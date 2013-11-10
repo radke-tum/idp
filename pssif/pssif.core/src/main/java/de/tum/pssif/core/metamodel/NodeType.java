@@ -12,4 +12,6 @@ public interface NodeType extends ElementType, Attributable, Specializable<NodeT
 
   Collection<EdgeType> getOutgoing();
 
+  Collection<EdgeType> getAuxiliaryEdgeTypes();
+
 }
