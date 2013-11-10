@@ -6,11 +6,21 @@ import de.tum.pssif.core.metamodel.ElementType;
 
 
 public interface Specializable<T extends ElementType> {
-  T getParent();
-
-  Collection<T> getChildren();
 
   /**
+   * Not null, any T if neccessary.
+   * @return
+   */
+  T getGeneralization();
+
+  /**
+   * Not null, can be empty.
+   * @return
+   */
+  Collection<T> getSpecializations();
+
+  /**
+   * this.inherit means this is the child.
    * Disinherit is (by convention) inherit with null!
    * @param other
    */

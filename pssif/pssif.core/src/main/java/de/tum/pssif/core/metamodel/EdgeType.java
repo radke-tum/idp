@@ -16,7 +16,13 @@ public interface EdgeType extends ElementType, Attributable, Specializable<EdgeT
 
   void allow(NodeType from, NodeType to);
 
-  void allow(NodeType from, NodeType to, NodeType aux);
+  /**
+   * The from to should already exist, otherwise kaboom!
+   * @param from
+   * @param to
+   * @param aux
+   */
+  void allowAuxiliaryFor(NodeType from, NodeType to, NodeType aux);
 
   Collection<NodeType> getIncoming(NodeType forOutgoing);
 
