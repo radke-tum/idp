@@ -16,7 +16,7 @@ public interface EdgeType extends ElementType, Attributable, Specializable<EdgeT
 
   void allow(NodeType from, NodeType to);
 
-  void allow(NodeType aux);
+  void allow(NodeType from, NodeType to, NodeType aux);
 
   Collection<NodeType> getIncoming(NodeType forOutgoing);
 
