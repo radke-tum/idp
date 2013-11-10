@@ -1,5 +1,7 @@
 package de.tum.pssif.core.metamodel;
 
+import java.util.Collection;
+
 import de.tum.pssif.core.metamodel.traits.Attributable;
 import de.tum.pssif.core.metamodel.traits.Specializable;
 
@@ -15,6 +17,12 @@ public interface EdgeType extends ElementType, Attributable, Specializable<EdgeT
   void allow(NodeType from, NodeType to);
 
   void allow(NodeType aux);
+
+  Collection<NodeType> getIncoming(NodeType forOutgoing);
+
+  Collection<NodeType> getOutgoing(NodeType forIncoming);
+
+  Collection<NodeType> getAuxiliaries(NodeType incoming, NodeType outgoing);
 
   boolean hasOpposite();
 
