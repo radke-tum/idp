@@ -1,4 +1,7 @@
 package de.tum.pssif.core.metamodel;
 
-public interface DataType extends Element {
+import de.tum.pssif.core.metamodel.traits.Named;
+
+public interface DataType extends Named {
+
 }

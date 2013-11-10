@@ -1,10 +1,10 @@
 package de.tum.pssif.core.model;
 
 /**
- * A PSS-IF model.
+ * Instance of node type
  * @author kgo
  *
  */
-public interface Model {
+public interface Node {
 
 }
