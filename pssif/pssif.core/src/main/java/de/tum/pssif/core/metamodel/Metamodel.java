@@ -2,27 +2,26 @@ package de.tum.pssif.core.metamodel;
 
 import java.util.Collection;
 
-
 public interface Metamodel {
 
-  NodeType createNode(String name);
+	NodeType createNode(String name);
 
-  EdgeType createEdge(String name);
+	EdgeType createEdge(String name);
 
-  EdgeType createEdge(String name, String oppositeName);
+	EdgeType createEdge(String name, String oppositeName);
 
-  Collection<ElementType> getElementTypes();
+	Collection<ElementType> getElementTypes();
 
-  Collection<NodeType> getNodeTypes();
+	Collection<NodeType> getNodeTypes();
 
-  Collection<EdgeType> getEdgeTypes();
+	Collection<EdgeType> getEdgeTypes();
 
-  ElementType findElementType(String name);
+	ElementType findElementType(String name);
 
-  NodeType findNodeType(String name);
+	NodeType findNodeType(String name);
 
-  EdgeType findEdgeType(String name);
+	EdgeType findEdgeType(String name);
 
-  void delete(ElementType elementType);
+	void delete(ElementType elementType);
 
 }

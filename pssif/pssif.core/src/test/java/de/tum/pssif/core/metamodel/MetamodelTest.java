@@ -5,177 +5,179 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import org.junit.Before;
 import org.junit.Test;
 
+import de.tum.pssif.core.metamodel.impl.MetamodelImpl;
 
 public class MetamodelTest {
 
-  private Metamodel metamodel;
+	private Metamodel metamodel;
 
-  private void resetMetamodel() {
-    //TODO
-  }
+	@Before
+	public void init() {
+		metamodel = new MetamodelImpl();
+	}
 
-  @Test
-  public void myTest() {
-    NodeType a = metamodel.createNode("A");
-    NodeType b = metamodel.createNode("B");
-    NodeType c = metamodel.createNode("C");
+	@Test
+	public void myTest() {
+		NodeType a = metamodel.createNode("A");
+		NodeType b = metamodel.createNode("B");
+		NodeType c = metamodel.createNode("C");
 
-    assertNotNull(a);
-    assertEquals(a, metamodel.findNodeType("A"));
-    assertEquals("A", a.getName());
+		assertTrue(metamodel.getElementTypes().contains(a));
+		assertTrue(metamodel.getNodeTypes().contains(a));
+		assertFalse(metamodel.getEdgeTypes().contains(a));
 
-    assertNotNull(b);
-    assertEquals("B", b.getName());
-    assertEquals(b, metamodel.findNodeType("B"));
+		assertTrue(metamodel.getElementTypes().contains(b));
+		assertTrue(metamodel.getNodeTypes().contains(b));
+		assertFalse(metamodel.getEdgeTypes().contains(b));
 
-    assertNotNull(c);
-    assertEquals("C", c.getName());
-    assertEquals(c, metamodel.findNodeType("C"));
+		assertTrue(metamodel.getElementTypes().contains(c));
+		assertTrue(metamodel.getNodeTypes().contains(c));
+		assertFalse(metamodel.getEdgeTypes().contains(c));
 
-    b.inherit(a);
-    assertEquals(a, b.getGeneralization());
-    assertEquals(b, a.getSpecializations().iterator().next());
+		assertNotNull(a);
+		assertEquals(a, metamodel.findNodeType("A"));
+		assertEquals("A", a.getName());
 
-    assertEquals(0, a.getIncomming());
-    assertEquals(0, a.getOutgoing());
-    //TODO this should fail when id and other properties are added by definition!
-    assertEquals(0, a.getAttributes());
-  }
+		assertNotNull(b);
+		assertEquals("B", b.getName());
+		assertEquals(b, metamodel.findNodeType("B"));
 
-  @Test
-  public void testLinearConnect() {
-    resetMetamodel();
+		assertNotNull(c);
+		assertEquals("C", c.getName());
+		assertEquals(c, metamodel.findNodeType("C"));
 
-    NodeType a = metamodel.createNode("a");
-    NodeType b = metamodel.createNode("b");
-    EdgeType edge = metamodel.createEdge("edge");
-    edge.allow(a, b);
+		b.inherit(a);
+		assertEquals(a, b.getGeneralization());
+		assertEquals(b, a.getSpecializations().iterator().next());
 
-    assertEquals(edge, a.getOutgoing().iterator().next());
-    assertEquals(0, b.getOutgoing().size());
+		assertEquals(0, a.getIncomming());
+		assertEquals(0, a.getOutgoing());
+		// TODO this should fail when id and other properties are added by
+		// definition!
+		assertEquals(0, a.getAttributes());
+	}
 
-    assertEquals(edge, b.getIncomming().iterator().next());
-    assertEquals(0, a.getIncomming().size());
+	@Test
+	public void testLinearConnect() {
+		NodeType a = metamodel.createNode("a");
+		NodeType b = metamodel.createNode("b");
+		EdgeType edge = metamodel.createEdge("edge");
+		edge.allow(a, b);
 
-    assertEquals(a, edge.getIncoming(b));
-    assertEquals(b, edge.getOutgoing(b));
-    assertEquals(0, edge.getAuxiliaries(a, b).size());
-  }
+		assertEquals(edge, a.getOutgoing().iterator().next());
+		assertEquals(0, b.getOutgoing().size());
 
-  @Test
-  public void testLinearConnectWithAuxiliaries() {
-    resetMetamodel();
+		assertEquals(edge, b.getIncomming().iterator().next());
+		assertEquals(0, a.getIncomming().size());
 
-    NodeType a = metamodel.createNode("a");
-    NodeType b = metamodel.createNode("b");
-    NodeType c = metamodel.createNode("c");
+		assertEquals(a, edge.getIncoming(b));
+		assertEquals(b, edge.getOutgoing(b));
+		assertEquals(0, edge.getAuxiliaries(a, b).size());
+	}
 
-    EdgeType edge = metamodel.createEdge("edge");
-    edge.allow(a, b);
-    edge.allowAuxiliaryFor(a, b, c);
+	@Test
+	public void testLinearConnectWithAuxiliaries() {
+		NodeType a = metamodel.createNode("a");
+		NodeType b = metamodel.createNode("b");
+		NodeType c = metamodel.createNode("c");
 
-    assertEquals(c, edge.getAuxiliaries(a, b).iterator().next());
-  }
+		EdgeType edge = metamodel.createEdge("edge");
+		edge.allow(a, b);
+		edge.allowAuxiliaryFor(a, b, c);
 
-  @Test(expected = IllegalStateException.class)
-  public void testLinearConnectWithAuxRequiresLinearConnect() {
-    resetMetamodel();
+		assertEquals(c, edge.getAuxiliaries(a, b).iterator().next());
+	}
 
-    NodeType a = metamodel.createNode("a");
-    NodeType b = metamodel.createNode("b");
-    NodeType c = metamodel.createNode("c");
+	@Test(expected = IllegalStateException.class)
+	public void testLinearConnectWithAuxRequiresLinearConnect() {
+		NodeType a = metamodel.createNode("a");
+		NodeType b = metamodel.createNode("b");
+		NodeType c = metamodel.createNode("c");
 
-    EdgeType edge = metamodel.createEdge("edge");
-    edge.allowAuxiliaryFor(a, b, c);
-  }
+		EdgeType edge = metamodel.createEdge("edge");
+		edge.allowAuxiliaryFor(a, b, c);
+	}
 
-  @Test
-  public void testManyToOneEdge() {
-    resetMetamodel();
+	@Test
+	public void testManyToOneEdge() {
+		NodeType a = metamodel.createNode("a");
+		NodeType b = metamodel.createNode("b");
+		NodeType c = metamodel.createNode("c");
 
-    NodeType a = metamodel.createNode("a");
-    NodeType b = metamodel.createNode("b");
-    NodeType c = metamodel.createNode("c");
+		EdgeType edge = metamodel.createEdge("edge");
+		edge.allow(a, b);
+		edge.allow(c, b);
 
-    EdgeType edge = metamodel.createEdge("edge");
-    edge.allow(a, b);
-    edge.allow(c, b);
+		assertTrue(edge.getIncoming(b).contains(a));
+		assertTrue(edge.getIncoming(b).contains(c));
 
-    assertTrue(edge.getIncoming(b).contains(a));
-    assertTrue(edge.getIncoming(b).contains(c));
+		assertEquals(b, edge.getOutgoing(a).iterator().next());
+		assertEquals(b, edge.getOutgoing(c).iterator().next());
+	}
 
-    assertEquals(b, edge.getOutgoing(a).iterator().next());
-    assertEquals(b, edge.getOutgoing(c).iterator().next());
-  }
+	@Test
+	public void testOneToManyEdge() {
+		NodeType a = metamodel.createNode("a");
+		NodeType b = metamodel.createNode("b");
+		NodeType c = metamodel.createNode("c");
 
-  @Test
-  public void testOneToManyEdge() {
-    resetMetamodel();
+		EdgeType edge = metamodel.createEdge("edge");
+		edge.allow(a, b);
+		edge.allow(a, c);
 
-    NodeType a = metamodel.createNode("a");
-    NodeType b = metamodel.createNode("b");
-    NodeType c = metamodel.createNode("c");
+		assertEquals(a, edge.getIncoming(b).iterator().next());
+		assertEquals(a, edge.getIncoming(c).iterator().next());
 
-    EdgeType edge = metamodel.createEdge("edge");
-    edge.allow(a, b);
-    edge.allow(a, c);
+		assertTrue(edge.getOutgoing(a).contains(b));
+		assertTrue(edge.getOutgoing(a).contains(c));
+	}
 
-    assertEquals(a, edge.getIncoming(b).iterator().next());
-    assertEquals(a, edge.getIncoming(c).iterator().next());
+	public void testOneToManyEdgeWithAuxiliaries() {
+		NodeType a = metamodel.createNode("a");
+		NodeType b = metamodel.createNode("b");
+		NodeType c = metamodel.createNode("c");
+		NodeType d = metamodel.createNode("d");
 
-    assertTrue(edge.getOutgoing(a).contains(b));
-    assertTrue(edge.getOutgoing(a).contains(c));
-  }
+		EdgeType edge = metamodel.createEdge("edge");
+		edge.allow(a, b);
+		edge.allow(a, c);
+		edge.allowAuxiliaryFor(a, b, d);
 
-  public void testOneToManyEdgeWithAuxiliaries() {
-    resetMetamodel();
+		assertEquals(a, edge.getIncoming(b).iterator().next());
+		assertEquals(a, edge.getIncoming(c).iterator().next());
 
-    NodeType a = metamodel.createNode("a");
-    NodeType b = metamodel.createNode("b");
-    NodeType c = metamodel.createNode("c");
-    NodeType d = metamodel.createNode("d");
+		assertTrue(edge.getOutgoing(a).contains(b));
+		assertTrue(edge.getOutgoing(a).contains(c));
 
-    EdgeType edge = metamodel.createEdge("edge");
-    edge.allow(a, b);
-    edge.allow(a, c);
-    edge.allowAuxiliaryFor(a, b, d);
+		assertTrue(edge.getAuxiliaries(a, b).contains(d));
+		assertFalse(edge.getAuxiliaries(a, c).contains(d));
+	}
 
-    assertEquals(a, edge.getIncoming(b).iterator().next());
-    assertEquals(a, edge.getIncoming(c).iterator().next());
+	public void testManyToOneEdgeWithAuxiliaries() {
+		NodeType a = metamodel.createNode("a");
+		NodeType b = metamodel.createNode("b");
+		NodeType c = metamodel.createNode("c");
+		NodeType d = metamodel.createNode("d");
 
-    assertTrue(edge.getOutgoing(a).contains(b));
-    assertTrue(edge.getOutgoing(a).contains(c));
+		EdgeType edge = metamodel.createEdge("edge");
 
-    assertTrue(edge.getAuxiliaries(a, b).contains(d));
-    assertFalse(edge.getAuxiliaries(a, c).contains(d));
-  }
+		edge.allow(a, b);
+		edge.allow(c, b);
+		edge.allowAuxiliaryFor(a, b, d);
 
-  public void testManyToOneEdgeWithAuxiliaries() {
-    resetMetamodel();
+		assertTrue(edge.getIncoming(b).contains(a));
+		assertTrue(edge.getIncoming(b).contains(c));
 
-    NodeType a = metamodel.createNode("a");
-    NodeType b = metamodel.createNode("b");
-    NodeType c = metamodel.createNode("c");
-    NodeType d = metamodel.createNode("d");
+		assertEquals(b, edge.getOutgoing(a).iterator().next());
+		assertEquals(b, edge.getOutgoing(c).iterator().next());
 
-    EdgeType edge = metamodel.createEdge("edge");
+		assertTrue(edge.getAuxiliaries(a, b).contains(d));
+		assertFalse(edge.getAuxiliaries(c, b).contains(d));
+	}
 
-    edge.allow(a, b);
-    edge.allow(c, b);
-    edge.allowAuxiliaryFor(a, b, d);
-
-    assertTrue(edge.getIncoming(b).contains(a));
-    assertTrue(edge.getIncoming(b).contains(c));
-
-    assertEquals(b, edge.getOutgoing(a).iterator().next());
-    assertEquals(b, edge.getOutgoing(c).iterator().next());
-
-    assertTrue(edge.getAuxiliaries(a, b).contains(d));
-    assertFalse(edge.getAuxiliaries(c, b).contains(d));
-  }
-
-  //TODO inehritance, effects on constraints and auxiliaries
+	// TODO inehritance, effects on constraints and auxiliaries
 
 }
