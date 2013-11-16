@@ -49,17 +49,34 @@ public class MetamodelTest {
 		NodeType node = metamodel.create("node");
 		NodeType development = metamodel.create("development");
 		NodeType solution = metamodel.create("solution");
+		NodeType sw = metamodel.create("software");
 
 		development.inherit(node);
 		solution.inherit(node);
+		sw.inherit(solution);
 
-		Assert.assertEquals(null, node.getGeneral());
+		Assert.assertNull(node.getGeneral());
 		Collection<NodeType> specials = node.getSpecials();
 		Assert.assertEquals(2, specials.size());
-		Assert.assertTrue(node.getSpecials().contains(development));
-		Assert.assertTrue(node.getSpecials().contains(solution));
+		Assert.assertTrue(specials.contains(development));
+		Assert.assertTrue(specials.contains(solution));
 
 		Assert.assertEquals(node, development.getGeneral());
 		Assert.assertEquals(node, solution.getGeneral());
+
+		EdgeType flow = metamodel.create("flow", "flows", solution,
+				MultiplicityContainer.of(1, 1), "flows", solution,
+				MultiplicityContainer.of(1, 1));
+		EdgeType infoflow = metamodel.create("infoflow", "infoflows", sw,
+				MultiplicityContainer.of(1, 1), "infoflows", sw,
+				MultiplicityContainer.of(1, 1));
+
+		infoflow.inherit(flow);
+
+		Assert.assertNull(flow.getGeneral());
+		Collection<EdgeType> flowSpecials = flow.getSpecials();
+		Assert.assertEquals(1, flowSpecials.size());
+		Assert.assertTrue(flowSpecials.contains(infoflow));
+		Assert.assertEquals(flow, infoflow.getGeneral());
 	}
 }

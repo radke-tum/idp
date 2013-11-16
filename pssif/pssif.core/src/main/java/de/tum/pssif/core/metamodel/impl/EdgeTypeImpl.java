@@ -79,13 +79,13 @@ public class EdgeTypeImpl extends NamedImpl implements EdgeType {
 
 	@Override
 	public void inherit(EdgeType general) {
-		registerSpecialization(this);
+		general.registerSpecialization(this);
 	}
 
 	@Override
 	public void registerSpecialization(EdgeTypeImpl special) {
 		specials.add(special);
-		registerGeneralization(this);
+		special.registerGeneralization(this);
 	}
 
 	@Override
