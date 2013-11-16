@@ -100,7 +100,6 @@ public class EdgeTypeBundle extends NamedImpl implements EdgeType {
 			result.addAll(type.getAuxiliaries());
 		}
 
-		// FIXME name???
 		return result;
 	}
 
