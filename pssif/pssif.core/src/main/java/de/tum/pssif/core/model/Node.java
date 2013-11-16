@@ -1,9 +1,10 @@
 package de.tum.pssif.core.model;
 
-import java.util.Collection;
-
 import de.tum.pssif.core.metamodel.EdgeEnd;
+import de.tum.pssif.core.util.PSSIFOption;
+
 
 public interface Node extends Element {
-	Collection<Edge> get(EdgeEnd end);
+
+  PSSIFOption<Edge> get(EdgeEnd end);
 }

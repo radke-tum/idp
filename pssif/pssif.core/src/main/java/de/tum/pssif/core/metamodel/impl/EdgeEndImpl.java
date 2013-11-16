@@ -1,7 +1,6 @@
 package de.tum.pssif.core.metamodel.impl;
 
 import java.util.Collection;
-import java.util.Collections;
 
 import com.google.common.collect.Sets;
 
@@ -11,61 +10,62 @@ import de.tum.pssif.core.metamodel.Multiplicity;
 import de.tum.pssif.core.metamodel.NodeType;
 import de.tum.pssif.core.model.Edge;
 import de.tum.pssif.core.model.Node;
+import de.tum.pssif.core.util.PSSIFOption;
 
-public class EdgeEndImpl extends NamedImpl implements EdgeEnd {
-	private final int lower;
-	private final UnlimitedNatural upper;
-	private final EdgeType edge;
-	private final NodeType type;
 
-	public EdgeEndImpl(String name, EdgeType edge, Multiplicity multiplicity,
-			NodeType type) {
-		super(name);
-		this.edge = edge;
-		lower = multiplicity.getLower();
-		upper = multiplicity.getUpper();
-		this.type = type;
-	}
+public final class EdgeEndImpl extends NamedImpl implements EdgeEnd {
+  private final int              lower;
+  private final UnlimitedNatural upper;
+  private final EdgeType         edge;
+  private final NodeTypeImpl     type;
 
-	@Override
-	public int getLower() {
-		return lower;
-	}
+  public EdgeEndImpl(String name, EdgeType edge, Multiplicity multiplicity, NodeTypeImpl type) {
+    super(name);
+    this.edge = edge;
+    lower = multiplicity.getLower();
+    upper = multiplicity.getUpper();
+    this.type = type;
+  }
 
-	@Override
-	public UnlimitedNatural getUpper() {
-		return upper;
-	}
+  @Override
+  public int getLower() {
+    return lower;
+  }
 
-	@Override
-	public Collection<NodeType> getTypes() {
-		return Sets.newHashSet(type);
-	}
+  @Override
+  public UnlimitedNatural getUpper() {
+    return upper;
+  }
 
-	@Override
-	public EdgeType getType() {
-		return edge;
-	}
+  @Override
+  public Collection<NodeType> getTypes() {
+    return Sets.<NodeType> newHashSet(type);
+  }
 
-	@Override
-	public Collection<Node> nodes(Collection<Edge> edges) {
-		Collection<Node> result = Sets.newHashSet();
+  public NodeTypeImpl getNodeType() {
+    return this.type;
+  }
 
-		for (Edge edge : edges) {
-			result.addAll(edge.get(this));
-		}
+  @Override
+  public EdgeType getType() {
+    return edge;
+  }
 
-		return Collections.unmodifiableCollection(result);
-	}
+  @Override
+  public PSSIFOption<Node> nodes(PSSIFOption<Edge> edges) {
+    PSSIFOption<Node> result = PSSIFOption.none();
+    for (Edge edge : edges.getMany()) {
+      result = PSSIFOption.merge(result, edge.get(this));
+    }
+    return result;
+  }
 
-	@Override
-	public Collection<Edge> edges(Collection<Node> nodes) {
-		Collection<Edge> result = Sets.newHashSet();
-
-		for (Node node : nodes) {
-			result.addAll(node.get(this));
-		}
-
-		return Collections.unmodifiableCollection(result);
-	}
+  @Override
+  public PSSIFOption<Edge> edges(PSSIFOption<Node> nodes) {
+    PSSIFOption<Edge> result = PSSIFOption.none();
+    for (Node node : nodes.getMany()) {
+      result = PSSIFOption.merge(result, node.get(this));
+    }
+    return result;
+  }
 }

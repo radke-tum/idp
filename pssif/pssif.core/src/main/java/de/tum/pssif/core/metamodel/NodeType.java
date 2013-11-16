@@ -6,26 +6,22 @@ import de.tum.pssif.core.metamodel.impl.NodeTypeImpl;
 import de.tum.pssif.core.metamodel.traits.Specializable;
 import de.tum.pssif.core.model.Model;
 import de.tum.pssif.core.model.Node;
+import de.tum.pssif.core.util.PSSIFOption;
 
-public interface NodeType extends ElementType,
-		Specializable<NodeType, NodeTypeImpl> {
-	void registerIncoming(EdgeType edge);
 
-	void registerOutgoing(EdgeType edge);
+public interface NodeType extends ElementType, Specializable<NodeType, NodeTypeImpl> {
 
-	void registerAuxiliary(EdgeType edge);
+  Collection<EdgeType> getEdgeTypes();
 
-	Collection<EdgeType> getEdgeTypes();
+  Collection<EdgeType> getIncomings();
 
-	Collection<EdgeType> getIncomings();
+  Collection<EdgeType> getOutgoings();
 
-	Collection<EdgeType> getOutgoings();
+  Collection<EdgeType> getAuxiliaries();
 
-	Collection<EdgeType> getAuxiliaries();
+  EdgeType findEdgeType(String name);
 
-	EdgeType findEdgeType(String name);
+  Node create(Model model);
 
-	Node create(Model model);
-
-	Collection<Node> apply(Model model);
+  PSSIFOption<Node> apply(Model model);
 }

@@ -10,17 +10,18 @@ import de.tum.pssif.core.model.Edge;
 import de.tum.pssif.core.model.Model;
 import de.tum.pssif.core.model.Node;
 
-public interface EdgeType extends ElementType,
-		Specializable<EdgeType, EdgeTypeImpl> {
-	EdgeEnd createAuxiliaryEnd(String name, Multiplicity mult, NodeType to);
 
-	Collection<EdgeEnd> getEnds();
+public interface EdgeType extends ElementType, Specializable<EdgeType, EdgeTypeImpl> {
 
-	EdgeEnd getIncoming();
+  Collection<EdgeEnd> getEnds();
 
-	EdgeEnd getOutgoing();
+  EdgeEnd findEdgeEnd(String name);
 
-	Collection<EdgeEnd> getAuxiliaries();
+  EdgeEnd getIncoming();
 
-	Edge create(Model model, Multimap<EdgeEnd, Node> connections);
+  EdgeEnd getOutgoing();
+
+  Collection<EdgeEnd> getAuxiliaries();
+
+  Edge create(Model model, Multimap<EdgeEnd, Node> connections);
 }

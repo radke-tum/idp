@@ -4,13 +4,15 @@ import java.util.Collection;
 
 import de.tum.pssif.core.model.Edge;
 import de.tum.pssif.core.model.Node;
+import de.tum.pssif.core.util.PSSIFOption;
+
 
 public interface EdgeEnd extends Named, Multiplicity {
-	Collection<NodeType> getTypes();
+  Collection<NodeType> getTypes();
 
-	EdgeType getType();
+  EdgeType getType();
 
-	Collection<Node> nodes(Collection<Edge> edges);
+  PSSIFOption<Node> nodes(PSSIFOption<Edge> edges);
 
-	Collection<Edge> edges(Collection<Node> nodes);
+  PSSIFOption<Edge> edges(PSSIFOption<Node> nodes);
 }
