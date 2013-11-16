@@ -91,6 +91,15 @@ public interface Multiplicity {
 			return new UnlimitedNatural(value);
 		}
 
+		public static UnlimitedNatural max(UnlimitedNatural a,
+				UnlimitedNatural b) {
+			if (a.equals(UNLIMITED) || b.equals(UNLIMITED)) {
+				return UNLIMITED;
+			} else {
+				return UnlimitedNatural.of(Math.max(a.value, b.value));
+			}
+		}
+
 		@Override
 		public int intValue() {
 			return value;
