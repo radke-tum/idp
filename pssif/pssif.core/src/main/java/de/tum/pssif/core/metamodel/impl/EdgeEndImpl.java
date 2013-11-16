@@ -1,6 +1,7 @@
 package de.tum.pssif.core.metamodel.impl;
 
 import java.util.Collection;
+import java.util.Collections;
 
 import com.google.common.collect.Sets;
 
@@ -8,6 +9,8 @@ import de.tum.pssif.core.metamodel.EdgeEnd;
 import de.tum.pssif.core.metamodel.EdgeType;
 import de.tum.pssif.core.metamodel.Multiplicity;
 import de.tum.pssif.core.metamodel.NodeType;
+import de.tum.pssif.core.model.Edge;
+import de.tum.pssif.core.model.Node;
 
 public class EdgeEndImpl extends NamedImpl implements EdgeEnd {
 	private final int lower;
@@ -42,5 +45,27 @@ public class EdgeEndImpl extends NamedImpl implements EdgeEnd {
 	@Override
 	public EdgeType getType() {
 		return edge;
+	}
+
+	@Override
+	public Collection<Node> nodes(Collection<Edge> edges) {
+		Collection<Node> result = Sets.newHashSet();
+
+		for (Edge edge : edges) {
+			result.addAll(edge.get(this));
+		}
+
+		return Collections.unmodifiableCollection(result);
+	}
+
+	@Override
+	public Collection<Edge> edges(Collection<Node> nodes) {
+		Collection<Edge> result = Sets.newHashSet();
+
+		for (Node node : nodes) {
+			result.addAll(node.get(this));
+		}
+
+		return Collections.unmodifiableCollection(result);
 	}
 }

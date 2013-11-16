@@ -104,4 +104,15 @@ public class NodeTypeImpl extends NamedImpl implements NodeType {
 		auxiliaries.add(edge);
 	}
 
+	@Override
+	public Collection<Node> apply(Model model) {
+		Collection<Node> result = model.findAll(this);
+
+		for (NodeType special : getSpecials()) {
+			result.addAll(special.apply(model));
+		}
+
+		return Collections.unmodifiableCollection(result);
+	}
+
 }

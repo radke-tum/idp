@@ -26,4 +26,6 @@ public interface NodeType extends ElementType,
 	EdgeType findEdgeType(String name);
 
 	Node create(Model model);
+
+	Collection<Node> apply(Model model);
 }
