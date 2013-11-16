@@ -5,7 +5,6 @@ import java.util.Collections;
 
 import com.google.common.collect.Sets;
 
-import de.tum.pssif.core.metamodel.EdgeEnd;
 import de.tum.pssif.core.metamodel.EdgeType;
 import de.tum.pssif.core.metamodel.NodeType;
 import de.tum.pssif.core.model.Model;
@@ -91,18 +90,18 @@ public class NodeTypeImpl extends NamedImpl implements NodeType {
 	}
 
 	@Override
-	public void registerIncoming(EdgeEnd end) {
-		incomings.add(end.getType());
+	public void registerIncoming(EdgeType edge) {
+		incomings.add(edge);
 	}
 
 	@Override
-	public void registerOutgoing(EdgeEnd end) {
-		outgoings.add(end.getType());
+	public void registerOutgoing(EdgeType edge) {
+		outgoings.add(edge);
 	}
 
 	@Override
-	public void registerAuxiliary(EdgeEnd end) {
-		auxiliaries.add(end.getType());
+	public void registerAuxiliary(EdgeType edge) {
+		auxiliaries.add(edge);
 	}
 
 }

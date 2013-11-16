@@ -28,8 +28,8 @@ public class EdgeTypeImpl extends NamedImpl implements EdgeType {
 		super(name);
 		incoming = new EdgeEndImpl(inName, this, inMult, inType);
 		outgoing = new EdgeEndImpl(outName, this, outMult, outType);
-		inType.registerOutgoing(outgoing);
-		outType.registerIncoming(incoming);
+		inType.registerOutgoing(this);
+		outType.registerIncoming(this);
 	}
 
 	@Override
@@ -37,7 +37,7 @@ public class EdgeTypeImpl extends NamedImpl implements EdgeType {
 			NodeType to) {
 		EdgeEndImpl result = new EdgeEndImpl(name, this, mult, to);
 		auxiliaries.add(result);
-		to.registerAuxiliary(result);
+		to.registerAuxiliary(this);
 		return result;
 	}
 
