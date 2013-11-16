@@ -40,14 +40,25 @@ public class ModelImpl implements Model {
   @Override
   public Edge createEdge(CreateEdgeOperation createOperation) {
     EdgeImpl newEdge = new EdgeImpl(createOperation.getEdgeTypeImpl());
-    //connecten
-    //1. resolve node impls
-    Multimap<EdgeEndImpl, NodeImpl> connectionsImpl = HashMultimap.create();
+
+    Multimap<EdgeEndImpl, NodeImpl> nodeImpls = HashMultimap.create();
     for (EdgeEndImpl ee : createOperation.getConnections().keySet()) {
-      ee.getNodeType().apply(this);
+      for (NodeImpl nodeImpl : this.nodes.get(ee.getNodeType())) {
+        if (createOperation.getConnections().get(ee).contains(nodeImpl)) {
+          nodeImpls.put(ee, nodeImpl);
+        }
+      }
     }
-    //2. delegate with full map
-    //e todo
+
+    //TODO structural integrity: all nodeimpls to connect must exist in model
+
+    for (EdgeEndImpl end : nodeImpls.keySet()) {
+      for (NodeImpl node : nodeImpls.get(end)) {
+        node.set(end, newEdge);
+        newEdge.set(end, node);
+      }
+    }
+
     return newEdge;
   }
 

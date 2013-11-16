@@ -23,6 +23,10 @@ public class EdgeImpl extends ElementImpl implements Edge {
     this.nodes = HashMultimap.create();
   }
 
+  protected void set(EdgeEndImpl edgeEnd, NodeImpl node) {
+    this.nodes.put(edgeEnd, node);
+  }
+
   @Override
   public PSSIFOption<Node> get(EdgeEnd end) {
     Set<EdgeEndImpl> localEdgeEnds = locateEdgeEnds(end, nodes.keySet());

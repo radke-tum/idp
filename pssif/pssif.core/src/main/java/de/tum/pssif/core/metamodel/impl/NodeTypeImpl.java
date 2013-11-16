@@ -113,18 +113,18 @@ public class NodeTypeImpl extends NamedImpl implements NodeType {
     return result;
   }
 
-  public Collection<EdgeEndImpl> getEdgeEndsImpl() {
-    Collection<EdgeEndImpl> result = Sets.newHashSet();
-    for (EdgeTypeImpl in : incomings) {
-      result.add(in.getOutgoing());
-    }
-    for (EdgeTypeImpl out : outgoings) {
-      result.add(out.getIncoming());
-    }
-    for (EdgeTypeImpl aux : auxiliaries) {
-      result.addAll(aux.getAuxEndsForType(this));
-    }
-    return result;
-  }
+  //  public Collection<EdgeEndImpl> getEdgeEndsImpl() {
+  //    Collection<EdgeEndImpl> result = Sets.newHashSet();
+  //    for (EdgeTypeImpl in : incomings) {
+  //      result.add(in.getOutgoing());
+  //    }
+  //    for (EdgeTypeImpl out : outgoings) {
+  //      result.add(out.getIncoming());
+  //    }
+  //    for (EdgeTypeImpl aux : auxiliaries) {
+  //      result.addAll(aux.getAuxEndsForType(this));
+  //    }
+  //    return result;
+  //  }
 
 }

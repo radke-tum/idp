@@ -67,4 +67,7 @@ public final class PSSIFOption<P> {
     return Sets.newHashSet(elements);
   }
 
+  public int size() {
+    return elements.size();
+  }
 }

@@ -20,9 +20,13 @@ public class NodeImpl extends ElementImpl implements Node {
 
   public NodeImpl(NodeTypeImpl nodeType) {
     this.edges = HashMultimap.create();
-    for (EdgeEndImpl edgeEndImpl : nodeType.getEdgeEndsImpl()) {
-      edges.put(edgeEndImpl, null);
-    }
+    //    for (EdgeEndImpl edgeEndImpl : nodeType.getEdgeEndsImpl()) {
+    //      edges.put(edgeEndImpl, null);
+    //    }
+  }
+
+  protected void set(EdgeEndImpl edgeEnd, EdgeImpl edge) {
+    this.edges.put(edgeEnd, edge);
   }
 
   @Override
