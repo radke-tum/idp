@@ -16,6 +16,8 @@ public class MetamodelImpl implements Metamodel {
 
 	@Override
 	public NodeType create(String name) {
+		// TODO should we require name uniqueness? NodeTypes may have unique
+		// names
 		NodeType result = new NodeTypeImpl(name);
 		nodes.add(result);
 		return result;

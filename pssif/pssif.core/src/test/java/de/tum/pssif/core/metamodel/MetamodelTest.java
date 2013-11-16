@@ -38,6 +38,10 @@ public class MetamodelTest {
 		Assert.assertTrue(outgoing.getTypes().contains(comp));
 		Assert.assertEquals(1, aux.iterator().next().getTypes().size());
 		Assert.assertTrue(aux.iterator().next().getTypes().contains(data));
+
+		// TODO check on incomings, outgoings and auxiliaries of the NodeTypes.
+		// TODO define behavior of incomings, outgoings and auxiliaries:
+		// are all "infoflow" outgoings bundled into an EdgeTypeBundle?
 	}
 
 	@Test
