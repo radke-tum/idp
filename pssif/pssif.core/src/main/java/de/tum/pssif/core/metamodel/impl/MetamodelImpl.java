@@ -47,8 +47,7 @@ public class MetamodelImpl implements Metamodel {
 		}
 
 		if (result.size() > 0) {
-			// TODO name???
-			return new EdgeTypeBundle("", result);
+			return new EdgeTypeBundle(name, result);
 		} else {
 			return null;
 		}
