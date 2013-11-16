@@ -26,15 +26,18 @@ public class EdgeTypeImpl extends NamedImpl implements EdgeType {
 			Multiplicity inMult, String outName, NodeType outType,
 			Multiplicity outMult) {
 		super(name);
-		incoming = new EdgeEndImpl(inName, inMult, inType);
-		outgoing = new EdgeEndImpl(outName, outMult, outType);
+		incoming = new EdgeEndImpl(inName, this, inMult, inType);
+		outgoing = new EdgeEndImpl(outName, this, outMult, outType);
+		inType.registerOutgoing(outgoing);
+		outType.registerIncoming(incoming);
 	}
 
 	@Override
 	public EdgeEnd createAuxiliaryEnd(String name, Multiplicity mult,
 			NodeType to) {
-		EdgeEndImpl result = new EdgeEndImpl(name, mult, to);
+		EdgeEndImpl result = new EdgeEndImpl(name, this, mult, to);
 		auxiliaries.add(result);
+		to.registerAuxiliary(result);
 		return result;
 	}
 

@@ -1,5 +1,7 @@
 package de.tum.pssif.core.model;
 
-public interface Model {
+import de.tum.pssif.core.metamodel.NodeType;
 
+public interface Model {
+	Node createNode(NodeType type);
 }

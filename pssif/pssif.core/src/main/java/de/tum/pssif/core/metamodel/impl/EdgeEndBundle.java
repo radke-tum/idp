@@ -6,13 +6,16 @@ import java.util.Collections;
 import com.google.common.collect.Sets;
 
 import de.tum.pssif.core.metamodel.EdgeEnd;
+import de.tum.pssif.core.metamodel.EdgeType;
 import de.tum.pssif.core.metamodel.NodeType;
 
 public class EdgeEndBundle extends NamedImpl implements EdgeEnd {
+	private final EdgeType edge;
 	private final Collection<EdgeEnd> bundled;
 
-	public EdgeEndBundle(String name, Collection<EdgeEnd> bundled) {
+	public EdgeEndBundle(String name, EdgeType edge, Collection<EdgeEnd> bundled) {
 		super(name);
+		this.edge = edge;
 		this.bundled = Collections.unmodifiableCollection(bundled);
 	}
 
@@ -47,6 +50,11 @@ public class EdgeEndBundle extends NamedImpl implements EdgeEnd {
 		}
 
 		return result;
+	}
+
+	@Override
+	public EdgeType getType() {
+		return edge;
 	}
 
 }

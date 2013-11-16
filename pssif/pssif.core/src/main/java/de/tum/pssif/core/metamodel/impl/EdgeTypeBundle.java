@@ -77,7 +77,7 @@ public class EdgeTypeBundle extends NamedImpl implements EdgeType {
 		}
 
 		// FIXME name???
-		return new EdgeEndBundle("", result);
+		return new EdgeEndBundle("", this, result);
 	}
 
 	@Override
@@ -89,7 +89,7 @@ public class EdgeTypeBundle extends NamedImpl implements EdgeType {
 		}
 
 		// FIXME name???
-		return new EdgeEndBundle("", result);
+		return new EdgeEndBundle("", this, result);
 	}
 
 	@Override

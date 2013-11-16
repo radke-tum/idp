@@ -9,11 +9,11 @@ import de.tum.pssif.core.model.Node;
 
 public interface NodeType extends ElementType,
 		Specializable<NodeType, NodeTypeImpl> {
-	void registerIncoming(EdgeType edge);
+	void registerIncoming(EdgeEnd end);
 
-	void registerOutgoing(EdgeType edge);
+	void registerOutgoing(EdgeEnd end);
 
-	void registerAuxiliary(EdgeType edge);
+	void registerAuxiliary(EdgeEnd end);
 
 	Collection<EdgeType> getEdgeTypes();
 
