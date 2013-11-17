@@ -14,27 +14,35 @@ import de.tum.pssif.core.util.PSSIFOption;
 
 
 public final class EdgeEndImpl extends NamedImpl implements EdgeEnd {
-  private final int              lower;
-  private final UnlimitedNatural upper;
-  private final EdgeType         edge;
-  private final NodeTypeImpl     type;
+  private final Multiplicity multiplicity;
+  private final EdgeType     edge;
+  private final NodeTypeImpl type;
 
   public EdgeEndImpl(String name, EdgeType edge, Multiplicity multiplicity, NodeTypeImpl type) {
     super(name);
     this.edge = edge;
-    lower = multiplicity.getLower();
-    upper = multiplicity.getUpper();
+    this.multiplicity = multiplicity;
     this.type = type;
   }
 
   @Override
-  public int getLower() {
-    return lower;
+  public int getEdgeEndLower() {
+    return this.multiplicity.getEdgeEndLower();
   }
 
   @Override
-  public UnlimitedNatural getUpper() {
-    return upper;
+  public UnlimitedNatural getEdgeEndUpper() {
+    return this.multiplicity.getEdgeEndUpper();
+  }
+
+  @Override
+  public int getEdgeTypeLower() {
+    return this.multiplicity.getEdgeTypeLower();
+  }
+
+  @Override
+  public UnlimitedNatural getEdgeTypeUpper() {
+    return this.multiplicity.getEdgeTypeUpper();
   }
 
   @Override

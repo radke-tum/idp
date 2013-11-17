@@ -15,6 +15,7 @@ import de.tum.pssif.core.metamodel.Multiplicity.UnlimitedNatural;
 import de.tum.pssif.core.metamodel.NodeType;
 import de.tum.pssif.core.metamodel.impl.MetamodelImpl;
 import de.tum.pssif.core.model.impl.ModelImpl;
+import de.tum.pssif.core.util.PSSIFOption;
 
 
 public class ModelTest {
@@ -38,12 +39,12 @@ public class ModelTest {
     NodeType requirement = metamodel.create("requirement");
     requirement.inherit(development);
 
-    metamodel.create("containment", "contains", hardware, MultiplicityContainer.of(0, UnlimitedNatural.UNLIMITED), "contained in", hardware,
-        MultiplicityContainer.of(0, 1));
-    metamodel.create("containment", "contains", hardware, MultiplicityContainer.of(0, UnlimitedNatural.UNLIMITED), "contained in", software,
-        MultiplicityContainer.of(0, 1));
-    metamodel.create("containment", "contains", software, MultiplicityContainer.of(0, UnlimitedNatural.UNLIMITED), "contained in", software,
-        MultiplicityContainer.of(0, 1));
+    metamodel.create("containment", "contains", hardware, MultiplicityContainer.of(1, UnlimitedNatural.of(1), 0, UnlimitedNatural.UNLIMITED),
+        "contained in", hardware, MultiplicityContainer.of(1, UnlimitedNatural.of(1), 1, UnlimitedNatural.of(1)));
+    metamodel.create("containment", "contains", hardware, MultiplicityContainer.of(1, UnlimitedNatural.of(1), 0, UnlimitedNatural.UNLIMITED),
+        "contained in", software, MultiplicityContainer.of(1, UnlimitedNatural.of(1), 1, UnlimitedNatural.of(1)));
+    metamodel.create("containment", "contains", software, MultiplicityContainer.of(1, UnlimitedNatural.of(1), 0, UnlimitedNatural.UNLIMITED),
+        "contained in", software, MultiplicityContainer.of(1, UnlimitedNatural.of(1), 1, UnlimitedNatural.of(1)));
 
     model = new ModelImpl();
   }
@@ -59,6 +60,10 @@ public class ModelTest {
     EdgeType hwContainment = node("hardware").findEdgeType("containment");
     connections.put(hwContainment.getIncoming(), ebike);
     connections.put(hwContainment.getOutgoing(), smartphone);
+    hwContainment.create(model, connections);
+
+    hwContainment = node("hardware").findEdgeType("containment");
+    connections.put(hwContainment.getIncoming(), ebike);
     connections.put(hwContainment.getOutgoing(), battery);
     hwContainment.create(model, connections);
 
@@ -67,7 +72,13 @@ public class ModelTest {
     connections.put(hwContainment.getOutgoing(), rentalApp);
     hwContainment.create(model, connections);
 
-    Assert.assertEquals(2, ebike.get(hwContainment.getIncoming()).getOne().get(hwContainment.getOutgoing()).size());
+    PSSIFOption<Edge> edges = ebike.get(hwContainment.getIncoming());
+    Assert.assertEquals(2, edges.size());
+    for (Edge edge : edges.getMany()) {
+      Assert.assertEquals(ebike, edge.get(hwContainment.getIncoming()).getOne());
+    }
+
+    //    Assert.assertEquals(2, ebike.get(hwContainment.getIncoming()).getOne().get(hwContainment.getOutgoing()).size());
   }
 
   private NodeType node(String name) {

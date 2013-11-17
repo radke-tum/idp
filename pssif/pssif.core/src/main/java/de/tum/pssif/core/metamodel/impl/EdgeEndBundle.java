@@ -24,22 +24,44 @@ public class EdgeEndBundle extends NamedImpl implements EdgeEnd {
   }
 
   @Override
-  public int getLower() {
+  public int getEdgeEndLower() {
     int result = Integer.MAX_VALUE;
 
     for (EdgeEnd end : bundled) {
-      result = Math.min(end.getLower(), result);
+      result = Math.min(end.getEdgeEndLower(), result);
     }
 
     return result;
   }
 
   @Override
-  public UnlimitedNatural getUpper() {
+  public UnlimitedNatural getEdgeEndUpper() {
     UnlimitedNatural result = UnlimitedNatural.of(0);
 
     for (EdgeEnd end : bundled) {
-      result = UnlimitedNatural.max(result, end.getUpper());
+      result = UnlimitedNatural.max(result, end.getEdgeEndUpper());
+    }
+
+    return result;
+  }
+
+  @Override
+  public int getEdgeTypeLower() {
+    int result = Integer.MAX_VALUE;
+
+    for (EdgeEnd end : bundled) {
+      result = Math.min(end.getEdgeTypeLower(), result);
+    }
+
+    return result;
+  }
+
+  @Override
+  public UnlimitedNatural getEdgeTypeUpper() {
+    UnlimitedNatural result = UnlimitedNatural.of(0);
+
+    for (EdgeEnd end : bundled) {
+      result = UnlimitedNatural.max(result, end.getEdgeTypeUpper());
     }
 
     return result;
