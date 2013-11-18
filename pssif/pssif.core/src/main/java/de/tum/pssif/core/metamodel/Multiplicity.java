@@ -4,189 +4,204 @@ import java.io.Serializable;
 
 import com.google.common.base.Preconditions;
 
-
 public interface Multiplicity {
-  int getEdgeEndLower();
+	int getEdgeEndLower();
 
-  UnlimitedNatural getEdgeEndUpper();
+	UnlimitedNatural getEdgeEndUpper();
 
-  int getEdgeTypeLower();
+	int getEdgeTypeLower();
 
-  UnlimitedNatural getEdgeTypeUpper();
+	UnlimitedNatural getEdgeTypeUpper();
 
-  public static final class MultiplicityContainer implements Multiplicity {
-    private final int              endLower;
-    private final UnlimitedNatural endUpper;
-    private final int              typeLower;
-    private final UnlimitedNatural typeUpper;
+	public static final class MultiplicityContainer implements Multiplicity {
+		private final int endLower;
+		private final UnlimitedNatural endUpper;
+		private final int typeLower;
+		private final UnlimitedNatural typeUpper;
 
-    public static Multiplicity of(int endLower, UnlimitedNatural endUpper, int typeLower, UnlimitedNatural typeUpper) {
-      Preconditions.checkArgument(endLower >= 0);
-      Preconditions.checkArgument(endUpper.compareTo(endLower) >= 0);
-      Preconditions.checkArgument(typeLower >= 0);
-      Preconditions.checkArgument(typeUpper.compareTo(typeUpper) >= 0);
-      return new MultiplicityContainer(endLower, endUpper, typeLower, typeUpper);
-    }
+		public static Multiplicity of(int endLower, UnlimitedNatural endUpper,
+				int typeLower, UnlimitedNatural typeUpper) {
+			Preconditions.checkArgument(endLower >= 0);
+			Preconditions.checkArgument(endUpper.compareTo(endLower) >= 0);
+			Preconditions.checkArgument(typeLower >= 0);
+			Preconditions.checkArgument(typeUpper.compareTo(typeUpper) >= 0);
+			return new MultiplicityContainer(endLower, endUpper, typeLower,
+					typeUpper);
+		}
 
-    public static Multiplicity of(int endLower, int endUpper, int typeLower, int typeUpper) {
-      return of(endLower, UnlimitedNatural.of(endUpper), typeLower, UnlimitedNatural.of(typeUpper));
-    }
+		public static Multiplicity of(int endLower, int endUpper,
+				int typeLower, UnlimitedNatural typeUpper) {
+			return of(endLower, UnlimitedNatural.of(endUpper), typeLower,
+					typeUpper);
+		}
 
-    private MultiplicityContainer(int endLower, UnlimitedNatural endUpper, int typeLower, UnlimitedNatural typeUpper) {
-      this.endLower = endLower;
-      this.endUpper = endUpper;
-      this.typeLower = typeLower;
-      this.typeUpper = typeUpper;
-    }
+		public static Multiplicity of(int endLower, UnlimitedNatural endUpper,
+				int typeLower, int typeUpper) {
+			return of(endLower, endUpper, typeLower,
+					UnlimitedNatural.of(typeUpper));
+		}
 
-    @Override
-    public int getEdgeEndLower() {
-      return endLower;
-    }
+		public static Multiplicity of(int endLower, int endUpper,
+				int typeLower, int typeUpper) {
+			return of(endLower, UnlimitedNatural.of(endUpper), typeLower,
+					UnlimitedNatural.of(typeUpper));
+		}
 
-    @Override
-    public UnlimitedNatural getEdgeEndUpper() {
-      return endUpper;
-    }
+		private MultiplicityContainer(int endLower, UnlimitedNatural endUpper,
+				int typeLower, UnlimitedNatural typeUpper) {
+			this.endLower = endLower;
+			this.endUpper = endUpper;
+			this.typeLower = typeLower;
+			this.typeUpper = typeUpper;
+		}
 
-    @Override
-    public int getEdgeTypeLower() {
-      return typeLower;
-    }
+		@Override
+		public int getEdgeEndLower() {
+			return endLower;
+		}
 
-    @Override
-    public UnlimitedNatural getEdgeTypeUpper() {
-      return typeUpper;
-    }
+		@Override
+		public UnlimitedNatural getEdgeEndUpper() {
+			return endUpper;
+		}
 
-    @Override
-    public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + endLower;
-      result = prime * result + ((endUpper == null) ? 0 : endUpper.hashCode());
-      return result;
-    }
+		@Override
+		public int getEdgeTypeLower() {
+			return typeLower;
+		}
 
-    @Override
-    public boolean equals(Object obj) {
-      if (this == obj) {
-        return true;
-      }
-      if (obj == null) {
-        return false;
-      }
-      if (getClass() != obj.getClass()) {
-        return false;
-      }
-      Multiplicity other = (Multiplicity) obj;
-      if (endLower != other.getEdgeEndLower()) {
-        return false;
-      }
-      if (endUpper == null) {
-        if (other.getEdgeEndUpper() != null) {
-          return false;
-        }
-      }
-      else if (!endUpper.equals(other.getEdgeEndUpper())) {
-        return false;
-      }
-      return true;
-    }
-  }
+		@Override
+		public UnlimitedNatural getEdgeTypeUpper() {
+			return typeUpper;
+		}
 
-  public static final class UnlimitedNatural extends Number implements Comparable<Number>, Serializable {
-    private static final long            serialVersionUID = 1L;
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + endLower;
+			result = prime * result
+					+ ((endUpper == null) ? 0 : endUpper.hashCode());
+			return result;
+		}
 
-    public static final UnlimitedNatural UNLIMITED        = new UnlimitedNatural(-1);
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj) {
+				return true;
+			}
+			if (obj == null) {
+				return false;
+			}
+			if (getClass() != obj.getClass()) {
+				return false;
+			}
+			Multiplicity other = (Multiplicity) obj;
+			if (endLower != other.getEdgeEndLower()) {
+				return false;
+			}
+			if (endUpper == null) {
+				if (other.getEdgeEndUpper() != null) {
+					return false;
+				}
+			} else if (!endUpper.equals(other.getEdgeEndUpper())) {
+				return false;
+			}
+			return true;
+		}
+	}
 
-    private int                          value;
+	public static final class UnlimitedNatural extends Number implements
+			Comparable<Number>, Serializable {
+		private static final long serialVersionUID = 1L;
 
-    private UnlimitedNatural(int value) {
-      this.value = value;
-    }
+		public static final UnlimitedNatural UNLIMITED = new UnlimitedNatural(
+				-1);
 
-    public static UnlimitedNatural of(int value) {
-      Preconditions.checkArgument(value >= 0);
-      return new UnlimitedNatural(value);
-    }
+		private int value;
 
-    public static UnlimitedNatural max(UnlimitedNatural a, UnlimitedNatural b) {
-      if (a.equals(UNLIMITED) || b.equals(UNLIMITED)) {
-        return UNLIMITED;
-      }
-      else {
-        return UnlimitedNatural.of(Math.max(a.value, b.value));
-      }
-    }
+		private UnlimitedNatural(int value) {
+			this.value = value;
+		}
 
-    @Override
-    public int intValue() {
-      return value;
-    }
+		public static UnlimitedNatural of(int value) {
+			Preconditions.checkArgument(value >= 0);
+			return new UnlimitedNatural(value);
+		}
 
-    @Override
-    public long longValue() {
-      return value;
-    }
+		public static UnlimitedNatural max(UnlimitedNatural a,
+				UnlimitedNatural b) {
+			if (a.equals(UNLIMITED) || b.equals(UNLIMITED)) {
+				return UNLIMITED;
+			} else {
+				return UnlimitedNatural.of(Math.max(a.value, b.value));
+			}
+		}
 
-    @Override
-    public float floatValue() {
-      return value;
-    }
+		@Override
+		public int intValue() {
+			return value;
+		}
 
-    @Override
-    public double doubleValue() {
-      return value;
-    }
+		@Override
+		public long longValue() {
+			return value;
+		}
 
-    @Override
-    public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + value;
-      return result;
-    }
+		@Override
+		public float floatValue() {
+			return value;
+		}
 
-    @Override
-    public boolean equals(Object obj) {
-      if (this == obj) {
-        return true;
-      }
-      if (obj == null) {
-        return false;
-      }
-      if (getClass() != obj.getClass()) {
-        if (Number.class.isAssignableFrom(obj.getClass())) {
-          return value == ((Number) obj).intValue();
-        }
-        return false;
-      }
-      UnlimitedNatural other = (UnlimitedNatural) obj;
-      if (value != other.value) {
-        return false;
-      }
-      return true;
-    }
+		@Override
+		public double doubleValue() {
+			return value;
+		}
 
-    @Override
-    public int compareTo(Number o) {
-      if (value == -1) {
-        if (o.intValue() == -1) {
-          return 0;
-        }
-        else {
-          return 1;
-        }
-      }
-      else {
-        if (o.intValue() == -1) {
-          return -1;
-        }
-        else {
-          return Integer.valueOf(value).compareTo(o.intValue());
-        }
-      }
-    }
-  }
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + value;
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj) {
+				return true;
+			}
+			if (obj == null) {
+				return false;
+			}
+			if (getClass() != obj.getClass()) {
+				if (Number.class.isAssignableFrom(obj.getClass())) {
+					return value == ((Number) obj).intValue();
+				}
+				return false;
+			}
+			UnlimitedNatural other = (UnlimitedNatural) obj;
+			if (value != other.value) {
+				return false;
+			}
+			return true;
+		}
+
+		@Override
+		public int compareTo(Number o) {
+			if (value == -1) {
+				if (o.intValue() == -1) {
+					return 0;
+				} else {
+					return 1;
+				}
+			} else {
+				if (o.intValue() == -1) {
+					return -1;
+				} else {
+					return Integer.valueOf(value).compareTo(o.intValue());
+				}
+			}
+		}
+	}
 }
