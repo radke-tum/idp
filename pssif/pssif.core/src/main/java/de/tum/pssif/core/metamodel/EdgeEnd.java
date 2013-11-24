@@ -15,4 +15,6 @@ public interface EdgeEnd extends Named, Multiplicity {
   PSSIFOption<Node> nodes(PSSIFOption<Edge> edges);
 
   PSSIFOption<Edge> edges(PSSIFOption<Node> nodes);
+
+  boolean equals(String name, NodeType type);
 }

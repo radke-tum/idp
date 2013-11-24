@@ -10,6 +10,7 @@ import com.google.common.collect.Sets;
 import de.tum.pssif.core.exception.PSSIFStructuralIntegrityException;
 import de.tum.pssif.core.metamodel.EdgeEnd;
 import de.tum.pssif.core.metamodel.EdgeType;
+import de.tum.pssif.core.metamodel.NodeType;
 import de.tum.pssif.core.model.Edge;
 import de.tum.pssif.core.model.Model;
 import de.tum.pssif.core.model.Node;
@@ -138,21 +139,24 @@ public class EdgeTypeBundle extends NamedImpl implements EdgeType {
     candidates: for (EdgeTypeImpl candidate : bundled) {
       for (EdgeEndImpl end : candidate.getEndImpls()) {
         //check if connections conform to candidates EdgeEnd multiplicities
-        if ((end.getEdgeEndLower() > 0 && !connections.containsKey(end))
-            || (connections.containsKey(end) && !end.includesEdgeEnd(connections.get(end).size()))) {
+        EdgeEnd connectionsEnd = findEnd(end.getName(), end.getNodeType(), connections.keySet());
+        if ((end.getEdgeEndLower() > 0 && connectionsEnd == null)
+            || (connectionsEnd != null && !end.includesEdgeEnd(connections.get(connectionsEnd).size()))) {
           continue candidates;
         }
 
         //check if creation would violate EdgeTypeMultiplicity of incoming nodes
-        for (Node incoming : connections.get(candidate.getIncoming())) {
-          if (!candidate.getIncoming().includesEdgeType(incoming.get(candidate.getIncoming()).size() + 1)) {
+        EdgeEnd incomingEnd = findEnd(candidate.getIncoming(), connections.keySet());
+        for (Node incoming : connections.get(incomingEnd)) {
+          if (!candidate.getIncoming().includesEdgeType(incoming.get(incomingEnd).size() + 1)) {
             continue candidates;
           }
         }
 
         //check if creation would violate EdgeTypeMultiplicity of outgoing nodes
-        for (Node outgoing : connections.get(candidate.getOutgoing())) {
-          if (!candidate.getOutgoing().includesEdgeType(outgoing.get(candidate.getOutgoing()).size() + 1)) {
+        EdgeEnd outgoingEnd = findEnd(candidate.getOutgoing(), connections.keySet());
+        for (Node outgoing : connections.get(outgoingEnd)) {
+          if (!candidate.getOutgoing().includesEdgeType(outgoing.get(outgoingEnd).size() + 1)) {
             continue candidates;
           }
         }
@@ -161,6 +165,19 @@ public class EdgeTypeBundle extends NamedImpl implements EdgeType {
     }
 
     return PSSIFOption.many(result);
+  }
+
+  private static EdgeEnd findEnd(String name, NodeType type, Collection<EdgeEnd> ends) {
+    for (EdgeEnd end : ends) {
+      if (end.equals(name, type)) {
+        return end;
+      }
+    }
+    return null;
+  }
+
+  private static EdgeEnd findEnd(EdgeEndImpl end, Collection<EdgeEnd> ends) {
+    return findEnd(end.getName(), end.getNodeType(), ends);
   }
 
   @Override

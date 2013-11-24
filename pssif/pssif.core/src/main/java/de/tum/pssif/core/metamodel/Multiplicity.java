@@ -108,12 +108,12 @@ public interface Multiplicity {
 
     @Override
     public boolean includesEdgeType(int count) {
-      return typeLower >= count && typeUpper.compareTo(Integer.valueOf(count)) >= 0;
+      return typeLower <= count && typeUpper.compareTo(Integer.valueOf(count)) >= 0;
     }
 
     @Override
     public boolean includesEdgeEnd(int count) {
-      return endLower >= count && endUpper.compareTo(Integer.valueOf(count)) >= 0;
+      return endLower <= count && endUpper.compareTo(Integer.valueOf(count)) >= 0;
     }
   }
 

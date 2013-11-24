@@ -121,4 +121,14 @@ public class EdgeEndBundle extends NamedImpl implements EdgeEnd {
     }
     return false;
   }
+
+  @Override
+  public boolean equals(String name, NodeType type) {
+    for (EdgeEnd end : bundled) {
+      if (end.equals(name, type)) {
+        return true;
+      }
+    }
+    return false;
+  }
 }

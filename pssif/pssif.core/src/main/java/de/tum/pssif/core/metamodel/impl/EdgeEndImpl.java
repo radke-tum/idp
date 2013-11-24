@@ -11,6 +11,7 @@ import de.tum.pssif.core.metamodel.NodeType;
 import de.tum.pssif.core.model.Edge;
 import de.tum.pssif.core.model.Node;
 import de.tum.pssif.core.util.PSSIFOption;
+import de.tum.pssif.core.util.PSSIFUtil;
 
 
 public final class EdgeEndImpl extends NamedImpl implements EdgeEnd {
@@ -85,5 +86,10 @@ public final class EdgeEndImpl extends NamedImpl implements EdgeEnd {
   @Override
   public boolean includesEdgeEnd(int count) {
     return multiplicity.includesEdgeEnd(count);
+  }
+
+  @Override
+  public boolean equals(String name, NodeType type) {
+    return PSSIFUtil.areSame(name, getName()) && this.type.equals(type);
   }
 }
