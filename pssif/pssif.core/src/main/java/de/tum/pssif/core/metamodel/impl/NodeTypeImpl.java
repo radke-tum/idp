@@ -105,7 +105,7 @@ public class NodeTypeImpl extends NamedImpl implements NodeType {
 
   @Override
   public PSSIFOption<Node> apply(Model model) {
-    PSSIFOption<Node> result = PSSIFOption.none();
+    PSSIFOption<Node> result = model.findAll(this);
     for (NodeType special : getSpecials()) {
       result = PSSIFOption.merge(result, special.apply(model));
     }
