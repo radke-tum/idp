@@ -1,5 +1,8 @@
 package de.tum.pssif.core.metamodel;
 
+import java.util.Collection;
+
+
 public interface Metamodel {
   NodeType create(String name);
 
@@ -10,4 +13,8 @@ public interface Metamodel {
   NodeType findNodeType(String name);
 
   EdgeType findEdgeType(String name);
+
+  Collection<NodeType> getNodeTypes();
+
+  Collection<EdgeType> getEdgeTypes();
 }

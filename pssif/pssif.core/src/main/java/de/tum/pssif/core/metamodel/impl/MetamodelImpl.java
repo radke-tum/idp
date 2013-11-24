@@ -65,6 +65,17 @@ public class MetamodelImpl implements Metamodel {
   }
 
   @Override
+  public Collection<NodeType> getNodeTypes() {
+    return Sets.<NodeType> newHashSet(this.nodes);
+  }
+
+  @Override
+  public Collection<EdgeType> getEdgeTypes() {
+    //TODO bundles or flat edge types here?
+    return Sets.<EdgeType> newHashSet(this.edges);
+  }
+
+  @Override
   public NodeTypeImpl findNodeType(String name) {
     return findElement(name, nodes);
   }
