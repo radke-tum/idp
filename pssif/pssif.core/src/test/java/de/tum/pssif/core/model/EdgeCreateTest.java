@@ -350,7 +350,7 @@ public class EdgeCreateTest {
     assertTrue(aux2s.getMany().contains(auxType2Node1));
     assertTrue(aux2s.getMany().contains(auxType2Node2));
 
-    //TODO create a second edge, see what happens. what should happen, btw...?
+    //TODO create a second edge, see what happens. what should happen, btw...? documented in 20131124-edgies.txt
   }
 
   @Test(expected = PSSIFException.class)
