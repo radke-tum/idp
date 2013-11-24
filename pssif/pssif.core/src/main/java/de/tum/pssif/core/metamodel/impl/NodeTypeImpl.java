@@ -2,6 +2,7 @@ package de.tum.pssif.core.metamodel.impl;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Set;
 
 import com.google.common.collect.Sets;
 
@@ -52,12 +53,24 @@ public class NodeTypeImpl extends NamedImpl implements NodeType {
 
   @Override
   public EdgeType findEdgeType(String name) {
-    for (EdgeType element : getEdgeTypes()) {
+    Set<EdgeTypeImpl> result = Sets.newHashSet();
+    for (EdgeTypeImpl element : getEdgeTypeImpls()) {
       if (element.getName().equals(name)) {
-        return element;
+        result.add(element);
       }
     }
-    return null;
+    if (result.size() == 0) {
+      return null;
+    }
+    return new EdgeTypeBundle(name, result);
+  }
+
+  private Set<EdgeTypeImpl> getEdgeTypeImpls() {
+    Set<EdgeTypeImpl> impls = Sets.newHashSet();
+    impls.addAll(incomings);
+    impls.addAll(outgoings);
+    impls.addAll(auxiliaries);
+    return impls;
   }
 
   @Override
