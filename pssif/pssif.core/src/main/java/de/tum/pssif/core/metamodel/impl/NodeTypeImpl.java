@@ -28,7 +28,6 @@ public class NodeTypeImpl extends NamedImpl implements NodeType {
   @Override
   public Collection<EdgeType> getEdgeTypes() {
     Collection<EdgeType> result = Sets.newHashSet();
-    //TODO inheritance
     result.addAll(getIncomings());
     result.addAll(getOutgoings());
     result.addAll(getAuxiliaries());

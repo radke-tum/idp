@@ -102,4 +102,23 @@ public class EdgeEndBundle extends NamedImpl implements EdgeEnd {
     return result;
   }
 
+  @Override
+  public boolean includesEdgeType(int count) {
+    for (EdgeEnd end : bundled) {
+      if (end.includesEdgeType(count)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  @Override
+  public boolean includesEdgeEnd(int count) {
+    for (EdgeEnd end : bundled) {
+      if (end.includesEdgeEnd(count)) {
+        return true;
+      }
+    }
+    return false;
+  }
 }

@@ -76,4 +76,54 @@ public final class EdgeEndImpl extends NamedImpl implements EdgeEnd {
     }
     return result;
   }
+
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((multiplicity == null) ? 0 : multiplicity.hashCode());
+    result = prime * result + ((type == null) ? 0 : type.hashCode());
+    return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
+    if (obj == null) {
+      return false;
+    }
+    if (getClass() != obj.getClass()) {
+      return false;
+    }
+    EdgeEndImpl other = (EdgeEndImpl) obj;
+    if (multiplicity == null) {
+      if (other.multiplicity != null) {
+        return false;
+      }
+    }
+    else if (!multiplicity.equals(other.multiplicity)) {
+      return false;
+    }
+    if (type == null) {
+      if (other.type != null) {
+        return false;
+      }
+    }
+    else if (!type.equals(other.type)) {
+      return false;
+    }
+    return true;
+  }
+
+  @Override
+  public boolean includesEdgeType(int count) {
+    return multiplicity.includesEdgeType(count);
+  }
+
+  @Override
+  public boolean includesEdgeEnd(int count) {
+    return multiplicity.includesEdgeEnd(count);
+  }
 }

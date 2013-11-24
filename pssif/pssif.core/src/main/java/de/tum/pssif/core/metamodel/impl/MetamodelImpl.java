@@ -20,8 +20,9 @@ public class MetamodelImpl implements Metamodel {
 
   @Override
   public NodeType create(String name) {
-    // TODO should we require name uniqueness? NodeTypes may have unique
-    // names
+    if (findNodeType(name) != null) {
+      throw new PSSIFStructuralIntegrityException("names of nodetypes must be unique");
+    }
     NodeTypeImpl result = new NodeTypeImpl(name);
     nodes.add(result);
     return result;
@@ -33,6 +34,12 @@ public class MetamodelImpl implements Metamodel {
     NodeTypeImpl outTypeImpl = findNodeType(outType.getName());
     if (inTypeImpl == null || outType == null) {
       throw new PSSIFStructuralIntegrityException("can not create edge when at least one of the defining node types does not exist");
+    }
+    EdgeType existing = findEdgeType(name);
+    if (existing != null) {
+      if (!existing.getIncoming().getName().equals(inName) || !existing.getOutgoing().getName().equals(outName)) {
+        throw new PSSIFStructuralIntegrityException("EdgeEnd-NamingConflict!");
+      }
     }
     EdgeTypeImpl result = new EdgeTypeImpl(name, inName, inTypeImpl, inMult, outName, outTypeImpl, outMult);
     edges.add(result);
@@ -57,15 +64,16 @@ public class MetamodelImpl implements Metamodel {
     return result;
   }
 
+  @Override
   public NodeTypeImpl findNodeType(String name) {
     return findElement(name, nodes);
   }
 
   @Override
   public EdgeType findEdgeType(String name) {
-    Collection<EdgeType> result = Sets.newHashSet();
+    Collection<EdgeTypeImpl> result = Sets.newHashSet();
 
-    for (EdgeType edge : edges) {
+    for (EdgeTypeImpl edge : edges) {
       if (edge.getName().equals(name)) {
         result.add(edge);
       }

@@ -18,13 +18,8 @@ public class EdgeImpl extends ElementImpl implements Edge {
 
   private final Multimap<EdgeEndImpl, NodeImpl> nodes;
 
-  public EdgeImpl(EdgeTypeImpl edgeType) {
-    //TODO extract simple edge ends
-    this.nodes = HashMultimap.create();
-  }
-
-  protected void set(EdgeEndImpl edgeEnd, NodeImpl node) {
-    this.nodes.put(edgeEnd, node);
+  public EdgeImpl(EdgeTypeImpl edgeType, Multimap<EdgeEndImpl, NodeImpl> connections) {
+    nodes = HashMultimap.create(connections);
   }
 
   @Override

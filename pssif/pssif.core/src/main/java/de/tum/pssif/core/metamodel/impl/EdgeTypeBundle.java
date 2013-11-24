@@ -3,6 +3,7 @@ package de.tum.pssif.core.metamodel.impl;
 import java.util.Collection;
 import java.util.Collections;
 
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 
@@ -17,40 +18,35 @@ import de.tum.pssif.core.util.PSSIFUtil;
 
 
 public class EdgeTypeBundle extends NamedImpl implements EdgeType {
-  private final Collection<EdgeType> bundled;
+  private final Collection<EdgeTypeImpl> bundled;
 
-  public EdgeTypeBundle(String name, Collection<EdgeType> bundled) {
+  public EdgeTypeBundle(String name, Collection<EdgeTypeImpl> bundled) {
     super(name);
     this.bundled = Collections.unmodifiableCollection(bundled);
   }
 
   @Override
   public EdgeType getGeneral() {
-    // TODO
     throw new UnsupportedOperationException();
   }
 
   @Override
   public Collection<EdgeType> getSpecials() {
-    // TODO
     throw new UnsupportedOperationException();
   }
 
   @Override
   public void inherit(EdgeType general) {
-    // TODO
     throw new UnsupportedOperationException();
   }
 
   @Override
   public void registerSpecialization(EdgeTypeImpl special) {
-    // TODO
     throw new UnsupportedOperationException();
   }
 
   @Override
   public void registerGeneralization(EdgeTypeImpl general) {
-    // TODO
     throw new UnsupportedOperationException();
   }
 
@@ -66,32 +62,57 @@ public class EdgeTypeBundle extends NamedImpl implements EdgeType {
   public EdgeEnd getIncoming() {
     Collection<EdgeEnd> result = Sets.newHashSet();
 
-    for (EdgeType type : bundled) {
+    String name = null;
+    for (EdgeTypeImpl type : bundled) {
+      if (name == null) {
+        name = type.getIncoming().getName();
+      }
+      else if (!name.equals(type.getIncoming().getName())) {
+        throw new PSSIFStructuralIntegrityException("edge ends with different names detected for bundle " + getName());
+      }
       result.add(type.getIncoming());
     }
 
-    // FIXME name???
-    return new EdgeEndBundle("", this, result);
+    return new EdgeEndBundle(name, this, result);
   }
 
   @Override
   public EdgeEnd getOutgoing() {
     Collection<EdgeEnd> result = Sets.newHashSet();
 
-    for (EdgeType type : bundled) {
+    String name = null;
+    for (EdgeTypeImpl type : bundled) {
+      if (name == null) {
+        name = type.getOutgoing().getName();
+      }
+      else if (!name.equals(type.getOutgoing().getName())) {
+        throw new PSSIFStructuralIntegrityException("edge ends with different names detected for bundle " + getName());
+      }
       result.add(type.getOutgoing());
     }
 
-    // FIXME name???
-    return new EdgeEndBundle("", this, result);
+    return new EdgeEndBundle(name, this, result);
   }
 
   @Override
   public Collection<EdgeEnd> getAuxiliaries() {
     Collection<EdgeEnd> result = Sets.newHashSet();
 
-    for (EdgeType type : bundled) {
-      result.addAll(type.getAuxiliaries());
+    Multimap<String, EdgeEnd> ends = HashMultimap.create();
+
+    for (EdgeTypeImpl type : bundled) {
+      for (EdgeEnd end : type.getAuxiliaries()) {
+        ends.put(end.getName(), end);
+      }
+    }
+
+    for (String name : ends.keySet()) {
+      if (ends.get(name).size() == 1) {
+        result.add(ends.get(name).iterator().next());
+      }
+      else {
+        result.add(new EdgeEndBundle(name, this, ends.get(name)));
+      }
     }
 
     return result;
@@ -100,18 +121,46 @@ public class EdgeTypeBundle extends NamedImpl implements EdgeType {
   @Override
   public Edge create(Model model, Multimap<EdgeEnd, Node> connections) {
     PSSIFOption<EdgeTypeImpl> matchingEdgeTypes = findMatchingEdgeTypes(connections);
+
     if (matchingEdgeTypes.isNone()) {
-      throw new PSSIFStructuralIntegrityException("edge bundle contains no matcing edge type for the provided combination of edge ends and nodes.");
+      throw new PSSIFStructuralIntegrityException("edge bundle contains no matching edge type for the provided combination of edge ends and nodes.");
     }
     else if (matchingEdgeTypes.isMany()) {
       throw new PSSIFStructuralIntegrityException("the provided edge and and node configuration is ambiguous in this edge type bundle.");
     }
+
     return matchingEdgeTypes.getOne().create(model, connections);
   }
 
   private PSSIFOption<EdgeTypeImpl> findMatchingEdgeTypes(Multimap<EdgeEnd, Node> connections) {
-    //TODO match stuff
-    return PSSIFOption.none();
+    Collection<EdgeTypeImpl> result = Sets.newHashSet();
+
+    candidates: for (EdgeTypeImpl candidate : bundled) {
+      for (EdgeEndImpl end : candidate.getEndImpls()) {
+        //check if connections conform to candidates EdgeEnd multiplicities
+        if ((end.getEdgeEndLower() > 0 && !connections.containsKey(end))
+            || (connections.containsKey(end) && !end.includesEdgeEnd(connections.get(end).size()))) {
+          continue candidates;
+        }
+
+        //check if creation would violate EdgeTypeMultiplicity of incoming nodes
+        for (Node incoming : connections.get(candidate.getIncoming())) {
+          if (!candidate.getIncoming().includesEdgeType(incoming.get(candidate.getIncoming()).size() + 1)) {
+            continue candidates;
+          }
+        }
+
+        //check if creation would violate EdgeTypeMultiplicity of outgoing nodes
+        for (Node outgoing : connections.get(candidate.getOutgoing())) {
+          if (!candidate.getOutgoing().includesEdgeType(outgoing.get(candidate.getOutgoing()).size() + 1)) {
+            continue candidates;
+          }
+        }
+      }
+      result.add(candidate);
+    }
+
+    return PSSIFOption.many(result);
   }
 
   @Override

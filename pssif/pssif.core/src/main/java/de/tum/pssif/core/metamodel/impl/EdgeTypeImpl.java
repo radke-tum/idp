@@ -7,6 +7,7 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 
+import de.tum.pssif.core.exception.PSSIFStructuralIntegrityException;
 import de.tum.pssif.core.metamodel.EdgeEnd;
 import de.tum.pssif.core.metamodel.EdgeType;
 import de.tum.pssif.core.metamodel.Multiplicity;
@@ -38,6 +39,12 @@ public class EdgeTypeImpl extends NamedImpl implements EdgeType {
     Collection<EdgeEnd> result = Sets.<EdgeEnd> newHashSet(getIncoming(), getOutgoing());
     result.addAll(getAuxiliaries());
     return Collections.<EdgeEnd> unmodifiableCollection(result);
+  }
+
+  public Collection<EdgeEndImpl> getEndImpls() {
+    Collection<EdgeEndImpl> result = Sets.<EdgeEndImpl> newHashSet(incoming, outgoing);
+    result.addAll(auxiliaries);
+    return Collections.<EdgeEndImpl> unmodifiableCollection(result);
   }
 
   @Override
@@ -89,7 +96,9 @@ public class EdgeTypeImpl extends NamedImpl implements EdgeType {
     Multimap<EdgeEndImpl, Node> connectionsImpl = HashMultimap.create();
     for (EdgeEnd end : connections.keySet()) {
       EdgeEndImpl endImpl = findEdgeEnd(end.getName());
-      //null? FIXME
+      if (endImpl == null) {
+        throw new PSSIFStructuralIntegrityException("cannot find EdgeEndImpl " + end.getName());
+      }
       connectionsImpl.putAll(endImpl, connections.get(end));
     }
     CreateEdgeOperation createOperation = new CreateEdgeOperation(this, connectionsImpl);

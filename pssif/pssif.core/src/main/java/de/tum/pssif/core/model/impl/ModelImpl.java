@@ -5,6 +5,7 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 
+import de.tum.pssif.core.exception.PSSIFStructuralIntegrityException;
 import de.tum.pssif.core.metamodel.NodeType;
 import de.tum.pssif.core.metamodel.impl.EdgeEndImpl;
 import de.tum.pssif.core.metamodel.impl.NodeTypeImpl;
@@ -39,25 +40,20 @@ public class ModelImpl implements Model {
 
   @Override
   public Edge createEdge(CreateEdgeOperation createOperation) {
-    EdgeImpl newEdge = new EdgeImpl(createOperation.getEdgeTypeImpl());
-
-    Multimap<EdgeEndImpl, NodeImpl> nodeImpls = HashMultimap.create();
+    Multimap<EdgeEndImpl, NodeImpl> nodeImplConnections = HashMultimap.create();
     for (EdgeEndImpl ee : createOperation.getConnections().keySet()) {
       for (NodeImpl nodeImpl : this.nodes.get(ee.getNodeType())) {
         if (createOperation.getConnections().get(ee).contains(nodeImpl)) {
-          nodeImpls.put(ee, nodeImpl);
+          nodeImplConnections.put(ee, nodeImpl);
         }
       }
     }
 
-    //TODO structural integrity: all nodeimpls to connect must exist in model
-
-    for (EdgeEndImpl end : nodeImpls.keySet()) {
-      for (NodeImpl node : nodeImpls.get(end)) {
-        node.set(end, newEdge);
-        newEdge.set(end, node);
-      }
+    if (nodeImplConnections.entries().size() != createOperation.getConnections().entries().size()) {
+      throw new PSSIFStructuralIntegrityException("could not resolve all nodes within model");
     }
+
+    EdgeImpl newEdge = new EdgeImpl(createOperation.getEdgeTypeImpl(), nodeImplConnections);
 
     return newEdge;
   }
