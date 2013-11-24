@@ -278,29 +278,194 @@ public class EdgeCreateTest {
   public void testMatchEdgeType2Config2() {
     //in: 4 nodes
     //out: 6 nodes
-    //aux1: 3 node
-    //aux2: 2 node
+    //aux1: 3 nodes
+    //aux2: 2 nodes
+    Model model = new ModelImpl();
+    Node fromNode1 = fromType().create(model);
+    Node fromNode2 = fromType().create(model);
+    Node fromNode3 = fromType().create(model);
+    Node fromNode4 = fromType().create(model);
+    Node toType2Node1 = toType2().create(model);
+    Node toType2Node2 = toType2().create(model);
+    Node toType2Node3 = toType2().create(model);
+    Node toType2Node4 = toType2().create(model);
+    Node toType2Node5 = toType2().create(model);
+    Node toType2Node6 = toType2().create(model);
+    Node auxType1Node1 = auxType1().create(model);
+    Node auxType1Node2 = auxType1().create(model);
+    Node auxType1Node3 = auxType1().create(model);
+    Node auxType2Node1 = auxType2().create(model);
+    Node auxType2Node2 = auxType2().create(model);
 
+    EdgeEnd fromEdgeEnd = edgeType().getIncoming();
+    EdgeEnd toEdgeEnd = edgeType().getOutgoing();
+    EdgeEnd aux1EdgeEnd = edgeType().findEdgeEnd(EDGE_END_AUX_1);
+    EdgeEnd aux2EdgeEnd = edgeType().findEdgeEnd(EDGE_END_AUX_2);
+
+    //Multimap<Pair<EdgeEnd, NodeType>, Node> 
+    Multimap<EdgeEnd, Node> connections = HashMultimap.create();
+
+    connections.put(fromEdgeEnd, fromNode1);
+    connections.put(fromEdgeEnd, fromNode2);
+    connections.put(fromEdgeEnd, fromNode3);
+    connections.put(fromEdgeEnd, fromNode4);
+    connections.put(toEdgeEnd, toType2Node1);
+    connections.put(toEdgeEnd, toType2Node2);
+    connections.put(toEdgeEnd, toType2Node3);
+    connections.put(toEdgeEnd, toType2Node4);
+    connections.put(toEdgeEnd, toType2Node5);
+    connections.put(toEdgeEnd, toType2Node6);
+    connections.put(aux1EdgeEnd, auxType1Node1);
+    connections.put(aux1EdgeEnd, auxType1Node2);
+    connections.put(aux1EdgeEnd, auxType1Node3);
+    connections.put(aux2EdgeEnd, auxType2Node1);
+    connections.put(aux2EdgeEnd, auxType2Node2);
+
+    Edge edge = edgeType().create(model, connections);
+
+    PSSIFOption<Node> froms = edge.get(fromEdgeEnd);
+    assertEquals(4, froms.size());
+    assertTrue(froms.getMany().contains(fromNode1));
+    assertTrue(froms.getMany().contains(fromNode2));
+    assertTrue(froms.getMany().contains(fromNode3));
+    assertTrue(froms.getMany().contains(fromNode4));
+
+    PSSIFOption<Node> tos = edge.get(toEdgeEnd);
+    assertEquals(6, tos.size());
+    assertTrue(tos.getMany().contains(toType2Node1));
+    assertTrue(tos.getMany().contains(toType2Node2));
+    assertTrue(tos.getMany().contains(toType2Node3));
+    assertTrue(tos.getMany().contains(toType2Node4));
+    assertTrue(tos.getMany().contains(toType2Node5));
+    assertTrue(tos.getMany().contains(toType2Node6));
+
+    PSSIFOption<Node> aux1s = edge.get(aux1EdgeEnd);
+    assertEquals(3, aux1s.size());
+    assertTrue(aux1s.getMany().contains(auxType1Node1));
+    assertTrue(aux1s.getMany().contains(auxType1Node2));
+    assertTrue(aux1s.getMany().contains(auxType1Node3));
+
+    PSSIFOption<Node> aux2s = edge.get(aux2EdgeEnd);
+    assertEquals(2, aux2s.size());
+    assertTrue(aux2s.getMany().contains(auxType2Node1));
+    assertTrue(aux2s.getMany().contains(auxType2Node2));
+
+    //TODO create a second edge, see what happens. what should happen, btw...?
   }
 
-  @Test
+  @Test(expected = PSSIFException.class)
   public void testMismatchEdgeType2FromType() {
-    //TODO
+    Model model = new ModelImpl();
+    //fail because of 5 from nodes, and upper = 4;
+    Node fromNode1 = fromType().create(model);
+    Node fromNode2 = fromType().create(model);
+    Node fromNode3 = fromType().create(model);
+    Node fromNode4 = fromType().create(model);
+    Node fromNode5 = fromType().create(model);
+    Node toType2Node1 = toType2().create(model);
+    Node toType2Node2 = toType2().create(model);
+    Node auxType1Node1 = auxType1().create(model);
+    Node auxType2Node1 = auxType2().create(model);
+
+    EdgeEnd fromEdgeEnd = edgeType().getIncoming();
+    EdgeEnd toEdgeEnd = edgeType().getOutgoing();
+    EdgeEnd aux1EdgeEnd = edgeType().findEdgeEnd(EDGE_END_AUX_1);
+    EdgeEnd aux2EdgeEnd = edgeType().findEdgeEnd(EDGE_END_AUX_2);
+
+    //Multimap<Pair<EdgeEnd, NodeType>, Node> 
+    Multimap<EdgeEnd, Node> connections = HashMultimap.create();
+
+    connections.put(fromEdgeEnd, fromNode1);
+    connections.put(fromEdgeEnd, fromNode2);
+    connections.put(fromEdgeEnd, fromNode3);
+    connections.put(fromEdgeEnd, fromNode4);
+    connections.put(fromEdgeEnd, fromNode5);
+    connections.put(toEdgeEnd, toType2Node1);
+    connections.put(toEdgeEnd, toType2Node2);
+    connections.put(aux1EdgeEnd, auxType1Node1);
+    connections.put(aux2EdgeEnd, auxType2Node1);
+
+    edgeType().create(model, connections);
   }
 
-  @Test
+  @Test(expected = PSSIFException.class)
   public void testMismatchEdgeType2ToType() {
-    //TODO present but wrong multiplicity?
+    //fail because of just one toNode (lower bound check)
+    Model model = new ModelImpl();
+    Node fromNode1 = fromType().create(model);
+    Node toType2Node1 = toType2().create(model);
+    Node auxType1Node1 = auxType1().create(model);
+    Node auxType2Node1 = auxType2().create(model);
+
+    EdgeEnd fromEdgeEnd = edgeType().getIncoming();
+    EdgeEnd toEdgeEnd = edgeType().getOutgoing();
+    EdgeEnd aux1EdgeEnd = edgeType().findEdgeEnd(EDGE_END_AUX_1);
+    EdgeEnd aux2EdgeEnd = edgeType().findEdgeEnd(EDGE_END_AUX_2);
+
+    //Multimap<Pair<EdgeEnd, NodeType>, Node> 
+    Multimap<EdgeEnd, Node> connections = HashMultimap.create();
+
+    connections.put(fromEdgeEnd, fromNode1);
+    connections.put(toEdgeEnd, toType2Node1);
+    connections.put(aux1EdgeEnd, auxType1Node1);
+    connections.put(aux2EdgeEnd, auxType2Node1);
+
+    edgeType().create(model, connections);
   }
 
-  @Test
+  @Test(expected = PSSIFException.class)
   public void testMismatchEdgeType2AuxType1() {
-    //TODO
+    //fail because of missing aux1
+    Model model = new ModelImpl();
+    Node fromNode1 = fromType().create(model);
+    Node toType2Node1 = toType2().create(model);
+    Node toType2Node2 = toType2().create(model);
+    Node auxType2Node1 = auxType2().create(model);
+
+    EdgeEnd fromEdgeEnd = edgeType().getIncoming();
+    EdgeEnd toEdgeEnd = edgeType().getOutgoing();
+    EdgeEnd aux2EdgeEnd = edgeType().findEdgeEnd(EDGE_END_AUX_2);
+
+    //Multimap<Pair<EdgeEnd, NodeType>, Node> 
+    Multimap<EdgeEnd, Node> connections = HashMultimap.create();
+
+    connections.put(fromEdgeEnd, fromNode1);
+    connections.put(toEdgeEnd, toType2Node1);
+    connections.put(toEdgeEnd, toType2Node2);
+    connections.put(aux2EdgeEnd, auxType2Node1);
+
+    edgeType().create(model, connections);
   }
 
-  @Test
+  @Test(expected = PSSIFException.class)
   public void testMismatchEdgeType2AuxType2() {
-    //TODO
+    //fail because of 3 aux2 nodes
+    Model model = new ModelImpl();
+    Node fromNode1 = fromType().create(model);
+    Node toType2Node1 = toType2().create(model);
+    Node toType2Node2 = toType2().create(model);
+    Node auxType1Node1 = auxType1().create(model);
+    Node auxType2Node1 = auxType2().create(model);
+    Node auxType2Node2 = auxType2().create(model);
+    Node auxType2Node3 = auxType2().create(model);
+
+    EdgeEnd fromEdgeEnd = edgeType().getIncoming();
+    EdgeEnd toEdgeEnd = edgeType().getOutgoing();
+    EdgeEnd aux1EdgeEnd = edgeType().findEdgeEnd(EDGE_END_AUX_1);
+    EdgeEnd aux2EdgeEnd = edgeType().findEdgeEnd(EDGE_END_AUX_2);
+
+    //Multimap<Pair<EdgeEnd, NodeType>, Node> 
+    Multimap<EdgeEnd, Node> connections = HashMultimap.create();
+
+    connections.put(fromEdgeEnd, fromNode1);
+    connections.put(toEdgeEnd, toType2Node1);
+    connections.put(toEdgeEnd, toType2Node2);
+    connections.put(aux1EdgeEnd, auxType1Node1);
+    connections.put(aux2EdgeEnd, auxType2Node1);
+    connections.put(aux2EdgeEnd, auxType2Node2);
+    connections.put(aux2EdgeEnd, auxType2Node3);
+
+    edgeType().create(model, connections);
   }
 
   @Test
