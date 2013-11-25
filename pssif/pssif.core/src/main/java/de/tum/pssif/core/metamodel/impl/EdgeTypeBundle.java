@@ -124,7 +124,7 @@ public class EdgeTypeBundle extends NamedImpl implements EdgeType {
 
   @Override
   public Edge create(Model model, Multimap<EdgeEnd, Node> connections) {
-    PSSIFOption<EdgeTypeImpl> matchingEdgeTypes = findMatchingEdgeTypes(connections);
+    PSSIFOption<EdgeTypeImpl> matchingEdgeTypes = findMatchingEdgeTypes(model, connections);
 
     if (matchingEdgeTypes.isNone()) {
       throw new PSSIFStructuralIntegrityException("edge bundle contains no matching edge type for the provided combination of edge ends and nodes.");
@@ -136,7 +136,7 @@ public class EdgeTypeBundle extends NamedImpl implements EdgeType {
     return matchingEdgeTypes.getOne().create(model, connections);
   }
 
-  private PSSIFOption<EdgeTypeImpl> findMatchingEdgeTypes(Multimap<EdgeEnd, Node> connections) {
+  private PSSIFOption<EdgeTypeImpl> findMatchingEdgeTypes(Model model, Multimap<EdgeEnd, Node> connections) {
     Collection<EdgeTypeImpl> result = Sets.newHashSet();
 
     candidates: for (EdgeTypeImpl candidate : bundled) {
@@ -146,6 +146,16 @@ public class EdgeTypeBundle extends NamedImpl implements EdgeType {
         if ((end.getEdgeEndLower() > 0 && connectionsEnd == null)
             || (connectionsEnd != null && !end.includesEdgeEnd(connections.get(connectionsEnd).size()))) {
           continue candidates;
+        }
+        for (Node node : connections.get(connectionsEnd)) {
+          if (!end.getNodeType().apply(model).getMany().contains(node)) {
+            //TODO fucking ugly, this dingsie. do something!
+            //pretty (prettier, to the least) alternatives:
+            //1. node knows its canonic node type
+            //2. connections is Multimap<Pair<EdgeEnd,NodeType>,Node>
+            //3. edgeEnd.findEndTo(nodeType) -> EdgeEndImpl
+            continue candidates;
+          }
         }
 
         //check if creation would violate EdgeTypeMultiplicity of incoming nodes
