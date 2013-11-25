@@ -14,4 +14,14 @@ public class AttributeImpl extends NamedImpl implements Attribute {
     this.type = type;
     this.unit = unit;
   }
+
+  @Override
+  public DataType getType() {
+    return type;
+  }
+
+  @Override
+  public Unit getUnit() {
+    return unit;
+  }
 }

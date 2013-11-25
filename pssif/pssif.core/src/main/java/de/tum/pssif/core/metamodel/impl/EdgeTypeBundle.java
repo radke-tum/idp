@@ -56,15 +56,15 @@ public class EdgeTypeBundle extends NamedImpl implements EdgeType {
 
   @Override
   public Collection<EdgeEnd> getEnds() {
-    Collection<EdgeEnd> result = Sets.newHashSet(getIncoming(), getOutgoing());
+    Collection<EdgeEnd> result = Sets.<EdgeEnd> newHashSet(getIncoming(), getOutgoing());
     result.addAll(getAuxiliaries());
 
     return Collections.unmodifiableCollection(result);
   }
 
   @Override
-  public EdgeEnd getIncoming() {
-    Collection<EdgeEnd> result = Sets.newHashSet();
+  public EdgeEndBundle getIncoming() {
+    Collection<EdgeEndImpl> result = Sets.newHashSet();
 
     String name = null;
     for (EdgeTypeImpl type : bundled) {
@@ -81,8 +81,8 @@ public class EdgeTypeBundle extends NamedImpl implements EdgeType {
   }
 
   @Override
-  public EdgeEnd getOutgoing() {
-    Collection<EdgeEnd> result = Sets.newHashSet();
+  public EdgeEndBundle getOutgoing() {
+    Collection<EdgeEndImpl> result = Sets.newHashSet();
 
     String name = null;
     for (EdgeTypeImpl type : bundled) {
@@ -102,10 +102,10 @@ public class EdgeTypeBundle extends NamedImpl implements EdgeType {
   public Collection<EdgeEnd> getAuxiliaries() {
     Collection<EdgeEnd> result = Sets.newHashSet();
 
-    Multimap<String, EdgeEnd> ends = HashMultimap.create();
+    Multimap<String, EdgeEndImpl> ends = HashMultimap.create();
 
     for (EdgeTypeImpl type : bundled) {
-      for (EdgeEnd end : type.getAuxiliaries()) {
+      for (EdgeEndImpl end : type.getAuxImpls()) {
         ends.put(end.getName(), end);
       }
     }
@@ -230,4 +230,5 @@ public class EdgeTypeBundle extends NamedImpl implements EdgeType {
   public Collection<Attribute> getAttributes() {
     throw new PSSIFStructuralIntegrityException("cannot get attributes from EdgeTypeBundle");
   }
+
 }

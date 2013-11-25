@@ -14,10 +14,10 @@ import de.tum.pssif.core.util.PSSIFOption;
 
 
 public class EdgeEndBundle extends NamedImpl implements EdgeEnd {
-  private final EdgeType            edge;
-  private final Collection<EdgeEnd> bundled;
+  private final EdgeType                edge;
+  private final Collection<EdgeEndImpl> bundled;
 
-  public EdgeEndBundle(String name, EdgeType edge, Collection<EdgeEnd> bundled) {
+  public EdgeEndBundle(String name, EdgeType edge, Collection<EdgeEndImpl> bundled) {
     super(name);
     this.edge = edge;
     this.bundled = Collections.unmodifiableCollection(bundled);

@@ -4,6 +4,7 @@ import java.util.Collection;
 
 
 public interface Metamodel {
+
   NodeType create(String name);
 
   EdgeType create(String name, String inName, NodeType inType, Multiplicity inMult, String outName, NodeType outType, Multiplicity outMult);
@@ -20,6 +21,12 @@ public interface Metamodel {
 
   Enumeration createEnumeration(String name);
 
+  Collection<Enumeration> getEnumerations();
+
+  Enumeration findEnumeration(String name);
+
+  void removeEnumeration(Enumeration enumeration);
+
   Unit findUnit(String name);
 
   Collection<Unit> getUnits();
@@ -32,9 +39,4 @@ public interface Metamodel {
 
   PrimitiveDataType findPrimitiveType(String name);
 
-  Collection<Enumeration> getEnumerations();
-
-  Enumeration findEnumeration(String name);
-
-  void removeEnumeration(Enumeration enumeration);
 }

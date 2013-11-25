@@ -62,6 +62,10 @@ public class EdgeTypeImpl extends ElementTypeImpl implements EdgeType {
     return Collections.<EdgeEnd> unmodifiableCollection(auxiliaries);
   }
 
+  protected Collection<EdgeEndImpl> getAuxImpls() {
+    return Collections.unmodifiableCollection(auxiliaries);
+  }
+
   protected Collection<EdgeEndImpl> getAuxEndsForType(NodeTypeImpl type) {
     Collection<EdgeEndImpl> result = Sets.newHashSet();
     for (EdgeEndImpl aux : auxiliaries) {

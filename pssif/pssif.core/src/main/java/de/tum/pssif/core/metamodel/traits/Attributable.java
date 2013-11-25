@@ -8,6 +8,7 @@ import de.tum.pssif.core.metamodel.Unit;
 
 
 public interface Attributable {
+
   Attribute createAttribute(String name, DataType type, Unit unit);
 
   Attribute findAttribute(String name);

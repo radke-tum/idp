@@ -117,6 +117,12 @@ public class MetamodelImpl implements Metamodel {
 
   @Override
   public Enumeration createEnumeration(String name) {
+    if (name == null || name.trim().isEmpty()) {
+      throw new PSSIFStructuralIntegrityException("name can not be null or empty");
+    }
+    if (findDataType(name) != null) {
+      throw new PSSIFStructuralIntegrityException("duplicate data type with name " + name);
+    }
     EnumerationImpl result = new EnumerationImpl(name);
     enumerations.add(result);
     return result;
