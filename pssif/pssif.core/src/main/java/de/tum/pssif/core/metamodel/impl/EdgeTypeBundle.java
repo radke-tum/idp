@@ -8,9 +8,12 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 
 import de.tum.pssif.core.exception.PSSIFStructuralIntegrityException;
+import de.tum.pssif.core.metamodel.Attribute;
+import de.tum.pssif.core.metamodel.DataType;
 import de.tum.pssif.core.metamodel.EdgeEnd;
 import de.tum.pssif.core.metamodel.EdgeType;
 import de.tum.pssif.core.metamodel.NodeType;
+import de.tum.pssif.core.metamodel.Unit;
 import de.tum.pssif.core.model.Edge;
 import de.tum.pssif.core.model.Model;
 import de.tum.pssif.core.model.Node;
@@ -198,4 +201,23 @@ public class EdgeTypeBundle extends NamedImpl implements EdgeType {
     return null;
   }
 
+  @Override
+  public Attribute createAttribute(String name, DataType type, Unit unit) {
+    throw new PSSIFStructuralIntegrityException("cannot create attribute within EdgeTypeBundle");
+  }
+
+  @Override
+  public void removeAttribute(Attribute attribute) {
+    throw new PSSIFStructuralIntegrityException("cannot remove attribute from EdgeTypeBundle");
+  }
+
+  @Override
+  public Attribute findAttribute(String name) {
+    throw new PSSIFStructuralIntegrityException("cannot find attribute within EdgeTypeBundle");
+  }
+
+  @Override
+  public Collection<Attribute> getAttributes() {
+    throw new PSSIFStructuralIntegrityException("cannot get attributes from EdgeTypeBundle");
+  }
 }

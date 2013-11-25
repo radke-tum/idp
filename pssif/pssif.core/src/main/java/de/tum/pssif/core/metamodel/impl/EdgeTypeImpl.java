@@ -18,7 +18,7 @@ import de.tum.pssif.core.model.operation.CreateEdgeOperation;
 import de.tum.pssif.core.util.PSSIFUtil;
 
 
-public class EdgeTypeImpl extends NamedImpl implements EdgeType {
+public class EdgeTypeImpl extends ElementTypeImpl implements EdgeType {
   private EdgeTypeImpl                  general;
   private Collection<EdgeTypeImpl>      specials    = Sets.newHashSet();
 

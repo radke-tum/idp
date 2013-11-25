@@ -62,6 +62,7 @@ public class ModelTest {
     connections.put(hwContainment.getOutgoing(), smartphone);
     hwContainment.create(model, connections);
 
+    connections = HashMultimap.create();
     hwContainment = node("hardware").findEdgeType("containment");
     connections.put(hwContainment.getIncoming(), ebike);
     connections.put(hwContainment.getOutgoing(), battery);

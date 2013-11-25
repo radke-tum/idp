@@ -1,4 +1,7 @@
 package de.tum.pssif.core.metamodel;
 
-public interface ElementType extends Named {
+import de.tum.pssif.core.metamodel.traits.Attributable;
+
+
+public interface ElementType extends Named, Attributable {
 }

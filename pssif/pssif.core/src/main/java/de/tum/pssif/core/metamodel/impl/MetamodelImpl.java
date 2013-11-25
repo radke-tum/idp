@@ -1,22 +1,30 @@
 package de.tum.pssif.core.metamodel.impl;
 
 import java.util.Collection;
+import java.util.Collections;
 
 import com.google.common.collect.Sets;
 
 import de.tum.pssif.core.exception.PSSIFStructuralIntegrityException;
+import de.tum.pssif.core.metamodel.DataType;
 import de.tum.pssif.core.metamodel.EdgeEnd;
 import de.tum.pssif.core.metamodel.EdgeType;
 import de.tum.pssif.core.metamodel.ElementType;
+import de.tum.pssif.core.metamodel.Enumeration;
 import de.tum.pssif.core.metamodel.Metamodel;
 import de.tum.pssif.core.metamodel.Multiplicity;
 import de.tum.pssif.core.metamodel.NodeType;
+import de.tum.pssif.core.metamodel.PrimitiveDataType;
+import de.tum.pssif.core.metamodel.Unit;
 import de.tum.pssif.core.util.PSSIFUtil;
 
 
 public class MetamodelImpl implements Metamodel {
-  private Collection<NodeTypeImpl> nodes = Sets.newHashSet();
-  private Collection<EdgeTypeImpl> edges = Sets.newHashSet();
+  private Collection<NodeTypeImpl>      nodes        = Sets.newHashSet();
+  private Collection<EdgeTypeImpl>      edges        = Sets.newHashSet();
+  private Collection<EnumerationImpl>   enumerations = Sets.newHashSet();
+  private Collection<PrimitiveDataType> primitives   = Sets.newHashSet();
+  private Collection<Unit>              units        = Sets.newHashSet();
 
   @Override
   public NodeType create(String name) {
@@ -102,6 +110,80 @@ public class MetamodelImpl implements Metamodel {
     for (T element : collection) {
       if (PSSIFUtil.areSame(element.getName(), name)) {
         return element;
+      }
+    }
+    return null;
+  }
+
+  @Override
+  public Enumeration createEnumeration(String name) {
+    EnumerationImpl result = new EnumerationImpl(name);
+    enumerations.add(result);
+    return result;
+  }
+
+  @Override
+  public Unit findUnit(String name) {
+    for (Unit candidate : units) {
+      if (PSSIFUtil.areSame(name, candidate.getName())) {
+        return candidate;
+      }
+    }
+    return null;
+  }
+
+  @Override
+  public Collection<Unit> getUnits() {
+    return Collections.unmodifiableCollection(units);
+  }
+
+  @Override
+  public DataType findDataType(String name) {
+    for (DataType candidate : getDataTypes()) {
+      if (PSSIFUtil.areSame(name, candidate.getName())) {
+        return candidate;
+      }
+    }
+    return null;
+  }
+
+  @Override
+  public Collection<DataType> getDataTypes() {
+    Collection<DataType> result = Sets.<DataType> newHashSet(primitives);
+    result.addAll(enumerations);
+    return Collections.unmodifiableCollection(result);
+  }
+
+  @Override
+  public Collection<PrimitiveDataType> getPrimitiveTypes() {
+    return Collections.unmodifiableCollection(primitives);
+  }
+
+  @Override
+  public Collection<Enumeration> getEnumerations() {
+    return Collections.<Enumeration> unmodifiableCollection(enumerations);
+  }
+
+  @Override
+  public void removeEnumeration(Enumeration enumeration) {
+    enumerations.remove(enumeration);
+  }
+
+  @Override
+  public PrimitiveDataType findPrimitiveType(String name) {
+    for (PrimitiveDataType candidate : primitives) {
+      if (candidate.getName().equals(name)) {
+        return candidate;
+      }
+    }
+    return null;
+  }
+
+  @Override
+  public Enumeration findEnumeration(String name) {
+    for (Enumeration candidate : enumerations) {
+      if (candidate.getName().equals(name)) {
+        return candidate;
       }
     }
     return null;

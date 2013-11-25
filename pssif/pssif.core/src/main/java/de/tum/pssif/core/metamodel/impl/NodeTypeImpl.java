@@ -13,7 +13,7 @@ import de.tum.pssif.core.model.operation.CreateNodeOperation;
 import de.tum.pssif.core.util.PSSIFOption;
 
 
-public class NodeTypeImpl extends NamedImpl implements NodeType {
+public class NodeTypeImpl extends ElementTypeImpl implements NodeType {
   private NodeType                 general;
   private Collection<NodeType>     specials    = Sets.newHashSet();
 
