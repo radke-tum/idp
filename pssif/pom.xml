@@ -7,6 +7,7 @@
 	<packaging>pom</packaging>
 	<modules>
 		<module>pssif.core</module>
+		<module>pssif.transform</module>
 	</modules>
 
 	<properties>
@@ -25,6 +26,11 @@
 				<artifactId>junit</artifactId>
 				<version>4.11</version>
 				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>de.tum</groupId>
+				<artifactId>pssif.core</artifactId>
+				<version>0.0.1-SNAPSHOT</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
