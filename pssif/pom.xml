@@ -8,6 +8,7 @@
 	<modules>
 		<module>pssif.core</module>
 		<module>pssif.transform</module>
+		<module>psiff.viz</module>
 	</modules>
 
 	<properties>
