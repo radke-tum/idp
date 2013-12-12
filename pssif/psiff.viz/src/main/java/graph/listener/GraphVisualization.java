@@ -24,6 +24,7 @@ import java.awt.geom.Rectangle2D;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.logging.StreamHandler;
 
 import javax.swing.AbstractAction;
 import javax.swing.BoundedRangeModel;
@@ -98,6 +99,7 @@ public class GraphVisualization {
 		g = gb.createGraph(detailedNodes);
 		
 		vv.repaint();
+		Object a = new StreamHandler();
 														
 	}
 	
