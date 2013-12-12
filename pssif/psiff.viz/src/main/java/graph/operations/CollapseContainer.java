@@ -12,9 +12,9 @@ public class CollapseContainer {
 	
 	public CollapseContainer()
 	{
-		this.addEdges = new LinkedList<>();
-		this.addNodes = new LinkedList<>();
-		this.removeEdges = new LinkedList<>();
+		this.addEdges = new LinkedList<InfoContainer>();
+		this.addNodes = new LinkedList<MyNode>();
+		this.removeEdges = new LinkedList<InfoContainer>();
 	}
 	
 	public void addNewEdges(InfoContainer edge)

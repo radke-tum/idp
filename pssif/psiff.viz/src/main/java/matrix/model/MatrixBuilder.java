@@ -36,7 +36,7 @@ public class MatrixBuilder {
 	
 	public LinkedList<MyNode> findRelevantNodes()
 	{
-		LinkedList<MyNode> res = new LinkedList<>();
+		LinkedList<MyNode> res = new LinkedList<MyNode>();
 		
 		List<MyNode> search = Model.getAllNodes();
 		
@@ -56,7 +56,7 @@ public class MatrixBuilder {
 	
 	public LinkedList<MyEdge> findRelevantEdges()
 	{
-		LinkedList<MyEdge> res = new LinkedList<>();
+		LinkedList<MyEdge> res = new LinkedList<MyEdge>();
 		
 		List<MyEdge> search = Model.getAllEdges();
 		
@@ -81,27 +81,27 @@ public class MatrixBuilder {
 		
 		// create HashMap to find connections faster
 		
-		HashMap<MyNode,LinkedList<MyNode>> mapping = new HashMap<MyNode,LinkedList<MyNode>>();
+		HashMap<MyNode,LinkedList<MyEdge>> mapping = new HashMap<MyNode,LinkedList<MyEdge>>();
 		
 		for (MyEdge e :edges)
 		{
 			MyNode source = e.getSourceNode();
-			MyNode dest = e.getDestinationNode();
+			//MyNode dest = e.getDestinationNode();
 			
-			LinkedList<MyNode> tmp = mapping.get(source);
+			LinkedList<MyEdge> tmp = mapping.get(source);
 			
 			// check if there is already a Connection
 			if (tmp==null)
 			{ 
 				// no entry yet
-				tmp = new LinkedList<>();
-				tmp.add(dest);
+				tmp = new LinkedList<MyEdge>();
+				tmp.add(e);
 				mapping.put(source, tmp);
 			}
 			else
 			{
 				// there is an entry
-				tmp.add(dest);
+				tmp.add(e);
 				mapping.put(source, tmp);
 			}
 		}
@@ -116,7 +116,7 @@ public class MatrixBuilder {
 				MyNode nodeJ = nodes.get(j);
 				
 				//check Mapping
-				LinkedList<MyNode> connections = mapping.get(nodeI);
+				LinkedList<MyEdge> connections = mapping.get(nodeI);
 				if (connections==null)
 				{
 					// no connections
@@ -126,11 +126,30 @@ public class MatrixBuilder {
 				{
 					// there are connections
 					//check if there is a connection from NodeI to NodeJ
-					if (connections.contains(nodeJ))
+					LinkedList<MyEdge> edge = findNode(connections, nodeJ);
+					if (edge.size() != 0)
+					{
+						String s = "";
+						for (MyEdge e : edge)
+						{
+							s = s + e.getConnectionType().toString();
+							if (e.getAttributes().size() != 0) 
+							{
+								for (String a : e.getAttributes()) 
+								{
+									s = s + " " + a + " ";
+								}
+							}
+							s = s + " || ";
+						}
+						res[i][j] = s;
+					}
+					
+					/*if (connections.contains(nodeJ))
 					{
 						// there exactly this connection
 						res[i][j] ="X";
-					}
+					}*/
 					else
 					{
 						// there are connections, but no connection between NodeI to NodeJ
@@ -169,5 +188,18 @@ public class MatrixBuilder {
 
 	public void setRelevantEdgesTypes(LinkedList<ConnectionType> edgesTypes) {
 		this.edgesTypes = edgesTypes;
+	}
+	
+	private LinkedList<MyEdge> findNode(LinkedList<MyEdge> connections, MyNode node)
+	{
+		LinkedList<MyEdge> res = new LinkedList<MyEdge>();
+		for (MyEdge e : connections) 
+		{
+			if (e.getDestinationNode().equals(node)) 
+			{
+				res.add(e);
+			}
+		}
+		return res;
 	}
 }

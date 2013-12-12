@@ -14,7 +14,7 @@ import model.Model;
 
 public class Main {
 	
-	private static MatrixVisualization matrix;
+	private static MatrixView matrix;
 	private static JFrame frame;
 	private static GraphView graphView;
 	
@@ -23,7 +23,7 @@ public class Main {
 		Model m = new Model();
 		m.MockData();
 
-		matrix = new MatrixVisualization();
+		matrix = new MatrixView();
 		graphView = new GraphView();
 
 		

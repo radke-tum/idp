@@ -63,5 +63,10 @@ public class MyEdge {
 		return destination;
 	}
 	
+	public List<String> getAttributes()
+	{
+		return this.attributes;
+	}
+	
 	
 }

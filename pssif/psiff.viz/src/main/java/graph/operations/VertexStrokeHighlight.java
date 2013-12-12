@@ -32,7 +32,7 @@ public class VertexStrokeHighlight<V,E> implements
 	        	this.graph = graph;
 	            this.pi = pi;
 	            this.dept = 1;
-	            this.followEdges = new LinkedList<>();
+	            this.followEdges = new LinkedList<ConnectionType>();
 	            this.specialSearch=false;
 	            
 	        }
@@ -56,7 +56,7 @@ public class VertexStrokeHighlight<V,E> implements
 	            {
 	        	//	System.out.println("-----------------------");
 	        	//	System.out.println(((MyNode) currentNode).getRealName());
-	                
+	               // System.out.println("specialSearch "+specialSearch);
 	            	if (specialSearch)
 	                {
 	                	if (pi.isPicked(currentNode))

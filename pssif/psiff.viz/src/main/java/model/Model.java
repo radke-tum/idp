@@ -16,8 +16,8 @@ public class Model {
 	
 	public Model()
 	{
-		nodes = new LinkedList<>();
-		edges = new LinkedList<>();
+		nodes = new LinkedList<MyNode>();
+		edges = new LinkedList<MyEdge>();
 	}
 	
 	public Model(LinkedList<MyNode> nodes, LinkedList<MyEdge> edges)
@@ -63,38 +63,38 @@ public class Model {
 		MyNode.setidcounter(0);
 		
 		
-		LinkedList<String> data = new LinkedList<>();
+		LinkedList<String> data = new LinkedList<String>();
 		
 		data.add("in: credentials");
 		data.add("out:boolean");
 		MyNode fverify = new MyNode("verify", data, NodeType.FUNCTION);
 		
-		data = new LinkedList<>();				
+		data = new LinkedList<String>();				
 		data.add("in: valid");
 		data.add("out: status");
 		MyNode funlock = new MyNode("unlock bike", data, NodeType.FUNCTION);
 		
-		data = new LinkedList<>();				
+		data = new LinkedList<String>();				
 		data.add("in: HTTP");
 		data.add("out: HTTP");
 		MyNode eserver = new MyNode("backoffice server", data, NodeType.HARDWARE);
 		
-		data = new LinkedList<>();				
+		data = new LinkedList<String>();				
 		data.add("in: HTTP");
 		data.add("out: HTTP, Signal");
 		MyNode ecomputer = new MyNode("onboard computer", data, NodeType.HARDWARE);
 		
-		data = new LinkedList<>();				
+		data = new LinkedList<String>();				
 		data.add("in: Signal");
 		data.add("out: Signal, DC 15V");
 		MyNode econtroller = new MyNode("micro controller", data, NodeType.HARDWARE);
 		
-		data = new LinkedList<>();				
+		data = new LinkedList<String>();				
 		data.add("in: DC 15V");
 		data.add("out: -");
 		MyNode elock = new MyNode("electric lock", data, NodeType.HARDWARE);
 		
-		data = new LinkedList<>();				
+		data = new LinkedList<String>();				
 		data.add("in: DC 15V");
 		data.add("out: -");
 		MyNode testNode = new MyNode("test node", data, NodeType.DECISION);
@@ -109,7 +109,7 @@ public class Model {
 		
 		
 		
-		LinkedList<String> s = new LinkedList<>();
+		LinkedList<String> s = new LinkedList<String>();
 		s.add("in: valid");
 		
 		edges.add(new MyEdge(ConnectionType.TRACE,s, fverify, funlock));

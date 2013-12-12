@@ -123,7 +123,7 @@ public class GraphBuilder {
 	public Graph<MyNode, MyEdge> removeAllNodesAndEdges ()
 	{
 		Collection<MyEdge> edges =g.getEdges();
-		LinkedList<MyEdge> edges2 = new LinkedList<>();
+		LinkedList<MyEdge> edges2 = new LinkedList<MyEdge>();
 		
 		Iterator<MyEdge> it1 = edges.iterator();
 		while (it1.hasNext())
@@ -139,7 +139,7 @@ public class GraphBuilder {
 		
 		
 		Collection<MyNode> nodes =g.getVertices();
-		LinkedList<MyNode> nodes2 = new LinkedList<>();
+		LinkedList<MyNode> nodes2 = new LinkedList<MyNode>();
 		
 		Iterator<MyNode> it2 = nodes.iterator();
 		while (it2.hasNext())

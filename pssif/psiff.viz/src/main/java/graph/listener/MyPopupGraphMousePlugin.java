@@ -1,5 +1,4 @@
 package graph.listener;
-
 import java.awt.Component;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -11,7 +10,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-
 import javax.swing.AbstractAction;
 import javax.swing.ButtonGroup;
 import javax.swing.JCheckBox;
@@ -26,7 +24,6 @@ import javax.swing.JPopupMenu;
 import javax.swing.JRadioButton;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JTextField;
-
 import org.apache.commons.collections15.map.HashedMap;
 
 import edu.uci.ics.jung.algorithms.layout.CircleLayout;

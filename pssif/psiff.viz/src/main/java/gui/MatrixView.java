@@ -4,35 +4,54 @@ import graph.model.ConnectionType;
 import graph.model.MyEdge;
 import graph.model.MyNode;
 import graph.model.NodeType;
+import gui.matrix.RowLegendTable;
+import gui.matrix.TableColumnAdjuster;
+import gui.matrix.VerticalTableHeaderCellRenderer;
 
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.util.Enumeration;
 import java.util.LinkedList;
 
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
 
 import matrix.model.MatrixBuilder;
+import matrix.model.XMLExport;
 
-public class MatrixVisualization {
+public class MatrixView {
 
 	//private GridLayout experimentLayout;
 	private JPanel matrixPanel;
 	private MatrixBuilder mbuilder;
+	private String[][] content;
+	private LinkedList<MyNode> nodes;
+	private LinkedList<MyEdge> edges;
+	private XMLExport xml_exporter;
 
-	public MatrixVisualization() {
+	public MatrixView() {
 
-		matrixPanel = new JPanel();
-		mbuilder = new MatrixBuilder();
+		this.matrixPanel = new JPanel();
+		this.mbuilder = new MatrixBuilder();
+		this.xml_exporter = new XMLExport();
 		
 	}
 	
@@ -41,8 +60,8 @@ public class MatrixVisualization {
 	
 	private void drawMatrix()
 	{
-		LinkedList<MyEdge> edges = mbuilder.findRelevantEdges();
-		LinkedList<MyNode> nodes=  mbuilder.findRelevantNodes();
+		edges = mbuilder.findRelevantEdges();
+		nodes=  mbuilder.findRelevantNodes();
 		matrixPanel = drawPanels(nodes,edges);
 	}
 	
@@ -69,10 +88,10 @@ public class MatrixVisualization {
 				counter++;				
 			}
 			
-			String[][] results = mbuilder.getEdgeConnections(nodes, edges);
+			content = mbuilder.getEdgeConnections(nodes, edges);
 
 
-			JTable mainTable = new JTable(results,legend);
+			JTable mainTable = new JTable(content,legend);
 			JScrollPane scrollPane = new JScrollPane(mainTable);
 			JTable rowTable = new RowLegendTable(mainTable);
 			
@@ -81,10 +100,17 @@ public class MatrixVisualization {
 			//scrollPane.setPreferredSize(mainTable.getSize());
 			//scrollPane.setCorner(JScrollPane.UPPER_LEFT_CORNER,rowTable.getTableHeader());
 			
-			mainTable.setEnabled(false);
+			/*mainTable.setEnabled(false);
 			mainTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 			TableColumnAdjuster tca = new TableColumnAdjuster(mainTable);
-			tca.adjustColumns();
+			tca.adjustColumns();*/
+			TableCellRenderer headerRenderer = new VerticalTableHeaderCellRenderer();
+		    Enumeration<TableColumn> columns = mainTable.getColumnModel().getColumns();
+		      while (columns.hasMoreElements())
+		      {
+		        TableColumn tc = (TableColumn)columns.nextElement();
+		        tc.setHeaderRenderer(headerRenderer);
+		      }
 			
 			p.add(scrollPane);
 			
@@ -103,6 +129,7 @@ public class MatrixVisualization {
 		if (display)
 		{
 			drawMatrix();
+			exportButton(this.matrixPanel);
 			return matrixPanel;
 		}
 		else
@@ -122,7 +149,7 @@ public class MatrixVisualization {
 		JPanel allPanel = new JPanel(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
 		
-		JPanel NodePanel = new JPanel(new GridLayout(0, 1));
+		final JPanel NodePanel = new JPanel(new GridLayout(0, 1));
 		
 		for (NodeType attr : nodePossibilities)
 		{
@@ -134,7 +161,7 @@ public class MatrixVisualization {
 			NodePanel.add(choice);
 		}
 		
-		JPanel EdgePanel = new JPanel(new GridLayout(0, 1));
+		final JPanel EdgePanel = new JPanel(new GridLayout(0, 1));
 		
 		for (ConnectionType attr : edgePossibilities)
 		{
@@ -145,6 +172,79 @@ public class MatrixVisualization {
 				choice.setSelected(false);
 			EdgePanel.add(choice);
 		}
+		JScrollPane scrollNodes = new JScrollPane(NodePanel,JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		scrollNodes.setPreferredSize(new Dimension(200, 400));
+			    
+	    JScrollPane scrollEdges = new JScrollPane(EdgePanel,JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		scrollEdges.setPreferredSize(new Dimension(200, 400));
+		
+		final JCheckBox selectAllNodes = new JCheckBox("Select all Node Types");
+	    
+	    selectAllNodes.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) 
+		
+	      {
+	        if (selectAllNodes.isSelected())
+	        {
+	          Component[] attr = NodePanel.getComponents();
+	          for (Component tmp : attr) {
+	            if ((tmp instanceof JCheckBox))
+	            {
+	              JCheckBox a = (JCheckBox)tmp;
+	              
+	              a.setSelected(true);
+	            }
+	          }
+	        }
+	        else
+	        {
+	          Component[] attr = NodePanel.getComponents();
+	          for (Component tmp : attr) {
+	            if ((tmp instanceof JCheckBox))
+	            {
+	              JCheckBox a = (JCheckBox)tmp;
+	              
+	              a.setSelected(false);
+	            }
+	          }
+	        }
+	      }
+	    });
+	    final JCheckBox selectAllEdges = new JCheckBox("Select all Edge Types");
+	    
+	    selectAllEdges.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) 
+	      {
+	        if (selectAllEdges.isSelected())
+	        {
+	          Component[] attr = EdgePanel.getComponents();
+	          for (Component tmp : attr) {
+	            if ((tmp instanceof JCheckBox))
+	            {
+	              JCheckBox a = (JCheckBox)tmp;
+	              
+	              a.setSelected(true);
+	            }
+	          }
+	        }
+	        else
+	        {
+	          Component[] attr = EdgePanel.getComponents();
+	          for (Component tmp : attr) {
+	            if ((tmp instanceof JCheckBox))
+	            {
+	              JCheckBox a = (JCheckBox)tmp;
+	              
+	              a.setSelected(false);
+	            }
+	          }
+	        }
+	      }
+	    });
 		
 		c.gridx = 0;
 		c.gridy = 0;
@@ -152,29 +252,30 @@ public class MatrixVisualization {
 		c.gridx = 1;
 		c.gridy = 0;
 		allPanel.add(new JLabel("Choose Connection Types"),c);
-		c.gridx = 0;
-		c.gridy = 1;
-		allPanel.add(NodePanel,c);
-		c.gridx = 1;
-		c.gridy = 1;
-		allPanel.add(EdgePanel,c);
+	    c.gridx = 0;
+	    c.gridy = 1;
+	    allPanel.add(scrollNodes, c);
+	    c.gridx = 1;
+	    c.gridy = 1;
+	    allPanel.add(scrollEdges, c);
+	    c.gridx = 0;
+	    c.gridy = 2;
+	    allPanel.add(selectAllNodes, c);
+	    c.gridx = 1;
+	    c.gridy = 2;
+	    allPanel.add(selectAllEdges, c);
 		
 		
-		allPanel.setPreferredSize(new Dimension(200,500));
-		allPanel.setMaximumSize(new Dimension(200,500));
-		allPanel.setMinimumSize(new Dimension(200,500));
-		JScrollPane p = new JScrollPane (allPanel, 
-	            ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
-	            ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		allPanel.setPreferredSize(new Dimension(400,500));
+		allPanel.setMaximumSize(new Dimension(400,500));
+		allPanel.setMinimumSize(new Dimension(400,500));
+
 		
-		/*p.setSize(200, 500);
-		p.setPreferredSize(200,500);*/
-		//p.add(allPanel);
-				JComponent[] inputs = new JComponent[] {
-						p//allPanel
+		JComponent[] inputs = new JComponent[] {
+						allPanel
 		    	};
 		
-		int dialogResult = JOptionPane.showConfirmDialog(null, p, "Choose the attributes", JOptionPane.DEFAULT_OPTION);
+		int dialogResult = JOptionPane.showConfirmDialog(null, inputs, "Choose the Edge and Node types", JOptionPane.DEFAULT_OPTION);
     	
     	if (dialogResult==0)
     	{
@@ -233,8 +334,29 @@ public class MatrixVisualization {
     	{
     		return false;
     	}
-    	
-    	
 	}
 	
+	private void exportButton(JPanel panel)
+	  {
+	    JButton button = new JButton("Export Matrix");
+	    
+	    button.addActionListener(new ActionListener()
+	    {
+	      public void actionPerformed(ActionEvent e)
+	      {
+	        JFileChooser saveFile = new JFileChooser();
+	        saveFile.setSelectedFile(new File(System.getProperty("user.home") + "\\matrix_export.xls"));
+	        saveFile.setDialogTitle("Select the file location");
+	        saveFile.setApproveButtonText("Save");
+	        
+	        int returnVal = saveFile.showOpenDialog(null);
+	        if (returnVal == 0)
+	        {
+	          File file = saveFile.getSelectedFile();
+	          MatrixView.this.xml_exporter.createXMLExport(content, nodes, file);
+	        }
+	      }
+	    });
+	    panel.add(button);
+	  }
 }

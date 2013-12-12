@@ -4,11 +4,11 @@ import edu.uci.ics.jung.algorithms.layout.FRLayout;
 import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.picking.PickedState;
-import graph.listener.GraphVisualization;
 import graph.model.ConnectionType;
 import graph.model.MyEdge;
 import graph.model.MyNode;
 import graph.model.NodeType;
+import gui.graph.GraphVisualization;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -37,6 +37,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 public class GraphView {
 	private JPanel parent;
@@ -89,32 +91,46 @@ public class GraphView {
 		information.setMaximumSize(d);
 		information.setMinimumSize(d);
 		information.setPreferredSize(d);
-
+		information.setLayout(new GridBagLayout());
+		GridBagConstraints c = new GridBagConstraints();
+		c.gridx = 0;
+		
+		int i = -1;
 		
 		parent.add(information, BorderLayout.EAST);
-		information.setLayout(new BoxLayout(information, BoxLayout.Y_AXIS));
 		
-		information.add(Box.createVerticalStrut(betweenComps));
+		c.gridy = (i++);
+		information.add(Box.createVerticalStrut(betweenComps),c);
 		JLabel lblNodeName = new JLabel("Node Name");
-		information.add(lblNodeName);
-		information.add(Box.createVerticalStrut(betweenLabelandComp));
+		c.gridy = (i++);
+		information.add(lblNodeName,c);
+		c.gridy = (i++);
+		information.add(Box.createVerticalStrut(betweenLabelandComp),c);
 		
 		nodename = new JLabel("");
-		information.add(nodename);
-
-		information.add(Box.createVerticalStrut(betweenComps));
+		c.gridy = (i++);
+		information.add(nodename,c);
+		
+		c.gridy = (i++);
+		information.add(Box.createVerticalStrut(betweenComps),c);
 		JLabel lblNodeType = new JLabel("Node Type");
-		information.add(lblNodeType);
+		c.gridy = (i++);
+		information.add(lblNodeType,c);
 		
-		information.add(Box.createVerticalStrut(betweenLabelandComp));
+		c.gridy = (i++);
+		information.add(Box.createVerticalStrut(betweenLabelandComp),c);
 		nodetype = new JLabel("");
-		information.add(nodetype);
+		c.gridy = (i++);
+		information.add(nodetype,c);
 		
-		information.add(Box.createVerticalStrut(betweenComps));
+		c.gridy = (i++);
+		information.add(Box.createVerticalStrut(betweenComps),c);
 		JLabel lblNodeAttributes = new JLabel("Node Attributes");
-		information.add(lblNodeAttributes);
+		c.gridy = (i++);
+		information.add(lblNodeAttributes,c);
 		
-		information.add(Box.createVerticalStrut(betweenLabelandComp));
+		c.gridy = (i++);
+		information.add(Box.createVerticalStrut(betweenLabelandComp),c);
 		
 		
 		nodeattributes = new JList<String>();
@@ -130,16 +146,21 @@ public class GraphView {
 		jScrollPane.setMaximumSize(new Dimension(x, scrolly));
 		jScrollPane.setMinimumSize(new Dimension(x, scrolly));
 		
-		information.add(jScrollPane);
-		information.add(Box.createVerticalStrut(betweenComps));
+		c.gridy = (i++);
+		information.add(jScrollPane,c);
+		c.gridy = (i++);
+		information.add(Box.createVerticalStrut(betweenComps),c);
 		
 		JLabel lblVisDetails = new JLabel("Visualization Details");
-		information.add(lblVisDetails);
-		information.add(Box.createVerticalStrut(betweenComps));
+		c.gridy = (i++);
+		information.add(lblVisDetails,c);
+		c.gridy = (i++);
+		information.add(Box.createVerticalStrut(betweenComps),c);
 		
 		nodeDetails = new JCheckBox();
 		nodeDetails.setText("Node Details");
-		information.add(nodeDetails);
+		c.gridy = (i++);
+		information.add(nodeDetails,c);
 		nodeDetails.setSelected(true);
 		graph.setNodeVisualisation(true);
 		nodeDetails.addItemListener(new ItemListener() {
@@ -162,7 +183,8 @@ public class GraphView {
 				
 			}
 		});
-		information.add(Box.createVerticalStrut(betweenComps));
+		c.gridy = (i++);
+		information.add(Box.createVerticalStrut(betweenComps),c);
 		
 		nodeHighlight = new JButton("Select Highlighted Nodes");
 		nodeHighlight.addActionListener(new ActionListener() {
@@ -172,8 +194,10 @@ public class GraphView {
 				chooseHighlightNodes();
 			}
 		});
-		information.add(nodeHighlight);
-		information.add(Box.createVerticalStrut(betweenComps));
+		c.gridy = (i++);
+		information.add(nodeHighlight,c);
+		c.gridy = (i++);
+		information.add(Box.createVerticalStrut(betweenComps),c);
 		
 		
 		
@@ -259,18 +283,66 @@ public class GraphView {
 		GridBagConstraints c = new GridBagConstraints();
 		
 		
-		JPanel EdgePanel = new JPanel(new GridLayout(0, 1));
+		final JPanel EdgePanel = new JPanel(new GridLayout(0, 1));
 		
 		LinkedList<ConnectionType> already = graph.getHighlightNodes();
+		int allcounter =0;
 		for (ConnectionType attr : edgePossibilities)
 		{
 			JCheckBox choice = new JCheckBox(attr.getName());
 			if (already!=null && already.contains(attr))
+			{
 				choice.setSelected(true);
+				allcounter++;
+			}
 			else
 				choice.setSelected(false);
 			EdgePanel.add(choice);
 		}
+		
+		
+		JScrollPane scrollEdges = new JScrollPane(EdgePanel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+		scrollEdges.setPreferredSize(new Dimension(200, 400));
+		
+		final JCheckBox selectAllEdges = new JCheckBox("Select all Edge Types");
+	    
+
+		selectAllEdges.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) 
+			{
+	        if (selectAllEdges.isSelected())
+	        {
+	          Component[] attr = EdgePanel.getComponents();
+	          for (Component tmp : attr) {
+	            if ((tmp instanceof JCheckBox))
+	            {
+	              JCheckBox a = (JCheckBox)tmp;
+	              
+	              a.setSelected(true);
+	            }
+	          }
+	        }
+	        else
+	        {
+	          Component[] attr = EdgePanel.getComponents();
+	          for (Component tmp : attr) {
+	            if ((tmp instanceof JCheckBox))
+	            {
+	              JCheckBox a = (JCheckBox)tmp;
+	              
+	              a.setSelected(false);
+	            }
+	          }
+	        }
+	      }
+	    });
+	    
+	    // set Select all edges Checkbox to true if all where selected
+	    if (allcounter!=0 && allcounter ==already.size() )
+	    	selectAllEdges.setSelected(true);
+		
 		
 		c.gridx = 1;
 		c.gridy = 0;
@@ -278,22 +350,23 @@ public class GraphView {
 
 		c.gridx = 1;
 		c.gridy = 1;
-		allPanel.add(EdgePanel,c);
+		allPanel.add(scrollEdges,c);
+		
+		c.gridx = 1;
+		c.gridy = 2;
+		allPanel.add(selectAllEdges,c);
 		
 		JComponent[] inputs = new JComponent[] {
 				allPanel
     	};
 		
-		LinkedList<ConnectionType> res = new LinkedList<>();
+		LinkedList<ConnectionType> res = new LinkedList<ConnectionType>();
 		
 		allPanel.setPreferredSize(new Dimension(200,500));
 		allPanel.setMaximumSize(new Dimension(200,500));
 		allPanel.setMinimumSize(new Dimension(200,500));
-		JScrollPane p = new JScrollPane (allPanel, 
-	            ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
-	            ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
-		int dialogResult = JOptionPane.showConfirmDialog(null, p, "Choose the attributes", JOptionPane.DEFAULT_OPTION);
+		int dialogResult = JOptionPane.showConfirmDialog(null, inputs, "Choose the highlighted Edge types", JOptionPane.DEFAULT_OPTION);
     	
     	if (dialogResult==0)
     	{
@@ -302,13 +375,17 @@ public class GraphView {
     		Component[] attr = EdgePanel.getComponents();       	
         	for (Component tmp :attr)
         	{
+        		System.out.println("test");
         		if ((tmp instanceof JCheckBox))
         		{
         			JCheckBox a = (JCheckBox) tmp;
+        			System.out.print(a.getText()+"  ");
+        			System.out.println(a.isSelected());
         			
         			// compare which ones where selected
         			 if (a.isSelected())
         			 {
+        				 System.out.println(a.getText());
         				 ConnectionType b = ConnectionType.getValue(a.getText());
         				 res.add(b);
         			 }

@@ -35,9 +35,9 @@ public class MyCollapser {
 		container = new CollapseContainer();
 		
 		recStartNode=startNode;
-		newInEdges = new LinkedList<>();
-		newOutEdges = new LinkedList<>();
-		touchedNodes = new LinkedList<>();
+		newInEdges = new LinkedList<InfoContainer>();
+		newOutEdges = new LinkedList<InfoContainer>();
+		touchedNodes = new LinkedList<MyNode>();
 		
 		recCollapseGraph(g,startNode,true,new LinkedList<MyNode>());
 		
@@ -73,8 +73,8 @@ public class MyCollapser {
 		{
 			Collection<MyEdge> out = g.getOutEdges(startNode);
 			
-			LinkedList<MyNode> tmp = new LinkedList<>();
-			LinkedList<MyEdge> del = new LinkedList<>();
+			LinkedList<MyNode> tmp = new LinkedList<MyNode>();
+			LinkedList<MyEdge> del = new LinkedList<MyEdge>();
 			for (MyEdge e : out)
 			{
 				if (e.getConnectionType() == ConnectionType.INCLUDES)
@@ -109,8 +109,8 @@ public class MyCollapser {
 			Collection<MyEdge> fout = g.getOutEdges(workNode);
 			Collection<MyEdge> fin =  g.getInEdges(workNode);
 			
-			List<MyEdge> out = new LinkedList<>();
-			List<MyEdge> in = new LinkedList<>();
+			List<MyEdge> out = new LinkedList<MyEdge>();
+			List<MyEdge> in = new LinkedList<MyEdge>();
 			
 			if (fin!=null)
 			{
@@ -213,6 +213,16 @@ public class MyCollapser {
 		}
 		
 			
+	}
+	
+	public boolean isExpandable (MyNode startNode)
+	{
+		CollapseContainer container = this.history.get(startNode);
+		
+		if (container==null)
+			return false;
+		else
+			return true;
 	}
 	
 }

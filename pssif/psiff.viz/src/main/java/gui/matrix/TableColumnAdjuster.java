@@ -1,4 +1,4 @@
-package gui;
+package gui.matrix;
 
 import java.awt.*;
 import java.awt.event.*;

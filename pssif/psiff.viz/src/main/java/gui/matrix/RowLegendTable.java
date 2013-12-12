@@ -1,4 +1,4 @@
-package gui;
+package gui.matrix;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -42,7 +42,7 @@ public class RowLegendTable extends JTable
 		Enumeration<TableColumn> columns =main.getTableHeader().getColumnModel().getColumns();
 		
 		int maxsize=0;
-		rowheader = new LinkedList<>();
+		rowheader = new LinkedList<String>();
 		while(columns.hasMoreElements())
 		{
 			TableColumn tc= columns.nextElement();
