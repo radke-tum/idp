@@ -60,7 +60,7 @@ public class MiddleMousePlugin implements MouseListener, GraphMousePlugin {
 			
 			if (me.getButton()==MouseEvent.BUTTON2)
 			{
-			VisualizationViewer<MyNode,MyEdge> vv = (VisualizationViewer<MyNode,MyEdge>)me.getSource();
+			/*VisualizationViewer<MyNode,MyEdge> vv = (VisualizationViewer<MyNode,MyEdge>)me.getSource();
 		        Point2D p = me.getPoint();
 		        //System.out.println("Call");
 		        GraphElementAccessor<MyNode,MyEdge> pickSupport = vv.getPickSupport();
@@ -115,7 +115,7 @@ public class MiddleMousePlugin implements MouseListener, GraphMousePlugin {
 		            	System.out.println("Middle MOUSE on Canvas!");
 		            }
 		               
-		        }
+		        }*/
 			}
 		}
 		@Override

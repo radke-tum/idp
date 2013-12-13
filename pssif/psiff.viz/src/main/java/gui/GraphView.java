@@ -49,6 +49,7 @@ public class GraphView {
 	private JList<String> nodeattributes;
 	private JCheckBox nodeDetails;
 	private JButton nodeHighlight;
+	private JButton collapseExpand;
 	
 	private Dimension screenSize;
 	
@@ -199,6 +200,29 @@ public class GraphView {
 		c.gridy = (i++);
 		information.add(Box.createVerticalStrut(betweenComps),c);
 		
+		collapseExpand = new JButton("Collapse/Expand Node");
+		collapseExpand.setEnabled(false);
+		collapseExpand.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (graph.isExpandable())
+				{
+					graph.ExpandNode(nodeDetails.isSelected());
+					collapseExpand.setText("Collapse Node");
+				}
+				
+				if (graph.isCollapsable())
+				{
+					graph.collapseNode();
+					collapseExpand.setText("Expand Noder");
+				}
+			}
+		});
+		c.gridy = (i++);
+		information.add(collapseExpand,c);
+		c.gridy = (i++);
+		information.add(Box.createVerticalStrut(betweenComps),c);
 		
 		
 		return parent;
@@ -243,6 +267,24 @@ public class GraphView {
 			}
 			this.nodeattributes.setListData(s);
 		}
+		
+		if (graph.isCollapsable())
+		{
+			collapseExpand.setText("Collapse Node");
+		}
+		
+		if (graph.isExpandable())
+		{
+			collapseExpand.setText("Expand Node");
+		}
+		
+		if (!graph.isCollapsable() && !graph.isExpandable())
+		{
+			collapseExpand.setText("Collapse/Expand Node");
+			collapseExpand.setEnabled(false);
+		}
+		else
+			collapseExpand.setEnabled(true);
 		
 	}
 	

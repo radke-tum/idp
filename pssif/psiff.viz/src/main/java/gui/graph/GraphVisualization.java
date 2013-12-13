@@ -16,6 +16,7 @@ import graph.model.GraphBuilder;
 import graph.model.MyEdge;
 import graph.model.MyNode;
 import graph.model.NodeType;
+import graph.operations.MyCollapser;
 import graph.operations.VertexStrokeHighlight;
 
 import java.awt.BasicStroke;
@@ -26,6 +27,8 @@ import java.awt.Shape;
 import java.awt.Stroke;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.LinkedList;
 
 import org.apache.commons.collections15.Transformer;
@@ -41,6 +44,7 @@ public class GraphVisualization
   private VertexStrokeHighlight<MyNode, MyEdge> vsh;
   private GraphBuilder gb;
   private boolean detailedNodes;
+  private MyCollapser collapser;
   
   public void reset()
   {
@@ -54,6 +58,7 @@ public class GraphVisualization
     int i = 1000;
     this.detailedNodes = details;
     this.gb = new GraphBuilder();
+    this.collapser = new MyCollapser();
     
     this.g = this.gb.createGraph(this.detailedNodes);
     
@@ -230,7 +235,11 @@ public class GraphVisualization
     if (details != this.detailedNodes)
     {
       this.detailedNodes = details;
-      this.g = this.gb.createGraph(details);
+      
+      if (collapser.CollapserActive())
+    	  this.g = this.gb.changeNodeDetails(details, g);
+      else
+    	  this.g = this.gb.createGraph(details);
       
       this.vv.repaint();
     }
@@ -250,6 +259,60 @@ public class GraphVisualization
   public LinkedList<ConnectionType> getHighlightNodes()
   {
     return this.vsh.getFollowEdges();
+  }
+  
+  public void collapseNode ()
+  {
+	  Collection<MyNode> picked =new HashSet<MyNode>(vv.getPickedVertexState().getPicked());
+      if(picked.size() == 1) {
+      	MyNode root = picked.iterator().next();
+      	
+      	if (collapser.isCollapsable(root, g))
+      	{
+	      	collapser.collapseGraph(g, root);
+	      	
+	      	vv.getPickedVertexState().clear();
+	        vv.repaint();
+      	}
+      }
+  }
+  
+  public void ExpandNode(boolean nodeDetails)
+  {
+	  Collection<MyNode> picked =new HashSet<MyNode>(vv.getPickedVertexState().getPicked());
+      if(picked.size() == 1) {
+      	MyNode root = picked.iterator().next();
+      	
+      	if (collapser.isExpandable(root))
+      	{
+	      	collapser.expandNode(g, root, nodeDetails);
+	      	
+	      	vv.getPickedVertexState().clear();
+	        vv.repaint();
+      	}
+      }
+  }
+  
+  public boolean isExpandable ()
+  {
+	  Collection<MyNode> picked =new HashSet<MyNode>(vv.getPickedVertexState().getPicked());
+      if(picked.size() == 1) {
+      	MyNode root = picked.iterator().next();
+      	
+      	return collapser.isExpandable(root);
+      }
+      return false;
+  }
+  
+  public boolean isCollapsable()
+  {
+	  Collection<MyNode> picked =new HashSet<MyNode>(vv.getPickedVertexState().getPicked());
+      if(picked.size() == 1) {
+      	MyNode root = picked.iterator().next();
+      	
+      	return collapser.isCollapsable(root, g);
+      }
+      return false;
   }
   
   /*	  private class MutableDirectionalEdgeValue extends ConstantDirectionalEdgeValueTransformer<MyNode,MyEdge> {

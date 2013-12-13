@@ -176,7 +176,7 @@ public class MyCollapser {
 	
 	}
 	
-	public Graph<MyNode,MyEdge> expandNode(Graph<MyNode,MyEdge> g, MyNode startNode)
+	public Graph<MyNode,MyEdge> expandNode(Graph<MyNode,MyEdge> g, MyNode startNode, boolean nodeDetails)
 	{
 		CollapseContainer container = this.history.get(startNode);
 		
@@ -198,7 +198,10 @@ public class MyCollapser {
 			for (MyNode n : nodes)
 			{
 				if (n!=null)
+				{
+					n.setDetailedOutput(nodeDetails);
 					g.addVertex(n);
+				}
 			}
 			
 			// add old Edges
@@ -223,6 +226,28 @@ public class MyCollapser {
 			return false;
 		else
 			return true;
+	}
+	
+	public boolean isCollapsable (MyNode startNode, Graph<MyNode,MyEdge> g)
+	{
+		Collection<MyEdge> out = g.getOutEdges(startNode);
+		for (MyEdge e : out)
+		{
+			if (e.getConnectionType() == ConnectionType.INCLUDES)
+			{
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	public boolean CollapserActive()
+	{
+		if (this.history.size()>0)
+			return true;
+		else
+			return false;
 	}
 	
 }
