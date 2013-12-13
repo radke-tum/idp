@@ -2,6 +2,8 @@ package gui;
 
 import java.awt.Dimension;
 import java.awt.Frame;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -26,17 +28,28 @@ public class Main {
 		matrix = new MatrixView();
 		graphView = new GraphView();
 
-		
-		
 		frame = new JFrame("PSS-IF");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		// Standart start with Graph
 		frame.getContentPane().add(graphView.getGraphPanel());
 		
-		frame.setExtendedState(Frame.MAXIMIZED_BOTH);
-		frame.setJMenuBar(createMenu());		
+		
+		frame.setJMenuBar(createMenu());
+		//frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+		
+		GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+		int width = gd.getDisplayMode().getWidth()/4;
+		int height = gd.getDisplayMode().getHeight()/4;
+		
+		width= width*3;
+		height = height*3;
+		
+		frame.setPreferredSize(new Dimension(width, height));
+		frame.setState(Frame.MAXIMIZED_BOTH);
+		
 		frame.pack();
+		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
 	}
 	
