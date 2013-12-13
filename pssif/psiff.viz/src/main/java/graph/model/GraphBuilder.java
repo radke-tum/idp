@@ -45,32 +45,13 @@ public class GraphBuilder {
 	
 	public Graph<MyNode, MyEdge> changeNodeDetails(boolean detailedNodes, Graph<MyNode, MyEdge> graph)
 	{
-		//Graph<MyNode, MyEdge> copy = new SparseMultigraph<MyNode,MyEdge>();
-		
-		Collection<MyEdge> edges = graph.getEdges();
 		Collection<MyNode> nodes = graph.getVertices();
-		
-		LinkedList<MyEdge> modelEdges = Model.getAllEdges();
-		LinkedList<MyNode> modelNodes = Model.getAllNodes();
-		
-		//removeAllNodesAndEdges(graph);
-		
-	//	MyNode.setidcounter(0);
-		
-		
+				
 		for (MyNode n : nodes)
 		{
 			n.setDetailedOutput(detailedNodes);
-			//graph.addVertex(n);
 		}
-		
-	/*	for (MyEdge e : edges)
-		{
-			graph.addEdge(e, e.getSourceNode(), e.getDestinationNode(), EdgeType.DIRECTED);
-		}*/
-		
-		
-		
+
 		return graph;
 	}
 	/*

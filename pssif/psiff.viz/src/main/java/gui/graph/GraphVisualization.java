@@ -17,6 +17,7 @@ import graph.model.MyEdge;
 import graph.model.MyNode;
 import graph.model.NodeType;
 import graph.operations.MyCollapser;
+import graph.operations.NodeAndEdgeFilter;
 import graph.operations.VertexStrokeHighlight;
 
 import java.awt.BasicStroke;
@@ -45,6 +46,8 @@ public class GraphVisualization
   private GraphBuilder gb;
   private boolean detailedNodes;
   private MyCollapser collapser;
+  private LinkedList<NodeType> vizNodes;
+  private LinkedList<ConnectionType> vizEdges;
   
   public void reset()
   {
@@ -59,6 +62,8 @@ public class GraphVisualization
     this.detailedNodes = details;
     this.gb = new GraphBuilder();
     this.collapser = new MyCollapser();
+    setVizEdges(ConnectionType.values());
+    setVizNodes(NodeType.values());
     
     this.g = this.gb.createGraph(this.detailedNodes);
     
@@ -314,6 +319,53 @@ public class GraphVisualization
       }
       return false;
   }
+
+public LinkedList<NodeType> getVizNodes() {
+	return vizNodes;
+}
+
+private void setVizNodes(LinkedList<NodeType> vizNodes) {
+	this.vizNodes = vizNodes;
+}
+
+private void setVizNodes(NodeType[] vizNodes) {
+	
+	this.vizNodes = new LinkedList<NodeType>();
+	for (NodeType n : vizNodes)
+	{
+		this.vizNodes.add(n);
+	}
+}
+
+public LinkedList<ConnectionType> getVizEdges() {
+	return vizEdges;
+}
+
+private void setVizEdges(LinkedList<ConnectionType> vizEdges) {
+	this.vizEdges = vizEdges;
+}
+
+private void setVizEdges(ConnectionType[] vizEdges) {
+	
+	this.vizEdges = new LinkedList<ConnectionType>();
+	for (ConnectionType n : vizEdges)
+	{
+		this.vizEdges.add(n);
+	}
+}
+
+public void applyNodeAndEdgeFilter(LinkedList<NodeType> nodes, LinkedList<ConnectionType> edges)
+{
+	NodeAndEdgeFilter.filter(g, nodes, edges);
+	setVizEdges(edges);
+	setVizNodes(nodes);
+	
+	collapser.reset();
+	
+	vv.getPickedVertexState().clear();
+    vv.repaint();
+}
+  
   
   /*	  private class MutableDirectionalEdgeValue extends ConstantDirectionalEdgeValueTransformer<MyNode,MyEdge> {
 	        BoundedRangeModel undirectedModel = new DefaultBoundedRangeModel(5,0,0,10);

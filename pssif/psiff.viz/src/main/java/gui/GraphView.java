@@ -50,6 +50,7 @@ public class GraphView {
 	private JCheckBox nodeDetails;
 	private JButton nodeHighlight;
 	private JButton collapseExpand;
+	private JButton typeFilter;
 	
 	private Dimension screenSize;
 	
@@ -215,7 +216,7 @@ public class GraphView {
 				if (graph.isCollapsable())
 				{
 					graph.collapseNode();
-					collapseExpand.setText("Expand Noder");
+					collapseExpand.setText("Expand Node");
 				}
 			}
 		});
@@ -223,6 +224,21 @@ public class GraphView {
 		information.add(collapseExpand,c);
 		c.gridy = (i++);
 		information.add(Box.createVerticalStrut(betweenComps),c);
+		
+		typeFilter = new JButton("Select Node & Edge Types");
+		typeFilter.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				chooseEdgeAndNodeTypes();
+			}
+		});
+		c.gridy = (i++);
+		information.add(typeFilter,c);
+		c.gridy = (i++);
+		information.add(Box.createVerticalStrut(betweenComps),c);
+		
+		
 		
 		
 		return parent;
@@ -437,6 +453,204 @@ public class GraphView {
     	}
     	graph.setHighlightNodes(res);
 
+	}
+	
+	private void chooseEdgeAndNodeTypes()
+	{
+		ConnectionType[] edgePossibilities = ConnectionType.values();
+		NodeType[] nodePossibilities = NodeType.values();
+		
+		
+		JPanel allPanel = new JPanel(new GridBagLayout());
+		GridBagConstraints c = new GridBagConstraints();
+		
+		final JPanel NodePanel = new JPanel(new GridLayout(0, 1));
+		
+		int nodecounter=0;
+		for (NodeType attr : nodePossibilities)
+		{
+			JCheckBox choice = new JCheckBox(attr.getName());
+			if (graph.getVizNodes().contains(attr))
+			{
+				choice.setSelected(true);
+				nodecounter++;
+			}
+			else
+				choice.setSelected(false);
+			NodePanel.add(choice);
+		}
+		
+		final JPanel EdgePanel = new JPanel(new GridLayout(0, 1));
+		
+		int edgecounter =0;
+		for (ConnectionType attr : edgePossibilities)
+		{
+			JCheckBox choice = new JCheckBox(attr.getName());
+			if (graph.getVizEdges().contains(attr))
+			{
+				choice.setSelected(true);
+				edgecounter++;
+			}
+			else
+				choice.setSelected(false);
+			EdgePanel.add(choice);
+		}
+		JScrollPane scrollNodes = new JScrollPane(NodePanel,JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		scrollNodes.setPreferredSize(new Dimension(200, 400));
+			    
+	    JScrollPane scrollEdges = new JScrollPane(EdgePanel,JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		scrollEdges.setPreferredSize(new Dimension(200, 400));
+		
+		final JCheckBox selectAllNodes = new JCheckBox("Select all Node Types");
+	    
+	    selectAllNodes.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) 
+		      {
+		        if (selectAllNodes.isSelected())
+		        {
+		          Component[] attr = NodePanel.getComponents();
+		          for (Component tmp : attr) {
+		            if ((tmp instanceof JCheckBox))
+		            {
+		              JCheckBox a = (JCheckBox)tmp;
+		              
+		              a.setSelected(true);
+		            }
+		          }
+		        }
+		        else
+		        {
+		          Component[] attr = NodePanel.getComponents();
+		          for (Component tmp : attr) {
+		            if ((tmp instanceof JCheckBox))
+		            {
+		              JCheckBox a = (JCheckBox)tmp;
+		              
+		              a.setSelected(false);
+		            }
+		          }
+		        }
+		      }
+	    });
+	    final JCheckBox selectAllEdges = new JCheckBox("Select all Edge Types");
+	    
+	    selectAllEdges.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) 
+	      {
+	        if (selectAllEdges.isSelected())
+	        {
+	          Component[] attr = EdgePanel.getComponents();
+	          for (Component tmp : attr) {
+	            if ((tmp instanceof JCheckBox))
+	            {
+	              JCheckBox a = (JCheckBox)tmp;
+	              
+	              a.setSelected(true);
+	            }
+	          }
+	        }
+	        else
+	        {
+	          Component[] attr = EdgePanel.getComponents();
+	          for (Component tmp : attr) {
+	            if ((tmp instanceof JCheckBox))
+	            {
+	              JCheckBox a = (JCheckBox)tmp;
+	              
+	              a.setSelected(false);
+	            }
+	          }
+	        }
+	      }
+	    });
+		
+	    if (nodecounter== nodePossibilities.length)
+	    	selectAllNodes.setSelected(true);
+	    else
+	    	selectAllNodes.setSelected(false);
+	    
+	    if (edgecounter== edgePossibilities.length)
+	    	selectAllEdges.setSelected(true);
+	    else
+	    	selectAllEdges.setSelected(false);
+	    
+		c.gridx = 0;
+		c.gridy = 0;
+		allPanel.add(new JLabel("Choose Node Types"),c);
+		c.gridx = 1;
+		c.gridy = 0;
+		allPanel.add(new JLabel("Choose Connection Types"),c);
+	    c.gridx = 0;
+	    c.gridy = 1;
+	    allPanel.add(scrollNodes, c);
+	    c.gridx = 1;
+	    c.gridy = 1;
+	    allPanel.add(scrollEdges, c);
+	    c.gridx = 0;
+	    c.gridy = 2;
+	    allPanel.add(selectAllNodes, c);
+	    c.gridx = 1;
+	    c.gridy = 2;
+	    allPanel.add(selectAllEdges, c);
+		
+		
+		allPanel.setPreferredSize(new Dimension(400,500));
+		allPanel.setMaximumSize(new Dimension(400,500));
+		allPanel.setMinimumSize(new Dimension(400,500));
+
+		
+		JComponent[] inputs = new JComponent[] {
+						allPanel
+		    	};
+		
+		int dialogResult = JOptionPane.showConfirmDialog(null, inputs, "Choose the Edge and Node types", JOptionPane.DEFAULT_OPTION);
+    	
+    	if (dialogResult==0)
+    	{
+    		LinkedList<NodeType> selectedNodes = new LinkedList<NodeType>();
+    		// get all the values of the Nodes
+        	Component[] attr = NodePanel.getComponents();       	
+        	for (Component tmp :attr)
+        	{
+        		if ((tmp instanceof JCheckBox))
+        		{
+        			JCheckBox a = (JCheckBox) tmp;
+        			
+        			// compare which ones where selected
+        			 if (a.isSelected())
+        			 {
+        				 NodeType b = NodeType.getValue(a.getText());
+        				 selectedNodes.add(b);
+        			 }
+        				
+        		}	
+        	}
+        	
+        	LinkedList<ConnectionType> selectedEdges = new LinkedList<ConnectionType>();
+    		// get all the values of the edges
+        	attr = EdgePanel.getComponents();       	
+        	for (Component tmp :attr)
+        	{
+        		if ((tmp instanceof JCheckBox))
+        		{
+        			JCheckBox a = (JCheckBox) tmp;
+        			
+        			// compare which ones where selected
+        			 if (a.isSelected())
+        			 {
+        				 ConnectionType b = ConnectionType.getValue(a.getText());
+        				 selectedEdges.add(b);
+        			 }
+        				
+        		}	
+        	}
+    		
+        	graph.applyNodeAndEdgeFilter(selectedNodes, selectedEdges);
+	}
 	}
 	
 }

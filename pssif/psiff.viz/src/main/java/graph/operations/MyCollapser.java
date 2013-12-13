@@ -250,4 +250,9 @@ public class MyCollapser {
 			return false;
 	}
 	
+	public void reset()
+	{
+		this.history.clear();
+	}
+	
 }
