@@ -53,12 +53,12 @@ public final class EdgeEndImpl extends NamedImpl implements EdgeEnd {
 
   @Override
   public boolean includesEdgeType(int count) {
-    return getEdgeTypeLower() >= count && getEdgeTypeUpper().compareTo(count) >= 0;
+    return multiplicity.includesEdgeType(count);
   }
 
   @Override
   public boolean includesEdgeEnd(int count) {
-    return getEdgeEndLower() >= count && getEdgeEndUpper().compareTo(count) >= 0;
+    return multiplicity.includesEdgeEnd(count);
   }
 
   @Override
