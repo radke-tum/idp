@@ -24,8 +24,10 @@ public class ModelImpl implements Model {
   }
 
   @Override
-  public Edge createEdge(ConnectionMapping type) {
+  public Edge createEdge(ConnectionMapping type, Node from, Node to) {
     Edge result = new EdgeImpl();
+    result.connect(type.getFrom(), from);
+    result.connect(type.getTo(), to);
     edges.put(type, result);
     return result;
   }

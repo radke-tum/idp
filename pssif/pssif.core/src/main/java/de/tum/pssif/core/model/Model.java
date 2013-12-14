@@ -9,7 +9,7 @@ public interface Model {
 
   Node createNode(NodeType type);
 
-  Edge createEdge(ConnectionMapping mapping);
+  Edge createEdge(ConnectionMapping mapping, Node from, Node to);
 
   PSSIFOption<Node> findAll(NodeType type);
 }

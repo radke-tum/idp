@@ -5,7 +5,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import de.tum.pssif.core.metamodel.ConnectionMapping;
-import de.tum.pssif.core.metamodel.EdgeEnd;
 import de.tum.pssif.core.metamodel.EdgeType;
 import de.tum.pssif.core.metamodel.Metamodel;
 import de.tum.pssif.core.metamodel.Multiplicity.MultiplicityContainer;
@@ -59,20 +58,9 @@ public class ModelTest {
     ConnectionMapping hw2hw = hwContainment.getMapping(node("hardware"), node("hardware"));
     ConnectionMapping hw2sw = hwContainment.getMapping(node("hardware"), node("software"));
 
-    EdgeEnd from = hw2hw.getFrom();
-    EdgeEnd to = hw2hw.getTo();
-
-    Edge containment = hw2hw.create(model);
-    containment.connect(from, ebike);
-    containment.connect(to, battery);
-
-    containment = hw2hw.create(model);
-    containment.connect(from, ebike);
-    containment.connect(to, smartphone);
-
-    containment = hw2sw.create(model);
-    containment.connect(from, smartphone);
-    containment.connect(to, rentalApp);
+    hw2hw.create(model, ebike, battery);
+    hw2hw.create(model, ebike, smartphone);
+    hw2sw.create(model, smartphone, rentalApp);
 
     PSSIFOption<Edge> edges = hwContainment.getIncoming().apply(ebike);
     Assert.assertEquals(2, edges.size());

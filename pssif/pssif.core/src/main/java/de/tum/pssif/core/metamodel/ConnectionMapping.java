@@ -2,6 +2,7 @@ package de.tum.pssif.core.metamodel;
 
 import de.tum.pssif.core.model.Edge;
 import de.tum.pssif.core.model.Model;
+import de.tum.pssif.core.model.Node;
 
 
 public interface ConnectionMapping {
@@ -9,5 +10,5 @@ public interface ConnectionMapping {
 
   EdgeEnd getTo();
 
-  Edge create(Model model);
+  Edge create(Model model, Node from, Node to);
 }
