@@ -6,6 +6,9 @@ import com.google.common.collect.Sets;
 
 import de.tum.pssif.core.metamodel.ConnectionMapping;
 import de.tum.pssif.core.metamodel.NodeType;
+import de.tum.pssif.core.metamodel.impl.CreateEdgeOperation;
+import de.tum.pssif.core.metamodel.impl.CreateNodeOperation;
+import de.tum.pssif.core.metamodel.impl.ReadNodesOperation;
 import de.tum.pssif.core.model.Edge;
 import de.tum.pssif.core.model.Model;
 import de.tum.pssif.core.model.Node;
@@ -17,23 +20,23 @@ public class ModelImpl implements Model {
   private final Multimap<ConnectionMapping, Edge> edges = ArrayListMultimap.create();
 
   @Override
-  public Node createNode(NodeType type) {
+  public Node apply(CreateNodeOperation op) {
     Node result = new NodeImpl();
-    nodes.put(type, result);
+    nodes.put(op.getType(), result);
     return result;
   }
 
   @Override
-  public Edge createEdge(ConnectionMapping type, Node from, Node to) {
+  public Edge apply(CreateEdgeOperation op) {
     Edge result = new EdgeImpl();
-    result.connect(type.getFrom(), from);
-    result.connect(type.getTo(), to);
-    edges.put(type, result);
+    op.getMapping().connectFrom(result, op.getFrom());
+    op.getMapping().connectTo(result, op.getTo());
+    edges.put(op.getMapping(), result);
     return result;
   }
 
   @Override
-  public PSSIFOption<Node> findAll(NodeType type) {
-    return PSSIFOption.many(Sets.<Node> newHashSet(nodes.get(type)));
+  public PSSIFOption<Node> apply(ReadNodesOperation op) {
+    return PSSIFOption.many(Sets.<Node> newHashSet(nodes.get(op.getType())));
   }
 }

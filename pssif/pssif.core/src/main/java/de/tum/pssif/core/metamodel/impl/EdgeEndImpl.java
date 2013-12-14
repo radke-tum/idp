@@ -63,11 +63,11 @@ public final class EdgeEndImpl extends NamedImpl implements EdgeEnd {
 
   @Override
   public PSSIFOption<Edge> apply(Node node) {
-    return node.get(this);
+    return new ReadConnectedOperation(this).apply(node);
   }
 
   @Override
   public PSSIFOption<Node> apply(Edge edge) {
-    return edge.get(this);
+    return new ReadConnectedOperation(this).apply(edge);
   }
 }

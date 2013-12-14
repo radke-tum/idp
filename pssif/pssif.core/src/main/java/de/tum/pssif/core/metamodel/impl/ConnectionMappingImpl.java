@@ -29,7 +29,7 @@ public class ConnectionMappingImpl implements ConnectionMapping {
 
   @Override
   public Edge create(Model model, Node from, Node to) {
-    return model.createEdge(this, from, to);
+    return new CreateEdgeOperation(this, from, to).apply(model);
   }
 
   @Override
@@ -37,7 +37,7 @@ public class ConnectionMappingImpl implements ConnectionMapping {
     if (!from.includesEdgeEnd(from.apply(edge).size() + 1)) {
       throw new PSSIFStructuralIntegrityException("multiplicity constraint violation");
     }
-    edge.connect(from, node);
+    new ConnectOperation(edge, from, node).apply();
   }
 
   @Override
@@ -45,7 +45,7 @@ public class ConnectionMappingImpl implements ConnectionMapping {
     if (!to.includesEdgeEnd(to.apply(edge).size() + 1)) {
       throw new PSSIFStructuralIntegrityException("multiplicity constraint violation");
     }
-    edge.connect(to, node);
+    new ConnectOperation(edge, to, node).apply();
   }
 
   @Override
@@ -53,7 +53,7 @@ public class ConnectionMappingImpl implements ConnectionMapping {
     if (!from.includesEdgeEnd(from.apply(edge).size() - 1)) {
       throw new PSSIFStructuralIntegrityException("multiplicity constraint violation");
     }
-    edge.disconnect(from, node);
+    new DisconnectOperation(edge, from, node).apply();
   }
 
   @Override
@@ -61,6 +61,6 @@ public class ConnectionMappingImpl implements ConnectionMapping {
     if (!to.includesEdgeEnd(to.apply(edge).size() - 1)) {
       throw new PSSIFStructuralIntegrityException("multiplicity constraint violation");
     }
-    edge.disconnect(to, node);
+    new DisconnectOperation(edge, to, node).apply();
   }
 }

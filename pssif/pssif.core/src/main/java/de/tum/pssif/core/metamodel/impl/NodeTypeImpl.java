@@ -70,12 +70,11 @@ public class NodeTypeImpl extends ElementTypeImpl<NodeType> implements NodeType 
 
   @Override
   public Node create(Model model) {
-    return model.createNode(this);
+    return new CreateNodeOperation(this).apply(model);
   }
 
   @Override
   public PSSIFOption<Node> apply(Model model) {
-    return model.findAll(this);
+    return new ReadNodesOperation(this).apply(model);
   }
-
 }

@@ -1,14 +1,15 @@
 package de.tum.pssif.core.model;
 
-import de.tum.pssif.core.metamodel.EdgeEnd;
+import de.tum.pssif.core.metamodel.impl.ConnectOperation;
+import de.tum.pssif.core.metamodel.impl.DisconnectOperation;
+import de.tum.pssif.core.metamodel.impl.ReadConnectedOperation;
 import de.tum.pssif.core.util.PSSIFOption;
 
 
 public interface Node extends Element {
+  PSSIFOption<Edge> apply(ReadConnectedOperation op);
 
-  PSSIFOption<Edge> get(EdgeEnd end);
+  void apply(ConnectOperation op);
 
-  void connect(EdgeEnd end, Edge edge);
-
-  void disconnect(EdgeEnd end, Edge edge);
+  void apply(DisconnectOperation op);
 }
