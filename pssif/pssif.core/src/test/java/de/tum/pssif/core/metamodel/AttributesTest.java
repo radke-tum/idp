@@ -32,29 +32,29 @@ public class AttributesTest {
 
   @Test
   public void testCreatePrimitiveNodeAttribute() {
-    nodeA().createAttribute("attr", PrimitiveDataType.INTEGER, Unit.INCH);
+    nodeA().createAttribute("attr", PrimitiveDataType.INTEGER, Units.INCH, true);
     Attribute attr = nodeA().findAttribute("attr");
     assertNotNull(attr);
     assertEquals(PrimitiveDataType.INTEGER, attr.getType());
-    assertEquals(Unit.INCH, attr.getUnit());
+    assertEquals(Units.INCH, attr.getUnit());
   }
 
   @Test
   public void testCreatePrimitiveEdgeAttribute() {
-    edge().createAttribute("attr", PrimitiveDataType.INTEGER, Unit.INCH);
+    edge().createAttribute("attr", PrimitiveDataType.INTEGER, Units.INCH, true);
     Attribute attr = edge().findAttribute("attr");
     assertNotNull(attr);
     assertEquals(PrimitiveDataType.INTEGER, attr.getType());
-    assertEquals(Unit.INCH, attr.getUnit());
+    assertEquals(Units.INCH, attr.getUnit());
   }
 
   @Test
   public void testRemoveNodeAttribute() {
-    nodeA().createAttribute("attr", PrimitiveDataType.INTEGER, Unit.INCH);
+    nodeA().createAttribute("attr", PrimitiveDataType.INTEGER, Units.INCH, true);
     Attribute attr = nodeA().findAttribute("attr");
     assertNotNull(attr);
     assertEquals(PrimitiveDataType.INTEGER, attr.getType());
-    assertEquals(Unit.INCH, attr.getUnit());
+    assertEquals(Units.INCH, attr.getUnit());
 
     nodeA().removeAttribute(attr);
     assertNull(nodeA().findAttribute("attr"));
@@ -62,11 +62,11 @@ public class AttributesTest {
 
   @Test
   public void testRemoveEdgeAttribute() {
-    edge().createAttribute("attr", PrimitiveDataType.INTEGER, Unit.INCH);
+    edge().createAttribute("attr", PrimitiveDataType.INTEGER, Units.INCH, true);
     Attribute attr = edge().findAttribute("attr");
     assertNotNull(attr);
     assertEquals(PrimitiveDataType.INTEGER, attr.getType());
-    assertEquals(Unit.INCH, attr.getUnit());
+    assertEquals(Units.INCH, attr.getUnit());
 
     edge().removeAttribute(attr);
     assertNull(edge().findAttribute("attr"));
@@ -90,13 +90,13 @@ public class AttributesTest {
     assertEquals("enum", enumeration.getName());
 
     //should accept null unit, since enums have no units.
-    nodeA().createAttribute("enumAttr", enumeration, null);
+    nodeA().createAttribute("enumAttr", enumeration, true);
 
     Attribute enumAttr = nodeA().findAttribute("enumAttr");
     assertNotNull(enumAttr);
     assertEquals(enumeration, enumAttr.getType());
     assertEquals("enumAttr", enumAttr.getName());
-    assertNull(enumAttr.getUnit());
+    assertEquals(Units.NONE, enumAttr.getUnit());
 
     metamodel.removeEnumeration(enumeration);
     assertNull(metamodel.findEnumeration("enum"));
@@ -173,20 +173,20 @@ public class AttributesTest {
 
   @Test(expected = PSSIFStructuralIntegrityException.class)
   public void testDuplicateAttributes() {
-    nodeA().createAttribute("attr", PrimitiveDataType.INTEGER, Unit.KG);
-    nodeA().createAttribute("attr", PrimitiveDataType.DECIMAL, Unit.INCH);
+    nodeA().createAttribute("attr", PrimitiveDataType.INTEGER, Units.KILOGRAM, true);
+    nodeA().createAttribute("attr", PrimitiveDataType.DECIMAL, Units.INCH, true);
   }
 
   @Test(expected = PSSIFStructuralIntegrityException.class)
   public void testCreateAttributeWithIncompatibleType() {
-    nodeA().createAttribute("attr", PrimitiveDataType.DATE, Unit.KG);
+    nodeA().createAttribute("attr", PrimitiveDataType.DATE, Units.KILOGRAM, true);
   }
 
   @Test(expected = PSSIFStructuralIntegrityException.class)
   public void testCreateEnumerationAttributeWithUnit() {
     Enumeration enumeration = metamodel.createEnumeration("enum");
     enumeration.createLiteral("lit");
-    nodeA().createAttribute("enumAttr", enumeration, Unit.CM);
+    nodeA().createAttribute("enumAttr", enumeration, Units.CENTIMETER, true);
   }
 
   public void testStaticDataTypes() {
@@ -207,9 +207,9 @@ public class AttributesTest {
   }
 
   public void testUnits() {
-    assertNotNull(metamodel.findUnit(Unit.CM.getName()));
-    assertNotNull(metamodel.findUnit(Unit.INCH.getName()));
-    assertNotNull(metamodel.findUnit(Unit.KG.getName()));
+    assertNotNull(metamodel.findUnit(Units.CENTIMETER.getName()));
+    assertNotNull(metamodel.findUnit(Units.INCH.getName()));
+    assertNotNull(metamodel.findUnit(Units.KILOGRAM.getName()));
     //TODO all other units!
   }
 

@@ -9,11 +9,14 @@ import de.tum.pssif.core.metamodel.Unit;
 
 public interface Attributable {
 
-  Attribute createAttribute(String name, DataType type, Unit unit);
+  Attribute createAttribute(String name, DataType dataType, boolean visible);
+
+  Attribute createAttribute(String name, DataType dataType, Unit unit, boolean visible);
 
   Attribute findAttribute(String name);
 
   Collection<Attribute> getAttributes();
 
   void removeAttribute(Attribute attribute);
+
 }

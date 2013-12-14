@@ -12,8 +12,9 @@ import de.tum.pssif.core.exception.PSSIFStructuralIntegrityException;
 import de.tum.pssif.core.metamodel.Attribute;
 import de.tum.pssif.core.metamodel.DataType;
 import de.tum.pssif.core.metamodel.ElementType;
-import de.tum.pssif.core.metamodel.Enumeration;
+import de.tum.pssif.core.metamodel.PrimitiveDataType;
 import de.tum.pssif.core.metamodel.Unit;
+import de.tum.pssif.core.metamodel.Units;
 import de.tum.pssif.core.util.PSSIFUtil;
 
 
@@ -50,7 +51,7 @@ public abstract class ElementTypeImpl<T extends ElementType<T>> extends NamedImp
   }
 
   @Override
-  public Attribute createAttribute(String name, DataType type, Unit unit) {
+  public Attribute createAttribute(String name, DataType type, Unit unit, boolean visible) {
     if (name == null || name.trim().isEmpty()) {
       throw new PSSIFStructuralIntegrityException("name can not be null or empty");
     }
@@ -58,16 +59,17 @@ public abstract class ElementTypeImpl<T extends ElementType<T>> extends NamedImp
     if (attributes.containsKey(normalized)) {
       throw new PSSIFStructuralIntegrityException("duplicate attribute with name " + name);
     }
-    //TODO this can be done better...
-    if (!(type instanceof Enumeration) && !unit.isAllowedForDataType(type)) {
-      throw new PSSIFStructuralIntegrityException("unit " + unit.getName() + " not allowed for data type " + type.getName());
+    if (!(PrimitiveDataType.DECIMAL.equals(type) || PrimitiveDataType.INTEGER.equals(type)) && !Units.NONE.equals(unit)) {
+      throw new PSSIFStructuralIntegrityException("Only numeric attributes can have units!");
     }
-    else if (type instanceof Enumeration && unit != null) {
-      throw new PSSIFStructuralIntegrityException("Enumerations can not have units");
-    }
-    Attribute result = new AttributeImpl(name, type, unit);
+    Attribute result = new AttributeImpl(name, type, unit, visible);
     attributes.put(normalized, result);
     return result;
+  }
+
+  @Override
+  public Attribute createAttribute(String name, DataType dataType, boolean visible) {
+    return createAttribute(name, dataType, Units.NONE, visible);
   }
 
   @Override
