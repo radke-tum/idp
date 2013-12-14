@@ -1,9 +1,5 @@
 package de.tum.pssif.core.metamodel.impl;
 
-import java.util.Collection;
-
-import com.google.common.collect.Sets;
-
 import de.tum.pssif.core.metamodel.EdgeEnd;
 import de.tum.pssif.core.metamodel.EdgeType;
 import de.tum.pssif.core.metamodel.Multiplicity;
@@ -11,15 +7,14 @@ import de.tum.pssif.core.metamodel.NodeType;
 import de.tum.pssif.core.model.Edge;
 import de.tum.pssif.core.model.Node;
 import de.tum.pssif.core.util.PSSIFOption;
-import de.tum.pssif.core.util.PSSIFUtil;
 
 
 public final class EdgeEndImpl extends NamedImpl implements EdgeEnd {
   private final Multiplicity multiplicity;
   private final EdgeType     edge;
-  private final NodeTypeImpl type;
+  private final NodeType     type;
 
-  public EdgeEndImpl(String name, EdgeType edge, Multiplicity multiplicity, NodeTypeImpl type) {
+  public EdgeEndImpl(String name, EdgeType edge, Multiplicity multiplicity, NodeType type) {
     super(name);
     this.edge = edge;
     this.multiplicity = multiplicity;
@@ -47,49 +42,32 @@ public final class EdgeEndImpl extends NamedImpl implements EdgeEnd {
   }
 
   @Override
-  public Collection<NodeType> getTypes() {
-    return Sets.<NodeType> newHashSet(type);
-  }
-
-  public NodeTypeImpl getNodeType() {
-    return this.type;
+  public NodeType getNodeType() {
+    return type;
   }
 
   @Override
-  public EdgeType getType() {
+  public EdgeType getEdgeType() {
     return edge;
   }
 
   @Override
-  public PSSIFOption<Node> nodes(PSSIFOption<Edge> edges) {
-    PSSIFOption<Node> result = PSSIFOption.none();
-    for (Edge edge : edges.getMany()) {
-      result = PSSIFOption.merge(result, edge.get(this));
-    }
-    return result;
-  }
-
-  @Override
-  public PSSIFOption<Edge> edges(PSSIFOption<Node> nodes) {
-    PSSIFOption<Edge> result = PSSIFOption.none();
-    for (Node node : nodes.getMany()) {
-      result = PSSIFOption.merge(result, node.get(this));
-    }
-    return result;
-  }
-
-  @Override
   public boolean includesEdgeType(int count) {
-    return multiplicity.includesEdgeType(count);
+    return getEdgeTypeLower() >= count && getEdgeTypeUpper().compareTo(count) >= 0;
   }
 
   @Override
   public boolean includesEdgeEnd(int count) {
-    return multiplicity.includesEdgeEnd(count);
+    return getEdgeEndLower() >= count && getEdgeEndUpper().compareTo(count) >= 0;
   }
 
   @Override
-  public boolean equals(String name, NodeType type) {
-    return PSSIFUtil.areSame(name, getName()) && this.type.equals(type);
+  public PSSIFOption<Edge> apply(Node node) {
+    return node.get(this);
+  }
+
+  @Override
+  public PSSIFOption<Node> apply(Edge edge) {
+    return edge.get(this);
   }
 }

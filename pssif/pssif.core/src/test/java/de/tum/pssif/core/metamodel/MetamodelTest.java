@@ -15,29 +15,24 @@ public class MetamodelTest {
 
   @Test
   public void test() {
-    NodeType is = metamodel.create("is");
-    NodeType comp = metamodel.create("component");
-    NodeType data = metamodel.create("dataobject");
-    metamodel.create("infoflow", "infoflows", is, MultiplicityContainer.of(1, UnlimitedNatural.of(1), 0, UnlimitedNatural.UNLIMITED), "infoflows",
-        is, MultiplicityContainer.of(1, UnlimitedNatural.of(1), 0, UnlimitedNatural.UNLIMITED));
-    EdgeType is2comp = metamodel.create("infoflow", "infoflows", is,
+    NodeType is = metamodel.createNodeType("is");
+    NodeType comp = metamodel.createNodeType("component");
+    NodeType data = metamodel.createNodeType("dataobject");
+    EdgeType infoflow = metamodel.createEdgeType("infoflow");
+    ConnectionMapping is2is = infoflow.createMapping("infoflows", is,
+        MultiplicityContainer.of(1, UnlimitedNatural.of(1), 0, UnlimitedNatural.UNLIMITED), "infoflows", is,
+        MultiplicityContainer.of(1, UnlimitedNatural.of(1), 0, UnlimitedNatural.UNLIMITED));
+    ConnectionMapping is2comp = infoflow.createMapping("infoflows", is,
         MultiplicityContainer.of(1, UnlimitedNatural.of(1), 0, UnlimitedNatural.UNLIMITED), "infoflows", comp,
         MultiplicityContainer.of(1, UnlimitedNatural.of(1), 0, UnlimitedNatural.UNLIMITED));
-    metamodel
-        .createAuxiliaryEnd(is2comp, "dataobjects", MultiplicityContainer.of(0, UnlimitedNatural.UNLIMITED, 0, UnlimitedNatural.UNLIMITED), data);
+    EdgeEnd aux = infoflow.createAuxiliary("dataobjects", MultiplicityContainer.of(0, UnlimitedNatural.UNLIMITED, 0, UnlimitedNatural.UNLIMITED),
+        data);
 
-    EdgeType infoflow = metamodel.findEdgeType("infoflow");
-    EdgeEnd incoming = infoflow.getIncoming();
-    EdgeEnd outgoing = infoflow.getOutgoing();
-    Collection<EdgeEnd> aux = infoflow.getAuxiliaries();
-
-    Assert.assertEquals(1, incoming.getTypes().size());
-    Assert.assertTrue(incoming.getTypes().contains(is));
-    Assert.assertEquals(2, outgoing.getTypes().size());
-    Assert.assertTrue(outgoing.getTypes().contains(is));
-    Assert.assertTrue(outgoing.getTypes().contains(comp));
-    Assert.assertEquals(1, aux.iterator().next().getTypes().size());
-    Assert.assertTrue(aux.iterator().next().getTypes().contains(data));
+    infoflow = metamodel.findEdgeType("infoflow");
+    Assert.assertEquals(is2is, infoflow.getMapping(is, is));
+    Assert.assertEquals(is2comp, infoflow.getMapping(is, comp));
+    Assert.assertEquals(1, infoflow.getAuxiliaries().size());
+    Assert.assertEquals(aux, infoflow.getAuxiliaries().iterator().next());
 
     // TODO check on incomings, outgoings and auxiliaries of the NodeTypes.
     // TODO define behavior of incomings, outgoings and auxiliaries:
@@ -46,10 +41,10 @@ public class MetamodelTest {
 
   @Test
   public void generalizationTest() {
-    NodeType node = metamodel.create("node");
-    NodeType development = metamodel.create("development");
-    NodeType solution = metamodel.create("solution");
-    NodeType sw = metamodel.create("software");
+    NodeType node = metamodel.createNodeType("node");
+    NodeType development = metamodel.createNodeType("development");
+    NodeType solution = metamodel.createNodeType("solution");
+    NodeType sw = metamodel.createNodeType("software");
 
     development.inherit(node);
     solution.inherit(node);
@@ -64,10 +59,11 @@ public class MetamodelTest {
     Assert.assertEquals(node, development.getGeneral());
     Assert.assertEquals(node, solution.getGeneral());
 
-    EdgeType flow = metamodel.create("flow", "flows", solution, MultiplicityContainer.of(1, UnlimitedNatural.of(1), 0, UnlimitedNatural.UNLIMITED),
-        "flows", solution, MultiplicityContainer.of(1, UnlimitedNatural.of(1), 0, UnlimitedNatural.UNLIMITED));
-    EdgeType infoflow = metamodel.create("infoflow", "infoflows", sw,
-        MultiplicityContainer.of(1, UnlimitedNatural.of(1), 0, UnlimitedNatural.UNLIMITED), "infoflows", sw,
+    EdgeType flow = metamodel.createEdgeType("flow");
+    flow.createMapping("flows", solution, MultiplicityContainer.of(1, UnlimitedNatural.of(1), 0, UnlimitedNatural.UNLIMITED), "flows", solution,
+        MultiplicityContainer.of(1, UnlimitedNatural.of(1), 0, UnlimitedNatural.UNLIMITED));
+    EdgeType infoflow = metamodel.createEdgeType("infoflow");
+    infoflow.createMapping("infoflows", sw, MultiplicityContainer.of(1, UnlimitedNatural.of(1), 0, UnlimitedNatural.UNLIMITED), "infoflows", sw,
         MultiplicityContainer.of(1, UnlimitedNatural.of(1), 0, UnlimitedNatural.UNLIMITED));
 
     infoflow.inherit(flow);

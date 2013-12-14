@@ -4,9 +4,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
-
+import de.tum.pssif.core.metamodel.ConnectionMapping;
 import de.tum.pssif.core.metamodel.EdgeEnd;
 import de.tum.pssif.core.metamodel.EdgeType;
 import de.tum.pssif.core.metamodel.Metamodel;
@@ -25,25 +23,26 @@ public class ModelTest {
   @Before
   public void init() {
     metamodel = new MetamodelImpl();
-    NodeType node = metamodel.create("node");
-    NodeType development = metamodel.create("development artifact");
+    NodeType node = metamodel.createNodeType("node");
+    NodeType development = metamodel.createNodeType("development artifact");
     development.inherit(node);
-    NodeType solution = metamodel.create("solution artifact");
+    NodeType solution = metamodel.createNodeType("solution artifact");
     solution.inherit(development);
-    NodeType hardware = metamodel.create("hardware");
+    NodeType hardware = metamodel.createNodeType("hardware");
     hardware.inherit(solution);
-    NodeType software = metamodel.create("software");
+    NodeType software = metamodel.createNodeType("software");
     software.inherit(solution);
-    NodeType usecase = metamodel.create("usecase");
+    NodeType usecase = metamodel.createNodeType("usecase");
     usecase.inherit(development);
-    NodeType requirement = metamodel.create("requirement");
+    NodeType requirement = metamodel.createNodeType("requirement");
     requirement.inherit(development);
 
-    metamodel.create("containment", "contains", hardware, MultiplicityContainer.of(1, UnlimitedNatural.of(1), 0, UnlimitedNatural.UNLIMITED),
+    EdgeType containment = metamodel.createEdgeType("containment");
+    containment.createMapping("contains", hardware, MultiplicityContainer.of(1, UnlimitedNatural.of(1), 0, UnlimitedNatural.UNLIMITED),
         "contained in", hardware, MultiplicityContainer.of(1, UnlimitedNatural.of(1), 1, UnlimitedNatural.of(1)));
-    metamodel.create("containment", "contains", hardware, MultiplicityContainer.of(1, UnlimitedNatural.of(1), 0, UnlimitedNatural.UNLIMITED),
+    containment.createMapping("contains", hardware, MultiplicityContainer.of(1, UnlimitedNatural.of(1), 0, UnlimitedNatural.UNLIMITED),
         "contained in", software, MultiplicityContainer.of(1, UnlimitedNatural.of(1), 1, UnlimitedNatural.of(1)));
-    metamodel.create("containment", "contains", software, MultiplicityContainer.of(1, UnlimitedNatural.of(1), 0, UnlimitedNatural.UNLIMITED),
+    containment.createMapping("contains", software, MultiplicityContainer.of(1, UnlimitedNatural.of(1), 0, UnlimitedNatural.UNLIMITED),
         "contained in", software, MultiplicityContainer.of(1, UnlimitedNatural.of(1), 1, UnlimitedNatural.of(1)));
 
     model = new ModelImpl();
@@ -56,27 +55,29 @@ public class ModelTest {
     Node battery = node("hardware").create(model);
     Node rentalApp = node("software").create(model);
 
-    Multimap<EdgeEnd, Node> connections = HashMultimap.create();
-    EdgeType hwContainment = node("hardware").findEdgeType("containment");
-    connections.put(hwContainment.getIncoming(), ebike);
-    connections.put(hwContainment.getOutgoing(), smartphone);
-    hwContainment.create(model, connections);
+    EdgeType hwContainment = node("hardware").findOutgoingEdgeType("containment");
+    ConnectionMapping hw2hw = hwContainment.getMapping(node("hardware"), node("hardware"));
+    ConnectionMapping hw2sw = hwContainment.getMapping(node("hardware"), node("software"));
 
-    connections = HashMultimap.create();
-    hwContainment = node("hardware").findEdgeType("containment");
-    connections.put(hwContainment.getIncoming(), ebike);
-    connections.put(hwContainment.getOutgoing(), battery);
-    hwContainment.create(model, connections);
+    EdgeEnd from = hw2hw.getFrom();
+    EdgeEnd to = hw2hw.getTo();
 
-    connections = HashMultimap.create();
-    connections.put(hwContainment.getIncoming(), smartphone);
-    connections.put(hwContainment.getOutgoing(), rentalApp);
-    hwContainment.create(model, connections);
+    Edge containment = hw2hw.create(model);
+    containment.connect(from, ebike);
+    containment.connect(to, battery);
 
-    PSSIFOption<Edge> edges = ebike.get(hwContainment.getIncoming());
+    containment = hw2hw.create(model);
+    containment.connect(from, ebike);
+    containment.connect(to, smartphone);
+
+    containment = hw2sw.create(model);
+    containment.connect(from, smartphone);
+    containment.connect(to, rentalApp);
+
+    PSSIFOption<Edge> edges = hwContainment.getIncoming().apply(ebike);
     Assert.assertEquals(2, edges.size());
     for (Edge edge : edges.getMany()) {
-      Assert.assertEquals(ebike, edge.get(hwContainment.getIncoming()).getOne());
+      Assert.assertEquals(ebike, hwContainment.getIncoming().apply(edge).getOne());
     }
 
     //    Assert.assertEquals(2, ebike.get(hwContainment.getIncoming()).getOne().get(hwContainment.getOutgoing()).size());

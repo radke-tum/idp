@@ -1,35 +1,32 @@
 package de.tum.pssif.core.model.impl;
 
-import java.util.Set;
-
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
-import com.google.common.collect.Sets;
 
 import de.tum.pssif.core.metamodel.EdgeEnd;
-import de.tum.pssif.core.metamodel.impl.EdgeEndImpl;
-import de.tum.pssif.core.metamodel.impl.EdgeTypeImpl;
 import de.tum.pssif.core.model.Edge;
 import de.tum.pssif.core.model.Node;
 import de.tum.pssif.core.util.PSSIFOption;
 
 
 public class EdgeImpl extends ElementImpl implements Edge {
+  private final Multimap<EdgeEnd, Node> nodes = HashMultimap.create();
 
-  private final Multimap<EdgeEndImpl, NodeImpl> nodes;
+  @Override
+  public void connect(EdgeEnd end, Node node) {
+    nodes.put(end, node);
+    node.connect(end, this);
+  }
 
-  public EdgeImpl(EdgeTypeImpl edgeType, Multimap<EdgeEndImpl, NodeImpl> connections) {
-    nodes = HashMultimap.create(connections);
+  @Override
+  public void disconnect(EdgeEnd end, Node node) {
+    nodes.remove(end, node);
+    node.disconnect(end, this);
   }
 
   @Override
   public PSSIFOption<Node> get(EdgeEnd end) {
-    Set<EdgeEndImpl> localEdgeEnds = locateEdgeEnds(end, nodes.keySet());
-    Set<Node> result = Sets.newHashSet();
-    for (EdgeEndImpl endImpl : localEdgeEnds) {
-      result.addAll(nodes.get(endImpl));
-    }
-    return PSSIFOption.many(result);
+    return PSSIFOption.many(nodes.get(end));
   }
 
 }

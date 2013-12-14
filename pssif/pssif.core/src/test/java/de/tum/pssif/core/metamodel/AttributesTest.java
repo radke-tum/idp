@@ -22,11 +22,12 @@ public class AttributesTest {
   @Before
   public void createMetamodel() {
     this.metamodel = new MetamodelImpl();
-    NodeType a = metamodel.create("A");
-    NodeType b = metamodel.create("B");
+    NodeType a = metamodel.createNodeType("A");
+    NodeType b = metamodel.createNodeType("B");
     Multiplicity inMult = MultiplicityContainer.of(1, 1, 0, UnlimitedNatural.UNLIMITED);
     Multiplicity outMult = MultiplicityContainer.of(1, 1, 0, UnlimitedNatural.UNLIMITED);
-    metamodel.create("edge", "in", a, inMult, "out", b, outMult);
+    EdgeType edgeType = metamodel.createEdgeType("edge");
+    edgeType.createMapping("in", a, inMult, "out", b, outMult);
   }
 
   @Test
@@ -44,7 +45,7 @@ public class AttributesTest {
     Attribute attr = edge().findAttribute("attr");
     assertNotNull(attr);
     assertEquals(PrimitiveDataType.INTEGER, attr.getType());
-    assertEquals(Unit.INCH, attr.getType());
+    assertEquals(Unit.INCH, attr.getUnit());
   }
 
   @Test
@@ -65,7 +66,7 @@ public class AttributesTest {
     Attribute attr = edge().findAttribute("attr");
     assertNotNull(attr);
     assertEquals(PrimitiveDataType.INTEGER, attr.getType());
-    assertEquals(Unit.INCH, attr.getType());
+    assertEquals(Unit.INCH, attr.getUnit());
 
     edge().removeAttribute(attr);
     assertNull(edge().findAttribute("attr"));
