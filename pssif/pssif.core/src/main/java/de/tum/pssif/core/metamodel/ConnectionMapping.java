@@ -11,4 +11,12 @@ public interface ConnectionMapping {
   EdgeEnd getTo();
 
   Edge create(Model model, Node from, Node to);
+
+  void connectFrom(Edge edge, Node node);
+
+  void connectTo(Edge edge, Node node);
+
+  void disconnectFrom(Edge edge, Node node);
+
+  void disconnectTo(Edge edge, Node node);
 }

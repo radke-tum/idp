@@ -5,6 +5,7 @@ import java.util.Collections;
 
 import com.google.common.collect.Sets;
 
+import de.tum.pssif.core.exception.PSSIFStructuralIntegrityException;
 import de.tum.pssif.core.metamodel.ConnectionMapping;
 import de.tum.pssif.core.metamodel.EdgeEnd;
 import de.tum.pssif.core.metamodel.EdgeType;
@@ -25,6 +26,9 @@ public class EdgeTypeImpl extends ElementTypeImpl<EdgeType> implements EdgeType 
   @Override
   public ConnectionMapping createMapping(String inName, NodeType in, Multiplicity inMultiplicity, String outName, NodeType out,
                                          Multiplicity outMultiplicity) {
+    if (inMultiplicity.getEdgeEndLower() < 1 || outMultiplicity.getEdgeEndLower() < 1) {
+      throw new PSSIFStructuralIntegrityException("cannot create mapping with edge end lower multiplicity < 1");
+    }
     EdgeEnd from = new EdgeEndImpl(inName, this, inMultiplicity, in);
     EdgeEnd to = new EdgeEndImpl(outName, this, outMultiplicity, out);
 

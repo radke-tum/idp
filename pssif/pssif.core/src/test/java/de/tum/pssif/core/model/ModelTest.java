@@ -4,6 +4,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import de.tum.pssif.core.exception.PSSIFStructuralIntegrityException;
 import de.tum.pssif.core.metamodel.ConnectionMapping;
 import de.tum.pssif.core.metamodel.EdgeType;
 import de.tum.pssif.core.metamodel.Metamodel;
@@ -67,8 +68,24 @@ public class ModelTest {
     for (Edge edge : edges.getMany()) {
       Assert.assertEquals(ebike, hwContainment.getIncoming().apply(edge).getOne());
     }
+  }
 
-    //    Assert.assertEquals(2, ebike.get(hwContainment.getIncoming()).getOne().get(hwContainment.getOutgoing()).size());
+  @Test(expected = PSSIFStructuralIntegrityException.class)
+  public void testConstraintViolation() {
+    Node ebike = node("hardware").create(model);
+    Node smartphone = node("hardware").create(model);
+    Node battery = node("hardware").create(model);
+    Node rentalApp = node("software").create(model);
+    Node gpsApp = node("software").create(model);
+
+    EdgeType hwContainment = node("hardware").findOutgoingEdgeType("containment");
+    ConnectionMapping hw2hw = hwContainment.getMapping(node("hardware"), node("hardware"));
+    ConnectionMapping hw2sw = hwContainment.getMapping(node("hardware"), node("software"));
+
+    hw2hw.create(model, ebike, battery);
+    hw2hw.create(model, ebike, smartphone);
+    Edge smartphoneContainment = hw2sw.create(model, smartphone, rentalApp);
+    hw2sw.connectTo(smartphoneContainment, gpsApp);
   }
 
   private NodeType node(String name) {
