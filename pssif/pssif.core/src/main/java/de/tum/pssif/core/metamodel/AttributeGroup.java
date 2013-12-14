@@ -1,10 +1,10 @@
 package de.tum.pssif.core.metamodel;
 
-import de.tum.pssif.core.metamodel.traits.Attributable;
+import de.tum.pssif.core.metamodel.traits.AttributableRead;
 
 
-public interface AttributeGroup extends Attributable, Named {
+public interface AttributeGroup extends AttributableRead, Named {
 
-  //Nothing special here
+  String DEFAULT_GROUP_NAME = "defaultGroup";
 
 }

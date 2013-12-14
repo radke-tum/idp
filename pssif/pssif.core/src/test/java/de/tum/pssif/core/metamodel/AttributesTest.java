@@ -32,7 +32,7 @@ public class AttributesTest {
 
   @Test
   public void testCreatePrimitiveNodeAttribute() {
-    nodeA().createAttribute("attr", PrimitiveDataType.INTEGER, Units.INCH, true);
+    nodeA().createAttribute(nodeA().getDefaultAttributeGroup(), "attr", PrimitiveDataType.INTEGER, Units.INCH, true);
     Attribute attr = nodeA().findAttribute("attr");
     assertNotNull(attr);
     assertEquals(PrimitiveDataType.INTEGER, attr.getType());
@@ -41,7 +41,7 @@ public class AttributesTest {
 
   @Test
   public void testCreatePrimitiveEdgeAttribute() {
-    edge().createAttribute("attr", PrimitiveDataType.INTEGER, Units.INCH, true);
+    edge().createAttribute(nodeA().getDefaultAttributeGroup(), "attr", PrimitiveDataType.INTEGER, Units.INCH, true);
     Attribute attr = edge().findAttribute("attr");
     assertNotNull(attr);
     assertEquals(PrimitiveDataType.INTEGER, attr.getType());
@@ -50,25 +50,25 @@ public class AttributesTest {
 
   @Test
   public void testRemoveNodeAttribute() {
-    nodeA().createAttribute("attr", PrimitiveDataType.INTEGER, Units.INCH, true);
+    nodeA().createAttribute(nodeA().getDefaultAttributeGroup(), "attr", PrimitiveDataType.INTEGER, Units.INCH, true);
     Attribute attr = nodeA().findAttribute("attr");
     assertNotNull(attr);
     assertEquals(PrimitiveDataType.INTEGER, attr.getType());
     assertEquals(Units.INCH, attr.getUnit());
 
-    nodeA().removeAttribute(attr);
+    nodeA().getDefaultAttributeGroup().removeAttribute(attr);
     assertNull(nodeA().findAttribute("attr"));
   }
 
   @Test
   public void testRemoveEdgeAttribute() {
-    edge().createAttribute("attr", PrimitiveDataType.INTEGER, Units.INCH, true);
+    edge().createAttribute(nodeA().getDefaultAttributeGroup(), "attr", PrimitiveDataType.INTEGER, Units.INCH, true);
     Attribute attr = edge().findAttribute("attr");
     assertNotNull(attr);
     assertEquals(PrimitiveDataType.INTEGER, attr.getType());
     assertEquals(Units.INCH, attr.getUnit());
 
-    edge().removeAttribute(attr);
+    edge().getDefaultAttributeGroup().removeAttribute(attr);
     assertNull(edge().findAttribute("attr"));
   }
 
@@ -90,7 +90,7 @@ public class AttributesTest {
     assertEquals("enum", enumeration.getName());
 
     //should accept null unit, since enums have no units.
-    nodeA().createAttribute("enumAttr", enumeration, true);
+    nodeA().createAttribute(nodeA().getDefaultAttributeGroup(), "enumAttr", enumeration, true);
 
     Attribute enumAttr = nodeA().findAttribute("enumAttr");
     assertNotNull(enumAttr);
@@ -173,20 +173,20 @@ public class AttributesTest {
 
   @Test(expected = PSSIFStructuralIntegrityException.class)
   public void testDuplicateAttributes() {
-    nodeA().createAttribute("attr", PrimitiveDataType.INTEGER, Units.KILOGRAM, true);
-    nodeA().createAttribute("attr", PrimitiveDataType.DECIMAL, Units.INCH, true);
+    nodeA().createAttribute(nodeA().getDefaultAttributeGroup(), "attr", PrimitiveDataType.INTEGER, Units.KILOGRAM, true);
+    nodeA().createAttribute(nodeA().getDefaultAttributeGroup(), "attr", PrimitiveDataType.DECIMAL, Units.INCH, true);
   }
 
   @Test(expected = PSSIFStructuralIntegrityException.class)
   public void testCreateAttributeWithIncompatibleType() {
-    nodeA().createAttribute("attr", PrimitiveDataType.DATE, Units.KILOGRAM, true);
+    nodeA().createAttribute(nodeA().getDefaultAttributeGroup(), "attr", PrimitiveDataType.DATE, Units.KILOGRAM, true);
   }
 
   @Test(expected = PSSIFStructuralIntegrityException.class)
   public void testCreateEnumerationAttributeWithUnit() {
     Enumeration enumeration = metamodel.createEnumeration("enum");
     enumeration.createLiteral("lit");
-    nodeA().createAttribute("enumAttr", enumeration, Units.CENTIMETER, true);
+    nodeA().createAttribute(nodeA().getDefaultAttributeGroup(), "enumAttr", enumeration, Units.CENTIMETER, true);
   }
 
   public void testStaticDataTypes() {
