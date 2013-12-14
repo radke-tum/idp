@@ -91,4 +91,5 @@ public class EdgeTypeImpl extends ElementTypeImpl<EdgeType> implements EdgeType 
   public EdgeEnd findAuxiliary(String name) {
     return PSSIFUtil.find(name, auxiliaries);
   }
+
 }
