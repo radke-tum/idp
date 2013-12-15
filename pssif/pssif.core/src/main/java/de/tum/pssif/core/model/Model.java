@@ -1,16 +1,16 @@
 package de.tum.pssif.core.model;
 
-import de.tum.pssif.core.metamodel.NodeType;
-import de.tum.pssif.core.model.operation.CreateEdgeOperation;
-import de.tum.pssif.core.model.operation.CreateNodeOperation;
+import de.tum.pssif.core.metamodel.impl.CreateEdgeOperation;
+import de.tum.pssif.core.metamodel.impl.CreateNodeOperation;
+import de.tum.pssif.core.metamodel.impl.ReadNodesOperation;
 import de.tum.pssif.core.util.PSSIFOption;
 
 
 public interface Model {
 
-  Node createNode(CreateNodeOperation createOperation);
+  Node apply(CreateNodeOperation op);
 
-  Edge createEdge(CreateEdgeOperation createOperation);
+  Edge apply(CreateEdgeOperation op);
 
-  PSSIFOption<Node> findAll(NodeType type);
+  PSSIFOption<Node> apply(ReadNodesOperation op);
 }

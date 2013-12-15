@@ -2,16 +2,17 @@ package de.tum.pssif.core.metamodel;
 
 import java.util.Collection;
 
-import de.tum.pssif.core.metamodel.impl.NodeTypeImpl;
-import de.tum.pssif.core.metamodel.traits.Specializable;
 import de.tum.pssif.core.model.Model;
 import de.tum.pssif.core.model.Node;
 import de.tum.pssif.core.util.PSSIFOption;
 
 
-public interface NodeType extends ElementType, Specializable<NodeType, NodeTypeImpl> {
+public interface NodeType extends ElementType<NodeType> {
+  void registerIncoming(EdgeType type);
 
-  Collection<EdgeType> getEdgeTypes();
+  void registerOutgoing(EdgeType type);
+
+  void registerAuxiliary(EdgeType type);
 
   Collection<EdgeType> getIncomings();
 
@@ -19,7 +20,11 @@ public interface NodeType extends ElementType, Specializable<NodeType, NodeTypeI
 
   Collection<EdgeType> getAuxiliaries();
 
-  EdgeType findEdgeType(String name);
+  EdgeType findIncomingEdgeType(String name);
+
+  EdgeType findOutgoingEdgeType(String name);
+
+  EdgeType findAuxiliaryEdgeType(String name);
 
   Node create(Model model);
 

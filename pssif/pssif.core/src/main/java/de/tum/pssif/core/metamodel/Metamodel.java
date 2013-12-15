@@ -5,11 +5,9 @@ import java.util.Collection;
 
 public interface Metamodel {
 
-  NodeType create(String name);
+  NodeType createNodeType(String name);
 
-  EdgeType create(String name, String inName, NodeType inType, Multiplicity inMult, String outName, NodeType outType, Multiplicity outMult);
-
-  EdgeEnd createAuxiliaryEnd(EdgeType onType, String name, Multiplicity mult, NodeType to);
+  EdgeType createEdgeType(String name);
 
   NodeType findNodeType(String name);
 

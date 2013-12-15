@@ -1,20 +1,10 @@
 package de.tum.pssif.core.metamodel;
 
-import java.util.Collection;
-
-import de.tum.pssif.core.model.Edge;
-import de.tum.pssif.core.model.Node;
-import de.tum.pssif.core.util.PSSIFOption;
+import de.tum.pssif.core.metamodel.traits.ElementApplicable;
 
 
-public interface EdgeEnd extends Named, Multiplicity {
-  Collection<NodeType> getTypes();
+public interface EdgeEnd extends Named, Multiplicity, ElementApplicable {
+  NodeType getNodeType();
 
-  EdgeType getType();
-
-  PSSIFOption<Node> nodes(PSSIFOption<Edge> edges);
-
-  PSSIFOption<Edge> edges(PSSIFOption<Node> nodes);
-
-  boolean equals(String name, NodeType type);
+  EdgeType getEdgeType();
 }

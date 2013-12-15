@@ -1,69 +1,42 @@
 package de.tum.pssif.core.model.impl;
 
 import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 
-import de.tum.pssif.core.exception.PSSIFStructuralIntegrityException;
+import de.tum.pssif.core.metamodel.ConnectionMapping;
 import de.tum.pssif.core.metamodel.NodeType;
-import de.tum.pssif.core.metamodel.impl.EdgeEndImpl;
-import de.tum.pssif.core.metamodel.impl.NodeTypeImpl;
+import de.tum.pssif.core.metamodel.impl.CreateEdgeOperation;
+import de.tum.pssif.core.metamodel.impl.CreateNodeOperation;
+import de.tum.pssif.core.metamodel.impl.ReadNodesOperation;
 import de.tum.pssif.core.model.Edge;
 import de.tum.pssif.core.model.Model;
 import de.tum.pssif.core.model.Node;
-import de.tum.pssif.core.model.operation.CreateEdgeOperation;
-import de.tum.pssif.core.model.operation.CreateNodeOperation;
 import de.tum.pssif.core.util.PSSIFOption;
-import de.tum.pssif.core.util.PSSIFUtil;
 
 
 public class ModelImpl implements Model {
-  private final Multimap<NodeTypeImpl, NodeImpl> nodes = ArrayListMultimap.create();
+  private final Multimap<NodeType, Node>          nodes = ArrayListMultimap.create();
+  private final Multimap<ConnectionMapping, Edge> edges = ArrayListMultimap.create();
 
   @Override
-  public Node createNode(CreateNodeOperation operation) {
-    NodeImpl result = new NodeImpl(operation.getNodeType());
-    nodes.put(operation.getNodeType(), result);
+  public Node apply(CreateNodeOperation op) {
+    Node result = new NodeImpl();
+    nodes.put(op.getType(), result);
     return result;
   }
 
   @Override
-  public PSSIFOption<Node> findAll(NodeType type) {
-    NodeTypeImpl typeImpl = findTypeImpl(type);
-    if (typeImpl == null) {
-      //TODO throw exception or just find nothing?
-      return PSSIFOption.none();
-    }
-    return PSSIFOption.many(Sets.<Node> newHashSet(nodes.get(typeImpl)));
+  public Edge apply(CreateEdgeOperation op) {
+    Edge result = new EdgeImpl();
+    op.getMapping().connectFrom(result, op.getFrom());
+    op.getMapping().connectTo(result, op.getTo());
+    edges.put(op.getMapping(), result);
+    return result;
   }
 
   @Override
-  public Edge createEdge(CreateEdgeOperation createOperation) {
-    Multimap<EdgeEndImpl, NodeImpl> nodeImplConnections = HashMultimap.create();
-    for (EdgeEndImpl ee : createOperation.getConnections().keySet()) {
-      for (NodeImpl nodeImpl : this.nodes.get(ee.getNodeType())) {
-        if (createOperation.getConnections().get(ee).contains(nodeImpl)) {
-          nodeImplConnections.put(ee, nodeImpl);
-        }
-      }
-    }
-
-    if (nodeImplConnections.entries().size() != createOperation.getConnections().entries().size()) {
-      throw new PSSIFStructuralIntegrityException("could not resolve all nodes within model");
-    }
-
-    EdgeImpl newEdge = new EdgeImpl(createOperation.getEdgeTypeImpl(), nodeImplConnections);
-
-    return newEdge;
-  }
-
-  private NodeTypeImpl findTypeImpl(NodeType nodeType) {
-    for (NodeTypeImpl typeImpl : nodes.keySet()) {
-      if (PSSIFUtil.areSame(nodeType.getName(), typeImpl.getName())) {
-        return typeImpl;
-      }
-    }
-    return null;
+  public PSSIFOption<Node> apply(ReadNodesOperation op) {
+    return PSSIFOption.many(Sets.<Node> newHashSet(nodes.get(op.getType())));
   }
 }

@@ -10,133 +10,71 @@ import de.tum.pssif.core.metamodel.EdgeType;
 import de.tum.pssif.core.metamodel.NodeType;
 import de.tum.pssif.core.model.Model;
 import de.tum.pssif.core.model.Node;
-import de.tum.pssif.core.model.operation.CreateNodeOperation;
 import de.tum.pssif.core.util.PSSIFOption;
+import de.tum.pssif.core.util.PSSIFUtil;
 
 
-public class NodeTypeImpl extends ElementTypeImpl implements NodeType {
-  private NodeType                 general;
-  private Collection<NodeType>     specials    = Sets.newHashSet();
-
-  private Collection<EdgeTypeImpl> incomings   = Sets.newHashSet();
-  private Collection<EdgeTypeImpl> outgoings   = Sets.newHashSet();
-  private Collection<EdgeTypeImpl> auxiliaries = Sets.newHashSet();
+public class NodeTypeImpl extends ElementTypeImpl<NodeType> implements NodeType {
+  private Set<EdgeType> incomings   = Sets.newHashSet();
+  private Set<EdgeType> outgoings   = Sets.newHashSet();
+  private Set<EdgeType> auxiliaries = Sets.newHashSet();
 
   public NodeTypeImpl(String name) {
     super(name);
   }
 
   @Override
-  public Collection<EdgeType> getEdgeTypes() {
-    Collection<EdgeType> result = Sets.newHashSet();
-    result.addAll(getIncomings());
-    result.addAll(getOutgoings());
-    result.addAll(getAuxiliaries());
+  public void registerIncoming(EdgeType type) {
+    incomings.add(type);
+  }
 
-    return Collections.unmodifiableCollection(result);
+  @Override
+  public void registerOutgoing(EdgeType type) {
+    outgoings.add(type);
+  }
+
+  @Override
+  public void registerAuxiliary(EdgeType type) {
+    auxiliaries.add(type);
   }
 
   @Override
   public Collection<EdgeType> getIncomings() {
-    return Collections.<EdgeType> unmodifiableCollection(incomings);
+    return Collections.unmodifiableCollection(incomings);
   }
 
   @Override
   public Collection<EdgeType> getOutgoings() {
-    return Collections.<EdgeType> unmodifiableCollection(outgoings);
+    return Collections.unmodifiableCollection(outgoings);
   }
 
   @Override
   public Collection<EdgeType> getAuxiliaries() {
-    return Collections.<EdgeType> unmodifiableCollection(auxiliaries);
+    return Collections.unmodifiableCollection(auxiliaries);
   }
 
   @Override
-  public EdgeType findEdgeType(String name) {
-    Set<EdgeTypeImpl> result = Sets.newHashSet();
-    for (EdgeTypeImpl element : getEdgeTypeImpls()) {
-      if (element.getName().equals(name)) {
-        result.add(element);
-      }
-    }
-    if (result.size() == 0) {
-      return null;
-    }
-    return new EdgeTypeBundle(name, result);
+  public EdgeType findIncomingEdgeType(String name) {
+    return PSSIFUtil.find(name, incomings);
   }
 
-  private Set<EdgeTypeImpl> getEdgeTypeImpls() {
-    Set<EdgeTypeImpl> impls = Sets.newHashSet();
-    impls.addAll(incomings);
-    impls.addAll(outgoings);
-    impls.addAll(auxiliaries);
-    return impls;
+  @Override
+  public EdgeType findOutgoingEdgeType(String name) {
+    return PSSIFUtil.find(name, outgoings);
+  }
+
+  @Override
+  public EdgeType findAuxiliaryEdgeType(String name) {
+    return PSSIFUtil.find(name, auxiliaries);
   }
 
   @Override
   public Node create(Model model) {
-    return model.createNode(new CreateNodeOperation(this));
-  }
-
-  @Override
-  public NodeType getGeneral() {
-    return general;
-  }
-
-  @Override
-  public Collection<NodeType> getSpecials() {
-    return Collections.unmodifiableCollection(specials);
-  }
-
-  @Override
-  public void inherit(NodeType general) {
-    general.registerSpecialization(this);
-  }
-
-  @Override
-  public void registerSpecialization(NodeTypeImpl special) {
-    specials.add(special);
-    special.registerGeneralization(this);
-  }
-
-  @Override
-  public void registerGeneralization(NodeTypeImpl general) {
-    this.general = general;
-  }
-
-  protected void registerIncoming(EdgeTypeImpl edge) {
-    incomings.add(edge);
-  }
-
-  protected void registerOutgoing(EdgeTypeImpl edge) {
-    outgoings.add(edge);
-  }
-
-  protected void registerAuxiliary(EdgeTypeImpl edge) {
-    auxiliaries.add(edge);
+    return new CreateNodeOperation(this).apply(model);
   }
 
   @Override
   public PSSIFOption<Node> apply(Model model) {
-    PSSIFOption<Node> result = model.findAll(this);
-    for (NodeType special : getSpecials()) {
-      result = PSSIFOption.merge(result, special.apply(model));
-    }
-    return result;
+    return new ReadNodesOperation(this).apply(model);
   }
-
-  //  public Collection<EdgeEndImpl> getEdgeEndsImpl() {
-  //    Collection<EdgeEndImpl> result = Sets.newHashSet();
-  //    for (EdgeTypeImpl in : incomings) {
-  //      result.add(in.getOutgoing());
-  //    }
-  //    for (EdgeTypeImpl out : outgoings) {
-  //      result.add(out.getIncoming());
-  //    }
-  //    for (EdgeTypeImpl aux : auxiliaries) {
-  //      result.addAll(aux.getAuxEndsForType(this));
-  //    }
-  //    return result;
-  //  }
-
 }

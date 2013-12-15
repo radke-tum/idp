@@ -2,26 +2,21 @@ package de.tum.pssif.core.metamodel;
 
 import java.util.Collection;
 
-import com.google.common.collect.Multimap;
-
-import de.tum.pssif.core.metamodel.impl.EdgeTypeImpl;
-import de.tum.pssif.core.metamodel.traits.Specializable;
-import de.tum.pssif.core.model.Edge;
-import de.tum.pssif.core.model.Model;
-import de.tum.pssif.core.model.Node;
+import de.tum.pssif.core.metamodel.traits.ElementApplicable;
 
 
-public interface EdgeType extends ElementType, Specializable<EdgeType, EdgeTypeImpl> {
+public interface EdgeType extends ElementType<EdgeType> {
+  ConnectionMapping createMapping(String inName, NodeType in, Multiplicity inMultiplicity, String outName, NodeType out, Multiplicity outMultiplicity);
 
-  Collection<EdgeEnd> getEnds();
+  EdgeEnd createAuxiliary(String name, Multiplicity multiplicity, NodeType to);
 
-  EdgeEnd findEdgeEnd(String name);
+  ElementApplicable getIncoming();
 
-  EdgeEnd getIncoming();
+  ElementApplicable getOutgoing();
 
-  EdgeEnd getOutgoing();
+  ConnectionMapping getMapping(NodeType in, NodeType out);
 
   Collection<EdgeEnd> getAuxiliaries();
 
-  Edge create(Model model, Multimap<EdgeEnd, Node> connections);
+  EdgeEnd findAuxiliary(String name);
 }
