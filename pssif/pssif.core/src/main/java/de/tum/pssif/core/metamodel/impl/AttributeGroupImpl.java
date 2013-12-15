@@ -15,8 +15,8 @@ import de.tum.pssif.core.util.PSSIFUtil;
 
 public class AttributeGroupImpl extends NamedImpl implements AttributeGroup {
 
-  private Map<String, Attribute>   attributes = Maps.newHashMap();
-  private final ElementTypeImpl<?> owner;
+  private final Map<String, Attribute> attributes = Maps.newHashMap();
+  private final ElementTypeImpl<?>     owner;
 
   public AttributeGroupImpl(String name, ElementTypeImpl<?> owner) {
     super(name);
@@ -33,7 +33,7 @@ public class AttributeGroupImpl extends NamedImpl implements AttributeGroup {
     if (result != null) {
       return result;
     }
-    AttributeGroup generalGroup = owner.getGeneral().findAttributeGroup(getName());
+    AttributeGroup generalGroup = owner.getGeneral() != null ? owner.getGeneral().findAttributeGroup(getName()) : null;
     if (generalGroup != null) {
       return generalGroup.findAttribute(name);
     }
