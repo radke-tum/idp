@@ -38,4 +38,9 @@ public class AttributeGroupImpl extends NamedImpl implements AttributeGroup {
     attributes.remove(PSSIFUtil.normalize(attribute.getName()));
   }
 
+  @Override
+  public Class<?> getMetaType() {
+    return AttributeGroup.class;
+  }
+
 }

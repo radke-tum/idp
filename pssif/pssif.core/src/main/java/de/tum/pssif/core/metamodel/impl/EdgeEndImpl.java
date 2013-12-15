@@ -70,4 +70,24 @@ public final class EdgeEndImpl extends NamedImpl implements EdgeEnd {
   public PSSIFOption<Node> apply(Edge edge) {
     return new ReadConnectedOperation(this).apply(edge);
   }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (!(obj instanceof EdgeEnd)) {
+      return false;
+    }
+    EdgeEnd other = (EdgeEnd) obj;
+    //TODO check multiplicity here as well?
+    return super.equals(obj) && this.edge.equals(other.getEdgeType()) && this.type.equals(other.getNodeType());
+  }
+
+  @Override
+  public int hashCode() {
+    return getMetaType().hashCode() ^ (getNodeType().getName() + getName() + getEdgeType().getName()).hashCode();
+  }
+
+  @Override
+  public Class<?> getMetaType() {
+    return EdgeEnd.class;
+  }
 }

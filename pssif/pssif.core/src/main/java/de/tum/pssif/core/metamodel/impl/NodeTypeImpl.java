@@ -77,4 +77,9 @@ public class NodeTypeImpl extends ElementTypeImpl<NodeType> implements NodeType 
   public PSSIFOption<Node> apply(Model model) {
     return new ReadNodesOperation(this).apply(model);
   }
+
+  @Override
+  public Class<?> getMetaType() {
+    return NodeType.class;
+  }
 }

@@ -48,6 +48,11 @@ public final class Units {
     public Unit getSi() {
       return this;
     }
+
+    @Override
+    public Class<?> getMetaType() {
+      return Unit.class;
+    }
   }
 
 }

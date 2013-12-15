@@ -96,4 +96,9 @@ public class EdgeTypeImpl extends ElementTypeImpl<EdgeType> implements EdgeType 
     return PSSIFUtil.find(name, auxiliaries);
   }
 
+  @Override
+  public Class<?> getMetaType() {
+    return EdgeType.class;
+  }
+
 }

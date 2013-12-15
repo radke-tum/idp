@@ -33,4 +33,22 @@ public class AttributeImpl extends NamedImpl implements Attribute {
     return visible;
   }
 
+  @Override
+  public final boolean equals(Object obj) {
+    if (!(obj instanceof Attribute)) {
+      return false;
+    }
+    return super.equals(obj) && getType().equals(((Attribute) obj).getType());
+  }
+
+  @Override
+  public final int hashCode() {
+    return getMetaType().hashCode() ^ (type.getName() + getName()).hashCode();
+  }
+
+  @Override
+  public Class<?> getMetaType() {
+    return Attribute.class;
+  }
+
 }

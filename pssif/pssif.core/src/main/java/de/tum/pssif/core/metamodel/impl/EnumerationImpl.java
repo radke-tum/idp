@@ -25,7 +25,7 @@ public class EnumerationImpl extends NamedImpl implements Enumeration {
     if (findLiteral(name) != null) {
       throw new PSSIFStructuralIntegrityException("literal with this name already exists");
     }
-    EnumerationLiteralImpl result = new EnumerationLiteralImpl(name);
+    EnumerationLiteralImpl result = new EnumerationLiteralImpl(this, name);
     literals.add(result);
     return result;
   }
@@ -48,5 +48,10 @@ public class EnumerationImpl extends NamedImpl implements Enumeration {
       }
     }
     return null;
+  }
+
+  @Override
+  public Class<?> getMetaType() {
+    return Enumeration.class;
   }
 }

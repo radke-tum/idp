@@ -35,6 +35,11 @@ public interface PrimitiveDataType extends DataType {
       return clazz;
     }
 
+    @Override
+    public Class<?> getMetaType() {
+      return PrimitiveDataType.class;
+    }
+
   }
 
 }

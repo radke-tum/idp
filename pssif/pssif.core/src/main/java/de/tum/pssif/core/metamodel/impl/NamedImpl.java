@@ -1,16 +1,35 @@
 package de.tum.pssif.core.metamodel.impl;
 
 import de.tum.pssif.core.metamodel.Named;
+import de.tum.pssif.core.util.PSSIFUtil;
 
-public class NamedImpl implements Named {
-	private final String name;
 
-	public NamedImpl(String name) {
-		this.name = name;
-	}
+public abstract class NamedImpl implements Named {
 
-	@Override
-	public final String getName() {
-		return name;
-	}
+  private final String name;
+
+  public NamedImpl(String name) {
+    this.name = name;
+  }
+
+  @Override
+  public final String getName() {
+    return name;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (!(obj instanceof Named)) {
+      return false;
+    }
+    return PSSIFUtil.areSame(getName(), ((Named) obj).getName()) && getMetaType().equals(((Named) obj).getMetaType());
+  }
+
+  @Override
+  public int hashCode() {
+    return getMetaType().hashCode() ^ getName().hashCode();
+  }
+
+  public abstract Class<?> getMetaType();
+
 }
