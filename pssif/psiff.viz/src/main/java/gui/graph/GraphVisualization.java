@@ -9,6 +9,7 @@ import edu.uci.ics.jung.visualization.control.AbstractModalGraphMouse;
 import edu.uci.ics.jung.visualization.control.DefaultModalGraphMouse;
 import edu.uci.ics.jung.visualization.decorators.ToStringLabeller;
 import edu.uci.ics.jung.visualization.renderers.Renderer.VertexLabel.Position;
+import graph.listener.ConfigWriterReader;
 import graph.listener.MiddleMousePlugin;
 import graph.listener.MyPopupGraphMousePlugin;
 import graph.model.ConnectionType;
@@ -29,6 +30,7 @@ import java.awt.Stroke;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 
@@ -48,6 +50,8 @@ public class GraphVisualization
   private MyCollapser collapser;
   private LinkedList<NodeType> vizNodes;
   private LinkedList<ConnectionType> vizEdges;
+  private HashMap<NodeType,Color> nodeColorMapping;
+  private ConfigWriterReader configWriterReader;
   
   public void reset()
   {
@@ -62,8 +66,10 @@ public class GraphVisualization
     this.detailedNodes = details;
     this.gb = new GraphBuilder();
     this.collapser = new MyCollapser();
+    configWriterReader = new ConfigWriterReader();
     setVizEdges(ConnectionType.values());
     setVizNodes(NodeType.values());
+    this.nodeColorMapping = configWriterReader.readColors();
     
     this.g = this.gb.createGraph(this.detailedNodes);
     
@@ -89,12 +95,22 @@ public class GraphVisualization
     {
       public Paint transform(MyNode i)
       {
-        if (i.getNodeType() == NodeType.FUNCTION) {
+      /*  if (i.getNodeType() == NodeType.FUNCTION) {
           return Color.GREEN;
         }
-        return Color.RED;
+        return Color.RED;*/
+    	
+    	if (nodeColorMapping!=null)
+    	{
+	    	Color c = nodeColorMapping.get(i.getNodeType());
+	    	if (c!=null)
+	    		return c;
+    	}
+    	
+    	return Color.LIGHT_GRAY;
       }
     };
+    
     Transformer<MyNode, Shape> vertexSize = new Transformer<MyNode, Shape>()
     {
       public Shape transform(MyNode node)
@@ -364,6 +380,19 @@ public void applyNodeAndEdgeFilter(LinkedList<NodeType> nodes, LinkedList<Connec
 	
 	vv.getPickedVertexState().clear();
     vv.repaint();
+}
+
+public void setNodeColorMapping(HashMap<NodeType, Color> nodeColorMapping) {
+	this.nodeColorMapping.putAll(nodeColorMapping);
+	this.configWriterReader.setColors(nodeColorMapping);
+	
+	vv.getPickedVertexState().clear();
+    vv.repaint();
+}
+
+public HashMap<NodeType, Color> getNodeColorMapping ()
+{
+	return this.configWriterReader.readColors();
 }
   
   

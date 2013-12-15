@@ -601,13 +601,8 @@ public class GraphView {
 		allPanel.setPreferredSize(new Dimension(400,500));
 		allPanel.setMaximumSize(new Dimension(400,500));
 		allPanel.setMinimumSize(new Dimension(400,500));
-
 		
-		JComponent[] inputs = new JComponent[] {
-						allPanel
-		    	};
-		
-		int dialogResult = JOptionPane.showConfirmDialog(null, inputs, "Choose the Edge and Node types", JOptionPane.DEFAULT_OPTION);
+		int dialogResult = JOptionPane.showConfirmDialog(null, allPanel, "Choose the Edge and Node types", JOptionPane.DEFAULT_OPTION);
     	
     	if (dialogResult==0)
     	{
