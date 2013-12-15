@@ -6,8 +6,10 @@ import java.util.Set;
 
 import com.google.common.collect.Sets;
 
+import de.tum.pssif.core.PSSIFConstants;
 import de.tum.pssif.core.exception.PSSIFStructuralIntegrityException;
 import de.tum.pssif.core.metamodel.Attribute;
+import de.tum.pssif.core.metamodel.AttributeCategory;
 import de.tum.pssif.core.metamodel.AttributeGroup;
 import de.tum.pssif.core.metamodel.DataType;
 import de.tum.pssif.core.metamodel.ElementType;
@@ -24,7 +26,7 @@ public abstract class ElementTypeImpl<T extends ElementType<T>> extends NamedImp
 
   public ElementTypeImpl(String name) {
     super(name);
-    this.attributeGroups.add(new AttributeGroupImpl(AttributeGroup.DEFAULT_GROUP_NAME));
+    this.attributeGroups.add(new AttributeGroupImpl(PSSIFConstants.DEFAULT_ATTRIBUTE_GROUP_NAME));
   }
 
   @Override
@@ -72,7 +74,7 @@ public abstract class ElementTypeImpl<T extends ElementType<T>> extends NamedImp
   }
 
   @Override
-  public Attribute createAttribute(AttributeGroup group, String name, DataType type, Unit unit, boolean visible) {
+  public Attribute createAttribute(AttributeGroup group, String name, DataType type, Unit unit, boolean visible, AttributeCategory category) {
     if (name == null || name.trim().isEmpty()) {
       throw new PSSIFStructuralIntegrityException("name can not be null or empty");
     }
@@ -86,14 +88,14 @@ public abstract class ElementTypeImpl<T extends ElementType<T>> extends NamedImp
     if (actual == null) {
       throw new PSSIFStructuralIntegrityException("Provided attribute group not part of this type.");
     }
-    AttributeImpl result = new AttributeImpl(name, type, unit, visible);
+    AttributeImpl result = new AttributeImpl(name, type, unit, visible, category);
     actual.addAttribute(result);
     return result;
   }
 
   @Override
-  public Attribute createAttribute(AttributeGroup group, String name, DataType dataType, boolean visible) {
-    return createAttribute(group, name, dataType, Units.NONE, visible);
+  public Attribute createAttribute(AttributeGroup group, String name, DataType dataType, boolean visible, AttributeCategory category) {
+    return createAttribute(group, name, dataType, Units.NONE, visible, category);
   }
 
   @Override
@@ -125,7 +127,7 @@ public abstract class ElementTypeImpl<T extends ElementType<T>> extends NamedImp
 
   @Override
   public AttributeGroup getDefaultAttributeGroup() {
-    return findAttributeGroup(AttributeGroup.DEFAULT_GROUP_NAME);
+    return findAttributeGroup(PSSIFConstants.DEFAULT_ATTRIBUTE_GROUP_NAME);
   }
 
   @Override
@@ -140,7 +142,7 @@ public abstract class ElementTypeImpl<T extends ElementType<T>> extends NamedImp
 
   @Override
   public void removeAttributeGroup(AttributeGroup group) {
-    if (PSSIFUtil.areSame(group.getName(), AttributeGroup.DEFAULT_GROUP_NAME)) {
+    if (PSSIFUtil.areSame(group.getName(), PSSIFConstants.DEFAULT_ATTRIBUTE_GROUP_NAME)) {
       throw new PSSIFStructuralIntegrityException("The default attribute group can not be removed!");
     }
     AttributeGroupImpl actual = findAttributeGroup(group.getName());

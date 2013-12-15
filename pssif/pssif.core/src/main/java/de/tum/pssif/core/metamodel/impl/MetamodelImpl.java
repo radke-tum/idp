@@ -8,9 +8,12 @@ import java.util.Set;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
+import de.tum.pssif.core.PSSIFConstants;
 import de.tum.pssif.core.exception.PSSIFStructuralIntegrityException;
+import de.tum.pssif.core.metamodel.AttributeCategory;
 import de.tum.pssif.core.metamodel.DataType;
 import de.tum.pssif.core.metamodel.EdgeType;
+import de.tum.pssif.core.metamodel.ElementType;
 import de.tum.pssif.core.metamodel.Enumeration;
 import de.tum.pssif.core.metamodel.Metamodel;
 import de.tum.pssif.core.metamodel.NodeType;
@@ -25,6 +28,28 @@ public class MetamodelImpl implements Metamodel {
   private Map<String, Enumeration>       enumerations   = Maps.newHashMap();
   private Map<String, PrimitiveDataType> primitivetypes = Maps.newHashMap();
   private Map<String, Unit>              units          = Maps.newHashMap();
+
+  public MetamodelImpl() {
+    NodeType rootNodeType = createNodeType(PSSIFConstants.ROOT_NODE_TYPE_NAME);
+    addDefaultAttributes(rootNodeType);
+    EdgeType rootEdgeType = createEdgeType(PSSIFConstants.ROOT_EDGE_TYPE_NAME);
+    addDefaultAttributes(rootEdgeType);
+  }
+
+  private final void addDefaultAttributes(ElementType<?> type) {
+    type.createAttribute(type.getDefaultAttributeGroup(), PSSIFConstants.BUILTIN_ATTRIBUTE_ID, PrimitiveDataType.STRING, true,
+        AttributeCategory.METADATA);
+    type.createAttribute(type.getDefaultAttributeGroup(), PSSIFConstants.BUILTIN_ATTRIBUTE_NAME, PrimitiveDataType.STRING, true,
+        AttributeCategory.METADATA);
+    type.createAttribute(type.getDefaultAttributeGroup(), PSSIFConstants.BUILTIN_ATTRIBUTE_VALIDITY_START, PrimitiveDataType.DATE, true,
+        AttributeCategory.TIME);
+    type.createAttribute(type.getDefaultAttributeGroup(), PSSIFConstants.BUILTIN_ATTRIBUTE_VALIDITY_END, PrimitiveDataType.DATE, true,
+        AttributeCategory.TIME);
+    type.createAttribute(type.getDefaultAttributeGroup(), PSSIFConstants.BUILTIN_ATTRIBUTE_VERSION, PrimitiveDataType.STRING, true,
+        AttributeCategory.METADATA);
+    type.createAttribute(type.getDefaultAttributeGroup(), PSSIFConstants.BUILTIN_ATTRIBUTE_COMMENT, PrimitiveDataType.STRING, true,
+        AttributeCategory.METADATA);
+  }
 
   @Override
   public NodeType createNodeType(String name) {

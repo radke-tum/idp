@@ -8,4 +8,6 @@ public interface Attribute extends Named {
 
   boolean isVisible();
 
+  AttributeCategory getCategory();
+
 }

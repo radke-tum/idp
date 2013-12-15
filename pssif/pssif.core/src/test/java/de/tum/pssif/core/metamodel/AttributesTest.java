@@ -32,7 +32,7 @@ public class AttributesTest {
 
   @Test
   public void testCreatePrimitiveNodeAttribute() {
-    nodeA().createAttribute(nodeA().getDefaultAttributeGroup(), "attr", PrimitiveDataType.INTEGER, Units.INCH, true);
+    nodeA().createAttribute(nodeA().getDefaultAttributeGroup(), "attr", PrimitiveDataType.INTEGER, Units.INCH, true, AttributeCategory.METADATA);
     Attribute attr = nodeA().findAttribute("attr");
     assertNotNull(attr);
     assertEquals(PrimitiveDataType.INTEGER, attr.getType());
@@ -41,7 +41,7 @@ public class AttributesTest {
 
   @Test
   public void testCreatePrimitiveEdgeAttribute() {
-    edge().createAttribute(nodeA().getDefaultAttributeGroup(), "attr", PrimitiveDataType.INTEGER, Units.INCH, true);
+    edge().createAttribute(nodeA().getDefaultAttributeGroup(), "attr", PrimitiveDataType.INTEGER, Units.INCH, true, AttributeCategory.METADATA);
     Attribute attr = edge().findAttribute("attr");
     assertNotNull(attr);
     assertEquals(PrimitiveDataType.INTEGER, attr.getType());
@@ -50,7 +50,7 @@ public class AttributesTest {
 
   @Test
   public void testRemoveNodeAttribute() {
-    nodeA().createAttribute(nodeA().getDefaultAttributeGroup(), "attr", PrimitiveDataType.INTEGER, Units.INCH, true);
+    nodeA().createAttribute(nodeA().getDefaultAttributeGroup(), "attr", PrimitiveDataType.INTEGER, Units.INCH, true, AttributeCategory.METADATA);
     Attribute attr = nodeA().findAttribute("attr");
     assertNotNull(attr);
     assertEquals(PrimitiveDataType.INTEGER, attr.getType());
@@ -62,7 +62,7 @@ public class AttributesTest {
 
   @Test
   public void testRemoveEdgeAttribute() {
-    edge().createAttribute(nodeA().getDefaultAttributeGroup(), "attr", PrimitiveDataType.INTEGER, Units.INCH, true);
+    edge().createAttribute(nodeA().getDefaultAttributeGroup(), "attr", PrimitiveDataType.INTEGER, Units.INCH, true, AttributeCategory.METADATA);
     Attribute attr = edge().findAttribute("attr");
     assertNotNull(attr);
     assertEquals(PrimitiveDataType.INTEGER, attr.getType());
@@ -90,7 +90,7 @@ public class AttributesTest {
     assertEquals("enum", enumeration.getName());
 
     //should accept null unit, since enums have no units.
-    nodeA().createAttribute(nodeA().getDefaultAttributeGroup(), "enumAttr", enumeration, true);
+    nodeA().createAttribute(nodeA().getDefaultAttributeGroup(), "enumAttr", enumeration, true, AttributeCategory.METADATA);
 
     Attribute enumAttr = nodeA().findAttribute("enumAttr");
     assertNotNull(enumAttr);
@@ -173,20 +173,20 @@ public class AttributesTest {
 
   @Test(expected = PSSIFStructuralIntegrityException.class)
   public void testDuplicateAttributes() {
-    nodeA().createAttribute(nodeA().getDefaultAttributeGroup(), "attr", PrimitiveDataType.INTEGER, Units.KILOGRAM, true);
-    nodeA().createAttribute(nodeA().getDefaultAttributeGroup(), "attr", PrimitiveDataType.DECIMAL, Units.INCH, true);
+    nodeA().createAttribute(nodeA().getDefaultAttributeGroup(), "attr", PrimitiveDataType.INTEGER, Units.KILOGRAM, true, AttributeCategory.METADATA);
+    nodeA().createAttribute(nodeA().getDefaultAttributeGroup(), "attr", PrimitiveDataType.DECIMAL, Units.INCH, true, AttributeCategory.METADATA);
   }
 
   @Test(expected = PSSIFStructuralIntegrityException.class)
   public void testCreateAttributeWithIncompatibleType() {
-    nodeA().createAttribute(nodeA().getDefaultAttributeGroup(), "attr", PrimitiveDataType.DATE, Units.KILOGRAM, true);
+    nodeA().createAttribute(nodeA().getDefaultAttributeGroup(), "attr", PrimitiveDataType.DATE, Units.KILOGRAM, true, AttributeCategory.METADATA);
   }
 
   @Test(expected = PSSIFStructuralIntegrityException.class)
   public void testCreateEnumerationAttributeWithUnit() {
     Enumeration enumeration = metamodel.createEnumeration("enum");
     enumeration.createLiteral("lit");
-    nodeA().createAttribute(nodeA().getDefaultAttributeGroup(), "enumAttr", enumeration, Units.CENTIMETER, true);
+    nodeA().createAttribute(nodeA().getDefaultAttributeGroup(), "enumAttr", enumeration, Units.CENTIMETER, true, AttributeCategory.METADATA);
   }
 
   public void testStaticDataTypes() {
