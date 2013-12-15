@@ -26,7 +26,7 @@ public abstract class ElementTypeImpl<T extends ElementType<T>> extends NamedImp
 
   public ElementTypeImpl(String name) {
     super(name);
-    this.attributeGroups.add(new AttributeGroupImpl(PSSIFConstants.DEFAULT_ATTRIBUTE_GROUP_NAME));
+    this.attributeGroups.add(new AttributeGroupImpl(PSSIFConstants.DEFAULT_ATTRIBUTE_GROUP_NAME, this));
   }
 
   @Override
@@ -78,6 +78,10 @@ public abstract class ElementTypeImpl<T extends ElementType<T>> extends NamedImp
     if (name == null || name.trim().isEmpty()) {
       throw new PSSIFStructuralIntegrityException("name can not be null or empty");
     }
+    //Note: this disables attribute overloading. If we want
+    //to overload attributes in specialization element types
+    //we need to find only locally, and filter on getAttributes
+    //so that inherited attributes are only taken when no local ones exist.
     if (findAttribute(name) != null) {
       throw new PSSIFStructuralIntegrityException("duplicate attribute with name " + name);
     }
@@ -115,7 +119,7 @@ public abstract class ElementTypeImpl<T extends ElementType<T>> extends NamedImp
     if (findAttributeGroup(name) != null) {
       throw new PSSIFStructuralIntegrityException("An attribute group with the name " + name + " already exists for element type " + getName());
     }
-    AttributeGroupImpl result = new AttributeGroupImpl(name);
+    AttributeGroupImpl result = new AttributeGroupImpl(name, this);
     this.attributeGroups.add(result);
     return result;
   }
