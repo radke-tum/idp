@@ -13,8 +13,7 @@ import graph.model.ConnectionType;
 import graph.model.MyEdge;
 import graph.model.MyNode;
 
-public class VertexStrokeHighlight<V,E> implements
-	    Transformer<V,Stroke>
+public class VertexStrokeHighlight<V,E> implements Transformer<V,Stroke>
 	    {
 	        protected boolean highlight = false;
 	        protected Stroke heavy = new BasicStroke(10);
@@ -23,7 +22,7 @@ public class VertexStrokeHighlight<V,E> implements
 	        protected PickedInfo<V> pi;
 	        protected Graph<V,E> graph;
 	        private LinkedList<ConnectionType> followEdges;
-	        private int dept;
+	        private int depth;
 	        private boolean specialSearch;
 	        
 	        
@@ -31,19 +30,19 @@ public class VertexStrokeHighlight<V,E> implements
 	        {
 	        	this.graph = graph;
 	            this.pi = pi;
-	            this.dept = 1;
+	            this.depth = 1;
 	            this.followEdges = new LinkedList<ConnectionType>();
 	            this.specialSearch=false;
 	            
 	        }
 	        
-	        public void setHighlight(boolean highlight, int searchDept, LinkedList<ConnectionType> followEdges)
+	        public void setHighlight(boolean highlight, int searchDepth, LinkedList<ConnectionType> followEdges)
 	        {
 	            this.highlight = highlight;
-	            this.dept = searchDept;
+	            this.depth = searchDepth;
 	            this.followEdges = followEdges;
 	            
-	            if (this.dept!=1 || this.followEdges.size()!=0)
+	            if (this.depth!=1 || this.followEdges.size()!=0)
 	            	this.specialSearch=true;
 	            else
 	            	this.specialSearch=false;
@@ -61,7 +60,7 @@ public class VertexStrokeHighlight<V,E> implements
 	                {
 	                	if (pi.isPicked(currentNode))
 	                	{
-		                    System.out.println("Heavy");
+		                    System.out.println(((MyNode) currentNode).getName() +"  Heavy");
 	                		return heavy;
 	                	}
 		                else
@@ -75,20 +74,54 @@ public class VertexStrokeHighlight<V,E> implements
 		                			{
 		                				if(searchOutEdges(v, currentNode))
 		                				{
-		                					System.out.println("medium");
+		                					//System.out.println("medium");
+		                					System.out.println(((MyNode) currentNode).getName());
+		                					System.out.println("                             direct Predecessor  Medium ");
 		                					return medium;
 		                				}
 		                				else
 		                				{
-		                					System.out.println("light");
+		                					//System.out.println("light");
+		                					System.out.println(((MyNode) currentNode).getName());
+		                					System.out.println("                              not direct Predecessor  Light ");
 		                					return light;
 		                				}
 		                			}
 		                		}
 		                	}
-		                	System.out.println("outer light");
-		                	return light;
-		                }
+		                	
+		                	if (depth>1)
+            				{
+            					if (searchDept(currentNode, depth, false))
+            					{
+            						System.out.println(((MyNode) currentNode).getName());
+            						System.out.println("                              depth Predecessor  Medium ");
+            						//System.out.println("medium");
+            						System.out.println("----------------------------");
+                					return medium;
+                				}
+                				else
+                				{
+                					System.out.println(((MyNode) currentNode).getName());
+                					System.out.println("                             not depth Predecessor  Light ");
+                					//System.out.println("light");
+                					System.out.println("----------------------------");
+                					return light;
+                				}	
+            				}
+            				else
+            				{
+            					System.out.println(((MyNode) currentNode).getName());
+            					System.out.println("                             depth only 1 Light ");
+            					//System.out.println("light");
+            					return light;
+            				}
+		                		
+	                	}
+	                	/*System.out.println(((MyNode) currentNode).getName());
+	                	System.out.println("                             Predessor null light");
+	                	//System.out.println("outer light");
+	                	return light;*/
 	                	
 	                }
 	                else
@@ -129,9 +162,56 @@ public class VertexStrokeHighlight<V,E> implements
 	        	 return false;
 	        }
 	        
+	        private boolean searchDept(V current, int level, boolean res)
+	        {
+	        	if (level >0)
+	        	{
+	        		Collection<V>  predecessors = graph.getPredecessors(current);
+	        		
+	        		if (predecessors!=null)
+	        		{
+		        		for (V v :predecessors)
+		        		{
+		        			System.out.println("Predcessor test "+ ((MyNode) v).getName());
+		        			if (pi.isPicked(v))
+	            			{
+	            				if(searchOutEdges(v,current))
+	            				{
+	            					res = res || true;
+	            					level=0;
+	            					return res;
+	            				}
+	            				/*else
+	            					return res || false;*/
+
+	            			}
+		        			else
+		        			{
+		        				if(searchOutEdges(v,current))
+		        				{
+		        					System.out.println(((MyNode) current).getName()+" rec");
+		        					return searchDept(v, level--, res);
+		        				}
+		        				/*else
+		        					return res || false;*/
+		        			}
+		        		}
+	        		}
+	        		/*else
+	        			return res || false;*/
+	        	}
+
+
+	        	return res;
+	        }
+	        
 	        public LinkedList<ConnectionType> getFollowEdges()
 	        {
 	        	return this.followEdges;
 	        }
+
+			public int getSearchDepth() {
+				return depth;
+			}
 	        
 }

@@ -1,13 +1,11 @@
 package model;
 
-import edu.uci.ics.jung.graph.util.EdgeType;
 import graph.model.ConnectionType;
 import graph.model.MyEdge;
 import graph.model.MyNode;
 import graph.model.NodeType;
 
 import java.util.LinkedList;
-import java.util.List;
 
 public class Model {
 	
@@ -129,5 +127,8 @@ public class Model {
 		edges.add(new MyEdge(ConnectionType.INCLUDES, elock, testNode));
 		
 	}
+	
+	
+
 
 }

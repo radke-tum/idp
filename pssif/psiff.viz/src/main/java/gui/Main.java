@@ -48,7 +48,7 @@ public class Main {
 		matrix = new MatrixView();
 		graphView = new GraphView();
 
-		frame = new JFrame("PSS-IF");
+		frame = new JFrame("Product Service Integration - Integration Framework ---- Visualisation");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		// Standart start with Graph

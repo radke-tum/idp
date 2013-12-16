@@ -86,11 +86,15 @@ public class GraphVisualization
       this.layout.setSize(new Dimension(i, i));
     }
     this.vv = new VisualizationViewer<MyNode, MyEdge>(this.layout);
-    if (d != null) {
+    if (d != null) 
+    {
       this.vv.setPreferredSize(d);
-    } else {
+    }
+    else 
+    {
       this.vv.setPreferredSize(new Dimension(i, i));
     }
+    
     Transformer<MyNode, Paint> vertexColor = new Transformer<MyNode, Paint>()
     {
       public Paint transform(MyNode i)
@@ -128,6 +132,7 @@ public class GraphVisualization
         return rec;
       }
     };
+    
     Transformer<MyNode, String> vertexLabelTransformer = new ChainedTransformer<MyNode, String>(new Transformer[] {
       new ToStringLabeller<String>(), 
       new Transformer<String,String>()
@@ -137,6 +142,7 @@ public class GraphVisualization
           return "<html>" + input;
         }
       } });
+    
 	  // Set up a new stroke Transformer for the edges
     Transformer<MyEdge, Stroke> edgeTransformer = new Transformer<MyEdge, Stroke>()
     {
@@ -268,13 +274,20 @@ public class GraphVisualization
   
   public void setHighlightNodes(LinkedList<ConnectionType> types)
   {
-	 // if (types.size()==0)
-	//	  this.vsh.setHighlight(true, 1, types);
-	 // else
+	setHighlightNodes(types,vsh.getSearchDepth());
+  }
+  
+  public void setHighlightNodes(LinkedList<ConnectionType> types, int depth)
+  {
 	 this.vsh = new VertexStrokeHighlight<MyNode, MyEdge>(g, this.vv.getPickedVertexState());
-	 this.vsh.setHighlight(true, 1, types);
+	 this.vsh.setHighlight(true, depth, types);
 	 this.vv.getRenderContext().setVertexStrokeTransformer(this.vsh);
 	 this.vv.repaint();
+  }
+  
+  public void setHighlightNodes(int depth)
+  {
+	 setHighlightNodes(vsh.getFollowEdges(), depth);
   }
   
   public LinkedList<ConnectionType> getHighlightNodes()

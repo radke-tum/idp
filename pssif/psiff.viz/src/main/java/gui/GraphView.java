@@ -36,7 +36,10 @@ import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSpinner;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.SpinnerModel;
+import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -200,6 +203,42 @@ public class GraphView {
 		information.add(nodeHighlight,c);
 		c.gridy = (i++);
 		information.add(Box.createVerticalStrut(betweenComps),c);
+		
+		
+		JLabel lblDepthSpinner = new JLabel("Search Depth");
+		c.gridy = (i++);
+		information.add(lblDepthSpinner,c);
+		
+		c.gridy = (i++);
+		information.add(Box.createVerticalStrut(betweenLabelandComp),c);
+		
+		int currentDepth = 1;
+	    SpinnerModel depthModel = new SpinnerNumberModel(currentDepth, //initial value
+	                                       1, //min
+	                                       currentDepth + 100, //max
+	                                       1);
+	    final JSpinner spinner = new JSpinner(depthModel);
+	    
+	    spinner.addChangeListener(new ChangeListener() {
+			
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				Object value = spinner.getValue();
+				if (value instanceof Integer)
+				{
+					int depth = (Integer) value;
+					graph.setHighlightNodes(depth);
+				}
+				
+			}
+		});
+	    
+	    c.gridy = (i++);
+		information.add(spinner,c);
+		c.gridy = (i++);
+		information.add(Box.createVerticalStrut(betweenComps),c);
+		
+		
 		
 		collapseExpand = new JButton("Collapse/Expand Node");
 		collapseExpand.setEnabled(false);
@@ -433,17 +472,17 @@ public class GraphView {
     		Component[] attr = EdgePanel.getComponents();       	
         	for (Component tmp :attr)
         	{
-        		System.out.println("test");
+        		//System.out.println("test");
         		if ((tmp instanceof JCheckBox))
         		{
         			JCheckBox a = (JCheckBox) tmp;
-        			System.out.print(a.getText()+"  ");
-        			System.out.println(a.isSelected());
+        		//	System.out.print(a.getText()+"  ");
+        		//	System.out.println(a.isSelected());
         			
         			// compare which ones where selected
         			 if (a.isSelected())
         			 {
-        				 System.out.println(a.getText());
+        		//		 System.out.println(a.getText());
         				 ConnectionType b = ConnectionType.getValue(a.getText());
         				 res.add(b);
         			 }
