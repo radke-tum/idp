@@ -18,16 +18,13 @@ import de.tum.pssif.core.metamodel.Enumeration;
 import de.tum.pssif.core.metamodel.Metamodel;
 import de.tum.pssif.core.metamodel.NodeType;
 import de.tum.pssif.core.metamodel.PrimitiveDataType;
-import de.tum.pssif.core.metamodel.Unit;
 import de.tum.pssif.core.util.PSSIFUtil;
 
 
 public class MetamodelImpl implements Metamodel {
-  private Map<String, NodeType>          nodetypes      = Maps.newHashMap();
-  private Map<String, EdgeType>          edgetypes      = Maps.newHashMap();
-  private Map<String, Enumeration>       enumerations   = Maps.newHashMap();
-  private Map<String, PrimitiveDataType> primitivetypes = Maps.newHashMap();
-  private Map<String, Unit>              units          = Maps.newHashMap();
+  private Map<String, NodeType>    nodetypes    = Maps.newHashMap();
+  private Map<String, EdgeType>    edgetypes    = Maps.newHashMap();
+  private Map<String, Enumeration> enumerations = Maps.newHashMap();
 
   public MetamodelImpl() {
     NodeType rootNodeType = createNodeType(PSSIFConstants.ROOT_NODE_TYPE_NAME);
@@ -115,23 +112,13 @@ public class MetamodelImpl implements Metamodel {
   }
 
   @Override
-  public Unit findUnit(String name) {
-    return units.get(PSSIFUtil.normalize(name));
-  }
-
-  @Override
-  public Collection<Unit> getUnits() {
-    return Collections.unmodifiableCollection(units.values());
-  }
-
-  @Override
   public DataType findDataType(String name) {
     String normalized = PSSIFUtil.normalize(name);
     if (enumerations.containsKey(normalized)) {
       return enumerations.get(normalized);
     }
     else {
-      return primitivetypes.get(normalized);
+      return findPrimitiveType(normalized);
     }
   }
 
@@ -140,18 +127,18 @@ public class MetamodelImpl implements Metamodel {
     Set<DataType> result = Sets.newHashSet();
 
     result.addAll(enumerations.values());
-    result.addAll(primitivetypes.values());
+    result.addAll(PrimitiveDataType.TYPES);
 
     return Collections.unmodifiableCollection(result);
   }
 
   @Override
   public Collection<PrimitiveDataType> getPrimitiveTypes() {
-    return Collections.unmodifiableCollection(primitivetypes.values());
+    return Collections.unmodifiableCollection(PrimitiveDataType.TYPES);
   }
 
   @Override
   public PrimitiveDataType findPrimitiveType(String name) {
-    return primitivetypes.get(PSSIFUtil.normalize(name));
+    return PSSIFUtil.find(name, PrimitiveDataType.TYPES);
   }
 }

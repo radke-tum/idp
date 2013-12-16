@@ -1,12 +1,12 @@
 package de.tum.pssif.core.metamodel.impl;
 
-import de.tum.pssif.core.metamodel.Attribute;
+import de.tum.pssif.core.metamodel.AttributeType;
 import de.tum.pssif.core.metamodel.AttributeCategory;
 import de.tum.pssif.core.metamodel.DataType;
 import de.tum.pssif.core.metamodel.Unit;
 
 
-public class AttributeImpl extends NamedImpl implements Attribute {
+public class AttributeImpl extends NamedImpl implements AttributeType {
 
   private final DataType          type;
   private final Unit              unit;
@@ -38,10 +38,10 @@ public class AttributeImpl extends NamedImpl implements Attribute {
 
   @Override
   public final boolean equals(Object obj) {
-    if (!(obj instanceof Attribute)) {
+    if (!(obj instanceof AttributeType)) {
       return false;
     }
-    return super.equals(obj) && getType().equals(((Attribute) obj).getType());
+    return super.equals(obj) && getType().equals(((AttributeType) obj).getType());
   }
 
   @Override
@@ -51,7 +51,7 @@ public class AttributeImpl extends NamedImpl implements Attribute {
 
   @Override
   public Class<?> getMetaType() {
-    return Attribute.class;
+    return AttributeType.class;
   }
 
   @Override

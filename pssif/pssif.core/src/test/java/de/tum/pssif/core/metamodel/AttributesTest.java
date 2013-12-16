@@ -33,7 +33,7 @@ public class AttributesTest {
   @Test
   public void testCreatePrimitiveNodeAttribute() {
     nodeA().createAttribute(nodeA().getDefaultAttributeGroup(), "attr", PrimitiveDataType.INTEGER, Units.INCH, true, AttributeCategory.METADATA);
-    Attribute attr = nodeA().findAttribute("attr");
+    AttributeType attr = nodeA().findAttribute("attr");
     assertNotNull(attr);
     assertEquals(PrimitiveDataType.INTEGER, attr.getType());
     assertEquals(Units.INCH, attr.getUnit());
@@ -42,7 +42,7 @@ public class AttributesTest {
   @Test
   public void testCreatePrimitiveEdgeAttribute() {
     edge().createAttribute(nodeA().getDefaultAttributeGroup(), "attr", PrimitiveDataType.INTEGER, Units.INCH, true, AttributeCategory.METADATA);
-    Attribute attr = edge().findAttribute("attr");
+    AttributeType attr = edge().findAttribute("attr");
     assertNotNull(attr);
     assertEquals(PrimitiveDataType.INTEGER, attr.getType());
     assertEquals(Units.INCH, attr.getUnit());
@@ -51,7 +51,7 @@ public class AttributesTest {
   @Test
   public void testRemoveNodeAttribute() {
     nodeA().createAttribute(nodeA().getDefaultAttributeGroup(), "attr", PrimitiveDataType.INTEGER, Units.INCH, true, AttributeCategory.METADATA);
-    Attribute attr = nodeA().findAttribute("attr");
+    AttributeType attr = nodeA().findAttribute("attr");
     assertNotNull(attr);
     assertEquals(PrimitiveDataType.INTEGER, attr.getType());
     assertEquals(Units.INCH, attr.getUnit());
@@ -63,7 +63,7 @@ public class AttributesTest {
   @Test
   public void testRemoveEdgeAttribute() {
     edge().createAttribute(nodeA().getDefaultAttributeGroup(), "attr", PrimitiveDataType.INTEGER, Units.INCH, true, AttributeCategory.METADATA);
-    Attribute attr = edge().findAttribute("attr");
+    AttributeType attr = edge().findAttribute("attr");
     assertNotNull(attr);
     assertEquals(PrimitiveDataType.INTEGER, attr.getType());
     assertEquals(Units.INCH, attr.getUnit());
@@ -92,7 +92,7 @@ public class AttributesTest {
     //should accept null unit, since enums have no units.
     nodeA().createAttribute(nodeA().getDefaultAttributeGroup(), "enumAttr", enumeration, true, AttributeCategory.METADATA);
 
-    Attribute enumAttr = nodeA().findAttribute("enumAttr");
+    AttributeType enumAttr = nodeA().findAttribute("enumAttr");
     assertNotNull(enumAttr);
     assertEquals(enumeration, enumAttr.getType());
     assertEquals("enumAttr", enumAttr.getName());
@@ -207,9 +207,9 @@ public class AttributesTest {
   }
 
   public void testUnits() {
-    assertNotNull(metamodel.findUnit(Units.CENTIMETER.getName()));
-    assertNotNull(metamodel.findUnit(Units.INCH.getName()));
-    assertNotNull(metamodel.findUnit(Units.KILOGRAM.getName()));
+    assertNotNull(Units.CENTIMETER.getName());
+    assertNotNull(Units.INCH.getName());
+    assertNotNull(Units.KILOGRAM.getName());
     //TODO all other units!
   }
 
