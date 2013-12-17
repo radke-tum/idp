@@ -54,13 +54,17 @@ public class GraphView {
 	private JButton nodeHighlight;
 	private JButton collapseExpand;
 	private JButton typeFilter;
+	private boolean active;
 	
 	private Dimension screenSize;
 	
 	public GraphView()
 	{
+		
+		active = false;
+
 		screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-		int x = (int) (screenSize.width*0.9);
+		int x = (int) (screenSize.width*0.85);
 		int y = (int) (screenSize.height*0.9);
 		if (nodeDetails==null)
 			graph = new GraphVisualization(new Dimension(x,y),true);
@@ -79,7 +83,7 @@ public class GraphView {
         parent.setLayout(new BorderLayout());
 		
 		JPanel graphpanel = new JPanel();
-		graphpanel.setBackground(Color.YELLOW);
+		//graphpanel.setBackground(Color.YELLOW);
 		
 		
 		VisualizationViewer<MyNode, MyEdge> vv = graph.getVisualisationViewer();
@@ -89,8 +93,8 @@ public class GraphView {
 		parent.add(graphpanel,BorderLayout.CENTER);
 		
 		JPanel information = new JPanel();
-		information.setBackground(Color.GREEN);
-		int x = (int) (screenSize.width*0.1);
+		information.setBackground(Color.LIGHT_GRAY);
+		int x = (int) (screenSize.width*0.15);
 		int y = (int) (screenSize.height);
 		Dimension d = new Dimension(x,y);
 		information.setMaximumSize(d);
@@ -686,5 +690,14 @@ public class GraphView {
         	graph.applyNodeAndEdgeFilter(selectedNodes, selectedEdges);
 	}
 	}
+
+	public boolean isActive() {
+		return active;
+	}
+
+	public void setActive(boolean active) {
+		this.active = active;
+	}
+	
 	
 }

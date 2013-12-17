@@ -205,44 +205,48 @@ public class ConfigWriterReader {
 	{
 		HashMap<NodeType, Color> res = new HashMap<NodeType, Color>();
 		
-		try
+		
+		if (configFile.exists())
 		{
-			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-			Document doc = dBuilder.parse(configFile);
-		 
-			//optional, but recommended
-			//read this - http://stackoverflow.com/questions/13786607/normalization-in-dom-parsing-with-java-how-does-it-work
-			doc.getDocumentElement().normalize();
-		 
-			//System.out.println("Root element :" + doc.getDocumentElement().getNodeName());
-		 
-			NodeList nList = doc.getElementsByTagName(nodeType);
-		 
-			//System.out.println("----------------------------");
-		 
-			for (int temp = 0; temp < nList.getLength(); temp++) 
+			try
 			{
-		 
-				Node nNode = nList.item(temp);
-		 
-				System.out.println("\nCurrent Element :" + nNode);
-		 
-				if (nNode.getNodeType() == Node.ELEMENT_NODE) {
-		 
-					Element eElement = (Element) nNode;
-					
-					String nodeTypeValue = eElement.getChildNodes().item(0).getNodeValue();	
-					System.out.println(nodeTypeValue);
-					NodeType current = NodeType.getValue(nodeTypeValue);
-					Color c = new Color(Integer.valueOf(eElement.getAttribute(attrColor)));
-					
-					res.put(current, c);
+				DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+				DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+				Document doc = dBuilder.parse(configFile);
+			 
+				//optional, but recommended
+				//read this - http://stackoverflow.com/questions/13786607/normalization-in-dom-parsing-with-java-how-does-it-work
+				doc.getDocumentElement().normalize();
+			 
+				//System.out.println("Root element :" + doc.getDocumentElement().getNodeName());
+			 
+				NodeList nList = doc.getElementsByTagName(nodeType);
+			 
+				//System.out.println("----------------------------");
+			 
+				for (int temp = 0; temp < nList.getLength(); temp++) 
+				{
+			 
+					Node nNode = nList.item(temp);
+			 
+					System.out.println("\nCurrent Element :" + nNode);
+			 
+					if (nNode.getNodeType() == Node.ELEMENT_NODE) {
+			 
+						Element eElement = (Element) nNode;
+						
+						String nodeTypeValue = eElement.getChildNodes().item(0).getNodeValue();	
+						System.out.println(nodeTypeValue);
+						NodeType current = NodeType.getValue(nodeTypeValue);
+						Color c = new Color(Integer.valueOf(eElement.getAttribute(attrColor)));
+						
+						res.put(current, c);
+					}
 				}
-			}
-	    } catch (Exception e) {
-	    	e.printStackTrace();
-	    }
+		    } catch (Exception e) {
+		    	e.printStackTrace();
+		    }
+		}
 		
 		return res;
 	  }

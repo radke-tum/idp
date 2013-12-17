@@ -85,7 +85,9 @@ public class GraphVisualization
     {
       this.layout.setSize(new Dimension(i, i));
     }
+    
     this.vv = new VisualizationViewer<MyNode, MyEdge>(this.layout);
+    
     if (d != null) 
     {
       this.vv.setPreferredSize(d);

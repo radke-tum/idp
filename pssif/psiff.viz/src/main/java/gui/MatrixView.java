@@ -8,6 +8,7 @@ import gui.matrix.RowLegendTable;
 import gui.matrix.TableColumnAdjuster;
 import gui.matrix.VerticalTableHeaderCellRenderer;
 
+import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -28,9 +29,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.ScrollPaneConstants;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
@@ -46,17 +44,15 @@ public class MatrixView {
 	private LinkedList<MyNode> nodes;
 	private LinkedList<MyEdge> edges;
 	private XMLExport xml_exporter;
+	private boolean active;
 
 	public MatrixView() {
-
 		this.matrixPanel = new JPanel();
 		this.mbuilder = new MatrixBuilder();
 		this.xml_exporter = new XMLExport();
-		
+		active = false;	
 	}
-	
-	
-	
+
 	
 	private void drawMatrix()
 	{
@@ -67,7 +63,7 @@ public class MatrixView {
 	
 	private JPanel drawPanels(LinkedList<MyNode> nodes, LinkedList<MyEdge> edges)
 	{
-		JPanel Content = new JPanel();
+		JPanel Content = new JPanel(new BorderLayout());
 		createMatrixContent(Content, nodes, edges);
 		
 		return Content;
@@ -100,10 +96,11 @@ public class MatrixView {
 			//scrollPane.setPreferredSize(mainTable.getSize());
 			//scrollPane.setCorner(JScrollPane.UPPER_LEFT_CORNER,rowTable.getTableHeader());
 			
-			/*mainTable.setEnabled(false);
+			mainTable.setEnabled(false);
 			mainTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 			TableColumnAdjuster tca = new TableColumnAdjuster(mainTable);
-			tca.adjustColumns();*/
+			tca.adjustColumns();
+			
 			TableCellRenderer headerRenderer = new VerticalTableHeaderCellRenderer();
 		    Enumeration<TableColumn> columns = mainTable.getColumnModel().getColumns();
 		      while (columns.hasMoreElements())
@@ -112,7 +109,7 @@ public class MatrixView {
 		        tc.setHeaderRenderer(headerRenderer);
 		      }
 			
-			p.add(scrollPane);
+			p.add(scrollPane, BorderLayout.CENTER);
 			
 		}
 	}
@@ -338,7 +335,8 @@ public class MatrixView {
 	
 	private void exportButton(JPanel panel)
 	  {
-	    JButton button = new JButton("Export Matrix");
+	    JPanel optionPanel = new JPanel();
+		JButton button = new JButton("Export Matrix");
 	    
 	    button.addActionListener(new ActionListener()
 	    {
@@ -357,6 +355,23 @@ public class MatrixView {
 	        }
 	      }
 	    });
-	    panel.add(button);
+	    optionPanel.add(button);
+	    
+	    panel.add(optionPanel, BorderLayout.EAST);
 	  }
+
+
+
+
+	public boolean isActive() {
+		return active;
+	}
+
+
+
+
+	public void setActive(boolean active) {
+		this.active = active;
+	}
+	
 }

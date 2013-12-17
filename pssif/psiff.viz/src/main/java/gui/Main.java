@@ -13,6 +13,8 @@ import java.awt.GraphicsEnvironment;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.util.HashMap;
 
 import javax.swing.BorderFactory;
@@ -36,27 +38,33 @@ import model.Model;
 
 public class Main {
 	
-	private static MatrixView matrix;
+	private static MatrixView matrixView;
 	private static JFrame frame;
 	private static GraphView graphView;
+	
+	private static JMenuItem resetGraph;
+	private static JMenuItem resetMatrix;
+	private static JMenuItem colorNodes;
 	
 	public static void main(String[] args) {
 		
 		Model m = new Model();
 		m.MockData();
 
-		matrix = new MatrixView();
+		matrixView = new MatrixView();
 		graphView = new GraphView();
 
-		frame = new JFrame("Product Service Integration - Integration Framework ---- Visualisation");
+		frame = new JFrame("Product Service Systems - Integration Framework ---- Visualisation");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		// Standart start with Graph
 		frame.getContentPane().add(graphView.getGraphPanel());
+		graphView.setActive(true);
+		matrixView.setActive(false);
 		
-		
-		frame.setJMenuBar(createMenu());
-		//frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+		frame.setJMenuBar(createMenu());		
+
+		adjustButtons();
 		
 		GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
 		int width = gd.getDisplayMode().getWidth()/4;
@@ -83,14 +91,20 @@ public class Main {
 		modeMenu.setPreferredSize(new Dimension(80,20));
 		
 		// Which Visualization
-		JMenu visualisationMenu = new JMenu("Visualisation");
+		JMenu visualisationMenu = new JMenu("Visualisation Mode");
 		JMenuItem graphItem = new JMenuItem("Graph");
 		graphItem.addActionListener(new ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				frame.getContentPane().removeAll();
+				Dimension d = frame.getSize();
+				System.out.println("current Size "+d);
 				frame.getContentPane().add(graphView.getGraphPanel());
+				graphView.setActive(true);
+				matrixView.setActive(false);
+				adjustButtons();
+				frame.setPreferredSize(d);
 				
 				frame.pack();
 				//frame.setExtendedState(Frame.MAXIMIZED_BOTH);
@@ -107,8 +121,13 @@ public class Main {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				frame.getContentPane().removeAll();
-				frame.getContentPane().add(matrix.getVisualization());
-				
+				Dimension d = frame.getSize();
+				System.out.println("current Size "+d);
+				frame.getContentPane().add(matrixView.getVisualization());
+				graphView.setActive(false);
+				matrixView.setActive(true);
+				adjustButtons();
+				frame.setPreferredSize(d);
 				
 				frame.pack();
 				//frame.setExtendedState(Frame.MAXIMIZED_BOTH);
@@ -121,7 +140,7 @@ public class Main {
 		
 		// Reset the Graph or Matrix
 		JMenu resetMenu = new JMenu("Reset");
-		JMenuItem resetGraph = new JMenuItem("Reset Graph");
+		resetGraph = new JMenuItem("Reset Graph");
 		resetGraph.addActionListener(new ActionListener() {
 			
 			@Override
@@ -129,18 +148,21 @@ public class Main {
 				graphView.resetGraph();
 			}
 		});
+
+		
 		resetMenu.add(resetGraph);
-		JMenuItem resetMatrix = new JMenuItem("Reset Matrix");
+		
+		resetMatrix = new JMenuItem("Reset Matrix");
 		resetMatrix.addActionListener(new ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				boolean res = matrix.chooseNodes();
+				boolean res = matrixView.chooseNodes();
 				
 				if (res)
 				{
 					frame.getContentPane().removeAll();
-					frame.getContentPane().add(matrix.getVisualization());
+					frame.getContentPane().add(matrixView.getVisualization());
 					
 					
 					frame.pack();
@@ -154,7 +176,7 @@ public class Main {
 		
 		// Color Options
 		JMenu colorMenu = new JMenu("Colors");
-		JMenuItem colorNodes = new JMenuItem("Node color");
+		colorNodes = new JMenuItem("Choose Node color");
 		colorNodes.addActionListener(new ActionListener() {
 			
 			@Override
@@ -216,6 +238,36 @@ public class Main {
     		graphView.getGraph().setNodeColorMapping(colors);
     		
     	}
+	}
+	
+	private static void adjustButtons()
+	{
+		if (graphView.isActive())
+		{
+			resetGraph.setEnabled(true);
+			resetMatrix.setEnabled(false);
+			colorNodes.setEnabled(true);
+		}
+		/*else
+		{
+			resetGraph.setEnabled(false);
+			resetMatrix.setEnabled(true);
+			colorNodes.setEnabled(false);
+		}*/
+		
+		if (matrixView.isActive())
+		{
+			resetGraph.setEnabled(false);
+			resetMatrix.setEnabled(true);
+			colorNodes.setEnabled(false);
+		}
+		/*else
+		{
+			resetGraph.setEnabled(true);
+			resetMatrix.setEnabled(false);
+			colorNodes.setEnabled(true);
+		}*/
+			
 	}
 }
 
