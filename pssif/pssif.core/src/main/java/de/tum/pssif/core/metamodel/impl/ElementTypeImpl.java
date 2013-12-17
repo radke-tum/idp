@@ -8,9 +8,9 @@ import com.google.common.collect.Sets;
 
 import de.tum.pssif.core.PSSIFConstants;
 import de.tum.pssif.core.exception.PSSIFStructuralIntegrityException;
-import de.tum.pssif.core.metamodel.Attribute;
 import de.tum.pssif.core.metamodel.AttributeCategory;
 import de.tum.pssif.core.metamodel.AttributeGroup;
+import de.tum.pssif.core.metamodel.AttributeType;
 import de.tum.pssif.core.metamodel.DataType;
 import de.tum.pssif.core.metamodel.ElementType;
 import de.tum.pssif.core.metamodel.PrimitiveDataType;
@@ -53,8 +53,8 @@ public abstract class ElementTypeImpl<T extends ElementType<T>> extends NamedImp
   }
 
   @Override
-  public Attribute findAttribute(String name) {
-    Attribute result = null;
+  public AttributeType findAttribute(String name) {
+    AttributeType result = null;
     for (AttributeGroup group : getAttributeGroups()) {
       result = group.findAttribute(name);
       if (result != null) {
@@ -65,8 +65,8 @@ public abstract class ElementTypeImpl<T extends ElementType<T>> extends NamedImp
   }
 
   @Override
-  public Collection<Attribute> getAttributes() {
-    Collection<Attribute> attrs = Sets.newHashSet();
+  public Collection<AttributeType> getAttributes() {
+    Collection<AttributeType> attrs = Sets.newHashSet();
     for (AttributeGroup group : getAttributeGroups()) {
       attrs.addAll(group.getAttributes());
     }
@@ -74,7 +74,7 @@ public abstract class ElementTypeImpl<T extends ElementType<T>> extends NamedImp
   }
 
   @Override
-  public Attribute createAttribute(AttributeGroup group, String name, DataType type, Unit unit, boolean visible, AttributeCategory category) {
+  public AttributeType createAttribute(AttributeGroup group, String name, DataType type, Unit unit, boolean visible, AttributeCategory category) {
     if (name == null || name.trim().isEmpty()) {
       throw new PSSIFStructuralIntegrityException("name can not be null or empty");
     }
@@ -98,12 +98,12 @@ public abstract class ElementTypeImpl<T extends ElementType<T>> extends NamedImp
   }
 
   @Override
-  public Attribute createAttribute(AttributeGroup group, String name, DataType dataType, boolean visible, AttributeCategory category) {
+  public AttributeType createAttribute(AttributeGroup group, String name, DataType dataType, boolean visible, AttributeCategory category) {
     return createAttribute(group, name, dataType, Units.NONE, visible, category);
   }
 
   @Override
-  public void removeAttribute(Attribute attribute) {
+  public void removeAttribute(AttributeType attribute) {
     for (AttributeGroup group : getAttributeGroups()) {
       if (group.findAttribute(attribute.getName()) != null) {
         group.removeAttribute(attribute);

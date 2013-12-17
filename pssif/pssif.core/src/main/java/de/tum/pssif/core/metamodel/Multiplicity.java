@@ -5,17 +5,59 @@ import java.io.Serializable;
 import com.google.common.base.Preconditions;
 
 
+/**
+ * A multiplicity of an {@link EdgeEnd}. Contains two pairs of lower and upper bounds:
+ * <li>edge end multiplicity: the number of edge end associations a <b>single</b> edge
+ * can have with regard to the corresponding edge end (used e.g. for XOR edge ends).
+ * Must be at least one for from and to edge ends.</li>
+ * <li>edge type multiplicity: the number of edges which can be associated with a node
+ * over the corresponding edge end. </li>
+ *
+ */
 public interface Multiplicity {
+
+  /**
+   * @return
+   *    The lower bound for edge end associations within a single edge end.
+   */
   int getEdgeEndLower();
 
+  /**
+   * @return
+   *    The upper bound for edge end associations within a single edge end.
+   */
   UnlimitedNatural getEdgeEndUpper();
 
+  /**
+   * @return
+   *    The lower bound for the number of edges associated with a node over an edge end.
+   */
   int getEdgeTypeLower();
 
+  /**
+   * @return
+   *    The upper bound for the number of edges associated with a node over an edge end.
+   */
   UnlimitedNatural getEdgeTypeUpper();
 
+  /**
+   * Returns true if the provided count is
+   * in the valid range of the edge end multiplicity.
+   * @param count
+   *    The count to check.
+   * @return
+   *    true if the count is within bounds, false otherwise.
+   */
   boolean includesEdgeType(int count);
 
+  /**
+   * Retrurns true if the provided count is
+   * in the valid range of the edge type multiplicity.
+   * @param count
+   *    The count to check.
+   * @return
+   *   true if the count is within bounds, false otherwise.
+   */
   boolean includesEdgeEnd(int count);
 
   public static final class MultiplicityContainer implements Multiplicity {

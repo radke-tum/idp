@@ -88,6 +88,8 @@ public class ModelTest {
     hw2sw.connectTo(smartphoneContainment, gpsApp);
   }
 
+  //TODO test attributes
+
   private NodeType node(String name) {
     return metamodel.findNodeType(name);
   }

@@ -8,14 +8,14 @@ import java.util.Set;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
-import de.tum.pssif.core.metamodel.Attribute;
+import de.tum.pssif.core.metamodel.AttributeType;
 import de.tum.pssif.core.metamodel.AttributeGroup;
 import de.tum.pssif.core.util.PSSIFUtil;
 
 
 public class AttributeGroupImpl extends NamedImpl implements AttributeGroup {
 
-  private final Map<String, Attribute> attributes = Maps.newHashMap();
+  private final Map<String, AttributeType> attributes = Maps.newHashMap();
   private final ElementTypeImpl<?>     owner;
 
   public AttributeGroupImpl(String name, ElementTypeImpl<?> owner) {
@@ -28,8 +28,8 @@ public class AttributeGroupImpl extends NamedImpl implements AttributeGroup {
   }
 
   @Override
-  public Attribute findAttribute(String name) {
-    Attribute result = this.attributes.get(PSSIFUtil.normalize(name));
+  public AttributeType findAttribute(String name) {
+    AttributeType result = this.attributes.get(PSSIFUtil.normalize(name));
     if (result != null) {
       return result;
     }
@@ -41,8 +41,8 @@ public class AttributeGroupImpl extends NamedImpl implements AttributeGroup {
   }
 
   @Override
-  public Collection<Attribute> getAttributes() {
-    Set<Attribute> result = Sets.newHashSet(this.attributes.values());
+  public Collection<AttributeType> getAttributes() {
+    Set<AttributeType> result = Sets.newHashSet(this.attributes.values());
     if (owner.getGeneral() != null && owner.getGeneral().findAttributeGroup(getName()) != null) {
       result.addAll(owner.getGeneral().findAttributeGroup(getName()).getAttributes());
     }
@@ -51,7 +51,7 @@ public class AttributeGroupImpl extends NamedImpl implements AttributeGroup {
   }
 
   @Override
-  public void removeAttribute(Attribute attribute) {
+  public void removeAttribute(AttributeType attribute) {
     attributes.remove(PSSIFUtil.normalize(attribute.getName()));
     //TODO fail if attribute not found?
   }
