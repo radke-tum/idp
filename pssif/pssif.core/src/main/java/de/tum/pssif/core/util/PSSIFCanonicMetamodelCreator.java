@@ -1,5 +1,6 @@
 package de.tum.pssif.core.util;
 
+import de.tum.pssif.core.PSSIFConstants;
 import de.tum.pssif.core.metamodel.AttributeCategory;
 import de.tum.pssif.core.metamodel.EdgeType;
 import de.tum.pssif.core.metamodel.Metamodel;
@@ -35,6 +36,8 @@ public final class PSSIFCanonicMetamodelCreator {
   public static final String N_SERVICE                                 = "Service";
   public static final String N_SOFTWARE                                = "Software";
   public static final String N_HARDWARE                                = "Hardware";
+  public static final String N_MECHANIC                                = "Mechanic";
+  public static final String N_ELECTRONIC                              = "Electronic";
 
   public static final String A_DURATION                                = "duration";
   public static final String A_REQUIREMENT_PRIORITY                    = "priority";
@@ -165,11 +168,20 @@ public final class PSSIFCanonicMetamodelCreator {
     NodeType hardware = metamodel.createNodeType(N_HARDWARE);
     hardware.inherit(block);
     hardware.createAttribute(hardware.getDefaultAttributeGroup(), A_HARDWARE_WEIGHT, PrimitiveDataType.DECIMAL, true, AttributeCategory.WEIGHT);
+
+    NodeType mechanic = metamodel.createNodeType(N_MECHANIC);
+    mechanic.inherit(hardware);
+
+    NodeType electronic = metamodel.createNodeType(N_ELECTRONIC);
+    electronic.inherit(hardware);
   }
 
   private static void createRelationships(MetamodelImpl metamodel) {
     EdgeType relationship = metamodel.createEdgeType(E_RELATIONSHIP);
-    //TODO mappings?
+    relationship.createMapping("from", node(N_FUNCTION, metamodel), defaultNoneToManyMultiplicity(), "to",
+        node(PSSIFConstants.ROOT_NODE_TYPE_NAME, metamodel), defaultNoneToManyMultiplicity());
+    relationship.createMapping("from", node(PSSIFConstants.ROOT_NODE_TYPE_NAME, metamodel), defaultNoneToManyMultiplicity(), "to",
+        node(N_FUNCTION, metamodel), defaultNoneToManyMultiplicity());
 
     createAttributionalRelationships(metamodel, relationship);
     createChronologicalRelationships(metamodel, relationship);
@@ -181,7 +193,6 @@ public final class PSSIFCanonicMetamodelCreator {
   }
 
   private static void createAttributionalRelationships(MetamodelImpl metamodel, EdgeType relationship) {
-    //TODO mappings?
     EdgeType attributionalRelationship = metamodel.createEdgeType(E_RELATIONSHIP_ATTRIBUTIONAL);
     attributionalRelationship.inherit(relationship);
 
@@ -196,7 +207,6 @@ public final class PSSIFCanonicMetamodelCreator {
   }
 
   private static void createChronologicalRelationships(MetamodelImpl metamodel, EdgeType relationship) {
-    //TODO mappings?
     EdgeType chronologicalRelationship = metamodel.createEdgeType(E_RELATIONSHIP_CHRONOLOGICAL);
     chronologicalRelationship.inherit(relationship);
 
@@ -217,7 +227,6 @@ public final class PSSIFCanonicMetamodelCreator {
   }
 
   private static void createReferentialRelationships(MetamodelImpl metamodel, EdgeType relationship) {
-    //TODO mappings?
     EdgeType referentialRelationship = metamodel.createEdgeType(E_RELATIONSHIP_REFERENTIAL);
     referentialRelationship.inherit(relationship);
 
@@ -235,7 +244,6 @@ public final class PSSIFCanonicMetamodelCreator {
   }
 
   private static void createInclusionRelationships(MetamodelImpl metamodel, EdgeType relationship) {
-    //TODO mappings?
     EdgeType inclusionRelationship = metamodel.createEdgeType(E_RELATIONSHIP_INCLUSION);
     inclusionRelationship.inherit(relationship);
 
@@ -250,7 +258,6 @@ public final class PSSIFCanonicMetamodelCreator {
   }
 
   private static void createCausalRelationships(MetamodelImpl metamodel, EdgeType relationship) {
-    //TODO mappings?
     EdgeType causalRelationship = metamodel.createEdgeType(E_RELATIONSHIP_CAUSAL);
     causalRelationship.inherit(relationship);
 
@@ -271,7 +278,6 @@ public final class PSSIFCanonicMetamodelCreator {
   }
 
   private static void createLogicalRelationships(MetamodelImpl metamodel, EdgeType relationship) {
-    //TODO mappings?
     EdgeType logicalRelationship = metamodel.createEdgeType(E_RELATIONSHIP_LOGICAL);
     logicalRelationship.inherit(relationship);
 
@@ -298,7 +304,6 @@ public final class PSSIFCanonicMetamodelCreator {
     EdgeType flow = metamodel.createEdgeType(E_FLOW);
     flow.createMapping("from", node(N_SOL_ARTIFACT, metamodel), defaultNoneToManyMultiplicity(), "to", node(N_SOL_ARTIFACT, metamodel),
         defaultNoneToManyMultiplicity());
-    //TODO what about the data object?
 
     NodeType block = node(N_BLOCK, metamodel);
 
