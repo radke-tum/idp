@@ -92,6 +92,6 @@ public final class EdgeEndImpl extends NamedImpl implements EdgeEnd {
   }
 
   public String toString() {
-    return "EdgeEnd:" + this.getName();
+    return "EdgeEnd:" + this.getName() + "(" + getNodeType() + ", " + getEdgeType() + ")";
   }
 }
