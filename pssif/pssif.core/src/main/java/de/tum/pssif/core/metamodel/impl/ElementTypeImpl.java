@@ -82,7 +82,7 @@ public abstract class ElementTypeImpl<T extends ElementType<T>> extends NamedImp
     //to overload attributes in specialization element types
     //we need to find only locally, and filter on getAttributes
     //so that inherited attributes are only taken when no local ones exist.
-    if (findAttribute(name) != null) {
+    if (findAttribute(name) != null || findAttributeInSpecializations(name) != null) {
       throw new PSSIFStructuralIntegrityException("duplicate attribute with name " + name);
     }
     if (!(PrimitiveDataType.DECIMAL.equals(type) || PrimitiveDataType.INTEGER.equals(type)) && !Units.NONE.equals(unit)) {
@@ -95,6 +95,16 @@ public abstract class ElementTypeImpl<T extends ElementType<T>> extends NamedImp
     AttributeImpl result = new AttributeImpl(name, type, unit, visible, category);
     actual.addAttribute(result);
     return result;
+  }
+
+  private AttributeType findAttributeInSpecializations(String name) {
+    for (T specialization : getSpecials()) {
+      AttributeType attr = specialization.findAttribute(name);
+      if (attr != null) {
+        return attr;
+      }
+    }
+    return null;
   }
 
   @Override

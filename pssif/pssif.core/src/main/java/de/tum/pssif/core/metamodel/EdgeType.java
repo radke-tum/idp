@@ -66,6 +66,8 @@ public interface EdgeType extends ElementType<EdgeType> {
    */
   ConnectionMapping getMapping(NodeType in, NodeType out);
 
+  Collection<ConnectionMapping> getMappings();
+
   /**
    * @return
    *    The collection of auxiliary edge ends.

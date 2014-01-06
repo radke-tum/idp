@@ -1,8 +1,13 @@
 package de.tum.pssif.core.util;
 
 import java.util.Collection;
+import java.util.Set;
 
+import com.google.common.collect.Sets;
+
+import de.tum.pssif.core.metamodel.EdgeEnd;
 import de.tum.pssif.core.metamodel.Named;
+import de.tum.pssif.core.metamodel.traits.Specializable;
 
 
 /**
@@ -53,5 +58,49 @@ public class PSSIFUtil {
       }
     }
     return null;
+  }
+
+  public static <T extends Specializable<T>> Collection<T> specializationsClosure(T element) {
+    Set<T> result = Sets.newHashSet();
+    for (T spec : element.getSpecials()) {
+      result.addAll(specializationsClosure(spec));
+    }
+    return result;
+  }
+
+  public static <T extends Specializable<T>> Collection<T> generalizationsClosure(T element) {
+    Set<T> result = Sets.newHashSet();
+    T next = element;
+    while (next.getGeneral() != null) {
+      next = next.getGeneral();
+      result.add(next);
+    }
+    return result;
+  }
+
+  public static <T extends Specializable<T>> boolean isReadCompatibleWith(T element, T readableAs) {
+    return generalizationsClosure(element).contains(readableAs);
+  }
+
+  public static <T extends Specializable<T>> boolean isWriteCompatibleWith(T element, T writableAs) {
+    return specializationsClosure(element).contains(writableAs);
+  }
+
+  public static <T extends Specializable<T>> boolean hasSpecializationIn(T element, Collection<T> collection) {
+    for (T candidate : collection) {
+      if (isReadCompatibleWith(candidate, element)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  public static boolean hasSpecializationIn(EdgeEnd element, Collection<EdgeEnd> collection) {
+    for (EdgeEnd candidate : collection) {
+      if (areSame(element.getName(), candidate.getName()) && isReadCompatibleWith(candidate.getNodeType(), element.getNodeType())) {
+        return true;
+      }
+    }
+    return false;
   }
 }
