@@ -1,6 +1,7 @@
 package de.tum.pssif.core.metamodel;
 
 import de.tum.pssif.core.model.Element;
+import de.tum.pssif.core.util.PSSIFValue;
 
 
 /**
@@ -42,7 +43,7 @@ public interface AttributeType extends Named {
    * @param element the {@link Element}
    * @param value the value to set
    */
-  void set(Element element, Object value);
+  void set(Element element, PSSIFValue value);
 
   /**
    * Get the value for this {@link AttributeType} for the specified {@link Element}

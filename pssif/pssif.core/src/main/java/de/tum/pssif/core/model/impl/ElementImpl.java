@@ -13,18 +13,19 @@ import de.tum.pssif.core.metamodel.impl.GetValueOperation;
 import de.tum.pssif.core.metamodel.impl.SetValueOperation;
 import de.tum.pssif.core.model.Element;
 import de.tum.pssif.core.util.PSSIFUtil;
+import de.tum.pssif.core.util.PSSIFValue;
 
 
 abstract class ElementImpl implements Element {
-  private Map<String, Object> values = Maps.newHashMap();
+  private Map<String, PSSIFValue> values = Maps.newHashMap();
 
   @Override
-  public Object getValue(GetValueOperation op) {
+  public PSSIFValue apply(GetValueOperation op) {
     return values.get(op.getAttributeType().getName());
   }
 
   @Override
-  public void setValue(SetValueOperation op) {
+  public void apply(SetValueOperation op) {
     values.put(op.getAttributeType().getName(), op.getValue());
   }
 

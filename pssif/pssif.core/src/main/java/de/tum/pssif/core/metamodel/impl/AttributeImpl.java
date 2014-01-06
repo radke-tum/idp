@@ -5,6 +5,7 @@ import de.tum.pssif.core.metamodel.AttributeType;
 import de.tum.pssif.core.metamodel.DataType;
 import de.tum.pssif.core.metamodel.Unit;
 import de.tum.pssif.core.model.Element;
+import de.tum.pssif.core.util.PSSIFValue;
 
 
 public class AttributeImpl extends NamedImpl implements AttributeType {
@@ -66,13 +67,13 @@ public class AttributeImpl extends NamedImpl implements AttributeType {
   }
 
   @Override
-  public void set(Element element, Object value) {
-    element.setValue(new SetValueOperation(this, value));
+  public void set(Element element, PSSIFValue value) {
+    new SetValueOperation(this, value).apply(element);
   }
 
   @Override
-  public Object get(Element element) {
-    return element.getValue(new GetValueOperation(this));
+  public PSSIFValue get(Element element) {
+    return new GetValueOperation(this).apply(element);
   }
 
 }
