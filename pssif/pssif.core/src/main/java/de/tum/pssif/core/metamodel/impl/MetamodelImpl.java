@@ -16,6 +16,8 @@ import de.tum.pssif.core.metamodel.EdgeType;
 import de.tum.pssif.core.metamodel.ElementType;
 import de.tum.pssif.core.metamodel.Enumeration;
 import de.tum.pssif.core.metamodel.Metamodel;
+import de.tum.pssif.core.metamodel.Multiplicity.MultiplicityContainer;
+import de.tum.pssif.core.metamodel.Multiplicity.UnlimitedNatural;
 import de.tum.pssif.core.metamodel.NodeType;
 import de.tum.pssif.core.metamodel.PrimitiveDataType;
 import de.tum.pssif.core.util.PSSIFUtil;
@@ -35,6 +37,8 @@ public class MetamodelImpl implements Metamodel {
     addDefaultAttributes(rootEdgeType);
     rootEdgeType.createAttribute(rootEdgeType.getDefaultAttributeGroup(), PSSIFConstants.BUILTIN_ATTRIBUTE_DIRECTED, PrimitiveDataType.BOOLEAN, true,
         AttributeCategory.METADATA);
+    rootEdgeType.createMapping("from", rootNodeType, MultiplicityContainer.of(1, UnlimitedNatural.UNLIMITED, 0, UnlimitedNatural.UNLIMITED), "to",
+        rootNodeType, MultiplicityContainer.of(1, UnlimitedNatural.UNLIMITED, 0, UnlimitedNatural.UNLIMITED));
   }
 
   private final void addDefaultAttributes(ElementType<?> type) {

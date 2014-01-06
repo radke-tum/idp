@@ -1,8 +1,10 @@
 package de.tum.pssif.core.util;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import de.tum.pssif.core.metamodel.EdgeEnd;
@@ -68,8 +70,8 @@ public class PSSIFUtil {
     return result;
   }
 
-  public static <T extends Specializable<T>> Collection<T> generalizationsClosure(T element) {
-    Set<T> result = Sets.newHashSet();
+  public static <T extends Specializable<T>> List<T> generalizationsClosure(T element) {
+    List<T> result = Lists.newArrayList();
     T next = element;
     while (next.getGeneral() != null) {
       next = next.getGeneral();
