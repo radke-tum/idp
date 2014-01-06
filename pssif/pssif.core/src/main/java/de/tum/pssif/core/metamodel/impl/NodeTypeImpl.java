@@ -99,7 +99,7 @@ public class NodeTypeImpl extends ElementTypeImpl<NodeType> implements NodeType 
 
   @Override
   public PSSIFOption<Node> apply(Model model) {
-    PSSIFOption<Node> result = PSSIFOption.none();
+    PSSIFOption<Node> result = new ReadNodesOperation(this).apply(model);
     for (NodeType currentType : PSSIFUtil.specializationsClosure((NodeType) this)) {
       result = PSSIFOption.merge(result, new ReadNodesOperation(currentType).apply(model));
     }
@@ -111,6 +111,7 @@ public class NodeTypeImpl extends ElementTypeImpl<NodeType> implements NodeType 
     return NodeType.class;
   }
 
+  @Override
   public String toString() {
     return "NodeType:" + this.getName();
   }
