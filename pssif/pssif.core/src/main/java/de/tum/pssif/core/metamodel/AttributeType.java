@@ -1,5 +1,8 @@
 package de.tum.pssif.core.metamodel;
 
+import de.tum.pssif.core.model.Element;
+
+
 /**
  * Concept which is used in the meta-model
  * to describe attributes.
@@ -33,4 +36,19 @@ public interface AttributeType extends Named {
    */
   AttributeCategory getCategory();
 
+  /**
+   * Set the specified value as value of this {@link AttributeType} for the specified {@link Element}
+   * 
+   * @param element the {@link Element}
+   * @param value the value to set
+   */
+  void set(Element element, Object value);
+
+  /**
+   * Get the value for this {@link AttributeType} for the specified {@link Element}
+   * 
+   * @param element the {@link Element}
+   * @return the value of this {@link AttributeType} for the specified {@link Element}
+   */
+  Object get(Element element);
 }

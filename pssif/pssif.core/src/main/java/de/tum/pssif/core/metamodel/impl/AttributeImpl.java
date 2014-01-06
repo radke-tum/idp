@@ -4,6 +4,7 @@ import de.tum.pssif.core.metamodel.AttributeCategory;
 import de.tum.pssif.core.metamodel.AttributeType;
 import de.tum.pssif.core.metamodel.DataType;
 import de.tum.pssif.core.metamodel.Unit;
+import de.tum.pssif.core.model.Element;
 
 
 public class AttributeImpl extends NamedImpl implements AttributeType {
@@ -59,8 +60,19 @@ public class AttributeImpl extends NamedImpl implements AttributeType {
     return this.category;
   }
 
+  @Override
   public String toString() {
     return "Attribute:" + this.getName();
+  }
+
+  @Override
+  public void set(Element element, Object value) {
+    element.setValue(new SetValueOperation(this, value));
+  }
+
+  @Override
+  public Object get(Element element) {
+    return element.getValue(new GetValueOperation(this));
   }
 
 }
