@@ -7,6 +7,7 @@ import java.util.Set;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
+import de.tum.pssif.core.PSSIFConstants;
 import de.tum.pssif.core.metamodel.EdgeEnd;
 import de.tum.pssif.core.metamodel.impl.EdgeEndImpl;
 import de.tum.pssif.core.metamodel.impl.GetValueOperation;
@@ -18,6 +19,11 @@ import de.tum.pssif.core.util.PSSIFValue;
 
 abstract class ElementImpl implements Element {
   private Map<String, PSSIFValue> values = Maps.newHashMap();
+
+  @Override
+  public String getId() {
+    return values.get(PSSIFConstants.BUILTIN_ATTRIBUTE_ID).asString();
+  }
 
   @Override
   public PSSIFValue apply(GetValueOperation op) {

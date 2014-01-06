@@ -9,6 +9,8 @@ import de.tum.pssif.core.util.PSSIFValue;
  * Common super-type for nodes and edges.
  */
 public interface Element {
+  String getId();
+
   void apply(SetValueOperation op);
 
   PSSIFValue apply(GetValueOperation op);
