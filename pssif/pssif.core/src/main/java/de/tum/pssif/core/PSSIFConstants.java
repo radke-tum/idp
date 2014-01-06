@@ -14,6 +14,8 @@ public final class PSSIFConstants {
   public static final String BUILTIN_ATTRIBUTE_VERSION        = "version";
   public static final String BUILTIN_ATTRIBUTE_COMMENT        = "comment";
 
+  public static final String BUILTIN_ATTRIBUTE_DIRECTED       = "directed";
+
   private PSSIFConstants() {
     //Nop
   }

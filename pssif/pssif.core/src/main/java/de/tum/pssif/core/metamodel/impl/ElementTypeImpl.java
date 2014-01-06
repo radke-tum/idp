@@ -43,13 +43,24 @@ public abstract class ElementTypeImpl<T extends ElementType<T>> extends NamedImp
   @SuppressWarnings("unchecked")
   @Override
   public void inherit(T general) {
+    if (this.equals(general)) {
+      throw new PSSIFStructuralIntegrityException("can not inherit self");
+    }
+    if (this.general != null) {
+      this.general.unregisterSpecialization((T) this);
+    }
     this.general = general;
-    general.registerSpecialization((T) this);
+    this.general.registerSpecialization((T) this);
   }
 
   @Override
   public void registerSpecialization(T special) {
     specializations.add(special);
+  }
+
+  @Override
+  public void unregisterSpecialization(T special) {
+    specializations.remove(special);
   }
 
   @Override

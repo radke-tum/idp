@@ -90,4 +90,8 @@ public final class EdgeEndImpl extends NamedImpl implements EdgeEnd {
   public Class<?> getMetaType() {
     return EdgeEnd.class;
   }
+
+  public String toString() {
+    return "EdgeEnd:" + this.getName();
+  }
 }

@@ -110,4 +110,8 @@ public class NodeTypeImpl extends ElementTypeImpl<NodeType> implements NodeType 
   public Class<?> getMetaType() {
     return NodeType.class;
   }
+
+  public String toString() {
+    return "NodeType:" + this.getName();
+  }
 }

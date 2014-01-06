@@ -27,10 +27,14 @@ public class MetamodelImpl implements Metamodel {
   private Map<String, Enumeration> enumerations = Maps.newHashMap();
 
   public MetamodelImpl() {
-    NodeType rootNodeType = createNodeType(PSSIFConstants.ROOT_NODE_TYPE_NAME);
+    NodeType rootNodeType = new NodeTypeImpl(PSSIFConstants.ROOT_NODE_TYPE_NAME);
+    nodetypes.put(PSSIFUtil.normalize(PSSIFConstants.ROOT_NODE_TYPE_NAME), rootNodeType);
     addDefaultAttributes(rootNodeType);
-    EdgeType rootEdgeType = createEdgeType(PSSIFConstants.ROOT_EDGE_TYPE_NAME);
+    EdgeType rootEdgeType = new EdgeTypeImpl(PSSIFConstants.ROOT_EDGE_TYPE_NAME);
+    edgetypes.put(PSSIFUtil.normalize(PSSIFConstants.ROOT_EDGE_TYPE_NAME), rootEdgeType);
     addDefaultAttributes(rootEdgeType);
+    rootEdgeType.createAttribute(rootEdgeType.getDefaultAttributeGroup(), PSSIFConstants.BUILTIN_ATTRIBUTE_DIRECTED, PrimitiveDataType.BOOLEAN, true,
+        AttributeCategory.METADATA);
   }
 
   private final void addDefaultAttributes(ElementType<?> type) {
@@ -50,15 +54,23 @@ public class MetamodelImpl implements Metamodel {
 
   @Override
   public NodeType createNodeType(String name) {
+    if (findNodeType(name) != null) {
+      throw new PSSIFStructuralIntegrityException("a node type with the name " + name + " already exists");
+    }
     NodeType result = new NodeTypeImpl(name);
     nodetypes.put(PSSIFUtil.normalize(name), result);
+    result.inherit(findNodeType(PSSIFConstants.ROOT_NODE_TYPE_NAME));
     return result;
   }
 
   @Override
   public EdgeType createEdgeType(String name) {
+    if (findEdgeType(name) != null) {
+      throw new PSSIFStructuralIntegrityException("an edge type with name " + name + " already exitsts");
+    }
     EdgeType result = new EdgeTypeImpl(name);
     edgetypes.put(PSSIFUtil.normalize(name), result);
+    result.inherit(findEdgeType(PSSIFConstants.ROOT_EDGE_TYPE_NAME));
     return result;
   }
 

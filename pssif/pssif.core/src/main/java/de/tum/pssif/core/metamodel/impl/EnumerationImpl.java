@@ -54,4 +54,8 @@ public class EnumerationImpl extends NamedImpl implements Enumeration {
   public Class<?> getMetaType() {
     return Enumeration.class;
   }
+
+  public String toString() {
+    return "Enumeration:" + this.getName();
+  }
 }

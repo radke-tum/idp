@@ -1,7 +1,7 @@
 package de.tum.pssif.core.metamodel.impl;
 
-import de.tum.pssif.core.metamodel.AttributeType;
 import de.tum.pssif.core.metamodel.AttributeCategory;
+import de.tum.pssif.core.metamodel.AttributeType;
 import de.tum.pssif.core.metamodel.DataType;
 import de.tum.pssif.core.metamodel.Unit;
 
@@ -57,6 +57,10 @@ public class AttributeImpl extends NamedImpl implements AttributeType {
   @Override
   public AttributeCategory getCategory() {
     return this.category;
+  }
+
+  public String toString() {
+    return "Attribute:" + this.getName();
   }
 
 }

@@ -33,4 +33,8 @@ public class EdgeEndBundleImpl implements ElementApplicable {
     }
     return result;
   }
+
+  public String toString() {
+    return "EdgeEndBundle(" + this.bundled + ")";
+  }
 }

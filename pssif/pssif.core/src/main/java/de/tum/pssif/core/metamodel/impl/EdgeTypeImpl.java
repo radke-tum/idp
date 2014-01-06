@@ -147,4 +147,8 @@ public class EdgeTypeImpl extends ElementTypeImpl<EdgeType> implements EdgeType 
     return EdgeType.class;
   }
 
+  public String toString() {
+    return "EdgeType:" + this.getName();
+  }
+
 }

@@ -23,9 +23,8 @@ public class ModelTest {
   @Before
   public void init() {
     metamodel = new MetamodelImpl();
-    NodeType node = metamodel.createNodeType("node");
     NodeType development = metamodel.createNodeType("development artifact");
-    development.inherit(node);
+
     NodeType solution = metamodel.createNodeType("solution artifact");
     solution.inherit(development);
     NodeType hardware = metamodel.createNodeType("hardware");

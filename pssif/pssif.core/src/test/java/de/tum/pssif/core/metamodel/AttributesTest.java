@@ -26,8 +26,6 @@ public class AttributesTest {
     NodeType b = metamodel.createNodeType("B");
     Multiplicity inMult = MultiplicityContainer.of(1, 1, 0, UnlimitedNatural.UNLIMITED);
     Multiplicity outMult = MultiplicityContainer.of(1, 1, 0, UnlimitedNatural.UNLIMITED);
-    EdgeType edgeType = metamodel.createEdgeType("edge");
-    edgeType.createMapping("in", a, inMult, "out", b, outMult);
   }
 
   @Test

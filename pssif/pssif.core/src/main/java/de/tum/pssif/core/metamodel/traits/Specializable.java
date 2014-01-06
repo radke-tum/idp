@@ -37,4 +37,11 @@ public interface Specializable<T> {
    * @param special
    */
   void registerSpecialization(T special);
+
+  /**
+   * Un-registers a specialization from its generalizaton.
+   * <b>USED INTERNALLY ONLY!</b> TODO get rid of it.
+   * @param special
+   */
+  void unregisterSpecialization(T special);
 }
