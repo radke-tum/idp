@@ -12,7 +12,7 @@ import de.tum.pssif.core.metamodel.impl.MetamodelImpl;
 
 
 public class MetamodelTest {
-  private Metamodel metamodel = new MetamodelImpl();
+  private MutableMetamodel metamodel = new MetamodelImpl();
 
   @Test
   public void test() {

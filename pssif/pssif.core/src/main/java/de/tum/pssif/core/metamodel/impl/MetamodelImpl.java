@@ -15,15 +15,15 @@ import de.tum.pssif.core.metamodel.DataType;
 import de.tum.pssif.core.metamodel.EdgeType;
 import de.tum.pssif.core.metamodel.ElementType;
 import de.tum.pssif.core.metamodel.Enumeration;
-import de.tum.pssif.core.metamodel.Metamodel;
 import de.tum.pssif.core.metamodel.Multiplicity.MultiplicityContainer;
 import de.tum.pssif.core.metamodel.Multiplicity.UnlimitedNatural;
+import de.tum.pssif.core.metamodel.MutableMetamodel;
 import de.tum.pssif.core.metamodel.NodeType;
 import de.tum.pssif.core.metamodel.PrimitiveDataType;
 import de.tum.pssif.core.util.PSSIFUtil;
 
 
-public class MetamodelImpl implements Metamodel {
+public class MetamodelImpl implements MutableMetamodel {
   private Map<String, NodeTypeImpl> nodetypes    = Maps.newHashMap();
   private Map<String, EdgeTypeImpl> edgetypes    = Maps.newHashMap();
   private Map<String, Enumeration>  enumerations = Maps.newHashMap();
