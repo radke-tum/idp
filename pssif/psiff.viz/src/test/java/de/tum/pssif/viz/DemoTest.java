@@ -3,7 +3,7 @@ package de.tum.pssif.viz;
 import org.junit.Test;
 
 import de.tum.pssif.core.PSSIFConstants;
-import de.tum.pssif.core.metamodel.AttributeType;
+import de.tum.pssif.core.metamodel.Attribute;
 import de.tum.pssif.core.metamodel.EdgeType;
 import de.tum.pssif.core.metamodel.Metamodel;
 import de.tum.pssif.core.metamodel.NodeType;
@@ -62,7 +62,7 @@ public class DemoTest {
     //This is how you find a particular node type
     NodeType rootNodeType = getMetamodel().findNodeType(PSSIFConstants.ROOT_NODE_TYPE_NAME);
     //And this is how you get the attributes
-    for (AttributeType attribute : rootNodeType.getAttributes()) {
+    for (Attribute attribute : rootNodeType.getAttributes()) {
       System.out.println(attribute.getName());
     }
   }
@@ -71,7 +71,7 @@ public class DemoTest {
     //This is how you find a particular edge type
     EdgeType rootEdgeType = getMetamodel().findEdgeType(PSSIFConstants.ROOT_EDGE_TYPE_NAME);
     //And this is how you get the attributes
-    for (AttributeType attribute : rootEdgeType.getAttributes()) {
+    for (Attribute attribute : rootEdgeType.getAttributes()) {
       System.out.println(attribute.getName());
     }
   }
@@ -92,7 +92,7 @@ public class DemoTest {
     PSSIFOption<Edge> outgoingEdges = edgeType.getIncoming().apply(node);
 
     //For each edge: retrieve its direction
-    AttributeType edgeDirection = edgeType.findAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_DIRECTED);
+    Attribute edgeDirection = edgeType.findAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_DIRECTED);
     for (Edge edge : outgoingEdges.getMany()) {
       System.out.println("direction: " + edgeDirection.get(edge));
     }
