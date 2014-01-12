@@ -1,4 +1,4 @@
-package de.tum.pssif.transform.graphml;
+package de.tum.pssif.transform.mapper.graphml;
 
 public interface GraphMLNode extends GraphMLElement {
 }
