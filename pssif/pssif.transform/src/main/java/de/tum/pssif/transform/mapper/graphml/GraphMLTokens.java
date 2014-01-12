@@ -1,4 +1,4 @@
-package de.tum.pssif.transform.graphml;
+package de.tum.pssif.transform.mapper.graphml;
 
 public class GraphMLTokens {
   public static final String XML_SCHEMA_NAMESPACE_TAG        = "xsi";

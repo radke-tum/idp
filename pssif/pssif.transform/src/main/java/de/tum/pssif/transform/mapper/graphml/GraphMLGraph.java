@@ -1,4 +1,4 @@
-package de.tum.pssif.transform.graphml;
+package de.tum.pssif.transform.mapper.graphml;
 
 import java.io.InputStream;
 import java.util.Map;
@@ -14,6 +14,9 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 
+/**
+ * TODO edgedefault
+ */
 public class GraphMLGraph {
   /*package*/enum EdgeDefault {
     DIRECTED, UNDIRECTED

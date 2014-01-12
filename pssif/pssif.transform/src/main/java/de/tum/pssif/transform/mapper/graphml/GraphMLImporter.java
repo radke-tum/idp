@@ -1,4 +1,4 @@
-package de.tum.pssif.transform.graphml;
+package de.tum.pssif.transform.mapper.graphml;
 
 import java.io.InputStream;
 import java.util.Map;
@@ -18,7 +18,7 @@ import de.tum.pssif.core.model.impl.ModelImpl;
 import de.tum.pssif.core.util.PSSIFCanonicMetamodelCreator;
 import de.tum.pssif.core.util.PSSIFOption;
 import de.tum.pssif.core.util.PSSIFValue;
-import de.tum.pssif.transform.graphml.GraphMLGraph.EdgeDefault;
+import de.tum.pssif.transform.mapper.graphml.GraphMLGraph.EdgeDefault;
 
 
 public class GraphMLImporter {
