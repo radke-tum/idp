@@ -18,14 +18,10 @@ import com.google.common.collect.Sets;
  * TODO edgedefault
  */
 public class GraphMLGraph {
-  /*package*/enum EdgeDefault {
-    DIRECTED, UNDIRECTED
-  }
+  private Boolean           edgeDefaultDirected = Boolean.TRUE;
 
-  private EdgeDefault       edgeDefault = EdgeDefault.DIRECTED;
-
-  private Map<String, Node> nodes       = Maps.newHashMap();
-  private Map<String, Edge> edges       = Maps.newHashMap();   //TODO a set might be sufficient here
+  private Map<String, Node> nodes               = Maps.newHashMap();
+  private Map<String, Edge> edges               = Maps.newHashMap(); //TODO a set might be sufficient here
 
   private Element           current;
 
@@ -54,10 +50,6 @@ public class GraphMLGraph {
     Set<GraphMLEdge> result = Sets.newHashSet();
     result.addAll(edges.values());
     return result;
-  }
-
-  public EdgeDefault getEdgeDefault() {
-    return edgeDefault;
   }
 
   private void readInternal(InputStream in) {
@@ -90,7 +82,7 @@ public class GraphMLGraph {
     String elementName = reader.getName().getLocalPart();
     if (GraphMLTokens.GRAPH.equals(elementName)) {
       if (GraphMLTokens.UNDIRECTED.equals(reader.getAttributeValue(null, GraphMLTokens.EDGEDEFAULT))) {
-        edgeDefault = EdgeDefault.UNDIRECTED;
+        edgeDefaultDirected = Boolean.FALSE;
       }
     }
     else if (GraphMLTokens.KEY.equals(elementName)) {
@@ -100,8 +92,9 @@ public class GraphMLGraph {
       current = new Node(reader.getAttributeValue(null, GraphMLTokens.ID));
     }
     else if (GraphMLTokens.EDGE.equals(elementName)) {
+      boolean directed = edgeDefaultDirected.booleanValue() && Boolean.valueOf(reader.getAttributeValue(null, GraphMLTokens.DIRECTED)).booleanValue();
       current = new Edge(reader.getAttributeValue(null, GraphMLTokens.ID), reader.getAttributeValue(null, GraphMLTokens.SOURCE),
-          reader.getAttributeValue(null, GraphMLTokens.TARGET));
+          reader.getAttributeValue(null, GraphMLTokens.TARGET), directed);
     }
     else if (GraphMLTokens.DATA.equals(elementName)) {
       String key = reader.getAttributeValue(null, GraphMLTokens.KEY);
@@ -137,13 +130,15 @@ public class GraphMLGraph {
   }
 
   private class Edge extends Element implements GraphMLEdge {
-    private final String source;
-    private final String target;
+    private final String  source;
+    private final String  target;
+    private final Boolean directed;
 
-    private Edge(String id, String source, String target) {
+    private Edge(String id, String source, String target, boolean directed) {
       super(id);
       this.source = source;
       this.target = target;
+      this.directed = Boolean.valueOf(directed);
     }
 
     @Override
@@ -154,6 +149,11 @@ public class GraphMLGraph {
     @Override
     public String getTargetId() {
       return target;
+    }
+
+    @Override
+    public Boolean isDirected() {
+      return directed;
     }
   }
 

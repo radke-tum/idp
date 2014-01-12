@@ -18,7 +18,6 @@ import de.tum.pssif.core.model.impl.ModelImpl;
 import de.tum.pssif.core.util.PSSIFCanonicMetamodelCreator;
 import de.tum.pssif.core.util.PSSIFOption;
 import de.tum.pssif.core.util.PSSIFValue;
-import de.tum.pssif.transform.mapper.graphml.GraphMLGraph.EdgeDefault;
 
 
 public class GraphMLImporter {
@@ -27,8 +26,6 @@ public class GraphMLImporter {
     Model result = new ModelImpl();
 
     GraphMLGraph graph = GraphMLGraph.read(in);
-
-    EdgeDefault edgeDefault = graph.getEdgeDefault();
 
     for (GraphMLNode inNode : graph.getNodes()) {
       NodeType type = metamodel.findNodeType(inNode.getType());
@@ -61,8 +58,7 @@ public class GraphMLImporter {
           ConnectionMapping mapping = type.getMapping(sourceType, targetType);
           if (sourceNode.isOne() && targetNode.isOne()) {
             Edge edge = mapping.create(result, sourceNode.getOne(), targetNode.getOne());
-            type.findAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_DIRECTED).set(edge,
-                PSSIFValue.create(Boolean.valueOf(edgeDefault.equals(EdgeDefault.DIRECTED))));
+            type.findAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_DIRECTED).set(edge, PSSIFValue.create(inEdge.isDirected()));
             readAttributes(type, edge, inEdge);
           }
           else {

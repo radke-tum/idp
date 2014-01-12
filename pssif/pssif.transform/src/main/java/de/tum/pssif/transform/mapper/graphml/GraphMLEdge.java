@@ -4,4 +4,6 @@ public interface GraphMLEdge extends GraphMLElement {
   String getSourceId();
 
   String getTargetId();
+
+  Boolean isDirected();
 }
