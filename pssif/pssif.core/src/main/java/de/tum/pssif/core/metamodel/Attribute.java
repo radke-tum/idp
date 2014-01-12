@@ -9,7 +9,7 @@ import de.tum.pssif.core.util.PSSIFValue;
  * to describe attributes.
  *
  */
-public interface AttributeType extends Named {
+public interface Attribute extends Named {
 
   /**
    * @return
@@ -38,7 +38,7 @@ public interface AttributeType extends Named {
   AttributeCategory getCategory();
 
   /**
-   * Set the specified value as value of this {@link AttributeType} for the specified {@link Element}
+   * Set the specified value as value of this {@link Attribute} for the specified {@link Element}
    * 
    * @param element the {@link Element}
    * @param value the value to set
@@ -46,10 +46,10 @@ public interface AttributeType extends Named {
   void set(Element element, PSSIFValue value);
 
   /**
-   * Get the value for this {@link AttributeType} for the specified {@link Element}
+   * Get the value for this {@link Attribute} for the specified {@link Element}
    * 
    * @param element the {@link Element}
-   * @return the value of this {@link AttributeType} for the specified {@link Element}
+   * @return the value of this {@link Attribute} for the specified {@link Element}
    */
   Object get(Element element);
 }

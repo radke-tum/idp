@@ -41,6 +41,10 @@ public class PSSIFUtil {
     return in == null ? "" : in.trim().toLowerCase();
   }
 
+  public static boolean isValidName(String name) {
+    return !normalize(name).isEmpty();
+  }
+
   /**
    * Locates a named element by name in a collection of named elements.
    * TODO use throughout the metamodel impl.
@@ -53,7 +57,7 @@ public class PSSIFUtil {
    */
   public static <T extends Named> T find(String name, Collection<T> collection) {
     for (T candidate : collection) {
-      if (areSame(name, candidate.getName())) {
+      if (candidate.hasName(name)) {
         return candidate;
       }
     }

@@ -8,9 +8,9 @@ import com.google.common.collect.Sets;
 
 import de.tum.pssif.core.PSSIFConstants;
 import de.tum.pssif.core.exception.PSSIFStructuralIntegrityException;
+import de.tum.pssif.core.metamodel.Attribute;
 import de.tum.pssif.core.metamodel.AttributeCategory;
 import de.tum.pssif.core.metamodel.AttributeGroup;
-import de.tum.pssif.core.metamodel.AttributeType;
 import de.tum.pssif.core.metamodel.DataType;
 import de.tum.pssif.core.metamodel.ElementType;
 import de.tum.pssif.core.metamodel.PrimitiveDataType;
@@ -64,9 +64,9 @@ public abstract class ElementTypeImpl<T extends ElementType<T>> extends NamedImp
   }
 
   @Override
-  public AttributeType findAttribute(String name) {
-    AttributeType result = null;
-    for (AttributeGroup group : getAttributeGroups()) {
+  public AttributeImpl findAttribute(String name) {
+    AttributeImpl result = null;
+    for (AttributeGroupImpl group : this.attributeGroups) {
       result = group.findAttribute(name);
       if (result != null) {
         return result;
@@ -76,8 +76,8 @@ public abstract class ElementTypeImpl<T extends ElementType<T>> extends NamedImp
   }
 
   @Override
-  public Collection<AttributeType> getAttributes() {
-    Collection<AttributeType> attrs = Sets.newHashSet();
+  public Collection<Attribute> getAttributes() {
+    Collection<Attribute> attrs = Sets.newHashSet();
     for (AttributeGroup group : getAttributeGroups()) {
       attrs.addAll(group.getAttributes());
     }
@@ -85,7 +85,7 @@ public abstract class ElementTypeImpl<T extends ElementType<T>> extends NamedImp
   }
 
   @Override
-  public AttributeType createAttribute(AttributeGroup group, String name, DataType type, Unit unit, boolean visible, AttributeCategory category) {
+  public Attribute createAttribute(AttributeGroup group, String name, DataType type, Unit unit, boolean visible, AttributeCategory category) {
     if (name == null || name.trim().isEmpty()) {
       throw new PSSIFStructuralIntegrityException("name can not be null or empty");
     }
@@ -108,9 +108,9 @@ public abstract class ElementTypeImpl<T extends ElementType<T>> extends NamedImp
     return result;
   }
 
-  private AttributeType findAttributeInSpecializations(String name) {
+  private Attribute findAttributeInSpecializations(String name) {
     for (T specialization : getSpecials()) {
-      AttributeType attr = specialization.findAttribute(name);
+      Attribute attr = specialization.findAttribute(name);
       if (attr != null) {
         return attr;
       }
@@ -119,18 +119,30 @@ public abstract class ElementTypeImpl<T extends ElementType<T>> extends NamedImp
   }
 
   @Override
-  public AttributeType createAttribute(AttributeGroup group, String name, DataType dataType, boolean visible, AttributeCategory category) {
+  public Attribute createAttribute(AttributeGroup group, String name, DataType dataType, boolean visible, AttributeCategory category) {
     return createAttribute(group, name, dataType, Units.NONE, visible, category);
   }
 
   @Override
-  public void removeAttribute(AttributeType attribute) {
-    for (AttributeGroup group : getAttributeGroups()) {
-      if (group.findAttribute(attribute.getName()) != null) {
-        group.removeAttribute(attribute);
-      }
+  public void addAlias(Attribute attribute, String alias) {
+    if (!PSSIFUtil.isValidName(alias)) {
+      throw new PSSIFStructuralIntegrityException("an alias can not be empty");
     }
+    if (findAttribute(alias) != null) {
+      throw new PSSIFStructuralIntegrityException("alias " + alias + " already in use for an attribute in this context");
+    }
+    findAttribute(attribute.getName()).addName(alias);
   }
+
+  //Not needed in the current use-cases
+  //  @Override
+  //  public void removeAttribute(AttributeType attribute) {
+  //    for (AttributeGroup group : getAttributeGroups()) {
+  //      if (group.findAttribute(attribute.getName()) != null) {
+  //        group.removeAttribute(attribute);
+  //      }
+  //    }
+  //  }
 
   @Override
   public AttributeGroup createAttributeGroup(String name) {

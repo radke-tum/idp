@@ -10,6 +10,8 @@ import java.util.Date;
 
 import com.google.common.collect.Sets;
 
+import de.tum.pssif.core.util.PSSIFOption;
+import de.tum.pssif.core.util.PSSIFUtil;
 import de.tum.pssif.core.util.PSSIFValue;
 
 
@@ -147,6 +149,16 @@ public interface PrimitiveDataType extends DataType {
       else {
         throw new IllegalArgumentException();
       }
+    }
+
+    @Override
+    public boolean hasName(String name) {
+      return PSSIFUtil.areSame(name, getName());
+    }
+
+    @Override
+    public PSSIFOption<String> getNames() {
+      return PSSIFOption.one(getName());
     }
   }
 

@@ -2,12 +2,12 @@ package de.tum.pssif.core.metamodel.traits;
 
 import java.util.Collection;
 
-import de.tum.pssif.core.metamodel.AttributeType;
+import de.tum.pssif.core.metamodel.Attribute;
 
 
 /**
  * Describes the read and delete operations
- * allowed for {@link AttributeType}s
+ * allowed for {@link Attribute}s
  * throughout a PSS-IF Metamodel.
  */
 public interface AttributableRead {
@@ -19,7 +19,7 @@ public interface AttributableRead {
    * @return
    *    The Attribute Type, of <b>null</b> if it does not exist in this context element.
    */
-  AttributeType findAttribute(String name);
+  Attribute findAttribute(String name);
 
   /**
    * Retrieves all Attribute Types in this context,
@@ -27,15 +27,16 @@ public interface AttributableRead {
    * @return
    *    A collection of all Attribute Types in the current context element.
    */
-  Collection<AttributeType> getAttributes();
+  Collection<Attribute> getAttributes();
 
-  /**
-   * Removes an Attribute Type from this context element.
-   * If the Attribute Type is inherited in this context, 
-   * an exception is thrown.
-   * @param attribute
-   *    The attriubte to remove.
-   */
-  void removeAttribute(AttributeType attribute);
+  //Not needed for the current use cases
+  //  /**
+  //   * Removes an Attribute Type from this context element.
+  //   * If the Attribute Type is inherited in this context, 
+  //   * an exception is thrown.
+  //   * @param attribute
+  //   *    The attriubte to remove.
+  //   */
+  //  void removeAttribute(AttributeType attribute);
 
 }

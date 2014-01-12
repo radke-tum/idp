@@ -24,15 +24,15 @@ import de.tum.pssif.core.util.PSSIFUtil;
 
 
 public class MetamodelImpl implements Metamodel {
-  private Map<String, NodeType>    nodetypes    = Maps.newHashMap();
-  private Map<String, EdgeType>    edgetypes    = Maps.newHashMap();
-  private Map<String, Enumeration> enumerations = Maps.newHashMap();
+  private Map<String, NodeTypeImpl> nodetypes    = Maps.newHashMap();
+  private Map<String, EdgeTypeImpl> edgetypes    = Maps.newHashMap();
+  private Map<String, Enumeration>  enumerations = Maps.newHashMap();
 
   public MetamodelImpl() {
-    NodeType rootNodeType = new NodeTypeImpl(PSSIFConstants.ROOT_NODE_TYPE_NAME);
+    NodeTypeImpl rootNodeType = new NodeTypeImpl(PSSIFConstants.ROOT_NODE_TYPE_NAME);
     nodetypes.put(PSSIFUtil.normalize(PSSIFConstants.ROOT_NODE_TYPE_NAME), rootNodeType);
     addDefaultAttributes(rootNodeType);
-    EdgeType rootEdgeType = new EdgeTypeImpl(PSSIFConstants.ROOT_EDGE_TYPE_NAME);
+    EdgeTypeImpl rootEdgeType = new EdgeTypeImpl(PSSIFConstants.ROOT_EDGE_TYPE_NAME);
     edgetypes.put(PSSIFUtil.normalize(PSSIFConstants.ROOT_EDGE_TYPE_NAME), rootEdgeType);
     addDefaultAttributes(rootEdgeType);
     rootEdgeType.createAttribute(rootEdgeType.getDefaultAttributeGroup(), PSSIFConstants.BUILTIN_ATTRIBUTE_DIRECTED, PrimitiveDataType.BOOLEAN, true,
@@ -58,10 +58,13 @@ public class MetamodelImpl implements Metamodel {
 
   @Override
   public NodeType createNodeType(String name) {
+    if (!PSSIFUtil.isValidName(name)) {
+      throw new PSSIFStructuralIntegrityException("a node can not have an empty name");
+    }
     if (findNodeType(name) != null) {
       throw new PSSIFStructuralIntegrityException("a node type with the name " + name + " already exists");
     }
-    NodeType result = new NodeTypeImpl(name);
+    NodeTypeImpl result = new NodeTypeImpl(name);
     nodetypes.put(PSSIFUtil.normalize(name), result);
     result.inherit(findNodeType(PSSIFConstants.ROOT_NODE_TYPE_NAME));
     return result;
@@ -69,38 +72,41 @@ public class MetamodelImpl implements Metamodel {
 
   @Override
   public EdgeType createEdgeType(String name) {
+    if (!PSSIFUtil.isValidName(name)) {
+      throw new PSSIFStructuralIntegrityException("an edge can not have an empty name");
+    }
     if (findEdgeType(name) != null) {
       throw new PSSIFStructuralIntegrityException("an edge type with name " + name + " already exitsts");
     }
-    EdgeType result = new EdgeTypeImpl(name);
+    EdgeTypeImpl result = new EdgeTypeImpl(name);
     edgetypes.put(PSSIFUtil.normalize(name), result);
     result.inherit(findEdgeType(PSSIFConstants.ROOT_EDGE_TYPE_NAME));
     return result;
   }
 
   @Override
-  public NodeType findNodeType(String name) {
-    return nodetypes.get(PSSIFUtil.normalize(name));
+  public NodeTypeImpl findNodeType(String name) {
+    return PSSIFUtil.find(name, nodetypes.values());
   }
 
   @Override
-  public EdgeType findEdgeType(String name) {
-    return edgetypes.get(PSSIFUtil.normalize(name));
+  public EdgeTypeImpl findEdgeType(String name) {
+    return PSSIFUtil.find(name, edgetypes.values());
   }
 
   @Override
   public Collection<NodeType> getNodeTypes() {
-    return Collections.unmodifiableCollection(nodetypes.values());
+    return Collections.<NodeType> unmodifiableCollection(nodetypes.values());
   }
 
   @Override
   public Collection<EdgeType> getEdgeTypes() {
-    return Collections.unmodifiableCollection(edgetypes.values());
+    return Collections.<EdgeType> unmodifiableCollection(edgetypes.values());
   }
 
   @Override
   public Enumeration createEnumeration(String name) {
-    if (name == null || name.trim().isEmpty()) {
+    if (!PSSIFUtil.isValidName(name)) {
       throw new PSSIFStructuralIntegrityException("name can not be null or empty");
     }
     String normalized = PSSIFUtil.normalize(name);
@@ -119,7 +125,7 @@ public class MetamodelImpl implements Metamodel {
 
   @Override
   public Enumeration findEnumeration(String name) {
-    return enumerations.get(PSSIFUtil.normalize(name));
+    return PSSIFUtil.find(name, enumerations.values());
   }
 
   @Override
@@ -130,8 +136,9 @@ public class MetamodelImpl implements Metamodel {
   @Override
   public DataType findDataType(String name) {
     String normalized = PSSIFUtil.normalize(name);
-    if (enumerations.containsKey(normalized)) {
-      return enumerations.get(normalized);
+    DataType dt = PSSIFUtil.find(normalized, enumerations.values());
+    if (dt != null) {
+      return dt;
     }
     else {
       return findPrimitiveType(normalized);
@@ -156,5 +163,28 @@ public class MetamodelImpl implements Metamodel {
   @Override
   public PrimitiveDataType findPrimitiveType(String name) {
     return PSSIFUtil.find(name, PrimitiveDataType.TYPES);
+  }
+
+  @Override
+  public void addAlias(ElementType<?> elementType, String alias) {
+    Class<?> metaType = elementType.getMetaType();
+    if (NodeType.class.equals(metaType)) {
+      if (PSSIFUtil.find(alias, this.nodetypes.values()) != null) {
+        throw new PSSIFStructuralIntegrityException("The alias " + alias + " is already used elswhere in the metamodel.");
+      }
+      if (!PSSIFUtil.isValidName(alias)) {
+        throw new PSSIFStructuralIntegrityException("The provided alias is empty!");
+      }
+      findNodeType(elementType.getName()).addName(alias);
+    }
+    else if (EdgeType.class.equals(metaType)) {
+      if (PSSIFUtil.find(alias, this.edgetypes.values()) != null) {
+        throw new PSSIFStructuralIntegrityException("The alias " + alias + " is already used elswhere in the metamodel.");
+      }
+      if (!PSSIFUtil.isValidName(alias)) {
+        throw new PSSIFStructuralIntegrityException("The provided alias is empty!");
+      }
+      findEdgeType(elementType.getName()).addName(alias);
+    }
   }
 }

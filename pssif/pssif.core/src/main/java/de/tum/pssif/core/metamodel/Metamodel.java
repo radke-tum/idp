@@ -117,6 +117,16 @@ public interface Metamodel {
    */
   PrimitiveDataType findPrimitiveType(String name);
 
+  /**
+   * Adds an alias to an element type if no naming uniqueness
+   * violation is caused by the alias.
+   * @param elementType
+   *    The element type to add an alias to.
+   * @param alias
+   *    The new alias.
+   */
+  void addAlias(ElementType<?> elementType, String alias);
+
   //TODO node and edge remove?
 
 }

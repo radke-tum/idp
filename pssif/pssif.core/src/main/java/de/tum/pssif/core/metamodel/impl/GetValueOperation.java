@@ -1,18 +1,18 @@
 package de.tum.pssif.core.metamodel.impl;
 
-import de.tum.pssif.core.metamodel.AttributeType;
+import de.tum.pssif.core.metamodel.Attribute;
 import de.tum.pssif.core.model.Element;
 import de.tum.pssif.core.util.PSSIFValue;
 
 
 public class GetValueOperation {
-  private final AttributeType type;
+  private final Attribute type;
 
-  /*package*/public GetValueOperation(AttributeType type) {
+  /*package*/public GetValueOperation(Attribute type) {
     this.type = type;
   }
 
-  public AttributeType getAttributeType() {
+  public Attribute getAttributeType() {
     return type;
   }
 
