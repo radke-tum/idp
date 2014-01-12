@@ -2,7 +2,7 @@ package de.tum.pssif.transform.mapper;
 
 import de.tum.pssif.core.exception.PSSIFException;
 import de.tum.pssif.core.util.PSSIFUtil;
-import de.tum.pssif.transform.mapper.graphml.GraphMlMapper;
+import de.tum.pssif.transform.mapper.graphml.GraphMLMapper;
 import de.tum.pssif.transform.mapper.sysml.SysMlMapper;
 import de.tum.pssif.transform.mapper.visio.VisioMapper;
 
@@ -15,7 +15,7 @@ public final class MapperFactory {
 
   public static Mapper getMapper(String name) {
     if (PSSIFUtil.areSame(GRAPHML, name)) {
-      return new GraphMlMapper();
+      return new GraphMLMapper();
     }
     else if (PSSIFUtil.areSame(SYSML, name)) {
       return new SysMlMapper();

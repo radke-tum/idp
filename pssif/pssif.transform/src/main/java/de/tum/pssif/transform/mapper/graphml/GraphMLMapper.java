@@ -1,6 +1,7 @@
 package de.tum.pssif.transform.mapper.graphml;
 
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Map;
 
 import de.tum.pssif.core.PSSIFConstants;
@@ -15,14 +16,14 @@ import de.tum.pssif.core.model.Element;
 import de.tum.pssif.core.model.Model;
 import de.tum.pssif.core.model.Node;
 import de.tum.pssif.core.model.impl.ModelImpl;
-import de.tum.pssif.core.util.PSSIFCanonicMetamodelCreator;
 import de.tum.pssif.core.util.PSSIFOption;
 import de.tum.pssif.core.util.PSSIFValue;
+import de.tum.pssif.transform.mapper.Mapper;
 
 
-public class GraphMLImporter {
-  public Model read(InputStream in) {
-    Metamodel metamodel = PSSIFCanonicMetamodelCreator.create();
+public class GraphMLMapper implements Mapper {
+  @Override
+  public Model read(Metamodel metamodel, InputStream in) {
     Model result = new ModelImpl();
 
     GraphMLGraph graph = GraphMLGraph.read(in);
@@ -88,5 +89,11 @@ public class GraphMLImporter {
         System.out.println("AttributeType " + key + " not found!");
       }
     }
+  }
+
+  @Override
+  public void write(Metamodel metamodel, Model model, OutputStream outputStream) {
+    // TODO Auto-generated method stub
+
   }
 }

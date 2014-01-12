@@ -13,7 +13,7 @@ import de.tum.pssif.core.model.Model;
 import de.tum.pssif.core.util.PSSIFCanonicMetamodelCreator;
 import de.tum.pssif.transform.mapper.graphml.GraphMLEdge;
 import de.tum.pssif.transform.mapper.graphml.GraphMLGraph;
-import de.tum.pssif.transform.mapper.graphml.GraphMLImporter;
+import de.tum.pssif.transform.mapper.graphml.GraphMLMapper;
 import de.tum.pssif.transform.mapper.graphml.GraphMLNode;
 
 
@@ -75,10 +75,10 @@ public class GraphMLReadTest {
   @Test
   public void testReadFlowIntoPSSIF() {
     InputStream in = getClass().getResourceAsStream("/flow.graphml");
-    GraphMLImporter importer = new GraphMLImporter();
+    GraphMLMapper importer = new GraphMLMapper();
 
     Metamodel metamodel = PSSIFCanonicMetamodelCreator.create();
-    Model model = importer.read(in);
+    Model model = importer.read(metamodel, in);
 
     NodeType state = metamodel.findNodeType("State");
     NodeType function = metamodel.findNodeType("Function");
@@ -90,9 +90,9 @@ public class GraphMLReadTest {
   @Test
   public void testReadHierarchicIntoPSSIF() {
     InputStream in = getClass().getResourceAsStream("/hierarchic.graphml");
-    GraphMLImporter importer = new GraphMLImporter();
+    GraphMLMapper importer = new GraphMLMapper();
 
     Metamodel metamodel = PSSIFCanonicMetamodelCreator.create();
-    Model model = importer.read(in);
+    Model model = importer.read(metamodel, in);
   }
 }
