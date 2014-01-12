@@ -1,4 +1,4 @@
-package de.tum.pssif.transform.graphml;
+package de.tum.pssif.transform.mapper.graphml;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,10 +11,6 @@ import de.tum.pssif.core.metamodel.Metamodel;
 import de.tum.pssif.core.metamodel.NodeType;
 import de.tum.pssif.core.model.Model;
 import de.tum.pssif.core.util.PSSIFCanonicMetamodelCreator;
-import de.tum.pssif.transform.mapper.graphml.GraphMLEdge;
-import de.tum.pssif.transform.mapper.graphml.GraphMLGraph;
-import de.tum.pssif.transform.mapper.graphml.GraphMLMapper;
-import de.tum.pssif.transform.mapper.graphml.GraphMLNode;
 
 
 public class GraphMLReadTest {
