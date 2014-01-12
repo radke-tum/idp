@@ -125,4 +125,20 @@ public class NodeTypeImpl extends ElementTypeImpl<NodeType> implements NodeType 
     }
     return PSSIFOption.none();
   }
+
+  @Override
+  public boolean isAssignableFrom(NodeType type) {
+    if (this.equals(type)) {
+      return true;
+    }
+    else {
+      for (NodeType special : getSpecials()) {
+        if (special.isAssignableFrom(type)) {
+          return true;
+        }
+      }
+    }
+
+    return false;
+  }
 }

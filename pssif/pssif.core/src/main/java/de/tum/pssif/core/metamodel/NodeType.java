@@ -105,4 +105,6 @@ public interface NodeType extends ElementType<NodeType> {
    * @return
    */
   PSSIFOption<Node> apply(Model model, String id);
+
+  boolean isAssignableFrom(NodeType type);
 }

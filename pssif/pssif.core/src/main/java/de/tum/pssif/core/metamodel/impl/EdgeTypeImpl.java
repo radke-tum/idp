@@ -111,7 +111,7 @@ public class EdgeTypeImpl extends ElementTypeImpl<EdgeType> implements EdgeType 
     ConnectionMapping result = null;
 
     for (ConnectionMapping candidate : mappings) {
-      if (candidate.getFrom().getNodeType().equals(in) && candidate.getTo().getNodeType().equals(out)) {
+      if (candidate.getFrom().getNodeType().isAssignableFrom(in) && candidate.getTo().getNodeType().isAssignableFrom(out)) {
         result = candidate;
         break;
       }
