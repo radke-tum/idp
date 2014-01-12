@@ -18,7 +18,7 @@ import com.google.common.collect.Sets;
  * TODO edgedefault
  */
 public class GraphMLGraph {
-  private enum EdgeDefault {
+  /*package*/enum EdgeDefault {
     DIRECTED, UNDIRECTED
   }
 
@@ -54,6 +54,10 @@ public class GraphMLGraph {
     Set<GraphMLEdge> result = Sets.newHashSet();
     result.addAll(edges.values());
     return result;
+  }
+
+  public EdgeDefault getEdgeDefault() {
+    return edgeDefault;
   }
 
   private void readInternal(InputStream in) {
