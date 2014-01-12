@@ -17,7 +17,7 @@ import de.tum.pssif.core.metamodel.impl.MetamodelImpl;
 
 public class AttributesTest {
 
-  private Metamodel metamodel;
+  private MutableMetamodel metamodel;
 
   @Before
   public void createMetamodel() {

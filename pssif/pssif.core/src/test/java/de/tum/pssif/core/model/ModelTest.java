@@ -7,9 +7,9 @@ import org.junit.Test;
 import de.tum.pssif.core.exception.PSSIFStructuralIntegrityException;
 import de.tum.pssif.core.metamodel.ConnectionMapping;
 import de.tum.pssif.core.metamodel.EdgeType;
-import de.tum.pssif.core.metamodel.Metamodel;
 import de.tum.pssif.core.metamodel.Multiplicity.MultiplicityContainer;
 import de.tum.pssif.core.metamodel.Multiplicity.UnlimitedNatural;
+import de.tum.pssif.core.metamodel.MutableMetamodel;
 import de.tum.pssif.core.metamodel.NodeType;
 import de.tum.pssif.core.metamodel.impl.MetamodelImpl;
 import de.tum.pssif.core.model.impl.ModelImpl;
@@ -17,8 +17,8 @@ import de.tum.pssif.core.util.PSSIFOption;
 
 
 public class ModelTest {
-  private Metamodel metamodel;
-  private Model     model;
+  private MutableMetamodel metamodel;
+  private Model            model;
 
   @Before
   public void init() {
