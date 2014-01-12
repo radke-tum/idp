@@ -1,0 +1,1 @@
+Created to force GIT to save resources folder.
