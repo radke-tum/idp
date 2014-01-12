@@ -14,9 +14,18 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 
+/**
+ * TODO edgedefault
+ */
 public class GraphMLGraph {
-  private Map<String, Node> nodes = Maps.newHashMap();
-  private Map<String, Edge> edges = Maps.newHashMap(); //TODO a set might be sufficient here
+  private enum EdgeDefault {
+    DIRECTED, UNDIRECTED
+  }
+
+  private EdgeDefault       edgeDefault = EdgeDefault.DIRECTED;
+
+  private Map<String, Node> nodes       = Maps.newHashMap();
+  private Map<String, Edge> edges       = Maps.newHashMap();   //TODO a set might be sufficient here
 
   private Element           current;
 
@@ -75,7 +84,12 @@ public class GraphMLGraph {
 
   private void startElement(XMLStreamReader reader) throws XMLStreamException {
     String elementName = reader.getName().getLocalPart();
-    if (GraphMLTokens.KEY.equals(elementName)) {
+    if (GraphMLTokens.GRAPH.equals(elementName)) {
+      if (GraphMLTokens.UNDIRECTED.equals(reader.getAttributeValue(null, GraphMLTokens.EDGEDEFAULT))) {
+        edgeDefault = EdgeDefault.UNDIRECTED;
+      }
+    }
+    else if (GraphMLTokens.KEY.equals(elementName)) {
       //TODO what to do here? nothing?
     }
     else if (GraphMLTokens.NODE.equals(elementName)) {
@@ -86,7 +100,11 @@ public class GraphMLGraph {
           reader.getAttributeValue(null, GraphMLTokens.TARGET));
     }
     else if (GraphMLTokens.DATA.equals(elementName)) {
-      current.setValue(reader.getAttributeValue(null, GraphMLTokens.KEY), reader.getElementText());
+      String key = reader.getAttributeValue(null, GraphMLTokens.KEY);
+      if (GraphMLTokens.ID.equals(key)) {
+        key = "__" + key + "__";
+      }
+      current.setValue(key, reader.getElementText());
     }
   }
 
@@ -137,6 +155,7 @@ public class GraphMLGraph {
 
   private class Element implements GraphMLElement {
     private final String        id;
+    private String              type;
     private Map<String, String> values = Maps.newHashMap();
 
     private Element(String id) {
@@ -144,7 +163,12 @@ public class GraphMLGraph {
     }
 
     private void setValue(String key, String value) {
-      values.put(key, value);
+      if (GraphMLTokens.ELEMENT_TYPE.equals(key)) {
+        type = value;
+      }
+      else {
+        values.put(key, value);
+      }
     }
 
     @Override
@@ -155,6 +179,11 @@ public class GraphMLGraph {
     @Override
     public Map<String, String> getValues() {
       return ImmutableMap.copyOf(values);
+    }
+
+    @Override
+    public String getType() {
+      return type;
     }
   }
 }

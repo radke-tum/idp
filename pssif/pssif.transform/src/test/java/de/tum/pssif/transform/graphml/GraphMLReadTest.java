@@ -4,7 +4,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
 
+import org.junit.Assert;
 import org.junit.Test;
+
+import de.tum.pssif.core.metamodel.Metamodel;
+import de.tum.pssif.core.metamodel.NodeType;
+import de.tum.pssif.core.model.Model;
+import de.tum.pssif.core.util.PSSIFCanonicMetamodelCreator;
 
 
 public class GraphMLReadTest {
@@ -60,5 +66,29 @@ public class GraphMLReadTest {
     //
     //      System.out.println();
     //    }
+  }
+
+  @Test
+  public void testReadFlowIntoPSSIF() {
+    InputStream in = getClass().getResourceAsStream("/flow.graphml");
+    GraphMLImporter importer = new GraphMLImporter();
+
+    Metamodel metamodel = PSSIFCanonicMetamodelCreator.create();
+    Model model = importer.read(in);
+
+    NodeType state = metamodel.findNodeType("State");
+    NodeType function = metamodel.findNodeType("Function");
+
+    Assert.assertEquals(8, state.apply(model).size());
+    Assert.assertEquals(5, function.apply(model).size());
+  }
+
+  @Test
+  public void testReadHierarchicIntoPSSIF() {
+    InputStream in = getClass().getResourceAsStream("/hierarchic.graphml");
+    GraphMLImporter importer = new GraphMLImporter();
+
+    Metamodel metamodel = PSSIFCanonicMetamodelCreator.create();
+    Model model = importer.read(in);
   }
 }

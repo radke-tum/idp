@@ -10,6 +10,7 @@ public class GraphMLTokens {
   public static final String G                               = "G";
   public static final String EDGEDEFAULT                     = "edgedefault";
   public static final String DIRECTED                        = "directed";
+  public static final String UNDIRECTED                      = "undirected";
   public static final String KEY                             = "key";
   public static final String FOR                             = "for";
   public static final String ID                              = "id";
@@ -29,4 +30,6 @@ public class GraphMLTokens {
   public static final String BOOLEAN                         = "boolean";
   public static final String INT                             = "int";
   public static final String _DEFAULT                        = "_default";
+
+  public static final String ELEMENT_TYPE                    = "bg_type";
 }
