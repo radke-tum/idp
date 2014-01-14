@@ -1,6 +1,8 @@
 package gui.graph;
 
-import graph.model.NodeType;
+
+
+import graph.model2.MyNodeType;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -14,7 +16,7 @@ public class MyListColorRenderer extends DefaultListCellRenderer
 	private static final long serialVersionUID = 1L;
 	
 		//private HashMap theChosen = new HashMap();
-	    private HashMap<NodeType, Color> colorMapper;
+	    private HashMap<MyNodeType, Color> colorMapper;
 
 	    public Component getListCellRendererComponent( JList list,  
 	    		Object value, int index, boolean isSelected,  
@@ -30,7 +32,7 @@ public class MyListColorRenderer extends DefaultListCellRenderer
 	        
 	        //System.out.println("getListCellRendererComponent ");
 	        
-	        NodeType t = (NodeType) value;
+	        MyNodeType t = (MyNodeType) value;
 	       // System.out.println(t);
 	        if( colorMapper.containsKey( t ) )  
 	        {  
@@ -44,13 +46,13 @@ public class MyListColorRenderer extends DefaultListCellRenderer
 	        return( this );  
 	    }
 	    
-	    public void setColor (NodeType type , Color c)
+	    public void setColor (MyNodeType type , Color c)
 	    {
 	    	 System.out.println("Put Color "+c);
 	    	this.colorMapper.put(type, c);
 	    }
 	    
-	    public HashMap<NodeType, Color> getColorMapping()
+	    public HashMap<MyNodeType, Color> getColorMapping()
 	    {
 	    	return this.colorMapper;
 	    }
@@ -58,11 +60,11 @@ public class MyListColorRenderer extends DefaultListCellRenderer
 	    public MyListColorRenderer()
 	    {
 	    	super();
-	    	colorMapper = new HashMap<NodeType, Color>();
+	    	colorMapper = new HashMap<MyNodeType, Color>();
 	    	
 	    }
 	    
-	    public void setColors(HashMap<NodeType,Color> map)
+	    public void setColors(HashMap<MyNodeType,Color> map)
 	    {
 	    	this.colorMapper = map;	
 	    }

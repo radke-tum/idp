@@ -1,6 +1,7 @@
 package graph.listener;
 
-import graph.model.NodeType;
+
+import graph.model2.MyNodeType;
 
 import java.awt.Color;
 import java.io.File;
@@ -17,6 +18,8 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+
+import model.ModelBuilder;
 
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
@@ -41,7 +44,7 @@ public class ConfigWriterReader {
 	}
 	
 	
-	public void setColors(HashMap<NodeType,Color> colormapping)
+	public void setColors(HashMap<MyNodeType,Color> colormapping)
 	{
 		if (!configFile.exists())
 			writeNewConfig(colormapping);
@@ -49,7 +52,7 @@ public class ConfigWriterReader {
 			updateColors(colormapping);
 	}
 	
-	private void writeNewConfig(HashMap<NodeType,Color> colormapping)
+	private void writeNewConfig(HashMap<MyNodeType,Color> colormapping)
 	{
 		
 		 try {
@@ -66,9 +69,9 @@ public class ConfigWriterReader {
 		Element nodecolors = doc.createElement(nodeColors);
 		rootElement.appendChild(nodecolors);
  
-		Set<NodeType> nodetypes = colormapping.keySet();
+		Set<MyNodeType> nodetypes = colormapping.keySet();
 		
-		for (NodeType t :nodetypes)
+		for (MyNodeType t :nodetypes)
 		{
 			Element node = doc.createElement(nodeType);
 			node.appendChild(doc.createTextNode(t.getName()));
@@ -101,7 +104,7 @@ public class ConfigWriterReader {
 	  }
 	}
 	
-	private void updateColors (HashMap<NodeType,Color> newColorMapping)
+	private void updateColors (HashMap<MyNodeType,Color> newColorMapping)
 	{
 		try {
 			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
@@ -120,14 +123,14 @@ public class ConfigWriterReader {
 			
 			// Get all the values from the newColorMapping
 			
-			Set<NodeType> newNodeTypes = newColorMapping.keySet();
+			Set<MyNodeType> newNodeTypes = newColorMapping.keySet();
 			
-			Set<NodeType> checkedNodeTypes = tryUpdate(colormapping, newColorMapping);
+			Set<MyNodeType> checkedNodeTypes = tryUpdate(colormapping, newColorMapping);
 			
 			// remove all the stuff which was already checked
 			newNodeTypes.removeAll(checkedNodeTypes);
 			
-			for (NodeType currentType: newNodeTypes)
+			for (MyNodeType currentType: newNodeTypes)
 			{
 				Element node = doc.createElement(nodeType);
 				node.appendChild(doc.createTextNode(currentType.getName()));
@@ -160,9 +163,9 @@ public class ConfigWriterReader {
 		   }
 	}
 
-	private Set<NodeType> tryUpdate(NodeList colormapping, HashMap<NodeType,Color> newColorMapping)
+	private Set<MyNodeType> tryUpdate(NodeList colormapping, HashMap<MyNodeType,Color> newColorMapping)
 	{
-		Set<NodeType> checkedNodeTypes = new HashSet<NodeType>();
+		Set<MyNodeType> checkedNodeTypes = new HashSet<MyNodeType>();
 		
 		for (int i = 0; i<colormapping.getLength();i++)
 		{
@@ -178,7 +181,7 @@ public class ConfigWriterReader {
 				
 				String colorValue = eElement.getAttribute(attrColor);
 				
-				NodeType t = NodeType.getValue(nodeTypeValue);
+				MyNodeType t = ModelBuilder.getNodeTypes().getValue(nodeTypeValue);
 				
 				checkedNodeTypes.add(t);
 				
@@ -201,49 +204,51 @@ public class ConfigWriterReader {
 		return checkedNodeTypes;
 	}
 	
-	public HashMap<NodeType, Color> readColors ()
+	public HashMap<MyNodeType, Color> readColors ()
 	{
-		HashMap<NodeType, Color> res = new HashMap<NodeType, Color>();
+		HashMap<MyNodeType, Color> res = new HashMap<MyNodeType, Color>();
 		
-		try
+		if (configFile.exists())
 		{
-			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-			Document doc = dBuilder.parse(configFile);
-		 
-			//optional, but recommended
-			//read this - http://stackoverflow.com/questions/13786607/normalization-in-dom-parsing-with-java-how-does-it-work
-			doc.getDocumentElement().normalize();
-		 
-			//System.out.println("Root element :" + doc.getDocumentElement().getNodeName());
-		 
-			NodeList nList = doc.getElementsByTagName(nodeType);
-		 
-			//System.out.println("----------------------------");
-		 
-			for (int temp = 0; temp < nList.getLength(); temp++) 
+			try
 			{
-		 
-				Node nNode = nList.item(temp);
-		 
-				System.out.println("\nCurrent Element :" + nNode);
-		 
-				if (nNode.getNodeType() == Node.ELEMENT_NODE) {
-		 
-					Element eElement = (Element) nNode;
-					
-					String nodeTypeValue = eElement.getChildNodes().item(0).getNodeValue();	
-					System.out.println(nodeTypeValue);
-					NodeType current = NodeType.getValue(nodeTypeValue);
-					Color c = new Color(Integer.valueOf(eElement.getAttribute(attrColor)));
-					
-					res.put(current, c);
+				DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+				DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+				Document doc = dBuilder.parse(configFile);
+			 
+				//optional, but recommended
+				//read this - http://stackoverflow.com/questions/13786607/normalization-in-dom-parsing-with-java-how-does-it-work
+				doc.getDocumentElement().normalize();
+			 
+				//System.out.println("Root element :" + doc.getDocumentElement().getNodeName());
+			 
+				NodeList nList = doc.getElementsByTagName(nodeType);
+			 
+				//System.out.println("----------------------------");
+			 
+				for (int temp = 0; temp < nList.getLength(); temp++) 
+				{
+			 
+					Node nNode = nList.item(temp);
+			 
+					//System.out.println("\nCurrent Element :" + nNode);
+			 
+					if (nNode.getNodeType() == Node.ELEMENT_NODE) {
+			 
+						Element eElement = (Element) nNode;
+						
+						String nodeTypeValue = eElement.getChildNodes().item(0).getNodeValue();	
+						//System.out.println(nodeTypeValue);
+						MyNodeType current = ModelBuilder.getNodeTypes().getValue(nodeTypeValue);
+						Color c = new Color(Integer.valueOf(eElement.getAttribute(attrColor)));
+						
+						res.put(current, c);
+					}
 				}
-			}
-	    } catch (Exception e) {
-	    	e.printStackTrace();
-	    }
-		
+		    } catch (Exception e) {
+		    	e.printStackTrace();
+		    }
+		}
 		return res;
 	  }
 

@@ -1,19 +1,21 @@
 package graph.operations;
 
-import graph.model.MyNode;
+
+
+import graph.model2.MyNode2;
 
 import java.util.LinkedList;
 
 public class CollapseContainer {
 
 	private LinkedList<InfoContainer> removeEdges;
-	private LinkedList<MyNode> addNodes;
+	private LinkedList<MyNode2> addNodes;
 	private LinkedList<InfoContainer> addEdges;
 	
 	public CollapseContainer()
 	{
 		this.addEdges = new LinkedList<InfoContainer>();
-		this.addNodes = new LinkedList<MyNode>();
+		this.addNodes = new LinkedList<MyNode2>();
 		this.removeEdges = new LinkedList<InfoContainer>();
 	}
 	
@@ -27,7 +29,7 @@ public class CollapseContainer {
 		this.addEdges.add(edge);
 	}
 	
-	public void addOldNode (MyNode node)
+	public void addOldNode (MyNode2 node)
 	{
 		this.addNodes.add(node);
 	}
@@ -36,7 +38,7 @@ public class CollapseContainer {
 		return removeEdges;
 	}
 
-	public LinkedList<MyNode> getOldNodes() {
+	public LinkedList<MyNode2> getOldNodes() {
 		return addNodes;
 	}
 

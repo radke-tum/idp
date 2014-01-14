@@ -1,6 +1,7 @@
 package matrix.model;
 
-import graph.model.MyNode;
+import graph.model2.MyNode2;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -16,7 +17,7 @@ import org.apache.poi.ss.usermodel.Row;
 
 public class XMLExport
 {
-  public void createXMLExport(String[][] values, LinkedList<MyNode> nodes, File saveLocation)
+  public void createXMLExport(String[][] values, LinkedList<MyNode2> nodes, File saveLocation)
   {
     LinkedList<LinkedList<String>> res = createLegend(nodes);
     
@@ -32,13 +33,13 @@ public class XMLExport
     writeToFile(res, saveLocation);
   }
   
-  private LinkedList<LinkedList<String>> createLegend(LinkedList<MyNode> nodes)
+  private LinkedList<LinkedList<String>> createLegend(LinkedList<MyNode2> nodes)
   {
     LinkedList<LinkedList<String>> res = new LinkedList<LinkedList<String>>();
     
     LinkedList<String> legend = new LinkedList<String>();
     legend.add("");
-    for (MyNode n : nodes) {
+    for (MyNode2 n : nodes) {
       legend.add(n.getName());
     }
     res.add(legend);

@@ -24,6 +24,9 @@ import javax.swing.JPopupMenu;
 import javax.swing.JRadioButton;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JTextField;
+
+import model.ModelBuilder;
+
 import org.apache.commons.collections15.map.HashedMap;
 
 import edu.uci.ics.jung.algorithms.layout.CircleLayout;
@@ -35,10 +38,11 @@ import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.util.EdgeType;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.control.AbstractPopupGraphMousePlugin;
-import graph.model.ConnectionType;
-import graph.model.MyEdge;
-import graph.model.MyNode;
-import graph.model.NodeType;
+
+import graph.model2.MyEdge2;
+import graph.model2.MyEdgeType;
+import graph.model2.MyNode2;
+import graph.model2.MyNodeType;
 import graph.operations.InfoContainer;
 
 public class MyPopupGraphMousePlugin extends AbstractPopupGraphMousePlugin implements MouseListener {
@@ -52,29 +56,29 @@ public class MyPopupGraphMousePlugin extends AbstractPopupGraphMousePlugin imple
 	    
 	    
 	    protected void handlePopup(MouseEvent e) {
-	        final VisualizationViewer<MyNode,MyEdge> vv = (VisualizationViewer<MyNode,MyEdge>)e.getSource();
+	    /*    final VisualizationViewer<MyNode2,MyEdge2> vv = (VisualizationViewer<MyNode2,MyEdge2>)e.getSource();
 	        Point2D p = e.getPoint();
 
-	        GraphElementAccessor<MyNode,MyEdge> pickSupport = vv.getPickSupport();
+	        GraphElementAccessor<MyNode2,MyEdge2> pickSupport = vv.getPickSupport();
 	        if(pickSupport != null) {
 	           // System.out.println("POPUP MOUSE is not NULL!");
-	            final MyNode node = pickSupport.getVertex(vv.getGraphLayout(), p.getX(), p.getY());
+	            final MyNode2 node = pickSupport.getVertex(vv.getGraphLayout(), p.getX(), p.getY());
 	            if(node != null) {
 	                JPopupMenu popup = new JPopupMenu();
 	                	         
 	                JMenu submenu = new JMenu("Add Edge");
 
-	                final Layout<MyNode, MyEdge> l = vv.getGraphLayout();
+	                final Layout<MyNode2, MyEdge2> l = vv.getGraphLayout();
                 	
-                	final Graph<MyNode, MyEdge> g = l.getGraph();
+                	final Graph<MyNode2, MyEdge2> g = l.getGraph();
                 	
-                	LinkedList<MyNode> col = new LinkedList<MyNode>();
+                	LinkedList<MyNode2> col = new LinkedList<MyNode2>();
                 	col.addAll(g.getVertices());
                 	
                 	col.remove(node);
                 	
                 	
-                	for (final MyNode cur : col)
+                	for (final MyNode2 cur : col)
                 	{
                 		JMenuItem menuItem = new JMenuItem("To : "+cur.getName());
                 		
@@ -83,9 +87,9 @@ public class MyPopupGraphMousePlugin extends AbstractPopupGraphMousePlugin imple
 							@Override
 							public void actionPerformed(ActionEvent arg0) {
 								
-								ConnectionType[] possibilities = ConnectionType.values();
+								MyEdgeType[] possibilities = ModelBuilder.getEdgeTypes().getAllEdgeTypesArray();
 
-								ConnectionType res = (ConnectionType)JOptionPane.showInputDialog(
+								MyEdgeType res = (MyEdgeType)JOptionPane.showInputDialog(
 								                    vv,"",
 								                    "Choose Edge Type",
 								                    JOptionPane.PLAIN_MESSAGE,
@@ -95,7 +99,7 @@ public class MyPopupGraphMousePlugin extends AbstractPopupGraphMousePlugin imple
 								
 								if (res!=null)
 								{
-									MyEdge newEdge = new MyEdge(res, node, cur);
+									MyEdge2 newEdge = new MyEdge2(res, node, cur);
 									g.addEdge(newEdge, node, cur ,EdgeType.DIRECTED);
 									
 									
@@ -118,14 +122,14 @@ public class MyPopupGraphMousePlugin extends AbstractPopupGraphMousePlugin imple
 	                  
 	                popup.add(new AbstractAction("Delete Node"){
 	                    public void actionPerformed(ActionEvent e) {
-	                    	Layout<MyNode, MyEdge> l = vv.getGraphLayout();
+	                    	Layout<MyNode2, MyEdge2> l = vv.getGraphLayout();
 	                      	
-	                      	Graph<MyNode, MyEdge> g = l.getGraph();
+	                      	Graph<MyNode2, MyEdge2> g = l.getGraph();
 	                    	
 	                    	
-	                    	Collection<MyEdge> col = g.getIncidentEdges(node);
+	                    	Collection<MyEdge2> col = g.getIncidentEdges(node);
 	                    	
-	                    	for (MyEdge edge :col)
+	                    	for (MyEdge2 edge :col)
 	                    	{
 	                    		g.removeEdge(edge);
 	                    	}
@@ -148,13 +152,13 @@ public class MyPopupGraphMousePlugin extends AbstractPopupGraphMousePlugin imple
                 	
                 	//final Graph<MyNode, MyEdge> graph = l.getGraph();
                 	
-                	col = new LinkedList<MyNode>();
+                	col = new LinkedList<MyNode2>();
                 	col.addAll(g.getVertices());
                 	
                 	col.remove(node);
                 	
                 	
-                	for (final MyNode cur : col)
+                	for (final MyNode2 cur : col)
                 	{
                 		JMenuItem menuItem = new JMenuItem("with: "+cur.getName());
                 		
@@ -275,7 +279,7 @@ public class MyPopupGraphMousePlugin extends AbstractPopupGraphMousePlugin imple
 										JPanel oldOutgoingPanel = new JPanel(new GridLayout(0, 1));
 										JPanel oldIncomingPanel = new JPanel(new GridLayout(0, 1));
 										
-										for (MyEdge edge: oldOutgoing_edges)
+										for (MyEdge2 edge: oldOutgoing_edges)
 										{
 											if (g.getDest(edge)!=cur)
 											{
@@ -287,7 +291,7 @@ public class MyPopupGraphMousePlugin extends AbstractPopupGraphMousePlugin imple
 											}
 										}
 										
-										for (MyEdge edge: oldIncoming_edges)
+										for (MyEdge2 edge: oldIncoming_edges)
 										{
 											if (g.getSource(edge)!=cur)
 											{
@@ -305,8 +309,8 @@ public class MyPopupGraphMousePlugin extends AbstractPopupGraphMousePlugin imple
 										
 										//New Node
 										HashMap<String, InfoContainer> newmapping = new HashMap<String,InfoContainer>();
-										Collection<MyEdge> newOutgoing_edges = g.getOutEdges(cur);
-										Collection<MyEdge> newIncoming_edges = g.getInEdges(cur);
+										Collection<MyEdge2> newOutgoing_edges = g.getOutEdges(cur);
+										Collection<MyEdge2> newIncoming_edges = g.getInEdges(cur);
 										
 										checkPanel2.add(new JLabel("Outgoing Edges"));
 										checkPanel2.add(new JLabel("InComing Edges"));
@@ -314,7 +318,7 @@ public class MyPopupGraphMousePlugin extends AbstractPopupGraphMousePlugin imple
 										JPanel newOutgoingPanel = new JPanel(new GridLayout(0, 1));
 										JPanel newIncomingPanel = new JPanel(new GridLayout(0, 1));
 										
-										for (MyEdge edge: newOutgoing_edges)
+										for (MyEdge2 edge: newOutgoing_edges)
 										{
 											if (g.getDest(edge)!=node)
 											{
@@ -326,7 +330,7 @@ public class MyPopupGraphMousePlugin extends AbstractPopupGraphMousePlugin imple
 											}
 										}
 										
-										for (MyEdge edge: newIncoming_edges)
+										for (MyEdge2 edge: newIncoming_edges)
 										{
 											if (g.getSource(edge)!=node)
 											{
@@ -477,14 +481,14 @@ public class MyPopupGraphMousePlugin extends AbstractPopupGraphMousePlugin imple
 	                popup.show(vv, e.getX(), e.getY());
 	            } 
 	            else {
-	                final MyEdge edge = pickSupport.getEdge(vv.getGraphLayout(), p.getX(), p.getY());
+	                final MyEdge2 edge = pickSupport.getEdge(vv.getGraphLayout(), p.getX(), p.getY());
 	                if(edge != null) {
 	                    JPopupMenu popup = new JPopupMenu();
 	                    popup.add(new AbstractAction("Delete \""+edge.toString()+"\" Edge") {
 	                        public void actionPerformed(ActionEvent e) {
-	                        	Layout<MyNode, MyEdge> l = vv.getGraphLayout();
+	                        	Layout<MyNode2, MyEdge2> l = vv.getGraphLayout();
 		                    	
-		                    	Graph<MyNode, MyEdge> g = l.getGraph();
+		                    	Graph<MyNode2, MyEdge2> g = l.getGraph();
 		                    	g.removeEdge(edge);
 		                    	
 		                    	//l.setGraph(g);
@@ -508,8 +512,8 @@ public class MyPopupGraphMousePlugin extends AbstractPopupGraphMousePlugin imple
 	                        	
 	                        	JTextField NodeName = new JTextField();
 	                        	JTextField NodeAttr = new JTextField();
-	                        	NodeType[] possibilities = NodeType.values();
-	                        	JComboBox<NodeType> Nodetype = new JComboBox<NodeType>(possibilities);
+	                        	MyNodeType[] possibilities = ModelBuilder.getNodeTypes().getAllNodeTypesArray();
+	                        	JComboBox<MyNodeType> Nodetype = new JComboBox<MyNodeType>(possibilities);
 	                        	final JComponent[] inputs = new JComponent[] {
 	                        			new JLabel("Node Name"),
 	                        			NodeName,
@@ -534,11 +538,11 @@ public class MyPopupGraphMousePlugin extends AbstractPopupGraphMousePlugin imple
 	                        			attributes.add(a);
 	                        		}
 	                        	
-	                        		MyNode newNode = new MyNode(NodeName.getText(), attributes,(NodeType)Nodetype.getSelectedItem());
+	                        		MyNode2 newNode = new MyNode2(NodeName.getText(), attributes,(MyNodeType)Nodetype.getSelectedItem());
 	                        		
-	                        		Layout<MyNode, MyEdge> l = vv.getGraphLayout();
+	                        		Layout<MyNode2, MyEdge2> l = vv.getGraphLayout();
 			                    	
-			                    	Graph<MyNode, MyEdge> g = l.getGraph();
+			                    	Graph<MyNode2, MyEdge2> g = l.getGraph();
 			                    	
 			                    	g.addVertex(newNode);
 			                    	
@@ -560,6 +564,6 @@ public class MyPopupGraphMousePlugin extends AbstractPopupGraphMousePlugin imple
 
 
 	        }// if(pickSupport != null)
-
+	*/
 	    }
 }

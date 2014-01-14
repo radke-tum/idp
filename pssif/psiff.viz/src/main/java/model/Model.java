@@ -9,8 +9,8 @@ import java.util.LinkedList;
 
 public class Model {
 	
-	private static LinkedList<MyNode> nodes;
-	private static LinkedList<MyEdge> edges;
+	private LinkedList<MyNode> nodes;
+	private LinkedList<MyEdge> edges;
 	
 	public Model()
 	{
@@ -36,12 +36,12 @@ public class Model {
 			edges.add(edge);
 	}
 	
-	public static LinkedList<MyNode> getAllNodes()
+	public  LinkedList<MyNode> getAllNodes()
 	{
 		return nodes;
 	}
 	
-	public static LinkedList<MyEdge> getAllEdges()
+	public  LinkedList<MyEdge> getAllEdges()
 	{
 		return edges;
 	}

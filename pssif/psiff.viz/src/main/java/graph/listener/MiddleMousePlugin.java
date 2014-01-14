@@ -39,8 +39,6 @@ import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.control.AbstractPopupGraphMousePlugin;
 import edu.uci.ics.jung.visualization.control.GraphMousePlugin;
 import edu.uci.ics.jung.visualization.subLayout.TreeCollapser;
-import graph.model.MyEdge;
-import graph.model.MyNode;
 import graph.operations.MyCollapser;
 
 public class MiddleMousePlugin implements MouseListener, GraphMousePlugin {

@@ -4,37 +4,26 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-
-
-
-import model.Model;
+import model.ModelBuilder;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.util.EdgeType;
-import graph.model.ConnectionType;
-import graph.model.MyEdge;
-import graph.model.MyNode;
-import graph.model.NodeType;
+import graph.model2.MyEdge2;
+import graph.model2.MyEdgeType;
+import graph.model2.MyNode2;
+import graph.model2.MyNodeType;
 
 public class NodeAndEdgeFilter {
 
-	public static Graph<MyNode, MyEdge> filter(Graph<MyNode, MyEdge> graph, LinkedList<NodeType> nodeTypes,  LinkedList<ConnectionType> edgeTypes)
+	public static Graph<MyNode2, MyEdge2> filter(Graph<MyNode2, MyEdge2> graph, LinkedList<MyNodeType> nodeTypes,  LinkedList<MyEdgeType> edgeTypes)
 	{		
-		LinkedList<MyNode> existingNodes = new LinkedList<MyNode>();
-		LinkedList<MyEdge> existingEdges = new LinkedList<MyEdge>();
-		
-		Collection<MyEdge> edges = graph.getEdges();		
-		LinkedList<MyEdge> edges2 = new LinkedList<MyEdge>();
-		
-		Iterator<MyEdge> it1 = edges.iterator();
-		while (it1.hasNext())
-		{
-			edges2.add(it1.next());
+		LinkedList<MyNode2> existingNodes = new LinkedList<MyNode2>();
+		LinkedList<MyEdge2> existingEdges = new LinkedList<MyEdge2>();
 			
-		}
+		LinkedList<MyEdge2> edges = new LinkedList<MyEdge2>(graph.getEdges());
 		
-		for (MyEdge e : edges2)
+		for (MyEdge2 e : edges)
 		{
-			if (!edgeTypes.contains(e.getConnectionType()))
+			if (!edgeTypes.contains(e.getEdgeType()))
 			{
 				graph.removeEdge(e);
 			}
@@ -43,17 +32,11 @@ public class NodeAndEdgeFilter {
 		}
 		
 		
-		Collection<MyNode> nodes = graph.getVertices();
-		LinkedList<MyNode> nodes2 = new LinkedList<MyNode>();
+
+		LinkedList<MyNode2> nodes = new LinkedList<MyNode2>(graph.getVertices());
 		
-		Iterator<MyNode> it2 = nodes.iterator();
-		while (it2.hasNext())
-		{
-			nodes2.add(it2.next());
-			
-		}
 		
-		for (MyNode n : nodes2)
+		for (MyNode2 n : nodes)
 		{
 			if (!nodeTypes.contains(n.getNodeType()))
 			{
@@ -63,8 +46,8 @@ public class NodeAndEdgeFilter {
 				existingNodes.add(n);
 		}
 		
-		LinkedList<MyNode> modelNodes = Model.getAllNodes();
-		for (MyNode n : modelNodes)
+		LinkedList<MyNode2> modelNodes = ModelBuilder.getAllNodes();
+		for (MyNode2 n : modelNodes)
 		{
 			if (nodeTypes.contains(n.getNodeType()) && !existingNodes.contains(n))
 			{
@@ -72,10 +55,10 @@ public class NodeAndEdgeFilter {
 			}
 		}
 		
-		LinkedList<MyEdge> modelEdges = Model.getAllEdges();
-		for (MyEdge e : modelEdges)
+		LinkedList<MyEdge2> modelEdges = ModelBuilder.getAllEdges();
+		for (MyEdge2 e : modelEdges)
 		{
-			if (edgeTypes.contains(e.getConnectionType()) && !existingEdges.contains(e))
+			if (edgeTypes.contains(e.getEdgeType()) && !existingEdges.contains(e))
 			{
 				graph.addEdge(e, e.getSourceNode(), e.getDestinationNode(),EdgeType.DIRECTED);
 			}

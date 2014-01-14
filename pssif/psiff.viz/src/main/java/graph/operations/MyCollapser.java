@@ -9,27 +9,26 @@ import java.util.List;
 import edu.uci.ics.jung.graph.DirectedSparseMultigraph;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.util.EdgeType;
-import graph.model.ConnectionType;
-import graph.model.MyEdge;
-import graph.model.MyNode;
+import graph.model2.MyEdge2;
+import graph.model2.MyNode2;
 
 public class MyCollapser {
 	
 
-	private MyNode recStartNode;
+	private MyNode2 recStartNode;
 	private LinkedList<InfoContainer> newInEdges;
 	private LinkedList<InfoContainer> newOutEdges;
-	private LinkedList<MyNode> touchedNodes;
+	private LinkedList<MyNode2> touchedNodes;
 	
-	private HashMap<MyNode,CollapseContainer> history;
+	private HashMap<MyNode2,CollapseContainer> history;
 	private CollapseContainer container;
 	
 	public MyCollapser()
 	{
-		this.history = new HashMap<MyNode, CollapseContainer>();
+		this.history = new HashMap<MyNode2, CollapseContainer>();
 	}
 	
-	public Graph<MyNode,MyEdge> collapseGraph(Graph<MyNode,MyEdge> g, MyNode startNode) 
+	public Graph<MyNode2,MyEdge2> collapseGraph(Graph<MyNode2,MyEdge2> g, MyNode2 startNode) 
 	{
 		// save copy
 		container = new CollapseContainer();
@@ -37,9 +36,9 @@ public class MyCollapser {
 		recStartNode=startNode;
 		newInEdges = new LinkedList<InfoContainer>();
 		newOutEdges = new LinkedList<InfoContainer>();
-		touchedNodes = new LinkedList<MyNode>();
+		touchedNodes = new LinkedList<MyNode2>();
 		
-		recCollapseGraph(g,startNode,true,new LinkedList<MyNode>());
+		recCollapseGraph(g,startNode,true,new LinkedList<MyNode2>());
 		
 		for (InfoContainer ic : newInEdges)
 		{
@@ -65,19 +64,19 @@ public class MyCollapser {
 		return g;
 	}
 	
-	
-	private void recCollapseGraph (Graph<MyNode,MyEdge> g, MyNode startNode, boolean start, LinkedList<MyNode> work)
+	//FIXME 
+	private void recCollapseGraph (Graph<MyNode2,MyEdge2> g, MyNode2 startNode, boolean start, LinkedList<MyNode2> work)
 	{
-		System.out.println("Start: "+start);
+		/*System.out.println("Start: "+start);
 		if (start)
 		{
-			Collection<MyEdge> out = g.getOutEdges(startNode);
+			Collection<MyEdge2> out = g.getOutEdges(startNode);
 			
-			LinkedList<MyNode> tmp = new LinkedList<MyNode>();
-			LinkedList<MyEdge> del = new LinkedList<MyEdge>();
-			for (MyEdge e : out)
+			LinkedList<MyNode2> tmp = new LinkedList<MyNode2>();
+			LinkedList<MyEdge2> del = new LinkedList<MyEdge2>();
+			for (MyEdge2 e : out)
 			{
-				if (e.getConnectionType() == ConnectionType.INCLUDES)
+				if (e.getEdgeType() == ConnectionType.INCLUDES)
 				{
 					MyNode next = g.getDest(e);
 					del.add(e);
@@ -173,11 +172,13 @@ public class MyCollapser {
 			recCollapseGraph(g, null, false, work);
 		}
 		
-	
+	*/
 	}
 	
-	public Graph<MyNode,MyEdge> expandNode(Graph<MyNode,MyEdge> g, MyNode startNode, boolean nodeDetails)
-	{
+	public Graph<MyNode2,MyEdge2> expandNode(Graph<MyNode2,MyEdge2> g, MyNode2 startNode, boolean nodeDetails)
+	//FIXME
+	
+	{/*
 		CollapseContainer container = this.history.get(startNode);
 		
 		if (container==null)
@@ -215,10 +216,11 @@ public class MyCollapser {
 			return g;
 		}
 		
-			
+			*/
+		return null;
 	}
 	
-	public boolean isExpandable (MyNode startNode)
+	public boolean isExpandable (MyNode2 startNode)
 	{
 		CollapseContainer container = this.history.get(startNode);
 		
@@ -228,16 +230,17 @@ public class MyCollapser {
 			return true;
 	}
 	
-	public boolean isCollapsable (MyNode startNode, Graph<MyNode,MyEdge> g)
+	public boolean isCollapsable (MyNode2 startNode, Graph<MyNode2,MyEdge2> g)
 	{
-		Collection<MyEdge> out = g.getOutEdges(startNode);
-		for (MyEdge e : out)
+		//FIXME
+		/*Collection<MyEdge2> out = g.getOutEdges(startNode);
+		for (MyEdge2 e : out)
 		{
 			if (e.getConnectionType() == ConnectionType.INCLUDES)
 			{
 				return true;
 			}
-		}
+		}*/
 		
 		return false;
 	}

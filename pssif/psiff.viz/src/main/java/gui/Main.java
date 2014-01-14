@@ -1,6 +1,7 @@
 package gui;
 
-import graph.model.NodeType;
+
+import graph.model2.MyNodeType;
 import gui.graph.MyListColorRenderer;
 
 import java.awt.BorderLayout;
@@ -13,6 +14,8 @@ import java.awt.GraphicsEnvironment;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.util.HashMap;
 
 import javax.swing.BorderFactory;
@@ -32,23 +35,25 @@ import javax.swing.colorchooser.AbstractColorChooserPanel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import model.Model;
+import model.ModelBuilder;
 
 public class Main {
 	
 	private static MatrixView matrix;
 	private static JFrame frame;
 	private static GraphView graphView;
+	private static Dimension frameSize;
 	
 	public static void main(String[] args) {
 		
-		Model m = new Model();
-		m.MockData();
+		//Model m = new Model();
+		//m.MockData();
+		ModelBuilder m = new ModelBuilder();
 
 		matrix = new MatrixView();
 		graphView = new GraphView();
 
-		frame = new JFrame("Product Service Integration - Integration Framework ---- Visualisation");
+		frame = new JFrame("Product Service System - Integration Framework ---- Visualisation");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		// Standart start with Graph
@@ -57,6 +62,7 @@ public class Main {
 		
 		frame.setJMenuBar(createMenu());
 		//frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+		
 		
 		GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
 		int width = gd.getDisplayMode().getWidth()/4;
@@ -67,6 +73,26 @@ public class Main {
 		
 		frame.setPreferredSize(new Dimension(width, height));
 		frame.setState(Frame.MAXIMIZED_BOTH);
+		
+		frameSize = frame.getSize();
+		
+		frame.addComponentListener(new ComponentListener() {
+			
+			@Override
+			public void componentShown(ComponentEvent e) {}
+			
+			@Override
+			public void componentResized(ComponentEvent e) {
+				frameSize = e.getComponent().getSize();
+				
+			}
+			
+			@Override
+			public void componentMoved(ComponentEvent e) {}
+			
+			@Override
+			public void componentHidden(ComponentEvent e) {}
+		});
 		
 		frame.pack();
 		frame.setLocationRelativeTo(null);
@@ -178,7 +204,7 @@ public class Main {
 	{
 		JPanel bannerPanel = new JPanel(new GridLayout());;
  
-       final JList<NodeType> list = new JList<NodeType>( NodeType.values() );  
+       final JList<MyNodeType> list = new JList<MyNodeType>( ModelBuilder.getNodeTypes().getAllNodeTypesArray() );  
         
        final MyListColorRenderer colorlistener = new MyListColorRenderer();
        colorlistener.setColors(graphView.getGraph().getNodeColorMapping());
@@ -195,7 +221,7 @@ public class Main {
 			
 			@Override
 			public void stateChanged(ChangeEvent e) {
-				NodeType type = list.getSelectedValue();
+				MyNodeType type = list.getSelectedValue();
 				Color newColor = tcc.getColor();
 				 
 				if (type!=null)
@@ -212,7 +238,7 @@ public class Main {
     	
     	if (dialogResult==0)
     	{
-    		HashMap<NodeType, Color > colors = colorlistener.getColorMapping();
+    		HashMap<MyNodeType, Color > colors = colorlistener.getColorMapping();
     		graphView.getGraph().setNodeColorMapping(colors);
     		
     	}

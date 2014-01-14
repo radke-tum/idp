@@ -1,18 +1,20 @@
 package gui;
 
-import graph.model.ConnectionType;
-import graph.model.MyEdge;
-import graph.model.MyNode;
-import graph.model.NodeType;
+import graph.model2.MyEdge2;
+import graph.model2.MyEdgeType;
+import graph.model2.MyNode2;
+import graph.model2.MyNodeType;
 import gui.matrix.RowLegendTable;
 import gui.matrix.TableColumnAdjuster;
 import gui.matrix.VerticalTableHeaderCellRenderer;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -28,14 +30,12 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.ScrollPaneConstants;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
 import matrix.model.MatrixBuilder;
 import matrix.model.XMLExport;
+import model.ModelBuilder;
 
 public class MatrixView {
 
@@ -43,8 +43,8 @@ public class MatrixView {
 	private JPanel matrixPanel;
 	private MatrixBuilder mbuilder;
 	private String[][] content;
-	private LinkedList<MyNode> nodes;
-	private LinkedList<MyEdge> edges;
+	private LinkedList<MyNode2> nodes;
+	private LinkedList<MyEdge2> edges;
 	private XMLExport xml_exporter;
 
 	public MatrixView() {
@@ -55,9 +55,6 @@ public class MatrixView {
 		
 	}
 	
-	
-	
-	
 	private void drawMatrix()
 	{
 		edges = mbuilder.findRelevantEdges();
@@ -65,16 +62,17 @@ public class MatrixView {
 		matrixPanel = drawPanels(nodes,edges);
 	}
 	
-	private JPanel drawPanels(LinkedList<MyNode> nodes, LinkedList<MyEdge> edges)
+	private JPanel drawPanels(LinkedList<MyNode2> nodes, LinkedList<MyEdge2> edges)
 	{
 		JPanel Content = new JPanel();
 		createMatrixContent(Content, nodes, edges);
+		
 		
 		return Content;
 	}
 	
 	
-	private void createMatrixContent (JPanel p, LinkedList<MyNode> nodes, LinkedList<MyEdge> edges)
+	private void createMatrixContent (JPanel p, LinkedList<MyNode2> nodes, LinkedList<MyEdge2> edges)
 	{
 		if (nodes.size()>0 && edges.size()>0)
 		{
@@ -82,7 +80,7 @@ public class MatrixView {
 			
 			int counter =0;
 			// create Legend
-			for (MyNode n : nodes)
+			for (MyNode2 n : nodes)
 			{
 				legend[counter] = n.getName();
 				counter++;				
@@ -93,6 +91,16 @@ public class MatrixView {
 
 			JTable mainTable = new JTable(content,legend);
 			JScrollPane scrollPane = new JScrollPane(mainTable);
+			
+			
+			/*Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+			int x = (int) (screenSize.width*0.85);
+			int y = (int) (screenSize.height*0.9);
+			
+			Dimension d = new Dimension(x,y);
+			scrollPane.setPreferredSize(d);*/
+			
+			
 			JTable rowTable = new RowLegendTable(mainTable);
 			
 			//scrollPane.add(rowTable);
@@ -100,10 +108,11 @@ public class MatrixView {
 			//scrollPane.setPreferredSize(mainTable.getSize());
 			//scrollPane.setCorner(JScrollPane.UPPER_LEFT_CORNER,rowTable.getTableHeader());
 			
-			/*mainTable.setEnabled(false);
+			mainTable.setEnabled(false);
 			mainTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 			TableColumnAdjuster tca = new TableColumnAdjuster(mainTable);
-			tca.adjustColumns();*/
+			tca.adjustColumns();
+			
 			TableCellRenderer headerRenderer = new VerticalTableHeaderCellRenderer();
 		    Enumeration<TableColumn> columns = mainTable.getColumnModel().getColumns();
 		      while (columns.hasMoreElements())
@@ -142,8 +151,8 @@ public class MatrixView {
 	 */
 	public boolean chooseNodes()
 	{
-		ConnectionType[] edgePossibilities = ConnectionType.values();
-		NodeType[] nodePossibilities = NodeType.values();
+		MyEdgeType[] edgePossibilities = ModelBuilder.getEdgeTypes().getAllEdgeTypesArray();
+		MyNodeType[] nodePossibilities = ModelBuilder.getNodeTypes().getAllNodeTypesArray();
 		
 		
 		JPanel allPanel = new JPanel(new GridBagLayout());
@@ -151,7 +160,7 @@ public class MatrixView {
 		
 		final JPanel NodePanel = new JPanel(new GridLayout(0, 1));
 		
-		for (NodeType attr : nodePossibilities)
+		for (MyNodeType attr : nodePossibilities)
 		{
 			JCheckBox choice = new JCheckBox(attr.getName());
 			if (mbuilder.getRelevantNodeTypes()!=null && mbuilder.getRelevantNodeTypes().contains(attr))
@@ -163,7 +172,7 @@ public class MatrixView {
 		
 		final JPanel EdgePanel = new JPanel(new GridLayout(0, 1));
 		
-		for (ConnectionType attr : edgePossibilities)
+		for (MyEdgeType attr : edgePossibilities)
 		{
 			JCheckBox choice = new JCheckBox(attr.getName());
 			if (mbuilder.getRelevantEdgesTypes()!=null && mbuilder.getRelevantEdgesTypes().contains(attr))
@@ -279,10 +288,11 @@ public class MatrixView {
     	
     	if (dialogResult==0)
     	{
+    		System.out.println("new select of Nodes");
     		if (mbuilder.getRelevantNodeTypes() ==null)
-    			mbuilder.setRelevantNodeTypes(new LinkedList<NodeType>());
+    			mbuilder.setRelevantNodeTypes(new LinkedList<MyNodeType>());
     		if (mbuilder.getRelevantEdgesTypes() == null)
-    			mbuilder.setRelevantEdgesTypes(new LinkedList<ConnectionType>());
+    			mbuilder.setRelevantEdgesTypes(new LinkedList<MyEdgeType>());
     		
     		// get all the values of the Nodes
         	Component[] attr = NodePanel.getComponents();       	
@@ -295,9 +305,15 @@ public class MatrixView {
         			// compare which ones where selected
         			 if (a.isSelected())
         			 {
-        				 NodeType b = NodeType.getValue(a.getText());
+        				 MyNodeType b = ModelBuilder.getNodeTypes().getValue(a.getText());
         				 if (!mbuilder.getRelevantNodeTypes().contains(b))
         					 mbuilder.getRelevantNodeTypes().add(b);
+        			 }
+        			 else
+        			 {
+        				 MyNodeType b = ModelBuilder.getNodeTypes().getValue(a.getText());
+        				 if (mbuilder.getRelevantNodeTypes().contains(b))
+        					 mbuilder.getRelevantNodeTypes().remove(b);
         			 }
         				
         		}	
@@ -314,9 +330,15 @@ public class MatrixView {
         			// compare which ones where selected
         			 if (a.isSelected())
         			 {
-        				 ConnectionType b = ConnectionType.getValue(a.getText());
+        				 MyEdgeType b = ModelBuilder.getEdgeTypes().getValue(a.getText());
         				 if (!mbuilder.getRelevantEdgesTypes().contains(b))
         					 mbuilder.getRelevantEdgesTypes().add(b);
+        			 }
+        			 else
+        			 {
+        				 MyEdgeType b = ModelBuilder.getEdgeTypes().getValue(a.getText());
+        				 if (mbuilder.getRelevantEdgesTypes().contains(b))
+        					 mbuilder.getRelevantEdgesTypes().remove(b);
         			 }
         				
         		}	

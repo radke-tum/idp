@@ -4,10 +4,11 @@ import edu.uci.ics.jung.algorithms.layout.FRLayout;
 import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.picking.PickedState;
-import graph.model.ConnectionType;
-import graph.model.MyEdge;
-import graph.model.MyNode;
-import graph.model.NodeType;
+import graph.model2.MyEdge2;
+import graph.model2.MyEdgeType;
+import graph.model2.MyEdgeTypes;
+import graph.model2.MyNode2;
+import graph.model2.MyNodeType;
 import gui.graph.GraphVisualization;
 
 import java.awt.BorderLayout;
@@ -43,6 +44,8 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import model.ModelBuilder;
+
 public class GraphView {
 	private JPanel parent;
 	private GraphVisualization graph;
@@ -56,11 +59,12 @@ public class GraphView {
 	private JButton typeFilter;
 	
 	private Dimension screenSize;
-	
+
 	public GraphView()
 	{
+		
 		screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-		int x = (int) (screenSize.width*0.9);
+		int x = (int) (screenSize.width*0.85);
 		int y = (int) (screenSize.height*0.9);
 		if (nodeDetails==null)
 			graph = new GraphVisualization(new Dimension(x,y),true);
@@ -79,10 +83,9 @@ public class GraphView {
         parent.setLayout(new BorderLayout());
 		
 		JPanel graphpanel = new JPanel();
-		graphpanel.setBackground(Color.YELLOW);
 		
 		
-		VisualizationViewer<MyNode, MyEdge> vv = graph.getVisualisationViewer();
+		VisualizationViewer<MyNode2, MyEdge2> vv = graph.getVisualisationViewer();
 		
 		graphpanel.add(vv);
 		
@@ -90,7 +93,7 @@ public class GraphView {
 		
 		JPanel information = new JPanel();
 		information.setBackground(Color.GREEN);
-		int x = (int) (screenSize.width*0.1);
+		int x = (int) (screenSize.width*0.15);
 		int y = (int) (screenSize.height);
 		Dimension d = new Dimension(x,y);
 		information.setMaximumSize(d);
@@ -289,13 +292,13 @@ public class GraphView {
 	
 	public void resetGraph()
 	{
-		FRLayout<MyNode, MyEdge> l = new FRLayout<MyNode, MyEdge>(graph.getGraph());
+		FRLayout<MyNode2, MyEdge2> l = new FRLayout<MyNode2, MyEdge2>(graph.getGraph());
     	graph.getVisualisationViewer().setGraphLayout(l);
     	
     	graph.getVisualisationViewer().repaint();
 	}
 	
-	private void updateSidebar(String nodeName, NodeType nodeType, List<String> attributes)
+	private void updateSidebar(String nodeName, MyNodeType nodeType, List<String> attributes)
 	{
 		if (nodeName==null)
 			this.nodename.setText("");
@@ -345,7 +348,7 @@ public class GraphView {
 	
 	private void addNodeChangeListener()
 	{
-		final PickedState<MyNode> pickedState = graph.getVisualisationViewer().getPickedVertexState();
+		final PickedState<MyNode2> pickedState = graph.getVisualisationViewer().getPickedVertexState();
 
 		pickedState.addItemListener(new ItemListener() {
 
@@ -353,8 +356,8 @@ public class GraphView {
 		    public void itemStateChanged(ItemEvent e) {
 		        Object subject = e.getItem();
 
-		        if (subject instanceof MyNode) {
-		        	MyNode vertex = (MyNode) subject;
+		        if (subject instanceof MyNode2) {
+		        	MyNode2 vertex = (MyNode2) subject;
 		            if (pickedState.isPicked(vertex)) 
 		              updateSidebar(vertex.getName(), vertex.getNodeType(), vertex.getAttributes());
 		            else
@@ -365,7 +368,7 @@ public class GraphView {
 		        
 		    }
 		});
-		Set<MyNode> s =pickedState.getPicked();
+		Set<MyNode2> s =pickedState.getPicked();
 		if (s==null)
 		{
 			updateSidebar(null, null,null);
@@ -374,7 +377,7 @@ public class GraphView {
 	
 	private void chooseHighlightNodes()
 	{
-		ConnectionType[] edgePossibilities = ConnectionType.values();
+		MyEdgeType[] edgePossibilities = ModelBuilder.getEdgeTypes().getAllEdgeTypesArray();
 		
 		JPanel allPanel = new JPanel(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
@@ -382,9 +385,9 @@ public class GraphView {
 		
 		final JPanel EdgePanel = new JPanel(new GridLayout(0, 1));
 		
-		LinkedList<ConnectionType> already = graph.getHighlightNodes();
+		LinkedList<MyEdgeType> already = graph.getHighlightNodes();
 		int allcounter =0;
-		for (ConnectionType attr : edgePossibilities)
+		for (MyEdgeType attr : edgePossibilities)
 		{
 			JCheckBox choice = new JCheckBox(attr.getName());
 			if (already!=null && already.contains(attr))
@@ -457,7 +460,7 @@ public class GraphView {
 				allPanel
     	};
 		
-		LinkedList<ConnectionType> res = new LinkedList<ConnectionType>();
+		LinkedList<MyEdgeType> res = new LinkedList<MyEdgeType>();
 		
 		allPanel.setPreferredSize(new Dimension(200,500));
 		allPanel.setMaximumSize(new Dimension(200,500));
@@ -483,7 +486,7 @@ public class GraphView {
         			 if (a.isSelected())
         			 {
         		//		 System.out.println(a.getText());
-        				 ConnectionType b = ConnectionType.getValue(a.getText());
+        				 MyEdgeType b = ModelBuilder.getEdgeTypes().getValue(a.getText());
         				 res.add(b);
         			 }
         				
@@ -496,8 +499,8 @@ public class GraphView {
 	
 	private void chooseEdgeAndNodeTypes()
 	{
-		ConnectionType[] edgePossibilities = ConnectionType.values();
-		NodeType[] nodePossibilities = NodeType.values();
+		MyEdgeType[] edgePossibilities = ModelBuilder.getEdgeTypes().getAllEdgeTypesArray();
+		MyNodeType[] nodePossibilities = ModelBuilder.getNodeTypes().getAllNodeTypesArray();
 		
 		
 		JPanel allPanel = new JPanel(new GridBagLayout());
@@ -506,7 +509,7 @@ public class GraphView {
 		final JPanel NodePanel = new JPanel(new GridLayout(0, 1));
 		
 		int nodecounter=0;
-		for (NodeType attr : nodePossibilities)
+		for (MyNodeType attr : nodePossibilities)
 		{
 			JCheckBox choice = new JCheckBox(attr.getName());
 			if (graph.getVizNodes().contains(attr))
@@ -522,7 +525,7 @@ public class GraphView {
 		final JPanel EdgePanel = new JPanel(new GridLayout(0, 1));
 		
 		int edgecounter =0;
-		for (ConnectionType attr : edgePossibilities)
+		for (MyEdgeType attr : edgePossibilities)
 		{
 			JCheckBox choice = new JCheckBox(attr.getName());
 			if (graph.getVizEdges().contains(attr))
@@ -645,7 +648,7 @@ public class GraphView {
     	
     	if (dialogResult==0)
     	{
-    		LinkedList<NodeType> selectedNodes = new LinkedList<NodeType>();
+    		LinkedList<MyNodeType> selectedNodes = new LinkedList<MyNodeType>();
     		// get all the values of the Nodes
         	Component[] attr = NodePanel.getComponents();       	
         	for (Component tmp :attr)
@@ -657,14 +660,14 @@ public class GraphView {
         			// compare which ones where selected
         			 if (a.isSelected())
         			 {
-        				 NodeType b = NodeType.getValue(a.getText());
+        				 MyNodeType b = ModelBuilder.getNodeTypes().getValue(a.getText());
         				 selectedNodes.add(b);
         			 }
         				
         		}	
         	}
         	
-        	LinkedList<ConnectionType> selectedEdges = new LinkedList<ConnectionType>();
+        	LinkedList<MyEdgeType> selectedEdges = new LinkedList<MyEdgeType>();
     		// get all the values of the edges
         	attr = EdgePanel.getComponents();       	
         	for (Component tmp :attr)
@@ -676,7 +679,7 @@ public class GraphView {
         			// compare which ones where selected
         			 if (a.isSelected())
         			 {
-        				 ConnectionType b = ConnectionType.getValue(a.getText());
+        				 MyEdgeType b = ModelBuilder.getEdgeTypes().getValue(a.getText());
         				 selectedEdges.add(b);
         			 }
         				
