@@ -9,6 +9,7 @@ public class MyEdgeTypes {
 private LinkedList<MyEdgeType> types;
 	
 	private static int idcounter;
+	public static String CONTAINMENT = "containment";
 	
 	public MyEdgeTypes (Collection<EdgeType> types)
 	{

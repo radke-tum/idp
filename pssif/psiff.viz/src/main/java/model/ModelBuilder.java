@@ -1,7 +1,6 @@
 package model;
 
-import graph.model.MyEdge;
-import graph.model.MyNode;
+
 import graph.model2.MyEdge2;
 import graph.model2.MyEdgeType;
 import graph.model2.MyEdgeTypes;
@@ -13,19 +12,17 @@ import java.util.Collection;
 import java.util.LinkedList;
 
 import de.tum.pssif.core.PSSIFConstants;
-import de.tum.pssif.core.metamodel.AttributeCategory;
+
 import de.tum.pssif.core.metamodel.ConnectionMapping;
-import de.tum.pssif.core.metamodel.DataType;
+
 import de.tum.pssif.core.metamodel.EdgeType;
-import de.tum.pssif.core.metamodel.Metamodel;
+
 import de.tum.pssif.core.metamodel.MutableMetamodel;
 import de.tum.pssif.core.metamodel.NodeType;
-import de.tum.pssif.core.metamodel.PrimitiveDataType;
-import de.tum.pssif.core.metamodel.Unit;
-import de.tum.pssif.core.metamodel.Units;
+
 
 import de.tum.pssif.core.model.Edge;
-import de.tum.pssif.core.model.Element;
+
 import de.tum.pssif.core.model.Model;
 import de.tum.pssif.core.model.Node;
 import de.tum.pssif.core.model.impl.ModelImpl;
@@ -131,7 +128,15 @@ public class ModelBuilder {
 				
 				Node destinationNode = destinations.getOne();
 				
-				MyEdge2 tmp = new MyEdge2(e, t, findNode(sourceNode), findNode(destinationNode));
+				MyEdge2 tmp;
+				
+				/*if (t.getType().getName().equals(MyEdgeTypes.CONTAINMENT))
+				{
+					// Their Edges are organized the other way. Don't be confused by the MyEdge2 call
+					tmp = new MyEdge2(e, t, findNode(sourceNode), findNode(destinationNode));
+				}
+				else*/
+					tmp = new MyEdge2(e, t, findNode(destinationNode), findNode(sourceNode));
 				
 				edges.add(tmp);
 			}

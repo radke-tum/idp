@@ -118,37 +118,37 @@ public class MiddleMousePlugin implements MouseListener, GraphMousePlugin {
 		}
 		@Override
 		public void mouseEntered(MouseEvent arg0) {
-			// TODO Auto-generated method stub
+			
 			 // System.out.println("Middle MOUSE is not NULL!");
 		}
 		@Override
 		public void mouseExited(MouseEvent arg0) {
-			// TODO Auto-generated method stub
+			
 			 // System.out.println("Middle MOUSE is not NULL!");
 		}
 		@Override
 		public void mousePressed(MouseEvent arg0) {
-			// TODO Auto-generated method stub
+			
 			 // System.out.println("Middle MOUSE is not NULL!");
 		}//
 		@Override
 		public void mouseReleased(MouseEvent arg0) {
-			// TODO Auto-generated method stub
+			
 			//  System.out.println("Middle MOUSE is not NULL!");
 		}
 		@Override
 		public boolean checkModifiers(MouseEvent arg0) {
-			// TODO Auto-generated method stub
+			
 			return false;
 		}
 		@Override
 		public int getModifiers() {
-			// TODO Auto-generated method stub
+			
 			return 0;
 		}
 		@Override
 		public void setModifiers(int arg0) {
-			// TODO Auto-generated method stub
+			
 			
 		}
 }

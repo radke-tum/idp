@@ -10,6 +10,7 @@ import edu.uci.ics.jung.graph.DirectedSparseMultigraph;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.util.EdgeType;
 import graph.model2.MyEdge2;
+import graph.model2.MyEdgeTypes;
 import graph.model2.MyNode2;
 
 public class MyCollapser {
@@ -64,10 +65,9 @@ public class MyCollapser {
 		return g;
 	}
 	
-	//FIXME 
 	private void recCollapseGraph (Graph<MyNode2,MyEdge2> g, MyNode2 startNode, boolean start, LinkedList<MyNode2> work)
 	{
-		/*System.out.println("Start: "+start);
+		System.out.println("Start: "+start);
 		if (start)
 		{
 			Collection<MyEdge2> out = g.getOutEdges(startNode);
@@ -76,9 +76,9 @@ public class MyCollapser {
 			LinkedList<MyEdge2> del = new LinkedList<MyEdge2>();
 			for (MyEdge2 e : out)
 			{
-				if (e.getEdgeType() == ConnectionType.INCLUDES)
+				if (e.getEdgeType().getName().equals(MyEdgeTypes.CONTAINMENT))
 				{
-					MyNode next = g.getDest(e);
+					MyNode2 next = g.getDest(e);
 					del.add(e);
 					
 					tmp.add(next);
@@ -91,7 +91,7 @@ public class MyCollapser {
 			{
 				System.out.println("delete first start Edge: "+del.get(i).toString());
 				
-				MyEdge e = del.get(i);
+				MyEdge2 e = del.get(i);
 				
 				container.addOldEdge(new InfoContainer(e, g.getSource(e), g.getDest(e)));
 				g.removeEdge(e);
@@ -103,17 +103,17 @@ public class MyCollapser {
 		if (work.size()>0)
 		{
 			System.out.println("loop Work "+work.size());
-			MyNode workNode = work.getFirst();
+			MyNode2 workNode = work.getFirst();
 			
-			Collection<MyEdge> fout = g.getOutEdges(workNode);
-			Collection<MyEdge> fin =  g.getInEdges(workNode);
+			Collection<MyEdge2> fout = g.getOutEdges(workNode);
+			Collection<MyEdge2> fin =  g.getInEdges(workNode);
 			
-			List<MyEdge> out = new LinkedList<MyEdge>();
-			List<MyEdge> in = new LinkedList<MyEdge>();
+			List<MyEdge2> out = new LinkedList<MyEdge2>();
+			List<MyEdge2> in = new LinkedList<MyEdge2>();
 			
 			if (fin!=null)
 			{
-				Iterator<MyEdge> it = fin.iterator();
+				Iterator<MyEdge2> it = fin.iterator();
 				while(it.hasNext())
 				{
 					in.add(it.next());
@@ -125,9 +125,9 @@ public class MyCollapser {
 				for (int i = 0; i<in.size();i++)
 				{
 					System.out.println("loop in "+i);
-					MyEdge e= in.get(i);
+					MyEdge2 e= in.get(i);
 					
-					MyNode source = g.getSource(e);
+					MyNode2 source = g.getSource(e);
 					
 					container.addOldEdge(new InfoContainer(e, g.getSource(e), g.getDest(e)));
 					g.removeEdge(e);
@@ -137,7 +137,7 @@ public class MyCollapser {
 			}
 			if (fout!=null)
 			{				
-				Iterator<MyEdge> it = fout.iterator();
+				Iterator<MyEdge2> it = fout.iterator();
 				while(it.hasNext())
 				{
 					out.add(it.next());
@@ -146,15 +146,15 @@ public class MyCollapser {
 				for (int i = 0; i<out.size();i++)
 				{
 					System.out.println("loop out "+out.size());
-					MyEdge e= out.get(i);
-					MyNode dest = g.getDest(e);
-					System.out.println("Remove Edge  "+e.getConnectionType().getName());
+					MyEdge2 e= out.get(i);
+					MyNode2 dest = g.getDest(e);
+					System.out.println("Remove Edge  "+e.getEdgeType().getName());
 					container.addOldEdge(new InfoContainer(e, g.getSource(e), g.getDest(e)));
 					g.removeEdge(e);
 					System.out.println("Add to work  "+dest.getName());
 					newOutEdges.add(new InfoContainer(e, recStartNode, dest));
 					
-					if (e.getConnectionType()==ConnectionType.INCLUDES && !work.contains(dest) )
+					if (e.getEdgeType().getName().equals(MyEdgeTypes.CONTAINMENT) && !work.contains(dest) )
 					{
 						work.add(dest);
 						touchedNodes.add(dest);
@@ -172,13 +172,11 @@ public class MyCollapser {
 			recCollapseGraph(g, null, false, work);
 		}
 		
-	*/
+	
 	}
 	
 	public Graph<MyNode2,MyEdge2> expandNode(Graph<MyNode2,MyEdge2> g, MyNode2 startNode, boolean nodeDetails)
-	//FIXME
-	
-	{/*
+	{
 		CollapseContainer container = this.history.get(startNode);
 		
 		if (container==null)
@@ -194,9 +192,9 @@ public class MyCollapser {
 			}
 			
 			// add old Nodes
-			LinkedList<MyNode> nodes = container.getOldNodes();
+			LinkedList<MyNode2> nodes = container.getOldNodes();
 			
-			for (MyNode n : nodes)
+			for (MyNode2 n : nodes)
 			{
 				if (n!=null)
 				{
@@ -215,9 +213,6 @@ public class MyCollapser {
 			this.history.remove(startNode);
 			return g;
 		}
-		
-			*/
-		return null;
 	}
 	
 	public boolean isExpandable (MyNode2 startNode)
@@ -232,15 +227,14 @@ public class MyCollapser {
 	
 	public boolean isCollapsable (MyNode2 startNode, Graph<MyNode2,MyEdge2> g)
 	{
-		//FIXME
-		/*Collection<MyEdge2> out = g.getOutEdges(startNode);
+		Collection<MyEdge2> out = g.getOutEdges(startNode);
 		for (MyEdge2 e : out)
 		{
-			if (e.getConnectionType() == ConnectionType.INCLUDES)
+			if (e.getEdgeType().getName().equals(MyEdgeTypes.CONTAINMENT))
 			{
 				return true;
 			}
-		}*/
+		}
 		
 		return false;
 	}

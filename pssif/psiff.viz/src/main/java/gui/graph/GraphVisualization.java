@@ -189,7 +189,7 @@ public class GraphVisualization
         case 0: 
           return Color.BLACK;
         case 1: 
-          return Color.YELLOW;
+          return Color.RED;
         case 2: 
           return Color.BLUE;
         case 3: 
@@ -209,7 +209,7 @@ public class GraphVisualization
         case 10: 
           return Color.PINK;
         case 11: 
-          return Color.RED;
+          return Color.YELLOW;
         case 12: 
           return Color.WHITE;
         }
