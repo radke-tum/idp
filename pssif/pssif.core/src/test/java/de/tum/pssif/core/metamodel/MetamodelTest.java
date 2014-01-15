@@ -5,13 +5,14 @@ import java.util.Collection;
 import org.junit.Assert;
 import org.junit.Test;
 
+import de.tum.pssif.core.PSSIFConstants;
 import de.tum.pssif.core.metamodel.Multiplicity.MultiplicityContainer;
 import de.tum.pssif.core.metamodel.Multiplicity.UnlimitedNatural;
 import de.tum.pssif.core.metamodel.impl.MetamodelImpl;
 
 
 public class MetamodelTest {
-  private Metamodel metamodel = new MetamodelImpl();
+  private MutableMetamodel metamodel = new MetamodelImpl();
 
   @Test
   public void test() {
@@ -41,23 +42,22 @@ public class MetamodelTest {
 
   @Test
   public void generalizationTest() {
-    NodeType node = metamodel.createNodeType("node");
     NodeType development = metamodel.createNodeType("development");
     NodeType solution = metamodel.createNodeType("solution");
     NodeType sw = metamodel.createNodeType("software");
 
-    development.inherit(node);
-    solution.inherit(node);
     sw.inherit(solution);
 
-    Assert.assertNull(node.getGeneral());
-    Collection<NodeType> specials = node.getSpecials();
+    NodeType rootNodeType = metamodel.findNodeType(PSSIFConstants.ROOT_NODE_TYPE_NAME);
+
+    Assert.assertNull(rootNodeType.getGeneral());
+    Collection<NodeType> specials = rootNodeType.getSpecials();
     Assert.assertEquals(2, specials.size());
     Assert.assertTrue(specials.contains(development));
     Assert.assertTrue(specials.contains(solution));
 
-    Assert.assertEquals(node, development.getGeneral());
-    Assert.assertEquals(node, solution.getGeneral());
+    Assert.assertEquals(rootNodeType, development.getGeneral());
+    Assert.assertEquals(rootNodeType, solution.getGeneral());
 
     EdgeType flow = metamodel.createEdgeType("flow");
     flow.createMapping("flows", solution, MultiplicityContainer.of(1, UnlimitedNatural.of(1), 0, UnlimitedNatural.UNLIMITED), "flows", solution,
@@ -68,7 +68,6 @@ public class MetamodelTest {
 
     infoflow.inherit(flow);
 
-    Assert.assertNull(flow.getGeneral());
     Collection<EdgeType> flowSpecials = flow.getSpecials();
     Assert.assertEquals(1, flowSpecials.size());
     Assert.assertTrue(flowSpecials.contains(infoflow));

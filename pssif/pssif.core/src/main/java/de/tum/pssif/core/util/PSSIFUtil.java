@@ -1,8 +1,13 @@
 package de.tum.pssif.core.util;
 
 import java.util.Collection;
+import java.util.List;
 
+import com.google.common.collect.Lists;
+
+import de.tum.pssif.core.metamodel.EdgeEnd;
 import de.tum.pssif.core.metamodel.Named;
+import de.tum.pssif.core.metamodel.traits.Specializable;
 
 
 /**
@@ -36,6 +41,10 @@ public class PSSIFUtil {
     return in == null ? "" : in.trim().toLowerCase();
   }
 
+  public static boolean isValidName(String name) {
+    return !normalize(name).isEmpty();
+  }
+
   /**
    * Locates a named element by name in a collection of named elements.
    * TODO use throughout the metamodel impl.
@@ -48,10 +57,54 @@ public class PSSIFUtil {
    */
   public static <T extends Named> T find(String name, Collection<T> collection) {
     for (T candidate : collection) {
-      if (areSame(name, candidate.getName())) {
+      if (candidate.hasName(name)) {
         return candidate;
       }
     }
     return null;
+  }
+
+  public static <T extends Specializable<T>> List<T> specializationsClosure(T element) {
+    List<T> result = Lists.newArrayList();
+    for (T spec : element.getSpecials()) {
+      result.addAll(specializationsClosure(spec));
+    }
+    return result;
+  }
+
+  public static <T extends Specializable<T>> List<T> generalizationsClosure(T element) {
+    List<T> result = Lists.newArrayList();
+    T next = element;
+    while (next.getGeneral() != null) {
+      next = next.getGeneral();
+      result.add(next);
+    }
+    return result;
+  }
+
+  public static <T extends Specializable<T>> boolean isReadCompatibleWith(T element, T readableAs) {
+    return generalizationsClosure(element).contains(readableAs);
+  }
+
+  public static <T extends Specializable<T>> boolean isWriteCompatibleWith(T element, T writableAs) {
+    return specializationsClosure(element).contains(writableAs);
+  }
+
+  public static <T extends Specializable<T>> boolean hasSpecializationIn(T element, Collection<T> collection) {
+    for (T candidate : collection) {
+      if (isReadCompatibleWith(candidate, element)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  public static boolean hasSpecializationIn(EdgeEnd element, Collection<EdgeEnd> collection) {
+    for (EdgeEnd candidate : collection) {
+      if (areSame(element.getName(), candidate.getName()) && isReadCompatibleWith(candidate.getNodeType(), element.getNodeType())) {
+        return true;
+      }
+    }
+    return false;
   }
 }

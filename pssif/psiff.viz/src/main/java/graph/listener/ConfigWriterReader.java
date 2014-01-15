@@ -228,7 +228,11 @@ public class ConfigWriterReader {
 	public HashMap<MyNodeType, Color> readColors ()
 	{
 		HashMap<MyNodeType, Color> res = new HashMap<MyNodeType, Color>();
+/*		
+<<<<<<< HEAD
+=======
 		
+>>>>>>> refs/remotes/origin/attempt3*/
 		if (configFile.exists())
 		{
 			try
@@ -252,6 +256,7 @@ public class ConfigWriterReader {
 			 
 					Node nNode = nList.item(temp);
 			 
+//<<<<<<< HEAD
 					//System.out.println("\nCurrent Element :" + nNode);
 			 
 					if (nNode.getNodeType() == Node.ELEMENT_NODE) {
@@ -261,6 +266,17 @@ public class ConfigWriterReader {
 						String nodeTypeValue = eElement.getChildNodes().item(0).getNodeValue();	
 						//System.out.println(nodeTypeValue);
 						MyNodeType current = ModelBuilder.getNodeTypes().getValue(nodeTypeValue);
+/*=======
+					System.out.println("\nCurrent Element :" + nNode);
+			 
+					if (nNode.getNodeType() == Node.ELEMENT_NODE) {
+			 
+						Element eElement = (Element) nNode;
+						
+						String nodeTypeValue = eElement.getChildNodes().item(0).getNodeValue();	
+						System.out.println(nodeTypeValue);
+						NodeType current = NodeType.getValue(nodeTypeValue);
+//>>>>>>> refs/remotes/origin/attempt3*/
 						Color c = new Color(Integer.valueOf(eElement.getAttribute(attrColor)));
 						
 						res.put(current, c);
@@ -270,6 +286,10 @@ public class ConfigWriterReader {
 		    	e.printStackTrace();
 		    }
 		}
+/*<<<<<<< HEAD
+=======
+		
+>>>>>>> refs/remotes/origin/attempt3*/
 		return res;
 	  }
 	

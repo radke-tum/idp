@@ -95,4 +95,16 @@ public interface NodeType extends ElementType<NodeType> {
    *    The node instances found.
    */
   PSSIFOption<Node> apply(Model model);
+
+  /**
+   * Retrieves a node of this type with the specified id from the specified model
+   * 
+   * @param model the model
+   * @param id the id
+   * 
+   * @return
+   */
+  PSSIFOption<Node> apply(Model model, String id);
+
+  boolean isAssignableFrom(NodeType type);
 }

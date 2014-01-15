@@ -8,9 +8,9 @@ import com.google.common.collect.Sets;
 
 import de.tum.pssif.core.PSSIFConstants;
 import de.tum.pssif.core.exception.PSSIFStructuralIntegrityException;
+import de.tum.pssif.core.metamodel.Attribute;
 import de.tum.pssif.core.metamodel.AttributeCategory;
 import de.tum.pssif.core.metamodel.AttributeGroup;
-import de.tum.pssif.core.metamodel.AttributeType;
 import de.tum.pssif.core.metamodel.DataType;
 import de.tum.pssif.core.metamodel.ElementType;
 import de.tum.pssif.core.metamodel.PrimitiveDataType;
@@ -43,8 +43,14 @@ public abstract class ElementTypeImpl<T extends ElementType<T>> extends NamedImp
   @SuppressWarnings("unchecked")
   @Override
   public void inherit(T general) {
+    if (this.equals(general)) {
+      throw new PSSIFStructuralIntegrityException("can not inherit self");
+    }
+    if (this.general != null) {
+      this.general.unregisterSpecialization((T) this);
+    }
     this.general = general;
-    general.registerSpecialization((T) this);
+    this.general.registerSpecialization((T) this);
   }
 
   @Override
@@ -53,9 +59,14 @@ public abstract class ElementTypeImpl<T extends ElementType<T>> extends NamedImp
   }
 
   @Override
-  public AttributeType findAttribute(String name) {
-    AttributeType result = null;
-    for (AttributeGroup group : getAttributeGroups()) {
+  public void unregisterSpecialization(T special) {
+    specializations.remove(special);
+  }
+
+  @Override
+  public AttributeImpl findAttribute(String name) {
+    AttributeImpl result = null;
+    for (AttributeGroupImpl group : this.attributeGroups) {
       result = group.findAttribute(name);
       if (result != null) {
         return result;
@@ -65,8 +76,8 @@ public abstract class ElementTypeImpl<T extends ElementType<T>> extends NamedImp
   }
 
   @Override
-  public Collection<AttributeType> getAttributes() {
-    Collection<AttributeType> attrs = Sets.newHashSet();
+  public Collection<Attribute> getAttributes() {
+    Collection<Attribute> attrs = Sets.newHashSet();
     for (AttributeGroup group : getAttributeGroups()) {
       attrs.addAll(group.getAttributes());
     }
@@ -74,7 +85,7 @@ public abstract class ElementTypeImpl<T extends ElementType<T>> extends NamedImp
   }
 
   @Override
-  public AttributeType createAttribute(AttributeGroup group, String name, DataType type, Unit unit, boolean visible, AttributeCategory category) {
+  public Attribute createAttribute(AttributeGroup group, String name, DataType type, Unit unit, boolean visible, AttributeCategory category) {
     if (name == null || name.trim().isEmpty()) {
       throw new PSSIFStructuralIntegrityException("name can not be null or empty");
     }
@@ -82,7 +93,7 @@ public abstract class ElementTypeImpl<T extends ElementType<T>> extends NamedImp
     //to overload attributes in specialization element types
     //we need to find only locally, and filter on getAttributes
     //so that inherited attributes are only taken when no local ones exist.
-    if (findAttribute(name) != null) {
+    if (findAttribute(name) != null || findAttributeInSpecializations(name) != null) {
       throw new PSSIFStructuralIntegrityException("duplicate attribute with name " + name);
     }
     if (!(PrimitiveDataType.DECIMAL.equals(type) || PrimitiveDataType.INTEGER.equals(type)) && !Units.NONE.equals(unit)) {
@@ -97,19 +108,41 @@ public abstract class ElementTypeImpl<T extends ElementType<T>> extends NamedImp
     return result;
   }
 
+  private Attribute findAttributeInSpecializations(String name) {
+    for (T specialization : getSpecials()) {
+      Attribute attr = specialization.findAttribute(name);
+      if (attr != null) {
+        return attr;
+      }
+    }
+    return null;
+  }
+
   @Override
-  public AttributeType createAttribute(AttributeGroup group, String name, DataType dataType, boolean visible, AttributeCategory category) {
+  public Attribute createAttribute(AttributeGroup group, String name, DataType dataType, boolean visible, AttributeCategory category) {
     return createAttribute(group, name, dataType, Units.NONE, visible, category);
   }
 
   @Override
-  public void removeAttribute(AttributeType attribute) {
-    for (AttributeGroup group : getAttributeGroups()) {
-      if (group.findAttribute(attribute.getName()) != null) {
-        group.removeAttribute(attribute);
-      }
+  public void addAlias(Attribute attribute, String alias) {
+    if (!PSSIFUtil.isValidName(alias)) {
+      throw new PSSIFStructuralIntegrityException("an alias can not be empty");
     }
+    if (findAttribute(alias) != null) {
+      throw new PSSIFStructuralIntegrityException("alias " + alias + " already in use for an attribute in this context");
+    }
+    findAttribute(attribute.getName()).addName(alias);
   }
+
+  //Not needed in the current use-cases
+  //  @Override
+  //  public void removeAttribute(AttributeType attribute) {
+  //    for (AttributeGroup group : getAttributeGroups()) {
+  //      if (group.findAttribute(attribute.getName()) != null) {
+  //        group.removeAttribute(attribute);
+  //      }
+  //    }
+  //  }
 
   @Override
   public AttributeGroup createAttributeGroup(String name) {

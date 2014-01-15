@@ -40,32 +40,56 @@ public class NodeTypeImpl extends ElementTypeImpl<NodeType> implements NodeType 
 
   @Override
   public Collection<EdgeType> getIncomings() {
-    return Collections.unmodifiableCollection(incomings);
+    Set<EdgeType> result = Sets.newHashSet(incomings);
+    for (NodeType gen : PSSIFUtil.generalizationsClosure((NodeType) this)) {
+      for (EdgeType genEdge : gen.getIncomings()) {
+        if (!PSSIFUtil.hasSpecializationIn(genEdge, result)) {
+          result.add(genEdge);
+        }
+      }
+    }
+    return Collections.unmodifiableCollection(result);
   }
 
   @Override
   public Collection<EdgeType> getOutgoings() {
-    return Collections.unmodifiableCollection(outgoings);
+    Set<EdgeType> result = Sets.newHashSet(outgoings);
+    for (NodeType gen : PSSIFUtil.generalizationsClosure((NodeType) this)) {
+      for (EdgeType genEdge : gen.getOutgoings()) {
+        if (!PSSIFUtil.hasSpecializationIn(genEdge, result)) {
+          result.add(genEdge);
+        }
+      }
+    }
+    return Collections.unmodifiableCollection(result);
   }
 
   @Override
   public Collection<EdgeType> getAuxiliaries() {
-    return Collections.unmodifiableCollection(auxiliaries);
+    Set<EdgeType> result = Sets.newHashSet(auxiliaries);
+    for (NodeType gen : PSSIFUtil.generalizationsClosure((NodeType) this)) {
+      for (EdgeType genEdge : gen.getAuxiliaries()) {
+        if (!PSSIFUtil.hasSpecializationIn(genEdge, result)) {
+          result.add(genEdge);
+        }
+      }
+    }
+    return Collections.unmodifiableCollection(result);
   }
 
   @Override
   public EdgeType findIncomingEdgeType(String name) {
-    return PSSIFUtil.find(name, incomings);
+    return PSSIFUtil.find(name, getIncomings());
   }
 
   @Override
   public EdgeType findOutgoingEdgeType(String name) {
-    return PSSIFUtil.find(name, outgoings);
+    return PSSIFUtil.find(name, getOutgoings());
   }
 
   @Override
   public EdgeType findAuxiliaryEdgeType(String name) {
-    return PSSIFUtil.find(name, auxiliaries);
+    return PSSIFUtil.find(name, getAuxiliaries());
   }
 
   @Override
@@ -75,11 +99,46 @@ public class NodeTypeImpl extends ElementTypeImpl<NodeType> implements NodeType 
 
   @Override
   public PSSIFOption<Node> apply(Model model) {
-    return new ReadNodesOperation(this).apply(model);
+    PSSIFOption<Node> result = new ReadNodesOperation(this).apply(model);
+    for (NodeType currentType : PSSIFUtil.specializationsClosure((NodeType) this)) {
+      result = PSSIFOption.merge(result, new ReadNodesOperation(currentType).apply(model));
+    }
+    return result;
   }
 
   @Override
   public Class<?> getMetaType() {
     return NodeType.class;
+  }
+
+  @Override
+  public String toString() {
+    return "NodeType:" + this.getName();
+  }
+
+  @Override
+  public PSSIFOption<Node> apply(Model model, String id) {
+    for (Node candidate : apply(model).getMany()) {
+      if (id.equals(candidate.getId())) {
+        return PSSIFOption.one(candidate);
+      }
+    }
+    return PSSIFOption.none();
+  }
+
+  @Override
+  public boolean isAssignableFrom(NodeType type) {
+    if (this.equals(type)) {
+      return true;
+    }
+    else {
+      for (NodeType special : getSpecials()) {
+        if (special.isAssignableFrom(type)) {
+          return true;
+        }
+      }
+    }
+
+    return false;
   }
 }

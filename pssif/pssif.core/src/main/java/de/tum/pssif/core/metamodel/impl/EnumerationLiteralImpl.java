@@ -36,4 +36,8 @@ public class EnumerationLiteralImpl extends NamedImpl implements EnumerationLite
     return EnumerationLiteral.class;
   }
 
+  public String toString() {
+    return "EnumerationLiteral:" + this.getName();
+  }
+
 }

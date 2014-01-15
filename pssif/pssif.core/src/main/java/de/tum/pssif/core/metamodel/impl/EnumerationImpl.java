@@ -8,6 +8,7 @@ import de.tum.pssif.core.exception.PSSIFStructuralIntegrityException;
 import de.tum.pssif.core.metamodel.Enumeration;
 import de.tum.pssif.core.metamodel.EnumerationLiteral;
 import de.tum.pssif.core.util.PSSIFUtil;
+import de.tum.pssif.core.util.PSSIFValue;
 
 
 public class EnumerationImpl extends NamedImpl implements Enumeration {
@@ -53,5 +54,29 @@ public class EnumerationImpl extends NamedImpl implements Enumeration {
   @Override
   public Class<?> getMetaType() {
     return Enumeration.class;
+  }
+
+  @Override
+  public String toString() {
+    return "Enumeration:" + this.getName();
+  }
+
+  @Override
+  public PSSIFValue fromObject(Object object) {
+    if (object instanceof EnumerationLiteral) {
+      return PSSIFValue.create(object);
+    }
+    else if (object instanceof String) {
+      EnumerationLiteral literal = findLiteral((String) object);
+      if (literal != null) {
+        return PSSIFValue.create(literal);
+      }
+      else {
+        throw new IllegalArgumentException();
+      }
+    }
+    else {
+      throw new IllegalArgumentException();
+    }
   }
 }

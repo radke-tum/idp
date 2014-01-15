@@ -1,16 +1,39 @@
 package de.tum.pssif.core.model.impl;
 
 import java.util.Collection;
+import java.util.Map;
 import java.util.Set;
 
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
+import de.tum.pssif.core.PSSIFConstants;
 import de.tum.pssif.core.metamodel.EdgeEnd;
 import de.tum.pssif.core.metamodel.impl.EdgeEndImpl;
+import de.tum.pssif.core.metamodel.impl.GetValueOperation;
+import de.tum.pssif.core.metamodel.impl.SetValueOperation;
+import de.tum.pssif.core.model.Element;
 import de.tum.pssif.core.util.PSSIFUtil;
+import de.tum.pssif.core.util.PSSIFValue;
 
 
-abstract class ElementImpl {
+abstract class ElementImpl implements Element {
+  private Map<String, PSSIFValue> values = Maps.newHashMap();
+
+  @Override
+  public String getId() {
+    return values.get(PSSIFConstants.BUILTIN_ATTRIBUTE_ID).asString();
+  }
+
+  @Override
+  public PSSIFValue apply(GetValueOperation op) {
+    return values.get(op.getAttributeType().getName());
+  }
+
+  @Override
+  public void apply(SetValueOperation op) {
+    values.put(op.getAttributeType().getName(), op.getValue());
+  }
 
   protected Set<EdgeEndImpl> locateEdgeEnds(EdgeEnd edgeEnd, Collection<EdgeEndImpl> candidates) {
     Set<EdgeEndImpl> result = Sets.newHashSet();

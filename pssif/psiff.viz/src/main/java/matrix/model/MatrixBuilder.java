@@ -18,17 +18,12 @@ public class MatrixBuilder {
 	
 	public MatrixBuilder(LinkedList<MyNodeType> nodeTypes, LinkedList<MyEdgeType>  edgesTypes)
 	{
-		/*Model m= new Model();
-		m.MockData();*/
-		
 		this.nodeTypes= nodeTypes;
 		this.edgesTypes = edgesTypes;
 	}
 	
 	public MatrixBuilder()
 	{
-		/*Model m= new Model();
-		m.MockData();*/
 	}
 	
 	
@@ -132,9 +127,18 @@ public class MatrixBuilder {
 					if (edge.size() != 0)
 					{
 						String s = "";
+//<<<<<<< HEAD
 						for (MyEdge2 e : edge)
+/*=======
+						for (int k =0; k<edge.size();k++)
+>>>>>>> refs/remotes/origin/attempt3*/
 						{
+//<<<<<<< HEAD
 							s = s + e.getEdgeType().toString();
+/*=======
+							MyEdge e = edge.get(k);
+							s = s + e.getConnectionType().getName();
+>>>>>>> refs/remotes/origin/attempt3*/
 							if (e.getAttributes().size() != 0) 
 							{
 								for (String a : e.getAttributes()) 
@@ -142,8 +146,13 @@ public class MatrixBuilder {
 									s = s + " " + a + " ";
 								}
 							}
+//<<<<<<< HEAD
 							//TODO comment in again
 							//s = s + " || ";
+//=======
+						//	if (k!= (edge.size()-1))
+							//	s = s + " || ";
+//>>>>>>> refs/remotes/origin/attempt3
 						}
 						res[i][j] = s;
 					}

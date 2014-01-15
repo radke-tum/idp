@@ -29,4 +29,9 @@ public class NodeImpl extends ElementImpl implements Node {
   public PSSIFOption<Edge> apply(ReadConnectedOperation op) {
     return PSSIFOption.many(edges.get(op.getEnd()));
   }
+
+  @Override
+  public String toString() {
+    return "Node (" + getId() + ")";
+  }
 }

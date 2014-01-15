@@ -57,12 +57,14 @@ public class GraphView {
 	private JButton nodeHighlight;
 	private JButton collapseExpand;
 	private JButton typeFilter;
+	private boolean active;
 	
 	private Dimension screenSize;
 
 	public GraphView()
 	{
-		
+
+		active = false;
 		screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		int x = (int) (screenSize.width*0.85);
 		int y = (int) (screenSize.height*0.9);
@@ -82,7 +84,11 @@ public class GraphView {
 		parent = new JPanel();
         parent.setLayout(new BorderLayout());
 		
-		JPanel graphpanel = new JPanel();
+		JPanel graphpanel = new JPanel();/*
+<<<<<<< HEAD
+=======
+		//graphpanel.setBackground(Color.YELLOW);
+>>>>>>> refs/remotes/origin/attempt3*/
 		
 		
 		VisualizationViewer<MyNode2, MyEdge2> vv = graph.getVisualisationViewer();
@@ -92,7 +98,11 @@ public class GraphView {
 		parent.add(graphpanel,BorderLayout.CENTER);
 		
 		JPanel information = new JPanel();
-		information.setBackground(Color.GREEN);
+//<<<<<<< HEAD
+		information.setBackground(Color.LIGHT_GRAY);
+/*=======
+		information.setBackground(Color.LIGHT_GRAY);
+>>>>>>> refs/remotes/origin/attempt3*/
 		int x = (int) (screenSize.width*0.15);
 		int y = (int) (screenSize.height);
 		Dimension d = new Dimension(x,y);
@@ -689,5 +699,14 @@ public class GraphView {
         	graph.applyNodeAndEdgeFilter(selectedNodes, selectedEdges);
 	}
 	}
+
+	public boolean isActive() {
+		return active;
+	}
+
+	public void setActive(boolean active) {
+		this.active = active;
+	}
+	
 	
 }

@@ -9,6 +9,9 @@ import gui.matrix.TableColumnAdjuster;
 import gui.matrix.VerticalTableHeaderCellRenderer;
 
 import java.awt.Color;
+
+import java.awt.BorderLayout;
+
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -46,14 +49,18 @@ public class MatrixView {
 	private LinkedList<MyNode2> nodes;
 	private LinkedList<MyEdge2> edges;
 	private XMLExport xml_exporter;
+	private boolean active;
 
 	public MatrixView() {
-
 		this.matrixPanel = new JPanel();
 		this.mbuilder = new MatrixBuilder();
 		this.xml_exporter = new XMLExport();
-		
+		active = false;	
 	}
+/*<<<<<<< HEAD
+=======
+
+>>>>>>> refs/remotes/origin/attempt3*/
 	
 	private void drawMatrix()
 	{
@@ -64,7 +71,7 @@ public class MatrixView {
 	
 	private JPanel drawPanels(LinkedList<MyNode2> nodes, LinkedList<MyEdge2> edges)
 	{
-		JPanel Content = new JPanel();
+		JPanel Content = new JPanel(new BorderLayout());
 		createMatrixContent(Content, nodes, edges);
 		
 		
@@ -121,7 +128,7 @@ public class MatrixView {
 		        tc.setHeaderRenderer(headerRenderer);
 		      }
 			
-			p.add(scrollPane);
+			p.add(scrollPane, BorderLayout.CENTER);
 			
 		}
 	}
@@ -360,7 +367,8 @@ public class MatrixView {
 	
 	private void exportButton(JPanel panel)
 	  {
-	    JButton button = new JButton("Export Matrix");
+	    JPanel optionPanel = new JPanel();
+		JButton button = new JButton("Export Matrix");
 	    
 	    button.addActionListener(new ActionListener()
 	    {
@@ -379,6 +387,23 @@ public class MatrixView {
 	        }
 	      }
 	    });
-	    panel.add(button);
+	    optionPanel.add(button);
+	    
+	    panel.add(optionPanel, BorderLayout.EAST);
 	  }
+
+
+
+
+	public boolean isActive() {
+		return active;
+	}
+
+
+
+
+	public void setActive(boolean active) {
+		this.active = active;
+	}
+	
 }

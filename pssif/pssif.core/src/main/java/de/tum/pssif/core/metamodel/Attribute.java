@@ -1,11 +1,15 @@
 package de.tum.pssif.core.metamodel;
 
+import de.tum.pssif.core.model.Element;
+import de.tum.pssif.core.util.PSSIFValue;
+
+
 /**
  * Concept which is used in the meta-model
  * to describe attributes.
  *
  */
-public interface AttributeType extends Named {
+public interface Attribute extends Named {
 
   /**
    * @return
@@ -33,4 +37,19 @@ public interface AttributeType extends Named {
    */
   AttributeCategory getCategory();
 
+  /**
+   * Set the specified value as value of this {@link Attribute} for the specified {@link Element}
+   * 
+   * @param element the {@link Element}
+   * @param value the value to set
+   */
+  void set(Element element, PSSIFValue value);
+
+  /**
+   * Get the value for this {@link Attribute} for the specified {@link Element}
+   * 
+   * @param element the {@link Element}
+   * @return the value of this {@link Attribute} for the specified {@link Element}
+   */
+  Object get(Element element);
 }

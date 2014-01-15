@@ -29,4 +29,9 @@ public class EdgeImpl extends ElementImpl implements Edge {
   public PSSIFOption<Node> apply(ReadConnectedOperation op) {
     return PSSIFOption.many(nodes.get(op.getEnd()));
   }
+
+  @Override
+  public String toString() {
+    return "Edge (" + getId() + ")";
+  }
 }

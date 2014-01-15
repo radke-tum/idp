@@ -1,12 +1,14 @@
 package de.tum.pssif.core.metamodel.impl;
 
-import de.tum.pssif.core.metamodel.AttributeType;
 import de.tum.pssif.core.metamodel.AttributeCategory;
+import de.tum.pssif.core.metamodel.Attribute;
 import de.tum.pssif.core.metamodel.DataType;
 import de.tum.pssif.core.metamodel.Unit;
+import de.tum.pssif.core.model.Element;
+import de.tum.pssif.core.util.PSSIFValue;
 
 
-public class AttributeImpl extends NamedImpl implements AttributeType {
+public class AttributeImpl extends NamedImpl implements Attribute {
 
   private final DataType          type;
   private final Unit              unit;
@@ -38,10 +40,10 @@ public class AttributeImpl extends NamedImpl implements AttributeType {
 
   @Override
   public final boolean equals(Object obj) {
-    if (!(obj instanceof AttributeType)) {
+    if (!(obj instanceof Attribute)) {
       return false;
     }
-    return super.equals(obj) && getType().equals(((AttributeType) obj).getType());
+    return super.equals(obj) && getType().equals(((Attribute) obj).getType());
   }
 
   @Override
@@ -51,12 +53,27 @@ public class AttributeImpl extends NamedImpl implements AttributeType {
 
   @Override
   public Class<?> getMetaType() {
-    return AttributeType.class;
+    return Attribute.class;
   }
 
   @Override
   public AttributeCategory getCategory() {
     return this.category;
+  }
+
+  @Override
+  public String toString() {
+    return "Attribute:" + this.getName();
+  }
+
+  @Override
+  public void set(Element element, PSSIFValue value) {
+    new SetValueOperation(this, value).apply(element);
+  }
+
+  @Override
+  public PSSIFValue get(Element element) {
+    return new GetValueOperation(this).apply(element);
   }
 
 }
