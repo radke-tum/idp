@@ -2,14 +2,15 @@ package de.tum.pssif.core.metamodel.impl;
 
 import de.tum.pssif.core.metamodel.Attribute;
 import de.tum.pssif.core.model.Element;
+import de.tum.pssif.core.util.PSSIFOption;
 import de.tum.pssif.core.util.PSSIFValue;
 
 
 public class SetValueOperation {
-  private final Attribute type;
-  private final PSSIFValue    value;
+  private final Attribute               type;
+  private final PSSIFOption<PSSIFValue> value;
 
-  /*package*/public SetValueOperation(Attribute type, PSSIFValue value) {
+  /*package*/public SetValueOperation(Attribute type, PSSIFOption<PSSIFValue> value) {
     this.type = type;
     this.value = value;
   }
@@ -18,7 +19,7 @@ public class SetValueOperation {
     return type;
   }
 
-  public PSSIFValue getValue() {
+  public PSSIFOption<PSSIFValue> getValue() {
     return value;
   }
 

@@ -1,10 +1,11 @@
 package de.tum.pssif.core.metamodel.impl;
 
-import de.tum.pssif.core.metamodel.AttributeCategory;
 import de.tum.pssif.core.metamodel.Attribute;
+import de.tum.pssif.core.metamodel.AttributeCategory;
 import de.tum.pssif.core.metamodel.DataType;
 import de.tum.pssif.core.metamodel.Unit;
 import de.tum.pssif.core.model.Element;
+import de.tum.pssif.core.util.PSSIFOption;
 import de.tum.pssif.core.util.PSSIFValue;
 
 
@@ -67,12 +68,12 @@ public class AttributeImpl extends NamedImpl implements Attribute {
   }
 
   @Override
-  public void set(Element element, PSSIFValue value) {
+  public void set(Element element, PSSIFOption<PSSIFValue> value) {
     new SetValueOperation(this, value).apply(element);
   }
 
   @Override
-  public PSSIFValue get(Element element) {
+  public PSSIFOption<PSSIFValue> get(Element element) {
     return new GetValueOperation(this).apply(element);
   }
 

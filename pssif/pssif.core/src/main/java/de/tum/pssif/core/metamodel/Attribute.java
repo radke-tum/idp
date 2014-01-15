@@ -1,6 +1,7 @@
 package de.tum.pssif.core.metamodel;
 
 import de.tum.pssif.core.model.Element;
+import de.tum.pssif.core.util.PSSIFOption;
 import de.tum.pssif.core.util.PSSIFValue;
 
 
@@ -43,7 +44,7 @@ public interface Attribute extends Named {
    * @param element the {@link Element}
    * @param value the value to set
    */
-  void set(Element element, PSSIFValue value);
+  void set(Element element, PSSIFOption<PSSIFValue> value);
 
   /**
    * Get the value for this {@link Attribute} for the specified {@link Element}
@@ -51,5 +52,5 @@ public interface Attribute extends Named {
    * @param element the {@link Element}
    * @return the value of this {@link Attribute} for the specified {@link Element}
    */
-  PSSIFValue get(Element element);
+  PSSIFOption<PSSIFValue> get(Element element);
 }

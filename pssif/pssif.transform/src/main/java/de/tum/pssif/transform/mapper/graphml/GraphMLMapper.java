@@ -33,7 +33,7 @@ public class GraphMLMapper implements Mapper {
       if (type != null) {
         Attribute idAttribute = type.findAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_ID);
         Node resultNode = type.create(result);
-        idAttribute.set(resultNode, idAttribute.getType().fromObject(inNode.getId()));
+        idAttribute.set(resultNode, PSSIFOption.one(idAttribute.getType().fromObject(inNode.getId())));
 
         readAttributes(type, resultNode, inNode);
       }
@@ -59,7 +59,7 @@ public class GraphMLMapper implements Mapper {
           ConnectionMapping mapping = type.getMapping(sourceType, targetType);
           if (sourceNode.isOne() && targetNode.isOne()) {
             Edge edge = mapping.create(result, sourceNode.getOne(), targetNode.getOne());
-            type.findAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_DIRECTED).set(edge, PSSIFValue.create(inEdge.isDirected()));
+            type.findAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_DIRECTED).set(edge, PSSIFOption.one(PSSIFValue.create(inEdge.isDirected())));
             readAttributes(type, edge, inEdge);
           }
           else {
@@ -83,7 +83,7 @@ public class GraphMLMapper implements Mapper {
     for (String key : values.keySet()) {
       Attribute attribute = type.findAttribute(key);
       if (attribute != null) {
-        attribute.set(element, attribute.getType().fromObject(values.get(key)));
+        attribute.set(element, PSSIFOption.one(attribute.getType().fromObject(values.get(key))));
       }
       else {
         System.out.println("AttributeType " + key + " not found!");

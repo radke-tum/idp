@@ -13,20 +13,22 @@ import de.tum.pssif.core.metamodel.impl.EdgeEndImpl;
 import de.tum.pssif.core.metamodel.impl.GetValueOperation;
 import de.tum.pssif.core.metamodel.impl.SetValueOperation;
 import de.tum.pssif.core.model.Element;
+import de.tum.pssif.core.util.PSSIFOption;
 import de.tum.pssif.core.util.PSSIFUtil;
 import de.tum.pssif.core.util.PSSIFValue;
 
 
 abstract class ElementImpl implements Element {
-  private Map<String, PSSIFValue> values = Maps.newHashMap();
+  private Map<String, PSSIFOption<PSSIFValue>> values = Maps.newHashMap();
 
   @Override
   public String getId() {
-    return values.get(PSSIFConstants.BUILTIN_ATTRIBUTE_ID).asString();
+    return values.get(PSSIFConstants.BUILTIN_ATTRIBUTE_ID).isOne() ? values.get(PSSIFConstants.BUILTIN_ATTRIBUTE_ID).getOne().asString()
+        : "undefined";
   }
 
   @Override
-  public PSSIFValue apply(GetValueOperation op) {
+  public PSSIFOption<PSSIFValue> apply(GetValueOperation op) {
     return values.get(op.getAttributeType().getName());
   }
 
