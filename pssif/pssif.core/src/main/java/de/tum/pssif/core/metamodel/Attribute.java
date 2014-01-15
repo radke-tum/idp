@@ -51,5 +51,5 @@ public interface Attribute extends Named {
    * @param element the {@link Element}
    * @return the value of this {@link Attribute} for the specified {@link Element}
    */
-  Object get(Element element);
+  PSSIFValue get(Element element);
 }
