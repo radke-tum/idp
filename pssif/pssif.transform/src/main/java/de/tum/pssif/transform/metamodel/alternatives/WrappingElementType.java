@@ -8,8 +8,6 @@ import de.tum.pssif.core.metamodel.AttributeGroup;
 import de.tum.pssif.core.metamodel.DataType;
 import de.tum.pssif.core.metamodel.ElementType;
 import de.tum.pssif.core.metamodel.Unit;
-import de.tum.pssif.core.util.PSSIFOption;
-import de.tum.pssif.core.util.PSSIFUtil;
 
 
 public abstract class WrappingElementType<T extends ElementType<T>> implements ElementType<T> {
@@ -28,16 +26,6 @@ public abstract class WrappingElementType<T extends ElementType<T>> implements E
 
   protected void setName(String name) {
     this.name = name;
-  }
-
-  @Override
-  public boolean hasName(String name) {
-    return PSSIFUtil.areSame(getName(), name);
-  }
-
-  @Override
-  public PSSIFOption<String> getNames() {
-    return PSSIFOption.one(getName());
   }
 
   @Override
@@ -92,12 +80,6 @@ public abstract class WrappingElementType<T extends ElementType<T>> implements E
   public Attribute createAttribute(AttributeGroup group, String name, DataType dataType, Unit unit, boolean visible, AttributeCategory category) {
     // TODO Auto-generated method stub
     return null;
-  }
-
-  @Override
-  public void addAlias(Attribute attribute, String alias) {
-    // TODO Auto-generated method stub
-
   }
 
   @Override

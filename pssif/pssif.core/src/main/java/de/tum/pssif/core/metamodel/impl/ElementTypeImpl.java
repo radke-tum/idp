@@ -123,17 +123,6 @@ public abstract class ElementTypeImpl<T extends ElementType<T>> extends NamedImp
     return createAttribute(group, name, dataType, Units.NONE, visible, category);
   }
 
-  @Override
-  public void addAlias(Attribute attribute, String alias) {
-    if (!PSSIFUtil.isValidName(alias)) {
-      throw new PSSIFStructuralIntegrityException("an alias can not be empty");
-    }
-    if (findAttribute(alias) != null) {
-      throw new PSSIFStructuralIntegrityException("alias " + alias + " already in use for an attribute in this context");
-    }
-    findAttribute(attribute.getName()).addName(alias);
-  }
-
   //Not needed in the current use-cases
   //  @Override
   //  public void removeAttribute(AttributeType attribute) {

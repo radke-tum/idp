@@ -4,7 +4,6 @@ import java.util.Collection;
 
 import com.google.common.collect.Sets;
 
-import de.tum.pssif.core.util.PSSIFOption;
 import de.tum.pssif.core.util.PSSIFUtil;
 
 
@@ -65,16 +64,6 @@ public final class Units {
     @Override
     public Class<?> getMetaType() {
       return Unit.class;
-    }
-
-    @Override
-    public boolean hasName(String name) {
-      return PSSIFUtil.areSame(name, getName());
-    }
-
-    @Override
-    public PSSIFOption<String> getNames() {
-      return PSSIFOption.one(getName());
     }
   }
 

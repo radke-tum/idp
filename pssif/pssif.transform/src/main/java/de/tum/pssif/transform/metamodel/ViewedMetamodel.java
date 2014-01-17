@@ -2,10 +2,11 @@ package de.tum.pssif.transform.metamodel;
 
 import de.tum.pssif.core.metamodel.Attribute;
 import de.tum.pssif.core.metamodel.ElementType;
+import de.tum.pssif.core.metamodel.Metamodel;
 import de.tum.pssif.core.metamodel.NodeType;
 
 
-public interface TransformingMetamodel {
+public interface ViewedMetamodel extends Metamodel {
 
   <T extends ElementType<T>> T rename(T elementType, String name);
 

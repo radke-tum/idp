@@ -57,7 +57,7 @@ public class PSSIFUtil {
    */
   public static <T extends Named> T find(String name, Collection<T> collection) {
     for (T candidate : collection) {
-      if (candidate.hasName(name)) {
+      if (PSSIFUtil.areSame(candidate.getName(), name)) {
         return candidate;
       }
     }

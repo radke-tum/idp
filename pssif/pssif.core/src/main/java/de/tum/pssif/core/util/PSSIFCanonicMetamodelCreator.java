@@ -310,7 +310,6 @@ public final class PSSIFCanonicMetamodelCreator {
     EdgeType energyFlow = metamodel.createEdgeType(E_FLOW_ENERGY);
     energyFlow.inherit(flow);
     energyFlow.createMapping("from", block, defaultNoneToManyMultiplicity(), "to", block, defaultNoneToManyMultiplicity());
-    metamodel.addAlias(energyFlow, "EnergyFlow");
 
     EdgeType materialFlow = metamodel.createEdgeType(E_FLOW_MATERIAL);
     materialFlow.inherit(flow);
@@ -319,7 +318,6 @@ public final class PSSIFCanonicMetamodelCreator {
     EdgeType informationFlow = metamodel.createEdgeType(E_FLOW_INFORMATION);
     informationFlow.inherit(flow);
     informationFlow.createMapping("from", block, defaultNoneToManyMultiplicity(), "to", block, defaultNoneToManyMultiplicity());
-    metamodel.addAlias(informationFlow, "InformationFlow");
 
     EdgeType controlFlow = metamodel.createEdgeType(E_FLOW_CONTROL);
     controlFlow.inherit(flow);

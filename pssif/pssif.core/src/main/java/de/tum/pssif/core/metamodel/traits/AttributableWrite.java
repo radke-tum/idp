@@ -1,8 +1,8 @@
 package de.tum.pssif.core.metamodel.traits;
 
+import de.tum.pssif.core.metamodel.Attribute;
 import de.tum.pssif.core.metamodel.AttributeCategory;
 import de.tum.pssif.core.metamodel.AttributeGroup;
-import de.tum.pssif.core.metamodel.Attribute;
 import de.tum.pssif.core.metamodel.DataType;
 import de.tum.pssif.core.metamodel.Unit;
 
@@ -50,7 +50,4 @@ public interface AttributableWrite {
    *    The newly created Attribute Type.
    */
   Attribute createAttribute(AttributeGroup group, String name, DataType dataType, Unit unit, boolean visible, AttributeCategory category);
-
-  void addAlias(Attribute attribute, String alias);
-
 }
