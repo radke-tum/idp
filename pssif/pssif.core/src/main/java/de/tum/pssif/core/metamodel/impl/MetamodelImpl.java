@@ -11,10 +11,11 @@ import de.tum.pssif.core.metamodel.Multiplicity.UnlimitedNatural;
 import de.tum.pssif.core.metamodel.MutableMetamodel;
 import de.tum.pssif.core.metamodel.NodeType;
 import de.tum.pssif.core.metamodel.PrimitiveDataType;
+import de.tum.pssif.core.metamodel.impl.base.AbstractMetamodel;
 import de.tum.pssif.core.util.PSSIFUtil;
 
 
-public class MetamodelImpl extends AbstractMetamodel<NodeTypeImpl, EdgeTypeImpl> implements MutableMetamodel {
+public class MetamodelImpl extends AbstractMetamodel implements MutableMetamodel {
   public MetamodelImpl() {
     NodeTypeImpl rootNodeType = new NodeTypeImpl(PSSIFConstants.ROOT_NODE_TYPE_NAME);
     addNodeType(rootNodeType);

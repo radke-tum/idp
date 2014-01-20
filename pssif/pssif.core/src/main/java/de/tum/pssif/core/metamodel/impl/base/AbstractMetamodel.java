@@ -1,4 +1,4 @@
-package de.tum.pssif.core.metamodel.impl;
+package de.tum.pssif.core.metamodel.impl.base;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -17,24 +17,24 @@ import de.tum.pssif.core.metamodel.PrimitiveDataType;
 import de.tum.pssif.core.util.PSSIFUtil;
 
 
-public abstract class AbstractMetamodel<N extends NodeType, E extends EdgeType> implements Metamodel {
-  private Map<String, N>           nodetypes    = Maps.newHashMap();
-  private Map<String, E>           edgetypes    = Maps.newHashMap();
+public abstract class AbstractMetamodel implements Metamodel {
+  private Map<String, NodeType>    nodetypes    = Maps.newHashMap();
+  private Map<String, EdgeType>    edgetypes    = Maps.newHashMap();
   private Map<String, Enumeration> enumerations = Maps.newHashMap();
 
-  protected void addNodeType(N type) {
+  protected void addNodeType(NodeType type) {
     nodetypes.put(PSSIFUtil.normalize(type.getName()), type);
   }
 
-  protected void removeNodeType(N type) {
+  protected void removeNodeType(NodeType type) {
     nodetypes.remove(PSSIFUtil.normalize(type.getName()));
   }
 
-  protected void addEdgeType(E type) {
+  protected void addEdgeType(EdgeType type) {
     edgetypes.put(PSSIFUtil.normalize(type.getName()), type);
   }
 
-  protected void removeEdgeType(E type) {
+  protected void removeEdgeType(EdgeType type) {
     edgetypes.remove(PSSIFUtil.normalize(type.getName()));
   }
 
@@ -47,12 +47,12 @@ public abstract class AbstractMetamodel<N extends NodeType, E extends EdgeType> 
   }
 
   @Override
-  public N findNodeType(String name) {
+  public NodeType findNodeType(String name) {
     return PSSIFUtil.find(name, nodetypes.values());
   }
 
   @Override
-  public E findEdgeType(String name) {
+  public EdgeType findEdgeType(String name) {
     return PSSIFUtil.find(name, edgetypes.values());
   }
 
