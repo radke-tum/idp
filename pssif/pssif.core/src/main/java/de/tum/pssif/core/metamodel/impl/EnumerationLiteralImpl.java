@@ -1,44 +1,10 @@
 package de.tum.pssif.core.metamodel.impl;
 
-import de.tum.pssif.core.metamodel.Enumeration;
-import de.tum.pssif.core.metamodel.EnumerationLiteral;
-import de.tum.pssif.core.metamodel.impl.base.AbstractNamed;
+import de.tum.pssif.core.metamodel.impl.base.AbstractEnumerationLiteral;
 
 
-public class EnumerationLiteralImpl extends AbstractNamed implements EnumerationLiteral {
-
-  private final EnumerationImpl owner;
-
+public class EnumerationLiteralImpl extends AbstractEnumerationLiteral {
   public EnumerationLiteralImpl(EnumerationImpl owner, String name) {
-    super(name);
-    this.owner = owner;
+    super(owner, name);
   }
-
-  @Override
-  public final boolean equals(Object obj) {
-    if (!(obj instanceof EnumerationLiteral)) {
-      return false;
-    }
-    return super.equals(obj) && getOwner().equals(((EnumerationLiteral) obj).getOwner());
-  }
-
-  @Override
-  public final int hashCode() {
-    return getMetaType().hashCode() ^ (owner.getName() + getName()).hashCode();
-  }
-
-  @Override
-  public Enumeration getOwner() {
-    return owner;
-  }
-
-  @Override
-  public Class<?> getMetaType() {
-    return EnumerationLiteral.class;
-  }
-
-  public String toString() {
-    return "EnumerationLiteral:" + this.getName();
-  }
-
 }

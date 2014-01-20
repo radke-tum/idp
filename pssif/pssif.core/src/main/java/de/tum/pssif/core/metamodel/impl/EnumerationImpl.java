@@ -1,20 +1,11 @@
 package de.tum.pssif.core.metamodel.impl;
 
-import java.util.Collection;
-
-import com.google.common.collect.Sets;
-
 import de.tum.pssif.core.exception.PSSIFStructuralIntegrityException;
-import de.tum.pssif.core.metamodel.Enumeration;
 import de.tum.pssif.core.metamodel.EnumerationLiteral;
-import de.tum.pssif.core.metamodel.impl.base.AbstractNamed;
-import de.tum.pssif.core.util.PSSIFUtil;
-import de.tum.pssif.core.util.PSSIFValue;
+import de.tum.pssif.core.metamodel.impl.base.AbstractEnumeration;
 
 
-public class EnumerationImpl extends AbstractNamed implements Enumeration {
-  private final Collection<EnumerationLiteralImpl> literals = Sets.newHashSet();
-
+public class EnumerationImpl extends AbstractEnumeration {
   public EnumerationImpl(String name) {
     super(name);
   }
@@ -28,56 +19,12 @@ public class EnumerationImpl extends AbstractNamed implements Enumeration {
       throw new PSSIFStructuralIntegrityException("literal with this name already exists");
     }
     EnumerationLiteralImpl result = new EnumerationLiteralImpl(this, name);
-    literals.add(result);
+    addLiteral(result);
     return result;
   }
 
   @Override
   public void removeLiteral(EnumerationLiteral literal) {
-    literals.remove(literal);
-  }
-
-  @Override
-  public Collection<EnumerationLiteral> getLiterals() {
-    return Sets.<EnumerationLiteral> newHashSet(this.literals);
-  }
-
-  @Override
-  public EnumerationLiteral findLiteral(String name) {
-    for (EnumerationLiteral literal : this.literals) {
-      if (PSSIFUtil.areSame(name, literal.getName())) {
-        return literal;
-      }
-    }
-    return null;
-  }
-
-  @Override
-  public Class<?> getMetaType() {
-    return Enumeration.class;
-  }
-
-  @Override
-  public String toString() {
-    return "Enumeration:" + this.getName();
-  }
-
-  @Override
-  public PSSIFValue fromObject(Object object) {
-    if (object instanceof EnumerationLiteral) {
-      return PSSIFValue.create(object);
-    }
-    else if (object instanceof String) {
-      EnumerationLiteral literal = findLiteral((String) object);
-      if (literal != null) {
-        return PSSIFValue.create(literal);
-      }
-      else {
-        throw new IllegalArgumentException();
-      }
-    }
-    else {
-      throw new IllegalArgumentException();
-    }
+    removeLiteralInternal(literal);
   }
 }
