@@ -87,6 +87,6 @@ public class MetamodelImpl extends AbstractMetamodel implements MutableMetamodel
 
   @Override
   public void removeEnumeration(Enumeration enumeration) {
-    super.removeEnumeration(enumeration);
+    super.removeEnumerationInternal(enumeration);
   }
 }

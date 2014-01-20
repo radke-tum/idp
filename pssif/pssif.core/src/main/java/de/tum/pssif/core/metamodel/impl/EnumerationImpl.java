@@ -7,11 +7,12 @@ import com.google.common.collect.Sets;
 import de.tum.pssif.core.exception.PSSIFStructuralIntegrityException;
 import de.tum.pssif.core.metamodel.Enumeration;
 import de.tum.pssif.core.metamodel.EnumerationLiteral;
+import de.tum.pssif.core.metamodel.impl.base.AbstractNamed;
 import de.tum.pssif.core.util.PSSIFUtil;
 import de.tum.pssif.core.util.PSSIFValue;
 
 
-public class EnumerationImpl extends NamedImpl implements Enumeration {
+public class EnumerationImpl extends AbstractNamed implements Enumeration {
   private final Collection<EnumerationLiteralImpl> literals = Sets.newHashSet();
 
   public EnumerationImpl(String name) {
