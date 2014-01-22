@@ -1,7 +1,9 @@
 package gui;
 
 
+import graph.model2.MyEdgeType;
 import graph.model2.MyNodeType;
+import graph.operations.GraphViewContainer;
 import gui.graph.MyListColorRenderer;
 
 import java.awt.BorderLayout;
@@ -11,18 +13,23 @@ import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.util.HashMap;
+import java.util.LinkedList;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.Icon;
+import javax.swing.JCheckBox;
 import javax.swing.JColorChooser;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -30,6 +37,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.colorchooser.AbstractColorChooserPanel;
 import javax.swing.event.ChangeEvent;
@@ -48,6 +56,7 @@ public class Main {
 	private static JMenuItem resetGraph;
 	private static JMenuItem resetMatrix;
 	private static JMenuItem colorNodes;
+	private static JMenuItem createView;
 	
 	public static void main(String[] args) {
 		
@@ -200,7 +209,7 @@ public class Main {
 		resetMenu.setIcon(null);
 		
 		// Color Options
-		JMenu colorMenu = new JMenu("Colors");
+		JMenu visualizationEffects = new JMenu("Visualization Effects");
 		colorNodes = new JMenuItem("Choose Node color");
 		colorNodes.addActionListener(new ActionListener() {
 			
@@ -209,13 +218,23 @@ public class Main {
 				pickNodeColor();
 			}
 		});
-		colorMenu.add(colorNodes);
+		visualizationEffects.add(colorNodes);
+		
+		createView = new JMenuItem("Create new GraphView");
+		createView.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				createNewGraphView ();
+			}
+		});
+		visualizationEffects.add(createView);
 		
 		// Add all to the menuBar
 		menuBar.add(modeMenu);
 		menuBar.add(visualisationMenu);
 		menuBar.add(resetMenu);
-		menuBar.add(colorMenu);
+		menuBar.add(visualizationEffects);
 		
 		return menuBar;
 	}
@@ -272,27 +291,225 @@ public class Main {
 			resetGraph.setEnabled(true);
 			resetMatrix.setEnabled(false);
 			colorNodes.setEnabled(true);
+			createView.setEnabled(true);
 		}
-		/*else
-		{
-			resetGraph.setEnabled(false);
-			resetMatrix.setEnabled(true);
-			colorNodes.setEnabled(false);
-		}*/
 		
 		if (matrixView.isActive())
 		{
 			resetGraph.setEnabled(false);
 			resetMatrix.setEnabled(true);
 			colorNodes.setEnabled(false);
+			createView.setEnabled(false);
 		}
-		/*else
-		{
-			resetGraph.setEnabled(true);
-			resetMatrix.setEnabled(false);
-			colorNodes.setEnabled(true);
-		}*/
 			
+	}
+	
+	private static void createNewGraphView ()
+	{
+		MyEdgeType[] edgePossibilities = ModelBuilder.getEdgeTypes().getAllEdgeTypesArray();
+		MyNodeType[] nodePossibilities = ModelBuilder.getNodeTypes().getAllNodeTypesArray();
+		
+		
+		JPanel allPanel = new JPanel(new GridBagLayout());
+		GridBagConstraints c = new GridBagConstraints();
+		
+		final JPanel NodePanel = new JPanel(new GridLayout(0, 1));
+		
+		for (MyNodeType attr : nodePossibilities)
+		{
+			JCheckBox choice = new JCheckBox(attr.getName());
+			
+			choice.setSelected(false);
+			NodePanel.add(choice);
+		}
+		
+		final JPanel EdgePanel = new JPanel(new GridLayout(0, 1));
+		
+		for (MyEdgeType attr : edgePossibilities)
+		{
+			JCheckBox choice = new JCheckBox(attr.getName());
+			choice.setSelected(false);
+			
+			EdgePanel.add(choice);
+		}
+		JScrollPane scrollNodes = new JScrollPane(NodePanel,JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		scrollNodes.setPreferredSize(new Dimension(200, 400));
+			    
+	    JScrollPane scrollEdges = new JScrollPane(EdgePanel,JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		scrollEdges.setPreferredSize(new Dimension(200, 400));
+		
+		final JCheckBox selectAllNodes = new JCheckBox("Select all Node Types");
+	    
+	    selectAllNodes.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) 
+		      {
+		        if (selectAllNodes.isSelected())
+		        {
+		          Component[] attr = NodePanel.getComponents();
+		          for (Component tmp : attr) {
+		            if ((tmp instanceof JCheckBox))
+		            {
+		              JCheckBox a = (JCheckBox)tmp;
+		              
+		              a.setSelected(true);
+		            }
+		          }
+		        }
+		        else
+		        {
+		          Component[] attr = NodePanel.getComponents();
+		          for (Component tmp : attr) {
+		            if ((tmp instanceof JCheckBox))
+		            {
+		              JCheckBox a = (JCheckBox)tmp;
+		              
+		              a.setSelected(false);
+		            }
+		          }
+		        }
+		      }
+	    });
+	    final JCheckBox selectAllEdges = new JCheckBox("Select all Edge Types");
+	    
+	    selectAllEdges.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) 
+	      {
+	        if (selectAllEdges.isSelected())
+	        {
+	          Component[] attr = EdgePanel.getComponents();
+	          for (Component tmp : attr) {
+	            if ((tmp instanceof JCheckBox))
+	            {
+	              JCheckBox a = (JCheckBox)tmp;
+	              
+	              a.setSelected(true);
+	            }
+	          }
+	        }
+	        else
+	        {
+	          Component[] attr = EdgePanel.getComponents();
+	          for (Component tmp : attr) {
+	            if ((tmp instanceof JCheckBox))
+	            {
+	              JCheckBox a = (JCheckBox)tmp;
+	              
+	              a.setSelected(false);
+	            }
+	          }
+	        }
+	      }
+	    });
+		
+	    selectAllNodes.setSelected(false);
+	    
+	    selectAllEdges.setSelected(false);
+	    
+	    JTextField viewNameTextField = new JTextField(10);
+	    
+	    int ypos =0;
+	    
+		c.gridx = 0;
+		c.gridy = ypos;
+		allPanel.add(new JLabel("Choose Node Types"),c);
+		c.gridx = 1;
+		c.gridy = ypos++;
+		allPanel.add(new JLabel("Choose Edge Types"),c);
+	    c.gridx = 0;
+	    c.gridy = ypos;
+	    allPanel.add(scrollNodes, c);
+	    c.gridx = 1;
+	    c.gridy = ypos++;
+	    allPanel.add(scrollEdges, c);
+	    c.gridx = 0;
+	    c.gridy = ypos;
+	    allPanel.add(selectAllNodes, c);
+	    c.gridx = 1;
+	    c.gridy = ypos++;
+	    allPanel.add(selectAllEdges, c);
+	    
+	    c.weighty = 1;
+	    
+		c.gridx = 0;
+		c.gridy = ypos;
+		allPanel.add(new JLabel("Graph View name "),c);
+		c.gridx = 1;
+		c.gridy = ypos++;
+		allPanel.add(viewNameTextField,c);
+	    
+		
+		
+		allPanel.setPreferredSize(new Dimension(400,500));
+		allPanel.setMaximumSize(new Dimension(400,500));
+		allPanel.setMinimumSize(new Dimension(400,500));
+		
+		int dialogResult = JOptionPane.showConfirmDialog(null, allPanel, "Create a new Graph View", JOptionPane.DEFAULT_OPTION);
+    	
+    	if (dialogResult==0)
+    	{
+    		LinkedList<MyNodeType> selectedNodes = new LinkedList<MyNodeType>();
+    		// get all the values of the Nodes
+        	Component[] attr = NodePanel.getComponents();       	
+        	for (Component tmp :attr)
+        	{
+        		if ((tmp instanceof JCheckBox))
+        		{
+        			JCheckBox a = (JCheckBox) tmp;
+        			
+        			// compare which ones where selected
+        			 if (a.isSelected())
+        			 {
+        				 MyNodeType b = ModelBuilder.getNodeTypes().getValue(a.getText());
+        				 selectedNodes.add(b);
+        			 }
+        				
+        		}	
+        	}
+        	
+        	LinkedList<MyEdgeType> selectedEdges = new LinkedList<MyEdgeType>();
+    		// get all the values of the edges
+        	attr = EdgePanel.getComponents();       	
+        	for (Component tmp :attr)
+        	{
+        		if ((tmp instanceof JCheckBox))
+        		{
+        			JCheckBox a = (JCheckBox) tmp;
+        			
+        			// compare which ones where selected
+        			 if (a.isSelected())
+        			 {
+        				 MyEdgeType b = ModelBuilder.getEdgeTypes().getValue(a.getText());
+        				 selectedEdges.add(b);
+        			 }
+        				
+        		}	
+        	}
+        	
+        	
+        	String viewName = viewNameTextField.getText();
+        	
+        	if (viewName.length()==0 || (selectedNodes.size()==0 && selectedEdges.size()==0))
+        	{
+        		// not enough information
+        		JPanel errorPanel = new JPanel();
+        		
+        		errorPanel.add(new JLabel("No name entered or no edge and node types selected"));
+        		
+        		JOptionPane.showMessageDialog(null, errorPanel, "Ups something went wrong", JOptionPane.ERROR_MESSAGE);
+        		
+        		
+        	}
+        	else
+        	{
+        		// write to config
+        		GraphViewContainer container = new GraphViewContainer(selectedNodes,selectedEdges,viewName);
+	        	graphView.getGraph().createNewGraphView(container);
+        	}
+        }
 	}
 }
 

@@ -5,12 +5,22 @@ import graph.model2.MyNodeType;
 
 import java.util.LinkedList;
 
+/**
+ * Contains information about a certain View on the Graph
+ *
+ */
 public class GraphViewContainer {
 	
 	private LinkedList<MyNodeType> selectedNodeTypes;
 	private LinkedList<MyEdgeType> selectedEdgeTypes;
 	private String viewName;
 	
+	/**
+	 * Creates a a new container with all the information about a certain View on the Graph
+	 * @param selectedNodeTypes : which Node Types should be visible
+	 * @param selectedEdgeTypes : which Edge Types should be visible
+	 * @param viewName : the Name of the view
+	 */
 	public GraphViewContainer(LinkedList<MyNodeType> selectedNodeTypes, LinkedList<MyEdgeType> selectedEdgeTypes, String viewName)
 	{
 		this.viewName = viewName;

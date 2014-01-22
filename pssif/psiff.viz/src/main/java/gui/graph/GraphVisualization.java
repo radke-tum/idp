@@ -17,6 +17,7 @@ import graph.model2.MyEdge2;
 import graph.model2.MyEdgeType;
 import graph.model2.MyNode2;
 import graph.model2.MyNodeType;
+import graph.operations.GraphViewContainer;
 import graph.operations.MyCollapser;
 import graph.operations.NodeAndEdgeFilter;
 import graph.operations.VertexStrokeHighlight;
@@ -411,7 +412,17 @@ public HashMap<MyNodeType, Color> getNodeColorMapping ()
 {
 	return this.configWriterReader.readColors();
 }
-  
+
+
+public void createNewGraphView (GraphViewContainer newView)
+{
+	this.configWriterReader.setGraphView(newView);
+}
+
+public HashMap<String, GraphViewContainer> getAllGraphViews()
+{
+	return this.configWriterReader.readViews();
+}
   
   /*	  private class MutableDirectionalEdgeValue extends ConstantDirectionalEdgeValueTransformer<MyNode,MyEdge> {
 	        BoundedRangeModel undirectedModel = new DefaultBoundedRangeModel(5,0,0,10);
