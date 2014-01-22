@@ -219,16 +219,16 @@ public class ModelBuilder {
 	    model = new ModelImpl();
 	    
 	    Node ebike = node("hardware", meta).create(model);
-	    node("hardware", meta).findAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_NAME).set(ebike, PSSIFValue.create("Ebike"));
+	    node("hardware", meta).findAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_NAME).set(ebike, PSSIFOption.one(PSSIFValue.create("Ebike")));
 	    
 	    Node smartphone = node("hardware", meta).create(model);
-	    node("hardware", meta).findAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_NAME).set(smartphone, PSSIFValue.create("Smartphone"));
+	    node("hardware", meta).findAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_NAME).set(smartphone, PSSIFOption.one(PSSIFValue.create("Smartphone")));
 	    Node battery = node("hardware", meta).create(model);
-	    node("hardware", meta).findAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_NAME).set(battery, PSSIFValue.create("Battery"));
+	    node("hardware", meta).findAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_NAME).set(battery, PSSIFOption.one(PSSIFValue.create("Battery")));
 	    Node rentalApp = node("software", meta).create(model);
-	    node("software", meta).findAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_NAME).set(rentalApp, PSSIFValue.create("RentalApp"));
+	    node("software", meta).findAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_NAME).set(rentalApp, PSSIFOption.one(PSSIFValue.create("RentalApp")));
 	    Node gpsApp = node("software", meta).create(model);
-	    node("software", meta).findAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_NAME).set(gpsApp, PSSIFValue.create("GpsApp"));
+	    node("software", meta).findAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_NAME).set(gpsApp, PSSIFOption.one(PSSIFValue.create("GpsApp")));
 
 	    EdgeType hwContainment = node("hardware", meta).findOutgoingEdgeType("containment");
 	    ConnectionMapping hw2hw = hwContainment.getMapping(node("hardware", meta), node("hardware", meta));

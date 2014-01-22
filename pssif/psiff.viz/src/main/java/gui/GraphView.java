@@ -61,17 +61,17 @@ public class GraphView {
 	
 	private Dimension screenSize;
 
-	public GraphView()
+	public GraphView(Dimension parentDimension)
 	{
-
 		active = false;
-		screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+		/*screenSize = Toolkit.getDefaultToolkit().getScreenSize();*/
+		screenSize = parentDimension;
 		int x = (int) (screenSize.width*0.85);
 		int y = (int) (screenSize.height*0.9);
 		if (nodeDetails==null)
 			graph = new GraphVisualization(new Dimension(x,y),true);
 		else
-			graph = new GraphVisualization(new Dimension(x,y),nodeDetails.isSelected());
+			graph = new GraphVisualization(new Dimension(x,y), nodeDetails.isSelected());
 		
 		addNodeChangeListener();
 	}
@@ -84,12 +84,7 @@ public class GraphView {
 		parent = new JPanel();
         parent.setLayout(new BorderLayout());
 		
-		JPanel graphpanel = new JPanel();/*
-<<<<<<< HEAD
-=======
-		//graphpanel.setBackground(Color.YELLOW);
->>>>>>> refs/remotes/origin/attempt3*/
-		
+		JPanel graphpanel = new JPanel();		
 		
 		VisualizationViewer<MyNode2, MyEdge2> vv = graph.getVisualisationViewer();
 		
@@ -98,11 +93,9 @@ public class GraphView {
 		parent.add(graphpanel,BorderLayout.CENTER);
 		
 		JPanel information = new JPanel();
-//<<<<<<< HEAD
+
 		information.setBackground(Color.LIGHT_GRAY);
-/*=======
-		information.setBackground(Color.LIGHT_GRAY);
->>>>>>> refs/remotes/origin/attempt3*/
+
 		int x = (int) (screenSize.width*0.15);
 		int y = (int) (screenSize.height);
 		Dimension d = new Dimension(x,y);

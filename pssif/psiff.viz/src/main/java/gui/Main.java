@@ -42,47 +42,22 @@ public class Main {
 	private static MatrixView matrixView;
 	private static JFrame frame;
 	private static GraphView graphView;
-//<<<<<<< HEAD
 	private static Dimension frameSize;
-//=======
+
 	
 	private static JMenuItem resetGraph;
 	private static JMenuItem resetMatrix;
 	private static JMenuItem colorNodes;
-//>>>>>>> refs/remotes/origin/attempt3
 	
 	public static void main(String[] args) {
 		
-		//Model m = new Model();
-		//m.MockData();
 		ModelBuilder m = new ModelBuilder();
 
-		matrixView = new MatrixView();
-		graphView = new GraphView();
 
-//<<<<<<< HEAD
-//		frame = new JFrame("Product Service System - Integration Framework ---- Visualisation");
-//=======
+
 		frame = new JFrame("Product Service Systems - Integration Framework ---- Visualisation");
-//>>>>>>> refs/remotes/origin/attempt3
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		
-		// Standart start with Graph
-		frame.getContentPane().add(graphView.getGraphPanel());
-		graphView.setActive(true);
-		matrixView.setActive(false);
-		
-//<<<<<<< HEAD
-		
-		frame.setJMenuBar(createMenu());
-		//frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-		
-//=======
-	//	frame.setJMenuBar(createMenu());		
 
-		adjustButtons();
-//>>>>>>> refs/remotes/origin/attempt3
-		
 		GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
 		int width = gd.getDisplayMode().getWidth()/4;
 		int height = gd.getDisplayMode().getHeight()/4;
@@ -112,6 +87,19 @@ public class Main {
 			@Override
 			public void componentHidden(ComponentEvent e) {}
 		});
+		
+		frame.pack();
+		
+		matrixView = new MatrixView();
+		graphView = new GraphView(frame.getSize());
+		
+		// Standart start with Graph
+		frame.getContentPane().add(graphView.getGraphPanel());
+		graphView.setActive(true);
+		matrixView.setActive(false);
+		
+		frame.setJMenuBar(createMenu());
+		adjustButtons();
 		
 		frame.pack();
 		frame.setLocationRelativeTo(null);

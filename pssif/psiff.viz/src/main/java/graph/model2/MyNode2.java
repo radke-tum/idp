@@ -15,7 +15,7 @@ public class MyNode2{
 
 	private Node node;
 	private String name;
-	private List<String> attributes ;
+	//private List<String> attributes ;
 	private int size;
 	private MyNodeType type;
 	private boolean detailedOutput;
@@ -33,26 +33,31 @@ public class MyNode2{
 		
 		if (nodeName.get(node)!=null)
 		{
-			PSSIFValue value = (PSSIFValue) nodeName.get(node);
+			PSSIFValue value = nodeName.get(node).getOne();
 			name = value.asString();
 			
 		}
 		else
 			name ="blabla";
 		
-		calcAttr();
+		//calcAttr();
 	}
 	
-	private void calcAttr()
+	private List<String> calcAttr()
 	{
-		attributes = new LinkedList<String>();
+		List<String> attributes = new LinkedList<String>();
 		
 		Collection<Attribute> attr = type.getType().getAttributes();
 		
 		for (Attribute current : attr)
 		{
 			String attrName = current.getName();
-			PSSIFValue value = (PSSIFValue) current.get(node);
+			
+			PSSIFValue value=null;
+			
+			if (current.get(node)!=null && current.get(node).isOne())
+				value = current.get(node).getOne();
+			
 			String attrValue="";
 			if (value !=null)
 				attrValue = (String) value.getValue();
@@ -63,6 +68,8 @@ public class MyNode2{
 			if (current.get(node)!=null)
 				attributes.add(res);
 		}
+		
+		return attributes;
 	}
 
 	
@@ -108,7 +115,7 @@ public class MyNode2{
 			output+=" <tr> ";
 			output+= "<td> <b>Attributes </b></td>";
 			output+=  " </tr> ";
-			for (String s : attributes)
+			for (String s : calcAttr())
 			{
 				output+=" <tr> ";
 				output+= "<td> "+s+" </td>";
@@ -154,12 +161,12 @@ public class MyNode2{
 	}
 	
 	public List<String> getAttributes() {
-		return attributes;
+		return calcAttr();
 	}
 
-	public void setAttributes(List<String> attributes) {
+	/*public void setAttributes(List<String> attributes) {
 		this.attributes = attributes;
-	}
+	}*/
 
 	public int getSize() {
 		return size;
