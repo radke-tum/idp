@@ -62,7 +62,14 @@ public class ConfigWriterReader {
 		if (!configFile.exists())
 			writeNewConfig(colormapping);
 		else
+		{
+			if (!colorConfigExists())
+			{
+				addBasicColorInfo();
+			}
+			
 			updateColors(colormapping);
+		}
 	}
 	
 	public void setGraphView(GraphViewContainer view)
@@ -228,11 +235,7 @@ public class ConfigWriterReader {
 	public HashMap<MyNodeType, Color> readColors ()
 	{
 		HashMap<MyNodeType, Color> res = new HashMap<MyNodeType, Color>();
-/*		
-<<<<<<< HEAD
-=======
-		
->>>>>>> refs/remotes/origin/attempt3*/
+
 		if (configFile.exists())
 		{
 			try
@@ -256,7 +259,6 @@ public class ConfigWriterReader {
 			 
 					Node nNode = nList.item(temp);
 			 
-//<<<<<<< HEAD
 					//System.out.println("\nCurrent Element :" + nNode);
 			 
 					if (nNode.getNodeType() == Node.ELEMENT_NODE) {
@@ -266,17 +268,7 @@ public class ConfigWriterReader {
 						String nodeTypeValue = eElement.getChildNodes().item(0).getNodeValue();	
 						//System.out.println(nodeTypeValue);
 						MyNodeType current = ModelBuilder.getNodeTypes().getValue(nodeTypeValue);
-/*=======
-					System.out.println("\nCurrent Element :" + nNode);
-			 
-					if (nNode.getNodeType() == Node.ELEMENT_NODE) {
-			 
-						Element eElement = (Element) nNode;
-						
-						String nodeTypeValue = eElement.getChildNodes().item(0).getNodeValue();	
-						System.out.println(nodeTypeValue);
-						NodeType current = NodeType.getValue(nodeTypeValue);
-//>>>>>>> refs/remotes/origin/attempt3*/
+
 						Color c = new Color(Integer.valueOf(eElement.getAttribute(attrColor)));
 						
 						res.put(current, c);
@@ -286,10 +278,7 @@ public class ConfigWriterReader {
 		    	e.printStackTrace();
 		    }
 		}
-/*<<<<<<< HEAD
-=======
-		
->>>>>>> refs/remotes/origin/attempt3*/
+		System.out.println("Found Nb Colors: "+ res.keySet().size());
 		return res;
 	  }
 	
@@ -348,7 +337,7 @@ public class ConfigWriterReader {
 				graphViewsNode.appendChild(graphViewNode);
 				
 				Element visibleNodeTypesNode = doc.createElement(visibleNodeTypes);
-				rootElement.appendChild(visibleNodeTypesNode);
+				graphViewNode.appendChild(visibleNodeTypesNode);
 				
 				// loop over the Node Types
 				for (MyNodeType t :view.getSelectedNodeTypes())
@@ -361,7 +350,7 @@ public class ConfigWriterReader {
 				}
 				
 				Element visibleEdgeTypesNode = doc.createElement(visibleEdgeTypes);
-				rootElement.appendChild(visibleEdgeTypesNode);
+				graphViewNode.appendChild(visibleEdgeTypesNode);
 				
 				// loop over the Edge Types
 				for (MyEdgeType t :view.getSelectedEdgeTypes())
@@ -399,7 +388,7 @@ public class ConfigWriterReader {
 				NodeList graphViewsNodes = doc.getElementsByTagName(graphViews);
 				
 				Element graphViewsNode;
-				if (graphViewsNodes==null)
+				if (graphViewsNodes==null || graphViewsNodes.getLength()==0)
 				{
 					// graphViews element
 					graphViewsNode = doc.createElement(graphViews);
@@ -559,4 +548,66 @@ public class ConfigWriterReader {
 		}
 		return res;
 	  }
+	
+	private boolean colorConfigExists()
+	{
+		boolean result = false;
+		
+		try
+		{
+			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+			Document doc = dBuilder.parse(configFile);
+		 
+			doc.getDocumentElement().normalize();
+		 
+			NodeList nList = doc.getElementsByTagName(nodeColors);
+			
+			if (nList==null || nList.getLength()==0)
+				result =false;
+			else
+				result=true;
+				
+		}
+	    catch (Exception e) {
+	    	e.printStackTrace();
+	    }
+		
+		return result;
+	}
+	
+	private void addBasicColorInfo()
+	{
+		 try {
+			 
+			 DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+				DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+				Document doc = docBuilder.parse(configFile);
+				
+				doc.getDocumentElement().normalize();
+				
+				// Get the root element
+				Element rootElement = (Element) doc.getFirstChild();
+		 
+				// nodecolors elements
+				Element nodecolors = doc.createElement(nodeColors);
+				rootElement.appendChild(nodecolors);
+				
+				// write the content into xml file
+				TransformerFactory transformerFactory = TransformerFactory.newInstance();
+				Transformer transformer = transformerFactory.newTransformer();
+				DOMSource source = new DOMSource(doc);
+				StreamResult result = new StreamResult(configFile);
+		 
+				// Output to console for testing
+				// StreamResult result = new StreamResult(System.out);
+		 
+				transformer.transform(source, result);
+		 
+				System.out.println("File saved!");
+		 }
+		    catch (Exception e) {
+		    	e.printStackTrace();
+		    }
+	}
 }
