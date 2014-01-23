@@ -11,7 +11,6 @@ import de.tum.pssif.core.exception.PSSIFStructuralIntegrityException;
 import de.tum.pssif.core.metamodel.Attribute;
 import de.tum.pssif.core.metamodel.AttributeGroup;
 import de.tum.pssif.core.metamodel.ElementType;
-import de.tum.pssif.core.metamodel.impl.AttributeGroupImpl;
 import de.tum.pssif.core.util.PSSIFUtil;
 
 
@@ -22,7 +21,6 @@ public abstract class AbstractElementType<T extends ElementType<T>> extends Abst
 
   public AbstractElementType(String name) {
     super(name);
-    this.attributeGroups.add(new AttributeGroupImpl(PSSIFConstants.DEFAULT_ATTRIBUTE_GROUP_NAME, this));
   }
 
   @Override

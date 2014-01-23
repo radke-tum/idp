@@ -21,37 +21,18 @@ import de.tum.pssif.core.util.PSSIFUtil;
 public class EdgeTypeImpl extends AbstractEdgeType {
   public EdgeTypeImpl(String name) {
     super(name);
+    addAttributeGroup(new AttributeGroupImpl(PSSIFConstants.DEFAULT_ATTRIBUTE_GROUP_NAME, this));
   }
 
   @Override
   public ConnectionMapping createMapping(String inName, NodeType in, Multiplicity inMultiplicity, String outName, NodeType out,
                                          Multiplicity outMultiplicity) {
-    checkMappingConsistency(inName, in, inMultiplicity, outName, out, outMultiplicity);
-
     EdgeEnd from = new EdgeEndImpl(inName, this, inMultiplicity, in);
     EdgeEnd to = new EdgeEndImpl(outName, this, outMultiplicity, out);
-
-    in.registerOutgoing(this);
-    out.registerIncoming(this);
-
     ConnectionMapping result = new ConnectionMappingImpl(from, to);
-    addMapping(result);
+    addMappingInternal(result);
 
     return result;
-  }
-
-  private void checkMappingConsistency(String inName, NodeType in, Multiplicity inMultiplicity, String outName, NodeType out,
-                                       Multiplicity outMultiplicity) {
-    if (inMultiplicity.getEdgeEndLower() < 1 || outMultiplicity.getEdgeEndLower() < 1) {
-      throw new PSSIFStructuralIntegrityException("cannot create mapping with edge end lower multiplicity < 1");
-    }
-    for (ConnectionMapping mapping : this.getMappings()) {
-      mapping.getFrom();
-      if (mapping.getFrom().getNodeType().equals(in) && PSSIFUtil.areSame(mapping.getFrom().getName(), inName)
-          && mapping.getTo().getNodeType().equals(out) && PSSIFUtil.areSame(mapping.getTo().getName(), outName)) {
-        throw new PSSIFStructuralIntegrityException("A connction mapping between the provided types with the provided names already exists.");
-      }
-    }
   }
 
   @Override
@@ -61,7 +42,7 @@ public class EdgeTypeImpl extends AbstractEdgeType {
       throw new PSSIFStructuralIntegrityException("An auxiliary edge end with this name already exists.");
     }
     EdgeEnd result = new EdgeEndImpl(name, this, multiplicity, to);
-    addAuxiliary(result);
+    addAuxiliaryInternal(result);
     to.registerAuxiliary(this);
     return result;
   }

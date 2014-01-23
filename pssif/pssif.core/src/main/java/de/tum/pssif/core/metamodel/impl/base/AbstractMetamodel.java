@@ -22,23 +22,23 @@ public abstract class AbstractMetamodel implements Metamodel {
   private Map<String, EdgeType>    edgetypes    = Maps.newHashMap();
   private Map<String, Enumeration> enumerations = Maps.newHashMap();
 
-  protected final void addNodeType(NodeType type) {
+  protected final void addNodeTypeInternal(NodeType type) {
     nodetypes.put(PSSIFUtil.normalize(type.getName()), type);
   }
 
-  protected final void removeNodeType(NodeType type) {
+  protected final void removeNodeTypeInternal(NodeType type) {
     nodetypes.remove(PSSIFUtil.normalize(type.getName()));
   }
 
-  protected final void addEdgeType(EdgeType type) {
+  protected final void addEdgeTypeInternal(EdgeType type) {
     edgetypes.put(PSSIFUtil.normalize(type.getName()), type);
   }
 
-  protected final void removeEdgeType(EdgeType type) {
+  protected final void removeEdgeTypeInternal(EdgeType type) {
     edgetypes.remove(PSSIFUtil.normalize(type.getName()));
   }
 
-  protected final void addEnumeration(Enumeration enumeration) {
+  protected final void addEnumerationInternal(Enumeration enumeration) {
     enumerations.put(PSSIFUtil.normalize(enumeration.getName()), enumeration);
   }
 

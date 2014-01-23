@@ -6,6 +6,7 @@ import java.util.Set;
 
 import com.google.common.collect.Sets;
 
+import de.tum.pssif.core.exception.PSSIFStructuralIntegrityException;
 import de.tum.pssif.core.metamodel.ConnectionMapping;
 import de.tum.pssif.core.metamodel.EdgeEnd;
 import de.tum.pssif.core.metamodel.EdgeType;
@@ -23,20 +24,39 @@ public abstract class AbstractEdgeType extends AbstractElementType<EdgeType> imp
     super(name);
   }
 
-  protected final void addMapping(ConnectionMapping mapping) {
+  protected final void addMappingInternal(ConnectionMapping mapping) {
+    checkMappingConsistency(mapping);
+
     mappings.add(mapping);
+    mapping.getFrom().getNodeType().registerOutgoing(this);
+    mapping.getTo().getNodeType().registerIncoming(this);
   }
 
-  protected final void removeMapping(ConnectionMapping mapping) {
+  protected final void removeMappingInternal(ConnectionMapping mapping) {
     mappings.remove(mapping);
   }
 
-  protected final void addAuxiliary(EdgeEnd end) {
+  protected final void addAuxiliaryInternal(EdgeEnd end) {
     auxiliaries.add(end);
   }
 
-  protected final void removeAuxiliary(EdgeEnd end) {
+  protected final void removeAuxiliaryInternal(EdgeEnd end) {
     auxiliaries.remove(end);
+  }
+
+  private void checkMappingConsistency(ConnectionMapping mapping) {
+    EdgeEnd from = mapping.getFrom();
+    EdgeEnd to = mapping.getTo();
+    if (from.getEdgeEndLower() < 1 || to.getEdgeEndLower() < 1) {
+      throw new PSSIFStructuralIntegrityException("cannot create mapping with edge end lower multiplicity < 1");
+    }
+    for (ConnectionMapping m : this.getMappings()) {
+      m.getFrom();
+      if (m.getFrom().getNodeType().equals(from) && PSSIFUtil.areSame(m.getFrom().getName(), from.getName()) && m.getTo().getNodeType().equals(to)
+          && PSSIFUtil.areSame(m.getTo().getName(), to.getName())) {
+        throw new PSSIFStructuralIntegrityException("A connction mapping between the provided types with the provided names already exists.");
+      }
+    }
   }
 
   @Override

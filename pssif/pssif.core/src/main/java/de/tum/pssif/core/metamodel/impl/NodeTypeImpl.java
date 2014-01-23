@@ -20,6 +20,7 @@ import de.tum.pssif.core.util.PSSIFUtil;
 public class NodeTypeImpl extends AbstractNodeType {
   public NodeTypeImpl(String name) {
     super(name);
+    addAttributeGroup(new AttributeGroupImpl(PSSIFConstants.DEFAULT_ATTRIBUTE_GROUP_NAME, this));
   }
 
   @Override

@@ -10,56 +10,56 @@
   <key attr.name="id" attr.type="int" for="edge" id="id" />
   <graph edgedefault="directed">
     <node id="node0">
-      <data key="bg_type">State</data>
+      <data key="bg_type">Statte</data>
       <data key="id">8</data>
       <data key="name">Kraft- und Momentenaufnahme durch das Fahrrad</data>
       <data key="output">False</data>
       <data key="input">False</data>
     </node>
     <node id="node1">
-      <data key="bg_type">State</data>
+      <data key="bg_type">Statte</data>
       <data key="id">6</data>
       <data key="name">Drehmoment am Schloss</data>
       <data key="output">False</data>
       <data key="input">False</data>
     </node>
     <node id="node2">
-      <data key="bg_type">State</data>
+      <data key="bg_type">Statte</data>
       <data key="id">7</data>
       <data key="name">elektrische Energie (in Batterie) gespeichert</data>
       <data key="output">False</data>
       <data key="input">False</data>
     </node>
     <node id="node3">
-      <data key="bg_type">State</data>
+      <data key="bg_type">Statte</data>
       <data key="id">5</data>
       <data key="name">PSSycle fahrbereit</data>
       <data key="output">False</data>
       <data key="input">False</data>
     </node>
     <node id="node4">
-      <data key="bg_type">State</data>
+      <data key="bg_type">Statte</data>
       <data key="id">4</data>
       <data key="name">Signal am Schloss</data>
       <data key="output">False</data>
       <data key="input">False</data>
     </node>
     <node id="node5">
-      <data key="bg_type">State</data>
+      <data key="bg_type">Statte</data>
       <data key="id">3</data>
       <data key="name">Nutzerdaten überprüft</data>
       <data key="output">False</data>
       <data key="input">False</data>
     </node>
     <node id="node6">
-      <data key="bg_type">State</data>
+      <data key="bg_type">Statte</data>
       <data key="id">2</data>
       <data key="name">Nutzerdaten im Bordcomputer eingegeben</data>
       <data key="output">False</data>
       <data key="input">False</data>
     </node>
     <node id="node7">
-      <data key="bg_type">State</data>
+      <data key="bg_type">Statte</data>
       <data key="id">1</data>
       <data key="name">Kunde möchte PSSycle ausleihen</data>
       <data key="output">False</data>
@@ -114,35 +114,35 @@
       <data key="id">0</data>
     </edge>
     <edge id="edge2" source="node9" target="node3">
-      <data key="bg_type">InformationFlow</data>
+      <data key="bg_type">Information flow</data>
       <data key="id">0</data>
     </edge>
     <edge id="edge3" source="node4" target="node9">
-      <data key="bg_type">InformationFlow</data>
+      <data key="bg_type">Information flow</data>
       <data key="id">0</data>
     </edge>
     <edge id="edge4" source="node10" target="node4">
-      <data key="bg_type">InformationFlow</data>
+      <data key="bg_type">Information flow</data>
       <data key="id">0</data>
     </edge>
     <edge id="edge5" source="node5" target="node10">
-      <data key="bg_type">InformationFlow</data>
+      <data key="bg_type">Information flow</data>
       <data key="id">0</data>
     </edge>
     <edge id="edge6" source="node11" target="node5">
-      <data key="bg_type">InformationFlow</data>
+      <data key="bg_type">Information flow</data>
       <data key="id">0</data>
     </edge>
     <edge id="edge7" source="node6" target="node11">
-      <data key="bg_type">InformationFlow</data>
+      <data key="bg_type">Information flow</data>
       <data key="id">0</data>
     </edge>
     <edge id="edge8" source="node12" target="node6">
-      <data key="bg_type">InformationFlow</data>
+      <data key="bg_type">Information flow</data>
       <data key="id">0</data>
     </edge>
     <edge id="edge9" source="node7" target="node12">
-      <data key="bg_type">InformationFlow</data>
+      <data key="bg_type">Information flow</data>
       <data key="id">0</data>
     </edge>
     <edge id="edge10" source="node1" target="node9">

@@ -10,7 +10,6 @@ import com.google.common.collect.Sets;
 
 import de.tum.pssif.core.metamodel.Attribute;
 import de.tum.pssif.core.metamodel.AttributeGroup;
-import de.tum.pssif.core.metamodel.impl.AttributeGroupImpl;
 import de.tum.pssif.core.util.PSSIFUtil;
 
 
@@ -33,7 +32,8 @@ public abstract class AbstractAttributeGroup extends AbstractNamed implements At
     if (result != null) {
       return result;
     }
-    AttributeGroupImpl generalGroup = owner.getGeneral() != null ? (AttributeGroupImpl) owner.getGeneral().findAttributeGroup(getName()) : null;
+    AbstractAttributeGroup generalGroup = owner.getGeneral() != null ? (AbstractAttributeGroup) owner.getGeneral().findAttributeGroup(getName())
+        : null;
     if (generalGroup != null) {
       return generalGroup.findAttribute(name);
     }

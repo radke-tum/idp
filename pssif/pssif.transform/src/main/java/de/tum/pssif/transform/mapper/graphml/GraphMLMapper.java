@@ -33,7 +33,12 @@ public class GraphMLMapper implements Mapper {
       if (type != null) {
         Attribute idAttribute = type.findAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_ID);
         Node resultNode = type.create(result);
-        idAttribute.set(resultNode, PSSIFOption.one(idAttribute.getType().fromObject(inNode.getId())));
+        if (idAttribute != null) {
+          idAttribute.set(resultNode, PSSIFOption.one(idAttribute.getType().fromObject(inNode.getId())));
+        }
+        else {
+          System.out.println("Attribute " + PSSIFConstants.BUILTIN_ATTRIBUTE_ID + " not found!");
+        }
 
         readAttributes(type, resultNode, inNode);
       }
@@ -86,7 +91,7 @@ public class GraphMLMapper implements Mapper {
         attribute.set(element, PSSIFOption.one(attribute.getType().fromObject(values.get(key))));
       }
       else {
-        System.out.println("AttributeType " + key + " not found!");
+        System.out.println("Attribute " + key + " not found!");
       }
     }
   }

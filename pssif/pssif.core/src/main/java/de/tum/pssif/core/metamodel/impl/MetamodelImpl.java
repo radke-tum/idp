@@ -18,10 +18,10 @@ import de.tum.pssif.core.util.PSSIFUtil;
 public class MetamodelImpl extends AbstractMetamodel implements MutableMetamodel {
   public MetamodelImpl() {
     NodeTypeImpl rootNodeType = new NodeTypeImpl(PSSIFConstants.ROOT_NODE_TYPE_NAME);
-    addNodeType(rootNodeType);
+    addNodeTypeInternal(rootNodeType);
     addDefaultAttributes(rootNodeType);
     EdgeTypeImpl rootEdgeType = new EdgeTypeImpl(PSSIFConstants.ROOT_EDGE_TYPE_NAME);
-    addEdgeType(rootEdgeType);
+    addEdgeTypeInternal(rootEdgeType);
     addDefaultAttributes(rootEdgeType);
     rootEdgeType.createAttribute(rootEdgeType.getDefaultAttributeGroup(), PSSIFConstants.BUILTIN_ATTRIBUTE_DIRECTED, PrimitiveDataType.BOOLEAN, true,
         AttributeCategory.METADATA);
@@ -53,7 +53,7 @@ public class MetamodelImpl extends AbstractMetamodel implements MutableMetamodel
       throw new PSSIFStructuralIntegrityException("a node type with the name " + name + " already exists");
     }
     NodeTypeImpl result = new NodeTypeImpl(name);
-    addNodeType(result);
+    addNodeTypeInternal(result);
     result.inherit(findNodeType(PSSIFConstants.ROOT_NODE_TYPE_NAME));
     return result;
   }
@@ -67,7 +67,7 @@ public class MetamodelImpl extends AbstractMetamodel implements MutableMetamodel
       throw new PSSIFStructuralIntegrityException("an edge type with name " + name + " already exitsts");
     }
     EdgeTypeImpl result = new EdgeTypeImpl(name);
-    addEdgeType(result);
+    addEdgeTypeInternal(result);
     result.inherit(findEdgeType(PSSIFConstants.ROOT_EDGE_TYPE_NAME));
     return result;
   }
@@ -81,7 +81,7 @@ public class MetamodelImpl extends AbstractMetamodel implements MutableMetamodel
       throw new PSSIFStructuralIntegrityException("duplicate data type with name " + name);
     }
     Enumeration result = new EnumerationImpl(name);
-    addEnumeration(result);
+    addEnumerationInternal(result);
     return result;
   }
 

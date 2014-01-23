@@ -11,6 +11,7 @@ import de.tum.pssif.core.metamodel.Metamodel;
 import de.tum.pssif.core.metamodel.NodeType;
 import de.tum.pssif.core.model.Model;
 import de.tum.pssif.core.util.PSSIFCanonicMetamodelCreator;
+import de.tum.pssif.transform.transformation.RenameNodeTypeTransformation;
 
 
 public class GraphMLReadTest {
@@ -74,9 +75,10 @@ public class GraphMLReadTest {
     GraphMLMapper importer = new GraphMLMapper();
 
     Metamodel metamodel = PSSIFCanonicMetamodelCreator.create();
+    metamodel = new RenameNodeTypeTransformation(metamodel.findNodeType("State"), "Statte").apply(metamodel);
     Model model = importer.read(metamodel, in);
 
-    NodeType state = metamodel.findNodeType("State");
+    NodeType state = metamodel.findNodeType("Statte");
     NodeType function = metamodel.findNodeType("Function");
 
     Assert.assertEquals(8, state.apply(model).size());
