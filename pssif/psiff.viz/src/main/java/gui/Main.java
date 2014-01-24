@@ -57,6 +57,7 @@ public class Main {
 	private static JMenuItem resetMatrix;
 	private static JMenuItem colorNodes;
 	private static JMenuItem createView;
+	private static JMenu applyView;
 	
 	public static void main(String[] args) {
 		
@@ -100,7 +101,7 @@ public class Main {
 		frame.pack();
 		
 		matrixView = new MatrixView();
-		graphView = new GraphView(frame.getSize());
+		graphView = new GraphView(/*frame.getSize()*/);
 		
 		// Standart start with Graph
 		frame.getContentPane().add(graphView.getGraphPanel());
@@ -210,7 +211,7 @@ public class Main {
 		
 		// Color Options
 		JMenu visualizationEffects = new JMenu("Visualization Effects");
-		colorNodes = new JMenuItem("Choose Node color");
+		colorNodes = new JMenuItem("Choose Node colors");
 		colorNodes.addActionListener(new ActionListener() {
 			
 			@Override
@@ -226,9 +227,16 @@ public class Main {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				createNewGraphView ();
+				resetReadGraphViews();
 			}
 		});
 		visualizationEffects.add(createView);
+		
+		applyView = new JMenu("Apply GraphView");
+		
+		visualizationEffects.add(applyView);
+		// create the SubMenus
+		readGraphViews();
 		
 		// Add all to the menuBar
 		menuBar.add(modeMenu);
@@ -508,8 +516,43 @@ public class Main {
         		// write to config
         		GraphViewContainer container = new GraphViewContainer(selectedNodes,selectedEdges,viewName);
 	        	graphView.getGraph().createNewGraphView(container);
+	        	
+	        	// apply the view
+	        	graphView.getGraph().applyNodeAndEdgeFilter(container.getSelectedNodeTypes(), container.getSelectedEdgeTypes());
         	}
         }
+	}
+
+	private static void readGraphViews()
+	{
+		final HashMap<String, GraphViewContainer> views = graphView.getGraph().getAllGraphViews();
+		
+		for (final String name : views.keySet())
+		{
+			JMenuItem menuItem = new JMenuItem(name);
+			
+			menuItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				graphView.getGraph().applyNodeAndEdgeFilter(ModelBuilder.getNodeTypes().getAllNodeTypes(), ModelBuilder.getEdgeTypes().getAllEdgeTypes());
+				
+				GraphViewContainer view = views.get(name);
+				
+				System.out.println("Number of Node Types: "+view.getSelectedNodeTypes().size());
+				System.out.println("Number of Edge Types: "+view.getSelectedEdgeTypes().size());
+				graphView.getGraph().applyNodeAndEdgeFilter(view.getSelectedNodeTypes(), view.getSelectedEdgeTypes());
+			}
+			});
+			
+			applyView.add(menuItem);
+			
+		}	
+	}
+	
+	private static void resetReadGraphViews()
+	{
+		applyView.removeAll();
+		readGraphViews();
 	}
 }
 

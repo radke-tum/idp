@@ -61,11 +61,11 @@ public class GraphView {
 	
 	private Dimension screenSize;
 
-	public GraphView(Dimension parentDimension)
+	public GraphView(/*Dimension parentDimension*/)
 	{
 		active = false;
-		/*screenSize = Toolkit.getDefaultToolkit().getScreenSize();*/
-		screenSize = parentDimension;
+		screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+		//screenSize = parentDimension;
 		int x = (int) (screenSize.width*0.85);
 		int y = (int) (screenSize.height*0.9);
 		if (nodeDetails==null)
@@ -295,6 +295,8 @@ public class GraphView {
 	
 	public void resetGraph()
 	{
+		graph.applyNodeAndEdgeFilter(ModelBuilder.getNodeTypes().getAllNodeTypes(), ModelBuilder.getEdgeTypes().getAllEdgeTypes());
+		
 		FRLayout<MyNode2, MyEdge2> l = new FRLayout<MyNode2, MyEdge2>(graph.getGraph());
     	graph.getVisualisationViewer().setGraphLayout(l);
     	

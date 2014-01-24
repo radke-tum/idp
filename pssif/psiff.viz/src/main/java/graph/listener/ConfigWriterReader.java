@@ -495,7 +495,7 @@ public class ConfigWriterReader {
 						String viewName = String.valueOf(graphViewElement.getAttribute(attrViewName));
 						
 						Node NodeTypes = graphViewElement.getElementsByTagName(visibleNodeTypes).item(0);
-						Node EdgeTypes = graphViewElement.getElementsByTagName(visibleNodeTypes).item(0);
+						Node EdgeTypes = graphViewElement.getElementsByTagName(visibleEdgeTypes).item(0);
 						
 						NodeList NodeTypeList = ((Element)NodeTypes).getElementsByTagName(visibleNodeType);
 						NodeList EdgeTypeList = ((Element)EdgeTypes).getElementsByTagName(visibleEdgeType);
