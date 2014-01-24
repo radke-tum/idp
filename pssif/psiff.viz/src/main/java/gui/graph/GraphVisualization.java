@@ -423,6 +423,11 @@ public HashMap<String, GraphViewContainer> getAllGraphViews()
 {
 	return this.configWriterReader.readViews();
 }
+
+public void deleteGraphView (GraphViewContainer deleteView)
+{
+	this.configWriterReader.deleteView(deleteView.getViewName());
+}
   
   /*	  private class MutableDirectionalEdgeValue extends ConstantDirectionalEdgeValueTransformer<MyNode,MyEdge> {
 	        BoundedRangeModel undirectedModel = new DefaultBoundedRangeModel(5,0,0,10);

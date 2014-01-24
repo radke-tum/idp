@@ -58,6 +58,7 @@ public class Main {
 	private static JMenuItem colorNodes;
 	private static JMenuItem createView;
 	private static JMenu applyView;
+	private static JMenu deleteView;
 	
 	public static void main(String[] args) {
 		
@@ -237,6 +238,12 @@ public class Main {
 		visualizationEffects.add(applyView);
 		// create the SubMenus
 		readGraphViews();
+		
+		deleteView = new JMenu("Delete GraphView");
+		
+		visualizationEffects.add(deleteView);
+		// create the SubMenus
+		deleteGraphView();
 		
 		// Add all to the menuBar
 		menuBar.add(modeMenu);
@@ -519,6 +526,10 @@ public class Main {
 	        	
 	        	// apply the view
 	        	graphView.getGraph().applyNodeAndEdgeFilter(container.getSelectedNodeTypes(), container.getSelectedEdgeTypes());
+	        	
+	        	//update the menus
+	        	resetDeleteGraphViews();
+	        	resetReadGraphViews();
         	}
         }
 	}
@@ -545,7 +556,6 @@ public class Main {
 			});
 			
 			applyView.add(menuItem);
-			
 		}	
 	}
 	
@@ -553,6 +563,35 @@ public class Main {
 	{
 		applyView.removeAll();
 		readGraphViews();
+	}
+	
+	private static void deleteGraphView()
+	{
+		final HashMap<String, GraphViewContainer> views = graphView.getGraph().getAllGraphViews();
+		
+		for (final String name : views.keySet())
+		{
+			JMenuItem menuItem = new JMenuItem(name);
+			
+			menuItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				
+				graphView.getGraph().deleteGraphView(views.get(name));
+				graphView.getGraph().applyNodeAndEdgeFilter(ModelBuilder.getNodeTypes().getAllNodeTypes(), ModelBuilder.getEdgeTypes().getAllEdgeTypes());
+				resetReadGraphViews();
+				resetDeleteGraphViews();
+			}
+			});
+			
+			deleteView.add(menuItem);
+		}	
+	}
+	
+	private static void resetDeleteGraphViews()
+	{
+		deleteView.removeAll();
+		deleteGraphView();
 	}
 }
 

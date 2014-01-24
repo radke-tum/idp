@@ -9,6 +9,7 @@ import graph.model2.MyEdgeType;
 import graph.model2.MyEdgeTypes;
 import graph.model2.MyNode2;
 import graph.model2.MyNodeType;
+import graph.operations.GraphViewContainer;
 import gui.graph.GraphVisualization;
 
 import java.awt.BorderLayout;
@@ -702,6 +703,5 @@ public class GraphView {
 	public void setActive(boolean active) {
 		this.active = active;
 	}
-	
 	
 }

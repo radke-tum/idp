@@ -36,30 +36,30 @@ import org.xml.sax.SAXException;
 public class ConfigWriterReader {
 	
 	
-	private File configFile;
-	private String rootConfig = "config";
-	private String nodeColors = "nodeColors";
-	private String nodeType = "nodeType";
-	private String attrColor = "color";
+	private static File CONFIG_FILE;
+	private static String ROOT_CONFIG = "config";
+	private static String NODE_COLORS = "nodeColors";
+	private static String NODE_TYPES = "nodeType";
+	private static String ATTR_COLOR = "color";
 	
-	private String graphViews ="graphViews";
-	private String graphView ="graphView";
-	private String attrViewName ="viewName";
-	private String visibleNodeTypes ="visibleNodeTypes";
-	private String visibleNodeType ="visibleNodeType";
-	private String visibleEdgeTypes ="visibleEdgeTypes";
-	private String visibleEdgeType ="visibleEdgeTypes";
+	private static String GRAPH_VIEWS ="graphViews";
+	private static String GRAPH_VIEW ="graphView";
+	private static String ATTR_VIEWNAME ="viewName";
+	private static String VISIBLE_NODETYPES ="visibleNodeTypes";
+	private static String VISIBLE_NODETYPE ="visibleNodeType";
+	private static String VISIBLE_EDGETYPES ="visibleEdgeTypes";
+	private static String VISIBLE_EDGETYPE ="visibleEdgeTypes";
 	
 	
 	public ConfigWriterReader()
 	{
-		configFile = new File("config.xml");
+		CONFIG_FILE = new File("config.xml");
 	}
 	
 	
 	public void setColors(HashMap<MyNodeType,Color> colormapping)
 	{
-		if (!configFile.exists())
+		if (!CONFIG_FILE.exists())
 			writeNewConfig(colormapping);
 		else
 		{
@@ -74,7 +74,7 @@ public class ConfigWriterReader {
 	
 	public void setGraphView(GraphViewContainer view)
 	{
-		if (!configFile.exists())
+		if (!CONFIG_FILE.exists())
 			writeNewConfig(view);
 		else
 			updateGraphView(view);
@@ -90,21 +90,21 @@ public class ConfigWriterReader {
  
 		// root elements
 		Document doc = docBuilder.newDocument();
-		Element rootElement = doc.createElement(rootConfig);
+		Element rootElement = doc.createElement(ROOT_CONFIG);
 		doc.appendChild(rootElement);
  
 		// nodecolors elements
-		Element nodecolors = doc.createElement(nodeColors);
+		Element nodecolors = doc.createElement(NODE_COLORS);
 		rootElement.appendChild(nodecolors);
  
 		Set<MyNodeType> nodetypes = colormapping.keySet();
 		
 		for (MyNodeType t :nodetypes)
 		{
-			Element node = doc.createElement(nodeType);
+			Element node = doc.createElement(NODE_TYPES);
 			node.appendChild(doc.createTextNode(t.getName()));
 			
-			Attr attr = doc.createAttribute(attrColor);
+			Attr attr = doc.createAttribute(ATTR_COLOR);
 			attr.setValue(String.valueOf(colormapping.get(t).getRGB()));
 			node.setAttributeNode(attr);
 			
@@ -116,7 +116,7 @@ public class ConfigWriterReader {
 		TransformerFactory transformerFactory = TransformerFactory.newInstance();
 		Transformer transformer = transformerFactory.newTransformer();
 		DOMSource source = new DOMSource(doc);
-		StreamResult result = new StreamResult(configFile);
+		StreamResult result = new StreamResult(CONFIG_FILE);
  
 		// Output to console for testing
 		// StreamResult result = new StreamResult(System.out);
@@ -137,7 +137,7 @@ public class ConfigWriterReader {
 		try {
 			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
-			Document doc = docBuilder.parse(configFile);
+			Document doc = docBuilder.parse(CONFIG_FILE);
 			
 			doc.getDocumentElement().normalize();
 			
@@ -145,9 +145,9 @@ public class ConfigWriterReader {
 			Node root = doc.getFirstChild();
 	 
 			// Get the Nodecolors element by tag name directly
-			NodeList colormapping = doc.getElementsByTagName(nodeType);
+			NodeList colormapping = doc.getElementsByTagName(NODE_TYPES);
 			
-			Node oldNodeColors = doc.getElementsByTagName(nodeColors).item(0);
+			Node oldNodeColors = doc.getElementsByTagName(NODE_COLORS).item(0);
 			
 			// Get all the values from the newColorMapping
 			
@@ -160,10 +160,10 @@ public class ConfigWriterReader {
 			
 			for (MyNodeType currentType: newNodeTypes)
 			{
-				Element node = doc.createElement(nodeType);
+				Element node = doc.createElement(NODE_TYPES);
 				node.appendChild(doc.createTextNode(currentType.getName()));
 				
-				Attr attr = doc.createAttribute(attrColor);
+				Attr attr = doc.createAttribute(ATTR_COLOR);
 				attr.setValue(String.valueOf(newColorMapping.get(currentType).getRGB()));
 				node.setAttributeNode(attr);
 				
@@ -175,7 +175,7 @@ public class ConfigWriterReader {
 			TransformerFactory transformerFactory = TransformerFactory.newInstance();
 			Transformer transformer = transformerFactory.newTransformer();
 			DOMSource source = new DOMSource(doc);
-			StreamResult result = new StreamResult(configFile);
+			StreamResult result = new StreamResult(CONFIG_FILE);
 			transformer.transform(source, result);
 	 
 			System.out.println("Done");
@@ -207,7 +207,7 @@ public class ConfigWriterReader {
 				String nodeTypeValue = eElement.getChildNodes().item(0).getNodeValue();
 				System.out.println("From XML " +nodeTypeValue);
 				
-				String colorValue = eElement.getAttribute(attrColor);
+				String colorValue = eElement.getAttribute(ATTR_COLOR);
 				
 				MyNodeType t = ModelBuilder.getNodeTypes().getValue(nodeTypeValue);
 				
@@ -222,7 +222,7 @@ public class ConfigWriterReader {
 				if (newColor!=null)
 				{
 					System.out.println("changed");
-					eElement.setAttribute(attrColor, String.valueOf(newColor.getRGB()));
+					eElement.setAttribute(ATTR_COLOR, String.valueOf(newColor.getRGB()));
 				}
 				System.out.println("------------------------");
 				
@@ -236,13 +236,13 @@ public class ConfigWriterReader {
 	{
 		HashMap<MyNodeType, Color> res = new HashMap<MyNodeType, Color>();
 
-		if (configFile.exists())
+		if (CONFIG_FILE.exists())
 		{
 			try
 			{
 				DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 				DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-				Document doc = dBuilder.parse(configFile);
+				Document doc = dBuilder.parse(CONFIG_FILE);
 			 
 				//optional, but recommended
 				//read this - http://stackoverflow.com/questions/13786607/normalization-in-dom-parsing-with-java-how-does-it-work
@@ -250,7 +250,7 @@ public class ConfigWriterReader {
 			 
 				//System.out.println("Root element :" + doc.getDocumentElement().getNodeName());
 			 
-				NodeList nList = doc.getElementsByTagName(nodeType);
+				NodeList nList = doc.getElementsByTagName(NODE_TYPES);
 			 
 				//System.out.println("----------------------------");
 			 
@@ -269,7 +269,7 @@ public class ConfigWriterReader {
 						//System.out.println(nodeTypeValue);
 						MyNodeType current = ModelBuilder.getNodeTypes().getValue(nodeTypeValue);
 
-						Color c = new Color(Integer.valueOf(eElement.getAttribute(attrColor)));
+						Color c = new Color(Integer.valueOf(eElement.getAttribute(ATTR_COLOR)));
 						
 						res.put(current, c);
 					}
@@ -297,11 +297,11 @@ public class ConfigWriterReader {
  
 		// root elements
 		Document doc = docBuilder.newDocument();
-		Element rootElement = doc.createElement(rootConfig);
+		Element rootElement = doc.createElement(ROOT_CONFIG);
 		doc.appendChild(rootElement);
 		
 		// graphViews element
-		Element graphViewsNode = doc.createElement(graphViews);
+		Element graphViewsNode = doc.createElement(GRAPH_VIEWS);
 		rootElement.appendChild(graphViewsNode);
 		
 		createGraphView(rootElement,doc,graphViewsNode,view);
@@ -310,7 +310,7 @@ public class ConfigWriterReader {
 		TransformerFactory transformerFactory = TransformerFactory.newInstance();
 		Transformer transformer = transformerFactory.newTransformer();
 		DOMSource source = new DOMSource(doc);
-		StreamResult result = new StreamResult(configFile);
+		StreamResult result = new StreamResult(CONFIG_FILE);
  
 		// Output to console for testing
 		// StreamResult result = new StreamResult(System.out);
@@ -329,33 +329,34 @@ public class ConfigWriterReader {
 	private void createGraphView(Element rootElement, Document doc, Element graphViewsNode, GraphViewContainer view)
 	{
 				// graphView element
-				Element graphViewNode = doc.createElement(graphView);
-				Attr attr = doc.createAttribute(attrViewName);
+				Element graphViewNode = doc.createElement(GRAPH_VIEW);
+				Attr attr = doc.createAttribute(ATTR_VIEWNAME);
 				attr.setValue(view.getViewName());
 				graphViewNode.setAttributeNode(attr);
 				
+				System.out.println();
 				graphViewsNode.appendChild(graphViewNode);
 				
-				Element visibleNodeTypesNode = doc.createElement(visibleNodeTypes);
+				Element visibleNodeTypesNode = doc.createElement(VISIBLE_NODETYPES);
 				graphViewNode.appendChild(visibleNodeTypesNode);
 				
 				// loop over the Node Types
 				for (MyNodeType t :view.getSelectedNodeTypes())
 				{
-					Element visibleNodeTypeNode = doc.createElement(visibleNodeType);
+					Element visibleNodeTypeNode = doc.createElement(VISIBLE_NODETYPE);
 					visibleNodeTypeNode.appendChild(doc.createTextNode(t.getName()));
 					
 					visibleNodeTypesNode.appendChild(visibleNodeTypeNode);
 					
 				}
 				
-				Element visibleEdgeTypesNode = doc.createElement(visibleEdgeTypes);
+				Element visibleEdgeTypesNode = doc.createElement(VISIBLE_EDGETYPES);
 				graphViewNode.appendChild(visibleEdgeTypesNode);
 				
 				// loop over the Edge Types
 				for (MyEdgeType t :view.getSelectedEdgeTypes())
 				{
-					Element visibleEdgeTypeNode = doc.createElement(visibleEdgeType);
+					Element visibleEdgeTypeNode = doc.createElement(VISIBLE_EDGETYPE);
 					visibleEdgeTypeNode.appendChild(doc.createTextNode(t.getName()));
 					
 					visibleEdgeTypesNode.appendChild(visibleEdgeTypeNode);
@@ -368,15 +369,15 @@ public class ConfigWriterReader {
 		try {
 			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
-			Document doc = docBuilder.parse(configFile);
+			Document doc = docBuilder.parse(CONFIG_FILE);
 			
 			doc.getDocumentElement().normalize();
 			
 			// Get the root element
 			Node root = doc.getFirstChild();
-	 
+			
 			// Get all the GrapView elements by tag name directly
-			NodeList graphviewNodes = doc.getElementsByTagName(graphView);
+			NodeList graphviewNodes = doc.getElementsByTagName(GRAPH_VIEW);
 			
 			Element currentGraphViewNode = graphViewAlreadyExists(view.getViewName(), graphviewNodes);
 			
@@ -385,18 +386,31 @@ public class ConfigWriterReader {
 				// graphView does not exist yet. Create a new
 				
 				//check if there is any View defined yet
-				NodeList graphViewsNodes = doc.getElementsByTagName(graphViews);
+				NodeList graphViewsNodes = doc.getElementsByTagName(GRAPH_VIEWS);
 				
 				Element graphViewsNode;
 				if (graphViewsNodes==null || graphViewsNodes.getLength()==0)
 				{
 					// graphViews element
-					graphViewsNode = doc.createElement(graphViews);
+					graphViewsNode = doc.createElement(GRAPH_VIEWS);
 					root.appendChild(graphViewsNode);
 				}
 				else
+				{
 					graphViewsNode = (Element) graphviewNodes.item(0);
+					// check if graphViews has subNodes
+					if (graphViewsNode==null || graphViewsNode.getChildNodes()==null || graphViewsNode.getChildNodes().getLength()==0)
+					{
+						// if it has none. Delete it an create a new Object
+						//root.removeChild(graphViewsNode);
+						
+						graphViewsNode = doc.createElement(GRAPH_VIEWS);
+						root.appendChild(graphViewsNode);
+					}
+					
+				}
 				
+				System.out.println("graphViewsNode null ? "+graphViewsNode==null);
 				createGraphView((Element)root,doc,graphViewsNode,view);
 				
 			}
@@ -404,7 +418,7 @@ public class ConfigWriterReader {
 			{
 				// graphView does exist. Delete the old one and insert a new one				
 				root.removeChild(currentGraphViewNode);
-				Element graphViewsNode = (Element) doc.getElementsByTagName(graphViews).item(0);
+				Element graphViewsNode = (Element) doc.getElementsByTagName(GRAPH_VIEWS).item(0);
 				
 				createGraphView((Element)root,doc,graphViewsNode,view);
 			}	
@@ -413,7 +427,7 @@ public class ConfigWriterReader {
 			TransformerFactory transformerFactory = TransformerFactory.newInstance();
 			Transformer transformer = transformerFactory.newTransformer();
 			DOMSource source = new DOMSource(doc);
-			StreamResult result = new StreamResult(configFile);
+			StreamResult result = new StreamResult(CONFIG_FILE);
 			transformer.transform(source, result);
 	 
 			System.out.println("Done");
@@ -448,7 +462,7 @@ public class ConfigWriterReader {
 					 
 					Element eElement = (Element) currentGraphView;
 					
-					String currentViewName = eElement.getAttribute(attrViewName);
+					String currentViewName = eElement.getAttribute(ATTR_VIEWNAME);
 					
 					if (currentViewName.equals(viewName))
 						return eElement;
@@ -463,13 +477,13 @@ public class ConfigWriterReader {
 	{
 		HashMap<String, GraphViewContainer> res = new HashMap<String, GraphViewContainer>();
 		
-		if (configFile.exists())
+		if (CONFIG_FILE.exists())
 		{
 			try
 			{
 				DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 				DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-				Document doc = dBuilder.parse(configFile);
+				Document doc = dBuilder.parse(CONFIG_FILE);
 			 
 				//optional, but recommended
 				//read this - http://stackoverflow.com/questions/13786607/normalization-in-dom-parsing-with-java-how-does-it-work
@@ -477,7 +491,7 @@ public class ConfigWriterReader {
 			 
 				//System.out.println("Root element :" + doc.getDocumentElement().getNodeName());
 			 
-				NodeList nList = doc.getElementsByTagName(graphView);
+				NodeList nList = doc.getElementsByTagName(GRAPH_VIEW);
 			 
 				//System.out.println("----------------------------");
 			 
@@ -492,13 +506,13 @@ public class ConfigWriterReader {
 			 
 						Element graphViewElement = (Element) nNode;
 						
-						String viewName = String.valueOf(graphViewElement.getAttribute(attrViewName));
+						String viewName = String.valueOf(graphViewElement.getAttribute(ATTR_VIEWNAME));
 						
-						Node NodeTypes = graphViewElement.getElementsByTagName(visibleNodeTypes).item(0);
-						Node EdgeTypes = graphViewElement.getElementsByTagName(visibleEdgeTypes).item(0);
+						Node NodeTypes = graphViewElement.getElementsByTagName(VISIBLE_NODETYPES).item(0);
+						Node EdgeTypes = graphViewElement.getElementsByTagName(VISIBLE_EDGETYPES).item(0);
 						
-						NodeList NodeTypeList = ((Element)NodeTypes).getElementsByTagName(visibleNodeType);
-						NodeList EdgeTypeList = ((Element)EdgeTypes).getElementsByTagName(visibleEdgeType);
+						NodeList NodeTypeList = ((Element)NodeTypes).getElementsByTagName(VISIBLE_NODETYPE);
+						NodeList EdgeTypeList = ((Element)EdgeTypes).getElementsByTagName(VISIBLE_EDGETYPE);
 						
 						LinkedList<MyNodeType> nodetypes = new LinkedList<MyNodeType>();
 						for (int i = 0; i < NodeTypeList.getLength(); i++)
@@ -557,11 +571,11 @@ public class ConfigWriterReader {
 		{
 			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-			Document doc = dBuilder.parse(configFile);
+			Document doc = dBuilder.parse(CONFIG_FILE);
 		 
 			doc.getDocumentElement().normalize();
 		 
-			NodeList nList = doc.getElementsByTagName(nodeColors);
+			NodeList nList = doc.getElementsByTagName(NODE_COLORS);
 			
 			if (nList==null || nList.getLength()==0)
 				result =false;
@@ -580,9 +594,9 @@ public class ConfigWriterReader {
 	{
 		 try {
 			 
-			 DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+			 	DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
 				DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
-				Document doc = docBuilder.parse(configFile);
+				Document doc = docBuilder.parse(CONFIG_FILE);
 				
 				doc.getDocumentElement().normalize();
 				
@@ -590,14 +604,14 @@ public class ConfigWriterReader {
 				Element rootElement = (Element) doc.getFirstChild();
 		 
 				// nodecolors elements
-				Element nodecolors = doc.createElement(nodeColors);
+				Element nodecolors = doc.createElement(NODE_COLORS);
 				rootElement.appendChild(nodecolors);
 				
 				// write the content into xml file
 				TransformerFactory transformerFactory = TransformerFactory.newInstance();
 				Transformer transformer = transformerFactory.newTransformer();
 				DOMSource source = new DOMSource(doc);
-				StreamResult result = new StreamResult(configFile);
+				StreamResult result = new StreamResult(CONFIG_FILE);
 		 
 				// Output to console for testing
 				// StreamResult result = new StreamResult(System.out);
@@ -609,5 +623,65 @@ public class ConfigWriterReader {
 		    catch (Exception e) {
 		    	e.printStackTrace();
 		    }
+	}
+	
+	public void deleteView(String deleteView)
+	{
+		try {
+			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+			Document doc = docBuilder.parse(CONFIG_FILE);
+			doc.getDocumentElement().normalize();
+			
+			// Get the graphview elements
+			NodeList viewList = doc.getElementsByTagName(GRAPH_VIEW);
+			
+			Node deleteNode=null;
+			
+			//iterate over the views
+			for (int i =0; i<viewList.getLength();i++)
+			{
+				Node currentView = viewList.item(i);
+				
+				NamedNodeMap attr = currentView.getAttributes();
+				Node nodeAttr = attr.getNamedItem(ATTR_VIEWNAME);
+				
+				System.out.println("delete test: "+nodeAttr.getNodeValue());
+				if (nodeAttr.getNodeValue().equals(deleteView))
+				{
+					System.out.println("delete selected				: "+nodeAttr.getNodeValue());
+					deleteNode=currentView;
+				}
+			}
+			
+			Node views = doc.getElementsByTagName(GRAPH_VIEWS).item(0);
+			Node root = doc.getFirstChild();
+			// delete the view
+			if (views!=null && deleteNode!=null)
+			{
+				views.removeChild(deleteNode);
+				
+				if (views.getChildNodes().getLength()==0)
+				{
+					root.removeChild(views);
+				}
+			}
+			
+			// write the content into xml file
+			TransformerFactory transformerFactory = TransformerFactory.newInstance();
+			Transformer transformer = transformerFactory.newTransformer();
+			DOMSource source = new DOMSource(doc);
+			StreamResult result = new StreamResult(CONFIG_FILE);
+			transformer.transform(source, result);
+			
+		} catch (ParserConfigurationException pce) {
+			pce.printStackTrace();
+		   } catch (TransformerException tfe) {
+			tfe.printStackTrace();
+		   } catch (IOException ioe) {
+			ioe.printStackTrace();
+		   } catch (SAXException sae) {
+			sae.printStackTrace();
+		   }
 	}
 }
