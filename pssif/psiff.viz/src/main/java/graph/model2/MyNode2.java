@@ -1,13 +1,18 @@
 package graph.model2;
 
 import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
 import de.tum.pssif.core.PSSIFConstants;
 import de.tum.pssif.core.metamodel.Attribute;
+import de.tum.pssif.core.metamodel.DataType;
+import de.tum.pssif.core.metamodel.PrimitiveDataType;
 import de.tum.pssif.core.model.Node;
 import de.tum.pssif.core.metamodel.NodeType;
+import de.tum.pssif.core.util.PSSIFOption;
 import de.tum.pssif.core.util.PSSIFValue;
 
 
@@ -60,16 +65,194 @@ public class MyNode2{
 			
 			String attrValue="";
 			if (value !=null)
-				attrValue = (String) value.getValue();
+				attrValue = String.valueOf(value.getValue());
 			String attrUnit = current.getUnit().getName();
 			
-			String res = attrName+" = "+attrValue+" : "+attrUnit;
+			String res;
+			
+			if (attrUnit.equals("none"))
+				res = attrName+" = "+attrValue+" : "+((PrimitiveDataType)current.getType()).getName();
+			else
+				res = attrName+" = "+attrValue+" in "+attrUnit+ " : "+((PrimitiveDataType)current.getType()).getName();
 			
 			if (current.get(node)!=null)
 				attributes.add(res);
 		}
 		
 		return attributes;
+	}
+	
+	public LinkedList<LinkedList<String>> getAttributes()
+	{
+		LinkedList<LinkedList<String>> attributes = new LinkedList<LinkedList<String>>();
+		
+		
+		Collection<Attribute> attr = type.getType().getAttributes();
+		
+		for (Attribute current : attr)
+		{
+			LinkedList<String> currentAttr = new LinkedList<String>();
+			
+			String attrName = current.getName();
+			
+			currentAttr.add(attrName);
+			
+			PSSIFValue value=null;
+			
+			if (current.get(node)!=null && current.get(node).isOne())
+				value = current.get(node).getOne();
+			
+			String attrValue="";
+			if (value !=null)
+				attrValue = String.valueOf(value.getValue());
+			
+			currentAttr.add(attrValue);
+			String attrUnit = current.getUnit().getName();
+			currentAttr.add(attrUnit);
+			
+			//String res;
+			
+			/*if (attrUnit.equals("none"))
+				res = attrName+" = "+attrValue+" : "+((PrimitiveDataType)current.getType()).getName();
+			else
+				res = attrName+" = "+attrValue+" in "+attrUnit+ " : "+((PrimitiveDataType)current.getType()).getName();
+			*/
+			//if (current.get(node)!=null)
+			//	attributes.add(res);
+			currentAttr.add(((PrimitiveDataType)current.getType()).getName());
+			
+			attributes.add(currentAttr);
+		}
+		
+		return attributes;
+	}
+	
+	public boolean updateAttribute(String attributeName, Object value)
+	{		
+		DataType attrType = type.getType().findAttribute(attributeName).getType();
+		
+		if (attrType.equals(PrimitiveDataType.BOOLEAN))
+		{
+			try 
+			{
+				//boolean res = (Boolean) value;
+				PSSIFValue res = PrimitiveDataType.BOOLEAN.fromObject(value);
+				
+				type.getType().findAttribute(attributeName).set(node, PSSIFOption.one(res));
+				
+				return true;
+			}
+			catch (IllegalArgumentException e)
+			{
+				return false;
+			}
+		}
+		
+		if (attrType.equals(PrimitiveDataType.DATE))
+		{
+			try 
+			{
+				PSSIFValue res = PrimitiveDataType.DATE.fromObject(value);
+				//Date res = (Date) value;
+				//Date.parse(s)
+				type.getType().findAttribute(attributeName).set(node, PSSIFOption.one(res));
+				
+				return true;
+			}
+			catch (IllegalArgumentException e)
+			{
+				System.out.println(e.getMessage());
+				return false;
+			}
+		}
+		
+		if (attrType.equals(PrimitiveDataType.DECIMAL))
+		{
+			try 
+			{
+				//Float res = (Float) value;
+				PSSIFValue res = PrimitiveDataType.DECIMAL.fromObject(value);
+				
+				type.getType().findAttribute(attributeName).set(node, PSSIFOption.one(res));
+				
+				return true;
+			}
+			catch (IllegalArgumentException e)
+			{
+				return false;
+			}
+		}
+		
+		if (attrType.equals(PrimitiveDataType.INTEGER))
+		{
+			try 
+			{
+				//Integer res = (Integer) value;
+				PSSIFValue res = PrimitiveDataType.INTEGER.fromObject(value);
+				
+				type.getType().findAttribute(attributeName).set(node, PSSIFOption.one(res));
+				
+				return true;
+			}
+			catch (IllegalArgumentException e)
+			{
+				return false;
+			}
+		}
+		
+		if (attrType.equals(PrimitiveDataType.STRING))
+		{
+			try 
+			{
+				//String res = (String) value;
+				PSSIFValue res = PrimitiveDataType.STRING.fromObject(value);
+				
+				type.getType().findAttribute(attributeName).set(node, PSSIFOption.one(res));
+				
+				return true;
+			}
+			catch (IllegalArgumentException e)
+			{
+				return false;
+			}
+		}
+		
+		type.getType().findAttribute(attributeName).set(node, PSSIFOption.one(PSSIFValue.create(value)));
+		return true;
+		
+		//node("hardware", meta).findAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_NAME).set(ebike, PSSIFOption.one(PSSIFValue.create("Ebike")));
+	}
+	
+	public HashMap<String, Attribute> getAttributesHashMap()
+	{
+		 HashMap<String, Attribute> res = new  HashMap<String, Attribute>();
+		
+		Collection<Attribute> attr = type.getType().getAttributes();
+		
+		for (Attribute current : attr)
+		{
+			String attrName = current.getName();
+			
+			res.put(attrName, current);
+			/*
+			PSSIFValue value=null;
+			
+			
+			if (current.get(node)!=null && current.get(node).isOne())
+				value = current.get(node).getOne();
+			
+			String attrValue="";
+			if (value !=null)
+				attrValue = (String) value.getValue();
+			String attrUnit = current.getUnit().getName();
+			
+			String res = attrName+" = "+attrValue+" : "+attrUnit;
+			
+			if (current.get(node)!=null)
+				attributes.add(res);*/
+		}
+		
+		return res;
 	}
 
 	
@@ -160,9 +343,9 @@ public class MyNode2{
 		this.name=name;
 	}
 	
-	public List<String> getAttributes() {
+	/*public List<String> getAttributes() {
 		return calcAttr();
-	}
+	}*/
 
 	/*public void setAttributes(List<String> attributes) {
 		this.attributes = attributes;

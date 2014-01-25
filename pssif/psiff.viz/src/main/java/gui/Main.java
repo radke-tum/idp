@@ -125,6 +125,7 @@ public class Main {
 		modeMenu.setText("Mouse Mode");
 		modeMenu.setIcon(null); 
 		modeMenu.setPreferredSize(new Dimension(80,20));
+		modeMenu.getItem(1).setSelected(true);
 		
 		// Which Visualization
 		JMenu visualisationMenu = new JMenu("Visualisation Mode");

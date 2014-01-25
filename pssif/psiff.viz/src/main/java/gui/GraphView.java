@@ -1,8 +1,10 @@
 package gui;
 
+import de.tum.pssif.core.metamodel.Attribute;
 import edu.uci.ics.jung.algorithms.layout.FRLayout;
 import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
+import edu.uci.ics.jung.visualization.annotations.AnnotatingModalGraphMouse.ModeKeyAdapter;
 import edu.uci.ics.jung.visualization.picking.PickedState;
 import graph.model2.MyEdge2;
 import graph.model2.MyEdgeType;
@@ -24,6 +26,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -39,11 +42,16 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
+import javax.swing.JTable;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
 
 import model.ModelBuilder;
 
@@ -53,12 +61,14 @@ public class GraphView {
 	
 	private JLabel nodename;
 	private JLabel nodetype;
-	private JList<String> nodeattributes;
+	//private JList<String> nodeattributes;
 	private JCheckBox nodeDetails;
 	private JButton nodeHighlight;
 	private JButton collapseExpand;
 	private JButton typeFilter;
 	private boolean active;
+	private JTable tableNodeAttributes;
+	private DefaultTableModel nodeAttributesModel;
 	
 	private Dimension screenSize;
 
@@ -144,15 +154,70 @@ public class GraphView {
 		c.gridy = (i++);
 		information.add(Box.createVerticalStrut(betweenLabelandComp),c);
 		
+		//String[][] data = new String[][]{};
+		//String[] columnNames = new String[]{"Attribute", "Value", "Unit", "Type"};
+		//tableNodeAttributes = new JTable(data, columnNames);
 		
-		nodeattributes = new JList<String>();
-		String[] a = new String[]{};
+		nodeAttributesModel = new DefaultTableModel(){
+			
+	        public boolean isCellEditable(int rowIndex, int columnIndex) {
+	            if (columnIndex==0 || columnIndex==2 || columnIndex==3)
+	            	return false;
+	            else
+	            	return true;
+	        }
+		};
+		nodeAttributesModel.addColumn("Attribute");
+		nodeAttributesModel.addColumn("Value");
+		nodeAttributesModel.addColumn("Unit");
+		nodeAttributesModel.addColumn("Type");
 		
-		nodeattributes.setListData(a);
-		nodeattributes.setVisibleRowCount(5);
+		tableNodeAttributes = new JTable(nodeAttributesModel);
+		tableNodeAttributes.getModel().addTableModelListener(new TableModelListener() {
+			
+			@Override
+			public void tableChanged(TableModelEvent e) {
+				
+				//System.out.println(e.getType());
+				if (  e.getType() == TableModelEvent.UPDATE)
+				{
+					int row = e.getFirstRow();
+			        int column = e.getColumn();
+			        TableModel model = (TableModel)e.getSource();
+			       // String columnName = model.getColumnName(column);
+			        Object data = model.getValueAt(row, column);
+			        String attributeName = (String) model.getValueAt(row, 0);
+					
+			        Set<MyNode2> selectedNodes = graph.getVisualisationViewer().getPickedVertexState().getPicked();
+			        if (!selectedNodes.isEmpty() && selectedNodes.size()==1)
+			        {
+			        	MyNode2 selectedNode = selectedNodes.iterator().next();
+			        	
+			        	boolean res = selectedNode.updateAttribute(attributeName, data);
+			        	//System.out.println("Update");
+			        	
+			        	if (!res)
+			        	{
+			        		//model.setValueAt("", row, column);
+			        		JPanel errorPanel = new JPanel();
+			        		
+			        		errorPanel.add(new JLabel("The value does not match the attribute data type"));
+			        		
+			        		JOptionPane.showMessageDialog(null, errorPanel, "Ups something went wrong", JOptionPane.ERROR_MESSAGE);
+			        	}
+			        }
+				}
+			}
+		});
+		
+		//nodeattributes = new JList<String>();
+		//String[] a = new String[]{};
+		
+		//nodeattributes.setListData(a);
+		//nodeattributes.setVisibleRowCount(5);
 		int scrolly = (int)( y*0.1);
 
-		JScrollPane jScrollPane = new JScrollPane(nodeattributes);
+		JScrollPane jScrollPane = new JScrollPane(tableNodeAttributes);
 		//jScrollPane.setViewportView(nodeattributes);
 		jScrollPane.setPreferredSize(new Dimension(x, scrolly));
 		jScrollPane.setMaximumSize(new Dimension(x, scrolly));
@@ -184,12 +249,12 @@ public class GraphView {
 				{
 					graph.setNodeVisualisation(true);
 					// checkbox selected
-					System.out.println("Test");
+					//System.out.println("Test");
 				}
 				else
 				{
 					// checkbox not selected
-					System.out.println("Test2");
+				//	System.out.println("Test2");
 					graph.setNodeVisualisation(false);
 				}
 				
@@ -304,7 +369,7 @@ public class GraphView {
     	graph.getVisualisationViewer().repaint();
 	}
 	
-	private void updateSidebar(String nodeName, MyNodeType nodeType, List<String> attributes)
+	private void updateSidebar(String nodeName, MyNodeType nodeType, LinkedList<LinkedList<String>> attributes)
 	{
 		if (nodeName==null)
 			this.nodename.setText("");
@@ -316,12 +381,33 @@ public class GraphView {
 			this.nodetype.setText(nodeType.getName());
 		if(attributes==null)
 		{
-			String[] s = new String[0];
-			this.nodeattributes.setListData(s);
+			//String[][] s = new String[][]{};
+			
+			for (int i = 0; i<nodeAttributesModel.getRowCount();i++)
+			{
+				nodeAttributesModel.removeRow(i);
+			}
+			nodeAttributesModel.setRowCount(0);
 		}
 		else
 		{
-			String[] s = new String[attributes.size()];
+			for (int i = 0; i<nodeAttributesModel.getRowCount();i++)
+			{
+				nodeAttributesModel.removeRow(i);
+			}
+			nodeAttributesModel.setRowCount(0);
+			
+			//System.out.println(nodeName+"     "+nodeAttributesModel.getRowCount());
+			
+			for (LinkedList<String> currentAttr: attributes)
+			{
+				String name = currentAttr.get(0);
+				String value = currentAttr.get(1);
+				String unit = currentAttr.get(2);
+				String type = currentAttr.get(3);
+				nodeAttributesModel.addRow(new String[]{name,value,unit,type});
+			}
+			/*String[] s = new String[attributes.size()];
 			
 			int counter=0;
 			for (String a : attributes)
@@ -329,7 +415,7 @@ public class GraphView {
 				s[counter]=a;
 				counter++;
 			}
-			this.nodeattributes.setListData(s);
+			this.nodeattributes.setListData(s);*/
 		}
 		
 		if (graph.isCollapsable())

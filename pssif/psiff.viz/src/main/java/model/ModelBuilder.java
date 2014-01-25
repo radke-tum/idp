@@ -12,17 +12,16 @@ import java.util.Collection;
 import java.util.LinkedList;
 
 import de.tum.pssif.core.PSSIFConstants;
-
+import de.tum.pssif.core.metamodel.AttributeCategory;
 import de.tum.pssif.core.metamodel.ConnectionMapping;
-
 import de.tum.pssif.core.metamodel.EdgeType;
-
 import de.tum.pssif.core.metamodel.MutableMetamodel;
 import de.tum.pssif.core.metamodel.NodeType;
 
 
+import de.tum.pssif.core.metamodel.PrimitiveDataType;
+import de.tum.pssif.core.metamodel.Units;
 import de.tum.pssif.core.model.Edge;
-
 import de.tum.pssif.core.model.Model;
 import de.tum.pssif.core.model.Node;
 import de.tum.pssif.core.model.impl.ModelImpl;
@@ -229,11 +228,29 @@ public class ModelBuilder {
 	    node("software", meta).findAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_NAME).set(rentalApp, PSSIFOption.one(PSSIFValue.create("RentalApp")));
 	    Node gpsApp = node("software", meta).create(model);
 	    node("software", meta).findAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_NAME).set(gpsApp, PSSIFOption.one(PSSIFValue.create("GpsApp")));
-
+	   // node("hardware", meta).createAttribute(group, name, dataType, visible, category)
+	    node("hardware", meta).createAttribute(node("hardware", meta).getDefaultAttributeGroup(), "testattr", PrimitiveDataType.INTEGER, Units.INCH, true, AttributeCategory.METADATA);
+	    node("hardware", meta).createAttribute(node("hardware", meta).getDefaultAttributeGroup(), "testattr2", PrimitiveDataType.BOOLEAN, Units.NONE, true, AttributeCategory.METADATA);
+	    node("hardware", meta).createAttribute(node("hardware", meta).getDefaultAttributeGroup(), "testattr3", PrimitiveDataType.DECIMAL, Units.KILOGRAM, true, AttributeCategory.METADATA);
 	    EdgeType hwContainment = node("hardware", meta).findOutgoingEdgeType("containment");
 	    ConnectionMapping hw2hw = hwContainment.getMapping(node("hardware", meta), node("hardware", meta));
 	    ConnectionMapping hw2sw = hwContainment.getMapping(node("hardware", meta), node("software", meta));
-
+	    
+	   /* for (int i =0;i<1000;i++)
+	    {
+	    	Node test = node("hardware", meta).create(model);
+	    	node("hardware", meta).findAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_NAME).set(gpsApp, PSSIFOption.one(PSSIFValue.create("test"+i)));
+	    	if ((i % 3) ==0)
+	    		hw2hw.create(model, test, battery);
+	    	if ((i % 3) ==1)
+	    		hw2hw.create(model, test, smartphone);
+	    	if ((i % 3) ==2)
+	    		hw2hw.create(model, test, ebike);
+	    	
+	    }*/
+	    
+	    
+	    
 	    hw2hw.create(model, ebike, battery);
 	    hw2hw.create(model, ebike, smartphone);
 	    hw2sw.create(model, smartphone, rentalApp);

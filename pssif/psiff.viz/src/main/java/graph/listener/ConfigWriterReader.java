@@ -123,7 +123,7 @@ public class ConfigWriterReader {
  
 		transformer.transform(source, result);
  
-		System.out.println("File saved!");
+		//System.out.println("File saved!");
  
 	  } catch (ParserConfigurationException pce) {
 		pce.printStackTrace();
@@ -178,7 +178,7 @@ public class ConfigWriterReader {
 			StreamResult result = new StreamResult(CONFIG_FILE);
 			transformer.transform(source, result);
 	 
-			System.out.println("Done");
+			//System.out.println("Done");
 	 
 		   } catch (ParserConfigurationException pce) {
 			pce.printStackTrace();
@@ -205,7 +205,7 @@ public class ConfigWriterReader {
 				Element eElement = (Element) current;
 				
 				String nodeTypeValue = eElement.getChildNodes().item(0).getNodeValue();
-				System.out.println("From XML " +nodeTypeValue);
+				//System.out.println("From XML " +nodeTypeValue);
 				
 				String colorValue = eElement.getAttribute(ATTR_COLOR);
 				
@@ -214,17 +214,17 @@ public class ConfigWriterReader {
 				checkedNodeTypes.add(t);
 				
 				Color newColor = newColorMapping.get(t);
-				System.out.println("new Color "+newColor);
+			//	System.out.println("new Color "+newColor);
 				
 				Color oldColor = new Color(Integer.valueOf(colorValue));
-				System.out.println("From XML Color "+oldColor);
+				//System.out.println("From XML Color "+oldColor);
 				
 				if (newColor!=null)
 				{
 					System.out.println("changed");
 					eElement.setAttribute(ATTR_COLOR, String.valueOf(newColor.getRGB()));
 				}
-				System.out.println("------------------------");
+			//	System.out.println("------------------------");
 				
 			}
 		}
@@ -278,7 +278,7 @@ public class ConfigWriterReader {
 		    	e.printStackTrace();
 		    }
 		}
-		System.out.println("Found Nb Colors: "+ res.keySet().size());
+	//	System.out.println("Found Nb Colors: "+ res.keySet().size());
 		return res;
 	  }
 	
@@ -317,7 +317,7 @@ public class ConfigWriterReader {
  
 		transformer.transform(source, result);
  
-		System.out.println("File saved!");
+		//System.out.println("File saved!");
  
 	  } catch (ParserConfigurationException pce) {
 		pce.printStackTrace();
@@ -334,7 +334,7 @@ public class ConfigWriterReader {
 				attr.setValue(view.getViewName());
 				graphViewNode.setAttributeNode(attr);
 				
-				System.out.println();
+				//System.out.println();
 				graphViewsNode.appendChild(graphViewNode);
 				
 				Element visibleNodeTypesNode = doc.createElement(VISIBLE_NODETYPES);
@@ -410,7 +410,7 @@ public class ConfigWriterReader {
 					
 				}
 				
-				System.out.println("graphViewsNode null ? "+graphViewsNode==null);
+			//	System.out.println("graphViewsNode null ? "+graphViewsNode==null);
 				createGraphView((Element)root,doc,graphViewsNode,view);
 				
 			}
@@ -430,7 +430,7 @@ public class ConfigWriterReader {
 			StreamResult result = new StreamResult(CONFIG_FILE);
 			transformer.transform(source, result);
 	 
-			System.out.println("Done");
+			//System.out.println("Done");
 	 
 		   } catch (ParserConfigurationException pce) {
 			pce.printStackTrace();
@@ -618,7 +618,7 @@ public class ConfigWriterReader {
 		 
 				transformer.transform(source, result);
 		 
-				System.out.println("File saved!");
+				//System.out.println("File saved!");
 		 }
 		    catch (Exception e) {
 		    	e.printStackTrace();
@@ -646,10 +646,10 @@ public class ConfigWriterReader {
 				NamedNodeMap attr = currentView.getAttributes();
 				Node nodeAttr = attr.getNamedItem(ATTR_VIEWNAME);
 				
-				System.out.println("delete test: "+nodeAttr.getNodeValue());
+				//System.out.println("delete test: "+nodeAttr.getNodeValue());
 				if (nodeAttr.getNodeValue().equals(deleteView))
 				{
-					System.out.println("delete selected				: "+nodeAttr.getNodeValue());
+				//	System.out.println("delete selected				: "+nodeAttr.getNodeValue());
 					deleteNode=currentView;
 				}
 			}
