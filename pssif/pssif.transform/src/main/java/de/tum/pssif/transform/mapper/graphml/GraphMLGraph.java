@@ -1,12 +1,17 @@
 package de.tum.pssif.transform.mapper.graphml;
 
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.Collection;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLStreamWriter;
 import javax.xml.stream.events.XMLEvent;
 
 import com.google.common.collect.ImmutableMap;
@@ -18,12 +23,15 @@ import com.google.common.collect.Sets;
  * TODO edgedefault
  */
 public class GraphMLGraph {
-  private Boolean           edgeDefaultDirected = Boolean.TRUE;
+  private Boolean                      edgeDefaultDirected = Boolean.TRUE;
 
-  private Map<String, Node> nodes               = Maps.newHashMap();
-  private Map<String, Edge> edges               = Maps.newHashMap(); //TODO a set might be sufficient here
+  private Map<String, GraphMlNodeImpl> nodes               = Maps.newHashMap();
+  private Map<String, GraphMlEdgeImpl> edges               = Maps.newHashMap(); //TODO a set might be sufficient here
 
-  private Element           current;
+  private Set<GraphMlAttribute>        nodeAttributes      = Sets.newHashSet();
+  private Set<GraphMlAttribute>        edgeAttributes      = Sets.newHashSet();
+
+  private Element                      current;
 
   public static GraphMLGraph read(InputStream in) {
     GraphMLGraph result = new GraphMLGraph();
@@ -33,7 +41,31 @@ public class GraphMLGraph {
     return result;
   }
 
+  public static void write(GraphMLGraph graph, OutputStream out) {
+    graph.writeInternal(out);
+  }
+
+  public static GraphMLGraph create() {
+    return new GraphMLGraph();
+  }
+
   private GraphMLGraph() {
+  }
+
+  void addNodeAttributes(Collection<GraphMlAttribute> attrs) {
+    this.nodeAttributes.addAll(attrs);
+  }
+
+  void addEdgeAttributes(Collection<GraphMlAttribute> attrs) {
+    this.edgeAttributes.addAll(attrs);
+  }
+
+  void addNode(GraphMlNodeImpl node) {
+    this.nodes.put(node.getId(), node);
+  }
+
+  void addEdge(GraphMlEdgeImpl edge) {
+    this.edges.put(edge.getId(), edge);
   }
 
   public Set<GraphMLNode> getNodes() {
@@ -89,11 +121,11 @@ public class GraphMLGraph {
       //TODO what to do here? nothing?
     }
     else if (GraphMLTokens.NODE.equals(elementName)) {
-      current = new Node(reader.getAttributeValue(null, GraphMLTokens.ID));
+      current = new GraphMlNodeImpl(reader.getAttributeValue(null, GraphMLTokens.ID));
     }
     else if (GraphMLTokens.EDGE.equals(elementName)) {
       boolean directed = edgeDefaultDirected.booleanValue() && Boolean.valueOf(reader.getAttributeValue(null, GraphMLTokens.DIRECTED)).booleanValue();
-      current = new Edge(reader.getAttributeValue(null, GraphMLTokens.ID), reader.getAttributeValue(null, GraphMLTokens.SOURCE),
+      current = new GraphMlEdgeImpl(reader.getAttributeValue(null, GraphMLTokens.ID), reader.getAttributeValue(null, GraphMLTokens.SOURCE),
           reader.getAttributeValue(null, GraphMLTokens.TARGET), directed);
     }
     else if (GraphMLTokens.DATA.equals(elementName)) {
@@ -111,30 +143,112 @@ public class GraphMLGraph {
       if (!(current instanceof GraphMLNode)) {
         throw new IllegalStateException();
       }
-      nodes.put(current.getId(), (Node) current);
+      nodes.put(current.getId(), (GraphMlNodeImpl) current);
       current = null;
     }
     else if (GraphMLTokens.EDGE.equals(elementName)) {
       if (!(current instanceof GraphMLEdge)) {
         throw new IllegalStateException();
       }
-      edges.put(current.getId(), (Edge) current);
+      edges.put(current.getId(), (GraphMlEdgeImpl) current);
       current = null;
     }
   }
 
-  private class Node extends Element implements GraphMLNode {
-    private Node(String id) {
+  private void writeInternal(OutputStream out) {
+    XMLOutputFactory factory = XMLOutputFactory.newInstance();
+
+    try {
+      XMLStreamWriter writer = factory.createXMLStreamWriter(out);
+      writeDocumentHeader(writer);
+      writeNodes(writer);
+      writeEdges(writer);
+      writeDocumentFooter(writer);
+      writer.flush();
+    } catch (XMLStreamException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+  }
+
+  private void writeDocumentHeader(XMLStreamWriter writer) throws XMLStreamException {
+    writer.writeStartDocument("UTF-8", "1.0");
+    writer.writeStartElement(GraphMLTokens.GRAPHML);
+    writer.writeAttribute(GraphMLTokens.XMLNS, GraphMLTokens.GRAPHML_XMLNS);
+    //write attribute keys
+    writeKeyElement(writer, GraphMLTokens.ELEMENT_TYPE, GraphMLTokens.STRING, GraphMLTokens.NODE, GraphMLTokens.ELEMENT_TYPE);
+    writeKeyElement(writer, GraphMLTokens.ELEMENT_TYPE, GraphMLTokens.STRING, GraphMLTokens.EDGE, GraphMLTokens.ELEMENT_TYPE);
+    for (GraphMlAttribute attr : nodeAttributes) {
+      writeKeyElement(writer, attr.getName(), attr.getType(), GraphMLTokens.NODE, attr.getId());
+    }
+    for (GraphMlAttribute attr : edgeAttributes) {
+      writeKeyElement(writer, attr.getName(), attr.getType(), GraphMLTokens.EDGE, attr.getId());
+    }
+    writer.writeStartElement(GraphMLTokens.GRAPH);
+    writer.writeAttribute(GraphMLTokens.EDGEDEFAULT, GraphMLTokens.DIRECTED);
+  }
+
+  private void writeKeyElement(XMLStreamWriter writer, String attrName, String attrType, String forAttr, String id) throws XMLStreamException {
+    writer.writeEmptyElement(GraphMLTokens.KEY);
+    writer.writeAttribute(GraphMLTokens.ATTR_NAME, attrName);
+    writer.writeAttribute(GraphMLTokens.ATTR_TYPE, attrType);
+    writer.writeAttribute(GraphMLTokens.FOR, forAttr);
+    writer.writeAttribute(GraphMLTokens.ID, id);
+  }
+
+  private void writeDataElemnent(XMLStreamWriter writer, String key, String text) throws XMLStreamException {
+    writer.writeStartElement(GraphMLTokens.DATA);
+    writer.writeAttribute(GraphMLTokens.KEY, key);
+    writer.writeCharacters(text);
+    writer.writeEndElement();
+  }
+
+  private void writeDataElements(XMLStreamWriter writer, Map<String, String> elements) throws XMLStreamException {
+    for (Entry<String, String> attrVal : elements.entrySet()) {
+      writeDataElemnent(writer, attrVal.getKey(), attrVal.getValue());
+    }
+  }
+
+  private void writeNodes(XMLStreamWriter writer) throws XMLStreamException {
+    for (Entry<String, GraphMlNodeImpl> entry : nodes.entrySet()) {
+      writer.writeStartElement(GraphMLTokens.NODE);
+      writer.writeAttribute(GraphMLTokens.ID, entry.getValue().getId());
+      writeDataElemnent(writer, GraphMLTokens.ELEMENT_TYPE, entry.getValue().getType());
+      writeDataElements(writer, entry.getValue().getValues());
+      writer.writeEndElement();
+    }
+  }
+
+  private void writeEdges(XMLStreamWriter writer) throws XMLStreamException {
+    for (Entry<String, GraphMlEdgeImpl> entry : edges.entrySet()) {
+      writer.writeStartElement(GraphMLTokens.EDGE);
+      writer.writeAttribute(GraphMLTokens.ID, entry.getValue().getId());
+      writer.writeAttribute(GraphMLTokens.SOURCE, entry.getValue().getSourceId());
+      writer.writeAttribute(GraphMLTokens.TARGET, entry.getValue().getTargetId());
+      writeDataElemnent(writer, GraphMLTokens.ELEMENT_TYPE, entry.getValue().getType());
+      writeDataElements(writer, entry.getValue().getValues());
+      writer.writeEndElement();
+    }
+  }
+
+  private void writeDocumentFooter(XMLStreamWriter writer) throws XMLStreamException {
+    writer.writeEndElement();
+    writer.writeEndElement();
+    writer.writeEndDocument();
+  }
+
+  static class GraphMlNodeImpl extends Element implements GraphMLNode {
+    GraphMlNodeImpl(String id) {
       super(id);
     }
   }
 
-  private class Edge extends Element implements GraphMLEdge {
+  static class GraphMlEdgeImpl extends Element implements GraphMLEdge {
     private final String  source;
     private final String  target;
     private final Boolean directed;
 
-    private Edge(String id, String source, String target, boolean directed) {
+    GraphMlEdgeImpl(String id, String source, String target, boolean directed) {
       super(id);
       this.source = source;
       this.target = target;
@@ -157,7 +271,7 @@ public class GraphMLGraph {
     }
   }
 
-  private class Element implements GraphMLElement {
+  private static class Element implements GraphMLElement {
     private final String        id;
     private String              type;
     private Map<String, String> values = Maps.newHashMap();
@@ -166,7 +280,7 @@ public class GraphMLGraph {
       this.id = id;
     }
 
-    private void setValue(String key, String value) {
+    void setValue(String key, String value) {
       if (GraphMLTokens.ELEMENT_TYPE.equals(key)) {
         type = value;
       }
@@ -189,5 +303,32 @@ public class GraphMLGraph {
     public String getType() {
       return type;
     }
+  }
+
+  static class GraphMlAttrImpl implements GraphMlAttribute {
+
+    private final String name;
+    private final String type;
+
+    GraphMlAttrImpl(String name, String type) {
+      this.name = name;
+      this.type = type;
+    }
+
+    @Override
+    public String getName() {
+      return name;
+    }
+
+    @Override
+    public String getType() {
+      return type;
+    }
+
+    @Override
+    public String getId() {
+      return name;
+    }
+
   }
 }

@@ -1,95 +1,26 @@
 package de.tum.pssif.core.metamodel.impl;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Set;
-
-import com.google.common.collect.Sets;
-
-import de.tum.pssif.core.metamodel.EdgeType;
+import de.tum.pssif.core.PSSIFConstants;
+import de.tum.pssif.core.exception.PSSIFStructuralIntegrityException;
+import de.tum.pssif.core.metamodel.Attribute;
+import de.tum.pssif.core.metamodel.AttributeCategory;
+import de.tum.pssif.core.metamodel.AttributeGroup;
+import de.tum.pssif.core.metamodel.DataType;
 import de.tum.pssif.core.metamodel.NodeType;
+import de.tum.pssif.core.metamodel.PrimitiveDataType;
+import de.tum.pssif.core.metamodel.Unit;
+import de.tum.pssif.core.metamodel.Units;
+import de.tum.pssif.core.metamodel.impl.base.AbstractNodeType;
 import de.tum.pssif.core.model.Model;
 import de.tum.pssif.core.model.Node;
 import de.tum.pssif.core.util.PSSIFOption;
 import de.tum.pssif.core.util.PSSIFUtil;
 
 
-public class NodeTypeImpl extends ElementTypeImpl<NodeType> implements NodeType {
-  private Set<EdgeType> incomings   = Sets.newHashSet();
-  private Set<EdgeType> outgoings   = Sets.newHashSet();
-  private Set<EdgeType> auxiliaries = Sets.newHashSet();
-
+public class NodeTypeImpl extends AbstractNodeType {
   public NodeTypeImpl(String name) {
     super(name);
-  }
-
-  @Override
-  public void registerIncoming(EdgeType type) {
-    incomings.add(type);
-  }
-
-  @Override
-  public void registerOutgoing(EdgeType type) {
-    outgoings.add(type);
-  }
-
-  @Override
-  public void registerAuxiliary(EdgeType type) {
-    auxiliaries.add(type);
-  }
-
-  @Override
-  public Collection<EdgeType> getIncomings() {
-    Set<EdgeType> result = Sets.newHashSet(incomings);
-    for (NodeType gen : PSSIFUtil.generalizationsClosure((NodeType) this)) {
-      for (EdgeType genEdge : gen.getIncomings()) {
-        if (!PSSIFUtil.hasSpecializationIn(genEdge, result)) {
-          result.add(genEdge);
-        }
-      }
-    }
-    return Collections.unmodifiableCollection(result);
-  }
-
-  @Override
-  public Collection<EdgeType> getOutgoings() {
-    Set<EdgeType> result = Sets.newHashSet(outgoings);
-    for (NodeType gen : PSSIFUtil.generalizationsClosure((NodeType) this)) {
-      for (EdgeType genEdge : gen.getOutgoings()) {
-        if (!PSSIFUtil.hasSpecializationIn(genEdge, result)) {
-          result.add(genEdge);
-        }
-      }
-    }
-    return Collections.unmodifiableCollection(result);
-  }
-
-  @Override
-  public Collection<EdgeType> getAuxiliaries() {
-    Set<EdgeType> result = Sets.newHashSet(auxiliaries);
-    for (NodeType gen : PSSIFUtil.generalizationsClosure((NodeType) this)) {
-      for (EdgeType genEdge : gen.getAuxiliaries()) {
-        if (!PSSIFUtil.hasSpecializationIn(genEdge, result)) {
-          result.add(genEdge);
-        }
-      }
-    }
-    return Collections.unmodifiableCollection(result);
-  }
-
-  @Override
-  public EdgeType findIncomingEdgeType(String name) {
-    return PSSIFUtil.find(name, getIncomings());
-  }
-
-  @Override
-  public EdgeType findOutgoingEdgeType(String name) {
-    return PSSIFUtil.find(name, getOutgoings());
-  }
-
-  @Override
-  public EdgeType findAuxiliaryEdgeType(String name) {
-    return PSSIFUtil.find(name, getAuxiliaries());
+    addAttributeGroup(new AttributeGroupImpl(PSSIFConstants.DEFAULT_ATTRIBUTE_GROUP_NAME, this));
   }
 
   @Override
@@ -107,16 +38,6 @@ public class NodeTypeImpl extends ElementTypeImpl<NodeType> implements NodeType 
   }
 
   @Override
-  public Class<?> getMetaType() {
-    return NodeType.class;
-  }
-
-  @Override
-  public String toString() {
-    return "NodeType:" + this.getName();
-  }
-
-  @Override
   public PSSIFOption<Node> apply(Model model, String id) {
     for (Node candidate : apply(model).getMany()) {
       if (id.equals(candidate.getId())) {
@@ -127,18 +48,58 @@ public class NodeTypeImpl extends ElementTypeImpl<NodeType> implements NodeType 
   }
 
   @Override
-  public boolean isAssignableFrom(NodeType type) {
-    if (this.equals(type)) {
-      return true;
+  public Attribute createAttribute(AttributeGroup group, String name, DataType type, Unit unit, boolean visible, AttributeCategory category) {
+    if (name == null || name.trim().isEmpty()) {
+      throw new PSSIFStructuralIntegrityException("name can not be null or empty");
     }
-    else {
-      for (NodeType special : getSpecials()) {
-        if (special.isAssignableFrom(type)) {
-          return true;
-        }
+    //Note: this disables attribute overloading. If we want
+    //to overload attributes in specialization element types
+    //we need to find only locally, and filter on getAttributes
+    //so that inherited attributes are only taken when no local ones exist.
+    if (findAttribute(name) != null || findAttributeInSpecializations(name) != null) {
+      throw new PSSIFStructuralIntegrityException("duplicate attribute with name " + name);
+    }
+    if (!(PrimitiveDataType.DECIMAL.equals(type) || PrimitiveDataType.INTEGER.equals(type)) && !Units.NONE.equals(unit)) {
+      throw new PSSIFStructuralIntegrityException("Only numeric attributes can have units!");
+    }
+    AttributeImpl result = new AttributeImpl(name, type, unit, visible, category);
+    addAttribute(group, result);
+    return result;
+  }
+
+  private Attribute findAttributeInSpecializations(String name) {
+    for (NodeType specialization : getSpecials()) {
+      Attribute attr = specialization.findAttribute(name);
+      if (attr != null) {
+        return attr;
       }
     }
+    return null;
+  }
 
-    return false;
+  @Override
+  public Attribute createAttribute(AttributeGroup group, String name, DataType dataType, boolean visible, AttributeCategory category) {
+    return createAttribute(group, name, dataType, Units.NONE, visible, category);
+  }
+
+  @Override
+  public AttributeGroup createAttributeGroup(String name) {
+    if (PSSIFUtil.normalize(name).isEmpty()) {
+      throw new PSSIFStructuralIntegrityException("The name of an attrobute group can not be null or empty!");
+    }
+    if (findAttributeGroup(name) != null) {
+      throw new PSSIFStructuralIntegrityException("An attribute group with the name " + name + " already exists for element type " + getName());
+    }
+    AttributeGroupImpl result = new AttributeGroupImpl(name, this);
+    addAttributeGroup(result);
+    return result;
+  }
+
+  @Override
+  public void removeAttributeGroup(AttributeGroup group) {
+    if (PSSIFUtil.areSame(group.getName(), PSSIFConstants.DEFAULT_ATTRIBUTE_GROUP_NAME)) {
+      throw new PSSIFStructuralIntegrityException("The default attribute group can not be removed!");
+    }
+    super.removeAttributeGroup(findAttributeGroup(group.getName()));
   }
 }

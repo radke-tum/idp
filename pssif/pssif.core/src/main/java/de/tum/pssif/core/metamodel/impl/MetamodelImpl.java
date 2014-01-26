@@ -11,16 +11,17 @@ import de.tum.pssif.core.metamodel.Multiplicity.UnlimitedNatural;
 import de.tum.pssif.core.metamodel.MutableMetamodel;
 import de.tum.pssif.core.metamodel.NodeType;
 import de.tum.pssif.core.metamodel.PrimitiveDataType;
+import de.tum.pssif.core.metamodel.impl.base.AbstractMetamodel;
 import de.tum.pssif.core.util.PSSIFUtil;
 
 
-public class MetamodelImpl extends AbstractMetamodel<NodeTypeImpl, EdgeTypeImpl> implements MutableMetamodel {
+public class MetamodelImpl extends AbstractMetamodel<NodeType, EdgeType> implements MutableMetamodel {
   public MetamodelImpl() {
     NodeTypeImpl rootNodeType = new NodeTypeImpl(PSSIFConstants.ROOT_NODE_TYPE_NAME);
-    addNodeType(rootNodeType);
+    addNodeTypeInternal(rootNodeType);
     addDefaultAttributes(rootNodeType);
     EdgeTypeImpl rootEdgeType = new EdgeTypeImpl(PSSIFConstants.ROOT_EDGE_TYPE_NAME);
-    addEdgeType(rootEdgeType);
+    addEdgeTypeInternal(rootEdgeType);
     addDefaultAttributes(rootEdgeType);
     rootEdgeType.createAttribute(rootEdgeType.getDefaultAttributeGroup(), PSSIFConstants.BUILTIN_ATTRIBUTE_DIRECTED, PrimitiveDataType.BOOLEAN, true,
         AttributeCategory.METADATA);
@@ -28,7 +29,7 @@ public class MetamodelImpl extends AbstractMetamodel<NodeTypeImpl, EdgeTypeImpl>
         rootNodeType, MultiplicityContainer.of(1, UnlimitedNatural.UNLIMITED, 0, UnlimitedNatural.UNLIMITED));
   }
 
-  private final void addDefaultAttributes(ElementType<?> type) {
+  private final void addDefaultAttributes(ElementType<?, ?> type) {
     type.createAttribute(type.getDefaultAttributeGroup(), PSSIFConstants.BUILTIN_ATTRIBUTE_ID, PrimitiveDataType.STRING, true,
         AttributeCategory.METADATA);
     type.createAttribute(type.getDefaultAttributeGroup(), PSSIFConstants.BUILTIN_ATTRIBUTE_NAME, PrimitiveDataType.STRING, true,
@@ -52,7 +53,7 @@ public class MetamodelImpl extends AbstractMetamodel<NodeTypeImpl, EdgeTypeImpl>
       throw new PSSIFStructuralIntegrityException("a node type with the name " + name + " already exists");
     }
     NodeTypeImpl result = new NodeTypeImpl(name);
-    addNodeType(result);
+    addNodeTypeInternal(result);
     result.inherit(findNodeType(PSSIFConstants.ROOT_NODE_TYPE_NAME));
     return result;
   }
@@ -66,7 +67,7 @@ public class MetamodelImpl extends AbstractMetamodel<NodeTypeImpl, EdgeTypeImpl>
       throw new PSSIFStructuralIntegrityException("an edge type with name " + name + " already exitsts");
     }
     EdgeTypeImpl result = new EdgeTypeImpl(name);
-    addEdgeType(result);
+    addEdgeTypeInternal(result);
     result.inherit(findEdgeType(PSSIFConstants.ROOT_EDGE_TYPE_NAME));
     return result;
   }
@@ -80,12 +81,12 @@ public class MetamodelImpl extends AbstractMetamodel<NodeTypeImpl, EdgeTypeImpl>
       throw new PSSIFStructuralIntegrityException("duplicate data type with name " + name);
     }
     Enumeration result = new EnumerationImpl(name);
-    addEnumeration(result);
+    addEnumerationInternal(result);
     return result;
   }
 
   @Override
   public void removeEnumeration(Enumeration enumeration) {
-    super.removeEnumeration(enumeration);
+    super.removeEnumerationInternal(enumeration);
   }
 }
