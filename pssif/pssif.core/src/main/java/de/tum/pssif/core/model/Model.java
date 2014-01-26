@@ -3,6 +3,7 @@ package de.tum.pssif.core.model;
 import de.tum.pssif.core.metamodel.impl.CreateEdgeOperation;
 import de.tum.pssif.core.metamodel.impl.CreateNodeOperation;
 import de.tum.pssif.core.metamodel.impl.ReadNodesOperation;
+import de.tum.pssif.core.metamodel.impl.base.ReadEdgesOperation;
 import de.tum.pssif.core.util.PSSIFOption;
 
 
@@ -37,4 +38,13 @@ public interface Model {
    *    A PSS-IF Option containing the nodes.
    */
   PSSIFOption<Node> apply(ReadNodesOperation op);
+
+  /**
+   * Retrieves a collection of nodes.
+   * @param op
+   *    The node read operation supplied by a Node Type.
+   * @return
+   *    A PSS-IF Option containing the nodes.
+   */
+  PSSIFOption<Edge> apply(ReadEdgesOperation op);
 }
