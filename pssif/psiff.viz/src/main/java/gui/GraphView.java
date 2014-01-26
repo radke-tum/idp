@@ -12,7 +12,7 @@ import graph.model2.MyEdgeTypes;
 import graph.model2.MyNode2;
 import graph.model2.MyNodeType;
 import graph.operations.GraphViewContainer;
-import graph.operations.NodeAttributeFilter;
+import graph.operations.AttributeFilter;
 import gui.graph.AttributeFilterPopup;
 import gui.graph.GraphVisualization;
 
@@ -68,7 +68,8 @@ public class GraphView {
 	private JButton nodeHighlight;
 	private JButton collapseExpand;
 	private JButton typeFilter;
-	private JButton attributeFilter;
+	private JButton nodeAttributeFilter;
+	private JButton edgeAttributeFilter;
 	private boolean active;
 	private JTable tableNodeAttributes;
 	private DefaultTableModel nodeAttributesModel;
@@ -341,22 +342,35 @@ public class GraphView {
 		c.gridy = (i++);
 		information.add(Box.createVerticalStrut(betweenComps),c);
 		
-		attributeFilter = new JButton("Filter by Attribute");
-		attributeFilter.addActionListener(new ActionListener() {
+		nodeAttributeFilter = new JButton("Filter Nodes  by Attribute");
+		nodeAttributeFilter.addActionListener(new ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				AttributeFilterPopup filter = new AttributeFilterPopup();
-				filter.showPopup(graph.getGraph());
+				AttributeFilterPopup filter = new AttributeFilterPopup(graph.getGraph(),true,false);
+				filter.showPopup();
 				graph.applyAttributeFilter();
 			}
 		});
 		c.gridy = (i++);
-		information.add(attributeFilter,c);
+		information.add(nodeAttributeFilter,c);
 		c.gridy = (i++);
 		information.add(Box.createVerticalStrut(betweenComps),c);
 		
-		
+		edgeAttributeFilter = new JButton("Filter Edges  by Attribute");
+		edgeAttributeFilter.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				AttributeFilterPopup filter = new AttributeFilterPopup(graph.getGraph(),false,true);
+				filter.showPopup();
+				graph.applyAttributeFilter();
+			}
+		});
+		c.gridy = (i++);
+		information.add(edgeAttributeFilter,c);
+		c.gridy = (i++);
+		information.add(Box.createVerticalStrut(betweenComps),c);
 		
 		
 		return parent;

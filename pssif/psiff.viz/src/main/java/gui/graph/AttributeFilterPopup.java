@@ -5,14 +5,14 @@ import graph.model2.MyEdgeType;
 import graph.model2.MyNode2;
 import graph.model2.MyNodeType;
 import graph.operations.AttributeOperations;
-import graph.operations.GraphViewContainer;
-import graph.operations.NodeAttributeFilter;
 
-import java.awt.Component;
+import graph.operations.AttributeFilter;
+
+
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.GridLayout;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
@@ -33,6 +33,7 @@ import model.ModelBuilder;
 public class AttributeFilterPopup {
 	
 	private MyNodeType[] nodePossibilities;
+	private MyEdgeType[] edgePossibilities;
 	private JPanel allPanel;
 	private JComboBox<String> attributeList;
 	private JComboBox<String> operationList;
@@ -41,9 +42,56 @@ public class AttributeFilterPopup {
 	private HashMap<String, DataType> attributeNames;
 	private Graph<MyNode2, MyEdge2> graph;
 	
-	public void showPopup(Graph<MyNode2, MyEdge2> graph)
+	public AttributeFilterPopup(Graph<MyNode2, MyEdge2> graph, boolean Nodefilter, boolean Edgefilter)
 	{
 		this.graph = graph;
+		
+		if (Nodefilter)
+		{
+			nodePossibilities = ModelBuilder.getNodeTypes().getAllNodeTypesArray();
+			edgePossibilities =null;
+			
+			attributeNames = new HashMap<String, DataType>();
+			
+			// get all the attributes and their type
+			for (MyNodeType type : nodePossibilities)
+			{
+				LinkedList<Attribute> temp = new LinkedList<Attribute>(type.getType().getAttributes());
+				
+				for (Attribute attr :temp)
+				{
+					attributeNames.put(attr.getName(), attr.getType());
+				}
+				
+			}
+		}
+		
+		if (Edgefilter)
+		{
+			
+			edgePossibilities = ModelBuilder.getEdgeTypes().getAllEdgeTypesArray();
+			nodePossibilities=null;
+			
+			attributeNames = new HashMap<String, DataType>();
+			
+			// get all the attributes and their type
+			for (MyEdgeType type : edgePossibilities)
+			{
+				LinkedList<Attribute> temp = new LinkedList<Attribute>(type.getType().getAttributes());
+				
+				for (Attribute attr :temp)
+				{
+					attributeNames.put(attr.getName(), attr.getType());
+				}
+				
+			}
+		}
+			
+	}
+	
+	public void showPopup()
+	{
+	//	this.graph = graph;
 		
 		JPanel panel = createPanel();
 		
@@ -76,26 +124,10 @@ public class AttributeFilterPopup {
 	}
 	
 	private JPanel createPanel()
-	{
-		nodePossibilities = ModelBuilder.getNodeTypes().getAllNodeTypesArray();
-		
+	{	
 		allPanel = new JPanel(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
 			
-		attributeNames = new HashMap<String, DataType>();
-		
-		// get all the attributes and their type
-		for (MyNodeType type : nodePossibilities)
-		{
-			LinkedList<Attribute> temp = new LinkedList<Attribute>(type.getType().getAttributes());
-			
-			for (Attribute attr :temp)
-			{
-				attributeNames.put(attr.getName(), attr.getType());
-			}
-			
-		}
-		
 		// holds all the Attributes
 		attributeList = new JComboBox<String>(attributeNames.keySet().toArray(new String[]{}));
 		
@@ -122,6 +154,8 @@ public class AttributeFilterPopup {
 		
 		if (attributeList.getItemCount()>0)
 			attributeList.setSelectedIndex(0);
+		if (operationList.getItemCount()>0)
+			operationList.setSelectedIndex(0);
 		
 	    valueTextField = new JTextField(10);
 	    
@@ -181,18 +215,22 @@ public class AttributeFilterPopup {
 				
 				try
 				{
-					NodeAttributeFilter.filter(graph, selectedAttribute, op, refValue);
+					if (nodePossibilities!=null)
+						AttributeFilter.filterNode(graph, selectedAttribute, op, refValue);
+
+					if (edgePossibilities!=null)
+						AttributeFilter.filterEdge(graph, selectedAttribute, op, refValue);
 				}
 				catch (Exception e)
 				{
+					System.out.println(e.getMessage());
+					
 					JPanel errorPanel = new JPanel();
 	        		
 	        		errorPanel.add(new JLabel("There was a problem converting the entered value into the attribute data type"));
 	        		
 	        		JOptionPane.showMessageDialog(null, errorPanel, "Ups something went wrong", JOptionPane.ERROR_MESSAGE);
 				}
-				
-				
 			}
     	}
 	}

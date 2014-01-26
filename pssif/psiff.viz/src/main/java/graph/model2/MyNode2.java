@@ -234,22 +234,6 @@ public class MyNode2{
 			String attrName = current.getName();
 			
 			res.put(attrName, current);
-			/*
-			PSSIFValue value=null;
-			
-			
-			if (current.get(node)!=null && current.get(node).isOne())
-				value = current.get(node).getOne();
-			
-			String attrValue="";
-			if (value !=null)
-				attrValue = (String) value.getValue();
-			String attrUnit = current.getUnit().getName();
-			
-			String res = attrName+" = "+attrValue+" : "+attrUnit;
-			
-			if (current.get(node)!=null)
-				attributes.add(res);*/
 		}
 		
 		return res;
