@@ -40,6 +40,15 @@ public class GraphMlWriteTest {
     view = new HideEdgeTypeAttributeTransformation(rootEdge, rootEdge.findAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_VALIDITY_START)).apply(view);
     view = new HideEdgeTypeAttributeTransformation(rootEdge, rootEdge.findAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_VERSION)).apply(view);
 
+    view = new HideNodeTypeAttributeTransformation(view.findNodeType("Hardware"), view.findNodeType("Hardware").findAttribute("weight")).apply(view);
+    view = new HideNodeTypeAttributeTransformation(view.findNodeType("Requirement"), view.findNodeType("Requirement").findAttribute("type"))
+        .apply(view);
+    view = new HideNodeTypeAttributeTransformation(view.findNodeType("Requirement"), view.findNodeType("Requirement").findAttribute("priority"))
+        .apply(view);
+    view = new HideNodeTypeAttributeTransformation(view.findNodeType("Activity"), view.findNodeType("Activity").findAttribute("duration"))
+        .apply(view);
+    view = new HideNodeTypeAttributeTransformation(view.findNodeType("Block"), view.findNodeType("Block").findAttribute("cost")).apply(view);
+
     Model model = importer.read(view, in);
 
     ByteArrayOutputStream out = new ByteArrayOutputStream();
