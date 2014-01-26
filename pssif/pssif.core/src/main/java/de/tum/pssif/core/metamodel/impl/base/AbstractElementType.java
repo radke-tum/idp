@@ -81,6 +81,15 @@ public abstract class AbstractElementType<T extends ElementType<T, E>, E extends
     return Collections.unmodifiableCollection(attrs);
   }
 
+  @Override
+  public Collection<Attribute> getDirectAttributes() {
+    Collection<Attribute> attrs = Sets.newHashSet();
+    for (AttributeGroup group : getAttributeGroups()) {
+      attrs.addAll(group.getDirectAttributes());
+    }
+    return Collections.unmodifiableCollection(attrs);
+  }
+
   protected final void addAttributeGroup(AbstractAttributeGroup ag) {
     attributeGroups.add(ag);
   }
@@ -115,6 +124,17 @@ public abstract class AbstractElementType<T extends ElementType<T, E>, E extends
       }
     }
     return null;
+  }
+
+  @Override
+  public void removeAttribute(Attribute attribute) {
+    for (AttributeGroup group : getAttributeGroups()) {
+      Attribute actual = PSSIFUtil.find(attribute.getName(), group.getAttributes());
+      if (actual != null) {
+        AbstractAttributeGroup actualGroup = findAttributeGroup(PSSIFUtil.normalize(group.getName()));
+        actualGroup.removeAttribute(actual);
+      }
+    }
   }
 
   @Override

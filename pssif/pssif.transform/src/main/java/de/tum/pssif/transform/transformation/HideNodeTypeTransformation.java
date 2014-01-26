@@ -19,7 +19,9 @@ public class HideNodeTypeTransformation extends HideTypeTransformation<NodeType>
 
   @Override
   public Metamodel apply(View view) {
-    removeType(view, getType());
+    if (getType() != null) {
+      removeType(view, getType());
+    }
     return view;
   }
 
