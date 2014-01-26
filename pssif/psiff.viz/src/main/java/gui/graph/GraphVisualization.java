@@ -400,6 +400,14 @@ public void applyNodeAndEdgeFilter(LinkedList<MyNodeType> nodes, LinkedList<MyEd
     vv.repaint();
 }
 
+public void applyAttributeFilter()
+{	
+	collapser.reset();
+	
+	vv.getPickedVertexState().clear();
+    vv.repaint();
+}
+
 public void setNodeColorMapping(HashMap<MyNodeType, Color> nodeColorMapping) {
 	this.nodeColorMapping.putAll(nodeColorMapping);
 	this.configWriterReader.setColors(nodeColorMapping);
@@ -422,6 +430,11 @@ public void createNewGraphView (GraphViewContainer newView)
 public HashMap<String, GraphViewContainer> getAllGraphViews()
 {
 	return this.configWriterReader.readViews();
+}
+
+public void deleteGraphView (GraphViewContainer deleteView)
+{
+	this.configWriterReader.deleteView(deleteView.getViewName());
 }
   
   /*	  private class MutableDirectionalEdgeValue extends ConstantDirectionalEdgeValueTransformer<MyNode,MyEdge> {

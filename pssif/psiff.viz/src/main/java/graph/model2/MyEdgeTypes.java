@@ -18,12 +18,12 @@ private LinkedList<MyEdgeType> types;
 		
 		for (EdgeType et : types)
 		{
-			if (et.getName()!="Edge")
-			{
+		//	if (et.getName()!="Edge")
+		//	{
 				MyEdgeType tmp = new MyEdgeType(et, idcounter++);
 				
 				this.types.add(tmp);
-			}
+		//	}
 		}
 	}
 	

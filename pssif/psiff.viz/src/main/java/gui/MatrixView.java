@@ -57,10 +57,6 @@ public class MatrixView {
 		this.xml_exporter = new XMLExport();
 		active = false;	
 	}
-/*<<<<<<< HEAD
-=======
-
->>>>>>> refs/remotes/origin/attempt3*/
 	
 	private void drawMatrix()
 	{

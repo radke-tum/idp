@@ -45,8 +45,8 @@ public class MyEdgeType {
 	 }
 	 
 	 public String toString() {
-			return type.getName();
-		}
+		return type.getName();
+	}
 
     
 }
