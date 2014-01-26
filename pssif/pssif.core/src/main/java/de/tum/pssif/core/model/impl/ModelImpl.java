@@ -9,6 +9,7 @@ import de.tum.pssif.core.metamodel.NodeType;
 import de.tum.pssif.core.metamodel.impl.CreateEdgeOperation;
 import de.tum.pssif.core.metamodel.impl.CreateNodeOperation;
 import de.tum.pssif.core.metamodel.impl.ReadNodesOperation;
+import de.tum.pssif.core.metamodel.impl.base.ReadEdgesOperation;
 import de.tum.pssif.core.model.Edge;
 import de.tum.pssif.core.model.Model;
 import de.tum.pssif.core.model.Node;
@@ -38,5 +39,10 @@ public class ModelImpl implements Model {
   @Override
   public PSSIFOption<Node> apply(ReadNodesOperation op) {
     return PSSIFOption.many(Sets.<Node> newHashSet(nodes.get(op.getType())));
+  }
+
+  @Override
+  public PSSIFOption<Edge> apply(ReadEdgesOperation op) {
+    return PSSIFOption.many(edges.get(op.getMapping()));
   }
 }
