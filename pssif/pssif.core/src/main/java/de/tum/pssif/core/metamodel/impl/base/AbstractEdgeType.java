@@ -13,10 +13,11 @@ import de.tum.pssif.core.metamodel.EdgeType;
 import de.tum.pssif.core.metamodel.NodeType;
 import de.tum.pssif.core.metamodel.impl.EdgeEndBundleImpl;
 import de.tum.pssif.core.metamodel.traits.ElementApplicable;
+import de.tum.pssif.core.model.Edge;
 import de.tum.pssif.core.util.PSSIFUtil;
 
 
-public abstract class AbstractEdgeType extends AbstractElementType<EdgeType> implements EdgeType {
+public abstract class AbstractEdgeType extends AbstractElementType<EdgeType, Edge> implements EdgeType {
   private Collection<ConnectionMapping> mappings    = Sets.newHashSet();
   private Collection<EdgeEnd>           auxiliaries = Sets.newHashSet();
 

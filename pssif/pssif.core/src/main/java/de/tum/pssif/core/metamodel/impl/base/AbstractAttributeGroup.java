@@ -14,10 +14,10 @@ import de.tum.pssif.core.util.PSSIFUtil;
 
 
 public abstract class AbstractAttributeGroup extends AbstractNamed implements AttributeGroup {
-  private final Map<String, Attribute> attributes = Maps.newHashMap();
-  private final AbstractElementType<?> owner;
+  private final Map<String, Attribute>    attributes = Maps.newHashMap();
+  private final AbstractElementType<?, ?> owner;
 
-  public AbstractAttributeGroup(String name, AbstractElementType<?> owner) {
+  public AbstractAttributeGroup(String name, AbstractElementType<?, ?> owner) {
     super(name);
     this.owner = owner;
   }

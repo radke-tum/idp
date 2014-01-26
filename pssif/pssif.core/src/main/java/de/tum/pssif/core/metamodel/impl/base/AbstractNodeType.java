@@ -8,10 +8,11 @@ import com.google.common.collect.Sets;
 
 import de.tum.pssif.core.metamodel.EdgeType;
 import de.tum.pssif.core.metamodel.NodeType;
+import de.tum.pssif.core.model.Node;
 import de.tum.pssif.core.util.PSSIFUtil;
 
 
-public abstract class AbstractNodeType extends AbstractElementType<NodeType> implements NodeType {
+public abstract class AbstractNodeType extends AbstractElementType<NodeType, Node> implements NodeType {
   private Set<EdgeType> incomings   = Sets.newHashSet();
   private Set<EdgeType> outgoings   = Sets.newHashSet();
   private Set<EdgeType> auxiliaries = Sets.newHashSet();

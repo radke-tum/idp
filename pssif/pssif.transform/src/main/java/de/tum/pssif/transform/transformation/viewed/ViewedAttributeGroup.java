@@ -7,11 +7,8 @@ import de.tum.pssif.core.metamodel.impl.base.AbstractElementType;
 
 
 public class ViewedAttributeGroup extends AbstractAttributeGroup {
-  private final AttributeGroup baseGroup;
-
-  public ViewedAttributeGroup(AttributeGroup baseGroup, String name, AbstractElementType<?> owner) {
+  public ViewedAttributeGroup(AttributeGroup baseGroup, String name, AbstractElementType<?, ?> owner) {
     super(name, owner);
-    this.baseGroup = baseGroup;
 
     for (Attribute a : baseGroup.getAttributes()) {
       addAttribute(new ViewedAttribute(a, a.getName(), a.getType(), a.getUnit(), a.isVisible(), a.getCategory()));

@@ -5,7 +5,7 @@ import de.tum.pssif.core.metamodel.impl.base.AbstractElementType;
 
 
 public class AttributeGroupImpl extends AbstractAttributeGroup {
-  public AttributeGroupImpl(String name, AbstractElementType<?> owner) {
+  public AttributeGroupImpl(String name, AbstractElementType<?, ?> owner) {
     super(name, owner);
   }
 }

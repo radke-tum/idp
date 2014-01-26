@@ -8,13 +8,16 @@ import com.google.common.collect.Sets;
 
 import de.tum.pssif.core.PSSIFConstants;
 import de.tum.pssif.core.exception.PSSIFStructuralIntegrityException;
+import de.tum.pssif.core.metamodel.Annotation;
 import de.tum.pssif.core.metamodel.Attribute;
 import de.tum.pssif.core.metamodel.AttributeGroup;
 import de.tum.pssif.core.metamodel.ElementType;
+import de.tum.pssif.core.model.Element;
+import de.tum.pssif.core.util.PSSIFOption;
 import de.tum.pssif.core.util.PSSIFUtil;
 
 
-public abstract class AbstractElementType<T extends ElementType<T>> extends AbstractNamed implements ElementType<T> {
+public abstract class AbstractElementType<T extends ElementType<T, E>, E extends Element> extends AbstractNamed implements ElementType<T, E> {
   private T                                 general         = null;
   private final Set<T>                      specializations = Sets.newHashSet();
   private final Set<AbstractAttributeGroup> attributeGroups = Sets.newHashSet();
@@ -112,5 +115,23 @@ public abstract class AbstractElementType<T extends ElementType<T>> extends Abst
       }
     }
     return null;
+  }
+
+  @Override
+  public Collection<Annotation> getAnnotations(E element) {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public PSSIFOption<String> getAnnotationValue(E element, String key) {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public void setAnnotation(E element, String key, String value) {
+    // TODO Auto-generated method stub
+
   }
 }

@@ -14,15 +14,12 @@ import de.tum.pssif.core.metamodel.impl.base.AbstractEdgeType;
 
 
 public class ViewedEdgeType extends AbstractEdgeType {
-  private final EdgeType baseType;
-
   public ViewedEdgeType(EdgeType baseType) {
     this(baseType, baseType.getName());
   }
 
   public ViewedEdgeType(EdgeType baseType, String name) {
     super(name);
-    this.baseType = baseType;
 
     for (AttributeGroup g : baseType.getAttributeGroups()) {
       addAttributeGroup(new ViewedAttributeGroup(g, g.getName(), this));

@@ -29,7 +29,7 @@ public class MetamodelImpl extends AbstractMetamodel<NodeType, EdgeType> impleme
         rootNodeType, MultiplicityContainer.of(1, UnlimitedNatural.UNLIMITED, 0, UnlimitedNatural.UNLIMITED));
   }
 
-  private final void addDefaultAttributes(ElementType<?> type) {
+  private final void addDefaultAttributes(ElementType<?, ?> type) {
     type.createAttribute(type.getDefaultAttributeGroup(), PSSIFConstants.BUILTIN_ATTRIBUTE_ID, PrimitiveDataType.STRING, true,
         AttributeCategory.METADATA);
     type.createAttribute(type.getDefaultAttributeGroup(), PSSIFConstants.BUILTIN_ATTRIBUTE_NAME, PrimitiveDataType.STRING, true,
