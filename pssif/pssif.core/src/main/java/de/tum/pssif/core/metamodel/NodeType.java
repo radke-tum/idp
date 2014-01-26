@@ -19,6 +19,8 @@ public interface NodeType extends ElementType<NodeType, Node> {
    */
   void registerIncoming(EdgeType type);
 
+  void deregisterIncoming(EdgeType type);
+
   /**
    * Registers an outgoing edge type to this node type.
    * @param type
@@ -26,12 +28,16 @@ public interface NodeType extends ElementType<NodeType, Node> {
    */
   void registerOutgoing(EdgeType type);
 
+  void deregisterOutgoing(EdgeType type);
+
   /**
    * Registers an auxiliary edge type to this node type.
    * @param type
    *    The auxiliary edge type to register.
    */
   void registerAuxiliary(EdgeType type);
+
+  void deregisterAuxiliary(EdgeType type);
 
   /**
    * @return

@@ -27,13 +27,28 @@ public abstract class AbstractNodeType extends AbstractElementType<NodeType, Nod
   }
 
   @Override
+  public void deregisterIncoming(EdgeType type) {
+    incomings.remove(type);
+  }
+
+  @Override
   public final void registerOutgoing(EdgeType type) {
     outgoings.add(type);
   }
 
   @Override
+  public void deregisterOutgoing(EdgeType type) {
+    outgoings.remove(type);
+  }
+
+  @Override
   public final void registerAuxiliary(EdgeType type) {
     auxiliaries.add(type);
+  }
+
+  @Override
+  public void deregisterAuxiliary(EdgeType type) {
+    auxiliaries.remove(type);
   }
 
   @Override

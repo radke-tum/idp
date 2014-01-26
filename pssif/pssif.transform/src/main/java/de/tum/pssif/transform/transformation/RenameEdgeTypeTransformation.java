@@ -37,16 +37,29 @@ public class RenameEdgeTypeTransformation extends RenameTransformation<EdgeType>
       special.inherit(renamed);
     }
 
+    Collection<ConnectionMapping> toRemove = Sets.newHashSet();
     for (ConnectionMapping mapping : actualTarget.getMappings()) {
+      toRemove.add(mapping);
       EdgeEnd from = mapping.getFrom();
       EdgeEnd to = mapping.getTo();
       ViewedEdgeEnd viewedFrom = new ViewedEdgeEnd(from, from.getName(), renamed, MultiplicityContainer.of(from.getEdgeEndLower(),
           from.getEdgeEndUpper(), from.getEdgeTypeLower(), from.getEdgeTypeUpper()), from.getNodeType());
       ViewedEdgeEnd viewedTo = new ViewedEdgeEnd(to, to.getName(), renamed, MultiplicityContainer.of(to.getEdgeEndLower(), to.getEdgeEndUpper(),
           to.getEdgeTypeLower(), to.getEdgeTypeUpper()), to.getNodeType());
+      from.getNodeType().registerOutgoing(renamed);
+      to.getNodeType().registerIncoming(renamed);
       renamed.addMapping(new ViewedConnectionMapping(mapping, viewedFrom, viewedTo));
     }
+    for (ConnectionMapping mapping : toRemove) {
+      mapping.getFrom().getNodeType().deregisterOutgoing(actualTarget);
+      mapping.getTo().getNodeType().deregisterIncoming(actualTarget);
+      actualTarget.removeMapping(mapping);
+    }
+
     for (EdgeEnd end : actualTarget.getAuxiliaries()) {
+      end.getNodeType().deregisterAuxiliary(actualTarget);
+      end.getNodeType().registerAuxiliary(renamed);
+      renamed.removeAuxiliary(end);
       renamed.addAuxiliary(new ViewedEdgeEnd(end, end.getName(), renamed, MultiplicityContainer.of(end.getEdgeEndLower(), end.getEdgeEndUpper(),
           end.getEdgeTypeLower(), end.getEdgeTypeUpper()), end.getNodeType()));
     }
