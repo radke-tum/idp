@@ -89,6 +89,7 @@ public class GraphMLMapper implements Mapper {
     }
     if (sourceNode.isOne() && targetNode.isOne() && mapping != null) {
       Edge edge = mapping.create(result, sourceNode.getOne(), targetNode.getOne());
+      type.findAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_ID).set(edge, PSSIFOption.one(PSSIFValue.create(inEdge.getId())));
       type.findAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_DIRECTED).set(edge, PSSIFOption.one(PSSIFValue.create(inEdge.isDirected())));
       readAttributes(type, edge, inEdge);
     }
