@@ -12,14 +12,15 @@ import javax.lang.model.type.PrimitiveType;
 
 import de.tum.pssif.core.metamodel.Attribute;
 import de.tum.pssif.core.metamodel.PrimitiveDataType;
+import de.tum.pssif.core.util.PSSIFOption;
 import de.tum.pssif.core.util.PSSIFValue;
 import edu.uci.ics.jung.graph.Graph;
 import graph.model2.MyEdge2;
 import graph.model2.MyNode2;
 
-public class NodeAttributeFilter {
+public class AttributeFilter {
 	
-	public static Graph<MyNode2, MyEdge2> filter(Graph<MyNode2, MyEdge2> graph, String attributeName, AttributeOperations op, Object RefValue) throws Exception
+	public static Graph<MyNode2, MyEdge2> filterNode(Graph<MyNode2, MyEdge2> graph, String attributeName, AttributeOperations op, Object RefValue) throws Exception
 	{
 		LinkedList<MyNode2> allNodes = new LinkedList<MyNode2>(graph.getVertices());
 		
@@ -37,26 +38,78 @@ public class NodeAttributeFilter {
 				{
 					boolean result = false;
 					
-					PSSIFValue attrValue=attr.get(currentNode.getNode()).getOne();
-					
-					PrimitiveDataType currentType = (PrimitiveDataType) attr.getType();
-					
-					
-					if (currentType.equals(PrimitiveDataType.BOOLEAN))
-						result = BooleanEval(attrValue, op, RefValue);
-					if (currentType.equals(PrimitiveDataType.DATE))
-						result = DateEval(attrValue, op, RefValue);
-					if (currentType.equals(PrimitiveDataType.DECIMAL))
-						result = DecimalEval(attrValue, op, RefValue);
-					if (currentType.equals(PrimitiveDataType.INTEGER))
-						result = IntegerEval(attrValue, op, RefValue);
-					if (currentType.equals(PrimitiveDataType.STRING))
-						result = StringEval(attrValue, op, RefValue);
+					if (attr.get(currentNode.getNode())!=null)
+					{
+						PSSIFValue attrValue=attr.get(currentNode.getNode()).getOne();
+						
+						PrimitiveDataType currentType = (PrimitiveDataType) attr.getType();
+						
+						
+						if (currentType.equals(PrimitiveDataType.BOOLEAN))
+							result = BooleanEval(attrValue, op, RefValue);
+						if (currentType.equals(PrimitiveDataType.DATE))
+							result = DateEval(attrValue, op, RefValue);
+						if (currentType.equals(PrimitiveDataType.DECIMAL))
+							result = DecimalEval(attrValue, op, RefValue);
+						if (currentType.equals(PrimitiveDataType.INTEGER))
+							result = IntegerEval(attrValue, op, RefValue);
+						if (currentType.equals(PrimitiveDataType.STRING))
+							result = StringEval(attrValue, op, RefValue);
+					}
 					
 					if (result == false)
 					{
 						graph.removeVertex(currentNode);
 					}
+				}
+			}
+		}
+		return graph;
+	}
+	
+	public static Graph<MyNode2, MyEdge2> filterEdge(Graph<MyNode2, MyEdge2> graph, String attributeName, AttributeOperations op, Object RefValue) throws Exception
+	{
+		LinkedList<MyEdge2> allEdges = new LinkedList<MyEdge2>(graph.getEdges());
+		
+		for (MyEdge2 currentEdge : allEdges)
+		{
+			HashMap<String, Attribute> attributes = currentEdge.getAttributesHashMap();
+			
+			Attribute attr = attributes.get(attributeName);
+			
+			if (attr== null)
+				graph.removeEdge(currentEdge);
+			else
+			{
+				if (testPossibleOperation(attr, op))
+				{
+					boolean result = false;
+					
+					//PSSIFOption<PSSIFValue>a = attr.get(currentEdge.getEdge());
+					//System.out.println("No value "+a ==null);
+					if (attr.get(currentEdge.getEdge())!=null)
+					{
+						PSSIFValue attrValue=attr.get(currentEdge.getEdge()).getOne();
+						
+						PrimitiveDataType currentType = (PrimitiveDataType) attr.getType();
+						
+						
+						if (currentType.equals(PrimitiveDataType.BOOLEAN))
+							result = BooleanEval(attrValue, op, RefValue);
+						if (currentType.equals(PrimitiveDataType.DATE))
+							result = DateEval(attrValue, op, RefValue);
+						if (currentType.equals(PrimitiveDataType.DECIMAL))
+							result = DecimalEval(attrValue, op, RefValue);
+						if (currentType.equals(PrimitiveDataType.INTEGER))
+							result = IntegerEval(attrValue, op, RefValue);
+						if (currentType.equals(PrimitiveDataType.STRING))
+							result = StringEval(attrValue, op, RefValue);
+					}
+					
+					if (result == false)
+						{
+							graph.removeEdge(currentEdge);
+						}
 				}
 			}
 		}
@@ -130,7 +183,17 @@ public class NodeAttributeFilter {
 		boolean result = false;
 		
 		String value = PrimitiveDataType.STRING.fromObject(attrValue.getValue()).asString();
-		String refvalue = PrimitiveDataType.STRING.fromObject(RefValue).asString();
+		String refvalue;
+		System.out.println(RefValue ==null);
+		if (RefValue instanceof String)
+		{
+			String castValue = String.valueOf(RefValue);
+			refvalue = PrimitiveDataType.STRING.fromObject(castValue).asString();
+		}
+		else
+			refvalue = PrimitiveDataType.STRING.fromObject(RefValue).asString();
+		
+		
 		
 		switch (op)
 		{

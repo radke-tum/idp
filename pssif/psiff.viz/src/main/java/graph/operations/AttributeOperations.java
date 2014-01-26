@@ -5,7 +5,7 @@ public enum AttributeOperations {
 	GREATER("Greater than"),
 	LESS ("Less than"),
 	GREATER_EQUAL("Greater or equal than"),
-	LESS_EQUAL("LESS or equal than"),
+	LESS_EQUAL("Less or equal than"),
 	EQUAL ("Equal"),
 	NOT_EQUAL ("Not equal");
 	
@@ -19,6 +19,12 @@ public enum AttributeOperations {
 	public String getName() {
 		return name;
 	}
+	
+	public String toString()
+	{
+		return name;
+	}
+	
 	
 	public static AttributeOperations getValueOf(String s)
 	{
