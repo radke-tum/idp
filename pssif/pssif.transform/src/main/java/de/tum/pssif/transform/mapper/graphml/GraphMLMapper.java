@@ -173,14 +173,13 @@ public class GraphMLMapper implements Mapper {
     //FIXME des geht?!
     Attribute idAttribute = edgeType.findAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_ID);
     for (ConnectionMapping mapping : edgeType.getMappings()) {
-      for (Node pssifNode : mapping.getFrom().getNodeType().apply(model).getMany()) {
-        PSSIFOption<Edge> edges = mapping.getFrom().apply(pssifNode);
-        for (Edge pssifEdge : edges.getMany()) {
-          Node targetNode = mapping.getTo().apply(pssifEdge).getOne();
-          GraphMlEdgeImpl edge = new GraphMlEdgeImpl(graph.getNode(id(idAttribute, pssifEdge)).getId(), graph.getNode(id(idAttribute, pssifNode))
-              .getId(), graph.getNode(id(idAttribute, targetNode)).getId(), false);
-          graph.addEdge(edge);
-        }
+      PSSIFOption<Edge> edges = mapping.apply(model);
+      for (Edge pssifEdge : edges.getMany()) {
+        Node sourceNode = mapping.getFrom().apply(pssifEdge).getMany().iterator().next();
+        Node targetNode = mapping.getTo().apply(pssifEdge).getMany().iterator().next();
+        GraphMlEdgeImpl edge = new GraphMlEdgeImpl(graph.getNode(id(idAttribute, pssifEdge)).getId(), graph.getNode(id(idAttribute, sourceNode))
+            .getId(), graph.getNode(id(idAttribute, targetNode)).getId(), false);
+        graph.addEdge(edge);
       }
     }
   }

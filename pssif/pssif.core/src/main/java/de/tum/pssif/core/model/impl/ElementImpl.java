@@ -29,7 +29,7 @@ abstract class ElementImpl implements Element {
 
   @Override
   public PSSIFOption<PSSIFValue> apply(GetValueOperation op) {
-    return values.get(op.getAttributeType().getName());
+    return values.get(op.getAttributeType().getName()) != null ? values.get(op.getAttributeType().getName()) : PSSIFOption.<PSSIFValue> none();
   }
 
   @Override
