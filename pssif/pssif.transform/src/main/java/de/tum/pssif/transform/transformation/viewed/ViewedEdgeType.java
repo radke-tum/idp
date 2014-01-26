@@ -33,6 +33,18 @@ public class ViewedEdgeType extends AbstractEdgeType {
     addMappingInternal(mapping);
   }
 
+  public void removeMapping(ConnectionMapping mapping) {
+    removeMappingInternal(mapping);
+  }
+
+  public void addAuxiliary(EdgeEnd end) {
+    addAuxiliaryInternal(end);
+  }
+
+  public void removeAuxiliary(EdgeEnd end) {
+    removeAuxiliaryInternal(end);
+  }
+
   @Override
   public ConnectionMapping createMapping(String inName, NodeType in, Multiplicity inMultiplicity, String outName, NodeType out,
                                          Multiplicity outMultiplicity) {

@@ -31,56 +31,74 @@ public class GraphMLMapper implements Mapper {
     for (GraphMLNode inNode : graph.getNodes()) {
       NodeType type = metamodel.findNodeType(inNode.getType());
       if (type != null) {
-        Attribute idAttribute = type.findAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_ID);
-        Node resultNode = type.create(result);
-        if (idAttribute != null) {
-          idAttribute.set(resultNode, PSSIFOption.one(idAttribute.getType().fromObject(inNode.getId())));
-        }
-        else {
-          System.out.println("Attribute " + PSSIFConstants.BUILTIN_ATTRIBUTE_ID + " not found!");
-        }
-
-        readAttributes(type, resultNode, inNode);
+        readNode(result, inNode, type);
       }
       else {
-        System.out.println("NodeType " + inNode.getType() + " not found!");
+        System.out.println("NodeType " + inNode.getType() + " not found! Defaulting to Node");
+        readNode(result, inNode, metamodel.findNodeType(PSSIFConstants.ROOT_NODE_TYPE_NAME));
       }
     }
 
     for (GraphMLEdge inEdge : graph.getEdges()) {
       EdgeType type = metamodel.findEdgeType(inEdge.getType());
       if (type != null) {
-
-        GraphMLNode inSourceNode = graph.getNode(inEdge.getSourceId());
-        GraphMLNode inTargetNode = graph.getNode(inEdge.getTargetId());
-
-        NodeType sourceType = metamodel.findNodeType(inSourceNode.getType());
-        PSSIFOption<Node> sourceNode = sourceType.apply(result, inSourceNode.getId());
-
-        NodeType targetType = metamodel.findNodeType(inTargetNode.getType());
-        PSSIFOption<Node> targetNode = targetType.apply(result, inTargetNode.getId());
-
-        if (sourceType != null && targetType != null) {
-          ConnectionMapping mapping = type.getMapping(sourceType, targetType);
-          if (sourceNode.isOne() && targetNode.isOne()) {
-            Edge edge = mapping.create(result, sourceNode.getOne(), targetNode.getOne());
-            type.findAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_DIRECTED).set(edge, PSSIFOption.one(PSSIFValue.create(inEdge.isDirected())));
-            readAttributes(type, edge, inEdge);
-          }
-          else {
-            System.out.println("either source or target node not found!");
-          }
-        }
-        else {
-          System.out.println("either source or target type of edge " + inEdge.getId() + " not found!");
-        }
+        readEdge(metamodel, result, graph, inEdge, type);
       }
       else {
-        System.out.println("EdgeType " + inEdge.getType() + " not found!");
+        System.out.println("EdgeType " + inEdge.getType() + " not found! Defaulting to Edge");
+        readEdge(metamodel, result, graph, inEdge, metamodel.findEdgeType(PSSIFConstants.ROOT_EDGE_TYPE_NAME));
       }
     }
 
     return result;
+  }
+
+  private void readEdge(Metamodel metamodel, Model result, GraphMLGraph graph, GraphMLEdge inEdge, EdgeType type) {
+    GraphMLNode inSourceNode = graph.getNode(inEdge.getSourceId());
+    GraphMLNode inTargetNode = graph.getNode(inEdge.getTargetId());
+
+    NodeType sourceType = metamodel.findNodeType(inSourceNode.getType());
+    if (sourceType == null) {
+      sourceType = metamodel.findNodeType(PSSIFConstants.ROOT_NODE_TYPE_NAME);
+    }
+    PSSIFOption<Node> sourceNode = sourceType.apply(result, inSourceNode.getId());
+
+    NodeType targetType = metamodel.findNodeType(inTargetNode.getType());
+    if (targetType == null) {
+      targetType = metamodel.findNodeType(PSSIFConstants.ROOT_NODE_TYPE_NAME);
+    }
+    PSSIFOption<Node> targetNode = targetType.apply(result, inTargetNode.getId());
+
+    ConnectionMapping mapping = type.getMapping(sourceType, targetType);
+    if (mapping == null) {
+      System.out.println(type.getName() + ": mapping " + sourceType.getName() + "-" + targetType.getName() + " not found! Defaulting to Edge");
+      type = metamodel.findEdgeType(PSSIFConstants.ROOT_EDGE_TYPE_NAME);
+      mapping = type.getMapping(sourceType, targetType);
+    }
+    if (!sourceNode.isOne()) {
+      System.out.println("source node " + inSourceNode.getId() + " not found!");
+    }
+    if (!targetNode.isOne()) {
+      System.out.println("target node " + inTargetNode.getId() + " not found!");
+    }
+    if (sourceNode.isOne() && targetNode.isOne() && mapping != null) {
+      Edge edge = mapping.create(result, sourceNode.getOne(), targetNode.getOne());
+      type.findAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_DIRECTED).set(edge, PSSIFOption.one(PSSIFValue.create(inEdge.isDirected())));
+      readAttributes(type, edge, inEdge);
+    }
+  }
+
+  private void readNode(Model result, GraphMLNode inNode, NodeType type) {
+    Attribute idAttribute = type.findAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_ID);
+    Node resultNode = type.create(result);
+    if (idAttribute != null) {
+      idAttribute.set(resultNode, PSSIFOption.one(idAttribute.getType().fromObject(inNode.getId())));
+    }
+    else {
+      System.out.println("Attribute " + PSSIFConstants.BUILTIN_ATTRIBUTE_ID + " not found!");
+    }
+
+    readAttributes(type, resultNode, inNode);
   }
 
   private static void readAttributes(ElementType<?> type, Element element, GraphMLElement inElement) {

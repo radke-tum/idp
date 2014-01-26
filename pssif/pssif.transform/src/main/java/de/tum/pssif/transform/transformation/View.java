@@ -13,12 +13,8 @@ import de.tum.pssif.transform.transformation.viewed.ViewedEdgeType;
 import de.tum.pssif.transform.transformation.viewed.ViewedNodeType;
 
 
-public class View extends AbstractMetamodel {
-  private Metamodel baseMetamodel;
-
+public class View extends AbstractMetamodel<ViewedNodeType, ViewedEdgeType> {
   public View(Metamodel baseMetamodel) {
-    this.baseMetamodel = baseMetamodel;
-
     for (NodeType nt : baseMetamodel.getNodeTypes()) {
       addNodeTypeInternal(new ViewedNodeType(nt));
     }
@@ -56,11 +52,19 @@ public class View extends AbstractMetamodel {
     return transformation.apply(this);
   }
 
-  protected void addNodeType(NodeType type) {
+  protected void addNodeType(ViewedNodeType type) {
     addNodeTypeInternal(type);
   }
 
-  protected void removeNodeType(NodeType type) {
+  protected void removeNodeType(ViewedNodeType type) {
     removeNodeTypeInternal(type);
+  }
+
+  protected void addEdgeType(ViewedEdgeType type) {
+    addEdgeTypeInternal(type);
+  }
+
+  protected void removeEdgeType(ViewedEdgeType type) {
+    removeEdgeTypeInternal(type);
   }
 }

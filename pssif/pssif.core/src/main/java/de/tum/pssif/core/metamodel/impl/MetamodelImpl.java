@@ -15,7 +15,7 @@ import de.tum.pssif.core.metamodel.impl.base.AbstractMetamodel;
 import de.tum.pssif.core.util.PSSIFUtil;
 
 
-public class MetamodelImpl extends AbstractMetamodel implements MutableMetamodel {
+public class MetamodelImpl extends AbstractMetamodel<NodeType, EdgeType> implements MutableMetamodel {
   public MetamodelImpl() {
     NodeTypeImpl rootNodeType = new NodeTypeImpl(PSSIFConstants.ROOT_NODE_TYPE_NAME);
     addNodeTypeInternal(rootNodeType);

@@ -1,9 +1,14 @@
 package de.tum.pssif.transform.transformation.viewed;
 
+import java.util.Collection;
+
+import com.google.common.collect.Sets;
+
 import de.tum.pssif.core.metamodel.Attribute;
 import de.tum.pssif.core.metamodel.AttributeCategory;
 import de.tum.pssif.core.metamodel.AttributeGroup;
 import de.tum.pssif.core.metamodel.DataType;
+import de.tum.pssif.core.metamodel.EdgeType;
 import de.tum.pssif.core.metamodel.NodeType;
 import de.tum.pssif.core.metamodel.Unit;
 import de.tum.pssif.core.metamodel.impl.base.AbstractNodeType;
@@ -41,6 +46,33 @@ public class ViewedNodeType extends AbstractNodeType {
   @Override
   public PSSIFOption<Node> apply(Model model, String id) {
     return baseType.apply(model, id);
+  }
+
+  public Collection<ViewedEdgeType> getIncomingsInternal() {
+    Collection<ViewedEdgeType> result = Sets.newHashSet();
+
+    for (EdgeType et : super.getIncomings()) {
+      result.add((ViewedEdgeType) et);
+    }
+    return result;
+  }
+
+  public Collection<ViewedEdgeType> getOutgoingsInternal() {
+    Collection<ViewedEdgeType> result = Sets.newHashSet();
+
+    for (EdgeType et : super.getOutgoings()) {
+      result.add((ViewedEdgeType) et);
+    }
+    return result;
+  }
+
+  public Collection<ViewedEdgeType> getAuxiliariesInternal() {
+    Collection<ViewedEdgeType> result = Sets.newHashSet();
+
+    for (EdgeType et : super.getAuxiliaries()) {
+      result.add((ViewedEdgeType) et);
+    }
+    return result;
   }
 
   @Override
