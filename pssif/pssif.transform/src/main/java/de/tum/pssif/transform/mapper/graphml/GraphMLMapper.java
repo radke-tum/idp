@@ -171,15 +171,14 @@ public class GraphMLMapper implements Mapper {
   }
 
   private void addEdgesToGraph(GraphMLGraph graph, EdgeType edgeType, Model model) {
-    //FIXME des geht?!
     Attribute idAttribute = edgeType.findAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_ID);
     for (ConnectionMapping mapping : edgeType.getMappings()) {
       PSSIFOption<Edge> edges = mapping.apply(model);
       for (Edge pssifEdge : edges.getMany()) {
         Node sourceNode = mapping.getFrom().apply(pssifEdge).getMany().iterator().next();
         Node targetNode = mapping.getTo().apply(pssifEdge).getMany().iterator().next();
-        GraphMlEdgeImpl edge = new GraphMlEdgeImpl(graph.getNode(id(idAttribute, pssifEdge)).getId(), graph.getNode(id(idAttribute, sourceNode))
-            .getId(), graph.getNode(id(idAttribute, targetNode)).getId(), false);
+        GraphMlEdgeImpl edge = new GraphMlEdgeImpl(id(idAttribute, pssifEdge), id(idAttribute, sourceNode), id(idAttribute, targetNode), false);
+        edge.setValue(GraphMLTokens.ELEMENT_TYPE, edgeType.getName());
         graph.addEdge(edge);
       }
     }
