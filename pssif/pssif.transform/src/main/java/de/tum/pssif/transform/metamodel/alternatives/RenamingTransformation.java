@@ -2,9 +2,10 @@ package de.tum.pssif.transform.metamodel.alternatives;
 
 import de.tum.pssif.core.metamodel.ElementType;
 import de.tum.pssif.core.metamodel.Metamodel;
+import de.tum.pssif.core.model.Element;
 
 
-public abstract class RenamingTransformation<T extends ElementType<T>> implements Transformation {
+public abstract class RenamingTransformation<T extends ElementType<T, E>, E extends Element> implements Transformation {
 
   private final T      toRename;
   private final String newName;

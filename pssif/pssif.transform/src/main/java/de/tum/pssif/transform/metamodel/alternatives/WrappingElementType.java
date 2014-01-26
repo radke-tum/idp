@@ -2,20 +2,23 @@ package de.tum.pssif.transform.metamodel.alternatives;
 
 import java.util.Collection;
 
+import de.tum.pssif.core.metamodel.Annotation;
 import de.tum.pssif.core.metamodel.Attribute;
 import de.tum.pssif.core.metamodel.AttributeCategory;
 import de.tum.pssif.core.metamodel.AttributeGroup;
 import de.tum.pssif.core.metamodel.DataType;
 import de.tum.pssif.core.metamodel.ElementType;
 import de.tum.pssif.core.metamodel.Unit;
+import de.tum.pssif.core.model.Element;
+import de.tum.pssif.core.util.PSSIFOption;
 
 
-public abstract class WrappingElementType<T extends ElementType<T>> implements ElementType<T> {
+public abstract class WrappingElementType<T extends ElementType<T, E>, E extends Element> implements ElementType<T, E> {
 
-  private final ElementType<T> wrapped;
-  private String               name = null;
+  private final ElementType<T, E> wrapped;
+  private String                  name = null;
 
-  protected WrappingElementType(ElementType<T> wrapped) {
+  protected WrappingElementType(ElementType<T, E> wrapped) {
     this.wrapped = wrapped;
   }
 
@@ -108,6 +111,24 @@ public abstract class WrappingElementType<T extends ElementType<T>> implements E
 
   @Override
   public void unregisterSpecialization(T special) {
+    // TODO Auto-generated method stub
+
+  }
+
+  @Override
+  public Collection<Annotation> getAnnotations(E element) {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public PSSIFOption<String> getAnnotationValue(E element, String key) {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public void setAnnotation(E element, String key, String value) {
     // TODO Auto-generated method stub
 
   }

@@ -16,9 +16,9 @@ import de.tum.pssif.core.util.PSSIFUtil;
 public class AttributeGroupImpl extends NamedImpl implements AttributeGroup {
 
   private final Map<String, AttributeImpl> attributes = Maps.newHashMap();
-  private final ElementTypeImpl<?>         owner;
+  private final ElementTypeImpl<?, ?>      owner;
 
-  public AttributeGroupImpl(String name, ElementTypeImpl<?> owner) {
+  public AttributeGroupImpl(String name, ElementTypeImpl<?, ?> owner) {
     super(name);
     this.owner = owner;
   }

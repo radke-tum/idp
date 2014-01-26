@@ -10,9 +10,9 @@ import de.tum.pssif.core.model.Node;
 import de.tum.pssif.core.util.PSSIFOption;
 
 
-public class WrappingNodeType extends WrappingElementType<NodeType> implements NodeType {
+public class WrappingNodeType extends WrappingElementType<NodeType, Node> implements NodeType {
 
-  protected WrappingNodeType(ElementType<NodeType> wrapped) {
+  protected WrappingNodeType(ElementType<NodeType, Node> wrapped) {
     super(wrapped);
   }
 

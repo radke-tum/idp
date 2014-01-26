@@ -8,6 +8,7 @@ import com.google.common.collect.Sets;
 
 import de.tum.pssif.core.PSSIFConstants;
 import de.tum.pssif.core.exception.PSSIFStructuralIntegrityException;
+import de.tum.pssif.core.metamodel.Annotation;
 import de.tum.pssif.core.metamodel.Attribute;
 import de.tum.pssif.core.metamodel.AttributeCategory;
 import de.tum.pssif.core.metamodel.AttributeGroup;
@@ -16,10 +17,12 @@ import de.tum.pssif.core.metamodel.ElementType;
 import de.tum.pssif.core.metamodel.PrimitiveDataType;
 import de.tum.pssif.core.metamodel.Unit;
 import de.tum.pssif.core.metamodel.Units;
+import de.tum.pssif.core.model.Element;
+import de.tum.pssif.core.util.PSSIFOption;
 import de.tum.pssif.core.util.PSSIFUtil;
 
 
-public abstract class ElementTypeImpl<T extends ElementType<T>> extends NamedImpl implements ElementType<T> {
+public abstract class ElementTypeImpl<T extends ElementType<T, E>, E extends Element> extends NamedImpl implements ElementType<T, E> {
   private T                             general         = null;
   private final Set<T>                  specializations = Sets.newHashSet();
   private final Set<AttributeGroupImpl> attributeGroups = Sets.newHashSet();
@@ -173,5 +176,23 @@ public abstract class ElementTypeImpl<T extends ElementType<T>> extends NamedImp
     }
     AttributeGroupImpl actual = findAttributeGroup(group.getName());
     this.attributeGroups.remove(actual);
+  }
+
+  @Override
+  public Collection<Annotation> getAnnotations(E element) {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public PSSIFOption<String> getAnnotationValue(E element, String key) {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public void setAnnotation(E element, String key, String value) {
+    // TODO Auto-generated method stub
+
   }
 }

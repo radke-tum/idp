@@ -78,7 +78,7 @@ public class GraphMLMapper implements Mapper {
     return result;
   }
 
-  private static void readAttributes(ElementType<?> type, Element element, GraphMLElement inElement) {
+  private static void readAttributes(ElementType<?, ?> type, Element element, GraphMLElement inElement) {
     Map<String, String> values = inElement.getValues();
     for (String key : values.keySet()) {
       Attribute attribute = type.findAttribute(key);

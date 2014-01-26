@@ -15,20 +15,20 @@ public class ViewImpl extends MetamodelImpl implements View {
   }
 
   @Override
-  public void add(ElementType<?> elementType) {
+  public void add(ElementType<?, ?> elementType) {
     // TODO Auto-generated method stub
 
   }
 
   @Override
-  public void replace(ElementType<?> toReplace, ElementType<?> replaceWith) {
+  public void replace(ElementType<?, ?> toReplace, ElementType<?, ?> replaceWith) {
     //re-create base metamodel with new type TODO
     // TODO Auto-generated method stub
 
   }
 
   @Override
-  public void remove(ElementType<?> elementType) {
+  public void remove(ElementType<?, ?> elementType) {
     // TODO Auto-generated method stub
 
   }

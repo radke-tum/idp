@@ -1,7 +1,9 @@
 package de.tum.pssif.core.metamodel;
 
+import de.tum.pssif.core.metamodel.traits.Annotatable;
 import de.tum.pssif.core.metamodel.traits.AttributeGroups;
 import de.tum.pssif.core.metamodel.traits.Specializable;
+import de.tum.pssif.core.model.Element;
 
 
 /**
@@ -10,7 +12,7 @@ import de.tum.pssif.core.metamodel.traits.Specializable;
  *
  * @param <T>
  */
-public interface ElementType<T extends ElementType<T>> extends Named, AttributeGroups, Specializable<T> {
+public interface ElementType<T extends ElementType<T, E>, E extends Element> extends Named, AttributeGroups, Specializable<T>, Annotatable<E> {
 
   //Nothing specific here
 

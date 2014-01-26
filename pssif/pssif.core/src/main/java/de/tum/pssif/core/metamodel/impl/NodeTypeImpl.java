@@ -14,7 +14,7 @@ import de.tum.pssif.core.util.PSSIFOption;
 import de.tum.pssif.core.util.PSSIFUtil;
 
 
-public class NodeTypeImpl extends ElementTypeImpl<NodeType> implements NodeType {
+public class NodeTypeImpl extends ElementTypeImpl<NodeType, Node> implements NodeType {
   private Set<EdgeType> incomings   = Sets.newHashSet();
   private Set<EdgeType> outgoings   = Sets.newHashSet();
   private Set<EdgeType> auxiliaries = Sets.newHashSet();
