@@ -142,8 +142,12 @@ public final class PSSIFCanonicMetamodelCreator {
   private static void createSolArtifacts(MetamodelImpl metamodel) {
     NodeType solutionArtifact = metamodel.createNodeType(N_SOL_ARTIFACT);
 
+    NodeType block = metamodel.createNodeType(N_BLOCK);
+    block.inherit(solutionArtifact);
+    block.createAttribute(block.getDefaultAttributeGroup(), A_BLOCK_COST, PrimitiveDataType.DECIMAL, true, AttributeCategory.MONETARY);
+
     NodeType function = metamodel.createNodeType(N_FUNCTION);
-    function.inherit(solutionArtifact);
+    function.inherit(block);
 
     NodeType activity = metamodel.createNodeType(N_ACTIVITY);
     activity.inherit(function);
@@ -151,10 +155,6 @@ public final class PSSIFCanonicMetamodelCreator {
 
     NodeType state = metamodel.createNodeType(N_STATE);
     state.inherit(function);
-
-    NodeType block = metamodel.createNodeType(N_BLOCK);
-    block.inherit(solutionArtifact);
-    block.createAttribute(block.getDefaultAttributeGroup(), A_BLOCK_COST, PrimitiveDataType.DECIMAL, true, AttributeCategory.MONETARY);
 
     NodeType actor = metamodel.createNodeType(N_ACTOR);
     actor.inherit(block);
