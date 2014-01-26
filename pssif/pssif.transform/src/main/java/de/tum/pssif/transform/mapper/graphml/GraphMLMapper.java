@@ -4,6 +4,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Map;
 
+import com.google.common.collect.Maps;
+
 import de.tum.pssif.core.PSSIFConstants;
 import de.tum.pssif.core.metamodel.Attribute;
 import de.tum.pssif.core.metamodel.ConnectionMapping;
@@ -17,8 +19,12 @@ import de.tum.pssif.core.model.Model;
 import de.tum.pssif.core.model.Node;
 import de.tum.pssif.core.model.impl.ModelImpl;
 import de.tum.pssif.core.util.PSSIFOption;
+import de.tum.pssif.core.util.PSSIFUtil;
 import de.tum.pssif.core.util.PSSIFValue;
 import de.tum.pssif.transform.mapper.Mapper;
+import de.tum.pssif.transform.mapper.graphml.GraphMLGraph.GraphMlAttrImpl;
+import de.tum.pssif.transform.mapper.graphml.GraphMLGraph.GraphMlEdgeImpl;
+import de.tum.pssif.transform.mapper.graphml.GraphMLGraph.GraphMlNodeImpl;
 
 
 public class GraphMLMapper implements Mapper {
@@ -93,7 +99,70 @@ public class GraphMLMapper implements Mapper {
 
   @Override
   public void write(Metamodel metamodel, Model model, OutputStream outputStream) {
-    // TODO Auto-generated method stub
+    GraphMLGraph graph = GraphMLGraph.create();
+    addAttributesToGraph(graph, metamodel);
+    for (NodeType nodeType : metamodel.getNodeTypes()) {
+      addNodesToGraph(graph, nodeType, model);
+    }
+    for (EdgeType edgeType : metamodel.getEdgeTypes()) {
+      addEdgesToGraph(graph, edgeType, model);
+    }
+    GraphMLGraph.write(graph, outputStream);
+  }
 
+  private void addAttributesToGraph(GraphMLGraph graph, Metamodel metamodel) {
+    Map<String, GraphMlAttribute> attributes = Maps.newHashMap();
+    for (NodeType nodeType : metamodel.getNodeTypes()) {
+      for (Attribute attribute : nodeType.getAttributes()) {
+        if (!attributes.containsKey(PSSIFUtil.normalize(attribute.getName()))) {
+          attributes.put(PSSIFUtil.normalize(attribute.getName()), new GraphMlAttrImpl(attribute.getName(), attribute.getType().getName()));
+        }
+      }
+    }
+    graph.addNodeAttributes(attributes.values());
+    attributes = Maps.newHashMap();
+    for (EdgeType edgeType : metamodel.getEdgeTypes()) {
+      for (Attribute attribute : edgeType.getAttributes()) {
+        if (!attributes.containsKey(PSSIFUtil.normalize(attribute.getName()))) {
+          attributes.put(PSSIFUtil.normalize(attribute.getName()), new GraphMlAttrImpl(attribute.getName(), attribute.getType().getName()));
+        }
+      }
+    }
+    graph.addEdgeAttributes(attributes.values());
+  }
+
+  private void addNodesToGraph(GraphMLGraph graph, NodeType nodeType, Model model) {
+    Attribute idAttribute = nodeType.findAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_ID);
+    for (Node pssifNode : nodeType.apply(model).getMany()) {
+      GraphMlNodeImpl node = new GraphMlNodeImpl(id(idAttribute, pssifNode));
+      node.setValue(GraphMLTokens.ELEMENT_TYPE, nodeType.getName());
+      for (Attribute attr : nodeType.getAttributes()) {
+        PSSIFOption<PSSIFValue> val = attr.get(pssifNode);
+        if (!idAttribute.equals(attr) && val.isOne()) {
+          node.setValue(attr.getName(), val.getOne().getValue().toString());
+        }
+      }
+      graph.addNode(node);
+    }
+  }
+
+  private void addEdgesToGraph(GraphMLGraph graph, EdgeType edgeType, Model model) {
+    //FIXME des geht?!
+    Attribute idAttribute = edgeType.findAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_ID);
+    for (ConnectionMapping mapping : edgeType.getMappings()) {
+      for (Node pssifNode : mapping.getFrom().getNodeType().apply(model).getMany()) {
+        PSSIFOption<Edge> edges = mapping.getFrom().apply(pssifNode);
+        for (Edge pssifEdge : edges.getMany()) {
+          Node targetNode = mapping.getTo().apply(pssifEdge).getOne();
+          GraphMlEdgeImpl edge = new GraphMlEdgeImpl(graph.getNode(id(idAttribute, pssifEdge)).getId(), graph.getNode(id(idAttribute, pssifNode))
+              .getId(), graph.getNode(id(idAttribute, targetNode)).getId(), false);
+          graph.addEdge(edge);
+        }
+      }
+    }
+  }
+
+  private static String id(Attribute idAttribute, Element element) {
+    return idAttribute.get(element).getOne().asString();
   }
 }
