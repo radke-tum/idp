@@ -12,6 +12,8 @@ import graph.model2.MyEdgeTypes;
 import graph.model2.MyNode2;
 import graph.model2.MyNodeType;
 import graph.operations.GraphViewContainer;
+import graph.operations.NodeAttributeFilter;
+import gui.graph.AttributeFilterPopup;
 import gui.graph.GraphVisualization;
 
 import java.awt.BorderLayout;
@@ -66,6 +68,7 @@ public class GraphView {
 	private JButton nodeHighlight;
 	private JButton collapseExpand;
 	private JButton typeFilter;
+	private JButton attributeFilter;
 	private boolean active;
 	private JTable tableNodeAttributes;
 	private DefaultTableModel nodeAttributesModel;
@@ -154,10 +157,6 @@ public class GraphView {
 		c.gridy = (i++);
 		information.add(Box.createVerticalStrut(betweenLabelandComp),c);
 		
-		//String[][] data = new String[][]{};
-		//String[] columnNames = new String[]{"Attribute", "Value", "Unit", "Type"};
-		//tableNodeAttributes = new JTable(data, columnNames);
-		
 		nodeAttributesModel = new DefaultTableModel(){
 			
 	        public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -210,15 +209,10 @@ public class GraphView {
 			}
 		});
 		
-		//nodeattributes = new JList<String>();
-		//String[] a = new String[]{};
-		
-		//nodeattributes.setListData(a);
-		//nodeattributes.setVisibleRowCount(5);
+
 		int scrolly = (int)( y*0.1);
 
 		JScrollPane jScrollPane = new JScrollPane(tableNodeAttributes);
-		//jScrollPane.setViewportView(nodeattributes);
 		jScrollPane.setPreferredSize(new Dimension(x, scrolly));
 		jScrollPane.setMaximumSize(new Dimension(x, scrolly));
 		jScrollPane.setMinimumSize(new Dimension(x, scrolly));
@@ -249,12 +243,10 @@ public class GraphView {
 				{
 					graph.setNodeVisualisation(true);
 					// checkbox selected
-					//System.out.println("Test");
 				}
 				else
 				{
 					// checkbox not selected
-				//	System.out.println("Test2");
 					graph.setNodeVisualisation(false);
 				}
 				
@@ -349,6 +341,21 @@ public class GraphView {
 		c.gridy = (i++);
 		information.add(Box.createVerticalStrut(betweenComps),c);
 		
+		attributeFilter = new JButton("Filter by Attribute");
+		attributeFilter.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				AttributeFilterPopup filter = new AttributeFilterPopup();
+				filter.showPopup(graph.getGraph());
+				graph.applyAttributeFilter();
+			}
+		});
+		c.gridy = (i++);
+		information.add(attributeFilter,c);
+		c.gridy = (i++);
+		information.add(Box.createVerticalStrut(betweenComps),c);
+		
 		
 		
 		
@@ -381,8 +388,6 @@ public class GraphView {
 			this.nodetype.setText(nodeType.getName());
 		if(attributes==null)
 		{
-			//String[][] s = new String[][]{};
-			
 			for (int i = 0; i<nodeAttributesModel.getRowCount();i++)
 			{
 				nodeAttributesModel.removeRow(i);
@@ -397,8 +402,6 @@ public class GraphView {
 			}
 			nodeAttributesModel.setRowCount(0);
 			
-			//System.out.println(nodeName+"     "+nodeAttributesModel.getRowCount());
-			
 			for (LinkedList<String> currentAttr: attributes)
 			{
 				String name = currentAttr.get(0);
@@ -407,15 +410,6 @@ public class GraphView {
 				String type = currentAttr.get(3);
 				nodeAttributesModel.addRow(new String[]{name,value,unit,type});
 			}
-			/*String[] s = new String[attributes.size()];
-			
-			int counter=0;
-			for (String a : attributes)
-			{
-				s[counter]=a;
-				counter++;
-			}
-			this.nodeattributes.setListData(s);*/
 		}
 		
 		if (graph.isCollapsable())
