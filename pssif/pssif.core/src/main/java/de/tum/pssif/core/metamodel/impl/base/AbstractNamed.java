@@ -1,14 +1,13 @@
-package de.tum.pssif.core.metamodel.impl;
+package de.tum.pssif.core.metamodel.impl.base;
 
 import de.tum.pssif.core.metamodel.Named;
 import de.tum.pssif.core.util.PSSIFUtil;
 
 
-public abstract class NamedImpl implements Named {
-
+public abstract class AbstractNamed implements Named {
   private final String name;
 
-  public NamedImpl(String name) {
+  public AbstractNamed(String name) {
     this.name = name;
   }
 
@@ -32,5 +31,4 @@ public abstract class NamedImpl implements Named {
 
   @Override
   public abstract Class<?> getMetaType();
-
 }

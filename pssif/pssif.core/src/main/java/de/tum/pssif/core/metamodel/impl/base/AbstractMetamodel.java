@@ -1,4 +1,4 @@
-package de.tum.pssif.core.metamodel.impl;
+package de.tum.pssif.core.metamodel.impl.base;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -22,27 +22,27 @@ public abstract class AbstractMetamodel<N extends NodeType, E extends EdgeType> 
   private Map<String, E>           edgetypes    = Maps.newHashMap();
   private Map<String, Enumeration> enumerations = Maps.newHashMap();
 
-  protected void addNodeType(N type) {
+  protected final void addNodeTypeInternal(N type) {
     nodetypes.put(PSSIFUtil.normalize(type.getName()), type);
   }
 
-  protected void removeNodeType(N type) {
+  protected final void removeNodeTypeInternal(N type) {
     nodetypes.remove(PSSIFUtil.normalize(type.getName()));
   }
 
-  protected void addEdgeType(E type) {
+  protected final void addEdgeTypeInternal(E type) {
     edgetypes.put(PSSIFUtil.normalize(type.getName()), type);
   }
 
-  protected void removeEdgeType(E type) {
+  protected final void removeEdgeTypeInternal(E type) {
     edgetypes.remove(PSSIFUtil.normalize(type.getName()));
   }
 
-  protected void addEnumeration(Enumeration enumeration) {
+  protected final void addEnumerationInternal(Enumeration enumeration) {
     enumerations.put(PSSIFUtil.normalize(enumeration.getName()), enumeration);
   }
 
-  protected void removeEnumeration(Enumeration enumeration) {
+  protected final void removeEnumerationInternal(Enumeration enumeration) {
     enumerations.remove(PSSIFUtil.normalize(enumeration.getName()));
   }
 
@@ -57,27 +57,27 @@ public abstract class AbstractMetamodel<N extends NodeType, E extends EdgeType> 
   }
 
   @Override
-  public Collection<NodeType> getNodeTypes() {
+  public final Collection<NodeType> getNodeTypes() {
     return Collections.<NodeType> unmodifiableCollection(nodetypes.values());
   }
 
   @Override
-  public Collection<EdgeType> getEdgeTypes() {
+  public final Collection<EdgeType> getEdgeTypes() {
     return Collections.<EdgeType> unmodifiableCollection(edgetypes.values());
   }
 
   @Override
-  public Collection<Enumeration> getEnumerations() {
+  public final Collection<Enumeration> getEnumerations() {
     return Collections.unmodifiableCollection(enumerations.values());
   }
 
   @Override
-  public Enumeration findEnumeration(String name) {
+  public final Enumeration findEnumeration(String name) {
     return PSSIFUtil.find(name, enumerations.values());
   }
 
   @Override
-  public DataType findDataType(String name) {
+  public final DataType findDataType(String name) {
     String normalized = PSSIFUtil.normalize(name);
     DataType dt = PSSIFUtil.find(normalized, enumerations.values());
     if (dt != null) {
@@ -89,7 +89,7 @@ public abstract class AbstractMetamodel<N extends NodeType, E extends EdgeType> 
   }
 
   @Override
-  public Collection<DataType> getDataTypes() {
+  public final Collection<DataType> getDataTypes() {
     Set<DataType> result = Sets.newHashSet();
 
     result.addAll(enumerations.values());
@@ -99,12 +99,12 @@ public abstract class AbstractMetamodel<N extends NodeType, E extends EdgeType> 
   }
 
   @Override
-  public Collection<PrimitiveDataType> getPrimitiveTypes() {
+  public final Collection<PrimitiveDataType> getPrimitiveTypes() {
     return Collections.unmodifiableCollection(PrimitiveDataType.TYPES);
   }
 
   @Override
-  public PrimitiveDataType findPrimitiveType(String name) {
+  public final PrimitiveDataType findPrimitiveType(String name) {
     return PSSIFUtil.find(name, PrimitiveDataType.TYPES);
   }
 }
