@@ -1,4 +1,4 @@
-package de.tum.pssif.core.metamodel.impl.base;
+package de.tum.pssif.core.metamodel.impl;
 
 import de.tum.pssif.core.metamodel.ConnectionMapping;
 import de.tum.pssif.core.model.Edge;

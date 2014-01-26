@@ -6,6 +6,7 @@ import de.tum.pssif.core.metamodel.impl.base.AbstractConnectionMapping;
 import de.tum.pssif.core.model.Edge;
 import de.tum.pssif.core.model.Model;
 import de.tum.pssif.core.model.Node;
+import de.tum.pssif.core.util.PSSIFOption;
 
 
 public class ViewedConnectionMapping extends AbstractConnectionMapping {
@@ -39,5 +40,10 @@ public class ViewedConnectionMapping extends AbstractConnectionMapping {
   @Override
   public void disconnectTo(Edge edge, Node node) {
     baseMapping.disconnectTo(edge, node);
+  }
+
+  @Override
+  public PSSIFOption<Edge> apply(Model model) {
+    return baseMapping.apply(model);
   }
 }

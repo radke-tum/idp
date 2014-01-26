@@ -2,8 +2,8 @@ package de.tum.pssif.core.model;
 
 import de.tum.pssif.core.metamodel.impl.CreateEdgeOperation;
 import de.tum.pssif.core.metamodel.impl.CreateNodeOperation;
+import de.tum.pssif.core.metamodel.impl.ReadEdgesOperation;
 import de.tum.pssif.core.metamodel.impl.ReadNodesOperation;
-import de.tum.pssif.core.metamodel.impl.base.ReadEdgesOperation;
 import de.tum.pssif.core.util.PSSIFOption;
 
 

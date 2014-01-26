@@ -6,6 +6,7 @@ import de.tum.pssif.core.metamodel.impl.base.AbstractConnectionMapping;
 import de.tum.pssif.core.model.Edge;
 import de.tum.pssif.core.model.Model;
 import de.tum.pssif.core.model.Node;
+import de.tum.pssif.core.util.PSSIFOption;
 
 
 public class ConnectionMappingImpl extends AbstractConnectionMapping {
@@ -52,5 +53,10 @@ public class ConnectionMappingImpl extends AbstractConnectionMapping {
       throw new PSSIFStructuralIntegrityException("multiplicity constraint violation");
     }
     new DisconnectOperation(edge, to, node).apply();
+  }
+
+  @Override
+  public PSSIFOption<Edge> apply(Model model) {
+    return model.apply(new ReadEdgesOperation(this));
   }
 }
