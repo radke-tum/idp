@@ -75,7 +75,7 @@ public class MyNode2{
 			else
 				res = attrName+" = "+attrValue+" in "+attrUnit+ " : "+((PrimitiveDataType)current.getType()).getName();
 			
-			if (current.get(node)!=null)
+			if (current.get(node)!=null && attrValue.length()>0)
 				attributes.add(res);
 		}
 		

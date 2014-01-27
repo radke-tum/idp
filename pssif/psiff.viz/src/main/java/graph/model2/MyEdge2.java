@@ -8,6 +8,7 @@ import java.util.List;
 
 import de.tum.pssif.core.metamodel.Attribute;
 import de.tum.pssif.core.model.Edge;
+import de.tum.pssif.core.util.PSSIFValue;
 
 public class MyEdge2 {
 	private MyEdgeType type;
@@ -39,12 +40,20 @@ public class MyEdge2 {
 		for (Attribute current : attr)
 		{
 			String attrName = current.getName();
-			String attrValue = String.valueOf(current.get(edge));
+			PSSIFValue value=null;
+			
+			if (current.get(edge)!=null && current.get(edge).isOne())
+				value = current.get(edge).getOne();
+			
+			String attrValue="";
+			if (value !=null)
+				attrValue = String.valueOf(value.getValue());
+			
 			String attrUnit = current.getUnit().getName();
 			
 			String tmp = attrName+" = "+attrValue+" : "+attrUnit;
 			
-			if (current.get(edge)!=null)
+			if (current.get(edge)!=null && attrValue.length()>0)
 				res.add(tmp);
 		}
 		
