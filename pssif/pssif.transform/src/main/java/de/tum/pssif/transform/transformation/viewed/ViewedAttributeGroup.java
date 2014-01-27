@@ -10,7 +10,7 @@ public class ViewedAttributeGroup extends AbstractAttributeGroup {
   public ViewedAttributeGroup(AttributeGroup baseGroup, String name, AbstractElementType<?, ?> owner) {
     super(name, owner);
 
-    for (Attribute a : baseGroup.getAttributes()) {
+    for (Attribute a : baseGroup.getDirectAttributes()) {
       addAttribute(new ViewedAttribute(a, a.getName(), a.getType(), a.getUnit(), a.isVisible(), a.getCategory()));
     }
   }

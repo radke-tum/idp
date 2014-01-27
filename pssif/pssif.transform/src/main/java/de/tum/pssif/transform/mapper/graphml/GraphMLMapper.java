@@ -138,7 +138,8 @@ public class GraphMLMapper implements Mapper {
     Map<String, GraphMlAttribute> attributes = Maps.newHashMap();
     for (NodeType nodeType : metamodel.getNodeTypes()) {
       for (Attribute attribute : nodeType.getAttributes()) {
-        if (!attributes.containsKey(PSSIFUtil.normalize(attribute.getName()))) {
+        if (!attributes.containsKey(PSSIFUtil.normalize(attribute.getName()))
+            && !PSSIFUtil.areSame(attribute.getName(), PSSIFConstants.BUILTIN_ATTRIBUTE_ID)) {
           attributes.put(PSSIFUtil.normalize(attribute.getName()), new GraphMlAttrImpl(attribute.getName(), attribute.getType().getName()));
         }
       }
@@ -147,7 +148,9 @@ public class GraphMLMapper implements Mapper {
     attributes = Maps.newHashMap();
     for (EdgeType edgeType : metamodel.getEdgeTypes()) {
       for (Attribute attribute : edgeType.getAttributes()) {
-        if (!attributes.containsKey(PSSIFUtil.normalize(attribute.getName()))) {
+        if (!attributes.containsKey(PSSIFUtil.normalize(attribute.getName()))
+            && !PSSIFUtil.areSame(attribute.getName(), PSSIFConstants.BUILTIN_ATTRIBUTE_DIRECTED)
+            && !PSSIFUtil.areSame(attribute.getName(), PSSIFConstants.BUILTIN_ATTRIBUTE_ID)) {
           attributes.put(PSSIFUtil.normalize(attribute.getName()), new GraphMlAttrImpl(attribute.getName(), attribute.getType().getName()));
         }
       }

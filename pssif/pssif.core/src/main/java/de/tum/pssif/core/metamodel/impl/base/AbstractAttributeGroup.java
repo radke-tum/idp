@@ -26,6 +26,10 @@ public abstract class AbstractAttributeGroup extends AbstractNamed implements At
     this.attributes.put(PSSIFUtil.normalize(attribute.getName()), attribute);
   }
 
+  protected final void removeAttribute(Attribute attribute) {
+    attributes.remove(PSSIFUtil.normalize(attribute.getName()));
+  }
+
   @Override
   public final Attribute findAttribute(String name) {
     Attribute result = PSSIFUtil.find(name, this.attributes.values());
@@ -48,6 +52,11 @@ public abstract class AbstractAttributeGroup extends AbstractNamed implements At
     }
     return Collections.unmodifiableCollection(result);
 
+  }
+
+  @Override
+  public final Collection<Attribute> getDirectAttributes() {
+    return Collections.unmodifiableCollection(attributes.values());
   }
 
   @Override

@@ -50,4 +50,6 @@ public interface AttributableWrite {
    *    The newly created Attribute Type.
    */
   Attribute createAttribute(AttributeGroup group, String name, DataType dataType, Unit unit, boolean visible, AttributeCategory category);
+
+  void removeAttribute(Attribute attribute);
 }
