@@ -147,7 +147,7 @@ public final class PSSIFCanonicMetamodelCreator {
     block.createAttribute(block.getDefaultAttributeGroup(), A_BLOCK_COST, PrimitiveDataType.DECIMAL, true, AttributeCategory.MONETARY);
 
     NodeType function = metamodel.createNodeType(N_FUNCTION);
-    function.inherit(block);
+    function.inherit(solutionArtifact);
 
     NodeType activity = metamodel.createNodeType(N_ACTIVITY);
     activity.inherit(function);
@@ -305,19 +305,19 @@ public final class PSSIFCanonicMetamodelCreator {
     flow.createMapping("from", node(N_SOL_ARTIFACT, metamodel), defaultNoneToManyMultiplicity(), "to", node(N_SOL_ARTIFACT, metamodel),
         defaultNoneToManyMultiplicity());
 
-    NodeType block = node(N_BLOCK, metamodel);
+    NodeType solutionArtifact = node(N_SOL_ARTIFACT, metamodel);
 
     EdgeType energyFlow = metamodel.createEdgeType(E_FLOW_ENERGY);
     energyFlow.inherit(flow);
-    energyFlow.createMapping("from", block, defaultNoneToManyMultiplicity(), "to", block, defaultNoneToManyMultiplicity());
+    energyFlow.createMapping("from", solutionArtifact, defaultNoneToManyMultiplicity(), "to", solutionArtifact, defaultNoneToManyMultiplicity());
 
     EdgeType materialFlow = metamodel.createEdgeType(E_FLOW_MATERIAL);
     materialFlow.inherit(flow);
-    materialFlow.createMapping("from", block, defaultNoneToManyMultiplicity(), "to", block, defaultNoneToManyMultiplicity());
+    materialFlow.createMapping("from", solutionArtifact, defaultNoneToManyMultiplicity(), "to", solutionArtifact, defaultNoneToManyMultiplicity());
 
     EdgeType informationFlow = metamodel.createEdgeType(E_FLOW_INFORMATION);
     informationFlow.inherit(flow);
-    informationFlow.createMapping("from", block, defaultNoneToManyMultiplicity(), "to", block, defaultNoneToManyMultiplicity());
+    informationFlow.createMapping("from", solutionArtifact, defaultNoneToManyMultiplicity(), "to", solutionArtifact, defaultNoneToManyMultiplicity());
 
     EdgeType controlFlow = metamodel.createEdgeType(E_FLOW_CONTROL);
     controlFlow.inherit(flow);
