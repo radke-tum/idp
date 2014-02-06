@@ -43,4 +43,8 @@ public final class Edge extends AElement {
     return getId().equals(((Edge) obj).getId());
   }
 
+  public String toString() {
+    //TODO attrs
+    return "Edge(id=" + getId() + "|type=" + getType() + "|from=" + getSource().getId() + "|to=" + getTarget().getId() + ")";
+  }
 }

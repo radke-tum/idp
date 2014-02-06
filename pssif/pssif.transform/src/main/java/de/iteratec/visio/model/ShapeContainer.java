@@ -76,4 +76,6 @@ public interface ShapeContainer extends DOMElementWrapper {
    *                               has a bounding box.
    */
   Rectangle2D getBoundingBox() throws IllegalStateException;
+
+  List<? extends Shape> getInnerShapes();
 }

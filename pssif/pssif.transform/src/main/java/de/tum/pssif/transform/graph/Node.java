@@ -15,7 +15,7 @@ public final class Node extends AElement {
     super(id);
   }
 
-  void addInnerNode(Node inner) {
+  public void addInnerNode(Node inner) {
     this.innerNodes.add(inner);
   }
 
@@ -53,6 +53,11 @@ public final class Node extends AElement {
       return false;
     }
     return getId().equals(((Node) obj).getId());
+  }
+
+  public String toString() {
+    //TODO attrs and inners
+    return "Node(id=" + getId() + "|type=" + getType() + ")";
   }
 
 }

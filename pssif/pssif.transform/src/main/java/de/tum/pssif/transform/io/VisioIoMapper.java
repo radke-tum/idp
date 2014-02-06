@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -13,33 +14,56 @@ import com.google.common.collect.Maps;
 
 import de.iteratec.visio.model.Document;
 import de.iteratec.visio.model.DocumentLoader;
-import de.iteratec.visio.model.Master;
 import de.iteratec.visio.model.Page;
 import de.iteratec.visio.model.Shape;
 import de.iteratec.visio.model.ShapeContainer;
 import de.iteratec.visio.model.exceptions.MasterNotFoundException;
 import de.iteratec.visio.model.exceptions.NoSuchElementException;
+import de.tum.pssif.core.PSSIFConstants;
 import de.tum.pssif.transform.IoMapper;
 import de.tum.pssif.transform.graph.Edge;
 import de.tum.pssif.transform.graph.Graph;
 import de.tum.pssif.transform.graph.Node;
 
 
+/**
+ * TODOs
+ *  - fetching of inner shapes, in case we need it...
+ * @author kgo
+ *
+ */
 public class VisioIoMapper implements IoMapper {
 
-  private final String templateFile;
+  private static final String     PSSIF_PREFIX                  = "pssif";
+
+  private static final String     PSSIF_CONNECTOR_MASTER        = PSSIF_PREFIX + ".connector";
+  private static final String     PSSIF_CONNECTOR_TYPE_PROPERTY = PSSIF_PREFIX + ".connector.type";
+  private static final String     PSSIF_ID_PROPERTY             = PSSIF_PREFIX + ".id";
+
+  private final String            templateFile;
+
+  private final Map<Shape, Node>  shapeToNode                   = Maps.newHashMap();
+  private final Map<Shape, Shape> shapeToParent                 = Maps.newHashMap();
 
   public VisioIoMapper(String templateFile) {
     this.templateFile = templateFile;
+  }
+
+  public VisioIoMapper() {
+    this.templateFile = "";
   }
 
   @Override
   public Graph read(InputStream in) {
     Document document = loadDocument(in);
     Graph graph = new Graph();
-    Map<Shape, Node> nodes = readNodes(graph, document);
-    readEdges(graph, document, nodes);
+    try {
+      readNodes(graph, document.getPage(0));
+      readEdges(graph, document);
 
+    } catch (NoSuchElementException e) {
+      throw new PSSIFIoException("No page found in Visio document.");
+    }
     return graph;
   }
 
@@ -68,16 +92,46 @@ public class VisioIoMapper implements IoMapper {
     }
   }
 
-  private Map<Shape, Node> readNodes(Graph graph, Document document) {
-    for (Master master : document.getMasters()) {
-      //      master.getName();
-      //      document.getShapes(master)
+  private void readNodes(Graph graph, ShapeContainer shapeContainer) {
+
+    for (Shape shape : shapeContainer.getShapes()) {
+      String masterName = null;
+      try {
+        masterName = shape.getMaster().getName();
+      } catch (MasterNotFoundException e) {
+        //ignore, considered to be a Node
+        masterName = PSSIFConstants.ROOT_NODE_TYPE_NAME;
+      }
+
+      //TODO any way to recognize connectors?...
+      //connects: each connect has shapeIds as from part and to-part
+      //-> some of the nodes become edges...
+      // type is provided by the master
+
+      String pssifId = null;
+      Object oId = shape.getCustomProperties().get(PSSIF_ID_PROPERTY);
+      if (oId == null) {
+        pssifId = shape.getID().toString();
+      }
+      Node node = graph.createNode(pssifId);
+      node.setType(masterName);
+      for (Entry<String, Object> entry : shape.getCustomProperties().entrySet()) {
+        if (entry.getValue() != null) {
+          node.setAttribute(entry.getKey(), entry.getValue().toString());
+        }
+      }
+
+      shapeToNode.put(shape, node);
+
+      for (Shape innerShape : shape.getInnerShapes()) {
+        shapeToParent.put(innerShape, shape);
+        readNodes(graph, innerShape);
+      }
     }
-    //TODO
-    return null;
+
   }
 
-  private void readEdges(Graph graph, Document document, Map<Shape, Node> nodes) {
+  private void readEdges(Graph graph, Document document) {
     //TODO
   }
 
