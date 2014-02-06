@@ -7,11 +7,16 @@ import com.google.common.collect.Sets;
 
 public final class Node extends AElement {
 
-  private final Set<Edge> incoming = Sets.newHashSet();
-  private final Set<Edge> outgoing = Sets.newHashSet();
+  private final Set<Node> innerNodes = Sets.newHashSet();
+  private final Set<Edge> incoming   = Sets.newHashSet();
+  private final Set<Edge> outgoing   = Sets.newHashSet();
 
   Node(String id) {
     super(id);
+  }
+
+  void addInnerNode(Node inner) {
+    this.innerNodes.add(inner);
   }
 
   void addIncoming(Edge edge) {
@@ -36,6 +41,10 @@ public final class Node extends AElement {
 
   public Set<Edge> getOutgoing() {
     return Sets.newHashSet(outgoing);
+  }
+
+  public Set<Node> getInnerNodes() {
+    return Sets.newHashSet(innerNodes);
   }
 
   @Override
