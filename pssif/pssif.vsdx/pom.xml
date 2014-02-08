@@ -6,4 +6,18 @@
     <version>0.0.1-SNAPSHOT</version>
   </parent>
   <artifactId>pssif.vsdx</artifactId>
+  <dependencies>
+		<dependency>
+	  		<groupId>com.google.guava</groupId>
+	  		<artifactId>guava</artifactId>
+	  	</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-compress</artifactId>
+		</dependency>
+	</dependencies>
 </project>
