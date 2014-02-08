@@ -5,12 +5,14 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.xml.sax.SAXException;
 
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 import de.iteratec.visio.model.Document;
 import de.iteratec.visio.model.DocumentLoader;
@@ -41,16 +43,19 @@ public class VisioIoMapper implements IoMapper {
   private static final String     PSSIF_ID_PROPERTY             = PSSIF_PREFIX + ".id";
 
   private final String            templateFile;
+  private final Set<String>       nodeMasters;
 
   private final Map<Shape, Node>  shapeToNode                   = Maps.newHashMap();
   private final Map<Shape, Shape> shapeToParent                 = Maps.newHashMap();
 
   public VisioIoMapper(String templateFile) {
     this.templateFile = templateFile;
+    this.nodeMasters = Sets.newHashSet();
   }
 
-  public VisioIoMapper() {
+  public VisioIoMapper(Set<String> nodeMasters) {
     this.templateFile = "";
+    this.nodeMasters = Sets.newHashSet(nodeMasters);
   }
 
   @Override
@@ -103,6 +108,10 @@ public class VisioIoMapper implements IoMapper {
         masterName = PSSIFConstants.ROOT_NODE_TYPE_NAME;
       }
 
+      if (!masterName.equals(PSSIFConstants.ROOT_NODE_TYPE_NAME) && !nodeMasters.contains(masterName)) {
+        continue;
+      }
+
       //TODO any way to recognize connectors?...
       //connects: each connect has shapeIds as from part and to-part
       //-> some of the nodes become edges...
@@ -115,6 +124,7 @@ public class VisioIoMapper implements IoMapper {
       }
       Node node = graph.createNode(pssifId);
       node.setType(masterName);
+      node.setAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_NAME, shape.getShapeText().getText());
       for (Entry<String, Object> entry : shape.getCustomProperties().entrySet()) {
         if (entry.getValue() != null) {
           node.setAttribute(entry.getKey(), entry.getValue().toString());
