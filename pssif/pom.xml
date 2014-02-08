@@ -7,6 +7,7 @@
 	<packaging>pom</packaging>
 	<modules>
 		<module>pssif.core</module>
+		<module>pssif.vsdx</module>
 		<module>pssif.transform</module>
 		<module>psiff.viz</module>
 	</modules>
