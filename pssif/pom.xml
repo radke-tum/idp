@@ -9,6 +9,7 @@
 		<module>pssif.core</module>
 		<module>pssif.transform</module>
 		<module>psiff.viz</module>
+		<module>pssif.vsdx</module>
 	</modules>
 
 	<properties>
