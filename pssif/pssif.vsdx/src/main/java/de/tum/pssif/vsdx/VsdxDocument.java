@@ -1,21 +1,20 @@
 package de.tum.pssif.vsdx;
 
-import java.io.OutputStream;
-import java.util.List;
+import java.util.Set;
 
 
 public interface VsdxDocument {
 
-  List<VsdxPage> getPages();
+  Set<VsdxMaster> getMasters();
 
-  List<VsdxMaster> getMasters();
-
-  VsdxPage getPage(int index);
+  VsdxPage getPage();
 
   VsdxMaster getMaster(int id);
 
   VsdxMaster getMaster(String name);
 
-  void wite(OutputStream outputStream);
+  boolean hasMaster(String name);
+
+  boolean hasMaster(int id);
 
 }

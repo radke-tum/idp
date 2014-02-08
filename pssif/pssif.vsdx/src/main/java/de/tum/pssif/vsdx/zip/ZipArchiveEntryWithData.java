@@ -21,4 +21,8 @@ public class ZipArchiveEntryWithData {
     return data;
   }
 
+  public String getName() {
+    return zipEntry.getName();
+  }
+
 }
