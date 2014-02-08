@@ -43,11 +43,6 @@ public class ViewedNodeType extends AbstractNodeType {
     return baseType.apply(model);
   }
 
-  @Override
-  public PSSIFOption<Node> apply(Model model, String id) {
-    return baseType.apply(model, id);
-  }
-
   public Collection<ViewedEdgeType> getIncomingsInternal() {
     Collection<ViewedEdgeType> result = Sets.newHashSet();
 
@@ -73,6 +68,10 @@ public class ViewedNodeType extends AbstractNodeType {
       result.add((ViewedEdgeType) et);
     }
     return result;
+  }
+
+  public void add(AttributeGroup ag, Attribute a) {
+    addAttribute(ag, a);
   }
 
   @Override

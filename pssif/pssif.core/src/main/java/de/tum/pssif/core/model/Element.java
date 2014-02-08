@@ -17,4 +17,6 @@ public interface Element {
 
   PSSIFOption<PSSIFValue> apply(GetValueOperation op);
 
+  Model getModel();
+
 }

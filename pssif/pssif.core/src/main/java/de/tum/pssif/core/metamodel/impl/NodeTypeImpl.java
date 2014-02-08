@@ -38,16 +38,6 @@ public class NodeTypeImpl extends AbstractNodeType {
   }
 
   @Override
-  public PSSIFOption<Node> apply(Model model, String id) {
-    for (Node candidate : apply(model).getMany()) {
-      if (id.equals(candidate.getId())) {
-        return PSSIFOption.one(candidate);
-      }
-    }
-    return PSSIFOption.none();
-  }
-
-  @Override
   public Attribute createAttribute(AttributeGroup group, String name, DataType type, Unit unit, boolean visible, AttributeCategory category) {
     if (name == null || name.trim().isEmpty()) {
       throw new PSSIFStructuralIntegrityException("name can not be null or empty");

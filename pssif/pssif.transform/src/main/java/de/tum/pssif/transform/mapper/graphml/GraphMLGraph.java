@@ -124,7 +124,7 @@ public class GraphMLGraph {
       current = new GraphMlNodeImpl(reader.getAttributeValue(null, GraphMLTokens.ID));
     }
     else if (GraphMLTokens.EDGE.equals(elementName)) {
-      boolean directed = edgeDefaultDirected.booleanValue() && Boolean.valueOf(reader.getAttributeValue(null, GraphMLTokens.DIRECTED)).booleanValue();
+      boolean directed = edgeDefaultDirected.booleanValue() || Boolean.valueOf(reader.getAttributeValue(null, GraphMLTokens.DIRECTED)).booleanValue();
       current = new GraphMlEdgeImpl(reader.getAttributeValue(null, GraphMLTokens.ID), reader.getAttributeValue(null, GraphMLTokens.SOURCE),
           reader.getAttributeValue(null, GraphMLTokens.TARGET), directed);
     }

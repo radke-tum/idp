@@ -13,13 +13,19 @@ import de.tum.pssif.core.metamodel.impl.EdgeEndImpl;
 import de.tum.pssif.core.metamodel.impl.GetValueOperation;
 import de.tum.pssif.core.metamodel.impl.SetValueOperation;
 import de.tum.pssif.core.model.Element;
+import de.tum.pssif.core.model.Model;
 import de.tum.pssif.core.util.PSSIFOption;
 import de.tum.pssif.core.util.PSSIFUtil;
 import de.tum.pssif.core.util.PSSIFValue;
 
 
 abstract class ElementImpl implements Element {
+  private final Model                          model;
   private Map<String, PSSIFOption<PSSIFValue>> values = Maps.newHashMap();
+
+  public ElementImpl(Model model) {
+    this.model = model;
+  }
 
   @Override
   public String getId() {
@@ -47,5 +53,10 @@ abstract class ElementImpl implements Element {
     }
 
     return result;
+  }
+
+  @Override
+  public Model getModel() {
+    return model;
   }
 }

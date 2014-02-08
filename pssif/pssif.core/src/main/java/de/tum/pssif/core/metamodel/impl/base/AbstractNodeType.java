@@ -8,7 +8,9 @@ import com.google.common.collect.Sets;
 
 import de.tum.pssif.core.metamodel.EdgeType;
 import de.tum.pssif.core.metamodel.NodeType;
+import de.tum.pssif.core.model.Model;
 import de.tum.pssif.core.model.Node;
+import de.tum.pssif.core.util.PSSIFOption;
 import de.tum.pssif.core.util.PSSIFUtil;
 
 
@@ -19,6 +21,16 @@ public abstract class AbstractNodeType extends AbstractElementType<NodeType, Nod
 
   public AbstractNodeType(String name) {
     super(name);
+  }
+
+  @Override
+  public final PSSIFOption<Node> apply(Model model, String id) {
+    for (Node candidate : apply(model).getMany()) {
+      if (id.equals(candidate.getId())) {
+        return PSSIFOption.one(candidate);
+      }
+    }
+    return PSSIFOption.none();
   }
 
   @Override

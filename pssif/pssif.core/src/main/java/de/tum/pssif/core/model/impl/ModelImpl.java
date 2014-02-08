@@ -22,14 +22,14 @@ public class ModelImpl implements Model {
 
   @Override
   public Node apply(CreateNodeOperation op) {
-    Node result = new NodeImpl();
+    Node result = new NodeImpl(this);
     nodes.put(op.getType(), result);
     return result;
   }
 
   @Override
   public Edge apply(CreateEdgeOperation op) {
-    Edge result = new EdgeImpl();
+    Edge result = new EdgeImpl(this);
     op.getMapping().connectFrom(result, op.getFrom());
     op.getMapping().connectTo(result, op.getTo());
     edges.put(op.getMapping(), result);

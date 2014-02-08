@@ -8,12 +8,17 @@ import de.tum.pssif.core.metamodel.impl.ConnectOperation;
 import de.tum.pssif.core.metamodel.impl.DisconnectOperation;
 import de.tum.pssif.core.metamodel.impl.ReadConnectedOperation;
 import de.tum.pssif.core.model.Edge;
+import de.tum.pssif.core.model.Model;
 import de.tum.pssif.core.model.Node;
 import de.tum.pssif.core.util.PSSIFOption;
 
 
 public class NodeImpl extends ElementImpl implements Node {
   private final Multimap<EdgeEnd, Edge> edges = HashMultimap.create();
+
+  public NodeImpl(Model model) {
+    super(model);
+  }
 
   @Override
   public void apply(ConnectOperation op) {
