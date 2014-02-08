@@ -49,7 +49,8 @@ public class View extends AbstractMetamodel<ViewedNodeType, ViewedEdgeType> {
   }
 
   public Metamodel transform(AbstractTransformation transformation) {
-    return transformation.apply(this);
+    transformation.apply(this);
+    return this;
   }
 
   protected void addNodeType(ViewedNodeType type) {

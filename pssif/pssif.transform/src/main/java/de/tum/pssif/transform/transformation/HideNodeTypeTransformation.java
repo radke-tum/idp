@@ -6,7 +6,6 @@ import com.google.common.collect.Sets;
 
 import de.tum.pssif.core.metamodel.ConnectionMapping;
 import de.tum.pssif.core.metamodel.EdgeEnd;
-import de.tum.pssif.core.metamodel.Metamodel;
 import de.tum.pssif.core.metamodel.NodeType;
 import de.tum.pssif.transform.transformation.viewed.ViewedEdgeType;
 import de.tum.pssif.transform.transformation.viewed.ViewedNodeType;
@@ -18,11 +17,10 @@ public class HideNodeTypeTransformation extends HideTypeTransformation<NodeType>
   }
 
   @Override
-  public Metamodel apply(View view) {
+  public void apply(View view) {
     if (getType() != null) {
       removeType(view, getType());
     }
-    return view;
   }
 
   private void removeType(View view, NodeType type) {

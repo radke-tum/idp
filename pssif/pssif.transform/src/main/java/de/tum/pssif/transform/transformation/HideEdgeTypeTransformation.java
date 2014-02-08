@@ -1,7 +1,6 @@
 package de.tum.pssif.transform.transformation;
 
 import de.tum.pssif.core.metamodel.EdgeType;
-import de.tum.pssif.core.metamodel.Metamodel;
 
 
 public class HideEdgeTypeTransformation extends HideTypeTransformation<EdgeType> {
@@ -10,11 +9,10 @@ public class HideEdgeTypeTransformation extends HideTypeTransformation<EdgeType>
   }
 
   @Override
-  public Metamodel apply(View view) {
+  public void apply(View view) {
     if (getType() != null) {
       removeType(view, getType());
     }
-    return view;
   }
 
   private void removeType(View view, EdgeType type) {

@@ -4,7 +4,6 @@ import de.tum.pssif.core.PSSIFConstants;
 import de.tum.pssif.core.metamodel.AttributeGroup;
 import de.tum.pssif.core.metamodel.ConnectionMapping;
 import de.tum.pssif.core.metamodel.EdgeType;
-import de.tum.pssif.core.metamodel.Metamodel;
 import de.tum.pssif.core.metamodel.NodeType;
 import de.tum.pssif.transform.transformation.nodified.NodifiedAttribute;
 import de.tum.pssif.transform.transformation.nodified.NodifiedNodeType;
@@ -27,7 +26,7 @@ public class NodifyTransformation extends AbstractTransformation {
   }
 
   @Override
-  public Metamodel apply(View view) {
+  public void apply(View view) {
     ViewedNodeType actualSourceType = view.findNodeType(sourceType.getName());
     ViewedNodeType actualTargetType = view.findNodeType(targetType.getName());
     ViewedEdgeType actualEdgeType = view.findEdgeType(edgeType.getName());
@@ -42,9 +41,5 @@ public class NodifyTransformation extends AbstractTransformation {
 
     view.removeNodeType(actualTargetType);
     view.addNodeType(new NodifiedNodeType(actualTargetType, mapping, attribute));
-
-    //TODO transform targettype to not deliver artificial nodes
-
-    return view;
   }
 }

@@ -9,5 +9,5 @@ public abstract class AbstractTransformation implements Transformation {
     return new View(input).transform(this);
   }
 
-  public abstract Metamodel apply(View view);
+  public abstract void apply(View view);
 }
