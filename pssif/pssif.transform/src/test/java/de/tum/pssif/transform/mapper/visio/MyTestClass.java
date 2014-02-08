@@ -1,18 +1,30 @@
 package de.tum.pssif.transform.mapper.visio;
 
+import java.util.Set;
+
 import org.junit.Test;
 
+import com.google.common.collect.Sets;
+
+import de.tum.pssif.core.PSSIFConstants;
 import de.tum.pssif.transform.graph.Graph;
+import de.tum.pssif.transform.graph.Node;
 import de.tum.pssif.transform.io.VisioIoMapper;
 
 
 public class MyTestClass {
 
+  public static final Set<String> EPK_NODE_MASTERS = Sets.newHashSet("Event", "Function", "Organizational Unit", "Process path", "XOR", "OR", "AND",
+                                                       "Information/ Material", "Main process", "Component", "Enterprise area", "Process group");
+
   @Test
   public void testReadToGraph() {
-    VisioIoMapper mapper = new VisioIoMapper();
+    VisioIoMapper mapper = new VisioIoMapper(EPK_NODE_MASTERS);
     Graph graph = mapper.read(getClass().getResourceAsStream("/visio/EPK-1.vdx"));
     System.out.println(graph);
+    for (Node node : graph.getNodes()) {
+      System.out.println("nodeId: " + node.getId() + "|name : " + node.getAttributeValue(PSSIFConstants.BUILTIN_ATTRIBUTE_NAME));
+    }
   }
 
   //  @Test
