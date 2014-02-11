@@ -46,4 +46,8 @@ public class ViewedConnectionMapping extends AbstractConnectionMapping {
   public PSSIFOption<Edge> apply(Model model) {
     return baseMapping.apply(model);
   }
+
+  protected ConnectionMapping getBaseMapping() {
+    return baseMapping;
+  }
 }

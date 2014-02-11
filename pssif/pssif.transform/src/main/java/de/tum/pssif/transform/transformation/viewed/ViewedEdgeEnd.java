@@ -28,4 +28,7 @@ public class ViewedEdgeEnd extends AbstractEdgeEnd {
     return baseEnd.apply(edge);
   }
 
+  protected EdgeEnd getBaseEnd() {
+    return baseEnd;
+  }
 }

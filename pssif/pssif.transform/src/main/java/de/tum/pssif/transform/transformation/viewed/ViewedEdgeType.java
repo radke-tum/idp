@@ -45,8 +45,14 @@ public class ViewedEdgeType extends AbstractEdgeType {
   @Override
   public ConnectionMapping createMapping(String inName, NodeType in, Multiplicity inMultiplicity, String outName, NodeType out,
                                          Multiplicity outMultiplicity) {
-    //FIXME separate mutable edgetype interface from interface edgetype
-    return null;
+    ConnectionMapping baseMapping = getMapping(in, out);
+
+    EdgeEnd from = new ViewedEdgeEnd(baseMapping.getFrom(), inName, this, inMultiplicity, in);
+    EdgeEnd to = new ViewedEdgeEnd(baseMapping.getTo(), outName, this, outMultiplicity, out);
+    ConnectionMapping result = new ViewedConnectionMapping(baseMapping, from, to);
+    addMappingInternal(result);
+
+    return result;
   }
 
   @Override

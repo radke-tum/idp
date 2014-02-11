@@ -1,14 +1,19 @@
 package de.tum.pssif.transform.mapper.graphml;
 
 import de.tum.pssif.core.PSSIFConstants;
+import de.tum.pssif.core.metamodel.ConnectionMapping;
 import de.tum.pssif.core.metamodel.EdgeType;
 import de.tum.pssif.core.metamodel.Metamodel;
+import de.tum.pssif.core.metamodel.Multiplicity.MultiplicityContainer;
+import de.tum.pssif.core.metamodel.Multiplicity.UnlimitedNatural;
 import de.tum.pssif.core.metamodel.NodeType;
 import de.tum.pssif.transform.transformation.HideEdgeTypeAttributeTransformation;
+import de.tum.pssif.transform.transformation.HideEdgeTypeTransformation;
 import de.tum.pssif.transform.transformation.HideNodeTypeAttributeTransformation;
 import de.tum.pssif.transform.transformation.NodifyTransformation;
 import de.tum.pssif.transform.transformation.RenameEdgeTypeTransformation;
 import de.tum.pssif.transform.transformation.RenameNodeTypeTransformation;
+import de.tum.pssif.transform.transformation.RetypeConnectionMappingTransformation;
 
 
 public class GraphMlViewCreator {
@@ -40,6 +45,37 @@ public class GraphMlViewCreator {
 
     view = new NodifyTransformation(view.findNodeType("Function"), view.findNodeType("Block"), view.findEdgeType("Relationship"), "functionary")
         .apply(view);
+
+    // Transformation starts here
+    EdgeType informationFlow = view.findEdgeType("InformationFlow");
+    EdgeType energyFlow = view.findEdgeType("EnergyFlow");
+    EdgeType controlFlow = view.findEdgeType("Control Flow");
+    NodeType function = view.findNodeType("Function");
+    NodeType state = view.findNodeType("State");
+    NodeType block = view.findNodeType("Block");
+    ConnectionMapping ifOrigMapping = informationFlow.getMapping(block, block);
+    ConnectionMapping efOrigMapping = energyFlow.getMapping(block, block);
+
+    ConnectionMapping iff2s = informationFlow.createMapping("f2if", function,
+        MultiplicityContainer.of(1, UnlimitedNatural.UNLIMITED, 0, UnlimitedNatural.UNLIMITED), "if2s", state,
+        MultiplicityContainer.of(1, UnlimitedNatural.UNLIMITED, 0, UnlimitedNatural.UNLIMITED));
+    ConnectionMapping ifs2f = informationFlow.createMapping("s2if", state,
+        MultiplicityContainer.of(1, UnlimitedNatural.UNLIMITED, 0, UnlimitedNatural.UNLIMITED), "if2f", function,
+        MultiplicityContainer.of(1, UnlimitedNatural.UNLIMITED, 0, UnlimitedNatural.UNLIMITED));
+    ConnectionMapping eff2s = energyFlow.createMapping("f2ef", function,
+        MultiplicityContainer.of(1, UnlimitedNatural.UNLIMITED, 0, UnlimitedNatural.UNLIMITED), "if2s", state,
+        MultiplicityContainer.of(1, UnlimitedNatural.UNLIMITED, 0, UnlimitedNatural.UNLIMITED));
+    ConnectionMapping efs2f = energyFlow.createMapping("s2ef", state,
+        MultiplicityContainer.of(1, UnlimitedNatural.UNLIMITED, 0, UnlimitedNatural.UNLIMITED), "if2f", function,
+        MultiplicityContainer.of(1, UnlimitedNatural.UNLIMITED, 0, UnlimitedNatural.UNLIMITED));
+
+    view = new RetypeConnectionMappingTransformation(informationFlow, iff2s, controlFlow, ifOrigMapping).apply(view);
+    view = new RetypeConnectionMappingTransformation(informationFlow, ifs2f, controlFlow, ifOrigMapping).apply(view);
+    view = new RetypeConnectionMappingTransformation(energyFlow, eff2s, controlFlow, efOrigMapping).apply(view);
+    view = new RetypeConnectionMappingTransformation(energyFlow, efs2f, controlFlow, efOrigMapping).apply(view);
+    //Transformation ends here
+
+    view = new HideEdgeTypeTransformation(view.findEdgeType("Control Flow")).apply(view);
 
     return view;
   }
