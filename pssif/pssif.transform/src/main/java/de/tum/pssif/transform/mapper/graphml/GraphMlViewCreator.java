@@ -8,6 +8,7 @@ import de.tum.pssif.transform.transformation.HideEdgeTypeAttributeTransformation
 import de.tum.pssif.transform.transformation.HideNodeTypeAttributeTransformation;
 import de.tum.pssif.transform.transformation.NodifyTransformation;
 import de.tum.pssif.transform.transformation.RenameEdgeTypeTransformation;
+import de.tum.pssif.transform.transformation.RenameNodeTypeTransformation;
 
 
 public class GraphMlViewCreator {
@@ -15,6 +16,8 @@ public class GraphMlViewCreator {
     Metamodel view = new RenameEdgeTypeTransformation(metamodel.findEdgeType("Information Flow"), "InformationFlow").apply(metamodel);
     view = new RenameEdgeTypeTransformation(view.findEdgeType("Energy Flow"), "EnergyFlow").apply(view);
     view = new RenameEdgeTypeTransformation(view.findEdgeType("Material Flow"), "MaterialFlow").apply(view);
+    view = new RenameNodeTypeTransformation(view.findNodeType("Function"), "AbstractFunction").apply(view);
+    view = new RenameNodeTypeTransformation(view.findNodeType("Activity"), "Function").apply(view);
     NodeType rootNode = view.findNodeType(PSSIFConstants.ROOT_NODE_TYPE_NAME);
     EdgeType rootEdge = view.findEdgeType(PSSIFConstants.ROOT_EDGE_TYPE_NAME);
     view = new HideNodeTypeAttributeTransformation(rootNode, rootNode.findAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_COMMENT)).apply(view);
@@ -31,12 +34,13 @@ public class GraphMlViewCreator {
         .apply(view);
     view = new HideNodeTypeAttributeTransformation(view.findNodeType("Requirement"), view.findNodeType("Requirement").findAttribute("priority"))
         .apply(view);
-    view = new HideNodeTypeAttributeTransformation(view.findNodeType("Activity"), view.findNodeType("Activity").findAttribute("duration"))
+    view = new HideNodeTypeAttributeTransformation(view.findNodeType("Function"), view.findNodeType("Function").findAttribute("duration"))
         .apply(view);
     view = new HideNodeTypeAttributeTransformation(view.findNodeType("Block"), view.findNodeType("Block").findAttribute("cost")).apply(view);
 
     view = new NodifyTransformation(view.findNodeType("Function"), view.findNodeType("Block"), view.findEdgeType("Relationship"), "functionary")
         .apply(view);
+
     return view;
   }
 }

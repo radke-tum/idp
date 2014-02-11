@@ -1,7 +1,10 @@
 package de.tum.pssif.transform.transformation;
 
 import java.util.Collection;
+import java.util.Map;
+import java.util.Map.Entry;
 
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 import de.tum.pssif.core.metamodel.ConnectionMapping;
@@ -42,6 +45,7 @@ public class RenameNodeTypeTransformation extends RenameTransformation<NodeType>
     connected.addAll(actualTarget.getOutgoingsInternal());
 
     for (ViewedEdgeType et : connected) {
+      Map<ConnectionMapping, ConnectionMapping> toReplace = Maps.newHashMap();
       for (ConnectionMapping mapping : et.getMappings()) {
         EdgeEnd from = mapping.getFrom();
         EdgeEnd to = mapping.getTo();
@@ -62,9 +66,13 @@ public class RenameNodeTypeTransformation extends RenameTransformation<NodeType>
               from.getEdgeTypeLower(), from.getEdgeTypeUpper()), fromType);
           to = new ViewedEdgeEnd(to, to.getName(), et, MultiplicityContainer.of(to.getEdgeEndLower(), to.getEdgeEndUpper(), to.getEdgeTypeLower(),
               to.getEdgeTypeUpper()), toType);
-          et.removeMapping(mapping);
-          et.addMapping(new ViewedConnectionMapping(mapping, from, to));
+          toReplace.put(mapping, new ViewedConnectionMapping(mapping, from, to));
         }
+      }
+
+      for (Entry<ConnectionMapping, ConnectionMapping> entry : toReplace.entrySet()) {
+        et.removeMapping(entry.getKey());
+        et.addMapping(entry.getValue());
       }
     }
 
