@@ -2,11 +2,21 @@ package graph.model2;
 
 import de.tum.pssif.core.metamodel.EdgeType;
 
+/**
+ * A container for the EdgeType from the PSSIF Model
+ * Adds an easier API 
+ * @author Luc
+ *
+ */
 public class MyEdgeType {
 	private EdgeType type; 
     private int lineType;
     
-    
+    /**
+     * Creates a new MyEdgeType Object
+     * @param type : EdgeType from the PSSIF Model
+     * @param lineType : a number to identify the MyEdgeType
+     */
     public MyEdgeType (EdgeType type, int lineType)
     {
     	this.type = type;
