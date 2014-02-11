@@ -104,8 +104,15 @@ public abstract class AbstractEdgeType extends AbstractElementType<EdgeType, Edg
 
     for (ConnectionMapping candidate : mappings) {
       if (candidate.getFrom().getNodeType().isAssignableFrom(in) && candidate.getTo().getNodeType().isAssignableFrom(out)) {
-        result = candidate;
-        break;
+        if (result != null) {
+          if (result.getFrom().getNodeType().isAssignableFrom(candidate.getFrom().getNodeType())
+              && result.getTo().getNodeType().isAssignableFrom(candidate.getTo().getNodeType())) {
+            result = candidate;
+          }
+        }
+        else {
+          result = candidate;
+        }
       }
     }
 
