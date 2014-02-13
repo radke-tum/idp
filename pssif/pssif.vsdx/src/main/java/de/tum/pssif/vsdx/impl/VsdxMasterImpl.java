@@ -5,16 +5,26 @@ import de.tum.pssif.vsdx.VsdxMaster;
 
 public class VsdxMasterImpl implements VsdxMaster {
 
+  private final int    id;
+  private final String name;
+
+  VsdxMasterImpl(String name, int id) {
+    this.id = id;
+    this.name = name;
+  }
+
   @Override
   public String getName() {
-    // TODO Auto-generated method stub
-    return null;
+    return name;
   }
 
   @Override
   public int getId() {
-    // TODO Auto-generated method stub
-    return 0;
+    return id;
+  }
+
+  public String toString() {
+    return "VsdxMaster(" + name + ", " + id + ")";
   }
 
 }

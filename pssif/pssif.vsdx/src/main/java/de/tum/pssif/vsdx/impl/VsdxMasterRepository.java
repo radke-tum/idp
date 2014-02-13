@@ -7,32 +7,45 @@ import com.google.common.collect.Sets;
 
 class VsdxMasterRepository {
 
+  private final Set<VsdxMasterImpl> masters;
+
+  private VsdxDocumentImpl          document;
+
+  public VsdxMasterRepository(Set<VsdxMasterImpl> masters) {
+    this.masters = masters;
+  }
+
   void setDocument(VsdxDocumentImpl document) {
-    //TODO
+    this.document = document;
   }
 
   Set<VsdxMasterImpl> getMasters() {
-    //TODO
-    return Sets.newHashSet();
+    return Sets.newHashSet(masters);
   }
 
   VsdxMasterImpl getMaster(String name) {
-    //TODO
+    for (VsdxMasterImpl master : masters) {
+      if (master.getName().equalsIgnoreCase(name)) {
+        return master;
+      }
+    }
     return null;
   }
 
   VsdxMasterImpl getMaster(int id) {
+    for (VsdxMasterImpl master : masters) {
+      if (master.getId() == id) {
+        return master;
+      }
+    }
     return null;
-    //TODO
   }
 
   boolean hasMaster(String name) {
-    //TODO
-    return false;
+    return getMaster(name) != null;
   }
 
   boolean hasMaster(int id) {
-    //tODO
-    return false;
+    return getMaster(id) != null;
   }
 }

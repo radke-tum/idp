@@ -1,0 +1,79 @@
+package de.tum.pssif.vsdx.impl;
+
+import java.util.Set;
+
+import com.google.common.collect.Sets;
+
+import de.tum.pssif.vsdx.VsdxDocument;
+import de.tum.pssif.vsdx.VsdxMaster;
+import de.tum.pssif.vsdx.VsdxShape;
+
+
+public class VsdxShapeImpl implements VsdxShape {
+
+  private final int                masterId;
+  private final int                id;
+  private final Set<VsdxShapeImpl> inners = Sets.newHashSet();
+
+  private VsdxDocumentImpl         document;
+  private String                   text   = "";
+
+  public VsdxShapeImpl(int id, int masterId) {
+    this.masterId = masterId;
+    this.id = id;
+  }
+
+  int setDocument(VsdxDocumentImpl document) {
+    this.document = document;
+    int maxId = id;
+    for (VsdxShapeImpl inner : inners) {
+      maxId = Math.max(maxId, inner.setDocument(document));
+    }
+    return maxId;
+  }
+
+  void addInnerShape(VsdxShapeImpl inner) {
+    this.inners.add(inner);
+  }
+
+  @Override
+  public Set<VsdxShape> getShapes() {
+    return Sets.<VsdxShape> newHashSet(inners);
+  }
+
+  @Override
+  public VsdxDocument getVsdxDocument() {
+    return this.document;
+  }
+
+  @Override
+  public VsdxShape createNewShape(String masterName) {
+    //TODO needs an id provider
+    return null;
+  }
+
+  @Override
+  public void setText(String text) {
+    this.text = text;
+  }
+
+  @Override
+  public String getText() {
+    return this.text;
+  }
+
+  @Override
+  public int getId() {
+    return this.id;
+  }
+
+  @Override
+  public VsdxMaster getMaster() {
+    return document.getMaster(masterId);
+  }
+
+  public String toString() {
+    return "VsdxShape(shapeId: " + id + " | masterId: " + masterId + " | text: " + text + ")";
+  }
+
+}

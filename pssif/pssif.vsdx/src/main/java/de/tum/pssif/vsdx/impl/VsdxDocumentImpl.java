@@ -14,12 +14,13 @@ public class VsdxDocumentImpl implements VsdxDocument {
   private final Set<ZipArchiveEntryWithData> transferOnlyEntries;
   private final VsdxPageImpl                 page;
   private final VsdxMasterRepository         masterRepository;
+  private int                                shapesMaxId;
 
   public VsdxDocumentImpl(Set<ZipArchiveEntryWithData> transferOnlyEntries, VsdxPageImpl page, VsdxMasterRepository masterRepo) {
     this.transferOnlyEntries = transferOnlyEntries;
     this.page = page;
     this.masterRepository = masterRepo;
-    page.setDocument(this);
+    shapesMaxId = page.setDocument(this);
     masterRepository.setDocument(this);
   }
 
@@ -51,6 +52,11 @@ public class VsdxDocumentImpl implements VsdxDocument {
   @Override
   public boolean hasMaster(int id) {
     return masterRepository.hasMaster(id);
+  }
+
+  int getNewShapeId() {
+    shapesMaxId++;
+    return shapesMaxId;
   }
 
   Set<ZipArchiveEntryWithData> getTransferOnlyEntries() {

@@ -4,6 +4,8 @@ import java.util.Set;
 
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 
+import com.google.common.collect.Sets;
+
 import de.tum.pssif.vsdx.VsdxDocument;
 import de.tum.pssif.vsdx.VsdxPage;
 import de.tum.pssif.vsdx.VsdxShape;
@@ -12,22 +14,28 @@ import de.tum.pssif.vsdx.zip.ZipArchiveEntryWithData;
 
 public class VsdxPageImpl implements VsdxPage {
 
-  private final ZipArchiveEntry zipArchiveEntry;
+  private final ZipArchiveEntry    zipArchiveEntry;
+  private final Set<VsdxShapeImpl> shapes;
 
-  private VsdxDocumentImpl      document;
+  private VsdxDocumentImpl         document;
 
-  VsdxPageImpl(ZipArchiveEntry zipArchiveEntry) {
+  VsdxPageImpl(ZipArchiveEntry zipArchiveEntry, Set<VsdxShapeImpl> shapes) {
     this.zipArchiveEntry = zipArchiveEntry;
+    this.shapes = shapes;
   }
 
-  void setDocument(VsdxDocumentImpl document) {
+  int setDocument(VsdxDocumentImpl document) {
     this.document = document;
+    int maxId = 0;
+    for (VsdxShapeImpl shape : shapes) {
+      maxId = Math.max(maxId, shape.setDocument(document));
+    }
+    return maxId;
   }
 
   @Override
   public Set<VsdxShape> getShapes() {
-    // TODO Auto-generated method stub
-    return null;
+    return Sets.<VsdxShape> newHashSet(shapes);
   }
 
   @Override
@@ -37,8 +45,7 @@ public class VsdxPageImpl implements VsdxPage {
 
   @Override
   public VsdxShape createNewShape(String masterName) {
-    // TODO Auto-generated method stub
-    return null;
+    return new VsdxShapeImpl(document.getNewShapeId(), document.getMaster(masterName).getId());
   }
 
   @Override
