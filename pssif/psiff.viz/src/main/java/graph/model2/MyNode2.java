@@ -33,8 +33,8 @@ public class MyNode2{
 		
 		if (nodeName.get(node)!=null)
 		{
-			//PSSIFValue value = nodeName.get(node).getOne();
-			PSSIFValue value = (PSSIFValue) nodeName.get(node);
+			PSSIFValue value = nodeName.get(node).getOne();
+			//PSSIFValue value = (PSSIFValue) nodeName.get(node);
 			name = value.asString();
 			
 		}
@@ -53,7 +53,8 @@ public class MyNode2{
 		for (Attribute current : attr)
 		{
 			String attrName = current.getName();
-			PSSIFValue value = (PSSIFValue) current.get(node);
+			//PSSIFValue value = (PSSIFValue) current.get(node);
+			PSSIFValue value = current.get(node).getOne();
 			String attrValue="";
 			if (value !=null)
 				attrValue = (String) value.getValue();
