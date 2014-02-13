@@ -33,6 +33,7 @@ public class MyNode2{
 		
 		if (nodeName.get(node)!=null)
 		{
+			//PSSIFValue value = nodeName.get(node).getOne();
 			PSSIFValue value = (PSSIFValue) nodeName.get(node);
 			name = value.asString();
 			

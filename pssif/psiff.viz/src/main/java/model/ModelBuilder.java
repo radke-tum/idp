@@ -26,6 +26,7 @@ import de.tum.pssif.core.model.Edge;
 import de.tum.pssif.core.model.Model;
 import de.tum.pssif.core.model.Node;
 import de.tum.pssif.core.model.impl.ModelImpl;
+import de.tum.pssif.core.util.PSSIFCanonicMetamodelCreator;
 import de.tum.pssif.core.util.PSSIFOption;
 import de.tum.pssif.core.util.PSSIFValue;
 import de.tum.pssif.core.metamodel.Attribute;

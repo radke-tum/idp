@@ -1,5 +1,6 @@
 package gui.graph;
 
+import de.tum.pssif.core.PSSIFConstants;
 import edu.uci.ics.jung.algorithms.layout.FRLayout;
 import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.graph.Graph;
