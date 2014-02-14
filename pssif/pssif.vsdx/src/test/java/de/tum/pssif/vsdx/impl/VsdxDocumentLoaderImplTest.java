@@ -9,13 +9,13 @@ import de.tum.pssif.vsdx.VsdxShape;
 
 public class VsdxDocumentLoaderImplTest {
 
-  //  @Test
-  //  public void testReadTemplate() {
-  //    System.out.println("--- Template ---");
-  //    VsdxDocument document = VsdxDocumentLoaderImpl.INSTANCE.loadDocument(getClass().getResourceAsStream("/epk-template.vsdx"));
-  //    System.out.println(document.getMasters());
-  //    System.out.println(document.getPage().getShapes());
-  //  }
+  @Test
+  public void testReadTemplate() {
+    System.out.println("--- Template ---");
+    VsdxDocument document = VsdxDocumentLoaderImpl.INSTANCE.loadDocument(getClass().getResourceAsStream("/epk-template.vsdx"));
+    System.out.println(document.getMasters());
+    System.out.println(document.getPage().getShapes());
+  }
 
   @Test
   public void testReadData() {
@@ -29,16 +29,6 @@ public class VsdxDocumentLoaderImplTest {
       System.out.println(printConnect("", connect));
     }
   }
-
-  //  @Test
-  //  public void testReadInnerShapes() {
-  //    System.out.println("--- Inner Shapes ---");
-  //    VsdxDocument document = VsdxDocumentLoaderImpl.INSTANCE.loadDocument(getClass().getResourceAsStream("/undamaged-infoFlowDiagram.vsdx"));
-  //    System.out.println(document.getMasters());
-  //    for (VsdxShape shape : document.getPage().getShapes()) {
-  //      System.out.println(printShape("", shape));
-  //    }
-  //  }
 
   private String printShape(String prefix, VsdxShape shape) {
     StringBuilder b = new StringBuilder();
