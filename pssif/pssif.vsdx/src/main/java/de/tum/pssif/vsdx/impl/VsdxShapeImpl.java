@@ -36,6 +36,11 @@ public class VsdxShapeImpl implements VsdxShape {
     this.inners.add(inner);
   }
 
+  void setInnerShapes(Set<VsdxShapeImpl> inners) {
+    this.inners.clear();
+    this.inners.addAll(inners);
+  }
+
   @Override
   public Set<VsdxShape> getShapes() {
     return Sets.<VsdxShape> newHashSet(inners);
