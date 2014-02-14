@@ -30,9 +30,7 @@ public class VsdxDocumentLoaderImpl implements VsdxDocumentLoader {
   public VsdxDocument loadDocument(InputStream inputStream) {
     Set<ZipArchiveEntryWithData> vsdxEntries = ZipReader.create(inputStream).read();
     assignEntries(vsdxEntries);
-    //TODO default connector master should be customizable
-    return new VsdxDocumentImpl(transferOnlyEntries, VsdxPageReader.INSTANCE.create(page1Xml),
-        VsdxMasterRepositoryReader.INSTANCE.create(mastersXml));
+    return new VsdxDocumentImpl(transferOnlyEntries, VsdxPageReader.INSTANCE.create(page1Xml), VsdxMasterRepositoryReader.INSTANCE.create(mastersXml));
   }
 
   private void assignEntries(Set<ZipArchiveEntryWithData> vsdxEntries) {

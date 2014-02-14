@@ -98,10 +98,6 @@ class VsdxPageReader {
     Node textNode = locateChildElement(shapeNode, VsdxTokens.TEXT);
     if (textNode != null) {
       shape.setText(seekText(textNode));
-      String text = seekText(textNode);
-      if (text.trim().isEmpty()) {
-        seekText(textNode);
-      }
     }
     Node innerShapesNode = locateChildElement(shapeNode, VsdxTokens.SHAPES);
     if (innerShapesNode != null) {
