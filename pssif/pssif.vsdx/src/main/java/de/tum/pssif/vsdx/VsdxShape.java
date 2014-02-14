@@ -1,5 +1,8 @@
 package de.tum.pssif.vsdx;
 
+import java.util.Set;
+
+
 public interface VsdxShape extends VsdxShapeContainer {
 
   int getId();
@@ -12,7 +15,10 @@ public interface VsdxShape extends VsdxShapeContainer {
 
   boolean isConnector();
 
-  //TODO more stuff here
-  //espeecially: setAttribute/getattribute
+  Set<String> getCustomPropertyNames();
+
+  String getCustomPropertyValue(String customPropertyName);
+
+  void setCustomProperty(String name, String value);
 
 }

@@ -13,8 +13,6 @@ import de.tum.pssif.vsdx.zip.ZipReader;
 
 public class VsdxDocumentLoaderImpl implements VsdxDocumentLoader {
 
-  public static VsdxDocumentLoader     INSTANCE            = new VsdxDocumentLoaderImpl();
-
   private Set<ZipArchiveEntryWithData> transferOnlyEntries = Sets.newHashSet();
 
   private ZipArchiveEntryWithData      mastersXml          = null;
@@ -22,7 +20,7 @@ public class VsdxDocumentLoaderImpl implements VsdxDocumentLoader {
   //we only read a page1 for now
   private ZipArchiveEntryWithData      page1Xml            = null;
 
-  private VsdxDocumentLoaderImpl() {
+  protected VsdxDocumentLoaderImpl() {
     //Nothing
   }
 

@@ -95,4 +95,22 @@ public class VsdxShapeImpl implements VsdxShape {
     return this instanceof VsdxConnector;
   }
 
+  @Override
+  public Set<String> getCustomPropertyNames() {
+    // TODO Auto-generated method stub
+    return Sets.newHashSet();
+  }
+
+  @Override
+  public String getCustomPropertyValue(String customPropertyName) {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public void setCustomProperty(String name, String value) {
+    // TODO Auto-generated method stub
+
+  }
+
 }
