@@ -35,12 +35,12 @@ public class VsdxDocumentImpl implements VsdxDocument {
   }
 
   @Override
-  public VsdxMaster getMaster(int id) {
+  public VsdxMasterImpl getMaster(int id) {
     return masterRepository.getMaster(id);
   }
 
   @Override
-  public VsdxMaster getMaster(String name) {
+  public VsdxMasterImpl getMaster(String name) {
     return masterRepository.getMaster(name);
   }
 

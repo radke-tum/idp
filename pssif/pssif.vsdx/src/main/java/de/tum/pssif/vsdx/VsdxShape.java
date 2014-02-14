@@ -10,6 +10,8 @@ public interface VsdxShape extends VsdxShapeContainer {
 
   VsdxMaster getMaster();
 
+  boolean isConnector();
+
   //TODO more stuff here
   //espeecially: setAttribute/getattribute
 

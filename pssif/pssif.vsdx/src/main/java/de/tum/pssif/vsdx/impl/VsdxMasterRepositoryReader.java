@@ -15,11 +15,11 @@ import de.tum.pssif.vsdx.exception.VsdxXmlException;
 import de.tum.pssif.vsdx.zip.ZipArchiveEntryWithData;
 
 
-class VsdxMasterRepositoryCreator {
+class VsdxMasterRepositoryReader {
 
-  static final VsdxMasterRepositoryCreator INSTANCE = new VsdxMasterRepositoryCreator();
+  static final VsdxMasterRepositoryReader INSTANCE = new VsdxMasterRepositoryReader();
 
-  private VsdxMasterRepositoryCreator() {
+  private VsdxMasterRepositoryReader() {
     //Nothing
   }
 

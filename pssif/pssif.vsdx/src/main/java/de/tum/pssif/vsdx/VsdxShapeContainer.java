@@ -9,6 +9,6 @@ public interface VsdxShapeContainer {
 
   VsdxDocument getVsdxDocument();
 
-  VsdxShape createNewShape(String masterName);
+  VsdxShape createNewShape(VsdxMaster master);
 
 }

@@ -4,14 +4,14 @@ import java.util.Set;
 
 import com.google.common.collect.Sets;
 
-import de.tum.pssif.vsdx.VsdxDocument;
+import de.tum.pssif.vsdx.VsdxConnector;
 import de.tum.pssif.vsdx.VsdxMaster;
 import de.tum.pssif.vsdx.VsdxShape;
 
 
 public class VsdxShapeImpl implements VsdxShape {
 
-  private final int                masterId;
+  protected final int              masterId;
   private final int                id;
   private final Set<VsdxShapeImpl> inners = Sets.newHashSet();
 
@@ -46,15 +46,20 @@ public class VsdxShapeImpl implements VsdxShape {
     return Sets.<VsdxShape> newHashSet(inners);
   }
 
+  Set<VsdxShapeImpl> innerShapesImpl() {
+    return Sets.newHashSet(inners);
+  }
+
   @Override
-  public VsdxDocument getVsdxDocument() {
+  public VsdxDocumentImpl getVsdxDocument() {
     return this.document;
   }
 
   @Override
-  public VsdxShape createNewShape(String masterName) {
-    //TODO needs an id provider
-    return null;
+  public VsdxShape createNewShape(VsdxMaster master) {
+    VsdxShapeImpl newInnerShape = new VsdxShapeImpl(document.getNewShapeId(), master.getId());
+    this.inners.add(newInnerShape);
+    return newInnerShape;
   }
 
   @Override
@@ -77,8 +82,17 @@ public class VsdxShapeImpl implements VsdxShape {
     return document.getMaster(masterId);
   }
 
+  int getMasterId() {
+    return masterId;
+  }
+
   public String toString() {
     return "VsdxShape(shapeId: " + id + " | masterId: " + masterId + " | text: " + text + ")";
+  }
+
+  @Override
+  public boolean isConnector() {
+    return this instanceof VsdxConnector;
   }
 
 }
