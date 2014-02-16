@@ -5,12 +5,21 @@ import java.util.LinkedList;
 
 import de.tum.pssif.core.metamodel.EdgeType;
 
+/**
+ * A container for all the EdgeTypes which pop up in the PSSIF Model
+ * @author Luc
+ *
+ */
 public class MyEdgeTypes {
-private LinkedList<MyEdgeType> types;
 	
+	private LinkedList<MyEdgeType> types;
 	private static int idcounter;
 	public static String CONTAINMENT = "containment";
 	
+	/**
+	 * Create a new MyEdgeTypes Object
+	 * @param types : Collection<EdgeType> || all the EdgeTypes found in the PSSIF Model
+	 */
 	public MyEdgeTypes (Collection<EdgeType> types)
 	{
 		idcounter =0;
@@ -18,19 +27,16 @@ private LinkedList<MyEdgeType> types;
 		
 		for (EdgeType et : types)
 		{
-		//	if (et.getName()!="Edge")
-		//	{
-				MyEdgeType tmp = new MyEdgeType(et, idcounter++);
+			MyEdgeType tmp = new MyEdgeType(et, idcounter++);
 				
-				this.types.add(tmp);
-		//	}
+			this.types.add(tmp);
 		}
 	}
 	
 	/**
-	 * Search a EdgeType by name
-	 * @param name
-	 * @return EdgeType or null if there is no EdgeType with the correct value
+	 * Search an EdgeType by a given name
+	 * @param name :String
+	 * @return EdgeType or null if there is no EdgeType with the given value
 	 */
 	public MyEdgeType getValue(String name)
 	{
@@ -45,24 +51,33 @@ private LinkedList<MyEdgeType> types;
 		return null;
 	}
 	
-	public void addNodeTypes (Collection<EdgeType> newTypes)
+	/**
+	 * Adds a collection of new EdgeTypes  
+	 * @param newTypes : Collection<EdgeType>
+	 */
+	public void addEdgeTypes (Collection<EdgeType> newTypes)
 	{
 		for (EdgeType ntype : newTypes)
 		{
 			MyEdgeType tmp = new MyEdgeType(ntype, idcounter++);
 			
+			// check if they are not already contained
 			if (!types.contains(tmp))
 				types.add(tmp);
 		}
 	}
-	
-	public void removeNodeType (Collection<EdgeType> oldTypes)
+	/**
+	 * Removes a collection of EdgeTypes
+	 * @param oldTypes : Collection<EdgeType>
+	 */
+	public void removEdgeType (Collection<EdgeType> oldTypes)
 	{
 		for (EdgeType otype : oldTypes)
 		{
 			MyEdgeType tmp = new MyEdgeType(otype, idcounter++);
 			
-			if (!types.contains(tmp))
+			// check if it his even contained
+			if (types.contains(tmp))
 				types.remove(tmp);
 		}
 	}

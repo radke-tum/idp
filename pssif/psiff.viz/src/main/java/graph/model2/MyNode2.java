@@ -17,14 +17,11 @@ import de.tum.pssif.core.util.PSSIFValue;
 
 
 public class MyNode2{
-
 	private Node node;
 	private String name;
-	//private List<String> attributes ;
 	private int size;
 	private MyNodeType type;
 	private boolean detailedOutput;
-	//public static int idcounter;
 	
 	private static int limit = 15;
 	private static int heightlimit = 2;
@@ -43,9 +40,7 @@ public class MyNode2{
 			
 		}
 		else
-			name ="blabla";
-		
-		//calcAttr();
+			name ="Name not available";
 	}
 	
 	private List<String> calcAttr()
@@ -110,15 +105,6 @@ public class MyNode2{
 			String attrUnit = current.getUnit().getName();
 			currentAttr.add(attrUnit);
 			
-			//String res;
-			
-			/*if (attrUnit.equals("none"))
-				res = attrName+" = "+attrValue+" : "+((PrimitiveDataType)current.getType()).getName();
-			else
-				res = attrName+" = "+attrValue+" in "+attrUnit+ " : "+((PrimitiveDataType)current.getType()).getName();
-			*/
-			//if (current.get(node)!=null)
-			//	attributes.add(res);
 			currentAttr.add(((PrimitiveDataType)current.getType()).getName());
 			
 			attributes.add(currentAttr);
@@ -135,7 +121,6 @@ public class MyNode2{
 		{
 			try 
 			{
-				//boolean res = (Boolean) value;
 				PSSIFValue res = PrimitiveDataType.BOOLEAN.fromObject(value);
 				
 				type.getType().findAttribute(attributeName).set(node, PSSIFOption.one(res));
@@ -153,8 +138,6 @@ public class MyNode2{
 			try 
 			{
 				PSSIFValue res = PrimitiveDataType.DATE.fromObject(value);
-				//Date res = (Date) value;
-				//Date.parse(s)
 				type.getType().findAttribute(attributeName).set(node, PSSIFOption.one(res));
 				
 				return true;
@@ -170,7 +153,6 @@ public class MyNode2{
 		{
 			try 
 			{
-				//Float res = (Float) value;
 				PSSIFValue res = PrimitiveDataType.DECIMAL.fromObject(value);
 				
 				type.getType().findAttribute(attributeName).set(node, PSSIFOption.one(res));
@@ -187,7 +169,6 @@ public class MyNode2{
 		{
 			try 
 			{
-				//Integer res = (Integer) value;
 				PSSIFValue res = PrimitiveDataType.INTEGER.fromObject(value);
 				
 				type.getType().findAttribute(attributeName).set(node, PSSIFOption.one(res));
@@ -204,7 +185,6 @@ public class MyNode2{
 		{
 			try 
 			{
-				//String res = (String) value;
 				PSSIFValue res = PrimitiveDataType.STRING.fromObject(value);
 				
 				type.getType().findAttribute(attributeName).set(node, PSSIFOption.one(res));
@@ -219,8 +199,6 @@ public class MyNode2{
 		
 		type.getType().findAttribute(attributeName).set(node, PSSIFOption.one(PSSIFValue.create(value)));
 		return true;
-		
-		//node("hardware", meta).findAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_NAME).set(ebike, PSSIFOption.one(PSSIFValue.create("Ebike")));
 	}
 	
 	public HashMap<String, Attribute> getAttributesHashMap()
@@ -269,9 +247,13 @@ public class MyNode2{
 	{
 		//setSize();
 	}
-
-	public String toString() {
-		
+	
+	/**
+	 * Get all the Informations about the Node. Should only be used in the GraphVisualization
+	 * @return a HTML String with all the node informations
+	 */
+	public String getNodeInformations()
+	{
 		String output="";
 		if (detailedOutput)
 		{
@@ -301,7 +283,7 @@ public class MyNode2{
 	
 /**
  * Pretty printed Name
- * @return
+ * @return a html name
  */
 	public String getName()
 	{
@@ -313,6 +295,7 @@ public class MyNode2{
 	
 	/**
 	 * Actual name value
+	 * @return the name
 	 */
 	public String getRealName()
 	{
@@ -326,14 +309,6 @@ public class MyNode2{
 	{
 		this.name=name;
 	}
-	
-	/*public List<String> getAttributes() {
-		return calcAttr();
-	}*/
-
-	/*public void setAttributes(List<String> attributes) {
-		this.attributes = attributes;
-	}*/
 
 	public int getSize() {
 		return size;
@@ -351,12 +326,15 @@ public class MyNode2{
 		this.detailedOutput = detailedOutput;
 	}
 	
-	public boolean compareTo (Node n)
+	public boolean equals (Object n)
 	{
-		if (this.node.equals(n))
-			return true;
-		else
-			return false;
+		if (n instanceof Node)
+		{
+			Node tmp = (Node) n;
+			return this.node.equals(tmp);
+		}
+		
+		return false;
 	}
 
 	public Node getNode() {

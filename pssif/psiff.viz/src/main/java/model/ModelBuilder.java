@@ -180,7 +180,7 @@ public class ModelBuilder {
 	{
 		for (MyNode2 current : nodes)
 		{
-			if (current.compareTo(n))
+			if (current.equals(n))
 				return current;
 		}
 		
