@@ -21,7 +21,7 @@ import de.tum.pssif.core.model.impl.ModelImpl;
 import de.tum.pssif.core.util.PSSIFOption;
 import de.tum.pssif.core.util.PSSIFUtil;
 import de.tum.pssif.core.util.PSSIFValue;
-import de.tum.pssif.transform.mapper.Mapper;
+import de.tum.pssif.transform.Mapper;
 import de.tum.pssif.transform.mapper.graphml.GraphMLGraph.GraphMlAttrImpl;
 import de.tum.pssif.transform.mapper.graphml.GraphMLGraph.GraphMlEdgeImpl;
 import de.tum.pssif.transform.mapper.graphml.GraphMLGraph.GraphMlNodeImpl;

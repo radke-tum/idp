@@ -34,14 +34,8 @@ public class VisioIoMapper implements IoMapper {
   private final Set<String>   nodeMasters;
   private final Set<String>   edgeMasters;
 
-  public VisioIoMapper(String templateFile) {
+  public VisioIoMapper(String templateFile, Set<String> nodeMasters, Set<String> edgeMasters) {
     this.templateFile = templateFile;
-    this.nodeMasters = Sets.newHashSet();
-    this.edgeMasters = Sets.newHashSet();
-  }
-
-  public VisioIoMapper(Set<String> nodeMasters, Set<String> edgeMasters) {
-    this.templateFile = "";
     this.nodeMasters = Sets.newHashSet(nodeMasters);
     this.edgeMasters = Sets.newHashSet(edgeMasters);
   }

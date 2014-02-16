@@ -1,4 +1,4 @@
-package de.tum.pssif.transform.mapper;
+package de.tum.pssif.transform;
 
 import java.io.InputStream;
 import java.io.OutputStream;

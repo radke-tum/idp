@@ -19,7 +19,7 @@ public class MyTestClass {
 
   @Test
   public void testReadToGraph() {
-    VisioIoMapper mapper = new VisioIoMapper(EPK_NODE_MASTERS, EPK_EDGE_MASTERS);
+    VisioIoMapper mapper = new VisioIoMapper("", EPK_NODE_MASTERS, EPK_EDGE_MASTERS);
     Graph graph = mapper.read(getClass().getResourceAsStream("/visio/epk-data.vsdx"));
     System.out.println(graph);
     //    for (Node node : graph.getNodes()) {
