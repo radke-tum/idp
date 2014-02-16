@@ -2,23 +2,27 @@ package de.tum.pssif.transform.io;
 
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Map;
 import java.util.Set;
 
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
-import de.iteratec.visio.model.Shape;
 import de.tum.pssif.transform.IoMapper;
+import de.tum.pssif.transform.graph.AElement;
+import de.tum.pssif.transform.graph.Edge;
 import de.tum.pssif.transform.graph.Graph;
 import de.tum.pssif.transform.graph.Node;
+import de.tum.pssif.vsdx.VsdxConnector;
 import de.tum.pssif.vsdx.VsdxDocument;
 import de.tum.pssif.vsdx.VsdxDocumentLoader;
+import de.tum.pssif.vsdx.VsdxShape;
 import de.tum.pssif.vsdx.exception.VsdxException;
 import de.tum.pssif.vsdx.impl.VsdxDocumentLoaderFactory;
 
 
 public class VisioIoMapper implements IoMapper {
+
+  private static final String VISIO_MASTER_SUFFIX_REGEX = "(\\.(\\d)*+)?";
+  private static final String VISIO_MASTER_SPLIT_REGEX  = "\\.";
 
   //  private static final String     PSSIF_PREFIX  = "pssif";
   //
@@ -26,20 +30,20 @@ public class VisioIoMapper implements IoMapper {
   //  private static final String     PSSIF_CONNECTOR_TYPE_PROPERTY = PSSIF_PREFIX + ".connector.type";
   //  private static final String     PSSIF_ID_PROPERTY             = PSSIF_PREFIX + ".id";
 
-  private final String            templateFile;
-  private final Set<String>       nodeMasters;
-
-  private final Map<Shape, Node>  shapeToNode   = Maps.newHashMap();
-  private final Map<Shape, Shape> shapeToParent = Maps.newHashMap();
+  private final String        templateFile;
+  private final Set<String>   nodeMasters;
+  private final Set<String>   edgeMasters;
 
   public VisioIoMapper(String templateFile) {
     this.templateFile = templateFile;
     this.nodeMasters = Sets.newHashSet();
+    this.edgeMasters = Sets.newHashSet();
   }
 
-  public VisioIoMapper(Set<String> nodeMasters) {
+  public VisioIoMapper(Set<String> nodeMasters, Set<String> edgeMasters) {
     this.templateFile = "";
     this.nodeMasters = Sets.newHashSet(nodeMasters);
+    this.edgeMasters = Sets.newHashSet(edgeMasters);
   }
 
   @Override
@@ -51,15 +55,86 @@ public class VisioIoMapper implements IoMapper {
     } catch (VsdxException e) {
       throw new PSSIFIoException("Failed to load VSDX document.", e);
     }
+    Graph graph = new Graph();
+    readNodes(document, graph);
+    readEdges(document, graph);
 
-    // TODO Auto-generated method stub
-    return null;
+    return graph;
   }
 
   @Override
   public void write(Graph graph, OutputStream out) {
     // TODO Auto-generated method stub
 
+  }
+
+  private void readNodes(VsdxDocument document, Graph graph) {
+    for (VsdxShape shape : document.getPage().getShapes()) {
+      readNode(shape, graph);
+    }
+  }
+
+  private Node readNode(VsdxShape shape, Graph graph) {
+    if (isNodeMasterSupported(shape.getMaster().getName())) {
+      Node node = graph.createNode(String.valueOf(shape.getId()));
+      node.setType(getValidMasterName(shape.getMaster().getName()));
+      readAttributes(node, shape);
+      for (VsdxShape inner : shape.getShapes()) {
+        Node innerNode = readNode(inner, graph);
+        if (innerNode != null) {
+          node.addInnerNode(innerNode);
+        }
+      }
+      return node;
+    }
+    return null;
+  }
+
+  private void readEdges(VsdxDocument document, Graph graph) {
+    for (VsdxConnector connector : document.getPage().getConnectors()) {
+      if (isEdgeMasterSupported(connector.getMaster().getName())) {
+        Node source = graph.findNode(String.valueOf(connector.getSourceShape().getId()));
+        Node target = graph.findNode(String.valueOf(connector.getTargetShape().getId()));
+        if (source != null && target != null) {
+          Edge edge = graph.createEdge(String.valueOf(connector.getId()));
+          edge.setType(getValidMasterName(connector.getMaster().getName()));
+          graph.connect(source, edge, target);
+          readAttributes(edge, connector);
+        }
+      }
+    }
+  }
+
+  private void readAttributes(AElement intoElement, VsdxShape source) {
+    for (String pName : source.getCustomPropertyNames()) {
+      if (source.getCustomPropertyValue(pName) != null) {
+        intoElement.setAttribute(pName, source.getCustomPropertyValue(pName));
+      }
+    }
+  }
+
+  private boolean isEdgeMasterSupported(String master) {
+    return masterIsSupported(master, edgeMasters);
+  }
+
+  private boolean isNodeMasterSupported(String master) {
+    return masterIsSupported(master, nodeMasters);
+  }
+
+  private boolean masterIsSupported(String master, Set<String> masters) {
+    if (masters.contains(master)) {
+      return true;
+    }
+    for (String candidate : masters) {
+      if (master.matches(candidate + VISIO_MASTER_SUFFIX_REGEX)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  private String getValidMasterName(String masterName) {
+    return masterName.split(VISIO_MASTER_SPLIT_REGEX)[0];
   }
 
   //  @Override

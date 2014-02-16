@@ -6,9 +6,7 @@ import org.junit.Test;
 
 import com.google.common.collect.Sets;
 
-import de.tum.pssif.core.PSSIFConstants;
 import de.tum.pssif.transform.graph.Graph;
-import de.tum.pssif.transform.graph.Node;
 import de.tum.pssif.transform.io.VisioIoMapper;
 
 
@@ -17,16 +15,28 @@ public class MyTestClass {
   public static final Set<String> EPK_NODE_MASTERS = Sets.newHashSet("Event", "Function", "Organizational Unit", "Process path", "XOR", "OR", "AND",
                                                        "Information/ Material", "Main process", "Component", "Enterprise area", "Process group");
 
+  public static final Set<String> EPK_EDGE_MASTERS = Sets.newHashSet("Dynamic connector");
+
   @Test
   public void testReadToGraph() {
-    VisioIoMapper mapper = new VisioIoMapper(EPK_NODE_MASTERS);
-    Graph graph = mapper.read(getClass().getResourceAsStream("/visio/EPK-1.vdx"));
+    VisioIoMapper mapper = new VisioIoMapper(EPK_NODE_MASTERS, EPK_EDGE_MASTERS);
+    Graph graph = mapper.read(getClass().getResourceAsStream("/visio/epk-data.vsdx"));
     System.out.println(graph);
-    for (Node node : graph.getNodes()) {
-      System.out.println("nodeId: " + node.getId() + "|name : " + node.getAttributeValue(PSSIFConstants.BUILTIN_ATTRIBUTE_NAME));
-    }
+    //    for (Node node : graph.getNodes()) {
+    //      System.out.println("nodeId: " + node.getId() + "|name : " + node.getAttributeValue(PSSIFConstants.BUILTIN_ATTRIBUTE_NAME));
+    //    }
   }
 
+  @Test
+  public void regexTest() {
+    //TODO
+    String testString1 = "MasterName";
+    String testString2 = "MasterName.324";
+    String regexSuffix = "(\\.(\\d)*+)?";
+    System.out.println(testString1 + " matches: " + testString1.matches(testString1 + regexSuffix));
+    System.out.println(testString2 + " matches: " + testString2.matches(testString1 + regexSuffix));
+
+  }
   //  @Test
   //  public void testTheBugger() throws SAXException, MasterNotFoundException {
   //    try {
