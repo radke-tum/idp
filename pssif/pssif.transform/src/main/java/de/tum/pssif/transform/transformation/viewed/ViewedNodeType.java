@@ -39,8 +39,8 @@ public class ViewedNodeType extends AbstractNodeType {
   }
 
   @Override
-  public PSSIFOption<Node> apply(Model model) {
-    return baseType.apply(model);
+  public PSSIFOption<Node> apply(Model model, boolean includeSubTypes) {
+    return baseType.apply(model, includeSubTypes);
   }
 
   public Collection<ViewedEdgeType> getIncomingsInternal() {

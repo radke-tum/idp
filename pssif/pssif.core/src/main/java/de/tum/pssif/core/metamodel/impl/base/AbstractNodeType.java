@@ -25,7 +25,7 @@ public abstract class AbstractNodeType extends AbstractElementType<NodeType, Nod
 
   @Override
   public final PSSIFOption<Node> apply(Model model, String id) {
-    for (Node candidate : apply(model).getMany()) {
+    for (Node candidate : apply(model, false).getMany()) {
       if (id.equals(candidate.getId())) {
         return PSSIFOption.one(candidate);
       }
