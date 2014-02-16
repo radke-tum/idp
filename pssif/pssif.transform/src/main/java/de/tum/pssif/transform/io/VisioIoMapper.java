@@ -138,20 +138,6 @@ public class VisioIoMapper implements IoMapper {
   }
 
   //  @Override
-  //  public Graph read(InputStream in) {
-  //    Document document = loadDocument(in);
-  //    Graph graph = new Graph();
-  //    try {
-  //      readNodes(graph, document.getPage(0));
-  //      readEdges(graph, document);
-  //
-  //    } catch (NoSuchElementException e) {
-  //      throw new PSSIFIoException("No page found in Visio document.");
-  //    }
-  //    return graph;
-  //  }
-  //
-  //  @Override
   //  public void write(Graph graph, OutputStream out) {
   //    Document document = loadFromTemplate();
   //    Page page = null;
@@ -175,55 +161,6 @@ public class VisioIoMapper implements IoMapper {
   //      throw new PSSIFIoException("Failed to write generated visio document to output stream.", e);
   //    }
   //  }
-  //
-  //  private void readNodes(Graph graph, ShapeContainer shapeContainer) {
-  //
-  //    for (Shape shape : shapeContainer.getShapes()) {
-  //      String masterName = null;
-  //      try {
-  //        masterName = shape.getMaster().getName();
-  //      } catch (MasterNotFoundException e) {
-  //        //ignore, considered to be a Node
-  //        masterName = PSSIFConstants.ROOT_NODE_TYPE_NAME;
-  //      }
-  //
-  //      if (!masterName.equals(PSSIFConstants.ROOT_NODE_TYPE_NAME) && !nodeMasters.contains(masterName)) {
-  //        continue;
-  //      }
-  //
-  //      //TODO any way to recognize connectors?...
-  //      //connects: each connect has shapeIds as from part and to-part
-  //      //-> some of the nodes become edges...
-  //      // type is provided by the master
-  //
-  //      String pssifId = null;
-  //      Object oId = shape.getCustomProperties().get(PSSIF_ID_PROPERTY);
-  //      if (oId == null) {
-  //        pssifId = shape.getID().toString();
-  //      }
-  //      Node node = graph.createNode(pssifId);
-  //      node.setType(masterName);
-  //      node.setAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_NAME, shape.getShapeText().getText());
-  //      for (Entry<String, Object> entry : shape.getCustomProperties().entrySet()) {
-  //        if (entry.getValue() != null) {
-  //          node.setAttribute(entry.getKey(), entry.getValue().toString());
-  //        }
-  //      }
-  //
-  //      shapeToNode.put(shape, node);
-  //
-  //      for (Shape innerShape : shape.getInnerShapes()) {
-  //        shapeToParent.put(innerShape, shape);
-  //        readNodes(graph, innerShape);
-  //      }
-  //    }
-  //
-  //  }
-  //
-  //  private void readEdges(Graph graph, Document document) {
-  //    //TODO
-  //  }
-  //
   //  private Shape createShape(Node node, ShapeContainer shapeContainer, Map<Node, Shape> nodesMap) {
   //    Shape shape = null;
   //    try {
@@ -261,19 +198,6 @@ public class VisioIoMapper implements IoMapper {
   //    }
   //
   //    return connector;
-  //  }
-  //
-  //  private Document loadFromTemplate() {
-  //    InputStream stream = getClass().getResourceAsStream(templateFile);
-  //    return loadDocument(stream);
-  //  }
-  //
-  //  private Document loadDocument(InputStream in) {
-  //    try {
-  //      return DocumentLoader.getVdxLoader().loadDocument(in);
-  //    } catch (IOException | ParserConfigurationException | SAXException e) {
-  //      throw new PSSIFIoException("Failed to load template file.", e);
-  //    }
   //  }
 
 }

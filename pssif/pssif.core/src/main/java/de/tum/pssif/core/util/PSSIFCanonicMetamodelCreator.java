@@ -3,6 +3,7 @@ package de.tum.pssif.core.util;
 import de.tum.pssif.core.PSSIFConstants;
 import de.tum.pssif.core.metamodel.AttributeCategory;
 import de.tum.pssif.core.metamodel.EdgeType;
+import de.tum.pssif.core.metamodel.Enumeration;
 import de.tum.pssif.core.metamodel.Metamodel;
 import de.tum.pssif.core.metamodel.Multiplicity;
 import de.tum.pssif.core.metamodel.Multiplicity.MultiplicityContainer;
@@ -14,6 +15,11 @@ import de.tum.pssif.core.metamodel.impl.MetamodelImpl;
 
 
 public final class PSSIFCanonicMetamodelCreator {
+
+  public static final String ENUM_CONJUNCTION                          = "Conjunction";
+  public static final String ENUM_CONJUNCTION_AND                      = "AND";
+  public static final String ENUM_CONJUNCTION_OR                       = "OR";
+  public static final String ENUM_CONJUNCTION_XOR                      = "XOR";
 
   public static final String N_DEV_ARTIFACT                            = "Development Artifact";
 
@@ -44,6 +50,7 @@ public final class PSSIFCanonicMetamodelCreator {
   public static final String A_REQUIREMENT_TYPE                        = "type";
   public static final String A_BLOCK_COST                              = "cost";
   public static final String A_HARDWARE_WEIGHT                         = "weight";
+  public static final String A_CONTROL_FLOW_HYPER_EDGE_CONJUNCTION     = "conjunction";
 
   public static final String E_FLOW                                    = "Flow";
   public static final String E_FLOW_ENERGY                             = "Energy Flow";
@@ -99,12 +106,20 @@ public final class PSSIFCanonicMetamodelCreator {
   public static Metamodel create() {
     MetamodelImpl metamodel = new MetamodelImpl();
 
+    createEnumerations(metamodel);
     createDevArtifacts(metamodel);
     createSolArtifacts(metamodel);
     createRelationships(metamodel);
     createFlows(metamodel);
 
     return metamodel;
+  }
+
+  private static void createEnumerations(MetamodelImpl metamodel) {
+    Enumeration conjunction = metamodel.createEnumeration(ENUM_CONJUNCTION);
+    conjunction.createLiteral(ENUM_CONJUNCTION_AND);
+    conjunction.createLiteral(ENUM_CONJUNCTION_OR);
+    conjunction.createLiteral(ENUM_CONJUNCTION_XOR);
   }
 
   private static void createDevArtifacts(MetamodelImpl metamodel) {
@@ -321,8 +336,10 @@ public final class PSSIFCanonicMetamodelCreator {
 
     EdgeType controlFlow = metamodel.createEdgeType(E_FLOW_CONTROL);
     controlFlow.inherit(flow);
-    controlFlow.createMapping("from", node(N_FUNCTION, metamodel), defaultNoneToManyMultiplicity(), "to", node(N_FUNCTION, metamodel),
-        defaultNoneToManyMultiplicity());
+    controlFlow.createMapping("from", node(N_FUNCTION, metamodel), defaultHyperEdgeMultiplicity(), "to", node(N_FUNCTION, metamodel),
+        defaultHyperEdgeMultiplicity());
+    controlFlow.createAttribute(controlFlow.getDefaultAttributeGroup(), A_CONTROL_FLOW_HYPER_EDGE_CONJUNCTION,
+        metamodel.findEnumeration(ENUM_CONJUNCTION), true, AttributeCategory.METADATA);
 
     EdgeType valueFlow = metamodel.createEdgeType(E_FLOW_VALUE);
     valueFlow.inherit(flow);
@@ -334,6 +351,10 @@ public final class PSSIFCanonicMetamodelCreator {
 
   private static Multiplicity defaultNoneToManyMultiplicity() {
     return MultiplicityContainer.of(1, 1, 0, UnlimitedNatural.UNLIMITED);
+  }
+
+  private static Multiplicity defaultHyperEdgeMultiplicity() {
+    return MultiplicityContainer.of(1, UnlimitedNatural.UNLIMITED, 0, UnlimitedNatural.UNLIMITED);
   }
 
 }
