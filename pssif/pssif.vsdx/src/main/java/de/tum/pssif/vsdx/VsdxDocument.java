@@ -17,4 +17,6 @@ public interface VsdxDocument {
 
   boolean hasMaster(int id);
 
+  VsdxDocumentWriter getDocumentWriter();
+
 }

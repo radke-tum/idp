@@ -5,6 +5,7 @@ import java.util.Set;
 import com.google.common.collect.Sets;
 
 import de.tum.pssif.vsdx.VsdxDocument;
+import de.tum.pssif.vsdx.VsdxDocumentWriter;
 import de.tum.pssif.vsdx.VsdxMaster;
 import de.tum.pssif.vsdx.zip.ZipArchiveEntryWithData;
 
@@ -63,4 +64,8 @@ public class VsdxDocumentImpl implements VsdxDocument {
     return Sets.newHashSet(this.transferOnlyEntries);
   }
 
+  @Override
+  public VsdxDocumentWriter getDocumentWriter() {
+    return new VsdxDocumentWriterImpl(this);
+  }
 }

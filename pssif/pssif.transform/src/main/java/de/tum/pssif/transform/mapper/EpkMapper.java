@@ -22,13 +22,17 @@ public class EpkMapper extends BaseVisioMapper {
 
   @Override
   protected Metamodel getView(Metamodel metamodel) {
-    // TODO create EPK View here!
-    return metamodel;
+    return createEpkView(metamodel);
   }
 
   @Override
   protected ModelMapper getModelMapper() {
     return new EpkModelMapper();
+  }
+
+  public static Metamodel createEpkView(Metamodel metamodel) {
+    //TODO
+    return metamodel;
   }
 
 }
