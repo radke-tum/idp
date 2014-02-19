@@ -15,6 +15,10 @@
 			<artifactId>pssif.core</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>de.tum</groupId>
+			<artifactId>pssif.vsdx</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 		</dependency>

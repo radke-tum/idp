@@ -73,14 +73,14 @@ public class MetamodelImpl extends AbstractMetamodel<NodeType, EdgeType> impleme
   }
 
   @Override
-  public Enumeration createEnumeration(String name) {
+  public EnumerationImpl createEnumeration(String name) {
     if (!PSSIFUtil.isValidName(name)) {
       throw new PSSIFStructuralIntegrityException("name can not be null or empty");
     }
     if (findDataType(name) != null) {
       throw new PSSIFStructuralIntegrityException("duplicate data type with name " + name);
     }
-    Enumeration result = new EnumerationImpl(name);
+    EnumerationImpl result = new EnumerationImpl(name);
     addEnumerationInternal(result);
     return result;
   }

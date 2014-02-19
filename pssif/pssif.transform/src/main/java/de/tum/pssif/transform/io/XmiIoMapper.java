@@ -3,21 +3,20 @@ package de.tum.pssif.transform.io;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import de.tum.pssif.core.metamodel.Metamodel;
-import de.tum.pssif.core.model.Model;
-import de.tum.pssif.transform.mapper.Mapper;
+import de.tum.pssif.transform.IoMapper;
+import de.tum.pssif.transform.graph.Graph;
 
 
-public class XmiIoMapper implements Mapper {
+public class XmiIoMapper implements IoMapper {
 
   @Override
-  public Model read(Metamodel metamodel, InputStream inputStream) {
+  public Graph read(InputStream in) {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public void write(Metamodel metamodel, Model model, OutputStream outputStream) {
+  public void write(Graph graph, OutputStream out) {
     // TODO Auto-generated method stub
 
   }

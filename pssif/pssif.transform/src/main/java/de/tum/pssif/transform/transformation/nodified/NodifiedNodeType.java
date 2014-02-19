@@ -36,10 +36,10 @@ public class NodifiedNodeType extends ViewedNodeType {
   }
 
   @Override
-  public PSSIFOption<Node> apply(Model model) {
+  public PSSIFOption<Node> apply(Model model, boolean includeSubTypes) {
     Collection<Node> result = Sets.newHashSet();
 
-    for (Node candidate : baseType.apply(model).getMany()) {
+    for (Node candidate : baseType.apply(model, includeSubTypes).getMany()) {
       for (Edge e : mapping.getTo().apply(candidate).getMany()) {
         for (Node fromNode : mapping.getFrom().apply(e).getMany()) {
           if (attribute.get(fromNode).getOne().getValue().equals(candidate.getId())) {

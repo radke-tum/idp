@@ -5,6 +5,7 @@ import java.util.Set;
 import com.google.common.collect.Sets;
 
 import de.tum.pssif.vsdx.VsdxDocument;
+import de.tum.pssif.vsdx.VsdxDocumentWriter;
 import de.tum.pssif.vsdx.VsdxMaster;
 import de.tum.pssif.vsdx.zip.ZipArchiveEntryWithData;
 
@@ -14,12 +15,13 @@ public class VsdxDocumentImpl implements VsdxDocument {
   private final Set<ZipArchiveEntryWithData> transferOnlyEntries;
   private final VsdxPageImpl                 page;
   private final VsdxMasterRepository         masterRepository;
+  private int                                shapesMaxId;
 
   public VsdxDocumentImpl(Set<ZipArchiveEntryWithData> transferOnlyEntries, VsdxPageImpl page, VsdxMasterRepository masterRepo) {
     this.transferOnlyEntries = transferOnlyEntries;
     this.page = page;
     this.masterRepository = masterRepo;
-    page.setDocument(this);
+    shapesMaxId = page.setDocument(this);
     masterRepository.setDocument(this);
   }
 
@@ -34,12 +36,12 @@ public class VsdxDocumentImpl implements VsdxDocument {
   }
 
   @Override
-  public VsdxMaster getMaster(int id) {
+  public VsdxMasterImpl getMaster(int id) {
     return masterRepository.getMaster(id);
   }
 
   @Override
-  public VsdxMaster getMaster(String name) {
+  public VsdxMasterImpl getMaster(String name) {
     return masterRepository.getMaster(name);
   }
 
@@ -53,8 +55,17 @@ public class VsdxDocumentImpl implements VsdxDocument {
     return masterRepository.hasMaster(id);
   }
 
+  int getNewShapeId() {
+    shapesMaxId++;
+    return shapesMaxId;
+  }
+
   Set<ZipArchiveEntryWithData> getTransferOnlyEntries() {
     return Sets.newHashSet(this.transferOnlyEntries);
   }
 
+  @Override
+  public VsdxDocumentWriter getDocumentWriter() {
+    return new VsdxDocumentWriterImpl(this);
+  }
 }

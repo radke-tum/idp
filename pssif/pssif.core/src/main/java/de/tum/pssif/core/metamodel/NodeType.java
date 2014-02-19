@@ -97,10 +97,12 @@ public interface NodeType extends ElementType<NodeType, Node> {
    * Retrieves all nodes which are instances of this node type in a model.
    * @param model
    *    The model to search in.
+   * @param includeSubTypes
+   *    Whether to include instances of this type only, or also instances of all subtypes.
    * @return
    *    The node instances found.
    */
-  PSSIFOption<Node> apply(Model model);
+  PSSIFOption<Node> apply(Model model, boolean includeSubTypes);
 
   /**
    * Retrieves a node of this type with the specified id from the specified model

@@ -21,7 +21,7 @@ import de.tum.pssif.core.model.impl.ModelImpl;
 import de.tum.pssif.core.util.PSSIFOption;
 import de.tum.pssif.core.util.PSSIFUtil;
 import de.tum.pssif.core.util.PSSIFValue;
-import de.tum.pssif.transform.mapper.Mapper;
+import de.tum.pssif.transform.Mapper;
 import de.tum.pssif.transform.mapper.graphml.GraphMLGraph.GraphMlAttrImpl;
 import de.tum.pssif.transform.mapper.graphml.GraphMLGraph.GraphMlEdgeImpl;
 import de.tum.pssif.transform.mapper.graphml.GraphMLGraph.GraphMlNodeImpl;
@@ -160,7 +160,7 @@ public class GraphMLMapper implements Mapper {
 
   private void addNodesToGraph(GraphMLGraph graph, NodeType nodeType, Model model) {
     Attribute idAttribute = nodeType.findAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_ID);
-    for (Node pssifNode : nodeType.apply(model).getMany()) {
+    for (Node pssifNode : nodeType.apply(model, false).getMany()) {
       GraphMlNodeImpl node = new GraphMlNodeImpl(id(idAttribute, pssifNode));
       node.setValue(GraphMLTokens.ELEMENT_TYPE, nodeType.getName());
       for (Attribute attr : nodeType.getAttributes()) {
