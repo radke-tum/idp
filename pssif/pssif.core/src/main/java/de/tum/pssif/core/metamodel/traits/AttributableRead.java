@@ -29,6 +29,8 @@ public interface AttributableRead {
    */
   Collection<Attribute> getAttributes();
 
+  Collection<Attribute> getDirectAttributes();
+
   //Not needed for the current use cases
   //  /**
   //   * Removes an Attribute Type from this context element.

@@ -10,7 +10,7 @@ import de.tum.pssif.core.util.PSSIFOption;
 /**
  * A type which describes nodes.
  */
-public interface NodeType extends ElementType<NodeType> {
+public interface NodeType extends ElementType<NodeType, Node> {
 
   /**
    * Registers an incoming edge type to this node type.
@@ -19,6 +19,8 @@ public interface NodeType extends ElementType<NodeType> {
    */
   void registerIncoming(EdgeType type);
 
+  void deregisterIncoming(EdgeType type);
+
   /**
    * Registers an outgoing edge type to this node type.
    * @param type
@@ -26,12 +28,16 @@ public interface NodeType extends ElementType<NodeType> {
    */
   void registerOutgoing(EdgeType type);
 
+  void deregisterOutgoing(EdgeType type);
+
   /**
    * Registers an auxiliary edge type to this node type.
    * @param type
    *    The auxiliary edge type to register.
    */
   void registerAuxiliary(EdgeType type);
+
+  void deregisterAuxiliary(EdgeType type);
 
   /**
    * @return

@@ -1,6 +1,5 @@
 package de.tum.pssif.core.metamodel;
 
-import de.tum.pssif.core.util.PSSIFOption;
 
 
 /**
@@ -16,19 +15,6 @@ public interface Named {
    *    The name of this entity.
    */
   String getName();
-
-  /**
-   * @param name
-   * @return
-   *    Whether the name of one of the aliases of this named is the same as the provided name.
-   */
-  boolean hasName(String name);
-
-  /**
-   * @return
-   *    The name and all aliases of this named.
-   */
-  PSSIFOption<String> getNames();
 
   /**
    * @return

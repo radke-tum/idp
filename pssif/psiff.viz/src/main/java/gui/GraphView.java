@@ -1,14 +1,19 @@
 package gui;
 
+import de.tum.pssif.core.metamodel.Attribute;
 import edu.uci.ics.jung.algorithms.layout.FRLayout;
 import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
+import edu.uci.ics.jung.visualization.annotations.AnnotatingModalGraphMouse.ModeKeyAdapter;
 import edu.uci.ics.jung.visualization.picking.PickedState;
 import graph.model2.MyEdge2;
 import graph.model2.MyEdgeType;
 import graph.model2.MyEdgeTypes;
 import graph.model2.MyNode2;
 import graph.model2.MyNodeType;
+import graph.operations.GraphViewContainer;
+import graph.operations.AttributeFilter;
+import gui.graph.AttributeFilterPopup;
 import gui.graph.GraphVisualization;
 
 import java.awt.BorderLayout;
@@ -23,6 +28,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -38,11 +44,16 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
+import javax.swing.JTable;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
 
 import model.ModelBuilder;
 
@@ -52,26 +63,30 @@ public class GraphView {
 	
 	private JLabel nodename;
 	private JLabel nodetype;
-	private JList<String> nodeattributes;
+	//private JList<String> nodeattributes;
 	private JCheckBox nodeDetails;
 	private JButton nodeHighlight;
 	private JButton collapseExpand;
 	private JButton typeFilter;
+	private JButton nodeAttributeFilter;
+	private JButton edgeAttributeFilter;
 	private boolean active;
+	private JTable tableNodeAttributes;
+	private DefaultTableModel nodeAttributesModel;
 	
 	private Dimension screenSize;
 
-	public GraphView()
+	public GraphView(/*Dimension parentDimension*/)
 	{
-
 		active = false;
 		screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+		//screenSize = parentDimension;
 		int x = (int) (screenSize.width*0.85);
 		int y = (int) (screenSize.height*0.9);
 		if (nodeDetails==null)
 			graph = new GraphVisualization(new Dimension(x,y),true);
 		else
-			graph = new GraphVisualization(new Dimension(x,y),nodeDetails.isSelected());
+			graph = new GraphVisualization(new Dimension(x,y), nodeDetails.isSelected());
 		
 		addNodeChangeListener();
 	}
@@ -84,12 +99,7 @@ public class GraphView {
 		parent = new JPanel();
         parent.setLayout(new BorderLayout());
 		
-		JPanel graphpanel = new JPanel();/*
-<<<<<<< HEAD
-=======
-		//graphpanel.setBackground(Color.YELLOW);
->>>>>>> refs/remotes/origin/attempt3*/
-		
+		JPanel graphpanel = new JPanel();		
 		
 		VisualizationViewer<MyNode2, MyEdge2> vv = graph.getVisualisationViewer();
 		
@@ -98,11 +108,9 @@ public class GraphView {
 		parent.add(graphpanel,BorderLayout.CENTER);
 		
 		JPanel information = new JPanel();
-//<<<<<<< HEAD
+
 		information.setBackground(Color.LIGHT_GRAY);
-/*=======
-		information.setBackground(Color.LIGHT_GRAY);
->>>>>>> refs/remotes/origin/attempt3*/
+
 		int x = (int) (screenSize.width*0.15);
 		int y = (int) (screenSize.height);
 		Dimension d = new Dimension(x,y);
@@ -150,16 +158,62 @@ public class GraphView {
 		c.gridy = (i++);
 		information.add(Box.createVerticalStrut(betweenLabelandComp),c);
 		
+		nodeAttributesModel = new DefaultTableModel(){
+			
+	        public boolean isCellEditable(int rowIndex, int columnIndex) {
+	            if (columnIndex==0 || columnIndex==2 || columnIndex==3)
+	            	return false;
+	            else
+	            	return true;
+	        }
+		};
+		nodeAttributesModel.addColumn("Attribute");
+		nodeAttributesModel.addColumn("Value");
+		nodeAttributesModel.addColumn("Unit");
+		nodeAttributesModel.addColumn("Type");
 		
-		nodeattributes = new JList<String>();
-		String[] a = new String[]{};
+		tableNodeAttributes = new JTable(nodeAttributesModel);
+		tableNodeAttributes.getModel().addTableModelListener(new TableModelListener() {
+			
+			@Override
+			public void tableChanged(TableModelEvent e) {
+				
+				//System.out.println(e.getType());
+				if (  e.getType() == TableModelEvent.UPDATE)
+				{
+					int row = e.getFirstRow();
+			        int column = e.getColumn();
+			        TableModel model = (TableModel)e.getSource();
+			       // String columnName = model.getColumnName(column);
+			        Object data = model.getValueAt(row, column);
+			        String attributeName = (String) model.getValueAt(row, 0);
+					
+			        Set<MyNode2> selectedNodes = graph.getVisualisationViewer().getPickedVertexState().getPicked();
+			        if (!selectedNodes.isEmpty() && selectedNodes.size()==1)
+			        {
+			        	MyNode2 selectedNode = selectedNodes.iterator().next();
+			        	
+			        	boolean res = selectedNode.updateAttribute(attributeName, data);
+			        	//System.out.println("Update");
+			        	
+			        	if (!res)
+			        	{
+			        		//model.setValueAt("", row, column);
+			        		JPanel errorPanel = new JPanel();
+			        		
+			        		errorPanel.add(new JLabel("The value does not match the attribute data type"));
+			        		
+			        		JOptionPane.showMessageDialog(null, errorPanel, "Ups something went wrong", JOptionPane.ERROR_MESSAGE);
+			        	}
+			        }
+				}
+			}
+		});
 		
-		nodeattributes.setListData(a);
-		nodeattributes.setVisibleRowCount(5);
+
 		int scrolly = (int)( y*0.1);
 
-		JScrollPane jScrollPane = new JScrollPane(nodeattributes);
-		//jScrollPane.setViewportView(nodeattributes);
+		JScrollPane jScrollPane = new JScrollPane(tableNodeAttributes);
 		jScrollPane.setPreferredSize(new Dimension(x, scrolly));
 		jScrollPane.setMaximumSize(new Dimension(x, scrolly));
 		jScrollPane.setMinimumSize(new Dimension(x, scrolly));
@@ -190,12 +244,10 @@ public class GraphView {
 				{
 					graph.setNodeVisualisation(true);
 					// checkbox selected
-					System.out.println("Test");
 				}
 				else
 				{
 					// checkbox not selected
-					System.out.println("Test2");
 					graph.setNodeVisualisation(false);
 				}
 				
@@ -290,7 +342,35 @@ public class GraphView {
 		c.gridy = (i++);
 		information.add(Box.createVerticalStrut(betweenComps),c);
 		
+		nodeAttributeFilter = new JButton("Filter Nodes  by Attribute");
+		nodeAttributeFilter.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				AttributeFilterPopup filter = new AttributeFilterPopup(graph.getGraph(),true,false);
+				filter.showPopup();
+				graph.applyAttributeFilter();
+			}
+		});
+		c.gridy = (i++);
+		information.add(nodeAttributeFilter,c);
+		c.gridy = (i++);
+		information.add(Box.createVerticalStrut(betweenComps),c);
 		
+		edgeAttributeFilter = new JButton("Filter Edges  by Attribute");
+		edgeAttributeFilter.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				AttributeFilterPopup filter = new AttributeFilterPopup(graph.getGraph(),false,true);
+				filter.showPopup();
+				graph.applyAttributeFilter();
+			}
+		});
+		c.gridy = (i++);
+		information.add(edgeAttributeFilter,c);
+		c.gridy = (i++);
+		information.add(Box.createVerticalStrut(betweenComps),c);
 		
 		
 		return parent;
@@ -302,13 +382,15 @@ public class GraphView {
 	
 	public void resetGraph()
 	{
+		graph.applyNodeAndEdgeFilter(ModelBuilder.getNodeTypes().getAllNodeTypes(), ModelBuilder.getEdgeTypes().getAllEdgeTypes());
+		
 		FRLayout<MyNode2, MyEdge2> l = new FRLayout<MyNode2, MyEdge2>(graph.getGraph());
     	graph.getVisualisationViewer().setGraphLayout(l);
     	
     	graph.getVisualisationViewer().repaint();
 	}
 	
-	private void updateSidebar(String nodeName, MyNodeType nodeType, List<String> attributes)
+	private void updateSidebar(String nodeName, MyNodeType nodeType, LinkedList<LinkedList<String>> attributes)
 	{
 		if (nodeName==null)
 			this.nodename.setText("");
@@ -320,20 +402,28 @@ public class GraphView {
 			this.nodetype.setText(nodeType.getName());
 		if(attributes==null)
 		{
-			String[] s = new String[0];
-			this.nodeattributes.setListData(s);
+			for (int i = 0; i<nodeAttributesModel.getRowCount();i++)
+			{
+				nodeAttributesModel.removeRow(i);
+			}
+			nodeAttributesModel.setRowCount(0);
 		}
 		else
 		{
-			String[] s = new String[attributes.size()];
-			
-			int counter=0;
-			for (String a : attributes)
+			for (int i = 0; i<nodeAttributesModel.getRowCount();i++)
 			{
-				s[counter]=a;
-				counter++;
+				nodeAttributesModel.removeRow(i);
 			}
-			this.nodeattributes.setListData(s);
+			nodeAttributesModel.setRowCount(0);
+			
+			for (LinkedList<String> currentAttr: attributes)
+			{
+				String name = currentAttr.get(0);
+				String value = currentAttr.get(1);
+				String unit = currentAttr.get(2);
+				String type = currentAttr.get(3);
+				nodeAttributesModel.addRow(new String[]{name,value,unit,type});
+			}
 		}
 		
 		if (graph.isCollapsable())
@@ -707,6 +797,5 @@ public class GraphView {
 	public void setActive(boolean active) {
 		this.active = active;
 	}
-	
 	
 }

@@ -7,6 +7,7 @@
 	<packaging>pom</packaging>
 	<modules>
 		<module>pssif.core</module>
+		<module>pssif.vsdx</module>
 		<module>pssif.transform</module>
 		<module>psiff.viz</module>
 	</modules>
@@ -32,6 +33,16 @@
 				<groupId>de.tum</groupId>
 				<artifactId>pssif.core</artifactId>
 				<version>0.0.1-SNAPSHOT</version>
+			</dependency>
+			<dependency>
+				<groupId>de.tum</groupId>
+				<artifactId>pssif.transform</artifactId>
+				<version>0.0.1-SNAPSHOT</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.commons</groupId>
+				<artifactId>commons-compress</artifactId>
+				<version>1.7</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

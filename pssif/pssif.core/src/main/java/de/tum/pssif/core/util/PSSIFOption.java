@@ -134,4 +134,17 @@ public final class PSSIFOption<P> {
   public int size() {
     return elements.size();
   }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (obj instanceof PSSIFOption) {
+      return elements.equals(((PSSIFOption<?>) obj).getMany());
+    }
+    return false;
+  }
+
+  @Override
+  public int hashCode() {
+    return elements.hashCode();
+  }
 }

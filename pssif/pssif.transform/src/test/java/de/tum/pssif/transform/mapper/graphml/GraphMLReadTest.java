@@ -7,10 +7,13 @@ import java.util.Map;
 import org.junit.Assert;
 import org.junit.Test;
 
+import de.tum.pssif.core.metamodel.EdgeType;
 import de.tum.pssif.core.metamodel.Metamodel;
 import de.tum.pssif.core.metamodel.NodeType;
 import de.tum.pssif.core.model.Model;
+import de.tum.pssif.core.model.Node;
 import de.tum.pssif.core.util.PSSIFCanonicMetamodelCreator;
+import de.tum.pssif.transform.transformation.RenameEdgeTypeTransformation;
 
 
 public class GraphMLReadTest {
@@ -74,13 +77,39 @@ public class GraphMLReadTest {
     GraphMLMapper importer = new GraphMLMapper();
 
     Metamodel metamodel = PSSIFCanonicMetamodelCreator.create();
-    Model model = importer.read(metamodel, in);
+    Metamodel view = new RenameEdgeTypeTransformation(metamodel.findEdgeType("Information Flow"), "InformationFlow").apply(metamodel);
+    view = new RenameEdgeTypeTransformation(view.findEdgeType("Energy Flow"), "EnergyFlow").apply(view);
+    Model model = importer.read(view, in);
 
-    NodeType state = metamodel.findNodeType("State");
-    NodeType function = metamodel.findNodeType("Function");
+    NodeType viewedState = view.findNodeType("State");
+    NodeType viewedFunction = view.findNodeType("Function");
 
-    Assert.assertEquals(8, state.apply(model).size());
-    Assert.assertEquals(5, function.apply(model).size());
+    EdgeType viewedInformationFlow = view.findEdgeType("InformationFlow");
+    EdgeType viewedEnergyFlow = view.findEdgeType("EnergyFlow");
+
+    NodeType canonicState = metamodel.findNodeType("State");
+    NodeType canonicFunction = metamodel.findNodeType("Function");
+
+    EdgeType canonicInformationFlow = metamodel.findEdgeType("Information Flow");
+    EdgeType canonicEnergyFlow = metamodel.findEdgeType("Energy Flow");
+
+    Assert.assertEquals(8, viewedState.apply(model).size());
+    Assert.assertEquals(5, viewedFunction.apply(model).size());
+    Assert.assertEquals(8, canonicState.apply(model).size());
+    Assert.assertEquals(5, canonicFunction.apply(model).size());
+
+    for (Node node : canonicState.apply(model).getMany()) {
+      Assert.assertEquals(canonicInformationFlow.getIncoming().apply(node), viewedInformationFlow.getIncoming().apply(node));
+      Assert.assertEquals(canonicInformationFlow.getOutgoing().apply(node), viewedInformationFlow.getOutgoing().apply(node));
+      Assert.assertEquals(canonicEnergyFlow.getIncoming().apply(node), viewedEnergyFlow.getIncoming().apply(node));
+      Assert.assertEquals(canonicEnergyFlow.getOutgoing().apply(node), viewedEnergyFlow.getOutgoing().apply(node));
+    }
+    for (Node node : canonicFunction.apply(model).getMany()) {
+      Assert.assertEquals(canonicInformationFlow.getIncoming().apply(node), viewedInformationFlow.getIncoming().apply(node));
+      Assert.assertEquals(canonicInformationFlow.getOutgoing().apply(node), viewedInformationFlow.getOutgoing().apply(node));
+      Assert.assertEquals(canonicEnergyFlow.getIncoming().apply(node), viewedEnergyFlow.getIncoming().apply(node));
+      Assert.assertEquals(canonicEnergyFlow.getOutgoing().apply(node), viewedEnergyFlow.getOutgoing().apply(node));
+    }
   }
 
   @Test

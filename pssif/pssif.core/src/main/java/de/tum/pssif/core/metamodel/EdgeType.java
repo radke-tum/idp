@@ -3,12 +3,13 @@ package de.tum.pssif.core.metamodel;
 import java.util.Collection;
 
 import de.tum.pssif.core.metamodel.traits.ElementApplicable;
+import de.tum.pssif.core.model.Edge;
 
 
 /**
  * A type which describes edges.
  */
-public interface EdgeType extends ElementType<EdgeType> {
+public interface EdgeType extends ElementType<EdgeType, Edge> {
 
   /**
    * Creates a connection mapping through this edge end between an incoming and an outgoing node type.

@@ -13,12 +13,12 @@ public class MyNodeTypes {
 		
 		for (NodeType nt : types)
 		{
-			if (nt.getName()!="Node")
-			{
+			//if (nt.getName()!="Node")
+		//	{
 				MyNodeType tmp = new MyNodeType(nt);
 				
 				this.types.add(tmp);
-			}
+		//	}
 		}
 		
 	}

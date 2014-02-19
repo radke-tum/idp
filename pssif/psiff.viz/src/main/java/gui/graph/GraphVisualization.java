@@ -18,6 +18,7 @@ import graph.model2.MyEdge2;
 import graph.model2.MyEdgeType;
 import graph.model2.MyNode2;
 import graph.model2.MyNodeType;
+import graph.operations.GraphViewContainer;
 import graph.operations.MyCollapser;
 import graph.operations.NodeAndEdgeFilter;
 import graph.operations.VertexStrokeHighlight;
@@ -138,7 +139,16 @@ public class GraphVisualization
       }
     };
     
-    Transformer<MyNode2, String> vertexLabelTransformer = new ChainedTransformer<MyNode2, String>(new Transformer[] {
+    Transformer<MyNode2, String> vertexLabelTransformer =  new Transformer<MyNode2, String>()
+    	    {
+        public String transform(MyNode2 node)
+        {
+        	return "<html>" + node.getNodeInformations();
+        }
+        
+    };
+    
+    /* = new ChainedTransformer<MyNode2, String>(new Transformer[] {
       new ToStringLabeller<String>(), 
       new Transformer<String,String>()
       {
@@ -146,7 +156,7 @@ public class GraphVisualization
         {
           return "<html>" + input;
         }
-      } });
+      } });*/
     
 	  // Set up a new stroke Transformer for the edges
     Transformer<MyEdge2, Stroke> edgeTransformer = new Transformer<MyEdge2, Stroke>()
@@ -173,7 +183,16 @@ public class GraphVisualization
         return b;
       }
     };
-    Transformer<MyEdge2, String> edgeLabelTransformer = new ChainedTransformer<MyEdge2, String>(new Transformer[] {
+    
+    Transformer<MyEdge2, String> edgeLabelTransformer =  new Transformer<MyEdge2, String>()
+    	    {
+		        public String transform(MyEdge2 edge)
+		        {
+		        	return "<html>" + edge.getEdgeInformations();
+		        }
+    	    };
+   /*new ChainedTransformer<MyEdge2, String>(new Transformer[] {
+        }
       new ToStringLabeller<String>(), 
       new Transformer<String,String>()
       {
@@ -181,7 +200,8 @@ public class GraphVisualization
         {
           return "<html>" + input;
         }
-      } });
+      } });*/
+    	    
     Transformer<MyEdge2, Paint> edgePaint = new Transformer<MyEdge2, Paint>()
     {
       public Paint transform(MyEdge2 edge)
@@ -400,6 +420,14 @@ public void applyNodeAndEdgeFilter(LinkedList<MyNodeType> nodes, LinkedList<MyEd
     vv.repaint();
 }
 
+public void applyAttributeFilter()
+{	
+	collapser.reset();
+	
+	vv.getPickedVertexState().clear();
+    vv.repaint();
+}
+
 public void setNodeColorMapping(HashMap<MyNodeType, Color> nodeColorMapping) {
 	this.nodeColorMapping.putAll(nodeColorMapping);
 	this.configWriterReader.setColors(nodeColorMapping);
@@ -412,7 +440,22 @@ public HashMap<MyNodeType, Color> getNodeColorMapping ()
 {
 	return this.configWriterReader.readColors();
 }
-  
+
+
+public void createNewGraphView (GraphViewContainer newView)
+{
+	this.configWriterReader.setGraphView(newView);
+}
+
+public HashMap<String, GraphViewContainer> getAllGraphViews()
+{
+	return this.configWriterReader.readViews();
+}
+
+public void deleteGraphView (GraphViewContainer deleteView)
+{
+	this.configWriterReader.deleteView(deleteView.getViewName());
+}
   
   /*	  private class MutableDirectionalEdgeValue extends ConstantDirectionalEdgeValueTransformer<MyNode,MyEdge> {
 	        BoundedRangeModel undirectedModel = new DefaultBoundedRangeModel(5,0,0,10);

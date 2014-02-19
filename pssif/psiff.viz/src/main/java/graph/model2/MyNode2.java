@@ -1,25 +1,27 @@
 package graph.model2;
 
 import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
 import de.tum.pssif.core.PSSIFConstants;
 import de.tum.pssif.core.metamodel.Attribute;
+import de.tum.pssif.core.metamodel.DataType;
+import de.tum.pssif.core.metamodel.PrimitiveDataType;
 import de.tum.pssif.core.model.Node;
 import de.tum.pssif.core.metamodel.NodeType;
+import de.tum.pssif.core.util.PSSIFOption;
 import de.tum.pssif.core.util.PSSIFValue;
 
 
 public class MyNode2{
-
 	private Node node;
 	private String name;
-	private List<String> attributes ;
 	private int size;
 	private MyNodeType type;
 	private boolean detailedOutput;
-	//public static int idcounter;
 	
 	private static int limit = 15;
 	private static int heightlimit = 2;
@@ -35,36 +37,189 @@ public class MyNode2{
 		{
 			PSSIFValue value = nodeName.get(node).getOne();
 			//PSSIFValue value = (PSSIFValue) nodeName.get(node);
+			
 			name = value.asString();
 			
 		}
 		else
-			name ="blabla";
-		
-		calcAttr();
+			name ="Name not available";
 	}
 	
-	private void calcAttr()
+	private List<String> calcAttr()
 	{
-		attributes = new LinkedList<String>();
+		List<String> attributes = new LinkedList<String>();
 		
 		Collection<Attribute> attr = type.getType().getAttributes();
 		
 		for (Attribute current : attr)
 		{
 			String attrName = current.getName();
-			//PSSIFValue value = (PSSIFValue) current.get(node);
-			PSSIFValue value = current.get(node).getOne();
+			
+			//PSSIFValue value = current.get(node).getOne();
+
+			
+			PSSIFValue value=null;
+			
+			if (current.get(node)!=null && current.get(node).isOne())
+				value = current.get(node).getOne();
+			
 			String attrValue="";
 			if (value !=null)
-				attrValue = (String) value.getValue();
+				attrValue = String.valueOf(value.getValue());
 			String attrUnit = current.getUnit().getName();
 			
-			String res = attrName+" = "+attrValue+" : "+attrUnit;
+			String res;
 			
-			if (current.get(node)!=null)
+			if (attrUnit.equals("none"))
+				res = attrName+" = "+attrValue+" : "+((PrimitiveDataType)current.getType()).getName();
+			else
+				res = attrName+" = "+attrValue+" in "+attrUnit+ " : "+((PrimitiveDataType)current.getType()).getName();
+			
+			if (current.get(node)!=null && attrValue.length()>0)
 				attributes.add(res);
 		}
+		
+		return attributes;
+	}
+	
+	public LinkedList<LinkedList<String>> getAttributes()
+	{
+		LinkedList<LinkedList<String>> attributes = new LinkedList<LinkedList<String>>();
+		
+		
+		Collection<Attribute> attr = type.getType().getAttributes();
+		
+		for (Attribute current : attr)
+		{
+			LinkedList<String> currentAttr = new LinkedList<String>();
+			
+			String attrName = current.getName();
+			
+			currentAttr.add(attrName);
+			
+			PSSIFValue value=null;
+			
+			if (current.get(node)!=null && current.get(node).isOne())
+				value = current.get(node).getOne();
+			
+			String attrValue="";
+			if (value !=null)
+				attrValue = String.valueOf(value.getValue());
+			
+			currentAttr.add(attrValue);
+			String attrUnit = current.getUnit().getName();
+			currentAttr.add(attrUnit);
+			
+			currentAttr.add(((PrimitiveDataType)current.getType()).getName());
+			
+			attributes.add(currentAttr);
+		}
+		
+		return attributes;
+	}
+	
+	public boolean updateAttribute(String attributeName, Object value)
+	{		
+		DataType attrType = type.getType().findAttribute(attributeName).getType();
+		
+		if (attrType.equals(PrimitiveDataType.BOOLEAN))
+		{
+			try 
+			{
+				PSSIFValue res = PrimitiveDataType.BOOLEAN.fromObject(value);
+				
+				type.getType().findAttribute(attributeName).set(node, PSSIFOption.one(res));
+				
+				return true;
+			}
+			catch (IllegalArgumentException e)
+			{
+				return false;
+			}
+		}
+		
+		if (attrType.equals(PrimitiveDataType.DATE))
+		{
+			try 
+			{
+				PSSIFValue res = PrimitiveDataType.DATE.fromObject(value);
+				type.getType().findAttribute(attributeName).set(node, PSSIFOption.one(res));
+				
+				return true;
+			}
+			catch (IllegalArgumentException e)
+			{
+				System.out.println(e.getMessage());
+				return false;
+			}
+		}
+		
+		if (attrType.equals(PrimitiveDataType.DECIMAL))
+		{
+			try 
+			{
+				PSSIFValue res = PrimitiveDataType.DECIMAL.fromObject(value);
+				
+				type.getType().findAttribute(attributeName).set(node, PSSIFOption.one(res));
+				
+				return true;
+			}
+			catch (IllegalArgumentException e)
+			{
+				return false;
+			}
+		}
+		
+		if (attrType.equals(PrimitiveDataType.INTEGER))
+		{
+			try 
+			{
+				PSSIFValue res = PrimitiveDataType.INTEGER.fromObject(value);
+				
+				type.getType().findAttribute(attributeName).set(node, PSSIFOption.one(res));
+				
+				return true;
+			}
+			catch (IllegalArgumentException e)
+			{
+				return false;
+			}
+		}
+		
+		if (attrType.equals(PrimitiveDataType.STRING))
+		{
+			try 
+			{
+				PSSIFValue res = PrimitiveDataType.STRING.fromObject(value);
+				
+				type.getType().findAttribute(attributeName).set(node, PSSIFOption.one(res));
+				
+				return true;
+			}
+			catch (IllegalArgumentException e)
+			{
+				return false;
+			}
+		}
+		
+		type.getType().findAttribute(attributeName).set(node, PSSIFOption.one(PSSIFValue.create(value)));
+		return true;
+	}
+	
+	public HashMap<String, Attribute> getAttributesHashMap()
+	{
+		 HashMap<String, Attribute> res = new  HashMap<String, Attribute>();
+		
+		Collection<Attribute> attr = type.getType().getAttributes();
+		
+		for (Attribute current : attr)
+		{
+			String attrName = current.getName();
+			
+			res.put(attrName, current);
+		}
+		
+		return res;
 	}
 
 	
@@ -97,9 +252,13 @@ public class MyNode2{
 	{
 		//setSize();
 	}
-
-	public String toString() {
-		
+	
+	/**
+	 * Get all the Informations about the Node. Should only be used in the GraphVisualization
+	 * @return a HTML String with all the node informations
+	 */
+	public String getNodeInformations()
+	{
 		String output="";
 		if (detailedOutput)
 		{
@@ -110,7 +269,7 @@ public class MyNode2{
 			output+=" <tr> ";
 			output+= "<td> <b>Attributes </b></td>";
 			output+=  " </tr> ";
-			for (String s : attributes)
+			for (String s : calcAttr())
 			{
 				output+=" <tr> ";
 				output+= "<td> "+s+" </td>";
@@ -129,7 +288,7 @@ public class MyNode2{
 	
 /**
  * Pretty printed Name
- * @return
+ * @return a html name
  */
 	public String getName()
 	{
@@ -141,6 +300,7 @@ public class MyNode2{
 	
 	/**
 	 * Actual name value
+	 * @return the name
 	 */
 	public String getRealName()
 	{
@@ -153,14 +313,6 @@ public class MyNode2{
 	public void setRealName(String name)
 	{
 		this.name=name;
-	}
-	
-	public List<String> getAttributes() {
-		return attributes;
-	}
-
-	public void setAttributes(List<String> attributes) {
-		this.attributes = attributes;
 	}
 
 	public int getSize() {
@@ -179,12 +331,15 @@ public class MyNode2{
 		this.detailedOutput = detailedOutput;
 	}
 	
-	public boolean compareTo (Node n)
+	public boolean equals (Object n)
 	{
-		if (this.node.equals(n))
-			return true;
-		else
-			return false;
+		if (n instanceof Node)
+		{
+			Node tmp = (Node) n;
+			return this.node.equals(tmp);
+		}
+		
+		return false;
 	}
 
 	public Node getNode() {
