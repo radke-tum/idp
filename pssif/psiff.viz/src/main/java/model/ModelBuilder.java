@@ -95,7 +95,7 @@ public class ModelBuilder {
 	{
 		for (MyNodeType t : nodeTypes.getAllNodeTypes())
 		{
-			PSSIFOption<Node> tempNodes = t.getType().apply(model);
+			PSSIFOption<Node> tempNodes = t.getType().apply(model,true);
 			
 			for (Node tempNode : tempNodes.getMany())
 			{
