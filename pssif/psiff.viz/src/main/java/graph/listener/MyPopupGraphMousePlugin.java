@@ -43,7 +43,6 @@ import graph.model2.MyEdge2;
 import graph.model2.MyEdgeType;
 import graph.model2.MyNode2;
 import graph.model2.MyNodeType;
-import graph.operations.InfoContainer;
 
 public class MyPopupGraphMousePlugin extends AbstractPopupGraphMousePlugin implements MouseListener {
 

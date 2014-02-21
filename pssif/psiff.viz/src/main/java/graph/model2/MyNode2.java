@@ -1,5 +1,7 @@
 package graph.model2;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -15,13 +17,20 @@ import de.tum.pssif.core.metamodel.NodeType;
 import de.tum.pssif.core.util.PSSIFOption;
 import de.tum.pssif.core.util.PSSIFValue;
 
-
+/**
+ * A Data container for the Nodes the PSS-IF Model
+ * Helps to manage the visualization/modification of the Node
+ * @author Luc
+ *
+ */
 public class MyNode2{
 	private Node node;
 	private String name;
 	private int size;
 	private MyNodeType type;
 	private boolean detailedOutput;
+	private boolean visible;
+	private boolean collapseNode;
 	
 	private static int limit = 15;
 	private static int heightlimit = 2;
@@ -30,21 +39,26 @@ public class MyNode2{
 	public MyNode2(Node node, MyNodeType type) {
 		this.node = node;
 		this.type = type;
+		this.visible = true;
+		this.collapseNode = false;
 		
+		// find the name of the Node
 		Attribute nodeName = type.getType().findAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_NAME);
 		
 		if (nodeName.get(node)!=null)
 		{
 			PSSIFValue value = nodeName.get(node).getOne();
-			//PSSIFValue value = (PSSIFValue) nodeName.get(node);
 			
 			name = value.asString();
-			
 		}
 		else
 			name ="Name not available";
 	}
 	
+	/**
+	 * Get all the Attributes from this node
+	 * @return List with the attributes. Format : Name = Value in (Unit) Datatype 
+	 */
 	private List<String> calcAttr()
 	{
 		List<String> attributes = new LinkedList<String>();
@@ -54,9 +68,6 @@ public class MyNode2{
 		for (Attribute current : attr)
 		{
 			String attrName = current.getName();
-			
-			//PSSIFValue value = current.get(node).getOne();
-
 			
 			PSSIFValue value=null;
 			
@@ -82,6 +93,10 @@ public class MyNode2{
 		return attributes;
 	}
 	
+	/**
+	 * Get a list with all the attributes from this Node
+	 * @return A list which contains a list with all the attribute information. Information Order in the list : Name, Value, Unit, Datatype
+	 */
 	public LinkedList<LinkedList<String>> getAttributes()
 	{
 		LinkedList<LinkedList<String>> attributes = new LinkedList<LinkedList<String>>();
@@ -118,6 +133,12 @@ public class MyNode2{
 		return attributes;
 	}
 	
+	/**
+	 * Update the value of a given attribute
+	 * @param attributeName
+	 * @param value
+	 * @return true if everything went fine, otherwise false
+	 */
 	public boolean updateAttribute(String attributeName, Object value)
 	{		
 		DataType attrType = type.getType().findAttribute(attributeName).getType();
@@ -142,7 +163,9 @@ public class MyNode2{
 		{
 			try 
 			{
-				PSSIFValue res = PrimitiveDataType.DATE.fromObject(value);
+				Date tmp = parseDate((String) value);
+				
+				PSSIFValue res = PrimitiveDataType.DATE.fromObject(tmp);
 				type.getType().findAttribute(attributeName).set(node, PSSIFOption.one(res));
 				
 				return true;
@@ -206,6 +229,57 @@ public class MyNode2{
 		return true;
 	}
 	
+	/**
+	 * We only accepts certain date formats. Checks different date formats and returns a date object
+	 * @param dateInString
+	 * @return a date object, if the given String is not coded in one of the given date formats, null is returned
+	 */
+	private Date parseDate(String dateInString)
+	{
+		SimpleDateFormat formatter;
+	
+		try {
+			formatter = new SimpleDateFormat("dd/MM/yyyy");
+			return formatter.parse(dateInString);
+		} catch (ParseException e) { }
+		
+		try {
+			formatter = new SimpleDateFormat("dd/MM/yyyy");
+			return formatter.parse(dateInString);
+		} catch (ParseException e) { }
+		
+		try {
+			formatter = new SimpleDateFormat("dd/M/yyyy");
+			return formatter.parse(dateInString);
+		} catch (ParseException e) { }
+		
+		try {
+			formatter = new SimpleDateFormat("dd-MM-yyyy");
+			return formatter.parse(dateInString);
+		} catch (ParseException e) { }
+		
+		try {
+			formatter = new SimpleDateFormat("dd-M-yyyy");
+			return formatter.parse(dateInString);
+		} catch (ParseException e) { }
+		
+		try {
+			formatter = new SimpleDateFormat("dd.MM.yyyy");
+			return formatter.parse(dateInString);
+		} catch (ParseException e) { }
+		
+		try {
+			formatter = new SimpleDateFormat("dd.M.yyyy");
+			return formatter.parse(dateInString);
+		} catch (ParseException e) { }
+		return null;
+		
+	}
+	
+	/**
+	 * Get a HashMap with all the Attributes from this node
+	 * @return A Mapping from Attributename to Attrbiute
+	 */
 	public HashMap<String, Attribute> getAttributesHashMap()
 	{
 		 HashMap<String, Attribute> res = new  HashMap<String, Attribute>();
@@ -326,12 +400,16 @@ public class MyNode2{
 	public boolean isDetailedOutput() {
 		return detailedOutput;
 	}
-
+	
+	/**
+	 * Defines if all the attributes and additional information is shown in the GUI
+	 * @param detailedOutput
+	 */
 	public void setDetailedOutput(boolean detailedOutput) {
 		this.detailedOutput = detailedOutput;
 	}
 	
-	public boolean equals (Object n)
+/*	public boolean equals (Object n)
 	{
 		if (n instanceof Node)
 		{
@@ -340,9 +418,25 @@ public class MyNode2{
 		}
 		
 		return false;
-	}
+	}*/
 
 	public Node getNode() {
 		return node;
+	}
+
+	public boolean isVisible() {
+		return visible;
+	}
+
+	public void setVisible(boolean visible) {
+		this.visible = visible;
+	}
+
+	public boolean isCollapseNode() {
+		return collapseNode;
+	}
+
+	public void setCollapseNode(boolean collapseNode) {
+		this.collapseNode = collapseNode;
 	}
 }

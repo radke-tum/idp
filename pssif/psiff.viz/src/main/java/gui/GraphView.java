@@ -13,6 +13,7 @@ import graph.model2.MyNode2;
 import graph.model2.MyNodeType;
 import graph.operations.GraphViewContainer;
 import graph.operations.AttributeFilter;
+import graph.operations.NodeAndEdgeTypeFilter;
 import gui.graph.AttributeFilterPopup;
 import gui.graph.GraphVisualization;
 
@@ -179,32 +180,38 @@ public class GraphView {
 			public void tableChanged(TableModelEvent e) {
 				
 				//System.out.println(e.getType());
-				if (  e.getType() == TableModelEvent.UPDATE)
+				if (e.getType() == TableModelEvent.UPDATE)
 				{
 					int row = e.getFirstRow();
 			        int column = e.getColumn();
 			        TableModel model = (TableModel)e.getSource();
-			       // String columnName = model.getColumnName(column);
+			       
 			        Object data = model.getValueAt(row, column);
 			        String attributeName = (String) model.getValueAt(row, 0);
 					
-			        Set<MyNode2> selectedNodes = graph.getVisualisationViewer().getPickedVertexState().getPicked();
-			        if (!selectedNodes.isEmpty() && selectedNodes.size()==1)
+			        // get the data to test if there was some data entered
+			        String testdata = (String) data;
+			        // do not trigger the event again if we previously wrote null back
+			        if (data !=null && testdata.length()>0)
 			        {
-			        	MyNode2 selectedNode = selectedNodes.iterator().next();
-			        	
-			        	boolean res = selectedNode.updateAttribute(attributeName, data);
-			        	//System.out.println("Update");
-			        	
-			        	if (!res)
-			        	{
-			        		//model.setValueAt("", row, column);
-			        		JPanel errorPanel = new JPanel();
-			        		
-			        		errorPanel.add(new JLabel("The value does not match the attribute data type"));
-			        		
-			        		JOptionPane.showMessageDialog(null, errorPanel, "Ups something went wrong", JOptionPane.ERROR_MESSAGE);
-			        	}
+				        Set<MyNode2> selectedNodes = graph.getVisualisationViewer().getPickedVertexState().getPicked();
+				        if (!selectedNodes.isEmpty() && selectedNodes.size()==1)
+				        {
+				        	MyNode2 selectedNode = selectedNodes.iterator().next();
+				        	
+				        	boolean res = selectedNode.updateAttribute(attributeName, data);
+				        	//System.out.println("Update");
+				        	
+				        	if (!res)
+				        	{
+				        		model.setValueAt(null, row, column);
+				        		JPanel errorPanel = new JPanel();
+				        		
+				        		errorPanel.add(new JLabel("The value does not match the attribute data type"));
+				        		
+				        		JOptionPane.showMessageDialog(null, errorPanel, "Ups something went wrong", JOptionPane.ERROR_MESSAGE);
+				        	}
+				        }
 			        }
 				}
 			}
@@ -315,6 +322,7 @@ public class GraphView {
 				{
 					graph.ExpandNode(nodeDetails.isSelected());
 					collapseExpand.setText("Collapse Node");
+					
 				}
 				
 				if (graph.isCollapsable())
@@ -347,9 +355,14 @@ public class GraphView {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				AttributeFilterPopup filter = new AttributeFilterPopup(graph.getGraph(),true,false);
+				AttributeFilterPopup filter = new AttributeFilterPopup(true,false);
+				
 				filter.showPopup();
-				graph.applyAttributeFilter();
+				ModelBuilder.printVisibleStuff();
+				graph.updateGraph();
+				
+				//graph.applyAttributeFilter();
+				//TODO
 			}
 		});
 		c.gridy = (i++);
@@ -362,9 +375,12 @@ public class GraphView {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				AttributeFilterPopup filter = new AttributeFilterPopup(graph.getGraph(),false,true);
+				AttributeFilterPopup filter = new AttributeFilterPopup(false,true);
 				filter.showPopup();
-				graph.applyAttributeFilter();
+				//ModelBuilder.printVisibleStuff();
+				graph.updateGraph();
+				//graph.applyAttributeFilter();
+				//TODO
 			}
 		});
 		c.gridy = (i++);
@@ -382,12 +398,15 @@ public class GraphView {
 	
 	public void resetGraph()
 	{
-		graph.applyNodeAndEdgeFilter(ModelBuilder.getNodeTypes().getAllNodeTypes(), ModelBuilder.getEdgeTypes().getAllEdgeTypes());
+		/*graph.applyNodeAndEdgeFilter(ModelBuilder.getNodeTypes().getAllNodeTypes(), ModelBuilder.getEdgeTypes().getAllEdgeTypes());
 		
 		FRLayout<MyNode2, MyEdge2> l = new FRLayout<MyNode2, MyEdge2>(graph.getGraph());
     	graph.getVisualisationViewer().setGraphLayout(l);
     	
-    	graph.getVisualisationViewer().repaint();
+    	graph.getVisualisationViewer().repaint();*/
+		new ModelBuilder();
+		this.getGraph().updateGraph();
+		ModelBuilder.printVisibleStuff();
 	}
 	
 	private void updateSidebar(String nodeName, MyNodeType nodeType, LinkedList<LinkedList<String>> attributes)
@@ -612,7 +631,7 @@ public class GraphView {
 		for (MyNodeType attr : nodePossibilities)
 		{
 			JCheckBox choice = new JCheckBox(attr.getName());
-			if (graph.getVizNodes().contains(attr))
+			if (NodeAndEdgeTypeFilter.getVisibleNodeTypes().contains(attr))
 			{
 				choice.setSelected(true);
 				nodecounter++;
@@ -628,7 +647,7 @@ public class GraphView {
 		for (MyEdgeType attr : edgePossibilities)
 		{
 			JCheckBox choice = new JCheckBox(attr.getName());
-			if (graph.getVizEdges().contains(attr))
+			if (NodeAndEdgeTypeFilter.getVisibleEdgeTypes().contains(attr))
 			{
 				choice.setSelected(true);
 				edgecounter++;

@@ -7,18 +7,18 @@ import graph.model.NodeType;
 
 import java.util.LinkedList;
 
-public class Model {
+public class OldModel {
 	
 	private LinkedList<MyNode> nodes;
 	private LinkedList<MyEdge> edges;
 	
-	public Model()
+	public OldModel()
 	{
 		nodes = new LinkedList<MyNode>();
 		edges = new LinkedList<MyEdge>();
 	}
 	
-	public Model(LinkedList<MyNode> nodes, LinkedList<MyEdge> edges)
+	public OldModel(LinkedList<MyNode> nodes, LinkedList<MyEdge> edges)
 	{
 		this.nodes = nodes;
 		this.edges = edges;

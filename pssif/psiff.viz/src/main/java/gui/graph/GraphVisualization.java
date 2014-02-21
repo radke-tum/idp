@@ -20,7 +20,7 @@ import graph.model2.MyNode2;
 import graph.model2.MyNodeType;
 import graph.operations.GraphViewContainer;
 import graph.operations.MyCollapser;
-import graph.operations.NodeAndEdgeFilter;
+import graph.operations.NodeAndEdgeTypeFilter;
 import graph.operations.VertexStrokeHighlight;
 
 import java.awt.BasicStroke;
@@ -44,7 +44,7 @@ import org.apache.commons.collections15.functors.ChainedTransformer;
 public class GraphVisualization
 {
   private Graph<MyNode2, MyEdge2> g;
-  static int Nodecount;
+//  static int Nodecount;
   private AbstractModalGraphMouse gm;
   private VisualizationViewer<MyNode2, MyEdge2> vv;
   private Layout<MyNode2, MyEdge2> layout;
@@ -52,17 +52,10 @@ public class GraphVisualization
   private GraphBuilder gb;
   private boolean detailedNodes;
   private MyCollapser collapser;
-  private LinkedList<MyNodeType> vizNodes;
-  private LinkedList<MyEdgeType> vizEdges;
+
   private HashMap<MyNodeType,Color> nodeColorMapping;
   private ConfigWriterReader configWriterReader;
-  
-  public void reset()
-  {
-    this.g = this.gb.createGraph(this.detailedNodes);
-    
-    this.vv.repaint();
-  }
+
   
   public GraphVisualization(Dimension d, boolean details)
   {
@@ -71,8 +64,6 @@ public class GraphVisualization
     this.gb = new GraphBuilder();
     this.collapser = new MyCollapser();
     configWriterReader = new ConfigWriterReader();
-    setVizEdges(ModelBuilder.getEdgeTypes().getAllEdgeTypes());
-    setVizNodes(ModelBuilder.getNodeTypes().getAllNodeTypes());
     this.nodeColorMapping = configWriterReader.readColors();
     
     this.g = this.gb.createGraph(this.detailedNodes);
@@ -105,11 +96,6 @@ public class GraphVisualization
     {
       public Paint transform(MyNode2 i)
       {
-      /*  if (i.getNodeType() == NodeType.FUNCTION) {
-          return Color.GREEN;
-        }
-        return Color.RED;*/
-    	
     	if (nodeColorMapping!=null)
     	{
 	    	Color c = nodeColorMapping.get(i.getNodeType());
@@ -148,16 +134,6 @@ public class GraphVisualization
         
     };
     
-    /* = new ChainedTransformer<MyNode2, String>(new Transformer[] {
-      new ToStringLabeller<String>(), 
-      new Transformer<String,String>()
-      {
-        public String transform(String input)
-        {
-          return "<html>" + input;
-        }
-      } });*/
-    
 	  // Set up a new stroke Transformer for the edges
     Transformer<MyEdge2, Stroke> edgeTransformer = new Transformer<MyEdge2, Stroke>()
     {
@@ -191,16 +167,6 @@ public class GraphVisualization
 		        	return "<html>" + edge.getEdgeInformations();
 		        }
     	    };
-   /*new ChainedTransformer<MyEdge2, String>(new Transformer[] {
-        }
-      new ToStringLabeller<String>(), 
-      new Transformer<String,String>()
-      {
-        public String transform(String input)
-        {
-          return "<html>" + input;
-        }
-      } });*/
     	    
     Transformer<MyEdge2, Paint> edgePaint = new Transformer<MyEdge2, Paint>()
     {
@@ -267,10 +233,10 @@ public class GraphVisualization
     this.gm.add(new MiddleMousePlugin());
   }
   
-  public Graph<MyNode2, MyEdge2> getGraph()
+ /* public Graph<MyNode2, MyEdge2> getGraph()
   {
     return this.g;
-  }
+  }*/
   
   public VisualizationViewer<MyNode2, MyEdge2> getVisualisationViewer()
   {
@@ -326,12 +292,11 @@ public class GraphVisualization
       if(picked.size() == 1) {
       	MyNode2 root = picked.iterator().next();
       	
-      	if (collapser.isCollapsable(root, g))
+      	if (collapser.isCollapsable(root))
       	{
-	      	collapser.collapseGraph(g, root);
+	      	collapser.collapseGraph( root);
 	      	
-	      	vv.getPickedVertexState().clear();
-	        vv.repaint();
+	      	this.updateGraph();
       	}
       }
   }
@@ -344,10 +309,9 @@ public class GraphVisualization
       	
       	if (collapser.isExpandable(root))
       	{
-	      	collapser.expandNode(g, root, nodeDetails);
+	      	collapser.expandNode( root, nodeDetails);
 	      	
-	      	vv.getPickedVertexState().clear();
-	        vv.repaint();
+	      	this.updateGraph();
       	}
       }
   }
@@ -369,64 +333,35 @@ public class GraphVisualization
       if(picked.size() == 1) {
       	MyNode2 root = picked.iterator().next();
       	
-      	return collapser.isCollapsable(root, g);
+      	return collapser.isCollapsable(root);
       }
       return false;
   }
 
-public LinkedList<MyNodeType> getVizNodes() {
-	return vizNodes;
-}
 
-private void setVizNodes(LinkedList<MyNodeType> vizNodes) {
-	this.vizNodes = vizNodes;
-}
-
-private void setVizNodes(MyNodeType[] vizNodes) {
-	
-	this.vizNodes = new LinkedList<MyNodeType>();
-	for (MyNodeType n : vizNodes)
-	{
-		this.vizNodes.add(n);
-	}
-}
-
-public LinkedList<MyEdgeType> getVizEdges() {
-	return vizEdges;
-}
-
-private void setVizEdges(LinkedList<MyEdgeType> vizEdges) {
-	this.vizEdges = vizEdges;
-}
-
-private void setVizEdges(MyEdgeType[] vizEdges) {
-	
-	this.vizEdges = new LinkedList<MyEdgeType>();
-	for (MyEdgeType n : vizEdges)
-	{
-		this.vizEdges.add(n);
-	}
-}
 
 public void applyNodeAndEdgeFilter(LinkedList<MyNodeType> nodes, LinkedList<MyEdgeType> edges)
 {
-	NodeAndEdgeFilter.filter(g, nodes, edges);
-	setVizEdges(edges);
-	setVizNodes(nodes);
+	NodeAndEdgeTypeFilter.filter(nodes, edges);
 	
-	collapser.reset();
+	updateGraph();
+}
+
+public void updateGraph()
+{
+	g = gb.updateGraph(detailedNodes);
 	
 	vv.getPickedVertexState().clear();
     vv.repaint();
 }
-
+/*
 public void applyAttributeFilter()
 {	
 	collapser.reset();
 	
 	vv.getPickedVertexState().clear();
     vv.repaint();
-}
+}*/
 
 public void setNodeColorMapping(HashMap<MyNodeType, Color> nodeColorMapping) {
 	this.nodeColorMapping.putAll(nodeColorMapping);

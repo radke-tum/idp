@@ -7,10 +7,11 @@ import java.util.List;
 
 import de.tum.pssif.core.metamodel.Attribute;
 import de.tum.pssif.core.model.Edge;
+import de.tum.pssif.core.model.Node;
 import de.tum.pssif.core.util.PSSIFValue;
 
 /**
- * A Data container for the Edge Type from the PSS-IF Model
+ * A Data container for the Edge from the PSS-IF Model
  * Helps to manage the visualization/modification of the Edge
  * @author Luc
  *
@@ -20,6 +21,8 @@ public class MyEdge2 {
 	private MyNode2 source;
 	private MyNode2 destination;
 	private Edge edge;
+	private boolean visible;
+	private boolean collapseEdge;
 	
 	/**
 	 * Creates a new MyEdge2 Object
@@ -33,6 +36,8 @@ public class MyEdge2 {
 		this.source=source;
 		this.destination = destination;
 		this.edge = edge;
+		this.visible = true;
+		this.collapseEdge = false;
 	}
 	
 	/**
@@ -155,6 +160,31 @@ public class MyEdge2 {
 		return edge;
 	}
 
-	
+	public boolean isVisible() {
+		return visible;
+	}
+
+	public void setVisible(boolean visible) {
+		this.visible = visible;
+	}
+
+	public boolean isCollapseEdge() {
+		return collapseEdge;
+	}
+
+	public void setCollapseEdge(boolean collapseEdge) {
+		this.collapseEdge = collapseEdge;
+	}
+
+	/*public boolean equals (Object e)
+	{
+		if (e instanceof Edge)
+		{
+			Edge tmp = (Edge) e;
+			return this.edge.equals(tmp);
+		}
+		
+		return false;
+	}*/
 	
 }

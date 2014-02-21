@@ -45,6 +45,9 @@ public class ModelBuilder {
 	private static LinkedList<MyNode2> nodes;
 	private static LinkedList<MyEdge2> edges;
 	
+	//private static LinkedList<MyNode2> collapserNodes;
+	//private static LinkedList<MyEdge2> collapserEdges;
+	
 	
 	public ModelBuilder(MutableMetamodel meta, Model model)
 	{
@@ -53,6 +56,9 @@ public class ModelBuilder {
 		
 		nodes = new LinkedList<MyNode2>();
 		edges = new LinkedList<MyEdge2>();
+		
+		//collapserNodes = new LinkedList<MyNode2>();
+		//collapserEdges = new LinkedList<MyEdge2>();
 		
 		createNodeTypes();
 		createEdgeTypes();
@@ -177,11 +183,22 @@ public class ModelBuilder {
 	}
 	
 	
-	private MyNode2 findNode (Node n)
+	public static MyNode2 findNode (Node n)
 	{
 		for (MyNode2 current : nodes)
 		{
-			if (current.equals(n))
+			if (current.getNode().equals(n))
+				return current;
+		}
+		
+		return null;
+	}
+	
+	public static MyEdge2 findEdge (Edge e)
+	{
+		for (MyEdge2 current : edges)
+		{
+			if (current.getEdge().equals(e))
 				return current;
 		}
 		
@@ -226,7 +243,7 @@ public class ModelBuilder {
 	    Node ebike = node("hardware", meta).create(model);
 	    node("hardware", meta).findAttribute("testattr").set(ebike, PSSIFOption.one(PSSIFValue.create(5)));
 	    node("hardware", meta).findAttribute("testattr2").set(ebike, PSSIFOption.one(PSSIFValue.create(true)));
-	    node("hardware", meta).findAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_NAME).set(ebike, PSSIFOption.one(PSSIFValue.create("Battery")));
+	    node("hardware", meta).findAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_NAME).set(ebike, PSSIFOption.one(PSSIFValue.create("Ebike")));
 	    Node smartphone = node("hardware", meta).create(model);
 	    node("hardware", meta).findAttribute("testattr2").set(smartphone, PSSIFOption.one(PSSIFValue.create(true)));
 	    node("hardware", meta).findAttribute("testattr").set(smartphone, PSSIFOption.one(PSSIFValue.create(10)));
@@ -270,9 +287,9 @@ public class ModelBuilder {
 	    hw2swUses.create(model, smartphone, gpsApp);
 	  }
 	
-	  private NodeType node(String name, MutableMetamodel metamodel) {
-		    return metamodel.findNodeType(name);
-		  }
+   private NodeType node(String name, MutableMetamodel metamodel) {
+	   return metamodel.findNodeType(name);
+   }
 
 	public static MyNodeTypes getNodeTypes() {
 		return nodeTypes;
@@ -281,4 +298,36 @@ public class ModelBuilder {
 	public static MyEdgeTypes getEdgeTypes() {
 		return edgeTypes;
 	}
+	
+	public static void addCollapserEdge(MyEdge2 newEdge)
+	{
+		//MyEdge2 newEdge = new MyEdge2(edge, type, source, destination);
+		newEdge.setCollapseEdge(true);
+		edges.add(newEdge);
+	}
+	
+	public static void removeCollapserEdge(MyEdge2 edge)
+	{
+		if (edge.isCollapseEdge())
+			edges.remove(edge);
+	}
+	
+	public static void printVisibleStuff ()
+	{
+		System.out.println("------visible Nodes----------");
+		for (MyNode2 n : nodes)
+		{
+			if (n.isVisible())
+				System.out.println(n.getRealName());
+		}
+		System.out.println("--------------------------");
+		System.out.println("------invisible Nodes----------");
+		for (MyNode2 n : nodes)
+		{
+			if (!n.isVisible())
+				System.out.println(n.getRealName());
+		}
+		System.out.println("--------------------------");
+	}
+	
 }

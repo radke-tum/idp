@@ -40,11 +40,11 @@ public class AttributeFilterPopup {
 	private JTextField valueTextField;
 	
 	private HashMap<String, DataType> attributeNames;
-	private Graph<MyNode2, MyEdge2> graph;
+	//private Graph<MyNode2, MyEdge2> graph;
 	
-	public AttributeFilterPopup(Graph<MyNode2, MyEdge2> graph, boolean Nodefilter, boolean Edgefilter)
+	public AttributeFilterPopup(boolean Nodefilter, boolean Edgefilter)
 	{
-		this.graph = graph;
+		//this.graph = graph;
 		
 		if (Nodefilter)
 		{
@@ -216,10 +216,10 @@ public class AttributeFilterPopup {
 				try
 				{
 					if (nodePossibilities!=null)
-						AttributeFilter.filterNode(graph, selectedAttribute, op, refValue);
+						AttributeFilter.filterNode( selectedAttribute, op, refValue);
 
 					if (edgePossibilities!=null)
-						AttributeFilter.filterEdge(graph, selectedAttribute, op, refValue);
+						AttributeFilter.filterEdge( selectedAttribute, op, refValue);
 				}
 				catch (Exception e)
 				{

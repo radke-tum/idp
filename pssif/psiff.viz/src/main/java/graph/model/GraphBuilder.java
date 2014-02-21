@@ -15,7 +15,8 @@ import graph.model2.MyNode2;
 public class GraphBuilder {
 	
 	private Graph<MyNode2, MyEdge2> g;
-	private boolean detailedNodes;
+	//private boolean detailedNodes;
+	private static boolean commentsVisible = false;
 	
 	public Graph<MyNode2, MyEdge2> createGraph(boolean detailedNodes)
 	{
@@ -26,22 +27,7 @@ public class GraphBuilder {
 
 		removeAllNodesAndEdges();
 		
-		MyNode.setidcounter(0);
-		
-		LinkedList<MyEdge2> edges = ModelBuilder.getAllEdges();
-		LinkedList<MyNode2> nodes = ModelBuilder.getAllNodes();
-		
-		
-		for (MyNode2 n : nodes)
-		{
-			n.setDetailedOutput(detailedNodes);
-			g.addVertex(n);
-		}
-		
-		for (MyEdge2 e : edges)
-		{
-			g.addEdge(e, e.getSourceNode(), e.getDestinationNode(), EdgeType.DIRECTED);
-		}
+		buildGraphFromModel(detailedNodes);
 		
 		return g;
 	}
@@ -66,33 +52,16 @@ public class GraphBuilder {
 	
 	private Graph<MyNode2, MyEdge2> removeAllNodesAndEdges (Graph<MyNode2, MyEdge2> graph)
 	{
-		Collection<MyEdge2> edges =graph.getEdges();
-		LinkedList<MyEdge2> edges2 = new LinkedList<MyEdge2>();
+		LinkedList<MyEdge2> edges = new LinkedList<MyEdge2>(graph.getEdges());
 		
-		Iterator<MyEdge2> it1 = edges.iterator();
-		while (it1.hasNext())
-		{
-			edges2.add(it1.next());
-			
-		}
-		
-		for (MyEdge2 e : edges2)
+		for (MyEdge2 e : edges)
 		{
 			graph.removeEdge(e);
 		}
 		
+		LinkedList<MyNode2> nodes = new LinkedList<MyNode2>(graph.getVertices());
 		
-		Collection<MyNode2> nodes =graph.getVertices();
-		LinkedList<MyNode2> nodes2 = new LinkedList<MyNode2>();
-		
-		Iterator<MyNode2> it2 = nodes.iterator();
-		while (it2.hasNext())
-		{
-			nodes2.add(it2.next());
-			
-		}
-		
-		for (MyNode2 n : nodes2)
+		for (MyNode2 n : nodes)
 		{
 			graph.removeVertex(n);
 		}
@@ -100,4 +69,55 @@ public class GraphBuilder {
 		return graph;
 	}
 	
+	public Graph<MyNode2, MyEdge2> updateGraph (boolean detailedNodes)
+	{
+		this.removeAllNodesAndEdges();
+		
+		return buildGraphFromModel(detailedNodes);
+	}
+	
+	private Graph<MyNode2, MyEdge2> buildGraphFromModel (boolean detailedNodes)
+	{
+		if (commentsVisible)
+			System.out.println("buildGraphFromModel ");
+		LinkedList<MyEdge2> edges = ModelBuilder.getAllEdges();
+		LinkedList<MyNode2> nodes = ModelBuilder.getAllNodes();
+		
+		
+		for (MyNode2 n : nodes)
+		{
+			if (n.isVisible())
+			{
+				n.setDetailedOutput(detailedNodes);
+				g.addVertex(n);
+				if (commentsVisible)
+					System.out.println("Node is visible "+n.getRealName());
+			}
+			else
+			{
+				if (commentsVisible)
+					System.out.println("Node not visible "+n.getRealName());
+			}
+		}
+		
+		for (MyEdge2 e : edges)
+		{
+			if (e.isVisible() && e.getDestinationNode().isVisible() && e.getSourceNode().isVisible())
+			{
+				if (commentsVisible)
+				{
+					System.out.println("Edge :"+ e.getEdgeInformations());
+					System.out.println("Source "+e.getSourceNode().getRealName());
+					System.out.println("Dest "+e.getDestinationNode().getRealName());
+				}
+				g.addEdge(e, e.getSourceNode(), e.getDestinationNode(), EdgeType.DIRECTED);
+				if (commentsVisible)
+					System.out.println("Edge-----------------");
+			}
+		}
+		if (commentsVisible)
+			System.out.println("----------------");
+		
+		return g;
+	}
 }

@@ -74,7 +74,6 @@ public class MatrixView {
 		return Content;
 	}
 	
-	
 	private void createMatrixContent (JPanel p, LinkedList<MyNode2> nodes, LinkedList<MyEdge2> edges)
 	{
 		if (nodes.size()>0 && edges.size()>0)
