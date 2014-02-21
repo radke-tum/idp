@@ -6,11 +6,11 @@ import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.annotations.AnnotatingModalGraphMouse.ModeKeyAdapter;
 import edu.uci.ics.jung.visualization.picking.PickedState;
-import graph.model2.MyEdge2;
-import graph.model2.MyEdgeType;
-import graph.model2.MyEdgeTypes;
-import graph.model2.MyNode2;
-import graph.model2.MyNodeType;
+import graph.model.MyEdge;
+import graph.model.MyEdgeType;
+import graph.model.MyEdgeTypes;
+import graph.model.MyNode;
+import graph.model.MyNodeType;
 import graph.operations.GraphViewContainer;
 import graph.operations.AttributeFilter;
 import graph.operations.NodeAndEdgeTypeFilter;
@@ -103,7 +103,7 @@ public class GraphView {
 		
 		JPanel graphpanel = new JPanel();		
 		
-		VisualizationViewer<MyNode2, MyEdge2> vv = graph.getVisualisationViewer();
+		VisualizationViewer<MyNode, MyEdge> vv = graph.getVisualisationViewer();
 		
 		graphpanel.add(vv);
 		
@@ -368,10 +368,10 @@ public class GraphView {
 			        // do not trigger the event again if we previously wrote null back
 			        if (data !=null && testdata.length()>0)
 			        {
-				        Set<MyNode2> selectedNodes = graph.getVisualisationViewer().getPickedVertexState().getPicked();
+				        Set<MyNode> selectedNodes = graph.getVisualisationViewer().getPickedVertexState().getPicked();
 				        if (!selectedNodes.isEmpty() && selectedNodes.size()==1)
 				        {
-				        	MyNode2 selectedNode = selectedNodes.iterator().next();
+				        	MyNode selectedNode = selectedNodes.iterator().next();
 				        	
 				        	boolean res = selectedNode.updateAttribute(attributeName, data);
 				        	//System.out.println("Update");
@@ -469,7 +469,7 @@ public class GraphView {
 	
 	private void addNodeChangeListener()
 	{
-		final PickedState<MyNode2> pickedState = graph.getVisualisationViewer().getPickedVertexState();
+		final PickedState<MyNode> pickedState = graph.getVisualisationViewer().getPickedVertexState();
 
 		pickedState.addItemListener(new ItemListener() {
 
@@ -477,8 +477,8 @@ public class GraphView {
 		    public void itemStateChanged(ItemEvent e) {
 		        Object subject = e.getItem();
 
-		        if (subject instanceof MyNode2) {
-		        	MyNode2 vertex = (MyNode2) subject;
+		        if (subject instanceof MyNode) {
+		        	MyNode vertex = (MyNode) subject;
 		            if (pickedState.isPicked(vertex)) 
 		              updateSidebar(vertex.getName(), vertex.getNodeType(), vertex.getAttributes());
 		            else
@@ -489,7 +489,7 @@ public class GraphView {
 		        
 		    }
 		});
-		Set<MyNode2> s =pickedState.getPicked();
+		Set<MyNode> s =pickedState.getPicked();
 		if (s==null)
 		{
 			updateSidebar(null, null,null);

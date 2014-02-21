@@ -1,9 +1,9 @@
 package gui.graph;
 
-import graph.model2.MyEdge2;
-import graph.model2.MyEdgeType;
-import graph.model2.MyNode2;
-import graph.model2.MyNodeType;
+import graph.model.MyEdge;
+import graph.model.MyEdgeType;
+import graph.model.MyNode;
+import graph.model.MyNodeType;
 import graph.operations.AttributeOperations;
 
 import graph.operations.AttributeFilter;

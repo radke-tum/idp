@@ -9,21 +9,19 @@ import model.ModelBuilder;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.SparseMultigraph;
 import edu.uci.ics.jung.graph.util.EdgeType;
-import graph.model2.MyEdge2;
-import graph.model2.MyNode2;
 
 public class GraphBuilder {
 	
-	private Graph<MyNode2, MyEdge2> g;
+	private Graph<MyNode, MyEdge> g;
 	//private boolean detailedNodes;
 	private static boolean commentsVisible = false;
 	
-	public Graph<MyNode2, MyEdge2> createGraph(boolean detailedNodes)
+	public Graph<MyNode, MyEdge> createGraph(boolean detailedNodes)
 	{
 		//this.detailedNodes=detailedNodes;
 		
 		if (g==null)
-			g = new SparseMultigraph<MyNode2,MyEdge2>();
+			g = new SparseMultigraph<MyNode,MyEdge>();
 
 		removeAllNodesAndEdges();
 		
@@ -32,11 +30,11 @@ public class GraphBuilder {
 		return g;
 	}
 	
-	public Graph<MyNode2, MyEdge2> changeNodeDetails(boolean detailedNodes, Graph<MyNode2, MyEdge2> graph)
+	public Graph<MyNode, MyEdge> changeNodeDetails(boolean detailedNodes, Graph<MyNode, MyEdge> graph)
 	{
-		Collection<MyNode2> nodes = graph.getVertices();
+		Collection<MyNode> nodes = graph.getVertices();
 				
-		for (MyNode2 n : nodes)
+		for (MyNode n : nodes)
 		{
 			n.setDetailedOutput(detailedNodes);
 		}
@@ -45,23 +43,23 @@ public class GraphBuilder {
 	}
 	
 	
-	public Graph<MyNode2, MyEdge2> removeAllNodesAndEdges ()
+	public Graph<MyNode, MyEdge> removeAllNodesAndEdges ()
 	{
 		return removeAllNodesAndEdges(g);
 	}
 	
-	private Graph<MyNode2, MyEdge2> removeAllNodesAndEdges (Graph<MyNode2, MyEdge2> graph)
+	private Graph<MyNode, MyEdge> removeAllNodesAndEdges (Graph<MyNode, MyEdge> graph)
 	{
-		LinkedList<MyEdge2> edges = new LinkedList<MyEdge2>(graph.getEdges());
+		LinkedList<MyEdge> edges = new LinkedList<MyEdge>(graph.getEdges());
 		
-		for (MyEdge2 e : edges)
+		for (MyEdge e : edges)
 		{
 			graph.removeEdge(e);
 		}
 		
-		LinkedList<MyNode2> nodes = new LinkedList<MyNode2>(graph.getVertices());
+		LinkedList<MyNode> nodes = new LinkedList<MyNode>(graph.getVertices());
 		
-		for (MyNode2 n : nodes)
+		for (MyNode n : nodes)
 		{
 			graph.removeVertex(n);
 		}
@@ -69,22 +67,22 @@ public class GraphBuilder {
 		return graph;
 	}
 	
-	public Graph<MyNode2, MyEdge2> updateGraph (boolean detailedNodes)
+	public Graph<MyNode, MyEdge> updateGraph (boolean detailedNodes)
 	{
 		this.removeAllNodesAndEdges();
 		
 		return buildGraphFromModel(detailedNodes);
 	}
 	
-	private Graph<MyNode2, MyEdge2> buildGraphFromModel (boolean detailedNodes)
+	private Graph<MyNode, MyEdge> buildGraphFromModel (boolean detailedNodes)
 	{
 		if (commentsVisible)
 			System.out.println("buildGraphFromModel ");
-		LinkedList<MyEdge2> edges = ModelBuilder.getAllEdges();
-		LinkedList<MyNode2> nodes = ModelBuilder.getAllNodes();
+		LinkedList<MyEdge> edges = ModelBuilder.getAllEdges();
+		LinkedList<MyNode> nodes = ModelBuilder.getAllNodes();
 		
 		
-		for (MyNode2 n : nodes)
+		for (MyNode n : nodes)
 		{
 			if (n.isVisible())
 			{
@@ -100,7 +98,7 @@ public class GraphBuilder {
 			}
 		}
 		
-		for (MyEdge2 e : edges)
+		for (MyEdge e : edges)
 		{
 			if (e.isVisible() && e.getDestinationNode().isVisible() && e.getSourceNode().isVisible())
 			{

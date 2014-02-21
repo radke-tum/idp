@@ -1,9 +1,9 @@
 package gui;
 
-import graph.model2.MyEdge2;
-import graph.model2.MyEdgeType;
-import graph.model2.MyNode2;
-import graph.model2.MyNodeType;
+import graph.model.MyEdge;
+import graph.model.MyEdgeType;
+import graph.model.MyNode;
+import graph.model.MyNodeType;
 import gui.matrix.MatrixChooseNodeAndEgeTypePopup;
 import gui.matrix.RowLegendTable;
 import gui.matrix.TableColumnAdjuster;
@@ -47,8 +47,8 @@ public class MatrixView {
 	private JPanel matrixPanel;
 	private MatrixBuilder mbuilder;
 	private String[][] content;
-	private LinkedList<MyNode2> nodes;
-	private LinkedList<MyEdge2> edges;
+	private LinkedList<MyNode> nodes;
+	private LinkedList<MyEdge> edges;
 	private ExcelExport xml_exporter;
 	private boolean active;
 
@@ -66,7 +66,7 @@ public class MatrixView {
 		matrixPanel = drawPanels(nodes,edges);
 	}
 	
-	private JPanel drawPanels(LinkedList<MyNode2> nodes, LinkedList<MyEdge2> edges)
+	private JPanel drawPanels(LinkedList<MyNode> nodes, LinkedList<MyEdge> edges)
 	{
 		JPanel Content = new JPanel(new BorderLayout());
 		createMatrixContent(Content, nodes, edges);
@@ -75,7 +75,7 @@ public class MatrixView {
 		return Content;
 	}
 	
-	private void createMatrixContent (JPanel p, LinkedList<MyNode2> nodes, LinkedList<MyEdge2> edges)
+	private void createMatrixContent (JPanel p, LinkedList<MyNode> nodes, LinkedList<MyEdge> edges)
 	{
 		if (nodes.size()>0 && edges.size()>0)
 		{
@@ -83,7 +83,7 @@ public class MatrixView {
 			
 			int counter =0;
 			// create Legend
-			for (MyNode2 n : nodes)
+			for (MyNode n : nodes)
 			{
 				legend[counter] = n.getName();
 				counter++;				

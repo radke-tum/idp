@@ -14,10 +14,10 @@ import graph.listener.ConfigWriterReader;
 import graph.listener.MiddleMousePlugin;
 import graph.listener.MyPopupGraphMousePlugin;
 import graph.model.GraphBuilder;
-import graph.model2.MyEdge2;
-import graph.model2.MyEdgeType;
-import graph.model2.MyNode2;
-import graph.model2.MyNodeType;
+import graph.model.MyEdge;
+import graph.model.MyEdgeType;
+import graph.model.MyNode;
+import graph.model.MyNodeType;
 import graph.operations.GraphViewContainer;
 import graph.operations.MyCollapser;
 import graph.operations.NodeAndEdgeTypeFilter;
@@ -43,12 +43,12 @@ import org.apache.commons.collections15.functors.ChainedTransformer;
 
 public class GraphVisualization
 {
-  private Graph<MyNode2, MyEdge2> g;
+  private Graph<MyNode, MyEdge> g;
 //  static int Nodecount;
   private AbstractModalGraphMouse gm;
-  private VisualizationViewer<MyNode2, MyEdge2> vv;
-  private Layout<MyNode2, MyEdge2> layout;
-  private VertexStrokeHighlight<MyNode2, MyEdge2> vsh;
+  private VisualizationViewer<MyNode, MyEdge> vv;
+  private Layout<MyNode, MyEdge> layout;
+  private VertexStrokeHighlight<MyNode, MyEdge> vsh;
   private GraphBuilder gb;
   private boolean detailedNodes;
   private MyCollapser collapser;
@@ -69,7 +69,7 @@ public class GraphVisualization
     this.g = this.gb.createGraph(this.detailedNodes);
     
 
-    this.layout = new FRLayout<MyNode2, MyEdge2>(this.g);
+    this.layout = new FRLayout<MyNode, MyEdge>(this.g);
     if (d != null)
     {
       int x = (int)d.getWidth() - 50;
@@ -81,7 +81,7 @@ public class GraphVisualization
       this.layout.setSize(new Dimension(i, i));
     }
 
-    this.vv = new VisualizationViewer<MyNode2, MyEdge2>(this.layout);
+    this.vv = new VisualizationViewer<MyNode, MyEdge>(this.layout);
 
     if (d != null) 
     {
@@ -92,9 +92,9 @@ public class GraphVisualization
       this.vv.setPreferredSize(new Dimension(i, i));
     }
     
-    Transformer<MyNode2, Paint> vertexColor = new Transformer<MyNode2, Paint>()
+    Transformer<MyNode, Paint> vertexColor = new Transformer<MyNode, Paint>()
     {
-      public Paint transform(MyNode2 i)
+      public Paint transform(MyNode i)
       {
     	if (nodeColorMapping!=null)
     	{
@@ -107,9 +107,9 @@ public class GraphVisualization
       }
     };
     
-    Transformer<MyNode2, Shape> vertexSize = new Transformer<MyNode2, Shape>()
+    Transformer<MyNode, Shape> vertexSize = new Transformer<MyNode, Shape>()
     {
-      public Shape transform(MyNode2 node)
+      public Shape transform(MyNode node)
       {
         if (node.isDetailedOutput())
         {
@@ -125,9 +125,9 @@ public class GraphVisualization
       }
     };
     
-    Transformer<MyNode2, String> vertexLabelTransformer =  new Transformer<MyNode2, String>()
+    Transformer<MyNode, String> vertexLabelTransformer =  new Transformer<MyNode, String>()
     	    {
-        public String transform(MyNode2 node)
+        public String transform(MyNode node)
         {
         	return "<html>" + node.getNodeInformations();
         }
@@ -135,9 +135,9 @@ public class GraphVisualization
     };
     
 	  // Set up a new stroke Transformer for the edges
-    Transformer<MyEdge2, Stroke> edgeTransformer = new Transformer<MyEdge2, Stroke>()
+    Transformer<MyEdge, Stroke> edgeTransformer = new Transformer<MyEdge, Stroke>()
     {
-      public Stroke transform(MyEdge2 edge)
+      public Stroke transform(MyEdge edge)
       {
         int res = edge.getEdgeType().getLineType() % 4;
         BasicStroke b = null;
@@ -160,17 +160,17 @@ public class GraphVisualization
       }
     };
     
-    Transformer<MyEdge2, String> edgeLabelTransformer =  new Transformer<MyEdge2, String>()
+    Transformer<MyEdge, String> edgeLabelTransformer =  new Transformer<MyEdge, String>()
     	    {
-		        public String transform(MyEdge2 edge)
+		        public String transform(MyEdge edge)
 		        {
 		        	return "<html>" + edge.getEdgeInformations();
 		        }
     	    };
     	    
-    Transformer<MyEdge2, Paint> edgePaint = new Transformer<MyEdge2, Paint>()
+    Transformer<MyEdge, Paint> edgePaint = new Transformer<MyEdge, Paint>()
     {
-      public Paint transform(MyEdge2 edge)
+      public Paint transform(MyEdge edge)
       {
         int res = edge.getEdgeType().getLineType() % 13;
         switch (res)
@@ -205,7 +205,7 @@ public class GraphVisualization
         return Color.BLACK;
       }
     };
-    this.vsh = new VertexStrokeHighlight<MyNode2,MyEdge2>(this.g, this.vv.getPickedVertexState());
+    this.vsh = new VertexStrokeHighlight<MyNode,MyEdge>(this.g, this.vv.getPickedVertexState());
     
     this.vsh.setHighlight(true, 1, new LinkedList<MyEdgeType>());
     
@@ -227,13 +227,13 @@ public class GraphVisualization
 
 
 
-    this.gm = new DefaultModalGraphMouse<MyNode2, MyEdge2>();
+    this.gm = new DefaultModalGraphMouse<MyNode, MyEdge>();
     this.vv.setGraphMouse(this.gm);
     this.gm.add(new MyPopupGraphMousePlugin());
     this.gm.add(new MiddleMousePlugin());
   }
   
-  public VisualizationViewer<MyNode2, MyEdge2> getVisualisationViewer()
+  public VisualizationViewer<MyNode, MyEdge> getVisualisationViewer()
   {
     return this.vv;
   }
@@ -265,7 +265,7 @@ public class GraphVisualization
   
   public void setHighlightNodes(LinkedList<MyEdgeType> types, int depth)
   {
-	 this.vsh = new VertexStrokeHighlight<MyNode2, MyEdge2>(g, this.vv.getPickedVertexState());
+	 this.vsh = new VertexStrokeHighlight<MyNode, MyEdge>(g, this.vv.getPickedVertexState());
 	 this.vsh.setHighlight(true, depth, types);
 	 this.vv.getRenderContext().setVertexStrokeTransformer(this.vsh);
 	 this.vv.repaint();
@@ -283,9 +283,9 @@ public class GraphVisualization
   
   public void collapseNode ()
   {
-	  Collection<MyNode2> picked =new HashSet<MyNode2>(vv.getPickedVertexState().getPicked());
+	  Collection<MyNode> picked =new HashSet<MyNode>(vv.getPickedVertexState().getPicked());
       if(picked.size() == 1) {
-      	MyNode2 root = picked.iterator().next();
+      	MyNode root = picked.iterator().next();
       	
       	if (collapser.isCollapsable(root))
       	{
@@ -298,9 +298,9 @@ public class GraphVisualization
   
   public void ExpandNode(boolean nodeDetails)
   {
-	  Collection<MyNode2> picked =new HashSet<MyNode2>(vv.getPickedVertexState().getPicked());
+	  Collection<MyNode> picked =new HashSet<MyNode>(vv.getPickedVertexState().getPicked());
       if(picked.size() == 1) {
-      	MyNode2 root = picked.iterator().next();
+      	MyNode root = picked.iterator().next();
       	
       	if (collapser.isExpandable(root))
       	{
@@ -313,9 +313,9 @@ public class GraphVisualization
   
   public boolean isExpandable ()
   {
-	  Collection<MyNode2> picked =new HashSet<MyNode2>(vv.getPickedVertexState().getPicked());
+	  Collection<MyNode> picked =new HashSet<MyNode>(vv.getPickedVertexState().getPicked());
       if(picked.size() == 1) {
-      	MyNode2 root = picked.iterator().next();
+      	MyNode root = picked.iterator().next();
       	
       	return collapser.isExpandable(root);
       }
@@ -324,9 +324,9 @@ public class GraphVisualization
   
   public boolean isCollapsable()
   {
-	  Collection<MyNode2> picked =new HashSet<MyNode2>(vv.getPickedVertexState().getPicked());
+	  Collection<MyNode> picked =new HashSet<MyNode>(vv.getPickedVertexState().getPicked());
       if(picked.size() == 1) {
-      	MyNode2 root = picked.iterator().next();
+      	MyNode root = picked.iterator().next();
       	
       	return collapser.isCollapsable(root);
       }

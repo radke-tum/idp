@@ -3,10 +3,10 @@ package graph.operations;
 import java.util.LinkedList;
 
 import model.ModelBuilder;
-import graph.model2.MyEdge2;
-import graph.model2.MyEdgeType;
-import graph.model2.MyNode2;
-import graph.model2.MyNodeType;
+import graph.model.MyEdge;
+import graph.model.MyEdgeType;
+import graph.model.MyNode;
+import graph.model.MyNodeType;
 
 public class NodeAndEdgeTypeFilter {
 	
@@ -18,9 +18,9 @@ public class NodeAndEdgeTypeFilter {
 		vizNodeTypes = nodeTypes;
 		vizEdgeTypes = edgeTypes;
 		
-		LinkedList<MyEdge2> edges = new LinkedList<MyEdge2>(ModelBuilder.getAllEdges());
+		LinkedList<MyEdge> edges = new LinkedList<MyEdge>(ModelBuilder.getAllEdges());
 		
-		for (MyEdge2 e : edges)
+		for (MyEdge e : edges)
 		{
 			if (!edgeTypes.contains(e.getEdgeType()))
 				e.setVisible(false);
@@ -28,9 +28,9 @@ public class NodeAndEdgeTypeFilter {
 				e.setVisible(true);
 		}
 		
-		LinkedList<MyNode2> nodes = new LinkedList<MyNode2>(ModelBuilder.getAllNodes());
+		LinkedList<MyNode> nodes = new LinkedList<MyNode>(ModelBuilder.getAllNodes());
 			
-		for (MyNode2 n : nodes)
+		for (MyNode n : nodes)
 		{
 			if (!nodeTypes.contains(n.getNodeType()))
 				n.setVisible(false);

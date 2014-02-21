@@ -1,7 +1,7 @@
 package graph.operations;
 
-import graph.model2.MyEdgeType;
-import graph.model2.MyNodeType;
+import graph.model.MyEdgeType;
+import graph.model.MyNodeType;
 
 import java.util.LinkedList;
 

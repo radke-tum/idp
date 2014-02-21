@@ -16,8 +16,8 @@ import de.tum.pssif.core.metamodel.Attribute;
 import de.tum.pssif.core.metamodel.PrimitiveDataType;
 import de.tum.pssif.core.util.PSSIFOption;
 import de.tum.pssif.core.util.PSSIFValue;
-import graph.model2.MyEdge2;
-import graph.model2.MyNode2;
+import graph.model.MyEdge;
+import graph.model.MyNode;
 
 /**
  * Allows to filter the Nodes and Edges by attribute
@@ -75,9 +75,9 @@ public class AttributeFilter {
 	
 	public static void filterNode(String attributeName, AttributeOperations op, Object RefValue) throws Exception
 	{
-		LinkedList<MyNode2> allNodes = ModelBuilder.getAllNodes();
+		LinkedList<MyNode> allNodes = ModelBuilder.getAllNodes();
 		
-		for (MyNode2 currentNode : allNodes)
+		for (MyNode currentNode : allNodes)
 		{
 			HashMap<String, Attribute> attributes = currentNode.getAttributesHashMap();
 			
@@ -175,9 +175,9 @@ public class AttributeFilter {
 	
 	public static void filterEdge(String attributeName, AttributeOperations op, Object RefValue) throws Exception
 	{
-		LinkedList<MyEdge2> allEdges = ModelBuilder.getAllEdges();
+		LinkedList<MyEdge> allEdges = ModelBuilder.getAllEdges();
 		
-		for (MyEdge2 currentEdge : allEdges)
+		for (MyEdge currentEdge : allEdges)
 		{
 			HashMap<String, Attribute> attributes = currentEdge.getAttributesHashMap();
 			

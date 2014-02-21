@@ -1,12 +1,12 @@
 package model;
 
 
-import graph.model2.MyEdge2;
-import graph.model2.MyEdgeType;
-import graph.model2.MyEdgeTypes;
-import graph.model2.MyNode2;
-import graph.model2.MyNodeType;
-import graph.model2.MyNodeTypes;
+import graph.model.MyEdge;
+import graph.model.MyEdgeType;
+import graph.model.MyEdgeTypes;
+import graph.model.MyNode;
+import graph.model.MyNodeType;
+import graph.model.MyNodeTypes;
 
 import java.util.Collection;
 import java.util.LinkedList;
@@ -42,16 +42,16 @@ public class ModelBuilder {
 	public MutableMetamodel meta;
 	private static MyNodeTypes nodeTypes;
 	private static MyEdgeTypes edgeTypes;
-	private static LinkedList<MyNode2> nodes;
-	private static LinkedList<MyEdge2> edges;
+	private static LinkedList<MyNode> nodes;
+	private static LinkedList<MyEdge> edges;
 	
 	public ModelBuilder(MutableMetamodel meta, Model model)
 	{
 		this.model = model;
 		this.meta = meta;
 		
-		nodes = new LinkedList<MyNode2>();
-		edges = new LinkedList<MyEdge2>();
+		nodes = new LinkedList<MyNode>();
+		edges = new LinkedList<MyEdge>();
 		
 		createNodeTypes();
 		createEdgeTypes();
@@ -65,8 +65,8 @@ public class ModelBuilder {
 	{
 		mockData();
 		
-		nodes = new LinkedList<MyNode2>();
-		edges = new LinkedList<MyEdge2>();
+		nodes = new LinkedList<MyNode>();
+		edges = new LinkedList<MyEdge>();
 		
 		createNodeTypes();
 		createEdgeTypes();
@@ -98,7 +98,7 @@ public class ModelBuilder {
 			
 			for (Node tempNode : tempNodes.getMany())
 			{
-				nodes.add(new MyNode2(tempNode, t));
+				nodes.add(new MyNode(tempNode, t));
 			}
 			
 		}
@@ -106,7 +106,7 @@ public class ModelBuilder {
 	
 	private void createEdges()
 	{
-		for (MyNode2 n: nodes)
+		for (MyNode n: nodes)
 		{
 			createEdge(n.getNode());
 		}
@@ -127,7 +127,7 @@ public class ModelBuilder {
 				
 				Node destinationNode = destinations.getOne();
 				
-				MyEdge2 tmp;
+				MyEdge tmp;
 				
 				/*if (t.getType().getName().equals(MyEdgeTypes.CONTAINMENT))
 				{
@@ -135,7 +135,7 @@ public class ModelBuilder {
 					tmp = new MyEdge2(e, t, findNode(sourceNode), findNode(destinationNode));
 				}
 				else*/
-					tmp = new MyEdge2(e, t, findNode(destinationNode), findNode(sourceNode));
+					tmp = new MyEdge(e, t, findNode(destinationNode), findNode(sourceNode));
 				
 				edges.add(tmp);
 			}
@@ -143,42 +143,42 @@ public class ModelBuilder {
 		
 	}
 	
-	public void addNode(MyNode2 node)
+	public void addNode(MyNode node)
 	{
 		if (!isContained(node))
 			nodes.add(node);
 	}
 	
-	public void addEdge (MyEdge2 edge)
+	public void addEdge (MyEdge edge)
 	{
 		if (!isContained(edge))
 			edges.add(edge);
 	}
 	
-	public static  LinkedList<MyNode2> getAllNodes()
+	public static  LinkedList<MyNode> getAllNodes()
 	{
 		return nodes;
 	}
 	
-	public static LinkedList<MyEdge2> getAllEdges()
+	public static LinkedList<MyEdge> getAllEdges()
 	{
 		return edges;
 	}
 	
-	public boolean isContained (MyNode2 node)
+	public boolean isContained (MyNode node)
 	{
 		return nodes.contains(node);
 	}
 	
-	public boolean isContained (MyEdge2 edge)
+	public boolean isContained (MyEdge edge)
 	{
 		return edges.contains(edge);
 	}
 	
 	
-	public static MyNode2 findNode (Node n)
+	public static MyNode findNode (Node n)
 	{
-		for (MyNode2 current : nodes)
+		for (MyNode current : nodes)
 		{
 			if (current.getNode().equals(n))
 				return current;
@@ -187,9 +187,9 @@ public class ModelBuilder {
 		return null;
 	}
 	
-	public static MyEdge2 findEdge (Edge e)
+	public static MyEdge findEdge (Edge e)
 	{
-		for (MyEdge2 current : edges)
+		for (MyEdge current : edges)
 		{
 			if (current.getEdge().equals(e))
 				return current;
@@ -292,14 +292,14 @@ public class ModelBuilder {
 		return edgeTypes;
 	}
 	
-	public static void addCollapserEdge(MyEdge2 newEdge)
+	public static void addCollapserEdge(MyEdge newEdge)
 	{
 		//MyEdge2 newEdge = new MyEdge2(edge, type, source, destination);
 		newEdge.setCollapseEdge(true);
 		edges.add(newEdge);
 	}
 	
-	public static void removeCollapserEdge(MyEdge2 edge)
+	public static void removeCollapserEdge(MyEdge edge)
 	{
 		if (edge.isCollapseEdge())
 			edges.remove(edge);
@@ -308,14 +308,14 @@ public class ModelBuilder {
 	public static void printVisibleStuff ()
 	{
 		System.out.println("------visible Nodes----------");
-		for (MyNode2 n : nodes)
+		for (MyNode n : nodes)
 		{
 			if (n.isVisible())
 				System.out.println(n.getRealName());
 		}
 		System.out.println("--------------------------");
 		System.out.println("------invisible Nodes----------");
-		for (MyNode2 n : nodes)
+		for (MyNode n : nodes)
 		{
 			if (!n.isVisible())
 				System.out.println(n.getRealName());

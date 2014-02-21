@@ -9,9 +9,9 @@ import org.apache.commons.collections15.Transformer;
 
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.visualization.picking.PickedInfo;
-import graph.model2.MyEdge2;
-import graph.model2.MyEdgeType;
-import graph.model2.MyNode2;
+import graph.model.MyEdge;
+import graph.model.MyEdgeType;
+import graph.model.MyNode;
 
 public class VertexStrokeHighlight<V,E> implements Transformer<V,Stroke>
 	    {
@@ -63,7 +63,7 @@ public class VertexStrokeHighlight<V,E> implements Transformer<V,Stroke>
 	                	if (pi.isPicked(currentNode))
 	                	{
 		                    if (debug)
-		                    	System.out.println(((MyNode2) currentNode).getName() +"  Heavy");
+		                    	System.out.println(((MyNode) currentNode).getName() +"  Heavy");
 	                		return heavy;
 	                	}
 		                else
@@ -80,7 +80,7 @@ public class VertexStrokeHighlight<V,E> implements Transformer<V,Stroke>
 		                					//System.out.println("medium");
 		                					 if (debug)
 		                					 {
-			                					System.out.println(((MyNode2) currentNode).getName());
+			                					System.out.println(((MyNode) currentNode).getName());
 			                					System.out.println("                             direct Predecessor  Medium ");
 		                					 }
 		                					return medium;
@@ -90,7 +90,7 @@ public class VertexStrokeHighlight<V,E> implements Transformer<V,Stroke>
 		                					//System.out.println("light");
 		                					 if (debug)
 		                					{
-		                						 System.out.println(((MyNode2) currentNode).getName());
+		                						 System.out.println(((MyNode) currentNode).getName());
 		                						 System.out.println("                              not direct Predecessor  Light ");
 		                					}
 		                					return light;
@@ -105,7 +105,7 @@ public class VertexStrokeHighlight<V,E> implements Transformer<V,Stroke>
             					{
             						 if (debug)
             						 {
-	            						System.out.println(((MyNode2) currentNode).getName());
+	            						System.out.println(((MyNode) currentNode).getName());
 	            						System.out.println("                              depth Predecessor  Medium ");
 	            						//System.out.println("medium");
 	            						System.out.println("----------------------------");
@@ -116,7 +116,7 @@ public class VertexStrokeHighlight<V,E> implements Transformer<V,Stroke>
                 				{
                 					 if (debug)
                 					 {
-		                					System.out.println(((MyNode2) currentNode).getName());
+		                					System.out.println(((MyNode) currentNode).getName());
 		                					System.out.println("                             not depth Predecessor  Light ");
 		                					//System.out.println("light");
 		                					System.out.println("----------------------------");
@@ -128,7 +128,7 @@ public class VertexStrokeHighlight<V,E> implements Transformer<V,Stroke>
             				{
             					 if (debug)
             					 {
-	            					System.out.println(((MyNode2) currentNode).getName());
+	            					System.out.println(((MyNode) currentNode).getName());
 	            					System.out.println("                             depth only 1 Light ");
 	            					//System.out.println("light");
             					 }
@@ -168,13 +168,13 @@ public class VertexStrokeHighlight<V,E> implements Transformer<V,Stroke>
 	        private boolean searchOutEdges(V source, V dest)
 	        {
 	        	@SuppressWarnings("unchecked")
-				Collection<MyEdge2> eout = ( Collection<MyEdge2>) graph.getOutEdges(source);
+				Collection<MyEdge> eout = ( Collection<MyEdge>) graph.getOutEdges(source);
 	        	 
-	        	 for (MyEdge2 e : eout)
+	        	 for (MyEdge e : eout)
 	        	 {
 	        		/* System.out.println(e.getConnectionType()+" dest "+e.getDestinationNode().getRealName()+
  							" source "+e.getSourceNode().getRealName());*/
-	        		 if (this.followEdges.contains(e.getEdgeType()) && e.getDestinationNode().equals(((MyNode2) dest)))
+	        		 if (this.followEdges.contains(e.getEdgeType()) && e.getDestinationNode().equals(((MyNode) dest)))
 	        				 return true;
 	        	 }
 	        	 return false;
@@ -191,7 +191,7 @@ public class VertexStrokeHighlight<V,E> implements Transformer<V,Stroke>
 		        		for (V v :predecessors)
 		        		{
 		        			 if (debug)
-		        				 System.out.println("Predcessor test "+ ((MyNode2) v).getName());
+		        				 System.out.println("Predcessor test "+ ((MyNode) v).getName());
 		        			if (pi.isPicked(v))
 	            			{
 	            				if(searchOutEdges(v,current))
@@ -209,7 +209,7 @@ public class VertexStrokeHighlight<V,E> implements Transformer<V,Stroke>
 		        				if(searchOutEdges(v,current))
 		        				{
 		        					 if (debug)
-		        						 System.out.println(((MyNode2) current).getName()+" rec");
+		        						 System.out.println(((MyNode) current).getName()+" rec");
 		        					return searchDept(v, level--, res);
 		        				}
 		        				/*else

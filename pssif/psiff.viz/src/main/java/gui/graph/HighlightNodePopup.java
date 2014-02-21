@@ -1,6 +1,6 @@
 package gui.graph;
 
-import graph.model2.MyEdgeType;
+import graph.model.MyEdgeType;
 
 import java.awt.Component;
 import java.awt.Dimension;

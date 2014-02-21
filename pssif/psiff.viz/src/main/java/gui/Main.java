@@ -1,8 +1,8 @@
 package gui;
 
 
-import graph.model2.MyEdgeType;
-import graph.model2.MyNodeType;
+import graph.model.MyEdgeType;
+import graph.model.MyNodeType;
 import graph.operations.GraphViewContainer;
 import gui.graph.CreateNewGraphViewPopup;
 import gui.graph.MyListColorRenderer;

@@ -1,7 +1,7 @@
 package gui.matrix;
 
-import graph.model2.MyEdgeType;
-import graph.model2.MyNodeType;
+import graph.model.MyEdgeType;
+import graph.model.MyNodeType;
 
 import java.awt.Component;
 import java.awt.Dimension;
