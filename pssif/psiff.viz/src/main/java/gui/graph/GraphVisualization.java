@@ -233,11 +233,6 @@ public class GraphVisualization
     this.gm.add(new MiddleMousePlugin());
   }
   
- /* public Graph<MyNode2, MyEdge2> getGraph()
-  {
-    return this.g;
-  }*/
-  
   public VisualizationViewer<MyNode2, MyEdge2> getVisualisationViewer()
   {
     return this.vv;

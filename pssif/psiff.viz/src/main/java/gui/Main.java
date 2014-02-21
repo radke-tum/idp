@@ -57,14 +57,14 @@ public class Main {
 	private static JMenuItem resetMatrix;
 	private static JMenuItem colorNodes;
 	private static JMenuItem createView;
+	private static JMenuItem graphVizualistation;
+	private static JMenuItem matrixVizualistation;
 	private static JMenu applyView;
 	private static JMenu deleteView;
 	
 	public static void main(String[] args) {
 		
 		ModelBuilder m = new ModelBuilder();
-
-
 
 		frame = new JFrame("Product Service Systems - Integration Framework ---- Visualisation");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -129,8 +129,8 @@ public class Main {
 		
 		// Which Visualization
 		JMenu visualisationMenu = new JMenu("Visualisation Mode");
-		JMenuItem graphItem = new JMenuItem("Graph");
-		graphItem.addActionListener(new ActionListener() {
+		graphVizualistation = new JMenuItem("Graph");
+		graphVizualistation.addActionListener(new ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -148,12 +148,12 @@ public class Main {
 				frame.repaint();
 			}
 		});
-		visualisationMenu.add(graphItem);
+		visualisationMenu.add(graphVizualistation);
 		visualisationMenu.setIcon(null);
 		
 		
-		JMenuItem matrixItem = new JMenuItem("Matrix");
-		matrixItem.addActionListener(new ActionListener() {
+		matrixVizualistation = new JMenuItem("Matrix");
+		matrixVizualistation.addActionListener(new ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -171,7 +171,7 @@ public class Main {
 				frame.repaint();
 			}
 		});
-		visualisationMenu.add(matrixItem);
+		visualisationMenu.add(matrixVizualistation);
 		visualisationMenu.setIcon(null);
 		
 		
@@ -308,6 +308,8 @@ public class Main {
 			resetMatrix.setEnabled(false);
 			colorNodes.setEnabled(true);
 			createView.setEnabled(true);
+			graphVizualistation.setEnabled(false);
+			matrixVizualistation.setEnabled(true);
 		}
 		
 		if (matrixView.isActive())
@@ -316,6 +318,8 @@ public class Main {
 			resetMatrix.setEnabled(true);
 			colorNodes.setEnabled(false);
 			createView.setEnabled(false);
+			graphVizualistation.setEnabled(true);
+			matrixVizualistation.setEnabled(false);
 		}
 			
 	}
@@ -539,54 +543,73 @@ public class Main {
 	{
 		final HashMap<String, GraphViewContainer> views = graphView.getGraph().getAllGraphViews();
 		
-		for (final String name : views.keySet())
+		if (views.size()==0)
 		{
-			JMenuItem menuItem = new JMenuItem(name);
+			applyView.setEnabled(false);
+		}
+		else
+		{
+			applyView.setEnabled(true);
 			
-			menuItem.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				graphView.getGraph().applyNodeAndEdgeFilter(ModelBuilder.getNodeTypes().getAllNodeTypes(), ModelBuilder.getEdgeTypes().getAllEdgeTypes());
+			for (final String name : views.keySet())
+			{
+				JMenuItem menuItem = new JMenuItem(name);
 				
-				GraphViewContainer view = views.get(name);
+				menuItem.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					graphView.getGraph().applyNodeAndEdgeFilter(ModelBuilder.getNodeTypes().getAllNodeTypes(), ModelBuilder.getEdgeTypes().getAllEdgeTypes());
+					
+					GraphViewContainer view = views.get(name);
+					
+					System.out.println("Number of Node Types: "+view.getSelectedNodeTypes().size());
+					System.out.println("Number of Edge Types: "+view.getSelectedEdgeTypes().size());
+					graphView.getGraph().applyNodeAndEdgeFilter(view.getSelectedNodeTypes(), view.getSelectedEdgeTypes());
+				}
+				});
 				
-				System.out.println("Number of Node Types: "+view.getSelectedNodeTypes().size());
-				System.out.println("Number of Edge Types: "+view.getSelectedEdgeTypes().size());
-				graphView.getGraph().applyNodeAndEdgeFilter(view.getSelectedNodeTypes(), view.getSelectedEdgeTypes());
+				applyView.add(menuItem);
 			}
-			});
-			
-			applyView.add(menuItem);
-		}	
+		}
 	}
 	
 	private static void resetReadGraphViews()
 	{
 		applyView.removeAll();
 		readGraphViews();
+		
 	}
 	
 	private static void deleteGraphView()
 	{
 		final HashMap<String, GraphViewContainer> views = graphView.getGraph().getAllGraphViews();
 		
-		for (final String name : views.keySet())
+		if (views.size()==0)
 		{
-			JMenuItem menuItem = new JMenuItem(name);
+			deleteView.setEnabled(false);
+		}
+		else
+		{
+			deleteView.setEnabled(true);
 			
-			menuItem.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
+			for (final String name : views.keySet())
+			{
+				JMenuItem menuItem = new JMenuItem(name);
 				
-				graphView.getGraph().deleteGraphView(views.get(name));
-				graphView.getGraph().applyNodeAndEdgeFilter(ModelBuilder.getNodeTypes().getAllNodeTypes(), ModelBuilder.getEdgeTypes().getAllEdgeTypes());
-				resetReadGraphViews();
-				resetDeleteGraphViews();
+				menuItem.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					
+					graphView.getGraph().deleteGraphView(views.get(name));
+					graphView.getGraph().applyNodeAndEdgeFilter(ModelBuilder.getNodeTypes().getAllNodeTypes(), ModelBuilder.getEdgeTypes().getAllEdgeTypes());
+					resetReadGraphViews();
+					resetDeleteGraphViews();
+				}
+				});
+				
+				deleteView.add(menuItem);
 			}
-			});
-			
-			deleteView.add(menuItem);
-		}	
+		}
 	}
 	
 	private static void resetDeleteGraphViews()
