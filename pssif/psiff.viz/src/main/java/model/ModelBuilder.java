@@ -45,10 +45,6 @@ public class ModelBuilder {
 	private static LinkedList<MyNode2> nodes;
 	private static LinkedList<MyEdge2> edges;
 	
-	//private static LinkedList<MyNode2> collapserNodes;
-	//private static LinkedList<MyEdge2> collapserEdges;
-	
-	
 	public ModelBuilder(MutableMetamodel meta, Model model)
 	{
 		this.model = model;
@@ -56,9 +52,6 @@ public class ModelBuilder {
 		
 		nodes = new LinkedList<MyNode2>();
 		edges = new LinkedList<MyEdge2>();
-		
-		//collapserNodes = new LinkedList<MyNode2>();
-		//collapserEdges = new LinkedList<MyEdge2>();
 		
 		createNodeTypes();
 		createEdgeTypes();

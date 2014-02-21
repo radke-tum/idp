@@ -15,7 +15,7 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 
-public class XMLExport
+public class ExcelExport
 {
   public void createXMLExport(String[][] values, LinkedList<MyNode2> nodes, File saveLocation)
   {

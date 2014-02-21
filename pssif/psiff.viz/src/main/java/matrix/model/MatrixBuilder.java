@@ -127,18 +127,12 @@ public class MatrixBuilder {
 					if (edge.size() != 0)
 					{
 						String s = "";
-//<<<<<<< HEAD
+
 						for (MyEdge2 e : edge)
-/*=======
-						for (int k =0; k<edge.size();k++)
->>>>>>> refs/remotes/origin/attempt3*/
 						{
-//<<<<<<< HEAD
+
 							s = s + e.getEdgeType().toString();
-/*=======
-							MyEdge e = edge.get(k);
-							s = s + e.getConnectionType().getName();
->>>>>>> refs/remotes/origin/attempt3*/
+
 							if (e.getAttributes().size() != 0) 
 							{
 								for (String a : e.getAttributes()) 
@@ -146,30 +140,15 @@ public class MatrixBuilder {
 									s = s + " " + a + " ";
 								}
 							}
-//<<<<<<< HEAD
-							//TODO comment in again
-							//s = s + " || ";
-//=======
-						//	if (k!= (edge.size()-1))
-							//	s = s + " || ";
-//>>>>>>> refs/remotes/origin/attempt3
 						}
 						res[i][j] = s;
 					}
-					
-					/*if (connections.contains(nodeJ))
-					{
-						// there exactly this connection
-						res[i][j] ="X";
-					}*/
 					else
 					{
 						// there are connections, but no connection between NodeI to NodeJ
 						res[i][j] ="";
 					}
 				}
-				
-				
 			}
 		}
 		
@@ -181,22 +160,13 @@ public class MatrixBuilder {
 		return nodeTypes;
 	}
 
-
-
-
 	public void setRelevantNodeTypes(LinkedList<MyNodeType> nodeTypes) {
 		this.nodeTypes = nodeTypes;
 	}
 
-
-
-
 	public LinkedList<MyEdgeType> getRelevantEdgesTypes() {
 		return edgesTypes;
 	}
-
-
-
 
 	public void setRelevantEdgesTypes(LinkedList<MyEdgeType> edgesTypes) {
 		this.edgesTypes = edgesTypes;
