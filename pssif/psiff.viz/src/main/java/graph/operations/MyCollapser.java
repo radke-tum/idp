@@ -6,11 +6,10 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import de.tum.pssif.core.metamodel.EdgeType;
+
 import model.ModelBuilder;
 
-import edu.uci.ics.jung.graph.DirectedSparseMultigraph;
-import edu.uci.ics.jung.graph.Graph;
-import edu.uci.ics.jung.graph.util.EdgeType;
 import graph.model.MyEdge;
 import graph.model.MyEdgeTypes;
 import graph.model.MyNode;
@@ -108,7 +107,7 @@ public class MyCollapser {
 	
 	private void recCollapseGraph ( MyNode startNode, boolean start, LinkedList<MyNode> work)
 	{
-		System.out.println("Start: "+start);
+		//System.out.println("Start: "+start);
 		if (start)
 		{
 			LinkedList<MyEdge> out = findOutgoingEdges(startNode);//g.getOutEdges(startNode);
@@ -117,7 +116,17 @@ public class MyCollapser {
 			LinkedList<MyEdge> del = new LinkedList<MyEdge>();
 			for (MyEdge e : out)
 			{
-				if (e.getEdgeType().getName().equals(MyEdgeTypes.CONTAINMENT))
+				EdgeType parent = e.getEdgeType().getType().getGeneral();
+				
+				boolean test = false;
+				if (parent!=null && parent.getName()!="Edge")
+					test = parent.getName().equals(MyEdgeTypes.CONTAINMENT);
+				else
+					test = e.getEdgeType().getName().equals(MyEdgeTypes.CONTAINMENT);
+				
+				System.out.println(parent.getName());
+				
+				if (test)
 				{
 					MyNode next = e.getDestinationNode();//g.getDest(e);
 					del.add(e);
@@ -130,7 +139,7 @@ public class MyCollapser {
 			touchedNodes.addAll(tmp);
 			for (int i = 0;i<del.size();i++)
 			{
-				System.out.println("delete first start Edge: "+del.get(i).toString());
+				//System.out.println("delete first start Edge: "+del.get(i).toString());
 				
 				MyEdge e = del.get(i);
 				
@@ -144,7 +153,7 @@ public class MyCollapser {
 		
 		if (work.size()>0)
 		{
-			System.out.println("loop Work "+work.size());
+			//System.out.println("loop Work "+work.size());
 			MyNode workNode = work.getFirst();
 			
 			/*Collection<MyEdge2> fout = g.getOutEdges(workNode);
@@ -188,14 +197,14 @@ public class MyCollapser {
 				
 				for (int i = 0; i<out.size();i++)
 				{
-					System.out.println("loop out "+out.size());
+				//	System.out.println("loop out "+out.size());
 					MyEdge e= out.get(i);
 					MyNode dest = e.getDestinationNode();//g.getDest(e);
-					System.out.println("Remove Edge  "+e.getEdgeType().getName());
+			//		System.out.println("Remove Edge  "+e.getEdgeType().getName());
 					container.addOldEdge(e);//g.getSource(e), g.getDest(e)));
 					//g.removeEdge(e);
 					e.setVisible(false);
-					System.out.println("Add to work  "+dest.getName());
+			//		System.out.println("Add to work  "+dest.getName());
 					newOutEdges.add(new MyEdge(e.getEdge(),e.getEdgeType(),recStartNode, e.getDestinationNode()));
 					if (e.getEdgeType().getName().equals(MyEdgeTypes.CONTAINMENT) && !work.contains(dest) )
 					{
@@ -211,14 +220,14 @@ public class MyCollapser {
 			workNode.setVisible(false);
 			work.remove(workNode);
 			
-			System.out.println("Work to do "+work.size());
-			for (MyNode tmp :work)
-			{
-				System.out.println("Node : " + tmp.getRealName());
-			}
-			System.out.println("		Tried to remove Node : " + workNode.getRealName());
+		//	System.out.println("Work to do "+work.size());
+			//for (MyNode tmp :work)
+		//	{
+		//		System.out.println("Node : " + tmp.getRealName());
+		//	}
+		//	System.out.println("		Tried to remove Node : " + workNode.getRealName());
 			//if (work.size()>0)
-			System.out.println("----------------------");
+		//	System.out.println("----------------------");
 			recCollapseGraph( null, false, work);
 		}
 		

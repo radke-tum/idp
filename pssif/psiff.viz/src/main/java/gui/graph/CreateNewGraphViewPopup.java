@@ -1,25 +1,37 @@
 package gui.graph;
 
+import graph.model.MyEdge;
 import graph.model.MyEdgeType;
 import graph.model.MyNodeType;
 import graph.operations.GraphViewContainer;
 import gui.GraphView;
+import gui.checkboxtree.CheckBoxTree;
 
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.List;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
+import javax.print.attribute.HashAttributeSet;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.JTree;
 
 import model.ModelBuilder;
 
@@ -29,10 +41,12 @@ public class CreateNewGraphViewPopup {
 	private JPanel EdgePanel;
 	private JTextField viewNameTextField;
 	private GraphView graphView;
+	private CheckBoxTree tree;
 	
 	public CreateNewGraphViewPopup(GraphView graphView)
 	{
 		this.graphView = graphView;
+		tree = new CheckBoxTree();
 	}
 	
 	private boolean evalDialog (int dialogResult)
@@ -58,7 +72,8 @@ public class CreateNewGraphViewPopup {
         		}	
         	}
         	
-        	LinkedList<MyEdgeType> selectedEdges = new LinkedList<MyEdgeType>();
+        	LinkedList<MyEdgeType> selectedEdges = tree.evalTree();
+        	/*
     		// get all the values of the edges
         	attr = EdgePanel.getComponents();       	
         	for (Component tmp :attr)
@@ -75,7 +90,7 @@ public class CreateNewGraphViewPopup {
         			 }
         				
         		}	
-        	}
+        	}*/
         	
         	
         	String viewName = viewNameTextField.getText();
@@ -102,7 +117,9 @@ public class CreateNewGraphViewPopup {
 	        	
 	        	return true;
         	}
+			
         }
+			
 		return false;
 	}
 	
@@ -117,7 +134,7 @@ public class CreateNewGraphViewPopup {
 	
 	private JPanel createPanel()
 	{
-		MyEdgeType[] edgePossibilities = ModelBuilder.getEdgeTypes().getAllEdgeTypesArray();
+		//MyEdgeType[] edgePossibilities = ModelBuilder.getEdgeTypes().getAllEdgeTypesArray();
 		MyNodeType[] nodePossibilities = ModelBuilder.getNodeTypes().getAllNodeTypesArray();
 		
 		
@@ -136,13 +153,11 @@ public class CreateNewGraphViewPopup {
 		
 		EdgePanel = new JPanel(new GridLayout(0, 1));
 		
-		for (MyEdgeType attr : edgePossibilities)
-		{
-			JCheckBox choice = new JCheckBox(attr.getName());
-			choice.setSelected(false);
-			
-			EdgePanel.add(choice);
-		}
+		TreeMap<String, LinkedList<MyEdgeType>> sortedEdges = sortByParentType(ModelBuilder.getEdgeTypes().getAllEdgeTypes());
+		
+		JTree tmpTree = tree.createTree(sortedEdges);
+
+		EdgePanel.add(tmpTree);
 		
 		JScrollPane scrollNodes = new JScrollPane(NodePanel,JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		scrollNodes.setPreferredSize(new Dimension(200, 400));
@@ -183,7 +198,7 @@ public class CreateNewGraphViewPopup {
 		        }
 		      }
 	    });
-	    final JCheckBox selectAllEdges = new JCheckBox("Select all Edge Types");
+	   /* final JCheckBox selectAllEdges = new JCheckBox("Select all Edge Types");
 	    
 	    selectAllEdges.addActionListener(new ActionListener() {
 			
@@ -215,11 +230,11 @@ public class CreateNewGraphViewPopup {
 	          }
 	        }
 	      }
-	    });
+	    });*/
 		
 	    selectAllNodes.setSelected(false);
 	    
-	    selectAllEdges.setSelected(false);
+	  //  selectAllEdges.setSelected(false);
 	    
 	    viewNameTextField = new JTextField(10);
 	    
@@ -242,7 +257,7 @@ public class CreateNewGraphViewPopup {
 	    allPanel.add(selectAllNodes, c);
 	    c.gridx = 1;
 	    c.gridy = ypos++;
-	    allPanel.add(selectAllEdges, c);
+	   // allPanel.add(selectAllEdges, c);
 	    
 	    c.weighty = 1;
 	    
@@ -260,5 +275,57 @@ public class CreateNewGraphViewPopup {
 		allPanel.setMinimumSize(new Dimension(400,500));
 		
 		return allPanel;
+	}
+	
+	private TreeMap <String,LinkedList<MyEdgeType>> sortByParentType (LinkedList<MyEdgeType> edgeTypes)
+	{
+		TreeMap <String,LinkedList<MyEdgeType>> res = new TreeMap <String,LinkedList<MyEdgeType>>();
+		
+		TreeMap <String,LinkedList<MyEdgeType>> map = new TreeMap<String,LinkedList<MyEdgeType>>();
+		
+		for (MyEdgeType t : edgeTypes)
+		{
+			String parentName;
+			if (t.getType().getGeneral()!=null)
+			{
+				parentName = t.getType().getGeneral().getName();	
+			}
+			else
+			{
+				parentName=" ";
+			}
+			LinkedList<MyEdgeType> tmp = map.get(parentName);
+			if (tmp == null)
+				tmp = new LinkedList<MyEdgeType>();
+			
+			tmp.add(t);
+			map.put(parentName, tmp);
+		}
+		
+		Iterator<String> it = map.keySet().iterator();
+		
+		MyEdgeTypeComparator comp = new MyEdgeTypeComparator();
+		
+		while (it.hasNext())
+		{
+			String current = it.next();
+			LinkedList<MyEdgeType> values = map.get(current);
+			
+			Collections.sort(values, comp);
+			
+			res.put(current, values);
+		}
+		
+		System.out.println(res.size());
+		
+		return res;
+	}
+	
+	private class MyEdgeTypeComparator implements Comparator<MyEdgeType>
+	{
+	  @Override public int compare( MyEdgeType type1, MyEdgeType type2 )
+	  {
+	    return type1.getName().compareTo(type2.getName());
+	  }
 	}
 }

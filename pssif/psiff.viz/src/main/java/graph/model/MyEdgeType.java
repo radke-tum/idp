@@ -21,6 +21,7 @@ public class MyEdgeType {
     {
     	this.type = type;
     	this.lineType = lineType;
+    	
     }
 
 
