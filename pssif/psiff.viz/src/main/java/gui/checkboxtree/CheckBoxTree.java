@@ -46,10 +46,10 @@ public class CheckBoxTree{
 		selectedValues = new LinkedList<MyEdgeType>();
 	}
 	
-	public JTree createTree(TreeMap<String,LinkedList<MyEdgeType>> edges)
+	public JTree createTree(TreeMap<String,LinkedList<MyEdgeType>> edges, LinkedList<MyEdgeType> selectedEdges)
 	{
 		selectedValues = new LinkedList<MyEdgeType>();
-	
+		
 		// get number of entries in the Treemap
 		int counter =0;
 		
@@ -85,6 +85,10 @@ public class CheckBoxTree{
 			for (MyEdgeType et : children)
 			{
 				nodes[nodeCounter] = new CheckNode(et.getName());
+				if (selectedEdges.contains(et))
+					nodes[nodeCounter].setSelected(true);
+				else
+					nodes[nodeCounter].setSelected(false);
 				// connect parent and child
 				nodes[tmpCounter].add(nodes[nodeCounter]);
 				nodeCounter++;
@@ -102,6 +106,11 @@ public class CheckBoxTree{
 	    tree.addMouseListener(new NodeSelectionListener(tree));
 	    
 	    return tree;
+	}
+	
+	public JTree createTree(TreeMap<String,LinkedList<MyEdgeType>> edges)
+	{
+		return createTree(edges, new LinkedList<MyEdgeType>());
 	}
 
 	public LinkedList<MyEdgeType> evalTree()

@@ -30,7 +30,7 @@ import de.tum.pssif.core.metamodel.PrimitiveDataType;
 import edu.uci.ics.jung.graph.Graph;
 import model.ModelBuilder;
 
-public class AttributeFilterPopup {
+public class AttributeFilterPopup extends MyPopup{
 	
 	private MyNodeType[] nodePossibilities;
 	private MyEdgeType[] edgePossibilities;
@@ -40,12 +40,9 @@ public class AttributeFilterPopup {
 	private JTextField valueTextField;
 	
 	private HashMap<String, DataType> attributeNames;
-	//private Graph<MyNode2, MyEdge2> graph;
 	
 	public AttributeFilterPopup(boolean Nodefilter, boolean Edgefilter)
 	{
-		//this.graph = graph;
-		
 		if (Nodefilter)
 		{
 			nodePossibilities = ModelBuilder.getNodeTypes().getAllNodeTypesArray();
@@ -91,8 +88,6 @@ public class AttributeFilterPopup {
 	
 	public void showPopup()
 	{
-	//	this.graph = graph;
-		
 		JPanel panel = createPanel();
 		
 		int dialogResult = JOptionPane.showConfirmDialog(null, panel, "Filter by Attribute", JOptionPane.DEFAULT_OPTION);

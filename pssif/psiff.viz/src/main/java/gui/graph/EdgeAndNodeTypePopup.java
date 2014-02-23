@@ -3,6 +3,7 @@ package gui.graph;
 import graph.model.MyEdgeType;
 import graph.model.MyNodeType;
 import graph.operations.NodeAndEdgeTypeFilter;
+import gui.checkboxtree.CheckBoxTree;
 
 import java.awt.Component;
 import java.awt.Dimension;
@@ -12,24 +13,28 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.LinkedList;
+import java.util.TreeMap;
 
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTree;
 
 import model.ModelBuilder;
 
-public class EdgeAndNodeTypePopup {
+public class EdgeAndNodeTypePopup extends MyPopup{
 
 	private JPanel NodePanel;
 	private JPanel EdgePanel;
 	private GraphVisualization graphViz;
+	private CheckBoxTree tree;
 	
 	public EdgeAndNodeTypePopup(GraphVisualization graphViz)
 	{
 		this.graphViz = graphViz;
+		this.tree = new CheckBoxTree();
 	}
 	
 	private void evalDialog (int dialogResult)
@@ -55,24 +60,7 @@ public class EdgeAndNodeTypePopup {
         		}	
         	}
         	
-        	LinkedList<MyEdgeType> selectedEdges = new LinkedList<MyEdgeType>();
-    		// get all the values of the edges
-        	attr = EdgePanel.getComponents();       	
-        	for (Component tmp :attr)
-        	{
-        		if ((tmp instanceof JCheckBox))
-        		{
-        			JCheckBox a = (JCheckBox) tmp;
-        			
-        			// compare which ones where selected
-        			 if (a.isSelected())
-        			 {
-        				 MyEdgeType b = ModelBuilder.getEdgeTypes().getValue(a.getText());
-        				 selectedEdges.add(b);
-        			 }
-        				
-        		}	
-        	}
+        	LinkedList<MyEdgeType> selectedEdges = tree.evalTree();
     		
         	graphViz.applyNodeAndEdgeFilter(selectedNodes, selectedEdges);
     	}
@@ -89,9 +77,9 @@ public class EdgeAndNodeTypePopup {
 	
 	private JPanel createPanel()
 	{
-		MyEdgeType[] edgePossibilities = ModelBuilder.getEdgeTypes().getAllEdgeTypesArray();
-		MyNodeType[] nodePossibilities = ModelBuilder.getNodeTypes().getAllNodeTypesArray();
+		LinkedList<MyNodeType> nodePossibilities = ModelBuilder.getNodeTypes().getAllNodeTypes();
 		
+		nodePossibilities = sortNodeTypes(nodePossibilities);
 		
 		JPanel allPanel = new JPanel(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
@@ -114,19 +102,14 @@ public class EdgeAndNodeTypePopup {
 		
 		EdgePanel = new JPanel(new GridLayout(0, 1));
 		
-		int edgecounter =0;
-		for (MyEdgeType attr : edgePossibilities)
-		{
-			JCheckBox choice = new JCheckBox(attr.getName());
-			if (NodeAndEdgeTypeFilter.getVisibleEdgeTypes().contains(attr))
-			{
-				choice.setSelected(true);
-				edgecounter++;
-			}
-			else
-				choice.setSelected(false);
-			EdgePanel.add(choice);
-		}
+		TreeMap<String, LinkedList<MyEdgeType>> sortedEdges = sortByParentType(ModelBuilder.getEdgeTypes().getAllEdgeTypes());
+		
+		JTree tmpTree = tree.createTree(sortedEdges);
+
+		EdgePanel.add(tmpTree);
+		
+
+		
 		JScrollPane scrollNodes = new JScrollPane(NodePanel,JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		scrollNodes.setPreferredSize(new Dimension(200, 400));
 			    
@@ -166,49 +149,12 @@ public class EdgeAndNodeTypePopup {
 		        }
 		      }
 	    });
-	    final JCheckBox selectAllEdges = new JCheckBox("Select all Edge Types");
-	    
-	    selectAllEdges.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) 
-	      {
-	        if (selectAllEdges.isSelected())
-	        {
-	          Component[] attr = EdgePanel.getComponents();
-	          for (Component tmp : attr) {
-	            if ((tmp instanceof JCheckBox))
-	            {
-	              JCheckBox a = (JCheckBox)tmp;
-	              
-	              a.setSelected(true);
-	            }
-	          }
-	        }
-	        else
-	        {
-	          Component[] attr = EdgePanel.getComponents();
-	          for (Component tmp : attr) {
-	            if ((tmp instanceof JCheckBox))
-	            {
-	              JCheckBox a = (JCheckBox)tmp;
-	              
-	              a.setSelected(false);
-	            }
-	          }
-	        }
-	      }
-	    });
+
 		
-	    if (nodecounter== nodePossibilities.length)
+	    if (nodecounter== nodePossibilities.size())
 	    	selectAllNodes.setSelected(true);
 	    else
 	    	selectAllNodes.setSelected(false);
-	    
-	    if (edgecounter== edgePossibilities.length)
-	    	selectAllEdges.setSelected(true);
-	    else
-	    	selectAllEdges.setSelected(false);
 	    
 		c.gridx = 0;
 		c.gridy = 0;
@@ -225,9 +171,6 @@ public class EdgeAndNodeTypePopup {
 	    c.gridx = 0;
 	    c.gridy = 2;
 	    allPanel.add(selectAllNodes, c);
-	    c.gridx = 1;
-	    c.gridy = 2;
-	    allPanel.add(selectAllEdges, c);
 		
 		
 		allPanel.setPreferredSize(new Dimension(400,500));
