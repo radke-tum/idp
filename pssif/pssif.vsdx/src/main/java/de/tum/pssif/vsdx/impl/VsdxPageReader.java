@@ -42,10 +42,10 @@ class VsdxPageReader {
       document.normalizeDocument();
       Element rootNode = document.getDocumentElement();
 
-      Node shapesNode = locateChildElement(rootNode, VsdxTokens.SHAPES);
+      Node shapesNode = locateSuccessorElement(rootNode, VsdxTokens.SHAPES);
       if (shapesNode != null) {
         shapes.addAll(readShapes(shapesNode));
-        Node connectsNode = locateChildElement(rootNode, VsdxTokens.CONNECTS);
+        Node connectsNode = locateSuccessorElement(rootNode, VsdxTokens.CONNECTS);
         if (connectsNode != null) {
           connectors.addAll(readConnectors(connectsNode, shapes));
           Set<VsdxShapeImpl> shapesToRemove = Sets.newHashSet();
@@ -95,11 +95,28 @@ class VsdxPageReader {
     int shapeId = Integer.valueOf(shapeIdString).intValue();
     int masterId = Integer.valueOf(masterIdString).intValue();
     VsdxShapeImpl shape = new VsdxShapeImpl(shapeId, masterId);
-    Node textNode = locateChildElement(shapeNode, VsdxTokens.TEXT);
+    Node textNode = locateSuccessorElement(shapeNode, VsdxTokens.TEXT);
     if (textNode != null) {
       shape.setText(seekText(textNode));
     }
-    Node innerShapesNode = locateChildElement(shapeNode, VsdxTokens.SHAPES);
+    for (Node sectionNode : locateChildElements(shapeNode, VsdxTokens.SECTION)) {
+      if (VsdxTokens.PROPERTY.equalsIgnoreCase(getAttributeValue(sectionNode, VsdxTokens.ATTRIBUTE_NAME))) {
+        for (Node rowNode : locateChildElements(sectionNode, VsdxTokens.ROW)) {
+          String propName = getAttributeValue(rowNode, VsdxTokens.ATTRIBUTE_NAME);
+          if (propName != null && !propName.trim().isEmpty()) {
+            for (Node cellNode : locateChildElements(rowNode, VsdxTokens.CELL)) {
+              if (VsdxTokens.VALUE.equalsIgnoreCase(getAttributeValue(cellNode, VsdxTokens.ATTRIBUTE_NAME))) {
+                String propertyValue = getAttributeValue(cellNode, VsdxTokens.ATTRIBUTE_VALUE);
+                if (propertyValue != null && !propertyValue.trim().isEmpty()) {
+                  shape.setCustomProperty(propName, propertyValue);
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    Node innerShapesNode = locateSuccessorElement(shapeNode, VsdxTokens.SHAPES);
     if (innerShapesNode != null) {
       shape.setInnerShapes(readShapes(innerShapesNode));
     }
@@ -179,7 +196,7 @@ class VsdxPageReader {
     return builder.toString();
   }
 
-  private static Node locateChildElement(Node inElement, String localName) {
+  private static Node locateSuccessorElement(Node inElement, String localName) {
     //Note: BFS
     NodeList nodeList = inElement.getChildNodes();
 
@@ -190,11 +207,23 @@ class VsdxPageReader {
       }
     }
     for (int i = 0; i < nodeList.getLength(); i++) {
-      Node shapesNode = locateChildElement(nodeList.item(i), localName);
+      Node shapesNode = locateSuccessorElement(nodeList.item(i), localName);
       if (shapesNode != null) {
         return shapesNode;
       }
     }
     return null;
+  }
+
+  private static Set<Node> locateChildElements(Node inElement, String localName) {
+    NodeList nodeList = inElement.getChildNodes();
+    Set<Node> result = Sets.newHashSet();
+    for (int i = 0; i < nodeList.getLength(); i++) {
+      Node node = nodeList.item(i);
+      if (localName.equals(node.getNodeName())) {
+        result.add(node);
+      }
+    }
+    return result;
   }
 }

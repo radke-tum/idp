@@ -103,8 +103,12 @@ public class VisioIoMapper implements IoMapper {
   }
 
   private void writeAttributes(VsdxShape inShape, AElement fromElement) {
-    //TODO convention for attributes?
     inShape.setText(fromElement.getAttributeValue(PSSIFConstants.BUILTIN_ATTRIBUTE_NAME));
+    for (String attrName : fromElement.getAttributeNames()) {
+      if (fromElement.getAttributeValue(attrName) != null) {
+        inShape.setCustomProperty(attrName, attrName);
+      }
+    }
   }
 
   private void readNodes(VsdxDocument document, Graph graph) {
