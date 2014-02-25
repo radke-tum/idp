@@ -2,6 +2,8 @@ package gui.matrix;
 
 import graph.model.MyEdgeType;
 import graph.model.MyNodeType;
+import gui.checkboxtree.CheckBoxTree;
+import gui.graph.MyPopup;
 
 import java.awt.Component;
 import java.awt.Dimension;
@@ -11,36 +13,41 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.LinkedList;
+import java.util.TreeMap;
 
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTree;
 
 import matrix.model.MatrixBuilder;
 import model.ModelBuilder;
 
-public class MatrixChooseNodeAndEgeTypePopup {
+public class MatrixChooseNodeAndEgeTypePopup extends MyPopup{
 	
 	private JPanel NodePanel;
 	private JPanel EdgePanel;
-	private MatrixBuilder mbuilder;
+	private MatrixBuilder matrixBuilder;
+	private CheckBoxTree tree;
+	
 	
 	public MatrixChooseNodeAndEgeTypePopup(MatrixBuilder mbuilder)
 	{
-		this.mbuilder =mbuilder; 
+		this.matrixBuilder =mbuilder;
+		this.tree = new CheckBoxTree();
 	}
 	
 	private boolean evalDialog (int dialogResult)
 	{
 		if (dialogResult==0)
     	{
-    		System.out.println("new select of Nodes");
-    		if (mbuilder.getRelevantNodeTypes() ==null)
-    			mbuilder.setRelevantNodeTypes(new LinkedList<MyNodeType>());
-    		if (mbuilder.getRelevantEdgesTypes() == null)
-    			mbuilder.setRelevantEdgesTypes(new LinkedList<MyEdgeType>());
+    		//System.out.println("new select of Nodes");
+    		if (matrixBuilder.getRelevantNodeTypes() ==null)
+    			matrixBuilder.setRelevantNodeTypes(new LinkedList<MyNodeType>());
+    		if (matrixBuilder.getRelevantEdgesTypes() == null)
+    			matrixBuilder.setRelevantEdgesTypes(new LinkedList<MyEdgeType>());
     		
     		// get all the values of the Nodes
         	Component[] attr = NodePanel.getComponents();       	
@@ -54,48 +61,25 @@ public class MatrixChooseNodeAndEgeTypePopup {
         			 if (a.isSelected())
         			 {
         				 MyNodeType b = ModelBuilder.getNodeTypes().getValue(a.getText());
-        				 if (!mbuilder.getRelevantNodeTypes().contains(b))
-        					 mbuilder.getRelevantNodeTypes().add(b);
+        				 if (!matrixBuilder.getRelevantNodeTypes().contains(b))
+        					 matrixBuilder.getRelevantNodeTypes().add(b);
         			 }
         			 else
         			 {
         				 MyNodeType b = ModelBuilder.getNodeTypes().getValue(a.getText());
-        				 if (mbuilder.getRelevantNodeTypes().contains(b))
-        					 mbuilder.getRelevantNodeTypes().remove(b);
+        				 if (matrixBuilder.getRelevantNodeTypes().contains(b))
+        					 matrixBuilder.getRelevantNodeTypes().remove(b);
         			 }
         				
         		}	
         	}
         	
     		// get all the values of the edges
-        	attr = EdgePanel.getComponents();       	
-        	for (Component tmp :attr)
-        	{
-        		if ((tmp instanceof JCheckBox))
-        		{
-        			JCheckBox a = (JCheckBox) tmp;
-        			
-        			// compare which ones where selected
-        			 if (a.isSelected())
-        			 {
-        				 MyEdgeType b = ModelBuilder.getEdgeTypes().getValue(a.getText());
-        				 if (!mbuilder.getRelevantEdgesTypes().contains(b))
-        					 mbuilder.getRelevantEdgesTypes().add(b);
-        			 }
-        			 else
-        			 {
-        				 MyEdgeType b = ModelBuilder.getEdgeTypes().getValue(a.getText());
-        				 if (mbuilder.getRelevantEdgesTypes().contains(b))
-        					 mbuilder.getRelevantEdgesTypes().remove(b);
-        			 }
-        				
-        		}	
-        	}
+        	LinkedList<MyEdgeType> selectedEdges = tree.evalTree();
+        	matrixBuilder.setRelevantEdgesTypes(selectedEdges);
     		
-        	System.out.println("selected Node Types "+mbuilder.getRelevantNodeTypes().size());
-        	System.out.println("selected Edge Types "+mbuilder.getRelevantEdgesTypes().size());
         	// can we display something
-    		if (mbuilder.getRelevantEdgesTypes().size()>0 && mbuilder.getRelevantNodeTypes().size()>0)
+    		if (matrixBuilder.getRelevantEdgesTypes().size()>0 && matrixBuilder.getRelevantNodeTypes().size()>0)
     			return true;
     	}
 
@@ -113,19 +97,18 @@ public class MatrixChooseNodeAndEgeTypePopup {
 	
 	private JPanel createPanel()
 	{
-		MyEdgeType[] edgePossibilities = ModelBuilder.getEdgeTypes().getAllEdgeTypesArray();
-		MyNodeType[] nodePossibilities = ModelBuilder.getNodeTypes().getAllNodeTypesArray();
-		
+		LinkedList<MyNodeType> nodePossibilities = ModelBuilder.getNodeTypes().getAllNodeTypes();
 		
 		JPanel allPanel = new JPanel(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
 		
 		NodePanel = new JPanel(new GridLayout(0, 1));
 		
+		nodePossibilities = sortNodeTypes(nodePossibilities);
 		for (MyNodeType attr : nodePossibilities)
 		{
 			JCheckBox choice = new JCheckBox(attr.getName());
-			if (mbuilder.getRelevantNodeTypes()!=null && mbuilder.getRelevantNodeTypes().contains(attr))
+			if (matrixBuilder.getRelevantNodeTypes()!=null && matrixBuilder.getRelevantNodeTypes().contains(attr))
 				choice.setSelected(true);
 			else
 				choice.setSelected(false);
@@ -134,15 +117,19 @@ public class MatrixChooseNodeAndEgeTypePopup {
 		
 		EdgePanel = new JPanel(new GridLayout(0, 1));
 		
-		for (MyEdgeType attr : edgePossibilities)
+		TreeMap <String,LinkedList<MyEdgeType>> edges = this.sortByEdgeTypeByParentType(ModelBuilder.getEdgeTypes().getAllEdgeTypes());
+		JTree edgeTree;
+		if (matrixBuilder.getRelevantEdgesTypes()!=null)
 		{
-			JCheckBox choice = new JCheckBox(attr.getName());
-			if (mbuilder.getRelevantEdgesTypes()!=null && mbuilder.getRelevantEdgesTypes().contains(attr))
-				choice.setSelected(true);
-			else
-				choice.setSelected(false);
-			EdgePanel.add(choice);
+			edgeTree = tree.createTree(edges, matrixBuilder.getRelevantEdgesTypes());
 		}
+		else
+		{
+			edgeTree = tree.createTree(edges);
+		}
+		
+		EdgePanel.add(edgeTree);
+		
 		JScrollPane scrollNodes = new JScrollPane(NodePanel,JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		scrollNodes.setPreferredSize(new Dimension(200, 400));
 			    
@@ -183,46 +170,20 @@ public class MatrixChooseNodeAndEgeTypePopup {
 	        }
 	      }
 	    });
-	    final JCheckBox selectAllEdges = new JCheckBox("Select all Edge Types");
-	    
-	    selectAllEdges.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) 
-	      {
-	        if (selectAllEdges.isSelected())
-	        {
-	          Component[] attr = EdgePanel.getComponents();
-	          for (Component tmp : attr) {
-	            if ((tmp instanceof JCheckBox))
-	            {
-	              JCheckBox a = (JCheckBox)tmp;
-	              
-	              a.setSelected(true);
-	            }
-	          }
-	        }
-	        else
-	        {
-	          Component[] attr = EdgePanel.getComponents();
-	          for (Component tmp : attr) {
-	            if ((tmp instanceof JCheckBox))
-	            {
-	              JCheckBox a = (JCheckBox)tmp;
-	              
-	              a.setSelected(false);
-	            }
-	          }
-	        }
-	      }
-	    });
 		
-		c.gridx = 0;
+		
+	    if ( matrixBuilder.getRelevantNodeTypes()!=null &&
+	    		matrixBuilder.getRelevantNodeTypes().containsAll(nodePossibilities))
+	    	selectAllNodes.setSelected(true);
+	    else
+	    	selectAllNodes.setSelected(false);
+	    
+	    c.gridx = 0;
 		c.gridy = 0;
 		allPanel.add(new JLabel("Choose Node Types"),c);
 		c.gridx = 1;
 		c.gridy = 0;
-		allPanel.add(new JLabel("Choose Connection Types"),c);
+		allPanel.add(new JLabel("Choose Edge Types"),c);
 	    c.gridx = 0;
 	    c.gridy = 1;
 	    allPanel.add(scrollNodes, c);
@@ -232,10 +193,6 @@ public class MatrixChooseNodeAndEgeTypePopup {
 	    c.gridx = 0;
 	    c.gridy = 2;
 	    allPanel.add(selectAllNodes, c);
-	    c.gridx = 1;
-	    c.gridy = 2;
-	    allPanel.add(selectAllEdges, c);
-		
 		
 		allPanel.setPreferredSize(new Dimension(400,500));
 		allPanel.setMaximumSize(new Dimension(400,500));

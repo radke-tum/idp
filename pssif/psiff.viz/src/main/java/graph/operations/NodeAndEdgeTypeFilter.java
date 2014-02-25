@@ -8,11 +8,21 @@ import graph.model.MyEdgeType;
 import graph.model.MyNode;
 import graph.model.MyNodeType;
 
+/**
+ * Allows to filter the graph by certain Edge or Node Types
+ * @author Luc
+ *
+ */
 public class NodeAndEdgeTypeFilter {
 	
 	private static LinkedList<MyNodeType> vizNodeTypes;
 	private static LinkedList<MyEdgeType> vizEdgeTypes;
 	
+	/**
+	 * Apply the Node and Edge Type filter to the graph
+	 * @param nodeTypes Node Types which should be displayed
+	 * @param edgeTypes Edge Types which should be displayed
+	 */
 	public static void filter( LinkedList<MyNodeType> nodeTypes,  LinkedList<MyEdgeType> edgeTypes)
 	{		
 		vizNodeTypes = nodeTypes;
@@ -39,6 +49,10 @@ public class NodeAndEdgeTypeFilter {
 		}
 	}
 	
+	/**
+	 * Which Node Types are currently visible in the graph
+	 * @return a list with all the Nodes Types which should be displayed
+	 */
 	public static LinkedList<MyNodeType> getVisibleNodeTypes()
 	{
 		if (vizNodeTypes==null)
@@ -49,6 +63,10 @@ public class NodeAndEdgeTypeFilter {
 		return vizNodeTypes;
 	}
 	
+	/**
+	 * Which Edge Types are currently visible in the graph
+	 * @return a list with all the Edge Types which should be displayed
+	 */
 	public static LinkedList<MyEdgeType> getVisibleEdgeTypes()
 	{
 		if (vizEdgeTypes==null)

@@ -20,7 +20,7 @@ import graph.model.MyEdge;
 import graph.model.MyNode;
 
 /**
- * Allows to filter the Nodes and Edges by attribute
+ * Allows to filter the Nodes and Edges by a specific attribute
  * @author Luc
  *
  */
@@ -72,7 +72,14 @@ public class AttributeFilter {
 		}
 		return graph;
 	}*/
-	
+	/**
+	 * Filters the graph by a given condition on an attribute of a Node.
+	 * All the Nodes which do not fulfill the condition will not be displayed later in the graph
+	 * @param attributeName  the attribute name on which the Nodes should be filtered
+	 * @param op the operation ( less, greater, equal,...) which should be executed on the attribute
+	 * @param RefValue the given value to which the node attribute values should be compared to
+	 * @throws Exception if the given condition contains a problem. Datatypes cannot be compared, Wrong data format,..
+	 */
 	public static void filterNode(String attributeName, AttributeOperations op, Object RefValue) throws Exception
 	{
 		LinkedList<MyNode> allNodes = ModelBuilder.getAllNodes();
@@ -85,7 +92,6 @@ public class AttributeFilter {
 			
 			if (attr== null)
 			{
-				//graph.removeVertex(currentNode);
 				currentNode.setVisible(false);
 			}
 			else
@@ -115,13 +121,11 @@ public class AttributeFilter {
 					
 					if (result == false)
 					{
-						//graph.removeVertex(currentNode);
 						currentNode.setVisible(false);
 					}
 				}
 			}
 		}
-		//return graph;
 	}
 	
 	/*public static Graph<MyNode2, MyEdge2> filterEdge(Graph<MyNode2, MyEdge2> graph, String attributeName, AttributeOperations op, Object RefValue) throws Exception
@@ -173,6 +177,14 @@ public class AttributeFilter {
 		return graph;
 	}*/
 	
+	/**
+	 * Filters the graph by a given condition on an attribute of an Edge.
+	 * All the Edges which do not fulfill the condition will not be displayed later in the graph
+	 * @param attributeName  the attribute name on which the Edges should be filtered
+	 * @param op the operation ( less, greater, equal,...) which should be executed on the attribute
+	 * @param RefValue the given value to which the node attribute values should be compared to
+	 * @throws Exception if the given condition contains a problem. Datatypes cannot be compared, Wrong data format,..
+	 */
 	public static void filterEdge(String attributeName, AttributeOperations op, Object RefValue) throws Exception
 	{
 		LinkedList<MyEdge> allEdges = ModelBuilder.getAllEdges();
@@ -194,8 +206,6 @@ public class AttributeFilter {
 				{
 					boolean result = false;
 					
-					//PSSIFOption<PSSIFValue>a = attr.get(currentEdge.getEdge());
-					//System.out.println("No value "+a ==null);
 					if (attr.get(currentEdge.getEdge())!=null)
 					{
 						PSSIFValue attrValue=attr.get(currentEdge.getEdge()).getOne();
@@ -217,15 +227,19 @@ public class AttributeFilter {
 					
 					if (result == false)
 					{
-						//graph.removeEdge(currentEdge);
 						currentEdge.setVisible(false);
 					}
 				}
 			}
 		}
-	//	return graph;
 	}
 	
+	/**
+	 * Test if a given operation is applicable to a given Attribute
+	 * @param attr the Attribute on which the operation should be applied
+	 * @param op the compare operation
+	 * @return true, if possible, false if not
+	 */
 	private static boolean testPossibleOperation(Attribute attr, AttributeOperations op )
 	{
 		PrimitiveDataType currentType = (PrimitiveDataType) attr.getType();
@@ -263,7 +277,14 @@ public class AttributeFilter {
 		
 		return false;
 	}
-
+	
+	/**
+	 * Evaluates the given condition
+	 * @param attrValue the value of the attribute 
+	 * @param op the operation which should be applied
+	 * @param RefValue the value to which the attribute value should be compared to
+	 * @return true if the condition is fulfilled, false otherwise 
+	 */
 	private static boolean BooleanEval (PSSIFValue attrValue, AttributeOperations op , Object RefValue)
 	{
 		boolean result = false;
@@ -288,6 +309,13 @@ public class AttributeFilter {
 		return result;
 	}
 	
+	/**
+	 * Evaluates the given condition
+	 * @param attrValue the value of the attribute 
+	 * @param op the operation which should be applied
+	 * @param RefValue the value to which the attribute value should be compared to
+	 * @return true if the condition is fulfilled, false otherwise 
+	 */
 	private static boolean StringEval (PSSIFValue attrValue, AttributeOperations op , Object RefValue)
 	{
 		boolean result = false;
@@ -315,6 +343,13 @@ public class AttributeFilter {
 		return result;
 	}
 	
+	/**
+	 * Evaluates the given condition
+	 * @param attrValue the value of the attribute 
+	 * @param op the operation which should be applied
+	 * @param RefValue the value to which the attribute value should be compared to
+	 * @return true if the condition is fulfilled, false otherwise 
+	 */
 	private static boolean DateEval (PSSIFValue attrValue, AttributeOperations op , Object RefValue) throws ParseException
 	{
 		boolean result = false;
@@ -342,6 +377,13 @@ public class AttributeFilter {
 		return result;
 	}
 	
+	/**
+	 * Evaluates the given condition
+	 * @param attrValue the value of the attribute 
+	 * @param op the operation which should be applied
+	 * @param RefValue the value to which the attribute value should be compared to
+	 * @return true if the condition is fulfilled, false otherwise 
+	 */
 	private static boolean DecimalEval (PSSIFValue attrValue, AttributeOperations op , Object RefValue)
 	{
 		boolean result = false;
@@ -371,6 +413,13 @@ public class AttributeFilter {
 		return result;
 	}
 	
+	/**
+	 * Evaluates the given condition
+	 * @param attrValue the value of the attribute 
+	 * @param op the operation which should be applied
+	 * @param RefValue the value to which the attribute value should be compared to
+	 * @return true if the condition is fulfilled, false otherwise 
+	 */
 	private static boolean IntegerEval (PSSIFValue attrValue, AttributeOperations op , Object RefValue)
 	{
 		boolean result = false;

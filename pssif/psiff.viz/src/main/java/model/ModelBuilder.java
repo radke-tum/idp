@@ -1,6 +1,5 @@
 package model;
 
-
 import graph.model.MyEdge;
 import graph.model.MyEdgeType;
 import graph.model.MyEdgeTypes;
@@ -36,6 +35,11 @@ import de.tum.pssif.core.metamodel.impl.MetamodelImpl;
 import de.tum.pssif.core.metamodel.impl.ReadConnectedOperation;
 import de.tum.pssif.core.metamodel.impl.SetValueOperation;
 
+/**
+ * Builds out of a Model and an MetaModel a Model which can be displayed as Graph and Matrix
+ * @author Luc
+ *
+ */
 public class ModelBuilder {
 	
 	public Model model;
@@ -45,6 +49,11 @@ public class ModelBuilder {
 	private static LinkedList<MyNode> nodes;
 	private static LinkedList<MyEdge> edges;
 	
+	/**
+	 * Initializes all the content
+	 * @param meta
+	 * @param model
+	 */
 	public ModelBuilder(MutableMetamodel meta, Model model)
 	{
 		this.model = model;
@@ -61,6 +70,9 @@ public class ModelBuilder {
 		
 	}
 	
+	/**
+	 * Should not be used!! Only for test purposes
+	 */
 	public ModelBuilder()
 	{
 		mockData();

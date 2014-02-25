@@ -24,6 +24,12 @@ import javax.swing.JTree;
 
 import model.ModelBuilder;
 
+/**
+ * Provides the functionality to the user to select certain Node an Edge Types. 
+ * Only Nodes an Edges which fulfill this type restriction should be displayed in the graph
+ * @author Luc
+ *
+ */
 public class EdgeAndNodeTypePopup extends MyPopup{
 
 	private JPanel NodePanel;
@@ -36,7 +42,10 @@ public class EdgeAndNodeTypePopup extends MyPopup{
 		this.graphViz = graphViz;
 		this.tree = new CheckBoxTree();
 	}
-	
+	/**
+	 * Evaluate the Popup after the users input
+	 * @param dialogResult the result of the users interaction with the popup gui
+	 */
 	private void evalDialog (int dialogResult)
 	{
 		if (dialogResult==0)
@@ -66,6 +75,10 @@ public class EdgeAndNodeTypePopup extends MyPopup{
     	}
 	}
 	
+	/**
+	 * Show the Popup to the user
+	 * @return
+	 */
 	public void showPopup()
 	{
 		JPanel allPanel = createPanel();
@@ -75,6 +88,10 @@ public class EdgeAndNodeTypePopup extends MyPopup{
 		evalDialog(dialogResult);
 	}
 	
+	/**
+	 * Create the Panel(GUI) of the Popup 
+	 * @return a panel with all the components
+	 */
 	private JPanel createPanel()
 	{
 		LinkedList<MyNodeType> nodePossibilities = ModelBuilder.getNodeTypes().getAllNodeTypes();
@@ -102,7 +119,7 @@ public class EdgeAndNodeTypePopup extends MyPopup{
 		
 		EdgePanel = new JPanel(new GridLayout(0, 1));
 		
-		TreeMap<String, LinkedList<MyEdgeType>> sortedEdges = sortByParentType(ModelBuilder.getEdgeTypes().getAllEdgeTypes());
+		TreeMap<String, LinkedList<MyEdgeType>> sortedEdges = sortByEdgeTypeByParentType(ModelBuilder.getEdgeTypes().getAllEdgeTypes());
 		
 		JTree tmpTree = tree.createTree(sortedEdges);
 

@@ -16,10 +16,13 @@ public class GraphBuilder {
 	//private boolean detailedNodes;
 	private static boolean commentsVisible = false;
 	
+	/**
+	 * Creates a new Graph with a given mode of Display for the Nodes
+	 * @param detailedNodes true == more details, false = less details
+	 * @return the graph with the according Node details grade
+	 */
 	public Graph<MyNode, MyEdge> createGraph(boolean detailedNodes)
 	{
-		//this.detailedNodes=detailedNodes;
-		
 		if (g==null)
 			g = new SparseMultigraph<MyNode,MyEdge>();
 
@@ -30,6 +33,12 @@ public class GraphBuilder {
 		return g;
 	}
 	
+	/**
+	 * Change the Display mode of the Nodes on the given graph
+	 * @param detailedNodes true == more details, false = less details
+	 * @par graph the graph on which the operation should be applied
+	 * @return the graph with the according Node details grade
+	 */
 	public Graph<MyNode, MyEdge> changeNodeDetails(boolean detailedNodes, Graph<MyNode, MyEdge> graph)
 	{
 		Collection<MyNode> nodes = graph.getVertices();
@@ -42,12 +51,20 @@ public class GraphBuilder {
 		return graph;
 	}
 	
-	
+	/**
+	 * Remove all Nodes and Edges from the graph
+	 * @return the empty graph
+	 */
 	public Graph<MyNode, MyEdge> removeAllNodesAndEdges ()
 	{
 		return removeAllNodesAndEdges(g);
 	}
 	
+	/**
+	 * Remove all Nodes and Edges from the graph
+	 * @param graph the graph on which the operation should be applied
+	 * @return the empty graph
+	 */
 	private Graph<MyNode, MyEdge> removeAllNodesAndEdges (Graph<MyNode, MyEdge> graph)
 	{
 		LinkedList<MyEdge> edges = new LinkedList<MyEdge>(graph.getEdges());
@@ -67,6 +84,11 @@ public class GraphBuilder {
 		return graph;
 	}
 	
+	/**
+	 * Updates the graph. Builds the graph again from the Model with the given mode of details display
+	 * @param detailedNodes true == all details, false == less details
+	 * @return the graph with the given preferences
+	 */
 	public Graph<MyNode, MyEdge> updateGraph (boolean detailedNodes)
 	{
 		this.removeAllNodesAndEdges();
@@ -74,6 +96,11 @@ public class GraphBuilder {
 		return buildGraphFromModel(detailedNodes);
 	}
 	
+	/**
+	 * Build the graph from the Model with the given mode of details for the nodes
+	 * @param detailedNodes true == all details, false == less details
+	 * @return the graph with the given preferences
+	 */
 	private Graph<MyNode, MyEdge> buildGraphFromModel (boolean detailedNodes)
 	{
 		if (commentsVisible)

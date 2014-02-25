@@ -222,10 +222,6 @@ public class GraphVisualization
     this.vv.getRenderContext().setEdgeLabelTransformer(edgeLabelTransformer);
     // vv.getRenderContext().setEdgeLabelClosenessTransformer(new MutableDirectionalEdgeValue(.3, .3));
     this.vv.getRenderContext().setEdgeDrawPaintTransformer(edgePaint);
-    //vv.getRenderContext().setE
-	//vv.getRenderContext().setEdgeShapeTransformer(new EdgeShape.CubicCurve<MyNode,MyEdge>());
-
-
 
     this.gm = new DefaultModalGraphMouse<MyNode, MyEdge>();
     this.vv.setGraphMouse(this.gm);
@@ -270,12 +266,12 @@ public class GraphVisualization
 	 this.vv.getRenderContext().setVertexStrokeTransformer(this.vsh);
 	 this.vv.repaint();
   }
-  
+  //TODO Strange
   public void setHighlightNodes(int depth)
   {
 	 setHighlightNodes(vsh.getFollowEdges(), depth);
   }
-  
+//TODO Strange
   public LinkedList<MyEdgeType> getHighlightNodes()
   {
     return this.vsh.getFollowEdges();
@@ -349,21 +345,12 @@ public void updateGraph()
 	vv.getPickedVertexState().clear();
     vv.repaint();
 }
-/*
-public void applyAttributeFilter()
-{	
-	collapser.reset();
-	
-	vv.getPickedVertexState().clear();
-    vv.repaint();
-}*/
 
 public void setNodeColorMapping(HashMap<MyNodeType, Color> nodeColorMapping) {
 	this.nodeColorMapping.putAll(nodeColorMapping);
 	this.configWriterReader.setColors(nodeColorMapping);
 	
-	vv.getPickedVertexState().clear();
-    vv.repaint();
+	updateGraph();
 }
 
 public HashMap<MyNodeType, Color> getNodeColorMapping ()
@@ -386,42 +373,5 @@ public void deleteGraphView (GraphViewContainer deleteView)
 {
 	this.configWriterReader.deleteView(deleteView.getViewName());
 }
-  
-  /*	  private class MutableDirectionalEdgeValue extends ConstantDirectionalEdgeValueTransformer<MyNode,MyEdge> {
-	        BoundedRangeModel undirectedModel = new DefaultBoundedRangeModel(5,0,0,10);
-	        BoundedRangeModel directedModel = new DefaultBoundedRangeModel(7,0,0,10);
-	        
-	        public MutableDirectionalEdgeValue(double undirected, double directed) {
-	            super(undirected, directed);
-	            undirectedModel.setValue((int)(undirected*10));
-	            directedModel.setValue((int)(directed*10));
-	            
-	            undirectedModel.addChangeListener(new ChangeListener(){
-	                public void stateChanged(ChangeEvent e) {
-	                    setUndirectedValue(new Double(undirectedModel.getValue()/10f));
-	                    vv.repaint();
-	                }
-	            });
-	            directedModel.addChangeListener(new ChangeListener(){
-	                public void stateChanged(ChangeEvent e) {
-	                    setDirectedValue(new Double(directedModel.getValue()/10f));
-	                    vv.repaint();
-	                }
-	            });
-	        }
-	        /**
-	         * @return Returns the directedModel.
-	         */
-	/*        public BoundedRangeModel getDirectedModel() {
-	            return directedModel;
-	        }
-
-	        /**
-	         * @return Returns the undirectedModel.
-	         */
-/*	        public BoundedRangeModel getUndirectedModel() {
-	            return undirectedModel;
-	        }
-	    }*/
 }
 

@@ -37,18 +37,31 @@ import javax.swing.tree.TreeSelectionModel;
 
 import model.ModelBuilder;
 
-
+/**
+ * A Tree to selected Edge Types. Provides already certain type of functionality
+ * @author Luc
+ *
+ */
 public class CheckBoxTree{
 	
 	private LinkedList<MyEdgeType> selectedValues;
 	
+	/**
+	 * create a new Instance
+	 */
 	public CheckBoxTree(){
 		selectedValues = new LinkedList<MyEdgeType>();
 	}
 	
+	/**
+	 * Create a new JTree with checkboxes
+	 * @param edges a Map(Name of the EdgeType, EdgeType Object) which should be displayed in the Tree
+	 * @param selectedEdges which edges where already previously selected. So the should now also be selected
+	 * @return a new JTree with the appropriated preferences
+	 */
 	public JTree createTree(TreeMap<String,LinkedList<MyEdgeType>> edges, LinkedList<MyEdgeType> selectedEdges)
 	{
-		selectedValues = new LinkedList<MyEdgeType>();
+		selectedValues = selectedEdges;
 		
 		// get number of entries in the Treemap
 		int counter =0;
@@ -108,11 +121,20 @@ public class CheckBoxTree{
 	    return tree;
 	}
 	
+	/**
+	 * create a new JTree. No Edge Type should be selected from the beginning
+	 * @param edges a Map(Name of the EdgeType, EdgeType Object) which should be displayed in the Tree
+	 * @return a new JTree with the appropriated preferences
+	 */
 	public JTree createTree(TreeMap<String,LinkedList<MyEdgeType>> edges)
 	{
 		return createTree(edges, new LinkedList<MyEdgeType>());
 	}
-
+	
+	/**
+	 * Get all the selected Edge Types from the JTree
+	 * @return a list with all the selected Edge Types
+	 */
 	public LinkedList<MyEdgeType> evalTree()
 	{
 		System.out.println("------------");
@@ -123,8 +145,12 @@ public class CheckBoxTree{
 		System.out.println("------------");
 		return selectedValues;
 	}
-
-	private void evalMouseSelecttion(CheckNode node)
+	
+	/**
+	 * Check if the the given Checkbox is selected or not. Evaluate this event 
+	 * @param node the checkbox which changed
+	 */
+	private void evalMouseSelection(CheckNode node)
 	{
 	 	String name =String.valueOf(node.getUserObject());
 
@@ -147,14 +173,20 @@ public class CheckBoxTree{
 	    }
 	    else
 	    {
+	    	// the checkbox was an parent Type. So his children have to be checked
 	    	for (int i=0;i<node.getChildCount();i++)
 	    	{
 	    		CheckNode child = (CheckNode) node.getChildAt(i);
-	    		evalMouseSelecttion(child);
+	    		evalMouseSelection(child);
 	    	}
 	    }
 	}
-
+	
+	/**
+	 * Provides some basic functionalities in the Tree Gui
+	 * @author Luc
+	 *
+	 */
 	class NodeSelectionListener extends MouseAdapter {
     JTree tree;
     
@@ -186,7 +218,7 @@ public class CheckBoxTree{
           tree.repaint();
         }
         // which edgeType is now really selected
-        evalMouseSelecttion (node);
+        evalMouseSelection (node);
       }
     }
   }

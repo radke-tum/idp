@@ -29,7 +29,11 @@ import de.tum.pssif.core.metamodel.DataType;
 import de.tum.pssif.core.metamodel.PrimitiveDataType;
 import edu.uci.ics.jung.graph.Graph;
 import model.ModelBuilder;
-
+/**
+ * Allows the user to specify an attribute filter for Nodes or Edges
+ * @author Luc
+ *
+ */
 public class AttributeFilterPopup extends MyPopup{
 	
 	private MyNodeType[] nodePossibilities;
@@ -41,6 +45,11 @@ public class AttributeFilterPopup extends MyPopup{
 	
 	private HashMap<String, DataType> attributeNames;
 	
+	/**
+	 * 
+	 * @param Nodefilter should it be a filter for Node attributes
+	 * @param Edgefilter should it be a filter for Edge attributes
+	 */
 	public AttributeFilterPopup(boolean Nodefilter, boolean Edgefilter)
 	{
 		if (Nodefilter)
@@ -86,6 +95,10 @@ public class AttributeFilterPopup extends MyPopup{
 			
 	}
 	
+	/**
+	 * Show the Popup to the user
+	 * @return
+	 */
 	public void showPopup()
 	{
 		JPanel panel = createPanel();
@@ -95,6 +108,11 @@ public class AttributeFilterPopup extends MyPopup{
 		evalDialog(dialogResult);
 	}
 	
+	/**
+	 * Defines which compare operations are possible for the given Datatype
+	 * @param type the datatype for which we have to define the compare possibilities
+	 * @return a String array with all the possible compare operation names
+	 */
 	private String[] getPossibleOperations(DataType type)
 	{
 		if (type.equals(PrimitiveDataType.BOOLEAN) || type.equals(PrimitiveDataType.STRING))
@@ -117,7 +135,10 @@ public class AttributeFilterPopup extends MyPopup{
 			return res;
 		}
 	}
-	
+	/**
+	 * Create the Panel(GUI) of the Popup 
+	 * @return a panel with all the components
+	 */
 	private JPanel createPanel()
 	{	
 		allPanel = new JPanel(new GridBagLayout());
@@ -186,6 +207,10 @@ public class AttributeFilterPopup extends MyPopup{
 		return allPanel;
 	}
 	
+	/**
+	 * Evaluate the Popup after the users input
+	 * @param dialogResult the result of the users interaction with the popup gui
+	 */
 	private void evalDialog (int dialogResult)
 	{
 		if (dialogResult==0)

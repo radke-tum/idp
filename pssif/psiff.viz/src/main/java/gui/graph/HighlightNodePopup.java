@@ -22,6 +22,11 @@ import javax.swing.JTree;
 
 import model.ModelBuilder;
 
+/**
+ * Allows the user to define the Edge Types which should be followed during the Highlight analysis.
+ * @author Luc
+ *
+ */
 public class HighlightNodePopup extends MyPopup{
 	
 	private JPanel popupPanel;
@@ -34,7 +39,10 @@ public class HighlightNodePopup extends MyPopup{
 		this.graphViz = graphViz;
 		this.tree = new CheckBoxTree();
 	}
-	
+	/**
+	 * Create the Panel(GUI) of the Popup 
+	 * @return a panel with all the components
+	 */
 	private JPanel createPanel()
 	{
 		//MyEdgeType[] edgePossibilities = ModelBuilder.getEdgeTypes().getAllEdgeTypesArray();
@@ -45,11 +53,11 @@ public class HighlightNodePopup extends MyPopup{
 		
 		edgePanel = new JPanel(new GridLayout(0, 1));
 		
-		LinkedList<MyEdgeType> highlightNodes = graphViz.getHighlightNodes();
+		LinkedList<MyEdgeType> highlightEdges = graphViz.getHighlightNodes();
 		
-		TreeMap<String, LinkedList<MyEdgeType>> sortedEdges = sortByParentType(ModelBuilder.getEdgeTypes().getAllEdgeTypes());
+		TreeMap<String, LinkedList<MyEdgeType>> sortedEdges = sortByEdgeTypeByParentType(ModelBuilder.getEdgeTypes().getAllEdgeTypes());
 		
-		JTree tmpTree = tree.createTree(sortedEdges, highlightNodes);
+		JTree tmpTree = tree.createTree(sortedEdges, highlightEdges);
 
 		edgePanel.add(tmpTree);
 		
@@ -129,7 +137,10 @@ public class HighlightNodePopup extends MyPopup{
 
 		return allPanel;
 	}
-	
+	/**
+	 * Evaluate the Popup after the users input
+	 * @param dialogResult the result of the users interaction with the popup gui
+	 */
 	private void evalDialog (int dialogResult)
 	{
 		if (dialogResult==0)
@@ -141,6 +152,10 @@ public class HighlightNodePopup extends MyPopup{
 		
 	}
 	
+	/**
+	 * Show the Popup to the user
+	 * @return
+	 */
 	public void showPopup()
 	{
 		popupPanel = createPanel();

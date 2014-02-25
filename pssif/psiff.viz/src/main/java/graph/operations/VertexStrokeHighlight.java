@@ -13,6 +13,13 @@ import graph.model.MyEdge;
 import graph.model.MyEdgeType;
 import graph.model.MyNode;
 
+/**
+ * Highlights certain Nodes which are connected with a defined Edge Type
+ * @author Luc
+ *
+ * @param <V> The Node class ( e.g. MyNode)
+ * @param <E> The Edge class ( e.g. MyEdge)
+ */
 public class VertexStrokeHighlight<V,E> implements Transformer<V,Stroke>
 	    {
 	        protected boolean highlight = false;
@@ -27,7 +34,11 @@ public class VertexStrokeHighlight<V,E> implements Transformer<V,Stroke>
 	        
 	        private static boolean debug = false;
 	        
-	        
+	        /**
+	         * Init the Highlighter
+	         * @param graph the graph on which the Highlighter should be applied
+	         * @param pi which Node is currently selected
+	         */
 	        public VertexStrokeHighlight(Graph<V,E> graph, PickedInfo<V> pi)
 	        {
 	        	this.graph = graph;
@@ -38,6 +49,12 @@ public class VertexStrokeHighlight<V,E> implements Transformer<V,Stroke>
 	            
 	        }
 	        
+	        /**
+	         * Which Edge Types should be followed and how depth
+	         * @param highlight should the Highlighter be turned on from the beginning
+	         * @param searchDepth how depth should the search go. (e.g. how many Edges should be followed)
+	         * @param followEdges which Edge Type should be followed at all
+	         */
 	        public void setHighlight(boolean highlight, int searchDepth, LinkedList<MyEdgeType> followEdges)
 	        {
 	            this.highlight = highlight;
@@ -50,6 +67,9 @@ public class VertexStrokeHighlight<V,E> implements Transformer<V,Stroke>
 	            	this.specialSearch=false;
 	        }
 	        
+	        /**
+	         * Do the visualization on the graph
+	         */
 	        public Stroke transform(V currentNode)
 	        {
 	            
@@ -165,6 +185,12 @@ public class VertexStrokeHighlight<V,E> implements Transformer<V,Stroke>
 	                return light; 
 	        }
 	        
+	        /**
+	         * check if between the source and the destination exists an Edge which has one of the selected EdgeTypes  
+	         * @param source The start Node
+	         * @param dest The destination Node
+	         * @return true if an Edge exists, which fulfills the Type condition, otherwise false
+	         */
 	        private boolean searchOutEdges(V source, V dest)
 	        {
 	        	@SuppressWarnings("unchecked")
@@ -180,6 +206,14 @@ public class VertexStrokeHighlight<V,E> implements Transformer<V,Stroke>
 	        	 return false;
 	        }
 	        
+	        /**
+	         * Test if one of the predecessor Node is already highlighted. 
+	         * If the current Node is in the a reachable depth range, the current Node must also be highlighted
+	         * @param current The Node which has to be test.
+	         * @param level how depth should be searched
+	         * @param res due to recursion. Should always be initialized with false 
+	         * @return  true if the tested Node should be highlighted, otherwise false
+	         */
 	        private boolean searchDept(V current, int level, boolean res)
 	        {
 	        	if (level >0)
@@ -200,9 +234,6 @@ public class VertexStrokeHighlight<V,E> implements Transformer<V,Stroke>
 	            					level=0;
 	            					return res;
 	            				}
-	            				/*else
-	            					return res || false;*/
-
 	            			}
 		        			else
 		        			{
@@ -212,24 +243,26 @@ public class VertexStrokeHighlight<V,E> implements Transformer<V,Stroke>
 		        						 System.out.println(((MyNode) current).getName()+" rec");
 		        					return searchDept(v, level--, res);
 		        				}
-		        				/*else
-		        					return res || false;*/
 		        			}
 		        		}
 	        		}
-	        		/*else
-	        			return res || false;*/
 	        	}
-
-
 	        	return res;
 	        }
 	        
+	        /**
+	         * Get all the Edge Types which should be followed
+	         * @return a list with Edge Types
+	         */
 	        public LinkedList<MyEdgeType> getFollowEdges()
 	        {
 	        	return this.followEdges;
 	        }
-
+	        
+	        /**
+	         * How depth is searched
+	         * @return the depth
+	         */
 			public int getSearchDepth() {
 				return depth;
 			}

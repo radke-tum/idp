@@ -11,11 +11,21 @@ import java.util.List;
 
 import model.ModelBuilder;
 
+/**
+ * Build a Matrix out of the available Model data
+ * @author Luc
+ *
+ */
 public class MatrixBuilder {
 	
 	private LinkedList<MyNodeType> nodeTypes;
 	private LinkedList<MyEdgeType>  edgesTypes;
 	
+	/**
+	 * initialize a MatrixBuilder instance
+	 * @param nodeTypes which Nodetypes should be contained in the matrix
+	 * @param edgesTypes which Edgetypes should be contained in the matrix
+	 */
 	public MatrixBuilder(LinkedList<MyNodeType> nodeTypes, LinkedList<MyEdgeType>  edgesTypes)
 	{
 		this.nodeTypes= nodeTypes;
@@ -24,11 +34,14 @@ public class MatrixBuilder {
 	
 	public MatrixBuilder()
 	{
+		this.nodeTypes= new LinkedList<MyNodeType>();
+		this.edgesTypes = new LinkedList<MyEdgeType>();
 	}
 	
-	
-	
-	
+	/**
+	 * Find all the Nodes which have as type one of the previously defined NodeTypes
+	 * @return a List with all Nodes instances
+	 */
 	public LinkedList<MyNode> findRelevantNodes()
 	{
 		LinkedList<MyNode> res = new LinkedList<MyNode>();
@@ -39,7 +52,7 @@ public class MatrixBuilder {
 		{
 			for (MyNode node : search)
 			{
-				System.out.println("Node loop "+node.getName()+" Type "+node.getNodeType().getName());
+				//System.out.println("Node loop "+node.getName()+" Type "+node.getNodeType().getName());
 				if (nodeTypes.contains(node.getNodeType()))
 				{
 					res.add(node);
@@ -47,10 +60,14 @@ public class MatrixBuilder {
 			}
 		}
 		
-		System.out.println("Found relevant nodes "+res.size());
+		//System.out.println("Found relevant nodes "+res.size());
 		return res;
 	}
 	
+	/**
+	 * Find all the Edges which have as type one of the previously defined EdgeTypes
+	 * @return a List with all Edge instances
+	 */
 	public LinkedList<MyEdge> findRelevantEdges()
 	{
 		LinkedList<MyEdge> res = new LinkedList<MyEdge>();
@@ -62,16 +79,22 @@ public class MatrixBuilder {
 			
 			for (MyEdge edge : search)
 			{
-				System.out.println("Edge loop Type "+edge.getEdgeType().getName());
+				//System.out.println("Edge loop Type "+edge.getEdgeType().getName());
 				if (edgesTypes.contains(edge.getEdgeType()))
 					res.add(edge);
 			}
 		}
 		
-		System.out.println("Found relevant edges "+res.size());
+		//System.out.println("Found relevant edges "+res.size());
 		return res;
 	}
-
+	
+	/**
+	 * Create the content of the matrix. Only the Edge connections between 2 Nodes 
+	 * @param nodes which have to be considered
+	 * @param edges which have to be considered
+	 * @return an 2 dimensional array with the connection information
+	 */
 	public String[][] getEdgeConnections(LinkedList<MyNode> nodes, LinkedList<MyEdge> edges)
 	{
 		String[][] res = new String[nodes.size()][nodes.size()];
@@ -123,7 +146,7 @@ public class MatrixBuilder {
 				{
 					// there are connections
 					//check if there is a connection from NodeI to NodeJ
-					LinkedList<MyEdge> edge = findNode(connections, nodeJ);
+					LinkedList<MyEdge> edge = findDestinationNode(connections, nodeJ);
 					if (edge.size() != 0)
 					{
 						String s = "";
@@ -172,7 +195,13 @@ public class MatrixBuilder {
 		this.edgesTypes = edgesTypes;
 	}
 	
-	private LinkedList<MyEdge> findNode(LinkedList<MyEdge> connections, MyNode node)
+	/**
+	 * find the Edges where a specific Node is the destination 
+	 * @param connections a set of Edges which will be tested
+	 * @param node the destination Node
+	 * @return a list with all the Edges which have as destination the parameter node
+	 */
+	private LinkedList<MyEdge> findDestinationNode(LinkedList<MyEdge> connections, MyNode node)
 	{
 		LinkedList<MyEdge> res = new LinkedList<MyEdge>();
 		for (MyEdge e : connections) 

@@ -14,6 +14,11 @@ import graph.model.MyEdge;
 import graph.model.MyEdgeTypes;
 import graph.model.MyNode;
 
+/**
+ * Allows to collapse or expand Nodes
+ * @author Luc
+ *
+ */
 public class MyCollapser {
 	
 
@@ -66,9 +71,12 @@ public class MyCollapser {
 		return g;
 	}*/
 	
+	/**
+	 * collapses the Graph at the given Node
+	 * @param startNode
+	 */
 	public void collapseGraph( MyNode startNode) 
 	{
-		// save copy
 		container = new CollapseContainer();
 		
 		recStartNode=startNode;
@@ -76,8 +84,11 @@ public class MyCollapser {
 		newOutEdges = new LinkedList<MyEdge>();
 		touchedNodes = new LinkedList<MyNode>();
 		
+		// remove all the collapsed nodes from the graph
 		recCollapseGraph(startNode,true,new LinkedList<MyNode>());
 		
+		// add new Edges which where previously connected to on of the Nodes which are are now collapsed
+		// the collapsed Node was the source of the Edge
 		for (MyEdge ic : newInEdges)
 		{
 			if (!touchedNodes.contains(ic.getSourceNode()))
@@ -88,6 +99,8 @@ public class MyCollapser {
 			}
 		}
 		
+		// add new Edges which where previously connected to on of the Nodes which are are now collapsed
+		// the collapsed Node was the destination of the Edge
 		for (MyEdge ic : newOutEdges)
 		{
 			if (!touchedNodes.contains(ic.getDestinationNode()))
@@ -99,12 +112,17 @@ public class MyCollapser {
 			
 		}
 		
+		// store all the information about the collapse operation
 		history.put(startNode, container);
 		
-		//return g;
 	}
 	
-	
+	/**
+	 * Remove all the Nodes and Edges from the graph which should not be displayed anymore after the collapse operation
+	 * @param startNode where to start the collapse operation
+	 * @param start should be set true, if called from outside
+	 * @param work Nodes which have to be processed
+	 */
 	private void recCollapseGraph ( MyNode startNode, boolean start, LinkedList<MyNode> work)
 	{
 		//System.out.println("Start: "+start);
@@ -114,68 +132,57 @@ public class MyCollapser {
 			
 			LinkedList<MyNode> tmp = new LinkedList<MyNode>();
 			LinkedList<MyEdge> del = new LinkedList<MyEdge>();
+			
 			for (MyEdge e : out)
 			{
 				EdgeType parent = e.getEdgeType().getType().getGeneral();
 				
 				boolean test = false;
+				// test if one of the outgoing edges is an containment
 				if (parent!=null && parent.getName()!="Edge")
 					test = parent.getName().equals(MyEdgeTypes.CONTAINMENT);
 				else
 					test = e.getEdgeType().getName().equals(MyEdgeTypes.CONTAINMENT);
 				
-				System.out.println(parent.getName());
-				
+				// if it was a containment edge, the connected nodes have to get further treatment
 				if (test)
 				{
 					MyNode next = e.getDestinationNode();//g.getDest(e);
+					// add them to the list of Edges which have to be deleted
 					del.add(e);
-					
 					tmp.add(next);
-					//System.out.println("Nodes to process "+next.getName());
 				}
 			}
+			
+			// add all the containment Nodes to the future work 
 			work.addAll(tmp);
 			touchedNodes.addAll(tmp);
+			
+			// remove the Edges from the graph
 			for (int i = 0;i<del.size();i++)
 			{
-				//System.out.println("delete first start Edge: "+del.get(i).toString());
-				
 				MyEdge e = del.get(i);
 				
 				container.addOldEdge(e);//g.getSource(e), g.getDest(e)));
-				//g.removeEdge(e);
+				
 				e.setVisible(false);
 			}
 		}
 		
-		
-		
+		// if there are still some Nodes which must be checked
 		if (work.size()>0)
 		{
-			//System.out.println("loop Work "+work.size());
 			MyNode workNode = work.getFirst();
-			
-			/*Collection<MyEdge2> fout = g.getOutEdges(workNode);
-			Collection<MyEdge2> fin =  g.getInEdges(workNode);*/
 			
 			List<MyEdge> out = findOutgoingEdges(workNode);//new LinkedList<MyEdge2>();
 			List<MyEdge> in = findIncomingEdges(workNode);//new LinkedList<MyEdge2>();
 			
 			if (in!=null)
 			{
-				/*Iterator<MyEdge2> it = fin.iterator();
-				while(it.hasNext())
-				{
-					in.add(it.next());
-				}*/
-				
-				//redirect edges to "collapsed" Node
-			
-				//Iterator<MyEdge> it = in.iterator();
+				// remove all the incoming edges and connect them to Nodes which will be available after the collapse operation
 				for (int i = 0; i<in.size();i++)
 				{
-					System.out.println("loop in "+i);
+					//System.out.println("loop in "+i);
 					MyEdge e= in.get(i);
 					
 					MyNode source = e.getSourceNode();//g.getSource(e);
@@ -188,13 +195,8 @@ public class MyCollapser {
 				}
 			}
 			if (out!=null)
-			{				
-				/*Iterator<MyEdge2> it = fout.iterator();
-				while(it.hasNext())
-				{
-					out.add(it.next());
-				}*/
-				
+			{	
+				// remove all the outgoing edges and connect them to Nodes which will be available after the collapse operation
 				for (int i = 0; i<out.size();i++)
 				{
 				//	System.out.println("loop out "+out.size());
@@ -230,8 +232,6 @@ public class MyCollapser {
 		//	System.out.println("----------------------");
 			recCollapseGraph( null, false, work);
 		}
-		
-	
 	}
 	
 	/*public Graph<MyNode2,MyEdge2> expandNode(Graph<MyNode2,MyEdge2> g, MyNode2 startNode, boolean nodeDetails)
@@ -274,10 +274,17 @@ public class MyCollapser {
 		}
 	}*/
 	
+	/**
+	 * Expands the graph again from a given startNode
+	 * @param startNode  the node which should be expanded
+	 * @param nodeDetails the mode of details display for the Node which should be applied
+	 */
 	public void expandNode( MyNode startNode, boolean nodeDetails)
 	{
+		// was there any collapse operation executed previously 
 		CollapseContainer container = this.history.get(startNode);
 		
+		//if yes undo all the operation
 		if (container!=null)
 		{
 			LinkedList<MyEdge> workEdges = container.getNewEdges();
@@ -285,7 +292,6 @@ public class MyCollapser {
 			// remove added Edges
 			for (MyEdge ic :workEdges)
 			{
-				//g.removeEdge(ic.getEdge());
 				ModelBuilder.removeCollapserEdge(ic);
 			}
 			
@@ -308,18 +314,20 @@ public class MyCollapser {
 			workEdges = container.getOldEdges();
 			for (MyEdge ic :workEdges)
 			{
-				//g.addEdge(ic.getEdge(), ic.getEdgeSource(), ic.getEdgeDestintation(), EdgeType.DIRECTED);
 				MyEdge tmp = ModelBuilder.findEdge(ic.getEdge());
 				
 				tmp.setVisible(true);
 			}
 			
 			this.history.remove(startNode);
-			//return g;
 		}
 	}
 	
-	
+	/**
+	 * Test if a certain Node is expandable
+	 * @param startNode the Node which should be tested
+	 * @return true if the node is expandable, fals if not
+	 */
 	public boolean isExpandable (MyNode startNode)
 	{
 		CollapseContainer container = this.history.get(startNode);
@@ -330,6 +338,11 @@ public class MyCollapser {
 			return true;
 	}
 	
+	/**
+	 * Test if a Node can collapsed
+	 * @param startNode the node which should be tested
+	 * @return true if the node can be collapsed, false otherwise
+	 */
 	public boolean isCollapsable (MyNode startNode)
 	{
 		LinkedList<MyEdge> out = findOutgoingEdges(startNode);//g.getOutEdges(startNode);
@@ -344,6 +357,10 @@ public class MyCollapser {
 		return false;
 	}
 	
+	/**
+	 * Was any collapse operation executed which is not yet undone(expanded)
+	 * @return true if there are operations which have to be undone(expanded), false otherwise
+	 */
 	public boolean CollapserActive()
 	{
 		if (this.history.size()>0)
@@ -351,12 +368,19 @@ public class MyCollapser {
 		else
 			return false;
 	}
-	
+	/**
+	 * remove all the expand operations which are not yet executed
+	 */
 	public void reset()
 	{
 		this.history.clear();
 	}
 	
+	/**
+	 * Find for a given Node all the outgoing edges
+	 * @param node the node which should be searched
+	 * @return a list with all the outgoing Edges
+	 */
 	private LinkedList<MyEdge> findOutgoingEdges (MyNode node)
 	{
 		LinkedList<MyEdge> res = new LinkedList<MyEdge>();
@@ -370,6 +394,11 @@ public class MyCollapser {
 		return res;
 	}
 	
+	/**
+	 * Find for a given Node all the incoming edges
+	 * @param node the node which should be searched
+	 * @return a list with all the incoming Edges
+	 */
 	private LinkedList<MyEdge> findIncomingEdges (MyNode node)
 	{
 		LinkedList<MyEdge> res = new LinkedList<MyEdge>();
@@ -379,8 +408,6 @@ public class MyCollapser {
 			if (e.isVisible() && e.getDestinationNode().equals(node))
 				res.add(e);
 		}
-		
 		return res;
 	}
-	
 }
