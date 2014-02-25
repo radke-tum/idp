@@ -1,8 +1,8 @@
 package graph.listener;
 
 
-import graph.model2.MyEdgeType;
-import graph.model2.MyNodeType;
+import graph.model.MyEdgeType;
+import graph.model.MyNodeType;
 import graph.operations.GraphViewContainer;
 
 import java.awt.Color;
@@ -446,6 +446,11 @@ public class ConfigWriterReader {
 				}
 				else
 				{
+					graphViewsNode = (Element) doc.getElementsByTagName(GRAPH_VIEWS).item(0);
+				}
+				/*else
+				{
+					//!!!!!!!
 					graphViewsNode = (Element) graphviewNodes.item(0);
 					// check if graphViews has subNodes
 					if (graphViewsNode==null || graphViewsNode.getChildNodes()==null || graphViewsNode.getChildNodes().getLength()==0)
@@ -456,7 +461,7 @@ public class ConfigWriterReader {
 						root.appendChild(graphViewsNode);
 					}
 					
-				}
+				}*/
 				
 			//	System.out.println("graphViewsNode null ? "+graphViewsNode==null);
 				createGraphView(doc,graphViewsNode,view);

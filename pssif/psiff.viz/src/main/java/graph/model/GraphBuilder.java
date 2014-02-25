@@ -9,48 +9,32 @@ import model.ModelBuilder;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.SparseMultigraph;
 import edu.uci.ics.jung.graph.util.EdgeType;
-import graph.model2.MyEdge2;
-import graph.model2.MyNode2;
 
 public class GraphBuilder {
 	
-	private Graph<MyNode2, MyEdge2> g;
-	private boolean detailedNodes;
+	private Graph<MyNode, MyEdge> g;
+	//private boolean detailedNodes;
+	private static boolean commentsVisible = false;
 	
-	public Graph<MyNode2, MyEdge2> createGraph(boolean detailedNodes)
+	public Graph<MyNode, MyEdge> createGraph(boolean detailedNodes)
 	{
 		//this.detailedNodes=detailedNodes;
 		
 		if (g==null)
-			g = new SparseMultigraph<MyNode2,MyEdge2>();
+			g = new SparseMultigraph<MyNode,MyEdge>();
 
 		removeAllNodesAndEdges();
 		
-		MyNode.setidcounter(0);
-		
-		LinkedList<MyEdge2> edges = ModelBuilder.getAllEdges();
-		LinkedList<MyNode2> nodes = ModelBuilder.getAllNodes();
-		
-		
-		for (MyNode2 n : nodes)
-		{
-			n.setDetailedOutput(detailedNodes);
-			g.addVertex(n);
-		}
-		
-		for (MyEdge2 e : edges)
-		{
-			g.addEdge(e, e.getSourceNode(), e.getDestinationNode(), EdgeType.DIRECTED);
-		}
+		buildGraphFromModel(detailedNodes);
 		
 		return g;
 	}
 	
-	public Graph<MyNode2, MyEdge2> changeNodeDetails(boolean detailedNodes, Graph<MyNode2, MyEdge2> graph)
+	public Graph<MyNode, MyEdge> changeNodeDetails(boolean detailedNodes, Graph<MyNode, MyEdge> graph)
 	{
-		Collection<MyNode2> nodes = graph.getVertices();
+		Collection<MyNode> nodes = graph.getVertices();
 				
-		for (MyNode2 n : nodes)
+		for (MyNode n : nodes)
 		{
 			n.setDetailedOutput(detailedNodes);
 		}
@@ -59,40 +43,23 @@ public class GraphBuilder {
 	}
 	
 	
-	public Graph<MyNode2, MyEdge2> removeAllNodesAndEdges ()
+	public Graph<MyNode, MyEdge> removeAllNodesAndEdges ()
 	{
 		return removeAllNodesAndEdges(g);
 	}
 	
-	private Graph<MyNode2, MyEdge2> removeAllNodesAndEdges (Graph<MyNode2, MyEdge2> graph)
+	private Graph<MyNode, MyEdge> removeAllNodesAndEdges (Graph<MyNode, MyEdge> graph)
 	{
-		Collection<MyEdge2> edges =graph.getEdges();
-		LinkedList<MyEdge2> edges2 = new LinkedList<MyEdge2>();
+		LinkedList<MyEdge> edges = new LinkedList<MyEdge>(graph.getEdges());
 		
-		Iterator<MyEdge2> it1 = edges.iterator();
-		while (it1.hasNext())
-		{
-			edges2.add(it1.next());
-			
-		}
-		
-		for (MyEdge2 e : edges2)
+		for (MyEdge e : edges)
 		{
 			graph.removeEdge(e);
 		}
 		
+		LinkedList<MyNode> nodes = new LinkedList<MyNode>(graph.getVertices());
 		
-		Collection<MyNode2> nodes =graph.getVertices();
-		LinkedList<MyNode2> nodes2 = new LinkedList<MyNode2>();
-		
-		Iterator<MyNode2> it2 = nodes.iterator();
-		while (it2.hasNext())
-		{
-			nodes2.add(it2.next());
-			
-		}
-		
-		for (MyNode2 n : nodes2)
+		for (MyNode n : nodes)
 		{
 			graph.removeVertex(n);
 		}
@@ -100,4 +67,55 @@ public class GraphBuilder {
 		return graph;
 	}
 	
+	public Graph<MyNode, MyEdge> updateGraph (boolean detailedNodes)
+	{
+		this.removeAllNodesAndEdges();
+		
+		return buildGraphFromModel(detailedNodes);
+	}
+	
+	private Graph<MyNode, MyEdge> buildGraphFromModel (boolean detailedNodes)
+	{
+		if (commentsVisible)
+			System.out.println("buildGraphFromModel ");
+		LinkedList<MyEdge> edges = ModelBuilder.getAllEdges();
+		LinkedList<MyNode> nodes = ModelBuilder.getAllNodes();
+		
+		
+		for (MyNode n : nodes)
+		{
+			if (n.isVisible())
+			{
+				n.setDetailedOutput(detailedNodes);
+				g.addVertex(n);
+				if (commentsVisible)
+					System.out.println("Node is visible "+n.getRealName());
+			}
+			else
+			{
+				if (commentsVisible)
+					System.out.println("Node not visible "+n.getRealName());
+			}
+		}
+		
+		for (MyEdge e : edges)
+		{
+			if (e.isVisible() && e.getDestinationNode().isVisible() && e.getSourceNode().isVisible())
+			{
+				if (commentsVisible)
+				{
+					System.out.println("Edge :"+ e.getEdgeInformations());
+					System.out.println("Source "+e.getSourceNode().getRealName());
+					System.out.println("Dest "+e.getDestinationNode().getRealName());
+				}
+				g.addEdge(e, e.getSourceNode(), e.getDestinationNode(), EdgeType.DIRECTED);
+				if (commentsVisible)
+					System.out.println("Edge-----------------");
+			}
+		}
+		if (commentsVisible)
+			System.out.println("----------------");
+		
+		return g;
+	}
 }

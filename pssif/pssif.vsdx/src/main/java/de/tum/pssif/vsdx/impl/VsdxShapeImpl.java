@@ -1,7 +1,9 @@
 package de.tum.pssif.vsdx.impl;
 
+import java.util.Map;
 import java.util.Set;
 
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 import de.tum.pssif.vsdx.VsdxConnector;
@@ -11,12 +13,13 @@ import de.tum.pssif.vsdx.VsdxShape;
 
 public class VsdxShapeImpl implements VsdxShape {
 
-  protected final int              masterId;
-  private final int                id;
-  private final Set<VsdxShapeImpl> inners = Sets.newHashSet();
+  protected final int               masterId;
+  private final int                 id;
+  private final Set<VsdxShapeImpl>  inners = Sets.newHashSet();
+  private final Map<String, String> props  = Maps.newHashMap();
 
-  private VsdxDocumentImpl         document;
-  private String                   text   = "";
+  private VsdxDocumentImpl          document;
+  private String                    text   = "";
 
   public VsdxShapeImpl(int id, int masterId) {
     this.masterId = masterId;
@@ -97,20 +100,17 @@ public class VsdxShapeImpl implements VsdxShape {
 
   @Override
   public Set<String> getCustomPropertyNames() {
-    // TODO Auto-generated method stub
-    return Sets.newHashSet();
+    return Sets.newHashSet(this.props.keySet());
   }
 
   @Override
   public String getCustomPropertyValue(String customPropertyName) {
-    // TODO Auto-generated method stub
-    return null;
+    return this.props.get(customPropertyName);
   }
 
   @Override
   public void setCustomProperty(String name, String value) {
-    // TODO Auto-generated method stub
-
+    this.props.put(name, value);
   }
 
 }

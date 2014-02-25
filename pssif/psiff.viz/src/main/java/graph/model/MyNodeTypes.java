@@ -1,9 +1,14 @@
-package graph.model2;
+package graph.model;
 
 import java.util.Collection;
 import java.util.LinkedList;
 import de.tum.pssif.core.metamodel.NodeType;
 
+/**
+ * All the possible Node Types of the PSSIF Model
+ * @author Luc
+ *
+ */
 public class MyNodeTypes {
 	private LinkedList<MyNodeType> types;
 	
@@ -13,12 +18,9 @@ public class MyNodeTypes {
 		
 		for (NodeType nt : types)
 		{
-			//if (nt.getName()!="Node")
-		//	{
-				MyNodeType tmp = new MyNodeType(nt);
+			MyNodeType tmp = new MyNodeType(nt);
 				
-				this.types.add(tmp);
-		//	}
+			this.types.add(tmp);
 		}
 		
 	}

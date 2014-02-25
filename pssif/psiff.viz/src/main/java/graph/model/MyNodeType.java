@@ -1,7 +1,12 @@
-package graph.model2;
+package graph.model;
 
 import de.tum.pssif.core.metamodel.NodeType;
 
+/**
+ * A datacontainer with the node type information of the PSSIF- Model for the Jung API 
+ * @author Luc
+ *
+ */
 public class MyNodeType {
 
 	private NodeType type;

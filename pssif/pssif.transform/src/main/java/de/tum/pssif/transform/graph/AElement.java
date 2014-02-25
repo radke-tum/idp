@@ -7,7 +7,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 
-abstract class AElement {
+public abstract class AElement {
 
   private final String        id;
   private String              type;

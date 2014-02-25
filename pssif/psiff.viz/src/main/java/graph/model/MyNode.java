@@ -1,35 +1,303 @@
 package graph.model;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 
-public class MyNode {
-	private int id; 
+import de.tum.pssif.core.PSSIFConstants;
+import de.tum.pssif.core.metamodel.Attribute;
+import de.tum.pssif.core.metamodel.DataType;
+import de.tum.pssif.core.metamodel.PrimitiveDataType;
+import de.tum.pssif.core.model.Node;
+import de.tum.pssif.core.metamodel.NodeType;
+import de.tum.pssif.core.util.PSSIFOption;
+import de.tum.pssif.core.util.PSSIFValue;
+
+/**
+ * A Data container for the Nodes the PSS-IF Model
+ * Helps to manage the visualization/modification of the Node
+ * @author Luc
+ *
+ */
+public class MyNode{
+	private Node node;
 	private String name;
-	private List<String> attributes ;
 	private int size;
-	private NodeType type;
+	private MyNodeType type;
 	private boolean detailedOutput;
-	public static int idcounter;
+	private boolean visible;
+	private boolean collapseNode;
 	
 	private static int limit = 15;
 	private static int heightlimit = 2;
 	
 	
-	public MyNode(String name, List<String> attributes, NodeType type) {
-		this.id = idcounter++;
-		this.name =name;
-		this.attributes = attributes;
+	public MyNode(Node node, MyNodeType type) {
+		this.node = node;
 		this.type = type;
-		//setSize();
+		this.visible = true;
+		this.collapseNode = false;
+		
+		// find the name of the Node
+		Attribute nodeName = type.getType().findAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_NAME);
+		
+		if (nodeName.get(node)!=null)
+		{
+			PSSIFValue value = nodeName.get(node).getOne();
+			
+			name = value.asString();
+		}
+		else
+			name ="Name not available";
+	}
+	
+	/**
+	 * Get all the Attributes from this node
+	 * @return List with the attributes. Format : Name = Value in (Unit) Datatype 
+	 */
+	private List<String> calcAttr()
+	{
+		List<String> attributes = new LinkedList<String>();
+		
+		Collection<Attribute> attr = type.getType().getAttributes();
+		
+		for (Attribute current : attr)
+		{
+			String attrName = current.getName();
+			
+			PSSIFValue value=null;
+			
+			if (current.get(node)!=null && current.get(node).isOne())
+				value = current.get(node).getOne();
+			
+			String attrValue="";
+			if (value !=null)
+				attrValue = String.valueOf(value.getValue());
+			String attrUnit = current.getUnit().getName();
+			
+			String res;
+			
+			if (attrUnit.equals("none"))
+				res = attrName+" = "+attrValue+" : "+((PrimitiveDataType)current.getType()).getName();
+			else
+				res = attrName+" = "+attrValue+" in "+attrUnit+ " : "+((PrimitiveDataType)current.getType()).getName();
+			
+			if (current.get(node)!=null && attrValue.length()>0)
+				attributes.add(res);
+		}
+		
+		return attributes;
+	}
+	
+	/**
+	 * Get a list with all the attributes from this Node
+	 * @return A list which contains a list with all the attribute information. Information Order in the list : Name, Value, Unit, Datatype
+	 */
+	public LinkedList<LinkedList<String>> getAttributes()
+	{
+		LinkedList<LinkedList<String>> attributes = new LinkedList<LinkedList<String>>();
+		
+		
+		Collection<Attribute> attr = type.getType().getAttributes();
+		
+		for (Attribute current : attr)
+		{
+			LinkedList<String> currentAttr = new LinkedList<String>();
+			
+			String attrName = current.getName();
+			
+			currentAttr.add(attrName);
+			
+			PSSIFValue value=null;
+			
+			if (current.get(node)!=null && current.get(node).isOne())
+				value = current.get(node).getOne();
+			
+			String attrValue="";
+			if (value !=null)
+				attrValue = String.valueOf(value.getValue());
+			
+			currentAttr.add(attrValue);
+			String attrUnit = current.getUnit().getName();
+			currentAttr.add(attrUnit);
+			
+			currentAttr.add(((PrimitiveDataType)current.getType()).getName());
+			
+			attributes.add(currentAttr);
+		}
+		
+		return attributes;
+	}
+	
+	/**
+	 * Update the value of a given attribute
+	 * @param attributeName
+	 * @param value
+	 * @return true if everything went fine, otherwise false
+	 */
+	public boolean updateAttribute(String attributeName, Object value)
+	{		
+		DataType attrType = type.getType().findAttribute(attributeName).getType();
+		
+		if (attrType.equals(PrimitiveDataType.BOOLEAN))
+		{
+			try 
+			{
+				PSSIFValue res = PrimitiveDataType.BOOLEAN.fromObject(value);
+				
+				type.getType().findAttribute(attributeName).set(node, PSSIFOption.one(res));
+				
+				return true;
+			}
+			catch (IllegalArgumentException e)
+			{
+				return false;
+			}
+		}
+		
+		if (attrType.equals(PrimitiveDataType.DATE))
+		{
+			try 
+			{
+				Date tmp = parseDate((String) value);
+				
+				PSSIFValue res = PrimitiveDataType.DATE.fromObject(tmp);
+				type.getType().findAttribute(attributeName).set(node, PSSIFOption.one(res));
+				
+				return true;
+			}
+			catch (IllegalArgumentException e)
+			{
+				System.out.println(e.getMessage());
+				return false;
+			}
+		}
+		
+		if (attrType.equals(PrimitiveDataType.DECIMAL))
+		{
+			try 
+			{
+				PSSIFValue res = PrimitiveDataType.DECIMAL.fromObject(value);
+				
+				type.getType().findAttribute(attributeName).set(node, PSSIFOption.one(res));
+				
+				return true;
+			}
+			catch (IllegalArgumentException e)
+			{
+				return false;
+			}
+		}
+		
+		if (attrType.equals(PrimitiveDataType.INTEGER))
+		{
+			try 
+			{
+				PSSIFValue res = PrimitiveDataType.INTEGER.fromObject(value);
+				
+				type.getType().findAttribute(attributeName).set(node, PSSIFOption.one(res));
+				
+				return true;
+			}
+			catch (IllegalArgumentException e)
+			{
+				return false;
+			}
+		}
+		
+		if (attrType.equals(PrimitiveDataType.STRING))
+		{
+			try 
+			{
+				PSSIFValue res = PrimitiveDataType.STRING.fromObject(value);
+				
+				type.getType().findAttribute(attributeName).set(node, PSSIFOption.one(res));
+				
+				return true;
+			}
+			catch (IllegalArgumentException e)
+			{
+				return false;
+			}
+		}
+		
+		type.getType().findAttribute(attributeName).set(node, PSSIFOption.one(PSSIFValue.create(value)));
+		return true;
+	}
+	
+	/**
+	 * We only accepts certain date formats. Checks different date formats and returns a date object
+	 * @param dateInString
+	 * @return a date object, if the given String is not coded in one of the given date formats, null is returned
+	 */
+	private Date parseDate(String dateInString)
+	{
+		SimpleDateFormat formatter;
+	
+		try {
+			formatter = new SimpleDateFormat("dd/MM/yyyy");
+			return formatter.parse(dateInString);
+		} catch (ParseException e) { }
+		
+		try {
+			formatter = new SimpleDateFormat("dd/MM/yyyy");
+			return formatter.parse(dateInString);
+		} catch (ParseException e) { }
+		
+		try {
+			formatter = new SimpleDateFormat("dd/M/yyyy");
+			return formatter.parse(dateInString);
+		} catch (ParseException e) { }
+		
+		try {
+			formatter = new SimpleDateFormat("dd-MM-yyyy");
+			return formatter.parse(dateInString);
+		} catch (ParseException e) { }
+		
+		try {
+			formatter = new SimpleDateFormat("dd-M-yyyy");
+			return formatter.parse(dateInString);
+		} catch (ParseException e) { }
+		
+		try {
+			formatter = new SimpleDateFormat("dd.MM.yyyy");
+			return formatter.parse(dateInString);
+		} catch (ParseException e) { }
+		
+		try {
+			formatter = new SimpleDateFormat("dd.M.yyyy");
+			return formatter.parse(dateInString);
+		} catch (ParseException e) { }
+		return null;
 		
 	}
 	
-	public static void setidcounter(int lastId)
+	/**
+	 * Get a HashMap with all the Attributes from this node
+	 * @return A Mapping from Attributename to Attrbiute
+	 */
+	public HashMap<String, Attribute> getAttributesHashMap()
 	{
-		idcounter=lastId;
+		 HashMap<String, Attribute> res = new  HashMap<String, Attribute>();
+		
+		Collection<Attribute> attr = type.getType().getAttributes();
+		
+		for (Attribute current : attr)
+		{
+			String attrName = current.getName();
+			
+			res.put(attrName, current);
+		}
+		
+		return res;
 	}
+
 	
-	private void setSize()
+	/*private void setSize()
 	{
 		int temp = name.length() / limit;
 		
@@ -52,26 +320,30 @@ public class MyNode {
 		}
 			
 	
-	}
+	}*/
 	
 	public void update()
 	{
 		//setSize();
 	}
-
-	public String toString() {
-		
+	
+	/**
+	 * Get all the Informations about the Node. Should only be used in the GraphVisualization
+	 * @return a HTML String with all the node informations
+	 */
+	public String getNodeInformations()
+	{
 		String output="";
 		if (detailedOutput)
 		{
 			output ="<table border=\"0\">";
 			output+=" <tr> ";
-			output+= "<th> <h3>&lt;&lt; "+type+" >> <br>"+name+"</h3> </th>";
+			output+= "<th> <h3>&lt;&lt; "+type.getName()+" >> <br>"+name+"</h3> </th>";
 			output+=  " </tr> ";
 			output+=" <tr> ";
 			output+= "<td> <b>Attributes </b></td>";
 			output+=  " </tr> ";
-			for (String s : attributes)
+			for (String s : calcAttr())
 			{
 				output+=" <tr> ";
 				output+= "<td> "+s+" </td>";
@@ -82,7 +354,7 @@ public class MyNode {
 		}
 		else
 		{
-			output+="<h3>&lt;&lt; "+type+" >> <br>"+name+"</h3>";
+			output+="<h3>&lt;&lt; "+type.getName()+" >> <br>"+name+"</h3>";
 		}
 		
 		return output;
@@ -90,7 +362,7 @@ public class MyNode {
 	
 /**
  * Pretty printed Name
- * @return
+ * @return a html name
  */
 	public String getName()
 	{
@@ -102,6 +374,7 @@ public class MyNode {
 	
 	/**
 	 * Actual name value
+	 * @return the name
 	 */
 	public String getRealName()
 	{
@@ -115,28 +388,55 @@ public class MyNode {
 	{
 		this.name=name;
 	}
-	
-	public List<String> getAttributes() {
-		return attributes;
-	}
-
-	public void setAttributes(List<String> attributes) {
-		this.attributes = attributes;
-	}
 
 	public int getSize() {
 		return size;
 	}
 
-	public NodeType getNodeType() {
+	public MyNodeType getNodeType() {
 		return type;
 	}
 
 	public boolean isDetailedOutput() {
 		return detailedOutput;
 	}
-
+	
+	/**
+	 * Defines if all the attributes and additional information is shown in the GUI
+	 * @param detailedOutput
+	 */
 	public void setDetailedOutput(boolean detailedOutput) {
 		this.detailedOutput = detailedOutput;
+	}
+	
+/*	public boolean equals (Object n)
+	{
+		if (n instanceof Node)
+		{
+			Node tmp = (Node) n;
+			return this.node.equals(tmp);
+		}
+		
+		return false;
+	}*/
+
+	public Node getNode() {
+		return node;
+	}
+
+	public boolean isVisible() {
+		return visible;
+	}
+
+	public void setVisible(boolean visible) {
+		this.visible = visible;
+	}
+
+	public boolean isCollapseNode() {
+		return collapseNode;
+	}
+
+	public void setCollapseNode(boolean collapseNode) {
+		this.collapseNode = collapseNode;
 	}
 }

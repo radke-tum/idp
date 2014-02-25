@@ -5,7 +5,7 @@ import java.util.Set;
 
 public interface VsdxPage extends VsdxShapeContainer {
 
-  VsdxShape createNewConnector(VsdxMaster master, VsdxShape fromShape, VsdxShape toShape);
+  VsdxConnector createNewConnector(VsdxMaster master, VsdxShape fromShape, VsdxShape toShape);
 
   Set<VsdxConnector> getConnectors();
 

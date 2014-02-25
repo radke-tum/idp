@@ -37,7 +37,7 @@ public class DemoTest {
     //This is how you find a particular node type
     NodeType rootNodeType = getMetamodel().findNodeType(PSSIFConstants.ROOT_NODE_TYPE_NAME);
     //This is how you obtain all instance nodes of a given node type
-    PSSIFOption<Node> nodes = rootNodeType.apply(getModel());
+    PSSIFOption<Node> nodes = rootNodeType.apply(getModel(), true);
     if (nodes.isNone()) {
       System.out.println("no nodes");
     }
@@ -86,7 +86,7 @@ public class DemoTest {
     EdgeType edgeType = nodeType.getOutgoings().iterator().next();
 
     //Get hold of a node (will throw an exception if there is more than one node of this type)
-    Node node = nodeType.apply(getModel()).getOne();
+    Node node = nodeType.apply(getModel(), true).getOne();
 
     //Get hold of edges outgoing from the node
     PSSIFOption<Edge> outgoingEdges = edgeType.getIncoming().apply(node);

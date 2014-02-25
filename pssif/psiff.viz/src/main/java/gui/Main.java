@@ -1,9 +1,10 @@
 package gui;
 
 
-import graph.model2.MyEdgeType;
-import graph.model2.MyNodeType;
+import graph.model.MyEdgeType;
+import graph.model.MyNodeType;
 import graph.operations.GraphViewContainer;
+import gui.graph.CreateNewGraphViewPopup;
 import gui.graph.MyListColorRenderer;
 
 import java.awt.BorderLayout;
@@ -57,14 +58,14 @@ public class Main {
 	private static JMenuItem resetMatrix;
 	private static JMenuItem colorNodes;
 	private static JMenuItem createView;
+	private static JMenuItem graphVizualistation;
+	private static JMenuItem matrixVizualistation;
 	private static JMenu applyView;
 	private static JMenu deleteView;
 	
 	public static void main(String[] args) {
 		
 		ModelBuilder m = new ModelBuilder();
-
-
 
 		frame = new JFrame("Product Service Systems - Integration Framework ---- Visualisation");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -129,8 +130,8 @@ public class Main {
 		
 		// Which Visualization
 		JMenu visualisationMenu = new JMenu("Visualisation Mode");
-		JMenuItem graphItem = new JMenuItem("Graph");
-		graphItem.addActionListener(new ActionListener() {
+		graphVizualistation = new JMenuItem("Graph");
+		graphVizualistation.addActionListener(new ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -148,12 +149,12 @@ public class Main {
 				frame.repaint();
 			}
 		});
-		visualisationMenu.add(graphItem);
+		visualisationMenu.add(graphVizualistation);
 		visualisationMenu.setIcon(null);
 		
 		
-		JMenuItem matrixItem = new JMenuItem("Matrix");
-		matrixItem.addActionListener(new ActionListener() {
+		matrixVizualistation = new JMenuItem("Matrix");
+		matrixVizualistation.addActionListener(new ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -171,7 +172,7 @@ public class Main {
 				frame.repaint();
 			}
 		});
-		visualisationMenu.add(matrixItem);
+		visualisationMenu.add(matrixVizualistation);
 		visualisationMenu.setIcon(null);
 		
 		
@@ -308,6 +309,8 @@ public class Main {
 			resetMatrix.setEnabled(false);
 			colorNodes.setEnabled(true);
 			createView.setEnabled(true);
+			graphVizualistation.setEnabled(false);
+			matrixVizualistation.setEnabled(true);
 		}
 		
 		if (matrixView.isActive())
@@ -316,277 +319,96 @@ public class Main {
 			resetMatrix.setEnabled(true);
 			colorNodes.setEnabled(false);
 			createView.setEnabled(false);
+			graphVizualistation.setEnabled(true);
+			matrixVizualistation.setEnabled(false);
 		}
 			
 	}
 	
 	private static void createNewGraphView ()
 	{
-		MyEdgeType[] edgePossibilities = ModelBuilder.getEdgeTypes().getAllEdgeTypesArray();
-		MyNodeType[] nodePossibilities = ModelBuilder.getNodeTypes().getAllNodeTypesArray();
+		CreateNewGraphViewPopup popup = new CreateNewGraphViewPopup(graphView);
+		boolean res = popup.showPopup();
 		
-		
-		JPanel allPanel = new JPanel(new GridBagLayout());
-		GridBagConstraints c = new GridBagConstraints();
-		
-		final JPanel NodePanel = new JPanel(new GridLayout(0, 1));
-		
-		for (MyNodeType attr : nodePossibilities)
+		if (res)
 		{
-			JCheckBox choice = new JCheckBox(attr.getName());
-			
-			choice.setSelected(false);
-			NodePanel.add(choice);
+        	//update the menus
+        	resetDeleteGraphViews();
+        	resetReadGraphViews();
 		}
-		
-		final JPanel EdgePanel = new JPanel(new GridLayout(0, 1));
-		
-		for (MyEdgeType attr : edgePossibilities)
-		{
-			JCheckBox choice = new JCheckBox(attr.getName());
-			choice.setSelected(false);
-			
-			EdgePanel.add(choice);
-		}
-		JScrollPane scrollNodes = new JScrollPane(NodePanel,JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		scrollNodes.setPreferredSize(new Dimension(200, 400));
-			    
-	    JScrollPane scrollEdges = new JScrollPane(EdgePanel,JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		scrollEdges.setPreferredSize(new Dimension(200, 400));
-		
-		final JCheckBox selectAllNodes = new JCheckBox("Select all Node Types");
-	    
-	    selectAllNodes.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) 
-		      {
-		        if (selectAllNodes.isSelected())
-		        {
-		          Component[] attr = NodePanel.getComponents();
-		          for (Component tmp : attr) {
-		            if ((tmp instanceof JCheckBox))
-		            {
-		              JCheckBox a = (JCheckBox)tmp;
-		              
-		              a.setSelected(true);
-		            }
-		          }
-		        }
-		        else
-		        {
-		          Component[] attr = NodePanel.getComponents();
-		          for (Component tmp : attr) {
-		            if ((tmp instanceof JCheckBox))
-		            {
-		              JCheckBox a = (JCheckBox)tmp;
-		              
-		              a.setSelected(false);
-		            }
-		          }
-		        }
-		      }
-	    });
-	    final JCheckBox selectAllEdges = new JCheckBox("Select all Edge Types");
-	    
-	    selectAllEdges.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) 
-	      {
-	        if (selectAllEdges.isSelected())
-	        {
-	          Component[] attr = EdgePanel.getComponents();
-	          for (Component tmp : attr) {
-	            if ((tmp instanceof JCheckBox))
-	            {
-	              JCheckBox a = (JCheckBox)tmp;
-	              
-	              a.setSelected(true);
-	            }
-	          }
-	        }
-	        else
-	        {
-	          Component[] attr = EdgePanel.getComponents();
-	          for (Component tmp : attr) {
-	            if ((tmp instanceof JCheckBox))
-	            {
-	              JCheckBox a = (JCheckBox)tmp;
-	              
-	              a.setSelected(false);
-	            }
-	          }
-	        }
-	      }
-	    });
-		
-	    selectAllNodes.setSelected(false);
-	    
-	    selectAllEdges.setSelected(false);
-	    
-	    JTextField viewNameTextField = new JTextField(10);
-	    
-	    int ypos =0;
-	    
-		c.gridx = 0;
-		c.gridy = ypos;
-		allPanel.add(new JLabel("Choose Node Types"),c);
-		c.gridx = 1;
-		c.gridy = ypos++;
-		allPanel.add(new JLabel("Choose Edge Types"),c);
-	    c.gridx = 0;
-	    c.gridy = ypos;
-	    allPanel.add(scrollNodes, c);
-	    c.gridx = 1;
-	    c.gridy = ypos++;
-	    allPanel.add(scrollEdges, c);
-	    c.gridx = 0;
-	    c.gridy = ypos;
-	    allPanel.add(selectAllNodes, c);
-	    c.gridx = 1;
-	    c.gridy = ypos++;
-	    allPanel.add(selectAllEdges, c);
-	    
-	    c.weighty = 1;
-	    
-		c.gridx = 0;
-		c.gridy = ypos;
-		allPanel.add(new JLabel("Graph View name "),c);
-		c.gridx = 1;
-		c.gridy = ypos++;
-		allPanel.add(viewNameTextField,c);
-	    
-		
-		
-		allPanel.setPreferredSize(new Dimension(400,500));
-		allPanel.setMaximumSize(new Dimension(400,500));
-		allPanel.setMinimumSize(new Dimension(400,500));
-		
-		int dialogResult = JOptionPane.showConfirmDialog(null, allPanel, "Create a new Graph View", JOptionPane.DEFAULT_OPTION);
-    	
-    	if (dialogResult==0)
-    	{
-    		LinkedList<MyNodeType> selectedNodes = new LinkedList<MyNodeType>();
-    		// get all the values of the Nodes
-        	Component[] attr = NodePanel.getComponents();       	
-        	for (Component tmp :attr)
-        	{
-        		if ((tmp instanceof JCheckBox))
-        		{
-        			JCheckBox a = (JCheckBox) tmp;
-        			
-        			// compare which ones where selected
-        			 if (a.isSelected())
-        			 {
-        				 MyNodeType b = ModelBuilder.getNodeTypes().getValue(a.getText());
-        				 selectedNodes.add(b);
-        			 }
-        				
-        		}	
-        	}
-        	
-        	LinkedList<MyEdgeType> selectedEdges = new LinkedList<MyEdgeType>();
-    		// get all the values of the edges
-        	attr = EdgePanel.getComponents();       	
-        	for (Component tmp :attr)
-        	{
-        		if ((tmp instanceof JCheckBox))
-        		{
-        			JCheckBox a = (JCheckBox) tmp;
-        			
-        			// compare which ones where selected
-        			 if (a.isSelected())
-        			 {
-        				 MyEdgeType b = ModelBuilder.getEdgeTypes().getValue(a.getText());
-        				 selectedEdges.add(b);
-        			 }
-        				
-        		}	
-        	}
-        	
-        	
-        	String viewName = viewNameTextField.getText();
-        	
-        	if (viewName.length()==0 || (selectedNodes.size()==0 && selectedEdges.size()==0))
-        	{
-        		// not enough information
-        		JPanel errorPanel = new JPanel();
-        		
-        		errorPanel.add(new JLabel("No name entered or no edge and node types selected"));
-        		
-        		JOptionPane.showMessageDialog(null, errorPanel, "Ups something went wrong", JOptionPane.ERROR_MESSAGE);
-        		
-        		
-        	}
-        	else
-        	{
-        		// write to config
-        		GraphViewContainer container = new GraphViewContainer(selectedNodes,selectedEdges,viewName);
-	        	graphView.getGraph().createNewGraphView(container);
-	        	
-	        	// apply the view
-	        	graphView.getGraph().applyNodeAndEdgeFilter(container.getSelectedNodeTypes(), container.getSelectedEdgeTypes());
-	        	
-	        	//update the menus
-	        	resetDeleteGraphViews();
-	        	resetReadGraphViews();
-        	}
-        }
 	}
 
 	private static void readGraphViews()
 	{
 		final HashMap<String, GraphViewContainer> views = graphView.getGraph().getAllGraphViews();
 		
-		for (final String name : views.keySet())
+		if (views.size()==0)
 		{
-			JMenuItem menuItem = new JMenuItem(name);
+			applyView.setEnabled(false);
+		}
+		else
+		{
+			applyView.setEnabled(true);
 			
-			menuItem.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				graphView.getGraph().applyNodeAndEdgeFilter(ModelBuilder.getNodeTypes().getAllNodeTypes(), ModelBuilder.getEdgeTypes().getAllEdgeTypes());
+			for (final String name : views.keySet())
+			{
+				JMenuItem menuItem = new JMenuItem(name);
 				
-				GraphViewContainer view = views.get(name);
+				menuItem.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					graphView.getGraph().applyNodeAndEdgeFilter(ModelBuilder.getNodeTypes().getAllNodeTypes(), ModelBuilder.getEdgeTypes().getAllEdgeTypes());
+					
+					GraphViewContainer view = views.get(name);
+					
+					System.out.println("Number of Node Types: "+view.getSelectedNodeTypes().size());
+					System.out.println("Number of Edge Types: "+view.getSelectedEdgeTypes().size());
+					graphView.getGraph().applyNodeAndEdgeFilter(view.getSelectedNodeTypes(), view.getSelectedEdgeTypes());
+				}
+				});
 				
-				System.out.println("Number of Node Types: "+view.getSelectedNodeTypes().size());
-				System.out.println("Number of Edge Types: "+view.getSelectedEdgeTypes().size());
-				graphView.getGraph().applyNodeAndEdgeFilter(view.getSelectedNodeTypes(), view.getSelectedEdgeTypes());
+				applyView.add(menuItem);
 			}
-			});
-			
-			applyView.add(menuItem);
-		}	
+		}
 	}
 	
 	private static void resetReadGraphViews()
 	{
 		applyView.removeAll();
 		readGraphViews();
+		
 	}
 	
 	private static void deleteGraphView()
 	{
 		final HashMap<String, GraphViewContainer> views = graphView.getGraph().getAllGraphViews();
 		
-		for (final String name : views.keySet())
+		if (views.size()==0)
 		{
-			JMenuItem menuItem = new JMenuItem(name);
+			deleteView.setEnabled(false);
+		}
+		else
+		{
+			deleteView.setEnabled(true);
 			
-			menuItem.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
+			for (final String name : views.keySet())
+			{
+				JMenuItem menuItem = new JMenuItem(name);
 				
-				graphView.getGraph().deleteGraphView(views.get(name));
-				graphView.getGraph().applyNodeAndEdgeFilter(ModelBuilder.getNodeTypes().getAllNodeTypes(), ModelBuilder.getEdgeTypes().getAllEdgeTypes());
-				resetReadGraphViews();
-				resetDeleteGraphViews();
+				menuItem.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					
+					graphView.getGraph().deleteGraphView(views.get(name));
+					graphView.getGraph().applyNodeAndEdgeFilter(ModelBuilder.getNodeTypes().getAllNodeTypes(), ModelBuilder.getEdgeTypes().getAllEdgeTypes());
+					resetReadGraphViews();
+					resetDeleteGraphViews();
+				}
+				});
+				
+				deleteView.add(menuItem);
 			}
-			});
-			
-			deleteView.add(menuItem);
-		}	
+		}
 	}
 	
 	private static void resetDeleteGraphViews()

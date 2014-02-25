@@ -1,4 +1,4 @@
-package graph.model2;
+package graph.model;
 
 import java.util.Collection;
 import java.util.LinkedList;

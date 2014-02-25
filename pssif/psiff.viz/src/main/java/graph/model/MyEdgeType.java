@@ -1,4 +1,4 @@
-package graph.model2;
+package graph.model;
 
 import de.tum.pssif.core.metamodel.EdgeType;
 
@@ -21,6 +21,7 @@ public class MyEdgeType {
     {
     	this.type = type;
     	this.lineType = lineType;
+    	
     }
 
 

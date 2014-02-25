@@ -39,11 +39,10 @@ import edu.uci.ics.jung.graph.util.EdgeType;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.control.AbstractPopupGraphMousePlugin;
 
-import graph.model2.MyEdge2;
-import graph.model2.MyEdgeType;
-import graph.model2.MyNode2;
-import graph.model2.MyNodeType;
-import graph.operations.InfoContainer;
+import graph.model.MyEdge;
+import graph.model.MyEdgeType;
+import graph.model.MyNode;
+import graph.model.MyNodeType;
 
 public class MyPopupGraphMousePlugin extends AbstractPopupGraphMousePlugin implements MouseListener {
 

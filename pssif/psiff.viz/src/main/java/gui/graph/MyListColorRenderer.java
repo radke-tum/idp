@@ -2,7 +2,7 @@ package gui.graph;
 
 
 
-import graph.model2.MyNodeType;
+import graph.model.MyNodeType;
 
 import java.awt.Color;
 import java.awt.Component;

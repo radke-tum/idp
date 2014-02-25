@@ -11,7 +11,6 @@ import de.tum.pssif.vsdx.VsdxDocument;
 import de.tum.pssif.vsdx.VsdxMaster;
 import de.tum.pssif.vsdx.VsdxPage;
 import de.tum.pssif.vsdx.VsdxShape;
-import de.tum.pssif.vsdx.zip.ZipArchiveEntryWithData;
 
 
 public class VsdxPageImpl implements VsdxPage {
@@ -63,7 +62,7 @@ public class VsdxPageImpl implements VsdxPage {
   }
 
   @Override
-  public VsdxShape createNewConnector(VsdxMaster master, VsdxShape fromShape, VsdxShape toShape) {
+  public VsdxConnector createNewConnector(VsdxMaster master, VsdxShape fromShape, VsdxShape toShape) {
     VsdxConnectorImpl connect = new VsdxConnectorImpl(document.getNewShapeId(), master.getId());
     connect.setSource((VsdxShapeImpl) fromShape);
     connect.setTarget((VsdxShapeImpl) toShape);
@@ -71,10 +70,8 @@ public class VsdxPageImpl implements VsdxPage {
     return connect;
   }
 
-  ZipArchiveEntryWithData asZipArchiveEntryWithData() {
-    //TODO this is a tricky one: serialize contents to byte array, then create new entry
-    //with zipArchiveentry clone of the current one, and the serialized data.
-    return null;
+  ZipArchiveEntry getZipArchiveEntry() {
+    return this.zipArchiveEntry;
   }
 
 }

@@ -10,17 +10,23 @@ import java.util.LinkedList;
 
 import javax.lang.model.type.PrimitiveType;
 
+import model.ModelBuilder;
+
 import de.tum.pssif.core.metamodel.Attribute;
 import de.tum.pssif.core.metamodel.PrimitiveDataType;
 import de.tum.pssif.core.util.PSSIFOption;
 import de.tum.pssif.core.util.PSSIFValue;
-import edu.uci.ics.jung.graph.Graph;
-import graph.model2.MyEdge2;
-import graph.model2.MyNode2;
+import graph.model.MyEdge;
+import graph.model.MyNode;
 
+/**
+ * Allows to filter the Nodes and Edges by attribute
+ * @author Luc
+ *
+ */
 public class AttributeFilter {
 	
-	public static Graph<MyNode2, MyEdge2> filterNode(Graph<MyNode2, MyEdge2> graph, String attributeName, AttributeOperations op, Object RefValue) throws Exception
+	/*public static Graph<MyNode2, MyEdge2> filterNode(Graph<MyNode2, MyEdge2> graph, String attributeName, AttributeOperations op, Object RefValue) throws Exception
 	{
 		LinkedList<MyNode2> allNodes = new LinkedList<MyNode2>(graph.getVertices());
 		
@@ -65,9 +71,60 @@ public class AttributeFilter {
 			}
 		}
 		return graph;
+	}*/
+	
+	public static void filterNode(String attributeName, AttributeOperations op, Object RefValue) throws Exception
+	{
+		LinkedList<MyNode> allNodes = ModelBuilder.getAllNodes();
+		
+		for (MyNode currentNode : allNodes)
+		{
+			HashMap<String, Attribute> attributes = currentNode.getAttributesHashMap();
+			
+			Attribute attr = attributes.get(attributeName);
+			
+			if (attr== null)
+			{
+				//graph.removeVertex(currentNode);
+				currentNode.setVisible(false);
+			}
+			else
+			{
+				if (testPossibleOperation(attr, op))
+				{
+					boolean result = false;
+					
+					if (attr.get(currentNode.getNode())!=null)
+					{
+						PSSIFValue attrValue=attr.get(currentNode.getNode()).getOne();
+						
+						PrimitiveDataType currentType = (PrimitiveDataType) attr.getType();
+						
+						
+						if (currentType.equals(PrimitiveDataType.BOOLEAN))
+							result = BooleanEval(attrValue, op, RefValue);
+						if (currentType.equals(PrimitiveDataType.DATE))
+							result = DateEval(attrValue, op, RefValue);
+						if (currentType.equals(PrimitiveDataType.DECIMAL))
+							result = DecimalEval(attrValue, op, RefValue);
+						if (currentType.equals(PrimitiveDataType.INTEGER))
+							result = IntegerEval(attrValue, op, RefValue);
+						if (currentType.equals(PrimitiveDataType.STRING))
+							result = StringEval(attrValue, op, RefValue);
+					}
+					
+					if (result == false)
+					{
+						//graph.removeVertex(currentNode);
+						currentNode.setVisible(false);
+					}
+				}
+			}
+		}
+		//return graph;
 	}
 	
-	public static Graph<MyNode2, MyEdge2> filterEdge(Graph<MyNode2, MyEdge2> graph, String attributeName, AttributeOperations op, Object RefValue) throws Exception
+	/*public static Graph<MyNode2, MyEdge2> filterEdge(Graph<MyNode2, MyEdge2> graph, String attributeName, AttributeOperations op, Object RefValue) throws Exception
 	{
 		LinkedList<MyEdge2> allEdges = new LinkedList<MyEdge2>(graph.getEdges());
 		
@@ -114,6 +171,59 @@ public class AttributeFilter {
 			}
 		}
 		return graph;
+	}*/
+	
+	public static void filterEdge(String attributeName, AttributeOperations op, Object RefValue) throws Exception
+	{
+		LinkedList<MyEdge> allEdges = ModelBuilder.getAllEdges();
+		
+		for (MyEdge currentEdge : allEdges)
+		{
+			HashMap<String, Attribute> attributes = currentEdge.getAttributesHashMap();
+			
+			Attribute attr = attributes.get(attributeName);
+			
+			if (attr== null)
+			{
+				//graph.removeEdge(currentEdge);
+				currentEdge.setVisible(false);
+			}
+			else
+			{
+				if (testPossibleOperation(attr, op))
+				{
+					boolean result = false;
+					
+					//PSSIFOption<PSSIFValue>a = attr.get(currentEdge.getEdge());
+					//System.out.println("No value "+a ==null);
+					if (attr.get(currentEdge.getEdge())!=null)
+					{
+						PSSIFValue attrValue=attr.get(currentEdge.getEdge()).getOne();
+						
+						PrimitiveDataType currentType = (PrimitiveDataType) attr.getType();
+						
+						
+						if (currentType.equals(PrimitiveDataType.BOOLEAN))
+							result = BooleanEval(attrValue, op, RefValue);
+						if (currentType.equals(PrimitiveDataType.DATE))
+							result = DateEval(attrValue, op, RefValue);
+						if (currentType.equals(PrimitiveDataType.DECIMAL))
+							result = DecimalEval(attrValue, op, RefValue);
+						if (currentType.equals(PrimitiveDataType.INTEGER))
+							result = IntegerEval(attrValue, op, RefValue);
+						if (currentType.equals(PrimitiveDataType.STRING))
+							result = StringEval(attrValue, op, RefValue);
+					}
+					
+					if (result == false)
+					{
+						//graph.removeEdge(currentEdge);
+						currentEdge.setVisible(false);
+					}
+				}
+			}
+		}
+	//	return graph;
 	}
 	
 	private static boolean testPossibleOperation(Attribute attr, AttributeOperations op )
@@ -184,7 +294,7 @@ public class AttributeFilter {
 		
 		String value = PrimitiveDataType.STRING.fromObject(attrValue.getValue()).asString();
 		String refvalue;
-		System.out.println(RefValue ==null);
+		//System.out.println(RefValue ==null);
 		if (RefValue instanceof String)
 		{
 			String castValue = String.valueOf(RefValue);

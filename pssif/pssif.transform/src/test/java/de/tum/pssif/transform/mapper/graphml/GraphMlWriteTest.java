@@ -8,8 +8,8 @@ import org.junit.Test;
 import de.tum.pssif.core.metamodel.Metamodel;
 import de.tum.pssif.core.model.Model;
 import de.tum.pssif.core.util.PSSIFCanonicMetamodelCreator;
-import de.tum.pssif.transform.mapper.Mapper;
-import de.tum.pssif.transform.mapper.MapperFactory;
+import de.tum.pssif.transform.Mapper;
+import de.tum.pssif.transform.MapperFactory;
 
 
 public class GraphMlWriteTest {
@@ -26,7 +26,7 @@ public class GraphMlWriteTest {
     Model model = importer.read(view, in);
 
     ByteArrayOutputStream out = new ByteArrayOutputStream();
-    Mapper mapper = MapperFactory.getMapper(MapperFactory.GRAPHML);
+    Mapper mapper = MapperFactory.getMapper(MapperFactory.UOFP);
     mapper.write(view, model, out);
 
     byte[] result = out.toByteArray();

@@ -1,9 +1,9 @@
 package matrix.model;
 
-import graph.model2.MyEdge2;
-import graph.model2.MyEdgeType;
-import graph.model2.MyNode2;
-import graph.model2.MyNodeType;
+import graph.model.MyEdge;
+import graph.model.MyEdgeType;
+import graph.model.MyNode;
+import graph.model.MyNodeType;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -29,15 +29,15 @@ public class MatrixBuilder {
 	
 	
 	
-	public LinkedList<MyNode2> findRelevantNodes()
+	public LinkedList<MyNode> findRelevantNodes()
 	{
-		LinkedList<MyNode2> res = new LinkedList<MyNode2>();
+		LinkedList<MyNode> res = new LinkedList<MyNode>();
 		
-		List<MyNode2> search = ModelBuilder.getAllNodes();
+		List<MyNode> search = ModelBuilder.getAllNodes();
 		
 		if (search !=null)
 		{
-			for (MyNode2 node : search)
+			for (MyNode node : search)
 			{
 				System.out.println("Node loop "+node.getName()+" Type "+node.getNodeType().getName());
 				if (nodeTypes.contains(node.getNodeType()))
@@ -51,16 +51,16 @@ public class MatrixBuilder {
 		return res;
 	}
 	
-	public LinkedList<MyEdge2> findRelevantEdges()
+	public LinkedList<MyEdge> findRelevantEdges()
 	{
-		LinkedList<MyEdge2> res = new LinkedList<MyEdge2>();
+		LinkedList<MyEdge> res = new LinkedList<MyEdge>();
 		
-		List<MyEdge2> search = ModelBuilder.getAllEdges();
+		List<MyEdge> search = ModelBuilder.getAllEdges();
 		
 		if (search !=null)
 		{
 			
-			for (MyEdge2 edge : search)
+			for (MyEdge edge : search)
 			{
 				System.out.println("Edge loop Type "+edge.getEdgeType().getName());
 				if (edgesTypes.contains(edge.getEdgeType()))
@@ -72,26 +72,26 @@ public class MatrixBuilder {
 		return res;
 	}
 
-	public String[][] getEdgeConnections(LinkedList<MyNode2> nodes, LinkedList<MyEdge2> edges)
+	public String[][] getEdgeConnections(LinkedList<MyNode> nodes, LinkedList<MyEdge> edges)
 	{
 		String[][] res = new String[nodes.size()][nodes.size()];
 		
 		// create HashMap to find connections faster
 		
-		HashMap<MyNode2,LinkedList<MyEdge2>> mapping = new HashMap<MyNode2,LinkedList<MyEdge2>>();
+		HashMap<MyNode,LinkedList<MyEdge>> mapping = new HashMap<MyNode,LinkedList<MyEdge>>();
 		
-		for (MyEdge2 e :edges)
+		for (MyEdge e :edges)
 		{
-			MyNode2 source = e.getSourceNode();
+			MyNode source = e.getSourceNode();
 			//MyNode dest = e.getDestinationNode();
 			
-			LinkedList<MyEdge2> tmp = mapping.get(source);
+			LinkedList<MyEdge> tmp = mapping.get(source);
 			
 			// check if there is already a Connection
 			if (tmp==null)
 			{ 
 				// no entry yet
-				tmp = new LinkedList<MyEdge2>();
+				tmp = new LinkedList<MyEdge>();
 				tmp.add(e);
 				mapping.put(source, tmp);
 			}
@@ -109,11 +109,11 @@ public class MatrixBuilder {
 		{
 			for (int j=0; j<res[i].length;j++)
 			{
-				MyNode2 nodeI = nodes.get(i);
-				MyNode2 nodeJ = nodes.get(j);
+				MyNode nodeI = nodes.get(i);
+				MyNode nodeJ = nodes.get(j);
 				
 				//check Mapping
-				LinkedList<MyEdge2> connections = mapping.get(nodeI);
+				LinkedList<MyEdge> connections = mapping.get(nodeI);
 				if (connections==null)
 				{
 					// no connections
@@ -123,22 +123,16 @@ public class MatrixBuilder {
 				{
 					// there are connections
 					//check if there is a connection from NodeI to NodeJ
-					LinkedList<MyEdge2> edge = findNode(connections, nodeJ);
+					LinkedList<MyEdge> edge = findNode(connections, nodeJ);
 					if (edge.size() != 0)
 					{
 						String s = "";
-//<<<<<<< HEAD
-						for (MyEdge2 e : edge)
-/*=======
-						for (int k =0; k<edge.size();k++)
->>>>>>> refs/remotes/origin/attempt3*/
+
+						for (MyEdge e : edge)
 						{
-//<<<<<<< HEAD
+
 							s = s + e.getEdgeType().toString();
-/*=======
-							MyEdge e = edge.get(k);
-							s = s + e.getConnectionType().getName();
->>>>>>> refs/remotes/origin/attempt3*/
+
 							if (e.getAttributes().size() != 0) 
 							{
 								for (String a : e.getAttributes()) 
@@ -146,30 +140,15 @@ public class MatrixBuilder {
 									s = s + " " + a + " ";
 								}
 							}
-//<<<<<<< HEAD
-							//TODO comment in again
-							//s = s + " || ";
-//=======
-						//	if (k!= (edge.size()-1))
-							//	s = s + " || ";
-//>>>>>>> refs/remotes/origin/attempt3
 						}
 						res[i][j] = s;
 					}
-					
-					/*if (connections.contains(nodeJ))
-					{
-						// there exactly this connection
-						res[i][j] ="X";
-					}*/
 					else
 					{
 						// there are connections, but no connection between NodeI to NodeJ
 						res[i][j] ="";
 					}
 				}
-				
-				
 			}
 		}
 		
@@ -181,31 +160,22 @@ public class MatrixBuilder {
 		return nodeTypes;
 	}
 
-
-
-
 	public void setRelevantNodeTypes(LinkedList<MyNodeType> nodeTypes) {
 		this.nodeTypes = nodeTypes;
 	}
-
-
-
 
 	public LinkedList<MyEdgeType> getRelevantEdgesTypes() {
 		return edgesTypes;
 	}
 
-
-
-
 	public void setRelevantEdgesTypes(LinkedList<MyEdgeType> edgesTypes) {
 		this.edgesTypes = edgesTypes;
 	}
 	
-	private LinkedList<MyEdge2> findNode(LinkedList<MyEdge2> connections, MyNode2 node)
+	private LinkedList<MyEdge> findNode(LinkedList<MyEdge> connections, MyNode node)
 	{
-		LinkedList<MyEdge2> res = new LinkedList<MyEdge2>();
-		for (MyEdge2 e : connections) 
+		LinkedList<MyEdge> res = new LinkedList<MyEdge>();
+		for (MyEdge e : connections) 
 		{
 			if (e.getDestinationNode().equals(node)) 
 			{

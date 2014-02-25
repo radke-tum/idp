@@ -93,18 +93,18 @@ public class GraphMLReadTest {
     EdgeType canonicInformationFlow = metamodel.findEdgeType("Information Flow");
     EdgeType canonicEnergyFlow = metamodel.findEdgeType("Energy Flow");
 
-    Assert.assertEquals(8, viewedState.apply(model).size());
-    Assert.assertEquals(5, viewedFunction.apply(model).size());
-    Assert.assertEquals(8, canonicState.apply(model).size());
-    Assert.assertEquals(5, canonicFunction.apply(model).size());
+    Assert.assertEquals(8, viewedState.apply(model, true).size());
+    Assert.assertEquals(5, viewedFunction.apply(model, true).size());
+    Assert.assertEquals(8, canonicState.apply(model, true).size());
+    Assert.assertEquals(5, canonicFunction.apply(model, true).size());
 
-    for (Node node : canonicState.apply(model).getMany()) {
+    for (Node node : canonicState.apply(model, true).getMany()) {
       Assert.assertEquals(canonicInformationFlow.getIncoming().apply(node), viewedInformationFlow.getIncoming().apply(node));
       Assert.assertEquals(canonicInformationFlow.getOutgoing().apply(node), viewedInformationFlow.getOutgoing().apply(node));
       Assert.assertEquals(canonicEnergyFlow.getIncoming().apply(node), viewedEnergyFlow.getIncoming().apply(node));
       Assert.assertEquals(canonicEnergyFlow.getOutgoing().apply(node), viewedEnergyFlow.getOutgoing().apply(node));
     }
-    for (Node node : canonicFunction.apply(model).getMany()) {
+    for (Node node : canonicFunction.apply(model, true).getMany()) {
       Assert.assertEquals(canonicInformationFlow.getIncoming().apply(node), viewedInformationFlow.getIncoming().apply(node));
       Assert.assertEquals(canonicInformationFlow.getOutgoing().apply(node), viewedInformationFlow.getOutgoing().apply(node));
       Assert.assertEquals(canonicEnergyFlow.getIncoming().apply(node), viewedEnergyFlow.getIncoming().apply(node));

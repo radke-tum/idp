@@ -8,38 +8,35 @@ import java.util.Set;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
-import de.iteratec.visio.model.Shape;
+import de.tum.pssif.core.PSSIFConstants;
 import de.tum.pssif.transform.IoMapper;
+import de.tum.pssif.transform.graph.AElement;
+import de.tum.pssif.transform.graph.Edge;
 import de.tum.pssif.transform.graph.Graph;
 import de.tum.pssif.transform.graph.Node;
+import de.tum.pssif.vsdx.VsdxConnector;
 import de.tum.pssif.vsdx.VsdxDocument;
 import de.tum.pssif.vsdx.VsdxDocumentLoader;
+import de.tum.pssif.vsdx.VsdxMaster;
+import de.tum.pssif.vsdx.VsdxShape;
+import de.tum.pssif.vsdx.VsdxShapeContainer;
 import de.tum.pssif.vsdx.exception.VsdxException;
 import de.tum.pssif.vsdx.impl.VsdxDocumentLoaderFactory;
 
 
 public class VisioIoMapper implements IoMapper {
 
-  //  private static final String     PSSIF_PREFIX  = "pssif";
-  //
-  //  private static final String     PSSIF_CONNECTOR_MASTER        = PSSIF_PREFIX + ".connector";
-  //  private static final String     PSSIF_CONNECTOR_TYPE_PROPERTY = PSSIF_PREFIX + ".connector.type";
-  //  private static final String     PSSIF_ID_PROPERTY             = PSSIF_PREFIX + ".id";
+  private static final String VISIO_MASTER_SUFFIX_REGEX = "(\\.(\\d)*+)?";
+  private static final String VISIO_MASTER_SPLIT_REGEX  = "\\.";
 
-  private final String            templateFile;
-  private final Set<String>       nodeMasters;
+  private final String        templateFile;
+  private final Set<String>   nodeMasters;
+  private final Set<String>   edgeMasters;
 
-  private final Map<Shape, Node>  shapeToNode   = Maps.newHashMap();
-  private final Map<Shape, Shape> shapeToParent = Maps.newHashMap();
-
-  public VisioIoMapper(String templateFile) {
+  public VisioIoMapper(String templateFile, Set<String> nodeMasters, Set<String> edgeMasters) {
     this.templateFile = templateFile;
-    this.nodeMasters = Sets.newHashSet();
-  }
-
-  public VisioIoMapper(Set<String> nodeMasters) {
-    this.templateFile = "";
     this.nodeMasters = Sets.newHashSet(nodeMasters);
+    this.edgeMasters = Sets.newHashSet(edgeMasters);
   }
 
   @Override
@@ -51,154 +48,136 @@ public class VisioIoMapper implements IoMapper {
     } catch (VsdxException e) {
       throw new PSSIFIoException("Failed to load VSDX document.", e);
     }
+    Graph graph = new Graph();
+    readNodes(document, graph);
+    readEdges(document, graph);
 
-    // TODO Auto-generated method stub
-    return null;
+    return graph;
   }
 
   @Override
   public void write(Graph graph, OutputStream out) {
-    // TODO Auto-generated method stub
-
+    VsdxDocument document = null;
+    try {
+      VsdxDocumentLoader loader = VsdxDocumentLoaderFactory.INSTANCE.create();
+      document = loader.loadDocument(getClass().getResourceAsStream(templateFile));
+    } catch (VsdxException e) {
+      throw new PSSIFIoException("Failed to load VSDX document.", e);
+    }
+    Map<Node, VsdxShape> shapes = writeShapes(graph.getNodes(), document);
+    writeConnectors(graph, document, shapes);
+    document.getDocumentWriter().write(out);
   }
 
-  //  @Override
-  //  public Graph read(InputStream in) {
-  //    Document document = loadDocument(in);
-  //    Graph graph = new Graph();
-  //    try {
-  //      readNodes(graph, document.getPage(0));
-  //      readEdges(graph, document);
-  //
-  //    } catch (NoSuchElementException e) {
-  //      throw new PSSIFIoException("No page found in Visio document.");
-  //    }
-  //    return graph;
-  //  }
-  //
-  //  @Override
-  //  public void write(Graph graph, OutputStream out) {
-  //    Document document = loadFromTemplate();
-  //    Page page = null;
-  //    try {
-  //      page = document.getPage(0);
-  //    } catch (NoSuchElementException e) {
-  //      throw new PSSIFIoException("No page found in template.", e);
-  //    }
-  //
-  //    Map<Node, Shape> nodesMap = Maps.newHashMap();
-  //    for (Node node : graph.getNodes()) {
-  //      createShape(node, page, nodesMap);
-  //    }
-  //    for (Edge edge : graph.getEdges()) {
-  //      createConnector(edge, page, nodesMap.get(edge.getSource()), nodesMap.get(edge.getTarget()));
-  //    }
-  //
-  //    try {
-  //      document.write(out);
-  //    } catch (IOException e) {
-  //      throw new PSSIFIoException("Failed to write generated visio document to output stream.", e);
-  //    }
-  //  }
-  //
-  //  private void readNodes(Graph graph, ShapeContainer shapeContainer) {
-  //
-  //    for (Shape shape : shapeContainer.getShapes()) {
-  //      String masterName = null;
-  //      try {
-  //        masterName = shape.getMaster().getName();
-  //      } catch (MasterNotFoundException e) {
-  //        //ignore, considered to be a Node
-  //        masterName = PSSIFConstants.ROOT_NODE_TYPE_NAME;
-  //      }
-  //
-  //      if (!masterName.equals(PSSIFConstants.ROOT_NODE_TYPE_NAME) && !nodeMasters.contains(masterName)) {
-  //        continue;
-  //      }
-  //
-  //      //TODO any way to recognize connectors?...
-  //      //connects: each connect has shapeIds as from part and to-part
-  //      //-> some of the nodes become edges...
-  //      // type is provided by the master
-  //
-  //      String pssifId = null;
-  //      Object oId = shape.getCustomProperties().get(PSSIF_ID_PROPERTY);
-  //      if (oId == null) {
-  //        pssifId = shape.getID().toString();
-  //      }
-  //      Node node = graph.createNode(pssifId);
-  //      node.setType(masterName);
-  //      node.setAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_NAME, shape.getShapeText().getText());
-  //      for (Entry<String, Object> entry : shape.getCustomProperties().entrySet()) {
-  //        if (entry.getValue() != null) {
-  //          node.setAttribute(entry.getKey(), entry.getValue().toString());
-  //        }
-  //      }
-  //
-  //      shapeToNode.put(shape, node);
-  //
-  //      for (Shape innerShape : shape.getInnerShapes()) {
-  //        shapeToParent.put(innerShape, shape);
-  //        readNodes(graph, innerShape);
-  //      }
-  //    }
-  //
-  //  }
-  //
-  //  private void readEdges(Graph graph, Document document) {
-  //    //TODO
-  //  }
-  //
-  //  private Shape createShape(Node node, ShapeContainer shapeContainer, Map<Node, Shape> nodesMap) {
-  //    Shape shape = null;
-  //    try {
-  //      shape = shapeContainer.createNewInnerShape(node.getType());
-  //      nodesMap.put(node, shape);
-  //    } catch (MasterNotFoundException e) {
-  //      throw new PSSIFIoException("Master shape not found for node of type: " + node.getType(), e);
-  //    }
-  //
-  //    for (Node inner : node.getInnerNodes()) {
-  //      createShape(inner, shape, nodesMap);
-  //    }
-  //
-  //    for (String attributeName : node.getAttributeNames()) {
-  //      if (node.getAttributeValue(attributeName) != null) {
-  //        shape.setCustomProperty(attributeName, node.getAttributeValue(attributeName));
-  //      }
-  //    }
-  //
-  //    return shape;
-  //  }
-  //
-  //  private Shape createConnector(Edge edge, Page page, Shape source, Shape target) {
-  //    Shape connector = null;
-  //    try {
-  //      connector = page.createNewConnector(edge.getType(), source, target);
-  //    } catch (MasterNotFoundException e) {
-  //      throw new PSSIFIoException("Master shape not found for node of type: " + edge.getType(), e);
-  //    }
-  //
-  //    for (String attributeName : edge.getAttributeNames()) {
-  //      if (edge.getAttributeValue(attributeName) != null) {
-  //        connector.setCustomProperty(attributeName, edge.getAttributeValue(attributeName));
-  //      }
-  //    }
-  //
-  //    return connector;
-  //  }
-  //
-  //  private Document loadFromTemplate() {
-  //    InputStream stream = getClass().getResourceAsStream(templateFile);
-  //    return loadDocument(stream);
-  //  }
-  //
-  //  private Document loadDocument(InputStream in) {
-  //    try {
-  //      return DocumentLoader.getVdxLoader().loadDocument(in);
-  //    } catch (IOException | ParserConfigurationException | SAXException e) {
-  //      throw new PSSIFIoException("Failed to load template file.", e);
-  //    }
-  //  }
+  private Map<Node, VsdxShape> writeShapes(Set<Node> nodes, VsdxDocument document) {
+    Map<Node, VsdxShape> shapes = Maps.newHashMap();
+    for (Node node : nodes) {
+      if (document.hasMaster(node.getType())) {
+        VsdxShape shape = writeShape(node, document.getMaster(node.getType()), document.getPage());
+        shapes.put(node, shape);
+        if (node.getInnerNodes().size() > 0) {
+          Map<Node, VsdxShape> innerShapes = writeShapes(node.getInnerNodes(), document);
+          shapes.putAll(innerShapes);
+        }
+      }
 
+    }
+    return shapes;
+  }
+
+  private VsdxShape writeShape(Node node, VsdxMaster master, VsdxShapeContainer container) {
+    VsdxShape shape = container.createNewShape(master);
+    writeAttributes(shape, node);
+    return shape;
+  }
+
+  private void writeConnectors(Graph graph, VsdxDocument document, Map<Node, VsdxShape> shapes) {
+    for (Edge edge : graph.getEdges()) {
+      VsdxShape sourceShape = shapes.get(edge.getSource());
+      VsdxShape targetShape = shapes.get(edge.getTarget());
+      if (document.hasMaster(edge.getType()) && sourceShape != null && targetShape != null) {
+        VsdxConnector connector = document.getPage().createNewConnector(document.getMaster(edge.getType()), sourceShape, targetShape);
+        writeAttributes(connector, edge);
+      }
+    }
+  }
+
+  private void writeAttributes(VsdxShape inShape, AElement fromElement) {
+    inShape.setText(fromElement.getAttributeValue(PSSIFConstants.BUILTIN_ATTRIBUTE_NAME));
+    for (String attrName : fromElement.getAttributeNames()) {
+      if (fromElement.getAttributeValue(attrName) != null) {
+        inShape.setCustomProperty(attrName, attrName);
+      }
+    }
+  }
+
+  private void readNodes(VsdxDocument document, Graph graph) {
+    for (VsdxShape shape : document.getPage().getShapes()) {
+      readNode(shape, graph);
+    }
+  }
+
+  private Node readNode(VsdxShape shape, Graph graph) {
+    if (isNodeMasterSupported(shape.getMaster().getName())) {
+      Node node = graph.createNode(String.valueOf(shape.getId()));
+      node.setType(getValidMasterName(shape.getMaster().getName()));
+      readAttributes(node, shape);
+      for (VsdxShape inner : shape.getShapes()) {
+        Node innerNode = readNode(inner, graph);
+        if (innerNode != null) {
+          node.addInnerNode(innerNode);
+        }
+      }
+      return node;
+    }
+    return null;
+  }
+
+  private void readEdges(VsdxDocument document, Graph graph) {
+    for (VsdxConnector connector : document.getPage().getConnectors()) {
+      if (isEdgeMasterSupported(connector.getMaster().getName())) {
+        Node source = graph.findNode(String.valueOf(connector.getSourceShape().getId()));
+        Node target = graph.findNode(String.valueOf(connector.getTargetShape().getId()));
+        if (source != null && target != null) {
+          Edge edge = graph.createEdge(String.valueOf(connector.getId()));
+          edge.setType(getValidMasterName(connector.getMaster().getName()));
+          graph.connect(source, edge, target);
+          readAttributes(edge, connector);
+        }
+      }
+    }
+  }
+
+  private void readAttributes(AElement intoElement, VsdxShape source) {
+    intoElement.setAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_NAME, source.getText());
+    for (String pName : source.getCustomPropertyNames()) {
+      if (source.getCustomPropertyValue(pName) != null) {
+        intoElement.setAttribute(pName, source.getCustomPropertyValue(pName));
+      }
+    }
+  }
+
+  private boolean isEdgeMasterSupported(String master) {
+    return masterIsSupported(master, edgeMasters);
+  }
+
+  private boolean isNodeMasterSupported(String master) {
+    return masterIsSupported(master, nodeMasters);
+  }
+
+  private boolean masterIsSupported(String master, Set<String> masters) {
+    if (masters.contains(master)) {
+      return true;
+    }
+    for (String candidate : masters) {
+      if (master.matches(candidate + VISIO_MASTER_SUFFIX_REGEX)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  private String getValidMasterName(String masterName) {
+    return masterName.split(VISIO_MASTER_SPLIT_REGEX)[0];
+  }
 }

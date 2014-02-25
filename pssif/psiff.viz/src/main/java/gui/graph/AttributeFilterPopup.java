@@ -1,9 +1,9 @@
 package gui.graph;
 
-import graph.model2.MyEdge2;
-import graph.model2.MyEdgeType;
-import graph.model2.MyNode2;
-import graph.model2.MyNodeType;
+import graph.model.MyEdge;
+import graph.model.MyEdgeType;
+import graph.model.MyNode;
+import graph.model.MyNodeType;
 import graph.operations.AttributeOperations;
 
 import graph.operations.AttributeFilter;
@@ -30,7 +30,7 @@ import de.tum.pssif.core.metamodel.PrimitiveDataType;
 import edu.uci.ics.jung.graph.Graph;
 import model.ModelBuilder;
 
-public class AttributeFilterPopup {
+public class AttributeFilterPopup extends MyPopup{
 	
 	private MyNodeType[] nodePossibilities;
 	private MyEdgeType[] edgePossibilities;
@@ -40,12 +40,9 @@ public class AttributeFilterPopup {
 	private JTextField valueTextField;
 	
 	private HashMap<String, DataType> attributeNames;
-	private Graph<MyNode2, MyEdge2> graph;
 	
-	public AttributeFilterPopup(Graph<MyNode2, MyEdge2> graph, boolean Nodefilter, boolean Edgefilter)
+	public AttributeFilterPopup(boolean Nodefilter, boolean Edgefilter)
 	{
-		this.graph = graph;
-		
 		if (Nodefilter)
 		{
 			nodePossibilities = ModelBuilder.getNodeTypes().getAllNodeTypesArray();
@@ -91,8 +88,6 @@ public class AttributeFilterPopup {
 	
 	public void showPopup()
 	{
-	//	this.graph = graph;
-		
 		JPanel panel = createPanel();
 		
 		int dialogResult = JOptionPane.showConfirmDialog(null, panel, "Filter by Attribute", JOptionPane.DEFAULT_OPTION);
@@ -216,10 +211,10 @@ public class AttributeFilterPopup {
 				try
 				{
 					if (nodePossibilities!=null)
-						AttributeFilter.filterNode(graph, selectedAttribute, op, refValue);
+						AttributeFilter.filterNode( selectedAttribute, op, refValue);
 
 					if (edgePossibilities!=null)
-						AttributeFilter.filterEdge(graph, selectedAttribute, op, refValue);
+						AttributeFilter.filterEdge( selectedAttribute, op, refValue);
 				}
 				catch (Exception e)
 				{
