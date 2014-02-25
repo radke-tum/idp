@@ -97,4 +97,8 @@ public class ViewedNodeType extends AbstractNodeType {
     //FIXME separate mutable nodetype interface from interface nodetype
     return null;
   }
+
+  protected final NodeType getBaseType() {
+    return baseType;
+  }
 }
