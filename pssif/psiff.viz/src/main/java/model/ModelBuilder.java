@@ -30,6 +30,7 @@ import de.tum.pssif.core.util.PSSIFValue;
 import de.tum.pssif.core.metamodel.Attribute;
 import de.tum.pssif.core.metamodel.Multiplicity.MultiplicityContainer;
 import de.tum.pssif.core.metamodel.Multiplicity.UnlimitedNatural;
+import de.tum.pssif.core.metamodel.impl.DisconnectOperation;
 import de.tum.pssif.core.metamodel.impl.GetValueOperation;
 import de.tum.pssif.core.metamodel.impl.MetamodelImpl;
 import de.tum.pssif.core.metamodel.impl.ReadConnectedOperation;
@@ -42,8 +43,8 @@ import de.tum.pssif.core.metamodel.impl.SetValueOperation;
  */
 public class ModelBuilder {
 	
-	public Model model;
-	public MutableMetamodel meta;
+	public static Model model;
+	public static MutableMetamodel meta;
 	private static MyNodeTypes nodeTypes;
 	private static MyEdgeTypes edgeTypes;
 	private static LinkedList<MyNode> nodes;
@@ -54,10 +55,10 @@ public class ModelBuilder {
 	 * @param meta
 	 * @param model
 	 */
-	public ModelBuilder(MutableMetamodel meta, Model model)
+	public ModelBuilder(MutableMetamodel Pmeta, Model Pmodel)
 	{
-		this.model = model;
-		this.meta = meta;
+		model = Pmodel;
+		meta = Pmeta;
 		
 		nodes = new LinkedList<MyNode>();
 		edges = new LinkedList<MyEdge>();
@@ -292,7 +293,7 @@ public class ModelBuilder {
 	    hw2swUses.create(model, smartphone, gpsApp);
 	  }
 	
-   private NodeType node(String name, MutableMetamodel metamodel) {
+   private static NodeType node(String name, MutableMetamodel metamodel) {
 	   return metamodel.findNodeType(name);
    }
 
@@ -335,4 +336,41 @@ public class ModelBuilder {
 		System.out.println("--------------------------");
 	}
 	
+	public static void addNewNode (String nodeName, MyNodeType type)
+	{
+		Node newNode = node(type.getName(), meta).create(model);
+		
+		node(type.getName(), meta).findAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_NAME).set(newNode, PSSIFOption.one(PSSIFValue.create(nodeName)));
+		
+		nodes.add(new MyNode(newNode, type));
+	}
+	
+	public static void removeNode (MyNode node)
+	{
+		//node.getNode().apply(new Disco);
+		
+		//Node newNode = node(type.getName(), meta)
+		
+		//node(type.getName(), meta).findAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_NAME).set(newNode, PSSIFOption.one(PSSIFValue.create(nodeName)));
+		
+		//newNode.apply();
+		//node.getNode().apply(new DisconnectOperation(null, null, null));
+	}
+	
+	public static boolean addNewEdge(MyNode source, MyNode destination, MyEdgeType edgetype)
+	{
+		ConnectionMapping mapping = edgetype.getType().getMapping(source.getNodeType().getType(), destination.getNodeType().getType());
+		
+		if (mapping!=null)
+		{
+			Edge newEdge = mapping.create(model, source.getNode(), destination.getNode());
+				
+			MyEdge e  = new MyEdge(newEdge, edgetype, source, destination);
+			
+			edges.add(e);
+			return true;
+		}
+		else
+			return false;
+	}
 }

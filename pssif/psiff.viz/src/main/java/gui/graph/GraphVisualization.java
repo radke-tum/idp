@@ -225,8 +225,8 @@ public class GraphVisualization
 
     this.gm = new DefaultModalGraphMouse<MyNode, MyEdge>();
     this.vv.setGraphMouse(this.gm);
-    this.gm.add(new MyPopupGraphMousePlugin());
-    this.gm.add(new MiddleMousePlugin());
+    this.gm.add(new MyPopupGraphMousePlugin(this));
+   // this.gm.add(new MiddleMousePlugin());
   }
   
   public VisualizationViewer<MyNode, MyEdge> getVisualisationViewer()
