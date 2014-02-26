@@ -51,7 +51,7 @@ public class Main {
 	private static MatrixView matrixView;
 	private static JFrame frame;
 	private static GraphView graphView;
-	private static Dimension frameSize;
+	//private static Dimension frameSize;
 
 	
 	private static JMenuItem resetGraph;
@@ -82,7 +82,7 @@ public class Main {
 		frame.setPreferredSize(new Dimension(width, height));
 		frame.setState(Frame.MAXIMIZED_BOTH);
 		
-		frameSize = frame.getSize();
+		/*frameSize = frame.getSize();
 		
 		frame.addComponentListener(new ComponentListener() {
 			
@@ -100,20 +100,11 @@ public class Main {
 			
 			@Override
 			public void componentHidden(ComponentEvent e) {}
-		});
+		});*/
 		
-		frame.pack();
-		
-	/*	matrixView = new MatrixView();
-		graphView = new GraphView();
-		
-		// Standart start with Graph
-		frame.getContentPane().add(graphView.getGraphPanel());
-		graphView.setActive(true);
-		matrixView.setActive(false);*/
+		//frame.pack();
 		
 		frame.setJMenuBar(createFileMenu());
-		
 		
 		frame.pack();
 		frame.setLocationRelativeTo(null);
@@ -157,6 +148,8 @@ public class Main {
 				        matrixView = new MatrixView();
 						graphView = new GraphView();
 						
+						Dimension d = frame.getSize();
+						
 						frame.getContentPane().removeAll();
 						// Standart start with Graph
 						frame.getContentPane().add(graphView.getGraphPanel());
@@ -166,6 +159,7 @@ public class Main {
 						frame.setJMenuBar(createMenu());
 						adjustButtons();
 						
+						frame.setPreferredSize(d);
 						frame.pack();
 						frame.repaint();
 					} catch (FileNotFoundException e1) {

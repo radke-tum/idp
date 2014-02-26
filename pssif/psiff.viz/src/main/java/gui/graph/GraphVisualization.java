@@ -113,11 +113,7 @@ public class GraphVisualization
         if (node.isDetailedOutput())
         {	
          
-          if (node.getHeight() != 0 && node.getWidth() != 0) {
-            /*return 
-              AffineTransform.getScaleInstance(node.getWidth(), node.getHeight()).createTransformedShape(rec);*/
-        	 // System.out.println("Height and width !=null");
-        	  
+          if (node.getHeight() != 0 && node.getWidth() != 0) { 
         	  return new Rectangle2D.Double(-75.0D, -75.0D, node.getWidth()*55, node.getHeight()*55);
           }
           else
@@ -220,8 +216,11 @@ public class GraphVisualization
     });
     
     vv.setVertexToolTipTransformer(new Transformer<MyNode,String>(){
-        public String transform(MyNode e) {
-            return "<html>" + e.getNodeInformations(true);
+        public String transform(MyNode n) {
+        	if (!n.isDetailedOutput())
+        		return "<html>" + n.getNodeInformations(true);
+        	else
+        		return "";
         }
     });
     

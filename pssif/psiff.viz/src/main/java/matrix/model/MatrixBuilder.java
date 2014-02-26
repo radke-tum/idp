@@ -150,19 +150,26 @@ public class MatrixBuilder {
 					if (edge.size() != 0)
 					{
 						String s = "";
-
+						
+						boolean first = true;
 						for (MyEdge e : edge)
 						{
 
-							s = s + e.getEdgeType().toString();
+							if (first)
+							{
+								s = s + e.getEdgeType().toString();
+								first = false;
+							}
+							else
+								s = s + " || "+ e.getEdgeType().toString();
 
-							if (e.getAttributes().size() != 0) 
+							/*if (e.getAttributes().size() != 0) 
 							{
 								for (String a : e.getAttributes()) 
 								{
 									s = s + " " + a + " ";
 								}
-							}
+							}*/
 						}
 						res[i][j] = s;
 					}
