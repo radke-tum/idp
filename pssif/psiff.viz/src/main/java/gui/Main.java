@@ -1,36 +1,31 @@
 package gui;
 
 
-import graph.model.MyEdgeType;
 import graph.model.MyNodeType;
 import graph.operations.GraphViewContainer;
 import gui.graph.CreateNewGraphViewPopup;
 import gui.graph.MyListColorRenderer;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
-import java.util.LinkedList;
 
-import javax.swing.BorderFactory;
-import javax.swing.DefaultListCellRenderer;
-import javax.swing.Icon;
-import javax.swing.JCheckBox;
 import javax.swing.JColorChooser;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -38,12 +33,17 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
-import javax.swing.colorchooser.AbstractColorChooserPanel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import de.tum.pssif.core.metamodel.Metamodel;
+import de.tum.pssif.core.model.Model;
+import de.tum.pssif.core.util.PSSIFCanonicMetamodelCreator;
+import de.tum.pssif.transform.Mapper;
+import de.tum.pssif.transform.MapperFactory;
+import de.tum.pssif.transform.mapper.graphml.GraphMLMapper;
+import de.tum.pssif.transform.mapper.graphml.GraphMlViewCreator;
 import model.ModelBuilder;
 
 public class Main {
@@ -60,12 +60,14 @@ public class Main {
 	private static JMenuItem createView;
 	private static JMenuItem graphVizualistation;
 	private static JMenuItem matrixVizualistation;
+	private static JMenuItem importFile;
+	private static JMenuItem exportFile;
 	private static JMenu applyView;
 	private static JMenu deleteView;
 	
 	public static void main(String[] args) {
 		
-		ModelBuilder m = new ModelBuilder();
+		//ModelBuilder m = new ModelBuilder();
 
 		frame = new JFrame("Product Service Systems - Integration Framework ---- Visualisation");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -102,26 +104,91 @@ public class Main {
 		
 		frame.pack();
 		
-		matrixView = new MatrixView();
-		graphView = new GraphView(/*frame.getSize()*/);
+	/*	matrixView = new MatrixView();
+		graphView = new GraphView();
 		
 		// Standart start with Graph
 		frame.getContentPane().add(graphView.getGraphPanel());
 		graphView.setActive(true);
-		matrixView.setActive(false);
+		matrixView.setActive(false);*/
 		
-		frame.setJMenuBar(createMenu());
-		adjustButtons();
+		frame.setJMenuBar(createFileMenu());
+		
 		
 		frame.pack();
 		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
 	}
 	
+	private static JMenuBar createFileMenu()
+	{
+		JMenuBar menuBar = new JMenuBar();
+		// File Import Export
+		JMenu fileMenu = new JMenu("File");
+		importFile = new JMenuItem("Import File");
+		importFile.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JFileChooser openFile = new JFileChooser();
+				
+				openFile.setCurrentDirectory(new File("C:\\Users\\Luc\\Desktop\\Uni Dropbox\\Dropbox\\IDP-PSS-IF-Shared\\Modelle PE"));
+				int returnVal = openFile.showOpenDialog(frame);
+				
+			    if (returnVal == JFileChooser.APPROVE_OPTION) {
+			      
+			    	File file = openFile.getSelectedFile();
+			        InputStream in;
+					try {
+						in = new FileInputStream(file);
+						
+						String path = file.getAbsolutePath();
+						String fileEnding = path.substring(path.lastIndexOf('.')+1);
+						
+						Mapper importer = MapperFactory.getMapper(fileEnding);
+						// TODO Needs to be changed	
+				        Metamodel metamodel = PSSIFCanonicMetamodelCreator.create();
+				        Metamodel view = GraphMlViewCreator.createGraphMlView(metamodel);
+
+				        Model model = importer.read(view, in);
+				        
+				        new ModelBuilder(metamodel,model);
+				        
+				        matrixView = new MatrixView();
+						graphView = new GraphView();
+						
+						frame.getContentPane().removeAll();
+						// Standart start with Graph
+						frame.getContentPane().add(graphView.getGraphPanel());
+						graphView.setActive(true);
+						matrixView.setActive(false);
+						
+						frame.setJMenuBar(createMenu());
+						adjustButtons();
+						
+						frame.pack();
+						frame.repaint();
+					} catch (FileNotFoundException e1) {
+						e1.printStackTrace();
+					}			       
+			    }
+			}
+		});
+		
+		fileMenu.add(importFile);
+		
+		menuBar.add(fileMenu);
+		
+		return menuBar;
+	}
+	
 	private static JMenuBar createMenu()
 	{
+		// contains already the file Menu
+		JMenuBar menuBar = createFileMenu();
+		
 		// PICKING or TRANSFORMING Mode
-		JMenuBar menuBar = new JMenuBar();
+		
 		JMenu modeMenu = graphView.getGraph().getAbstractModalGraphMouse().getModeMenu(); // Obtain mode menu from the mouse
 		modeMenu.setText("Mouse Mode");
 		modeMenu.setIcon(null); 

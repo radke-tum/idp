@@ -43,5 +43,9 @@
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>de.tum</groupId>
+			<artifactId>pssif.transform</artifactId>
+		</dependency>
 	</dependencies>
 </project>

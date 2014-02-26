@@ -131,11 +131,15 @@ public class GraphBuilder {
 			{
 				if (commentsVisible)
 				{
-					System.out.println("Edge :"+ e.getEdgeInformations());
+					System.out.println("Edge :"+ e.getEdgeTypeName());
 					System.out.println("Source "+e.getSourceNode().getRealName());
 					System.out.println("Dest "+e.getDestinationNode().getRealName());
 				}
-				g.addEdge(e, e.getSourceNode(), e.getDestinationNode(), EdgeType.DIRECTED);
+				if (e.isDirected())
+					g.addEdge(e, e.getSourceNode(), e.getDestinationNode(), EdgeType.DIRECTED);
+				else
+					g.addEdge(e, e.getSourceNode(), e.getDestinationNode(), EdgeType.UNDIRECTED);
+				
 				if (commentsVisible)
 					System.out.println("Edge-----------------");
 			}

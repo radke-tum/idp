@@ -46,7 +46,7 @@ import graph.model.MyNode;
 import graph.model.MyNodeType;
 import gui.graph.GraphVisualization;
 
-public class MyPopupGraphMousePlugin extends AbstractPopupGraphMousePlugin implements MouseListener {
+public class MyPopupGraphMousePlugin extends AbstractPopupGraphMousePlugin {
 		
 		private GraphVisualization gViz;
 		

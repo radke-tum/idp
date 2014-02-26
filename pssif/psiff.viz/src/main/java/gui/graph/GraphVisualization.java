@@ -11,7 +11,6 @@ import edu.uci.ics.jung.visualization.control.DefaultModalGraphMouse;
 import edu.uci.ics.jung.visualization.decorators.ToStringLabeller;
 import edu.uci.ics.jung.visualization.renderers.Renderer.VertexLabel.Position;
 import graph.listener.ConfigWriterReader;
-import graph.listener.MiddleMousePlugin;
 import graph.listener.MyPopupGraphMousePlugin;
 import graph.model.GraphBuilder;
 import graph.model.MyEdge;
@@ -112,16 +111,24 @@ public class GraphVisualization
       public Shape transform(MyNode node)
       {
         if (node.isDetailedOutput())
-        {
-          Rectangle2D rec = new Rectangle2D.Double(-75.0D, -75.0D, 150.0D, 150.0D);
-          if (node.getSize() != 0) {
-            return 
-              AffineTransform.getScaleInstance(node.getSize() + 1, node.getSize() + 1).createTransformedShape(rec);
+        {	
+         
+          if (node.getHeight() != 0 && node.getWidth() != 0) {
+            /*return 
+              AffineTransform.getScaleInstance(node.getWidth(), node.getHeight()).createTransformedShape(rec);*/
+        	 // System.out.println("Height and width !=null");
+        	  
+        	  return new Rectangle2D.Double(-75.0D, -75.0D, node.getWidth()*55, node.getHeight()*55);
           }
-          return rec;
+          else
+          {
+        	  return new Rectangle2D.Double(-75.0D, -75.0D, 150.0D, 150.0D);
+          }
         }
-        Rectangle2D rec = new Rectangle2D.Double(-75.0D, -25.0D, 150.0D, 50.0D);
-        return rec;
+        else
+        {
+        	return new Rectangle2D.Double(-75.0D, -25.0D, node.getWidth()*55, 50.0D);
+        }
       }
     };
     
@@ -129,7 +136,7 @@ public class GraphVisualization
     	    {
         public String transform(MyNode node)
         {
-        	return "<html>" + node.getNodeInformations();
+        	return "<html>" + node.getNodeInformations(node.isDetailedOutput());
         }
         
     };
@@ -164,7 +171,7 @@ public class GraphVisualization
     	    {
 		        public String transform(MyEdge edge)
 		        {
-		        	return "<html>" + edge.getEdgeInformations();
+		        	return "<html>" + edge.getEdgeTypeName();
 		        }
     	    };
     	    
@@ -172,7 +179,7 @@ public class GraphVisualization
     {
       public Paint transform(MyEdge edge)
       {
-        int res = edge.getEdgeType().getLineType() % 13;
+        int res = edge.getEdgeType().getLineType() % 8;
         switch (res)
         {
         case 0: 
@@ -183,28 +190,41 @@ public class GraphVisualization
           return Color.BLUE;
         case 3: 
           return Color.CYAN;
-        case 4: 
+       /* case 4: 
           return Color.DARK_GRAY;
         case 5: 
-          return Color.GRAY;
-        case 6: 
+          return Color.GRAY;*/
+        case 4: 
           return Color.GREEN;
-        case 7: 
-          return Color.LIGHT_GRAY;
-        case 8: 
+      /*  case 7: 
+          return Color.LIGHT_GRAY;*/
+        case 5: 
           return Color.MAGENTA;
-        case 9: 
+        case 6: 
           return Color.ORANGE;
-        case 10: 
+        case 7: 
           return Color.PINK;
-        case 11: 
+      /*  case 11: 
           return Color.YELLOW;
         case 12: 
-          return Color.WHITE;
+          return Color.WHITE;*/
         }
         return Color.BLACK;
       }
     };
+    
+    vv.setEdgeToolTipTransformer(new Transformer<MyEdge,String>(){
+        public String transform(MyEdge e) {
+            return "<html>" + e.getEdgeInformations();
+        }
+    });
+    
+    vv.setVertexToolTipTransformer(new Transformer<MyNode,String>(){
+        public String transform(MyNode e) {
+            return "<html>" + e.getNodeInformations(true);
+        }
+    });
+    
     this.vsh = new VertexStrokeHighlight<MyNode,MyEdge>(this.g, this.vv.getPickedVertexState());
     
     this.vsh.setHighlight(true, 1, new LinkedList<MyEdgeType>());
@@ -226,7 +246,6 @@ public class GraphVisualization
     this.gm = new DefaultModalGraphMouse<MyNode, MyEdge>();
     this.vv.setGraphMouse(this.gm);
     this.gm.add(new MyPopupGraphMousePlugin(this));
-   // this.gm.add(new MiddleMousePlugin());
   }
   
   public VisualizationViewer<MyNode, MyEdge> getVisualisationViewer()
@@ -253,26 +272,42 @@ public class GraphVisualization
       this.vv.repaint();
     }
   }
-  
-  public void setHighlightNodes(LinkedList<MyEdgeType> types)
+  /**
+   * Which Edge Types should be followed during highlight
+   * @param types List with all the Edge Types which should be followed
+   */
+  public void setFollowEdgeTypes(LinkedList<MyEdgeType> types)
   {
-	setHighlightNodes(types,vsh.getSearchDepth());
+	setFollowEdgeTypes(types,vsh.getSearchDepth());
   }
   
-  public void setHighlightNodes(LinkedList<MyEdgeType> types, int depth)
+  /**
+   * Which Edge Types should be followed during highlight
+   * @param types List with all the Edge Types which should be followed
+   * @param depth how deep should the Edges be followed
+   */
+  public void setFollowEdgeTypes(LinkedList<MyEdgeType> types, int depth)
   {
 	 this.vsh = new VertexStrokeHighlight<MyNode, MyEdge>(g, this.vv.getPickedVertexState());
 	 this.vsh.setHighlight(true, depth, types);
 	 this.vv.getRenderContext().setVertexStrokeTransformer(this.vsh);
 	 this.vv.repaint();
   }
-  //TODO Strange
-  public void setHighlightNodes(int depth)
+
+  /**
+   * Which Edge Types should be followed during highlight
+    * @param depth how deep should the Edges be followed
+   */
+  public void setFollowEdgeTypes(int depth)
   {
-	 setHighlightNodes(vsh.getFollowEdges(), depth);
+	 setFollowEdgeTypes(vsh.getFollowEdges(), depth);
   }
-//TODO Strange
-  public LinkedList<MyEdgeType> getHighlightNodes()
+  
+  /**
+   * Get the Edge Types which are followed during the highlighting
+   * @return List with Edge Types
+   */
+  public LinkedList<MyEdgeType> getFollowEdgeTypes()
   {
     return this.vsh.getFollowEdges();
   }

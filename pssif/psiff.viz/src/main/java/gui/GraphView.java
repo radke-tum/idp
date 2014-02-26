@@ -241,7 +241,7 @@ public class GraphView {
 				if (value instanceof Integer)
 				{
 					int depth = (Integer) value;
-					graph.setHighlightNodes(depth);
+					graph.setFollowEdgeTypes(depth);
 				}
 				
 			}

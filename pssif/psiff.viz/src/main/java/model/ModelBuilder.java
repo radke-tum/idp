@@ -14,6 +14,7 @@ import de.tum.pssif.core.PSSIFConstants;
 import de.tum.pssif.core.metamodel.AttributeCategory;
 import de.tum.pssif.core.metamodel.ConnectionMapping;
 import de.tum.pssif.core.metamodel.EdgeType;
+import de.tum.pssif.core.metamodel.Metamodel;
 import de.tum.pssif.core.metamodel.MutableMetamodel;
 import de.tum.pssif.core.metamodel.NodeType;
 
@@ -55,10 +56,11 @@ public class ModelBuilder {
 	 * @param meta
 	 * @param model
 	 */
-	public ModelBuilder(MutableMetamodel Pmeta, Model Pmodel)
+	public ModelBuilder(Metamodel Pmeta, Model Pmodel)
 	{
 		model = Pmodel;
-		meta = Pmeta;
+		
+		meta = (MutableMetamodel) Pmeta;
 		
 		nodes = new LinkedList<MyNode>();
 		edges = new LinkedList<MyEdge>();
@@ -91,14 +93,14 @@ public class ModelBuilder {
 	
 	private void createNodeTypes()
 	{
-		Collection<NodeType> types = this.meta.getNodeTypes();
+		Collection<NodeType> types = meta.getNodeTypes();
 		
 		nodeTypes = new MyNodeTypes(types);
 	}
 	
 	private void createEdgeTypes()
 	{
-		Collection<EdgeType> types = this.meta.getEdgeTypes();
+		Collection<EdgeType> types = meta.getEdgeTypes();
 		
 		edgeTypes = new MyEdgeTypes(types);
 	}
@@ -268,18 +270,7 @@ public class ModelBuilder {
 	    ConnectionMapping hw2hw = hwContainment.getMapping(node("hardware", meta), node("hardware", meta));
 	    ConnectionMapping hw2sw = hwContainment.getMapping(node("hardware", meta), node("software", meta));
 	    
-	   /* for (int i =0;i<1000;i++)
-	    {
-	    	Node test = node("hardware", meta).create(model);
-	    	node("hardware", meta).findAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_NAME).set(gpsApp, PSSIFOption.one(PSSIFValue.create("test"+i)));
-	    	if ((i % 3) ==0)
-	    		hw2hw.create(model, test, battery);
-	    	if ((i % 3) ==1)
-	    		hw2hw.create(model, test, smartphone);
-	    	if ((i % 3) ==2)
-	    		hw2hw.create(model, test, ebike);
-	    	
-	    }*/
+
 	    
 	    
 	    

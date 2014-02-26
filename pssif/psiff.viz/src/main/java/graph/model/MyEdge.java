@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
+import de.tum.pssif.core.PSSIFConstants;
 import de.tum.pssif.core.metamodel.Attribute;
 import de.tum.pssif.core.model.Edge;
 import de.tum.pssif.core.model.Node;
@@ -42,7 +43,7 @@ public class MyEdge {
 	
 	/**
 	 * Get all the attributes from the PSS-IF Model Edge
-	 * @return LinkedList<String> with the formated information from the edge. Might be empty
+	 * @return List with the formated information from the edge. Might be empty
 	 */
 	private LinkedList<String> calcAttr()
 	{
@@ -77,20 +78,31 @@ public class MyEdge {
 		return res;
 	}
 	
-	/*
-	public String toString() {
+	/**
+	 * Check if this Edge has an direction
+	 * @return true and false
+	 */
+	public boolean isDirected()
+	{
+		Attribute edgeDirection = type.getType().findAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_DIRECTED);
+		if (edgeDirection.get(edge).isOne())
+			return edgeDirection.get(edge).getOne().asBoolean();
+		else
+			return false;
+	}
+	/**
+	 * Get the name of the Edge Type
+	 * @return a HTML String with the name
+	 */
+	public String getEdgeTypeName()
+	{
 		String s ;
 		
 		s= "&lt;&lt;  "+type.getName()+"  &gt;&gt;";
 			
-		for (String a : calcAttr())
-		{
-			s+="<br>";
-			s+=a;
-		}
-		
 		return s;
-	}*/
+	}
+	
 	/**
 	 * Get all the Informations about the Edge. Should only be used in the GraphVisualization
 	 * @return a HTML String with all the edge informations

@@ -53,7 +53,7 @@ public class HighlightNodePopup extends MyPopup{
 		
 		edgePanel = new JPanel(new GridLayout(0, 1));
 		
-		LinkedList<MyEdgeType> highlightEdges = graphViz.getHighlightNodes();
+		LinkedList<MyEdgeType> highlightEdges = graphViz.getFollowEdgeTypes();
 		
 		TreeMap<String, LinkedList<MyEdgeType>> sortedEdges = sortByEdgeTypeByParentType(ModelBuilder.getEdgeTypes().getAllEdgeTypes());
 		
@@ -147,7 +147,7 @@ public class HighlightNodePopup extends MyPopup{
     	{
 			LinkedList<MyEdgeType> res = tree.evalTree();
 			
-			graphViz.setHighlightNodes(res);
+			graphViz.setFollowEdgeTypes(res);
     	}
 		
 	}
