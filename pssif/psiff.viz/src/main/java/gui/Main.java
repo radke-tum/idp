@@ -325,7 +325,7 @@ public class Main {
 			public void actionPerformed(ActionEvent e) {
 				frame.getContentPane().removeAll();
 				Dimension d = frame.getSize();
-				System.out.println("current Size "+d);
+				
 				frame.getContentPane().add(graphView.getGraphPanel());
 				graphView.setActive(true);
 				matrixView.setActive(false);
@@ -333,7 +333,6 @@ public class Main {
 				frame.setPreferredSize(d);
 				
 				frame.pack();
-				//frame.setExtendedState(Frame.MAXIMIZED_BOTH);
 				frame.repaint();
 			}
 		});

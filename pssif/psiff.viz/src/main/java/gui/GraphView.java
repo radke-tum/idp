@@ -14,6 +14,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -23,6 +24,8 @@ import java.util.LinkedList;
 import java.util.Set;
 
 import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
@@ -49,21 +52,23 @@ public class GraphView {
 	private JLabel nodename;
 	private JLabel nodetype;
 	private JCheckBox nodeDetails;
-	private JButton nodeHighlight;
 	private JButton collapseExpand;
 	private boolean active;
 	private JTable tableNodeAttributes;
 	private DefaultTableModel nodeAttributesModel;
 	
 	private Dimension screenSize;
+	private static int betweenComps =10;
 
 	public GraphView(/*Dimension parentDimension*/)
 	{
 		active = false;
 		screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		//screenSize = parentDimension;
-		int x = (int) (screenSize.width*0.85);
-		int y = (int) (screenSize.height*0.9);
+		//int x = (int) (screenSize.width*0.85);
+		//int y = (int) (screenSize.height*0.9);
+		int x = (int) (screenSize.width);
+		int y = (int) (screenSize.height*0.75);
 		if (nodeDetails==null)
 			graph = new GraphVisualization(new Dimension(x,y),true);
 		else
@@ -74,93 +79,137 @@ public class GraphView {
 	
 	public JPanel getGraphPanel()
 	{
-		int betweenComps =15;
-		int betweenLabelandComp=10;
-		
 		parent = new JPanel();
         parent.setLayout(new BorderLayout());
 		
+        parent.add(addGraphViz(),BorderLayout.CENTER);
+        
+        parent.add(addInformationPanel(), BorderLayout.SOUTH);
+        
+        return parent;
+	}
+	
+	private JPanel addGraphViz()
+	{
 		JPanel graphpanel = new JPanel();		
 		
 		VisualizationViewer<MyNode, MyEdge> vv = graph.getVisualisationViewer();
 		
 		graphpanel.add(vv);
-		
-		parent.add(graphpanel,BorderLayout.CENTER);
-		
+		return graphpanel;
+	}
+	
+	private JPanel addInformationPanel()
+	{
 		JPanel information = new JPanel();
 
-		information.setBackground(Color.LIGHT_GRAY);
-
-		int x = (int) (screenSize.width*0.15);
-		int y = (int) (screenSize.height);
+		int x = (int) (screenSize.width);
+		int y = (int) (screenSize.height*0.15);
 		Dimension d = new Dimension(x,y);
+		
 		information.setMaximumSize(d);
 		information.setMinimumSize(d);
 		information.setPreferredSize(d);
-		information.setLayout(new GridBagLayout());
-		GridBagConstraints c = new GridBagConstraints();
+		
+		information.setLayout(new BorderLayout());
+		
+		// selected Node Information
+		information.add(addNodeInformationPanel(), BorderLayout.WEST);
+
+		// attributes table 
+		information.add(addAttributePanel(x, y), BorderLayout.CENTER);
+		
+		// Basic Graph operations
+		information.add(addBasicOperationPanel(), BorderLayout.EAST);
+		
+		return information;
+	}
+	
+	private JPanel addNodeInformationPanel()
+	{
+		GridBagConstraints c = new GridBagConstraints();	
+		int ypos = -1;
+		
+		// selected Node Information
+		JPanel nodeInfos = new JPanel();
+		nodeInfos.setLayout(new GridBagLayout());
+		nodeInfos.setBackground(Color.LIGHT_GRAY);
+		
 		c.gridx = 0;
-		
-		int i = -1;
-		
-		parent.add(information, BorderLayout.EAST);
-		
-		c.gridy = (i++);
-		information.add(Box.createVerticalStrut(betweenComps),c);
 		JLabel lblNodeName = new JLabel("Node Name");
-		c.gridy = (i++);
-		information.add(lblNodeName,c);
-		c.gridy = (i++);
-		information.add(Box.createVerticalStrut(betweenLabelandComp),c);
-		
+		ypos++;
+		c.gridy = ypos;
+		nodeInfos.add(lblNodeName,c);
+
 		nodename = new JLabel("");
-		c.gridy = (i++);
-		information.add(nodename,c);
+		ypos++;
+		c.gridy = ypos;
+		nodeInfos.add(nodename,c);
 		
-		c.gridy = (i++);
-		information.add(Box.createVerticalStrut(betweenComps),c);
+		ypos++;
+		c.gridy = ypos;
+		nodeInfos.add(Box.createVerticalStrut(betweenComps),c);
+		
 		JLabel lblNodeType = new JLabel("Node Type");
-		c.gridy = (i++);
-		information.add(lblNodeType,c);
-		
-		c.gridy = (i++);
-		information.add(Box.createVerticalStrut(betweenLabelandComp),c);
+		ypos++;
+		c.gridy = ypos;
+		nodeInfos.add(lblNodeType,c);
 		nodetype = new JLabel("");
-		c.gridy = (i++);
-		information.add(nodetype,c);
+		ypos++;
+		c.gridy = ypos;
+		nodeInfos.add(nodetype,c);
 		
-		c.gridy = (i++);
-		information.add(Box.createVerticalStrut(betweenComps),c);
+		c.gridx =1;
+		c.gridheight=ypos;
+		nodeInfos.add(Box.createHorizontalStrut(10),c);
+		
+		return nodeInfos;
+	}
+	
+	private JPanel addAttributePanel(int sizeX, int sizeY)
+	{
+		JPanel attributeInfos = new JPanel();
+		attributeInfos.setLayout(new BorderLayout());
+		attributeInfos.setBackground(Color.LIGHT_GRAY);
+		
 		JLabel lblNodeAttributes = new JLabel("Node Attributes");
-		c.gridy = (i++);
-		information.add(lblNodeAttributes,c);
+
+		attributeInfos.add(lblNodeAttributes,BorderLayout.NORTH);
 		
-		c.gridy = (i++);
-		information.add(Box.createVerticalStrut(betweenLabelandComp),c);
-		
-		int scrolly = (int)( y*0.1);
+		int scrollx = (int) (sizeX*0.8);
+		int scrolly = (int) (sizeY*0.9);
 
 		JScrollPane jScrollPane = new JScrollPane(createAttributTable());
-		jScrollPane.setPreferredSize(new Dimension(x, scrolly));
-		jScrollPane.setMaximumSize(new Dimension(x, scrolly));
-		jScrollPane.setMinimumSize(new Dimension(x, scrolly));
+		jScrollPane.setPreferredSize(new Dimension(scrollx, scrolly));
+		jScrollPane.setMaximumSize(new Dimension(scrollx, scrolly));
+		jScrollPane.setMinimumSize(new Dimension(scrollx, scrolly));
 		
-		c.gridy = (i++);
-		information.add(jScrollPane,c);
-		c.gridy = (i++);
-		information.add(Box.createVerticalStrut(betweenComps),c);
+		attributeInfos.add(jScrollPane,BorderLayout.CENTER);
 		
-		JLabel lblVisDetails = new JLabel("Visualization Details");
-		c.gridy = (i++);
-		information.add(lblVisDetails,c);
-		c.gridy = (i++);
-		information.add(Box.createVerticalStrut(betweenComps),c);
+		return attributeInfos;
+	}
+	
+	private JPanel addBasicOperationPanel()
+	{
+		GridBagConstraints c = new GridBagConstraints();	
+		int ypos = -1;
 		
-		nodeDetails = new JCheckBox();
-		nodeDetails.setText("Node Details");
-		c.gridy = (i++);
-		information.add(nodeDetails,c);
+		JPanel basicOperations = new JPanel();
+		basicOperations.setLayout(new GridBagLayout());
+		basicOperations.setBackground(Color.LIGHT_GRAY);
+
+		JLabel lblVisDetails = new JLabel("Visualisation Details");
+		ypos++;
+		c.gridy = ypos;
+		c.gridx = 1;
+		basicOperations.add(lblVisDetails,c);
+		ypos++;
+		c.gridy = ypos;
+		
+		nodeDetails = new JCheckBox("Node Details");
+		ypos++;
+		c.gridy = ypos;
+		basicOperations.add(nodeDetails,c);
 		nodeDetails.setSelected(true);
 		graph.setNodeVisualisation(true);
 		nodeDetails.addItemListener(new ItemListener() {
@@ -170,8 +219,8 @@ public class GraphView {
 				JCheckBox parent = (JCheckBox)item.getSource();
 				if (parent.isSelected())
 				{
-					graph.setNodeVisualisation(true);
 					// checkbox selected
+					graph.setNodeVisualisation(true);
 				}
 				else
 				{
@@ -181,42 +230,28 @@ public class GraphView {
 				
 			}
 		});
-		c.gridy = (i++);
-		information.add(Box.createVerticalStrut(betweenComps),c);
+		ypos++;
+		c.gridy = ypos;
+		basicOperations.add(Box.createVerticalStrut(betweenComps),c);
 		
-		/*nodeHighlight = new JButton("Select Highlighted Nodes");
-		nodeHighlight.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				chooseHighlightNodes();
-			}
-		});
-		c.gridy = (i++);
-		information.add(nodeHighlight,c);
-		c.gridy = (i++);
-		information.add(Box.createVerticalStrut(betweenComps),c);
-		*/
+
 		
 		JLabel lblDepthSpinner = new JLabel("Search Depth");
-		c.gridy = (i++);
-		information.add(lblDepthSpinner,c);
-		
-		c.gridy = (i++);
-		information.add(Box.createVerticalStrut(betweenLabelandComp),c);
-		
+		ypos++;
+		c.gridy = ypos;
+		basicOperations.add(lblDepthSpinner,c);	
+	
 		int currentDepth = 1;
 	    SpinnerModel depthModel = new SpinnerNumberModel(currentDepth, //initial value
 	                                       1, //min
 	                                       currentDepth + 100, //max
 	                                       1);
-	    final JSpinner spinner = new JSpinner(depthModel);
-	    
-	    spinner.addChangeListener(new ChangeListener() {
-			
+	    JSpinner spinner = new JSpinner(depthModel);
+	    spinner.addChangeListener(new ChangeListener() {			
 			@Override
 			public void stateChanged(ChangeEvent e) {
-				Object value = spinner.getValue();
+				
+				Object value = ((JSpinner)e.getSource()).getValue();
 				if (value instanceof Integer)
 				{
 					int depth = (Integer) value;
@@ -225,25 +260,23 @@ public class GraphView {
 				
 			}
 		});
+	    ypos++;
+		c.gridy = ypos;
+	    basicOperations.add(spinner,c);
 	    
-	    c.gridy = (i++);
-		information.add(spinner,c);
-		c.gridy = (i++);
-		information.add(Box.createVerticalStrut(betweenComps),c);
-		
-		
+	    ypos++;
+		c.gridy = ypos;
+		basicOperations.add(Box.createVerticalStrut(betweenComps),c);
 		
 		collapseExpand = new JButton("Collapse/Expand Node");
 		collapseExpand.setEnabled(false);
 		collapseExpand.addActionListener(new ActionListener() {
-			
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (graph.isExpandable())
 				{
 					graph.ExpandNode(nodeDetails.isSelected());
-					collapseExpand.setText("Collapse Node");
-					
+					collapseExpand.setText("Collapse Node");	
 				}
 				
 				if (graph.isCollapsable())
@@ -253,13 +286,15 @@ public class GraphView {
 				}
 			}
 		});
-		c.gridy = (i++);
-		information.add(collapseExpand,c);
-		c.gridy = (i++);
-		information.add(Box.createVerticalStrut(betweenComps),c);
-
+		ypos++;
+		c.gridy = ypos;
+		basicOperations.add(collapseExpand,c);
 		
-		return parent;
+		c.gridx =0;
+		c.gridheight=ypos;
+		basicOperations.add(Box.createHorizontalStrut(10),c);
+		
+		return basicOperations;
 	}
 	
 	private JTable createAttributTable()
@@ -283,8 +318,6 @@ public class GraphView {
 			
 			@Override
 			public void tableChanged(TableModelEvent e) {
-				
-				//System.out.println(e.getType());
 				if (e.getType() == TableModelEvent.UPDATE)
 				{
 					int row = e.getFirstRow();
@@ -305,7 +338,6 @@ public class GraphView {
 				        	MyNode selectedNode = selectedNodes.iterator().next();
 				        	
 				        	boolean res = selectedNode.updateAttribute(attributeName, data);
-				        	//System.out.println("Update");
 				        	
 				        	if (!res)
 				        	{
@@ -418,21 +450,6 @@ public class GraphView {
 		{
 			updateSidebar(null, null,null);
 		}
-	}
-	
-	private void chooseHighlightNodes()
-	{
-		HighlightNodePopup popup = new HighlightNodePopup(graph);
-		
-		popup.showPopup();
-
-	}
-	
-	private void chooseEdgeAndNodeTypes()
-	{
-		EdgeAndNodeTypePopup popup = new EdgeAndNodeTypePopup(graph);
-		
-		popup.showPopup();
 	}
 
 	public boolean isActive() {
