@@ -184,7 +184,7 @@ public class GraphView {
 		c.gridy = (i++);
 		information.add(Box.createVerticalStrut(betweenComps),c);
 		
-		nodeHighlight = new JButton("Select Highlighted Nodes");
+		/*nodeHighlight = new JButton("Select Highlighted Nodes");
 		nodeHighlight.addActionListener(new ActionListener() {
 			
 			@Override
@@ -196,7 +196,7 @@ public class GraphView {
 		information.add(nodeHighlight,c);
 		c.gridy = (i++);
 		information.add(Box.createVerticalStrut(betweenComps),c);
-		
+		*/
 		
 		JLabel lblDepthSpinner = new JLabel("Search Depth");
 		c.gridy = (i++);

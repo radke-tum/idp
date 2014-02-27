@@ -80,7 +80,7 @@ public class GraphVisualization
     this.g = this.gb.createGraph(this.detailedNodes);
     
 
-    this.layout = new CircleLayout<MyNode, MyEdge>(this.g);
+    this.layout = new FRLayout<MyNode, MyEdge>(this.g);
     if (d != null)
     {
       int x = (int)d.getWidth() - 50;
@@ -452,17 +452,13 @@ public class GraphVisualization
 			this.layout = new CircleLayout<MyNode, MyEdge>(g);
 		}
 		
-		//this.layout.setSize(d);
-		
 		layout.setInitializer(vv.getGraphLayout());
 		layout.setSize(vv.getSize());
         
 		LayoutTransition<MyNode,MyEdge> lt =new LayoutTransition<MyNode,MyEdge>(vv, vv.getGraphLayout(), layout);
 		Animator animator = new Animator(lt);
 		animator.start();
-		//animator.stop();
 		vv.getRenderContext().getMultiLayerTransformer().setToIdentity();
 		vv.repaint();
-		//updateGraph();
 	}
 }

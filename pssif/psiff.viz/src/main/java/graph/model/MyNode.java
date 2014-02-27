@@ -303,12 +303,17 @@ public class MyNode{
 		if (temp >0)
 			sizewidth = temp;
 		
+		temp = (type.getName().length()+6)/ limit;
+		
+		if (temp >sizewidth)
+			sizewidth = temp;
+		
 		List<String> attr = calcAttr();
 		for (String s : attr)
 		{
 			temp = s.length() / limit;
 			
-			if (temp >0 && temp > sizewidth)
+			if (temp > sizewidth)
 				sizewidth = temp;
 		}
 				
