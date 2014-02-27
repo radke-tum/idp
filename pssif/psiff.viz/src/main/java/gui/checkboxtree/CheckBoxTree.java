@@ -113,12 +113,57 @@ public class CheckBoxTree{
 		
 	    JTree tree = new JTree( nodes[0] );
 	    tree.setCellRenderer(new CheckBoxRenderer());
-	   
+	    
+	    evalChildrenSelection(tree);
+	  
+	    
 	    tree.getSelectionModel().setSelectionMode(TreeSelectionModel.DISCONTIGUOUS_TREE_SELECTION);
 	    tree.putClientProperty("JTree.lineStyle", "Angled");
 	    tree.addMouseListener(new NodeSelectionListener(tree));
 	    
 	    return tree;
+	}
+	
+	/**
+	 * Check which parent CheckNodes needs to be selected, because all there children are selected
+	 * @param tree the tree where to execute the evaluation
+	 */
+	private void evalChildrenSelection(JTree tree)
+	{
+		CheckNode root = (CheckNode )tree.getModel().getRoot();
+		
+		childrenSelected(tree, root);
+	}
+	
+	/**
+	 * Recursive function which checks, if all the children of the current CheckNode are selected
+	 * @param tree the tree where to execute the evaluation
+	 * @param current the current place in the tree
+	 * @return true if all subNodes are selected, false otherwise
+	 */
+	private boolean childrenSelected (JTree tree, CheckNode current)
+	{
+		int childcount = current.getChildCount();
+		// Check if current is a Leaf or not
+		if (childcount>0)
+		{
+			boolean res = true;
+			
+			// get all the children and execute the same test on them again
+			for (int i=0; i<childcount;i++)
+			{
+				CheckNode child = (CheckNode) tree.getModel().getChild(current, i);
+				boolean fu = childrenSelected(tree, child);
+				res = res && fu;
+			}
+			current.isSelected = res;
+			
+			return res;
+			
+		}
+		// Node wasa Leaf so return his state
+		else
+			return current.isSelected;
 	}
 	
 	/**
@@ -137,12 +182,12 @@ public class CheckBoxTree{
 	 */
 	public LinkedList<MyEdgeType> evalTree()
 	{
-		System.out.println("------------");
+		/*System.out.println("------------");
 		for(MyEdgeType et : selectedValues)
 		{
 			System.out.println(et.getName()); 
 		}
-		System.out.println("------------");
+		System.out.println("------------");*/
 		return selectedValues;
 	}
 	
@@ -211,14 +256,18 @@ public class CheckBoxTree{
             tree.collapsePath(path);
           }
         }
+        
         ((DefaultTreeModel) tree.getModel()).nodeChanged(node);
+        evalChildrenSelection(tree);
+        
         // I need revalidate if node is root.  but why?
-        if (row == 0) {
+        //if (row == 0) {
           tree.revalidate();
           tree.repaint();
-        }
+        //}
         // which edgeType is now really selected
         evalMouseSelection (node);
+       
       }
     }
   }

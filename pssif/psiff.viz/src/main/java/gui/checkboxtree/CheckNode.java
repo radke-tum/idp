@@ -55,7 +55,7 @@ public class CheckNode extends DefaultMutableTreeNode {
 	      }
 	    }
 	  }
-
+	  
 	  public boolean isSelected() {
 	    return isSelected;
 	  }
