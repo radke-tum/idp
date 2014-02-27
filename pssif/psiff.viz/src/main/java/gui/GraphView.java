@@ -279,7 +279,7 @@ public class GraphView {
 		c.gridy = (i++);
 		information.add(Box.createVerticalStrut(betweenComps),c);
 		
-		typeFilter = new JButton("Select Node & Edge Types");
+		/*typeFilter = new JButton("Select Node & Edge Types");
 		typeFilter.addActionListener(new ActionListener() {
 			
 			@Override
@@ -290,7 +290,7 @@ public class GraphView {
 		c.gridy = (i++);
 		information.add(typeFilter,c);
 		c.gridy = (i++);
-		information.add(Box.createVerticalStrut(betweenComps),c);
+		information.add(Box.createVerticalStrut(betweenComps),c);*/
 		
 		nodeAttributeFilter = new JButton("Filter Nodes  by Attribute");
 		nodeAttributeFilter.addActionListener(new ActionListener() {

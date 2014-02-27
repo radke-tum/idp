@@ -104,7 +104,7 @@ public class CreateNewGraphViewPopup extends MyPopup{
 	        	graphView.getGraph().createNewGraphView(container);
 	        	
 	        	// apply the view
-	        	graphView.getGraph().applyNodeAndEdgeFilter(container.getSelectedNodeTypes(), container.getSelectedEdgeTypes());
+	        	//graphView.getGraph().applyNodeAndEdgeFilter(container.getSelectedNodeTypes(), container.getSelectedEdgeTypes(), viewName);
 	        	
 	        	return true;
         	}

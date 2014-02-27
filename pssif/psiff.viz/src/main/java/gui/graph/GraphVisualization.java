@@ -365,9 +365,16 @@ public class GraphVisualization
 
 
 
-public void applyNodeAndEdgeFilter(LinkedList<MyNodeType> nodes, LinkedList<MyEdgeType> edges)
+public void applyNodeAndEdgeFilter(LinkedList<MyNodeType> nodes, LinkedList<MyEdgeType> edges, String viewName)
 {
-	NodeAndEdgeTypeFilter.filter(nodes, edges);
+	NodeAndEdgeTypeFilter.filter(nodes, edges, viewName);
+	
+	updateGraph();
+}
+
+public void undoNodeAndEdgeFilter(String viewName)
+{
+	NodeAndEdgeTypeFilter.undoFilter(viewName);
 	
 	updateGraph();
 }

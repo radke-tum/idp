@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JColorChooser;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -413,18 +414,29 @@ public class Main {
 			
 			for (final String name : views.keySet())
 			{
-				JMenuItem menuItem = new JMenuItem(name);
+				JCheckBoxMenuItem menuItem = new JCheckBoxMenuItem(name);
 				
 				menuItem.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					graphView.getGraph().applyNodeAndEdgeFilter(ModelBuilder.getNodeTypes().getAllNodeTypes(), ModelBuilder.getEdgeTypes().getAllEdgeTypes());
+					//graphView.getGraph().applyNodeAndEdgeFilter(ModelBuilder.getNodeTypes().getAllNodeTypes(), ModelBuilder.getEdgeTypes().getAllEdgeTypes());
 					
 					GraphViewContainer view = views.get(name);
 					
-					System.out.println("Number of Node Types: "+view.getSelectedNodeTypes().size());
-					System.out.println("Number of Edge Types: "+view.getSelectedEdgeTypes().size());
-					graphView.getGraph().applyNodeAndEdgeFilter(view.getSelectedNodeTypes(), view.getSelectedEdgeTypes());
+					JCheckBoxMenuItem item = (JCheckBoxMenuItem)e.getSource();
+					if (item.isSelected())
+					{
+						//System.out.println("Selected");
+						graphView.getGraph().applyNodeAndEdgeFilter(view.getSelectedNodeTypes(), view.getSelectedEdgeTypes(), name);
+					}
+					else
+					{
+					//	System.out.println("UnSelected");
+						graphView.getGraph().undoNodeAndEdgeFilter(name);
+					}
+					//System.out.println("Number of Node Types: "+view.getSelectedNodeTypes().size());
+					//System.out.println("Number of Edge Types: "+view.getSelectedEdgeTypes().size());
+					
 				}
 				});
 				
@@ -461,7 +473,7 @@ public class Main {
 				public void actionPerformed(ActionEvent e) {
 					
 					graphView.getGraph().deleteGraphView(views.get(name));
-					graphView.getGraph().applyNodeAndEdgeFilter(ModelBuilder.getNodeTypes().getAllNodeTypes(), ModelBuilder.getEdgeTypes().getAllEdgeTypes());
+					graphView.getGraph().undoNodeAndEdgeFilter(name);
 					resetReadGraphViews();
 					resetDeleteGraphViews();
 				}

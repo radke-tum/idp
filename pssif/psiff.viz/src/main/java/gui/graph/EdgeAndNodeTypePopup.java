@@ -71,7 +71,7 @@ public class EdgeAndNodeTypePopup extends MyPopup{
         	
         	LinkedList<MyEdgeType> selectedEdges = tree.evalTree();
     		
-        	graphViz.applyNodeAndEdgeFilter(selectedNodes, selectedEdges);
+        	graphViz.applyNodeAndEdgeFilter(selectedNodes, selectedEdges, null);
     	}
 	}
 	
