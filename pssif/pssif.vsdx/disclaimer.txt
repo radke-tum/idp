@@ -1,0 +1,2 @@
+Inspired by the GXL2Visio library developed by iteratec GmbH.
+See http://sourceforge.net/projects/gxl2visio/.

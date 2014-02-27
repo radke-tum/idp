@@ -47,7 +47,8 @@ class VsdxPageReader {
         shapes.addAll(readShapes(shapesNode));
         Node connectsNode = locateSuccessorElement(rootNode, VsdxTokens.CONNECTS);
         if (connectsNode != null) {
-          connectors.addAll(readConnectors(connectsNode, shapes));
+          Set<VsdxShapeImpl> disconnectedConnectors = Sets.newHashSet();
+          connectors.addAll(readConnectors(connectsNode, shapes, disconnectedConnectors));
           Set<VsdxShapeImpl> shapesToRemove = Sets.newHashSet();
           for (VsdxConnectorImpl connect : connectors) {
             for (VsdxShapeImpl shape : shapes) {
@@ -57,6 +58,7 @@ class VsdxPageReader {
             }
           }
           shapes.removeAll(shapesToRemove);
+          shapes.removeAll(disconnectedConnectors);
         }
       }
     } catch (IOException e) {
@@ -123,7 +125,7 @@ class VsdxPageReader {
     return shape;
   }
 
-  private Set<VsdxConnectorImpl> readConnectors(Node connectsNode, Set<VsdxShapeImpl> rootShapes) {
+  private Set<VsdxConnectorImpl> readConnectors(Node connectsNode, Set<VsdxShapeImpl> rootShapes, Set<VsdxShapeImpl> disconnectedConnectors) {
     Set<VsdxConnectorImpl> connects = Sets.newHashSet();
     Map<Integer, VsdxShapeImpl> allShapes = getShapesByIdFlattened(rootShapes);
     Map<Integer, Integer> connectorToSource = Maps.newHashMap();
@@ -132,6 +134,9 @@ class VsdxPageReader {
     for (int i = 0; i < children.getLength(); i++) {
       Node connectNode = children.item(i);
       String connectorIdString = getAttributeValue(connectNode, VsdxTokens.FROM_SHEET);
+      if (connectorIdString.trim().equalsIgnoreCase("38")) {
+        System.out.println("aha");
+      }
       String shapeIdString = getAttributeValue(connectNode, VsdxTokens.TO_SHEET);
       String sourceOrTargetString = getAttributeValue(connectNode, VsdxTokens.FROM_CELL);
       Integer connectorId = connectorIdString.trim().isEmpty() ? -1 : Integer.valueOf(connectorIdString);
@@ -157,8 +162,19 @@ class VsdxPageReader {
         connector.setTarget(targetShape);
         connects.add(connector);
       }
+      else {
+        disconnectedConnectors.add(allShapes.get(entry.getKey()));
+      }
     }
-
+    for (Entry<Integer, Integer> entry : connectorToTarget.entrySet()) {
+      if (connectorToSource.get(entry.getKey()) == null) {
+        disconnectedConnectors.add(allShapes.get(entry.getKey()));
+      }
+    }
+    //Note: filtering the disconnected ones works only partially this way
+    //i.e. connectors which have nor source neither target will be skipped
+    //but: they can only be caught if explicit knowledge of
+    //1D and 2D shape masters is available
     return connects;
   }
 
