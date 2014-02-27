@@ -3,6 +3,7 @@ package gui;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.picking.PickedState;
 import graph.model.MyEdge;
+import graph.model.MyEdgeType;
 import graph.model.MyNode;
 import graph.model.MyNodeType;
 import gui.graph.EdgeAndNodeTypePopup;
@@ -25,12 +26,14 @@ import java.util.Set;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.JTable;
@@ -49,13 +52,28 @@ public class GraphView {
 	private JPanel parent;
 	private GraphVisualization graph;
 	
+	private JPanel nodeInformationPanel;
+	private JPanel edgeInformationPanel;
+	private JPanel nodeAttributePanel;
+	private JPanel edgeAttributePanel;
+	private JPanel informationPanel;
 	private JLabel nodename;
 	private JLabel nodetype;
+	private JLabel edgetype;
+	private JLabel edgeSource;
+	private JLabel edgeDestination;
 	private JCheckBox nodeDetails;
 	private JButton collapseExpand;
 	private boolean active;
 	private JTable tableNodeAttributes;
 	private DefaultTableModel nodeAttributesModel;
+	private JTable tableEdgeAttributes;
+	private DefaultTableModel edgeAttributesModel;
+	private ButtonGroup group;
+	private JRadioButton nodeSelection;
+	private JRadioButton edgeSelection;
+	private ItemListener nodeListener;
+	private ItemListener edgeListener;
 	
 	private Dimension screenSize;
 	private static int betweenComps =10;
@@ -84,6 +102,7 @@ public class GraphView {
 		
         parent.add(addGraphViz(),BorderLayout.CENTER);
         
+        
         parent.add(addInformationPanel(), BorderLayout.SOUTH);
         
         return parent;
@@ -101,28 +120,36 @@ public class GraphView {
 	
 	private JPanel addInformationPanel()
 	{
-		JPanel information = new JPanel();
+		informationPanel = new JPanel();
 
 		int x = (int) (screenSize.width);
 		int y = (int) (screenSize.height*0.15);
 		Dimension d = new Dimension(x,y);
 		
-		information.setMaximumSize(d);
-		information.setMinimumSize(d);
-		information.setPreferredSize(d);
+		informationPanel.setMaximumSize(d);
+		informationPanel.setMinimumSize(d);
+		informationPanel.setPreferredSize(d);
 		
-		information.setLayout(new BorderLayout());
-		
-		// selected Node Information
-		information.add(addNodeInformationPanel(), BorderLayout.WEST);
-
-		// attributes table 
-		information.add(addAttributePanel(x, y), BorderLayout.CENTER);
+		informationPanel.setLayout(new BorderLayout());
 		
 		// Basic Graph operations
-		information.add(addBasicOperationPanel(), BorderLayout.EAST);
+		informationPanel.add(addBasicOperationPanel(), BorderLayout.EAST);
 		
-		return information;
+		// Attributs
+		nodeAttributePanel = addNodeAttributePanel(x, y);
+		edgeAttributePanel = addEdgeAttributePanel(x, y);
+		
+		informationPanel.add(nodeAttributePanel, BorderLayout.CENTER);
+		
+		// Basic information
+		nodeInformationPanel = addNodeInformationPanel();
+		edgeInformationPanel = addEdgeInformationPanel();
+		
+		informationPanel.add(nodeInformationPanel, BorderLayout.WEST);
+		
+		nodeSelection.setSelected(true);
+
+		return informationPanel;
 	}
 	
 	private JPanel addNodeInformationPanel()
@@ -166,7 +193,61 @@ public class GraphView {
 		return nodeInfos;
 	}
 	
-	private JPanel addAttributePanel(int sizeX, int sizeY)
+	private JPanel addEdgeInformationPanel()
+	{
+		GridBagConstraints c = new GridBagConstraints();	
+		int ypos = -1;
+		
+		// selected Node Information
+		JPanel edgeInfos = new JPanel();
+		edgeInfos.setLayout(new GridBagLayout());
+		edgeInfos.setBackground(Color.LIGHT_GRAY);
+		
+		c.gridx = 0;
+		
+		JLabel lblEdgeType = new JLabel("Edge Type");
+		ypos++;
+		c.gridy = ypos;
+		edgeInfos.add(lblEdgeType,c);
+		edgetype = new JLabel("");
+		ypos++;
+		c.gridy = ypos;
+		edgeInfos.add(edgetype,c);
+		
+		ypos++;
+		c.gridy = ypos;
+		edgeInfos.add(Box.createVerticalStrut(betweenComps),c);
+		
+		JLabel lblsource = new JLabel("Source");
+		ypos++;
+		c.gridy = ypos;
+		edgeInfos.add(lblsource,c);
+		edgeSource = new JLabel("");
+		ypos++;
+		c.gridy = ypos;
+		edgeInfos.add(edgeSource,c);
+		
+		ypos++;
+		c.gridy = ypos;
+		edgeInfos.add(Box.createVerticalStrut(betweenComps),c);
+		
+		JLabel lbldestination = new JLabel("Destination");
+		ypos++;
+		c.gridy = ypos;
+		edgeInfos.add(lbldestination,c);
+		edgeDestination = new JLabel("");
+		ypos++;
+		c.gridy = ypos;
+		edgeInfos.add(edgeDestination,c);
+		
+		c.gridx =1;
+		c.gridheight=ypos;
+		edgeInfos.add(Box.createHorizontalStrut(10),c);
+		
+		return edgeInfos;
+	}
+	
+	private JPanel addNodeAttributePanel(int sizeX, int sizeY)
 	{
 		JPanel attributeInfos = new JPanel();
 		attributeInfos.setLayout(new BorderLayout());
@@ -179,7 +260,30 @@ public class GraphView {
 		int scrollx = (int) (sizeX*0.8);
 		int scrolly = (int) (sizeY*0.9);
 
-		JScrollPane jScrollPane = new JScrollPane(createAttributTable());
+		JScrollPane jScrollPane = new JScrollPane(createNodeAttributTable());
+		jScrollPane.setPreferredSize(new Dimension(scrollx, scrolly));
+		jScrollPane.setMaximumSize(new Dimension(scrollx, scrolly));
+		jScrollPane.setMinimumSize(new Dimension(scrollx, scrolly));
+		
+		attributeInfos.add(jScrollPane,BorderLayout.CENTER);
+		
+		return attributeInfos;
+	}
+	
+	private JPanel addEdgeAttributePanel(int sizeX, int sizeY)
+	{
+		JPanel attributeInfos = new JPanel();
+		attributeInfos.setLayout(new BorderLayout());
+		attributeInfos.setBackground(Color.LIGHT_GRAY);
+		
+		JLabel lblEdgeAttributes = new JLabel("Edge Attributes");
+
+		attributeInfos.add(lblEdgeAttributes,BorderLayout.NORTH);
+		
+		int scrollx = (int) (sizeX*0.8);
+		int scrolly = (int) (sizeY*0.9);
+
+		JScrollPane jScrollPane = new JScrollPane(createEdgeAttributTable());
 		jScrollPane.setPreferredSize(new Dimension(scrollx, scrolly));
 		jScrollPane.setMaximumSize(new Dimension(scrollx, scrolly));
 		jScrollPane.setMinimumSize(new Dimension(scrollx, scrolly));
@@ -197,23 +301,102 @@ public class GraphView {
 		JPanel basicOperations = new JPanel();
 		basicOperations.setLayout(new GridBagLayout());
 		basicOperations.setBackground(Color.LIGHT_GRAY);
-
-		JLabel lblVisDetails = new JLabel("Visualisation Details");
+		
+		JLabel pickMode = new JLabel("Pick Mode");
 		ypos++;
 		c.gridy = ypos;
 		c.gridx = 1;
+		basicOperations.add(pickMode);
+		
+		edgeSelection = new JRadioButton("Edge");
+		edgeSelection.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JRadioButton parent = (JRadioButton) e.getSource();
+				if (parent.isSelected())
+				{
+					addEdgeChangeListener();
+					
+					informationPanel.remove(nodeAttributePanel);
+					informationPanel.remove(nodeInformationPanel);
+					informationPanel.add(edgeAttributePanel, BorderLayout.CENTER);
+					informationPanel.add(edgeInformationPanel, BorderLayout.WEST);
+					
+					informationPanel.validate();
+					informationPanel.revalidate();
+					informationPanel.repaint();
+					
+					parent.validate();
+					parent.revalidate();
+					parent.repaint();
+				}
+				else
+				{
+					System.out.println("Why Edge");
+				}
+			}
+		});
+		nodeSelection = new JRadioButton("Node");
+		nodeSelection.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				
+				JRadioButton parent = (JRadioButton) e.getSource();
+				if (parent.isSelected())
+				{
+					addNodeChangeListener();
+					
+					informationPanel.remove(edgeAttributePanel);
+					informationPanel.remove(edgeInformationPanel);
+					informationPanel.add(nodeAttributePanel, BorderLayout.CENTER);
+					informationPanel.add(nodeInformationPanel, BorderLayout.WEST);
+					
+					informationPanel.validate();
+					informationPanel.revalidate();
+					informationPanel.repaint();
+					
+					parent.validate();
+					parent.revalidate();
+					parent.repaint();
+				}
+			}
+		});
+		
+		
+		group = new ButtonGroup();
+		group.add(edgeSelection);
+		group.add(nodeSelection);
+		/*ypos++;
+		c.gridy = ypos;*/
+		c.gridx = 2;
+		basicOperations.add(edgeSelection,c);
+		/*ypos++;
+		c.gridy = ypos;*/
+		c.gridx = 3;
+		basicOperations.add(nodeSelection,c);
+		
+		
+		ypos++;
+		c.gridy = ypos;
+		c.gridx = 1;
+		c.gridwidth =4;
+		basicOperations.add(Box.createVerticalStrut(betweenComps),c);
+		
+		JLabel lblVisDetails = new JLabel("Visualisation Details");
+		ypos++;
+		c.gridy = ypos;
 		basicOperations.add(lblVisDetails,c);
 		ypos++;
 		c.gridy = ypos;
-		
 		nodeDetails = new JCheckBox("Node Details");
 		ypos++;
 		c.gridy = ypos;
 		basicOperations.add(nodeDetails,c);
 		nodeDetails.setSelected(true);
 		graph.setNodeVisualisation(true);
-		nodeDetails.addItemListener(new ItemListener() {
-			
+		nodeDetails.addItemListener(new ItemListener() {			
 			@Override
 			public void itemStateChanged(ItemEvent item) {			
 				JCheckBox parent = (JCheckBox)item.getSource();
@@ -227,7 +410,6 @@ public class GraphView {
 					// checkbox not selected
 					graph.setNodeVisualisation(false);
 				}
-				
 			}
 		});
 		ypos++;
@@ -292,12 +474,13 @@ public class GraphView {
 		
 		c.gridx =0;
 		c.gridheight=ypos;
+		c.gridwidth =1;
 		basicOperations.add(Box.createHorizontalStrut(10),c);
 		
 		return basicOperations;
 	}
 	
-	private JTable createAttributTable()
+	private JTable createNodeAttributTable()
 	{
 		nodeAttributesModel = new DefaultTableModel(){
 			
@@ -357,6 +540,66 @@ public class GraphView {
 		return tableNodeAttributes;
 	}
 	
+	private JTable createEdgeAttributTable()
+	{
+		edgeAttributesModel = new DefaultTableModel(){
+			
+	        public boolean isCellEditable(int rowIndex, int columnIndex) {
+	            if (columnIndex==0 || columnIndex==2 || columnIndex==3)
+	            	return false;
+	            else
+	            	return true;
+	        }
+		};
+		edgeAttributesModel.addColumn("Attribute");
+		edgeAttributesModel.addColumn("Value");
+		edgeAttributesModel.addColumn("Unit");
+		edgeAttributesModel.addColumn("Type");
+		
+		tableEdgeAttributes = new JTable(edgeAttributesModel);
+		tableEdgeAttributes.getModel().addTableModelListener(new TableModelListener() {
+			
+			@Override
+			public void tableChanged(TableModelEvent e) {
+				if (e.getType() == TableModelEvent.UPDATE)
+				{
+					int row = e.getFirstRow();
+			        int column = e.getColumn();
+			        TableModel model = (TableModel)e.getSource();
+			       
+			        Object data = model.getValueAt(row, column);
+			        String attributeName = (String) model.getValueAt(row, 0);
+					
+			        // get the data to test if there was some data entered
+			        String testdata = (String) data;
+			        // do not trigger the event again if we previously wrote null back
+			        if (data !=null && testdata.length()>0)
+			        {
+				        Set<MyEdge> selectedEdges = graph.getVisualisationViewer().getPickedEdgeState().getPicked();
+				        if (!selectedEdges.isEmpty() && selectedEdges.size()==1)
+				        {
+				        	MyEdge selectedEdge = selectedEdges.iterator().next();
+				        	
+				        	boolean res = selectedEdge.updateAttribute(attributeName, data);
+				        	
+				        	if (!res)
+				        	{
+				        		model.setValueAt(null, row, column);
+				        		JPanel errorPanel = new JPanel();
+				        		
+				        		errorPanel.add(new JLabel("The value does not match the attribute data type"));
+				        		
+				        		JOptionPane.showMessageDialog(null, errorPanel, "Ups something went wrong", JOptionPane.ERROR_MESSAGE);
+				        	}
+				        }
+			        }
+				}
+			}
+		});
+		
+		return tableEdgeAttributes;
+	}
+	
 	public GraphVisualization getGraph() {
 		return graph;
 	}
@@ -367,8 +610,9 @@ public class GraphView {
 		this.getGraph().updateGraph();
 	}
 	
-	private void updateSidebar(String nodeName, MyNodeType nodeType, LinkedList<LinkedList<String>> attributes)
+	private void updateNodeSidebar(String nodeName, MyNodeType nodeType, LinkedList<LinkedList<String>> attributes)
 	{
+		
 		if (nodeName==null)
 			this.nodename.setText("");
 		else
@@ -423,32 +667,137 @@ public class GraphView {
 		
 	}
 	
+	private void updateEdgeSidebar(MyEdge edge, MyEdgeType edgeType, LinkedList<LinkedList<String>> attributes)
+	{
+		if (edge==null)
+		{
+			this.edgeSource.setText("");
+			this.edgeDestination.setText("");
+		}
+		else
+		{
+			this.edgeSource.setText(edge.getSourceNode().getRealName());
+			this.edgeDestination.setText(edge.getDestinationNode().getRealName());
+		}
+		
+		if (edgeType==null)
+			this.edgetype.setText("");
+		else
+			this.edgetype.setText(edgeType.getName());
+		if(attributes==null)
+		{
+			for (int i = 0; i<edgeAttributesModel.getRowCount();i++)
+			{
+				edgeAttributesModel.removeRow(i);
+			}
+			edgeAttributesModel.setRowCount(0);
+		}
+		else
+		{
+			for (int i = 0; i<edgeAttributesModel.getRowCount();i++)
+			{
+				edgeAttributesModel.removeRow(i);
+			}
+			edgeAttributesModel.setRowCount(0);
+			
+			for (LinkedList<String> currentAttr: attributes)
+			{
+				String name = currentAttr.get(0);
+				String value = currentAttr.get(1);
+				String unit = currentAttr.get(2);
+				String type = currentAttr.get(3);
+				edgeAttributesModel.addRow(new String[]{name,value,unit,type});
+			}
+		}
+		
+		if (graph.isCollapsable())
+		{
+			collapseExpand.setText("Collapse Node");
+		}
+		
+		if (graph.isExpandable())
+		{
+			collapseExpand.setText("Expand Node");
+		}
+		
+		if (!graph.isCollapsable() && !graph.isExpandable())
+		{
+			collapseExpand.setText("Collapse/Expand Node");
+			collapseExpand.setEnabled(false);
+		}
+		else
+			collapseExpand.setEnabled(true);
+		
+	}
+	
 	private void addNodeChangeListener()
 	{
-		final PickedState<MyNode> pickedState = graph.getVisualisationViewer().getPickedVertexState();
-
-		pickedState.addItemListener(new ItemListener() {
+		PickedState<MyNode> pickedState = graph.getVisualisationViewer().getPickedVertexState();
+		
+		if (edgeListener!=null)
+			pickedState.removeItemListener(edgeListener);
+		
+		nodeListener =new ItemListener() {
 
 		    @Override
 		    public void itemStateChanged(ItemEvent e) {
+		    	@SuppressWarnings("unchecked")
+				PickedState<MyNode> pi = (PickedState<MyNode>)e.getSource();
 		        Object subject = e.getItem();
 
 		        if (subject instanceof MyNode) {
 		        	MyNode vertex = (MyNode) subject;
-		            if (pickedState.isPicked(vertex)) 
-		              updateSidebar(vertex.getName(), vertex.getNodeType(), vertex.getAttributes());
+		            if (pi.isPicked(vertex)) 
+		              updateNodeSidebar(vertex.getName(), vertex.getNodeType(), vertex.getAttributes());
 		            else
-		            	updateSidebar(null, null,null);
+		            	updateNodeSidebar(null, null,null);
 		        }
 		        else
-		        	updateSidebar(null, null,null);
+		        	updateNodeSidebar(null, null,null);
 		        
 		    }
-		});
+		};
+		
+		pickedState.addItemListener(nodeListener);
+		
 		Set<MyNode> s =pickedState.getPicked();
 		if (s==null)
 		{
-			updateSidebar(null, null,null);
+			updateNodeSidebar(null, null,null);
+		}
+	}
+	
+	private void addEdgeChangeListener()
+	{
+		PickedState<MyEdge> pickedState = graph.getVisualisationViewer().getPickedEdgeState();
+		if(nodeListener!=null)
+			pickedState.removeItemListener(nodeListener);
+		
+		edgeListener = new ItemListener() {
+
+		    @Override
+		    public void itemStateChanged(ItemEvent e) {
+		    	@SuppressWarnings("unchecked")
+				PickedState<MyEdge> pi = (PickedState<MyEdge>)e.getSource();
+		        Object subject = e.getItem();
+
+		        if (subject instanceof MyEdge) {
+		        	MyEdge edge = (MyEdge) subject;
+		            if (pi.isPicked(edge)) 
+		            	updateEdgeSidebar(edge, edge.getEdgeType(), edge.getAttributesForTable());
+		            else
+		            	updateEdgeSidebar(null,null, null);
+		        }
+		        else
+		        	updateEdgeSidebar(null, null, null);
+		        
+		    }
+		};
+		pickedState.addItemListener(edgeListener);
+		Set<MyEdge> s =pickedState.getPicked();
+		if (s==null)
+		{
+			updateEdgeSidebar(null, null,null);
 		}
 	}
 
