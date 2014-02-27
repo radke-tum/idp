@@ -78,17 +78,23 @@ public class ModelBuilder {
 	 */
 	public ModelBuilder()
 	{
-		mockData();
+		//mockData();
 		
-		nodes = new LinkedList<MyNode>();
-		edges = new LinkedList<MyEdge>();
-		
-		createNodeTypes();
-		createEdgeTypes();
-		
-		createNodes();
-		createEdges();
-		
+		if (meta!= null || model !=null)
+		{
+			nodes = new LinkedList<MyNode>();
+			edges = new LinkedList<MyEdge>();
+			
+			createNodeTypes();
+			createEdgeTypes();
+			
+			createNodes();
+			createEdges();
+		}
+		else
+		{
+			throw new NullPointerException("Should not be used!!!");
+		}
 	}
 	
 	private void createNodeTypes()
@@ -327,7 +333,7 @@ public class ModelBuilder {
 		System.out.println("--------------------------");
 	}
 	
-	public static void addNewNode (String nodeName, MyNodeType type)
+	public static void addNewNodeFromGUI (String nodeName, MyNodeType type)
 	{
 		Node newNode = node(type.getName(), meta).create(model);
 		
@@ -348,7 +354,7 @@ public class ModelBuilder {
 		//node.getNode().apply(new DisconnectOperation(null, null, null));
 	}
 	
-	public static boolean addNewEdge(MyNode source, MyNode destination, MyEdgeType edgetype)
+	public static boolean addNewEdgeGUI(MyNode source, MyNode destination, MyEdgeType edgetype)
 	{
 		ConnectionMapping mapping = edgetype.getType().getMapping(source.getNodeType().getType(), destination.getNodeType().getType());
 		

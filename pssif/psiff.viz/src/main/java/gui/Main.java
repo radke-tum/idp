@@ -3,7 +3,9 @@ package gui;
 
 import graph.model.MyNodeType;
 import graph.operations.GraphViewContainer;
+import gui.graph.AttributeFilterPopup;
 import gui.graph.CreateNewGraphViewPopup;
+import gui.graph.GraphVisualization;
 import gui.graph.MyListColorRenderer;
 
 import java.awt.Color;
@@ -59,12 +61,21 @@ public class Main {
 	private static JMenuItem resetMatrix;
 	private static JMenuItem colorNodes;
 	private static JMenuItem createView;
+	private static JMenuItem attributFilter;
 	private static JMenuItem graphVizualistation;
 	private static JMenuItem matrixVizualistation;
 	private static JMenuItem importFile;
 	private static JMenuItem exportFile;
+	private static JCheckBoxMenuItem KKLayout;
+	private static JCheckBoxMenuItem FRLayout;
+	private static JCheckBoxMenuItem SpringLayout;
+	private static JCheckBoxMenuItem ISOMLayout;
+	private static JCheckBoxMenuItem CircleLayout;
 	private static JMenu applyView;
 	private static JMenu deleteView;
+	private static JMenu graphLayout;
+	private static JMenu visualizationEffects;
+	
 	
 	public static void main(String[] args) {
 		
@@ -182,6 +193,20 @@ public class Main {
 		// contains already the file Menu
 		JMenuBar menuBar = createFileMenu();
 		
+		exportFile = new JMenuItem("Export File");
+		
+		exportFile.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO has to be implemented
+				
+			}
+		});
+		
+		menuBar.getMenu(0).add(exportFile);
+		
+		
 		// PICKING or TRANSFORMING Mode
 		
 		JMenu modeMenu = graphView.getGraph().getAbstractModalGraphMouse().getModeMenu(); // Obtain mode menu from the mouse
@@ -189,6 +214,80 @@ public class Main {
 		modeMenu.setIcon(null); 
 		modeMenu.setPreferredSize(new Dimension(80,20));
 		modeMenu.getItem(1).setSelected(true);
+		
+		// Which GraphLayout
+		graphLayout = new JMenu("Graph Layout");
+		
+		KKLayout = new JCheckBoxMenuItem(GraphVisualization.KKLayout);
+		KKLayout.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				graphView.getGraph().changeLayout(GraphVisualization.KKLayout);
+				FRLayout.setSelected(false);
+				SpringLayout.setSelected(false);
+				ISOMLayout.setSelected(false);
+				CircleLayout.setSelected(false);
+			}
+		});
+		graphLayout.add(KKLayout);
+		
+		FRLayout = new JCheckBoxMenuItem(GraphVisualization.FRLayout);
+		FRLayout.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				graphView.getGraph().changeLayout(GraphVisualization.FRLayout);
+				KKLayout.setSelected(false);
+				SpringLayout.setSelected(false);
+				ISOMLayout.setSelected(false);
+				CircleLayout.setSelected(false);
+			}
+		});
+		graphLayout.add(FRLayout);
+		
+		SpringLayout = new JCheckBoxMenuItem(GraphVisualization.SpringLayout);
+		SpringLayout.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				graphView.getGraph().changeLayout(GraphVisualization.SpringLayout);
+				KKLayout.setSelected(false);
+				FRLayout.setSelected(false);
+				ISOMLayout.setSelected(false);
+				CircleLayout.setSelected(false);
+			}
+		});
+		graphLayout.add(SpringLayout);
+		
+		ISOMLayout = new JCheckBoxMenuItem(GraphVisualization.ISOMLayout);
+		ISOMLayout.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				graphView.getGraph().changeLayout(GraphVisualization.ISOMLayout);
+				KKLayout.setSelected(false);
+				FRLayout.setSelected(false);
+				SpringLayout.setSelected(false);
+				CircleLayout.setSelected(false);
+			}
+		});
+		graphLayout.add(ISOMLayout);
+		
+		CircleLayout = new JCheckBoxMenuItem(GraphVisualization.CircleLayout);
+		CircleLayout.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				graphView.getGraph().changeLayout(GraphVisualization.CircleLayout);
+				KKLayout.setSelected(false);
+				FRLayout.setSelected(false);
+				SpringLayout.setSelected(false);
+				ISOMLayout.setSelected(false);
+			}
+		});
+		graphLayout.add(CircleLayout);
+		menuBar.add(graphLayout);
 		
 		// Which Visualization
 		JMenu visualisationMenu = new JMenu("Visualisation Mode");
@@ -275,7 +374,7 @@ public class Main {
 		resetMenu.setIcon(null);
 		
 		// Color Options
-		JMenu visualizationEffects = new JMenu("Visualization Effects");
+		visualizationEffects = new JMenu("Visualization Effects");
 		colorNodes = new JMenuItem("Choose Node colors");
 		colorNodes.addActionListener(new ActionListener() {
 			
@@ -284,7 +383,23 @@ public class Main {
 				pickNodeColor();
 			}
 		});
+		
 		visualizationEffects.add(colorNodes);
+		
+		attributFilter = new JMenuItem("Filter by attribut");
+		attributFilter.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				AttributeFilterPopup filter = new AttributeFilterPopup();
+		
+				filter.showPopup();
+
+				graphView.getGraph().updateGraph();
+			}
+		});
+		
+		visualizationEffects.add(attributFilter);
 		
 		createView = new JMenuItem("Create new GraphView");
 		createView.addActionListener(new ActionListener() {
@@ -369,20 +484,27 @@ public class Main {
 		{
 			resetGraph.setEnabled(true);
 			resetMatrix.setEnabled(false);
-			colorNodes.setEnabled(true);
-			createView.setEnabled(true);
+			//colorNodes.setEnabled(true);
+			//createView.setEnabled(true);
 			graphVizualistation.setEnabled(false);
 			matrixVizualistation.setEnabled(true);
+			//attributFilter.setEnabled(true);
+			graphLayout.setEnabled(true);
+			visualizationEffects.setEnabled(true);
+			
 		}
 		
 		if (matrixView.isActive())
 		{
 			resetGraph.setEnabled(false);
 			resetMatrix.setEnabled(true);
-			colorNodes.setEnabled(false);
-			createView.setEnabled(false);
+			//colorNodes.setEnabled(false);
+			//createView.setEnabled(false);
 			graphVizualistation.setEnabled(true);
 			matrixVizualistation.setEnabled(false);
+			//attributFilter.setEnabled(false);
+			graphLayout.setEnabled(false);
+			visualizationEffects.setEnabled(false);
 		}
 			
 	}

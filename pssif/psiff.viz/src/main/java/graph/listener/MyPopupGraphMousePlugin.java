@@ -546,7 +546,7 @@ public class MyPopupGraphMousePlugin extends AbstractPopupGraphMousePlugin {
 
                 	if (NodeName.getText()!=null && NodeName.getText().length()>0)
                 	{
-                		ModelBuilder.addNewNode(NodeName.getText(), (MyNodeType) Nodetype.getSelectedItem());
+                		ModelBuilder.addNewNodeFromGUI(NodeName.getText(), (MyNodeType) Nodetype.getSelectedItem());
                 		gViz.updateGraph();
                 	}                                       	
                 	
@@ -606,7 +606,7 @@ public class MyPopupGraphMousePlugin extends AbstractPopupGraphMousePlugin {
 				
 				if (edgetype!=null)
 				{
-					boolean res = ModelBuilder.addNewEdge(source, dest, edgetype);
+					boolean res = ModelBuilder.addNewEdgeGUI(source, dest, edgetype);
 					if (res)
 						gViz.updateGraph();
 					else

@@ -1,34 +1,31 @@
 package gui.graph;
 
-import graph.model.MyEdge;
 import graph.model.MyEdgeType;
-import graph.model.MyNode;
 import graph.model.MyNodeType;
-import graph.operations.AttributeOperations;
-
 import graph.operations.AttributeFilter;
-
+import graph.operations.AttributeOperations;
 
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.HashMap;
+import java.util.Arrays;
 import java.util.LinkedList;
+import java.util.TreeMap;
 
+import javax.swing.ButtonGroup;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 
+import model.ModelBuilder;
 import de.tum.pssif.core.metamodel.Attribute;
 import de.tum.pssif.core.metamodel.DataType;
 import de.tum.pssif.core.metamodel.PrimitiveDataType;
-import edu.uci.ics.jung.graph.Graph;
-import model.ModelBuilder;
 /**
  * Allows the user to specify an attribute filter for Nodes or Edges
  * @author Luc
@@ -42,22 +39,25 @@ public class AttributeFilterPopup extends MyPopup{
 	private JComboBox<String> attributeList;
 	private JComboBox<String> operationList;
 	private JTextField valueTextField;
+	private ButtonGroup group;
+	private JRadioButton nodeFilter;
+	private JRadioButton edgeFilter;
 	
-	private HashMap<String, DataType> attributeNames;
+	private TreeMap<String, DataType> attributeNames;
 	
 	/**
 	 * 
 	 * @param Nodefilter should it be a filter for Node attributes
 	 * @param Edgefilter should it be a filter for Edge attributes
 	 */
-	public AttributeFilterPopup(boolean Nodefilter, boolean Edgefilter)
+	public AttributeFilterPopup(/*boolean Nodefilter, boolean Edgefilter*/)
 	{
-		if (Nodefilter)
+		/*if (Nodefilter)
 		{
 			nodePossibilities = ModelBuilder.getNodeTypes().getAllNodeTypesArray();
 			edgePossibilities =null;
 			
-			attributeNames = new HashMap<String, DataType>();
+			attributeNames = new TreeMap<String, DataType>();
 			
 			// get all the attributes and their type
 			for (MyNodeType type : nodePossibilities)
@@ -78,7 +78,7 @@ public class AttributeFilterPopup extends MyPopup{
 			edgePossibilities = ModelBuilder.getEdgeTypes().getAllEdgeTypesArray();
 			nodePossibilities=null;
 			
-			attributeNames = new HashMap<String, DataType>();
+			attributeNames = new TreeMap<String, DataType>();
 			
 			// get all the attributes and their type
 			for (MyEdgeType type : edgePossibilities)
@@ -92,6 +92,7 @@ public class AttributeFilterPopup extends MyPopup{
 				
 			}
 		}
+		*/
 			
 	}
 	
@@ -115,15 +116,17 @@ public class AttributeFilterPopup extends MyPopup{
 	 */
 	private String[] getPossibleOperations(DataType type)
 	{
+		String[] res;
+		
 		if (type.equals(PrimitiveDataType.BOOLEAN) || type.equals(PrimitiveDataType.STRING))
 		{
-			return new String[]{AttributeOperations.EQUAL.toString(),AttributeOperations.NOT_EQUAL.toString()};
+			res = new String[]{AttributeOperations.EQUAL.toString(),AttributeOperations.NOT_EQUAL.toString()};
 		}
 		else
 		{
 			AttributeOperations[] tmp = AttributeOperations.values();
 			
-			String[] res = new String[tmp.length];
+			res = new String[tmp.length];
 			
 			int i=0;
 			for (AttributeOperations ao :tmp)
@@ -132,8 +135,11 @@ public class AttributeFilterPopup extends MyPopup{
 				i++;
 						
 			}
-			return res;
 		}
+		
+		Arrays.sort(res);
+		
+		return res;
 	}
 	/**
 	 * Create the Panel(GUI) of the Popup 
@@ -143,7 +149,59 @@ public class AttributeFilterPopup extends MyPopup{
 	{	
 		allPanel = new JPanel(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
+		
+		int ypos =0;
+		
+		group = new ButtonGroup();
+		nodeFilter = new JRadioButton("Node attributes");
+		edgeFilter = new JRadioButton("Edge attributes");
+		
+		nodeFilter.setSelected(true);
+		evalNodeSelection();
+		
+		nodeFilter.addActionListener(new ActionListener() {
 			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				evalNodeSelection();
+				updateAllFields();
+			}
+		});
+		
+		edgeFilter.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				evalEdgeSelection();
+				updateAllFields();
+			}
+		});
+		
+		group.add(nodeFilter);
+		group.add(edgeFilter);
+		
+		c.gridx= 0;
+		c.gridy = ypos;
+		allPanel.add(new JLabel("Filter by :"),c);
+		
+		ypos++;
+		
+		c.gridx= 1;
+		c.gridy = ypos;
+		allPanel.add(nodeFilter,c);
+		c.gridx= 2;
+		c.gridy = ypos;
+		allPanel.add(edgeFilter,c);
+		
+		ypos++;
+		c.gridx= 1;
+		c.gridy = ypos;
+		allPanel.add(new JLabel(""),c);
+		
+		ypos++;
+		
+	//	c.weighty = 1;
+		
 		// holds all the Attributes
 		attributeList = new JComboBox<String>(attributeNames.keySet().toArray(new String[]{}));
 		
@@ -154,17 +212,19 @@ public class AttributeFilterPopup extends MyPopup{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				 JComboBox<String> cb = (JComboBox<String>)e.getSource();
-			     String attrName = (String)cb.getSelectedItem();
-			     
-			     DataType dataType = attributeNames.get(attrName);
-			     
-			     operationList.removeAllItems();
-			     
-			     for (String s : getPossibleOperations(dataType))
-			     {
-			    	 operationList.addItem(s);
-			     }
-			    
+				 if (cb.getSelectedItem()!=null)
+				 {
+				     String attrName = (String)cb.getSelectedItem();
+				     
+				     DataType dataType = attributeNames.get(attrName);
+				     
+				     operationList.removeAllItems();
+				     			     
+				     for (String s : getPossibleOperations(dataType))
+				     {
+				    	 operationList.addItem(s);
+				     }
+				 }
 			}
 		});
 		
@@ -175,8 +235,6 @@ public class AttributeFilterPopup extends MyPopup{
 		
 	    valueTextField = new JTextField(10);
 	    
-	    int ypos =0;
-	    
 		c.gridx = 0;
 		c.gridy = ypos;
 		allPanel.add(new JLabel("Choose an Attribute"),c);
@@ -185,9 +243,10 @@ public class AttributeFilterPopup extends MyPopup{
 		allPanel.add(new JLabel("Choose an Operation"),c);
 		c.gridx = 2;
 		c.gridy = ypos++;
-		allPanel.add(new JLabel("Enter a Value"),c);
+		allPanel.add(new JLabel("Enter a compare Value"),c);
 		
-		c.weighty = 1;
+		//c.weighty = 1;
+		c.weightx = 1;
 		
 	    c.gridx = 0;
 	    c.gridy = ypos;
@@ -200,11 +259,71 @@ public class AttributeFilterPopup extends MyPopup{
 	    allPanel.add(valueTextField, c);
 	    
 		
-		allPanel.setPreferredSize(new Dimension(400,500));
-		allPanel.setMaximumSize(new Dimension(400,500));
-		allPanel.setMinimumSize(new Dimension(400,500));
+		allPanel.setPreferredSize(new Dimension(400,200));
+		allPanel.setMaximumSize(new Dimension(400,200));
+		allPanel.setMinimumSize(new Dimension(400,200));
 
 		return allPanel;
+	}
+	
+	private void evalNodeSelection()
+	{
+		nodePossibilities = ModelBuilder.getNodeTypes().getAllNodeTypesArray();
+		//edgePossibilities =null;
+		
+		attributeNames = new TreeMap<String, DataType>();
+		
+		// get all the attributes and their type
+		for (MyNodeType type : nodePossibilities)
+		{
+			LinkedList<Attribute> temp = new LinkedList<Attribute>(type.getType().getAttributes());
+			
+			for (Attribute attr :temp)
+			{
+				attributeNames.put(attr.getName(), attr.getType());
+			}
+			
+		}
+	}
+	private void evalEdgeSelection()
+	{
+		edgePossibilities = ModelBuilder.getEdgeTypes().getAllEdgeTypesArray();
+		//nodePossibilities=null;
+		
+		attributeNames = new TreeMap<String, DataType>();
+		
+		// get all the attributes and their type
+		for (MyEdgeType type : edgePossibilities)
+		{
+			LinkedList<Attribute> temp = new LinkedList<Attribute>(type.getType().getAttributes());
+			
+			for (Attribute attr :temp)
+			{
+				attributeNames.put(attr.getName(), attr.getType());
+			}
+			
+		}
+	}
+	
+	private void updateAllFields()
+	{
+		valueTextField.setText("");
+		
+		attributeList.removeAllItems();
+		for (String s: attributeNames.keySet().toArray(new String[]{}))
+		{
+			attributeList.addItem(s);
+		}
+		
+		DataType dataType = attributeNames.get(attributeList.getItemAt(0));
+	     
+	    operationList.removeAllItems();
+	     
+	     
+	     for (String s : getPossibleOperations(dataType))
+	     {
+	    	 operationList.addItem(s);
+	     }
 	}
 	
 	/**
@@ -215,7 +334,8 @@ public class AttributeFilterPopup extends MyPopup{
 	{
 		if (dialogResult==0)
     	{
-    		String selectedAttribute = (String)attributeList.getSelectedItem();
+    		
+			String selectedAttribute = (String)attributeList.getSelectedItem();
     		String selectedOperation = (String)operationList.getSelectedItem();
     		String refValue = valueTextField.getText();
     		
@@ -235,10 +355,10 @@ public class AttributeFilterPopup extends MyPopup{
 				
 				try
 				{
-					if (nodePossibilities!=null)
+					if (nodeFilter.isSelected())
 						AttributeFilter.filterNode( selectedAttribute, op, refValue);
 
-					if (edgePossibilities!=null)
+					if (edgeFilter.isSelected())
 						AttributeFilter.filterEdge( selectedAttribute, op, refValue);
 				}
 				catch (Exception e)

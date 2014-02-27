@@ -1,15 +1,21 @@
 package gui.graph;
 
 import de.tum.pssif.core.PSSIFConstants;
+import edu.uci.ics.jung.algorithms.layout.CircleLayout;
 import edu.uci.ics.jung.algorithms.layout.FRLayout;
+import edu.uci.ics.jung.algorithms.layout.ISOMLayout;
+import edu.uci.ics.jung.algorithms.layout.KKLayout;
 import edu.uci.ics.jung.algorithms.layout.Layout;
+import edu.uci.ics.jung.algorithms.layout.SpringLayout;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.visualization.RenderContext;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.control.AbstractModalGraphMouse;
 import edu.uci.ics.jung.visualization.control.DefaultModalGraphMouse;
 import edu.uci.ics.jung.visualization.decorators.ToStringLabeller;
+import edu.uci.ics.jung.visualization.layout.LayoutTransition;
 import edu.uci.ics.jung.visualization.renderers.Renderer.VertexLabel.Position;
+import edu.uci.ics.jung.visualization.util.Animator;
 import graph.listener.ConfigWriterReader;
 import graph.listener.MyPopupGraphMousePlugin;
 import graph.model.GraphBuilder;
@@ -42,6 +48,12 @@ import org.apache.commons.collections15.functors.ChainedTransformer;
 
 public class GraphVisualization
 {
+  public static final String KKLayout ="KKLayout";
+  public static final String FRLayout  ="FRLayout";
+  public static final String SpringLayout  ="SpringLayout";
+  public static final String ISOMLayout  ="ISOMLayout";
+  public static final String CircleLayout  ="CircleLayout";
+	
   private Graph<MyNode, MyEdge> g;
 //  static int Nodecount;
   private AbstractModalGraphMouse gm;
@@ -68,7 +80,7 @@ public class GraphVisualization
     this.g = this.gb.createGraph(this.detailedNodes);
     
 
-    this.layout = new FRLayout<MyNode, MyEdge>(this.g);
+    this.layout = new CircleLayout<MyNode, MyEdge>(this.g);
     if (d != null)
     {
       int x = (int)d.getWidth() - 50;
@@ -365,54 +377,92 @@ public class GraphVisualization
 
 
 
-public void applyNodeAndEdgeFilter(LinkedList<MyNodeType> nodes, LinkedList<MyEdgeType> edges, String viewName)
-{
-	NodeAndEdgeTypeFilter.filter(nodes, edges, viewName);
+	public void applyNodeAndEdgeFilter(LinkedList<MyNodeType> nodes, LinkedList<MyEdgeType> edges, String viewName)
+	{
+		NodeAndEdgeTypeFilter.filter(nodes, edges, viewName);
+		
+		updateGraph();
+	}
 	
-	updateGraph();
-}
-
-public void undoNodeAndEdgeFilter(String viewName)
-{
-	NodeAndEdgeTypeFilter.undoFilter(viewName);
+	public void undoNodeAndEdgeFilter(String viewName)
+	{
+		NodeAndEdgeTypeFilter.undoFilter(viewName);
+		
+		updateGraph();
+	}
 	
-	updateGraph();
-}
-
-public void updateGraph()
-{
-	g = gb.updateGraph(detailedNodes);
+	public void updateGraph()
+	{
+		g = gb.updateGraph(detailedNodes);
+		
+		vv.getPickedVertexState().clear();
+	    vv.repaint();
+	}
 	
-	vv.getPickedVertexState().clear();
-    vv.repaint();
-}
-
-public void setNodeColorMapping(HashMap<MyNodeType, Color> nodeColorMapping) {
-	this.nodeColorMapping.putAll(nodeColorMapping);
-	this.configWriterReader.setColors(nodeColorMapping);
+	public void setNodeColorMapping(HashMap<MyNodeType, Color> nodeColorMapping) {
+		this.nodeColorMapping.putAll(nodeColorMapping);
+		this.configWriterReader.setColors(nodeColorMapping);
+		
+		updateGraph();
+	}
 	
-	updateGraph();
+	public HashMap<MyNodeType, Color> getNodeColorMapping ()
+	{
+		return this.configWriterReader.readColors();
+	}
+	
+	
+	public void createNewGraphView (GraphViewContainer newView)
+	{
+		this.configWriterReader.setGraphView(newView);
+	}
+	
+	public HashMap<String, GraphViewContainer> getAllGraphViews()
+	{
+		return this.configWriterReader.readViews();
+	}
+	
+	public void deleteGraphView (GraphViewContainer deleteView)
+	{
+		this.configWriterReader.deleteView(deleteView.getViewName());
+	}
+	
+	public void changeLayout (String newLayout)
+	{
+		//Dimension d =layout.getSize();
+		
+		if (newLayout.equals(KKLayout))
+		{
+			this.layout = new KKLayout<MyNode, MyEdge>(g);
+		}
+		if (newLayout.equals(FRLayout))
+		{
+			this.layout = new FRLayout<MyNode, MyEdge>(g);
+		}
+		if (newLayout.equals(SpringLayout))
+		{
+			this.layout = new SpringLayout<MyNode, MyEdge>(g);
+		}
+		if (newLayout.equals(ISOMLayout))
+		{
+			this.layout = new ISOMLayout<MyNode, MyEdge>(g);
+		}
+		if (newLayout.equals(CircleLayout))
+		{
+			this.layout = new CircleLayout<MyNode, MyEdge>(g);
+		}
+		
+		//this.layout.setSize(d);
+		
+		layout.setInitializer(vv.getGraphLayout());
+		layout.setSize(vv.getSize());
+        
+		LayoutTransition<MyNode,MyEdge> lt =new LayoutTransition<MyNode,MyEdge>(vv, vv.getGraphLayout(), layout);
+		Animator animator = new Animator(lt);
+		animator.start();
+		//animator.stop();
+		vv.getRenderContext().getMultiLayerTransformer().setToIdentity();
+		vv.repaint();
+		//updateGraph();
+	}
 }
-
-public HashMap<MyNodeType, Color> getNodeColorMapping ()
-{
-	return this.configWriterReader.readColors();
-}
-
-
-public void createNewGraphView (GraphViewContainer newView)
-{
-	this.configWriterReader.setGraphView(newView);
-}
-
-public HashMap<String, GraphViewContainer> getAllGraphViews()
-{
-	return this.configWriterReader.readViews();
-}
-
-public void deleteGraphView (GraphViewContainer deleteView)
-{
-	this.configWriterReader.deleteView(deleteView.getViewName());
-}
-}
-

@@ -76,8 +76,10 @@ public class NodeAndEdgeTypeFilter {
 	
 	public static void undoFilter(String viewName)
 	{
-		mapViewToEdgeType.remove(viewName);
-		mapViewToNodeType.remove(viewName);
+		if (mapViewToEdgeType!=null)
+			mapViewToEdgeType.remove(viewName);
+		if (mapViewToNodeType!=null)
+			mapViewToNodeType.remove(viewName);
 		
 		calcVisibleNodesAndEdges();
 	}

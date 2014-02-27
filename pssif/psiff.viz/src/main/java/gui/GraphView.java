@@ -1,54 +1,36 @@
 package gui;
 
-import de.tum.pssif.core.metamodel.Attribute;
-import edu.uci.ics.jung.algorithms.layout.FRLayout;
-import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
-import edu.uci.ics.jung.visualization.annotations.AnnotatingModalGraphMouse.ModeKeyAdapter;
 import edu.uci.ics.jung.visualization.picking.PickedState;
 import graph.model.MyEdge;
-import graph.model.MyEdgeType;
-import graph.model.MyEdgeTypes;
 import graph.model.MyNode;
 import graph.model.MyNodeType;
-import graph.operations.GraphViewContainer;
-import graph.operations.AttributeFilter;
-import graph.operations.NodeAndEdgeTypeFilter;
-import gui.graph.AttributeFilterPopup;
 import gui.graph.EdgeAndNodeTypePopup;
 import gui.graph.GraphVisualization;
 import gui.graph.HighlightNodePopup;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Set;
 
 import javax.swing.Box;
-import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JComponent;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.JTable;
-import javax.swing.ScrollPaneConstants;
 import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
@@ -69,9 +51,6 @@ public class GraphView {
 	private JCheckBox nodeDetails;
 	private JButton nodeHighlight;
 	private JButton collapseExpand;
-	private JButton typeFilter;
-	private JButton nodeAttributeFilter;
-	private JButton edgeAttributeFilter;
 	private boolean active;
 	private JTable tableNodeAttributes;
 	private DefaultTableModel nodeAttributesModel;
@@ -278,55 +257,7 @@ public class GraphView {
 		information.add(collapseExpand,c);
 		c.gridy = (i++);
 		information.add(Box.createVerticalStrut(betweenComps),c);
-		
-		/*typeFilter = new JButton("Select Node & Edge Types");
-		typeFilter.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				chooseEdgeAndNodeTypes();
-			}
-		});
-		c.gridy = (i++);
-		information.add(typeFilter,c);
-		c.gridy = (i++);
-		information.add(Box.createVerticalStrut(betweenComps),c);*/
-		
-		nodeAttributeFilter = new JButton("Filter Nodes  by Attribute");
-		nodeAttributeFilter.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				AttributeFilterPopup filter = new AttributeFilterPopup(true,false);
-				
-				filter.showPopup();
 
-				graph.updateGraph();
-
-			}
-		});
-		c.gridy = (i++);
-		information.add(nodeAttributeFilter,c);
-		c.gridy = (i++);
-		information.add(Box.createVerticalStrut(betweenComps),c);
-		
-		edgeAttributeFilter = new JButton("Filter Edges  by Attribute");
-		edgeAttributeFilter.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				AttributeFilterPopup filter = new AttributeFilterPopup(false,true);
-				filter.showPopup();
-
-				graph.updateGraph();
-
-			}
-		});
-		c.gridy = (i++);
-		information.add(edgeAttributeFilter,c);
-		c.gridy = (i++);
-		information.add(Box.createVerticalStrut(betweenComps),c);
-		
 		
 		return parent;
 	}
@@ -400,15 +331,8 @@ public class GraphView {
 	
 	public void resetGraph()
 	{
-		/*graph.applyNodeAndEdgeFilter(ModelBuilder.getNodeTypes().getAllNodeTypes(), ModelBuilder.getEdgeTypes().getAllEdgeTypes());
-		
-		FRLayout<MyNode2, MyEdge2> l = new FRLayout<MyNode2, MyEdge2>(graph.getGraph());
-    	graph.getVisualisationViewer().setGraphLayout(l);
-    	
-    	graph.getVisualisationViewer().repaint();*/
 		new ModelBuilder();
 		this.getGraph().updateGraph();
-		//ModelBuilder.printVisibleStuff();
 	}
 	
 	private void updateSidebar(String nodeName, MyNodeType nodeType, LinkedList<LinkedList<String>> attributes)
