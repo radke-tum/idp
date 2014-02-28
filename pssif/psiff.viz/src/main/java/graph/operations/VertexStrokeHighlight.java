@@ -188,7 +188,7 @@ public class VertexStrokeHighlight<V,E> implements Transformer<V,Stroke>
 	        		if (depthsearch)
 	        		{
 		        		 if ((this.followEdges.isEmpty() && e.getDestinationNode().equals(((MyNode) dest)) )|| 
-		        				 (this.followEdges.contains(e.getEdgeType()) && e.getDestinationNode().equals(((MyNode) dest))))
+		        				 (!this.followEdges.isEmpty() && this.followEdges.contains(e.getEdgeType()) && e.getDestinationNode().equals(((MyNode) dest))))
 		        				 return true;
 	        		}
 	        		else
@@ -228,9 +228,10 @@ public class VertexStrokeHighlight<V,E> implements Transformer<V,Stroke>
 	        		}
 	        		
 	        		boolean res=false;
+	        		level--;
 	        		for (V v :next)
 	        		{
-	        			level--;
+	        			
 	        			res = res || searchDept(v, level); 
 	        		}
 	        		

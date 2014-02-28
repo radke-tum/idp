@@ -13,6 +13,7 @@ import gui.graph.HighlightNodePopup;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
@@ -76,7 +77,8 @@ public class GraphView {
 	private ItemListener edgeListener;
 	
 	private Dimension screenSize;
-	private static int betweenComps =10;
+	private static int betweenComps =7;
+	private static Color bgColor = Color.LIGHT_GRAY;
 
 	public GraphView(/*Dimension parentDimension*/)
 	{
@@ -86,7 +88,7 @@ public class GraphView {
 		//int x = (int) (screenSize.width*0.85);
 		//int y = (int) (screenSize.height*0.9);
 		int x = (int) (screenSize.width);
-		int y = (int) (screenSize.height*0.75);
+		int y = (int) (screenSize.height*0.78);
 		if (nodeDetails==null)
 			graph = new GraphVisualization(new Dimension(x,y),true);
 		else
@@ -160,7 +162,7 @@ public class GraphView {
 		// selected Node Information
 		JPanel nodeInfos = new JPanel();
 		nodeInfos.setLayout(new GridBagLayout());
-		nodeInfos.setBackground(Color.LIGHT_GRAY);
+		nodeInfos.setBackground(bgColor);
 		
 		c.gridx = 0;
 		JLabel lblNodeName = new JLabel("Node Name");
@@ -201,7 +203,7 @@ public class GraphView {
 		// selected Node Information
 		JPanel edgeInfos = new JPanel();
 		edgeInfos.setLayout(new GridBagLayout());
-		edgeInfos.setBackground(Color.LIGHT_GRAY);
+		edgeInfos.setBackground(bgColor);
 		
 		c.gridx = 0;
 		
@@ -251,7 +253,7 @@ public class GraphView {
 	{
 		JPanel attributeInfos = new JPanel();
 		attributeInfos.setLayout(new BorderLayout());
-		attributeInfos.setBackground(Color.LIGHT_GRAY);
+		attributeInfos.setBackground(bgColor);
 		
 		JLabel lblNodeAttributes = new JLabel("Node Attributes");
 
@@ -261,6 +263,7 @@ public class GraphView {
 		int scrolly = (int) (sizeY*0.9);
 
 		JScrollPane jScrollPane = new JScrollPane(createNodeAttributTable());
+		jScrollPane.setBackground(bgColor);
 		jScrollPane.setPreferredSize(new Dimension(scrollx, scrolly));
 		jScrollPane.setMaximumSize(new Dimension(scrollx, scrolly));
 		jScrollPane.setMinimumSize(new Dimension(scrollx, scrolly));
@@ -274,7 +277,7 @@ public class GraphView {
 	{
 		JPanel attributeInfos = new JPanel();
 		attributeInfos.setLayout(new BorderLayout());
-		attributeInfos.setBackground(Color.LIGHT_GRAY);
+		attributeInfos.setBackground(bgColor);
 		
 		JLabel lblEdgeAttributes = new JLabel("Edge Attributes");
 
@@ -284,6 +287,7 @@ public class GraphView {
 		int scrolly = (int) (sizeY*0.9);
 
 		JScrollPane jScrollPane = new JScrollPane(createEdgeAttributTable());
+		jScrollPane.setBackground(bgColor);
 		jScrollPane.setPreferredSize(new Dimension(scrollx, scrolly));
 		jScrollPane.setMaximumSize(new Dimension(scrollx, scrolly));
 		jScrollPane.setMinimumSize(new Dimension(scrollx, scrolly));
@@ -300,15 +304,12 @@ public class GraphView {
 		
 		JPanel basicOperations = new JPanel();
 		basicOperations.setLayout(new GridBagLayout());
-		basicOperations.setBackground(Color.LIGHT_GRAY);
+		basicOperations.setBackground(bgColor);
 		
 		JLabel pickMode = new JLabel("Pick Mode");
-		ypos++;
-		c.gridy = ypos;
-		c.gridx = 1;
-		basicOperations.add(pickMode);
 		
 		edgeSelection = new JRadioButton("Edge");
+		edgeSelection.setBackground(bgColor);
 		edgeSelection.addActionListener(new ActionListener() {
 			
 			@Override
@@ -338,6 +339,7 @@ public class GraphView {
 			}
 		});
 		nodeSelection = new JRadioButton("Node");
+		nodeSelection.setBackground(bgColor);
 		nodeSelection.addActionListener(new ActionListener() {
 			
 			@Override
@@ -368,20 +370,20 @@ public class GraphView {
 		group = new ButtonGroup();
 		group.add(edgeSelection);
 		group.add(nodeSelection);
-		/*ypos++;
-		c.gridy = ypos;*/
-		c.gridx = 2;
-		basicOperations.add(edgeSelection,c);
-		/*ypos++;
-		c.gridy = ypos;*/
-		c.gridx = 3;
-		basicOperations.add(nodeSelection,c);
-		
 		
 		ypos++;
 		c.gridy = ypos;
 		c.gridx = 1;
-		c.gridwidth =4;
+		JPanel pickPanel = new JPanel(new FlowLayout());
+		pickPanel.setBackground(bgColor);
+		pickPanel.add(pickMode);
+		pickPanel.add(edgeSelection);
+		pickPanel.add(nodeSelection);
+		
+		basicOperations.add(pickPanel, c);
+		
+		ypos++;
+		c.gridy = ypos;
 		basicOperations.add(Box.createVerticalStrut(betweenComps),c);
 		
 		JLabel lblVisDetails = new JLabel("Visualisation Details");
@@ -391,6 +393,7 @@ public class GraphView {
 		ypos++;
 		c.gridy = ypos;
 		nodeDetails = new JCheckBox("Node Details");
+		nodeDetails.setBackground(bgColor);
 		ypos++;
 		c.gridy = ypos;
 		basicOperations.add(nodeDetails,c);
