@@ -5,12 +5,15 @@ import de.tum.pssif.core.metamodel.Attribute;
 import de.tum.pssif.core.metamodel.EdgeType;
 import de.tum.pssif.core.metamodel.Metamodel;
 import de.tum.pssif.core.metamodel.NodeType;
-import de.tum.pssif.transform.transformation.CreateNodeTransformation;
+import de.tum.pssif.transform.transformation.CreateArtificialNodeTransformation;
 import de.tum.pssif.transform.transformation.HideEdgeTypeAttributeTransformation;
 import de.tum.pssif.transform.transformation.HideNodeTypeAttributeTransformation;
+import de.tum.pssif.transform.transformation.LeftJoinConnectionMappingTransformation;
 import de.tum.pssif.transform.transformation.MoveAttributeTransformation;
 import de.tum.pssif.transform.transformation.RenameEdgeTypeTransformation;
 import de.tum.pssif.transform.transformation.RenameNodeTypeTransformation;
+import de.tum.pssif.transform.transformation.RightJoinConnectionMappingTransformation;
+import de.tum.pssif.transform.transformation.SpecializeConnectionMappingTransformation;
 
 
 public class GraphMlViewCreator {
@@ -40,99 +43,63 @@ public class GraphMlViewCreator {
         .apply(view);
     view = new HideNodeTypeAttributeTransformation(view.findNodeType("Block"), view.findNodeType("Block").findAttribute("cost")).apply(view);
 
-    view = new CreateNodeTransformation(view.findNodeType("Function"), view.findNodeType("Block"), view.findEdgeType("Relationship")).apply(view);
-    view = new CreateNodeTransformation(view.findNodeType("State"), view.findNodeType("Block"), view.findEdgeType("Relationship")).apply(view);
+    view = new CreateArtificialNodeTransformation(view.findNodeType("Function"), view.findNodeType("Block"), view.findEdgeType("Relationship"))
+        .apply(view);
+    view = new CreateArtificialNodeTransformation(view.findNodeType("State"), view.findNodeType("Block"), view.findEdgeType("Relationship"))
+        .apply(view);
 
     NodeType block = view.findNodeType("Block");
     Attribute id = block.findAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_ID);
     view = new MoveAttributeTransformation(view.findNodeType("Function"), "functionary", block, id, view.findEdgeType("Relationship")).apply(view);
-    block = view.findNodeType("Block");
     Attribute name = block.findAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_NAME);
     view = new MoveAttributeTransformation(view.findNodeType("Function"), "functionary", block, name, view.findEdgeType("Relationship")).apply(view);
 
-    block = view.findNodeType("Block");
-    id = block.findAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_ID);
     view = new MoveAttributeTransformation(view.findNodeType("State"), "functionary", block, id, view.findEdgeType("Relationship")).apply(view);
-    block = view.findNodeType("Block");
-    name = block.findAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_NAME);
     view = new MoveAttributeTransformation(view.findNodeType("State"), "functionary", block, name, view.findEdgeType("Relationship")).apply(view);
 
-    /*
-
-    // Transformation starts here
     EdgeType informationFlow = view.findEdgeType("InformationFlow");
-    //    EdgeType energyFlow = view.findEdgeType("EnergyFlow");
-    EdgeType controlFlow = view.findEdgeType("Control Flow");
-    EdgeType relationship = view.findEdgeType("Relationship");
-    NodeType function = view.findNodeType("Function");
+    EdgeType energyFlow = view.findEdgeType("EnergyFlow");
+    EdgeType materialFlow = view.findEdgeType("MaterialFlow");
     NodeType state = view.findNodeType("State");
+    NodeType function = view.findNodeType("Function");
+    view = new SpecializeConnectionMappingTransformation(informationFlow, state, function, informationFlow.getMapping(block, block)).apply(view);
+    view = new SpecializeConnectionMappingTransformation(energyFlow, state, function, energyFlow.getMapping(block, block)).apply(view);
+    view = new SpecializeConnectionMappingTransformation(materialFlow, state, function, materialFlow.getMapping(block, block)).apply(view);
+
+    view = new SpecializeConnectionMappingTransformation(informationFlow, function, state, informationFlow.getMapping(block, block)).apply(view);
+    view = new SpecializeConnectionMappingTransformation(energyFlow, function, state, energyFlow.getMapping(block, block)).apply(view);
+    view = new SpecializeConnectionMappingTransformation(materialFlow, function, state, materialFlow.getMapping(block, block)).apply(view);
+
+    view = moveEdge(view, informationFlow);
+    view = moveEdge(view, energyFlow);
+    view = moveEdge(view, materialFlow);
+
+    return view;
+  }
+
+  private static Metamodel moveEdge(Metamodel view, EdgeType type) {
+    type = view.findEdgeType(type.getName());
+    NodeType state = view.findNodeType("State");
+    NodeType function = view.findNodeType("Function");
     NodeType block = view.findNodeType("Block");
-    ConnectionMapping ifOrigMapping = informationFlow.getMapping(block, block);
-    //    ConnectionMapping efOrigMapping = energyFlow.getMapping(block, block);
-    ConnectionMapping relMappingF2B = relationship.getMapping(function, block);
-    //    ConnectionMapping cfMapping = controlFlow.getMapping(function.getGeneral(), function.getGeneral());
+    EdgeType relationship = view.findEdgeType("Relationship");
+    view = new LeftJoinConnectionMappingTransformation(type, type.getMapping(state, function), relationship, relationship.getMapping(state, block),
+        type.getMapping(state, block)).apply(view);
 
-    ConnectionMapping iff2s = informationFlow.createMapping("f2if", function,
-        MultiplicityContainer.of(1, UnlimitedNatural.UNLIMITED, 0, UnlimitedNatural.UNLIMITED), "if2s", state,
-        MultiplicityContainer.of(1, UnlimitedNatural.UNLIMITED, 0, UnlimitedNatural.UNLIMITED));
-    controlFlow.createMapping("f2cf", function, MultiplicityContainer.of(1, UnlimitedNatural.UNLIMITED, 0, UnlimitedNatural.UNLIMITED), "cf2s",
-        state, MultiplicityContainer.of(1, UnlimitedNatural.UNLIMITED, 0, UnlimitedNatural.UNLIMITED));
-    //    ConnectionMapping eff2s = energyFlow.createMapping("f2ef", function,
-    //        MultiplicityContainer.of(1, UnlimitedNatural.UNLIMITED, 0, UnlimitedNatural.UNLIMITED), "if2s", state,
-    //        MultiplicityContainer.of(1, UnlimitedNatural.UNLIMITED, 0, UnlimitedNatural.UNLIMITED));
-    //    ConnectionMapping efs2f = energyFlow.createMapping("s2ef", state,
-    //        MultiplicityContainer.of(1, UnlimitedNatural.UNLIMITED, 0, UnlimitedNatural.UNLIMITED), "if2f", function,
-    //        MultiplicityContainer.of(1, UnlimitedNatural.UNLIMITED, 0, UnlimitedNatural.UNLIMITED));
-
-    view = new RetypeConnectionMappingTransformation(informationFlow, iff2s, controlFlow, new LeftJoinedConnectionMapping(iff2s,
-        relMappingF2B.getFrom(), relMappingF2B.getTo(), ifOrigMapping)).apply(view);
-
-    informationFlow = view.findEdgeType("InformationFlow");
-    //    energyFlow = view.findEdgeType("EnergyFlow");
-    controlFlow = view.findEdgeType("Control Flow");
+    type = view.findEdgeType(type.getName());
     relationship = view.findEdgeType("Relationship");
-    function = view.findNodeType("Function");
-    state = view.findNodeType("State");
-    block = view.findNodeType("Block");
-    ifOrigMapping = informationFlow.getMapping(block, block);
-    //    efOrigMapping = energyFlow.getMapping(block, block);
-    relMappingF2B = relationship.getMapping(function, block);
-    //    cfMapping = controlFlow.getMapping(function.getGeneral(), function.getGeneral());
-    ConnectionMapping ifs2f = informationFlow.createMapping("s2if", state,
-        MultiplicityContainer.of(1, UnlimitedNatural.UNLIMITED, 0, UnlimitedNatural.UNLIMITED), "if2f", function,
-        MultiplicityContainer.of(1, UnlimitedNatural.UNLIMITED, 0, UnlimitedNatural.UNLIMITED));
-    controlFlow.createMapping("s2cf", state, MultiplicityContainer.of(1, UnlimitedNatural.UNLIMITED, 0, UnlimitedNatural.UNLIMITED), "cf2f",
-        function, MultiplicityContainer.of(1, UnlimitedNatural.UNLIMITED, 0, UnlimitedNatural.UNLIMITED));
-    view = new RetypeConnectionMappingTransformation(informationFlow, ifs2f, controlFlow, new RightJoinedConnectionMapping(ifs2f,
-        relMappingF2B.getFrom(), relMappingF2B.getTo(), ifOrigMapping)).apply(view);
+    view = new RightJoinConnectionMappingTransformation(type, type.getMapping(state, function), relationship,
+        relationship.getMapping(function, block), type.getMapping(state, function)).apply(view);
 
-    //    informationFlow = view.findEdgeType("InformationFlow");
-    //    controlFlow = view.findEdgeType("Control Flow");
-    //    function = view.findNodeType("Function");
-    //    relationship = view.findEdgeType("Relationship");
-    //    state = view.findNodeType("State");
-    //    block = view.findNodeType("Block");
-    //    relMappingF2B = relationship.getMapping(function, block);
-    //    ConnectionMapping ifs2f = informationFlow.createMapping("s2if", state,
-    //        MultiplicityContainer.of(1, UnlimitedNatural.UNLIMITED, 0, UnlimitedNatural.UNLIMITED), "if2f", function,
-    //        MultiplicityContainer.of(1, UnlimitedNatural.UNLIMITED, 0, UnlimitedNatural.UNLIMITED));
-    //
-    //    view = new RetypeConnectionMappingTransformation(informationFlow, ifs2f, controlFlow, new RightJoinedConnectionMapping(ifs2f,
-    //        relMappingF2B.getFrom(), relMappingF2B.getTo(), ifOrigMapping)).apply(view);
-    //    //    view = new RetypeConnectionMappingTransformation(energyFlow, eff2s, controlFlow, new LeftJoinedConnectionMapping(eff2s, relMappingF2B.getFrom(),
-    //    //        relMappingF2B.getTo(), efOrigMapping)).apply(view);
-    //    //    view = new RetypeConnectionMappingTransformation(energyFlow, efs2f, controlFlow, new LeftJoinedConnectionMapping(efs2f, cfMapping.getTo(),
-    //    //        cfMapping.getFrom(), efOrigMapping)).apply(view);
-    //    //Transformation ends here
+    type = view.findEdgeType(type.getName());
+    relationship = view.findEdgeType("Relationship");
+    view = new LeftJoinConnectionMappingTransformation(type, type.getMapping(function, state), relationship,
+        relationship.getMapping(function, block), type.getMapping(state, block)).apply(view);
 
-    //    view = new HideEdgeTypeTransformation(view.findEdgeType("Control Flow")).apply(view);
-
-    view = new NodifyTransformation(view.findNodeType("Function"), view.findNodeType("Block"), view.findEdgeType("Relationship"), "functionary")
-        .apply(view);
-        
-        
-        */
-
+    type = view.findEdgeType(type.getName());
+    relationship = view.findEdgeType("Relationship");
+    view = new RightJoinConnectionMappingTransformation(type, type.getMapping(function, state), relationship, relationship.getMapping(state, block),
+        type.getMapping(function, state)).apply(view);
     return view;
   }
 }

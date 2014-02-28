@@ -2,17 +2,17 @@ package de.tum.pssif.transform.transformation;
 
 import de.tum.pssif.core.metamodel.EdgeType;
 import de.tum.pssif.core.metamodel.NodeType;
-import de.tum.pssif.transform.transformation.nodified.CreateArtificialNodeType;
+import de.tum.pssif.transform.transformation.artificial.CreateArtificialNodeType;
 import de.tum.pssif.transform.transformation.viewed.ViewedEdgeType;
 import de.tum.pssif.transform.transformation.viewed.ViewedNodeType;
 
 
-public class CreateNodeTransformation extends AbstractTransformation {
+public class CreateArtificialNodeTransformation extends AbstractTransformation {
   private NodeType sourceType;
   private NodeType targetType;
   private EdgeType edgeType;
 
-  public CreateNodeTransformation(NodeType sourceType, NodeType targetType, EdgeType edgeType) {
+  public CreateArtificialNodeTransformation(NodeType sourceType, NodeType targetType, EdgeType edgeType) {
     this.sourceType = sourceType;
     this.targetType = targetType;
     this.edgeType = edgeType;

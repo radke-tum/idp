@@ -1,4 +1,4 @@
-package de.tum.pssif.transform.transformation.nodified;
+package de.tum.pssif.transform.transformation.artificial;
 
 import de.tum.pssif.core.PSSIFConstants;
 import de.tum.pssif.core.metamodel.Attribute;
