@@ -62,8 +62,11 @@ public class GraphMlViewCreator {
     EdgeType materialFlow = view.findEdgeType("MaterialFlow");
     NodeType state = view.findNodeType("State");
     NodeType function = view.findNodeType("Function");
+    block = view.findNodeType("Block");
     view = new SpecializeConnectionMappingTransformation(informationFlow, state, function, informationFlow.getMapping(block, block)).apply(view);
+    block = view.findNodeType("Block");
     view = new SpecializeConnectionMappingTransformation(energyFlow, state, function, energyFlow.getMapping(block, block)).apply(view);
+    block = view.findNodeType("Block");
     view = new SpecializeConnectionMappingTransformation(materialFlow, state, function, materialFlow.getMapping(block, block)).apply(view);
 
     view = new SpecializeConnectionMappingTransformation(informationFlow, function, state, informationFlow.getMapping(block, block)).apply(view);
