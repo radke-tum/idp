@@ -1,6 +1,5 @@
 package model;
 
-
 import graph.model.MyEdge;
 import graph.model.MyEdgeType;
 import graph.model.MyEdgeTypes;
@@ -15,6 +14,7 @@ import de.tum.pssif.core.PSSIFConstants;
 import de.tum.pssif.core.metamodel.AttributeCategory;
 import de.tum.pssif.core.metamodel.ConnectionMapping;
 import de.tum.pssif.core.metamodel.EdgeType;
+import de.tum.pssif.core.metamodel.Metamodel;
 import de.tum.pssif.core.metamodel.MutableMetamodel;
 import de.tum.pssif.core.metamodel.NodeType;
 
@@ -31,24 +31,36 @@ import de.tum.pssif.core.util.PSSIFValue;
 import de.tum.pssif.core.metamodel.Attribute;
 import de.tum.pssif.core.metamodel.Multiplicity.MultiplicityContainer;
 import de.tum.pssif.core.metamodel.Multiplicity.UnlimitedNatural;
+import de.tum.pssif.core.metamodel.impl.DisconnectOperation;
 import de.tum.pssif.core.metamodel.impl.GetValueOperation;
 import de.tum.pssif.core.metamodel.impl.MetamodelImpl;
 import de.tum.pssif.core.metamodel.impl.ReadConnectedOperation;
 import de.tum.pssif.core.metamodel.impl.SetValueOperation;
 
+/**
+ * Builds out of a Model and an MetaModel a Model which can be displayed as Graph and Matrix
+ * @author Luc
+ *
+ */
 public class ModelBuilder {
 	
-	public Model model;
-	public MutableMetamodel meta;
+	public static Model model;
+	public static MutableMetamodel meta;
 	private static MyNodeTypes nodeTypes;
 	private static MyEdgeTypes edgeTypes;
 	private static LinkedList<MyNode> nodes;
 	private static LinkedList<MyEdge> edges;
 	
-	public ModelBuilder(MutableMetamodel meta, Model model)
+	/**
+	 * Initializes all the content
+	 * @param meta
+	 * @param model
+	 */
+	public ModelBuilder(Metamodel Pmeta, Model Pmodel)
 	{
-		this.model = model;
-		this.meta = meta;
+		model = Pmodel;
+		
+		meta = (MutableMetamodel) Pmeta;
 		
 		nodes = new LinkedList<MyNode>();
 		edges = new LinkedList<MyEdge>();
@@ -61,31 +73,40 @@ public class ModelBuilder {
 		
 	}
 	
+	/**
+	 * Should not be used!! Only for test purposes
+	 */
 	public ModelBuilder()
 	{
-		mockData();
+		//mockData();
 		
-		nodes = new LinkedList<MyNode>();
-		edges = new LinkedList<MyEdge>();
-		
-		createNodeTypes();
-		createEdgeTypes();
-		
-		createNodes();
-		createEdges();
-		
+		if (meta!= null || model !=null)
+		{
+			nodes = new LinkedList<MyNode>();
+			edges = new LinkedList<MyEdge>();
+			
+			createNodeTypes();
+			createEdgeTypes();
+			
+			createNodes();
+			createEdges();
+		}
+		else
+		{
+			throw new NullPointerException("Should not be used!!!");
+		}
 	}
 	
 	private void createNodeTypes()
 	{
-		Collection<NodeType> types = this.meta.getNodeTypes();
+		Collection<NodeType> types = meta.getNodeTypes();
 		
 		nodeTypes = new MyNodeTypes(types);
 	}
 	
 	private void createEdgeTypes()
 	{
-		Collection<EdgeType> types = this.meta.getEdgeTypes();
+		Collection<EdgeType> types = meta.getEdgeTypes();
 		
 		edgeTypes = new MyEdgeTypes(types);
 	}
@@ -255,18 +276,7 @@ public class ModelBuilder {
 	    ConnectionMapping hw2hw = hwContainment.getMapping(node("hardware", meta), node("hardware", meta));
 	    ConnectionMapping hw2sw = hwContainment.getMapping(node("hardware", meta), node("software", meta));
 	    
-	   /* for (int i =0;i<1000;i++)
-	    {
-	    	Node test = node("hardware", meta).create(model);
-	    	node("hardware", meta).findAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_NAME).set(gpsApp, PSSIFOption.one(PSSIFValue.create("test"+i)));
-	    	if ((i % 3) ==0)
-	    		hw2hw.create(model, test, battery);
-	    	if ((i % 3) ==1)
-	    		hw2hw.create(model, test, smartphone);
-	    	if ((i % 3) ==2)
-	    		hw2hw.create(model, test, ebike);
-	    	
-	    }*/
+
 	    
 	    
 	    
@@ -280,7 +290,7 @@ public class ModelBuilder {
 	    hw2swUses.create(model, smartphone, gpsApp);
 	  }
 	
-   private NodeType node(String name, MutableMetamodel metamodel) {
+   private static NodeType node(String name, MutableMetamodel metamodel) {
 	   return metamodel.findNodeType(name);
    }
 
@@ -323,4 +333,41 @@ public class ModelBuilder {
 		System.out.println("--------------------------");
 	}
 	
+	public static void addNewNodeFromGUI (String nodeName, MyNodeType type)
+	{
+		Node newNode = node(type.getName(), meta).create(model);
+		
+		node(type.getName(), meta).findAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_NAME).set(newNode, PSSIFOption.one(PSSIFValue.create(nodeName)));
+		
+		nodes.add(new MyNode(newNode, type));
+	}
+	
+	public static void removeNode (MyNode node)
+	{
+		//node.getNode().apply(new Disco);
+		
+		//Node newNode = node(type.getName(), meta)
+		
+		//node(type.getName(), meta).findAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_NAME).set(newNode, PSSIFOption.one(PSSIFValue.create(nodeName)));
+		
+		//newNode.apply();
+		//node.getNode().apply(new DisconnectOperation(null, null, null));
+	}
+	
+	public static boolean addNewEdgeGUI(MyNode source, MyNode destination, MyEdgeType edgetype)
+	{
+		ConnectionMapping mapping = edgetype.getType().getMapping(source.getNodeType().getType(), destination.getNodeType().getType());
+		
+		if (mapping!=null)
+		{
+			Edge newEdge = mapping.create(model, source.getNode(), destination.getNode());
+				
+			MyEdge e  = new MyEdge(newEdge, edgetype, source, destination);
+			
+			edges.add(e);
+			return true;
+		}
+		else
+			return false;
+	}
 }

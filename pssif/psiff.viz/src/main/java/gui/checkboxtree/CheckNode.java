@@ -6,6 +6,11 @@ import java.util.Enumeration;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 
+/**
+ * Provides some Tree related special Checkbox. (if parent is selected, select also all the children)
+ * @author Luc
+ *
+ */
 public class CheckNode extends DefaultMutableTreeNode {
 
 	  public final static int SINGLE_SELECTION = 0;
@@ -50,7 +55,7 @@ public class CheckNode extends DefaultMutableTreeNode {
 	      }
 	    }
 	  }
-
+	  
 	  public boolean isSelected() {
 	    return isSelected;
 	  }

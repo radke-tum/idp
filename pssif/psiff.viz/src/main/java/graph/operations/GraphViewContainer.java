@@ -27,25 +27,42 @@ public class GraphViewContainer {
 		this.selectedEdgeTypes = selectedEdgeTypes;
 		this.selectedNodeTypes = selectedNodeTypes;
 	}
-	
+	/**
+	 * Creates an empty new container
+	 */
 	public GraphViewContainer()
 	{
 		this.selectedEdgeTypes = new LinkedList<MyEdgeType>();
 		this.selectedNodeTypes = new LinkedList<MyNodeType>();
 	}
-
+	/**
+	 * Get all the Node Types which should be displayed
+	 * @return a list with all the Node Types
+	 */
 	public LinkedList<MyNodeType> getSelectedNodeTypes() {
 		return selectedNodeTypes;
 	}
-
+	
+	/**
+	 * Set the Node Types which should be displayed in this View
+	 * @param selectedNodeTypes a list with all the Node Types
+	 */
 	public void setSelectedNodeTypes(LinkedList<MyNodeType> selectedNodeTypes) {
 		this.selectedNodeTypes = selectedNodeTypes;
 	}
-
+	
+	/**
+	 * Get all the Edges Types which should be displayed
+	 * @return a list with all the Edge Types
+	 */
 	public LinkedList<MyEdgeType> getSelectedEdgeTypes() {
 		return selectedEdgeTypes;
 	}
 
+	/**
+	 * Set the Edge Types which should be displayed in this View
+	 * @param selectedEdgeTypes a list with all the Edge Types
+	 */
 	public void setSelectedEdgeTypes(LinkedList<MyEdgeType> selectedEdgeTypes) {
 		this.selectedEdgeTypes = selectedEdgeTypes;
 	}

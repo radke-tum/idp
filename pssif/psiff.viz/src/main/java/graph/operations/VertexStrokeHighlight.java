@@ -5,6 +5,8 @@ import java.awt.Stroke;
 import java.util.Collection;
 import java.util.LinkedList;
 
+import model.ModelBuilder;
+
 import org.apache.commons.collections15.Transformer;
 
 import edu.uci.ics.jung.graph.Graph;
@@ -13,6 +15,13 @@ import graph.model.MyEdge;
 import graph.model.MyEdgeType;
 import graph.model.MyNode;
 
+/**
+ * Highlights certain Nodes which are connected with a defined Edge Type
+ * @author Luc
+ *
+ * @param <V> The Node class ( e.g. MyNode)
+ * @param <E> The Edge class ( e.g. MyEdge)
+ */
 public class VertexStrokeHighlight<V,E> implements Transformer<V,Stroke>
 	    {
 	        protected boolean highlight = false;
@@ -27,7 +36,11 @@ public class VertexStrokeHighlight<V,E> implements Transformer<V,Stroke>
 	        
 	        private static boolean debug = false;
 	        
-	        
+	        /**
+	         * Init the Highlighter
+	         * @param graph the graph on which the Highlighter should be applied
+	         * @param pi which Node is currently selected
+	         */
 	        public VertexStrokeHighlight(Graph<V,E> graph, PickedInfo<V> pi)
 	        {
 	        	this.graph = graph;
@@ -38,6 +51,12 @@ public class VertexStrokeHighlight<V,E> implements Transformer<V,Stroke>
 	            
 	        }
 	        
+	        /**
+	         * Which Edge Types should be followed and how depth
+	         * @param highlight should the Highlighter be turned on from the beginning
+	         * @param searchDepth how depth should the search go. (e.g. how many Edges should be followed)
+	         * @param followEdges which Edge Type should be followed at all
+	         */
 	        public void setHighlight(boolean highlight, int searchDepth, LinkedList<MyEdgeType> followEdges)
 	        {
 	            this.highlight = highlight;
@@ -50,6 +69,9 @@ public class VertexStrokeHighlight<V,E> implements Transformer<V,Stroke>
 	            	this.specialSearch=false;
 	        }
 	        
+	        /**
+	         * Do the visualization on the graph
+	         */
 	        public Stroke transform(V currentNode)
 	        {
 	            
@@ -68,40 +90,9 @@ public class VertexStrokeHighlight<V,E> implements Transformer<V,Stroke>
 	                	}
 		                else
 		                {	                
-		                	Collection<V>  predecessors = graph.getPredecessors(currentNode);
-		                	if (predecessors!=null)
-		                	{
-		                		for (V v: predecessors)
-		                		{
-		                			if (pi.isPicked(v))
-		                			{
-		                				if(searchOutEdges(v, currentNode))
-		                				{
-		                					//System.out.println("medium");
-		                					 if (debug)
-		                					 {
-			                					System.out.println(((MyNode) currentNode).getName());
-			                					System.out.println("                             direct Predecessor  Medium ");
-		                					 }
-		                					return medium;
-		                				}
-		                				else
-		                				{
-		                					//System.out.println("light");
-		                					 if (debug)
-		                					{
-		                						 System.out.println(((MyNode) currentNode).getName());
-		                						 System.out.println("                              not direct Predecessor  Light ");
-		                					}
-		                					return light;
-		                				}
-		                			}
-		                		}
-		                	}
-		                	
 		                	if (depth>1)
             				{
-            					if (searchDept(currentNode, depth, false))
+		                		if (searchDept(currentNode, depth))
             					{
             						 if (debug)
             						 {
@@ -126,21 +117,33 @@ public class VertexStrokeHighlight<V,E> implements Transformer<V,Stroke>
             				}
             				else
             				{
-            					 if (debug)
-            					 {
-	            					System.out.println(((MyNode) currentNode).getName());
-	            					System.out.println("                             depth only 1 Light ");
-	            					//System.out.println("light");
-            					 }
-            					return light;
+            					Collection<V>  predecessors = graph.getNeighbors(currentNode);
+    		                	if (predecessors!=null)
+    		                	{
+    		                		for (V v: predecessors)
+    		                		{
+    		                			if (pi.isPicked(v))
+    		                			{
+    		                				if(searchOutEdges(v, currentNode,false))
+    		                				{
+    		                					//System.out.println("medium");
+    		                					 if (debug)
+    		                					 {
+    			                					System.out.println(((MyNode) currentNode).getName());
+    			                					System.out.println("                             direct Predecessor  Medium ");
+    		                					 }
+    		                					return medium;
+    		                				}
+    		                			}
+    		                			
+    		                		}
+    		                		return light;
+    		                	}
+    		                	else
+    		                		return light;
             				}
 		                		
-	                	}
-	                	/*System.out.println(((MyNode) currentNode).getName());
-	                	System.out.println("                             Predessor null light");
-	                	//System.out.println("outer light");
-	                	return light;*/
-	                	
+	                	}        	
 	                }
 	                else
 	                {
@@ -165,73 +168,130 @@ public class VertexStrokeHighlight<V,E> implements Transformer<V,Stroke>
 	                return light; 
 	        }
 	        
-	        private boolean searchOutEdges(V source, V dest)
+	        /**
+	         * check if between the source and the destination exists an Edge which has one of the selected EdgeTypes  
+	         * @param source The start Node
+	         * @param dest The destination Node
+	         * @param depthsearch if depth search has to be true, else always false
+	         * @return true if an Edge exists, which fulfills the Type condition, otherwise false
+	         */
+	        private boolean searchOutEdges(V source, V dest, boolean depthsearch)
 	        {
 	        	@SuppressWarnings("unchecked")
-				Collection<MyEdge> eout = ( Collection<MyEdge>) graph.getOutEdges(source);
+	        	LinkedList<MyEdge> eout = findOutgoingEdges(source);
+				//Collection<MyEdge> eout = ( Collection<MyEdge>) graph.getOutEdges(source);
 	        	 
 	        	 for (MyEdge e : eout)
 	        	 {
 	        		/* System.out.println(e.getConnectionType()+" dest "+e.getDestinationNode().getRealName()+
  							" source "+e.getSourceNode().getRealName());*/
-	        		 if (this.followEdges.contains(e.getEdgeType()) && e.getDestinationNode().equals(((MyNode) dest)))
-	        				 return true;
+	        		if (depthsearch)
+	        		{
+		        		 if ((this.followEdges.isEmpty() && e.getDestinationNode().equals(((MyNode) dest)) )|| 
+		        				 (!this.followEdges.isEmpty() && this.followEdges.contains(e.getEdgeType()) && e.getDestinationNode().equals(((MyNode) dest))))
+		        				 return true;
+	        		}
+	        		else
+	        		{
+	        			if (this.followEdges.contains(e.getEdgeType()) && e.getDestinationNode().equals(((MyNode) dest)))
+		        				 return true;
+	        		}
 	        	 }
 	        	 return false;
 	        }
 	        
-	        private boolean searchDept(V current, int level, boolean res)
+	        /**
+	         * Test if one of the predecessor Node is already highlighted. 
+	         * If the current Node is in the a reachable depth range, the current Node must also be highlighted
+	         * @param current The Node which has to be test.
+	         * @param level how depth should be searched
+	         * @param res due to recursion. Should always be initialized with false 
+	         * @return  true if the tested Node should be highlighted, otherwise false
+	         */
+	        private boolean searchDept(V current, int level )
 	        {
-	        	if (level >0)
+	        	if (level>0)
 	        	{
-	        		Collection<V>  predecessors = graph.getPredecessors(current);
+	        		Collection<V>  predecessors = graph.getNeighbors(current);
+	        		LinkedList<V> next = new LinkedList<V>();
 	        		
-	        		if (predecessors!=null)
+	        		for (V v: predecessors)
 	        		{
-		        		for (V v :predecessors)
-		        		{
-		        			 if (debug)
-		        				 System.out.println("Predcessor test "+ ((MyNode) v).getName());
+	        			if (searchOutEdges(v, current, true))
+	        			{
 		        			if (pi.isPicked(v))
-	            			{
-	            				if(searchOutEdges(v,current))
-	            				{
-	            					res = res || true;
-	            					level=0;
-	            					return res;
-	            				}
-	            				/*else
-	            					return res || false;*/
-
-	            			}
+		        				return true;
 		        			else
-		        			{
-		        				if(searchOutEdges(v,current))
-		        				{
-		        					 if (debug)
-		        						 System.out.println(((MyNode) current).getName()+" rec");
-		        					return searchDept(v, level--, res);
-		        				}
-		        				/*else
-		        					return res || false;*/
-		        			}
-		        		}
+		        				next.add(v);
+
+	        			}
 	        		}
-	        		/*else
-	        			return res || false;*/
+	        		
+	        		boolean res=false;
+	        		level--;
+	        		for (V v :next)
+	        		{
+	        			
+	        			res = res || searchDept(v, level); 
+	        		}
+	        		
+	        		return res;
 	        	}
 
-
-	        	return res;
+	        		return false;
 	        }
 	        
+
+	        /**
+	         * Get all the Edge Types which should be followed
+	         * @return a list with Edge Types
+	         */
 	        public LinkedList<MyEdgeType> getFollowEdges()
 	        {
 	        	return this.followEdges;
 	        }
-
+	        
+	        /**
+	         * How depth is searched
+	         * @return the depth
+	         */
 			public int getSearchDepth() {
 				return depth;
+			}
+			
+			/**
+			 * Find for a given Node all the outgoing edges
+			 * @param node the node which should be searched
+			 * @return a list with all the outgoing Edges
+			 */
+			private LinkedList<MyEdge> findOutgoingEdges (V node)
+			{
+				LinkedList<MyEdge> res = new LinkedList<MyEdge>();
+				
+				for (MyEdge e :ModelBuilder.getAllEdges())
+				{
+					if (e.isVisible() && e.getSourceNode().equals((MyNode)node))
+						res.add(e);
+				}
+				
+				return res;
+			}
+			
+			/**
+			 * Find for a given Node all the incoming edges
+			 * @param node the node which should be searched
+			 * @return a list with all the incoming Edges
+			 */
+			private LinkedList<MyEdge> findIncomingEdges (MyNode node)
+			{
+				LinkedList<MyEdge> res = new LinkedList<MyEdge>();
+				
+				for (MyEdge e :ModelBuilder.getAllEdges())
+				{
+					if (e.isVisible() && e.getDestinationNode().equals(node))
+						res.add(e);
+				}
+				return res;
 			}
 	        
 }

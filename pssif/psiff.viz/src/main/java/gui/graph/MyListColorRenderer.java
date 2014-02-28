@@ -1,7 +1,5 @@
 package gui.graph;
 
-
-
 import graph.model.MyNodeType;
 
 import java.awt.Color;
@@ -10,13 +8,15 @@ import java.util.HashMap;
 
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JList;
-
+/**
+ * Allows to change the background color of a entry in a JList
+ * @author Luc
+ *
+ */
 public class MyListColorRenderer extends DefaultListCellRenderer  
 	{  
-	private static final long serialVersionUID = 1L;
-	
-		//private HashMap theChosen = new HashMap();
-	    private HashMap<MyNodeType, Color> colorMapper;
+		private static final long serialVersionUID = 1L;
+		private HashMap<MyNodeType, Color> colorMapper;
 
 	    public Component getListCellRendererComponent( JList list,  
 	    		Object value, int index, boolean isSelected,  
@@ -24,14 +24,7 @@ public class MyListColorRenderer extends DefaultListCellRenderer
 	    {  
 	        super.getListCellRendererComponent( list, value, index,  
 	                isSelected, cellHasFocus );  
-	        
-	       /* if( isSelected )  
-	        {  
-	            theChosen.put( value, "chosen" );  
-	        }  */
-	        
-	        //System.out.println("getListCellRendererComponent ");
-	        
+	         
 	        MyNodeType t = (MyNodeType) value;
 	       // System.out.println(t);
 	        if( colorMapper.containsKey( t ) )  
@@ -48,7 +41,7 @@ public class MyListColorRenderer extends DefaultListCellRenderer
 	    
 	    public void setColor (MyNodeType type , Color c)
 	    {
-	    	 System.out.println("Put Color "+c);
+	    	//System.out.println("Put Color "+c);
 	    	this.colorMapper.put(type, c);
 	    }
 	    

@@ -14,6 +14,11 @@ import javax.swing.UIManager;
 import javax.swing.plaf.ColorUIResource;
 import javax.swing.tree.TreeCellRenderer;
 
+/**
+ * Class which adds the Checkboxes to every node and leaf in the default JTree
+ * @author Luc
+ *
+ */
 public class CheckBoxRenderer extends JPanel implements TreeCellRenderer {
 	  protected JCheckBox check;
 

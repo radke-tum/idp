@@ -1,5 +1,10 @@
 package graph.operations;
 
+/**
+ * Enum with all the possible attribute operations
+ * @author Luc
+ *
+ */
 public enum AttributeOperations {
 	
 	GREATER("Greater than"),
@@ -20,12 +25,18 @@ public enum AttributeOperations {
 		return name;
 	}
 	
+	/**
+	 * returns the name of the operation
+	 */
 	public String toString()
 	{
 		return name;
 	}
-	
-	
+	/**
+	 * Get an attribute operation by his name
+	 * @param s the name of the operation
+	 * @return the attribute operation if it does exist, otherwise null
+	 */
 	public static AttributeOperations getValueOf(String s)
 	{
 		AttributeOperations res =null;

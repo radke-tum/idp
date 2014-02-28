@@ -21,11 +21,15 @@ public final class VsdxTokens {
   public static final String TO_PART                        = "ToPart";
   public static final String BEGIN_X                        = "BeginX";
   public static final String END_X                          = "EndX";
+  public static final String BEGIN_Y                        = "BeginY";
+  public static final String END_Y                          = "EndY";
   public static final String SECTION                        = "Section";
   public static final String ATTRIBUTE_NAME                 = "N";
   public static final String ATTRIBUTE_VALUE                = "V";
   public static final String ATTRIBUTE_UNIT                 = "U";
   public static final String ATTRIBUTE_FORMULA              = "F";
+  public static final String ATTRIBUTE_INDEX                = "IX";
+  public static final String ATTRIBUTE_TYPE                 = "T";
   public static final String UNIT_IN                        = "IN";
   public static final String FORMULA_NONE                   = "No Formula";
   public static final String PROPERTY                       = "Property";
@@ -50,6 +54,12 @@ public final class VsdxTokens {
   public static final String STATIC_SHAPE_SHADOW_OFFSET_X   = "ShapeShdwOffsetX";
   public static final String STATIC_SHAPE_SHADOW_OFFSET_Y   = "ShapeShdwOffsetY";
   public static final String STATIC_OBJECT_TYPE             = "ObjType";
+
+  public static final String GEOMETRY                       = "Geometry";
+  public static final String MOVE_TO                        = "MoveTo";
+  public static final String LINE_TO                        = "LineTo";
+  public static final String X                              = "X";
+  public static final String Y                              = "Y";
 
   private VsdxTokens() {
     //NOP

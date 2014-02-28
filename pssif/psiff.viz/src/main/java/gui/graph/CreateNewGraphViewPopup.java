@@ -35,6 +35,11 @@ import javax.swing.JTree;
 
 import model.ModelBuilder;
 
+/**
+ * Provides the functionality to create a new View on the Graph
+ * @author Luc
+ *
+ */
 public class CreateNewGraphViewPopup extends MyPopup{
 	
 	private JPanel NodePanel;
@@ -49,6 +54,11 @@ public class CreateNewGraphViewPopup extends MyPopup{
 		tree = new CheckBoxTree();
 	}
 	
+	/**
+	 * Evaluate the Popup after the users input
+	 * @param dialogResult the result of the users interaction with the popup gui
+	 * @return true if the View was successfully created, false otherwise
+	 */
 	private boolean evalDialog (int dialogResult)
 	{
 		if (dialogResult==0)
@@ -72,26 +82,7 @@ public class CreateNewGraphViewPopup extends MyPopup{
         		}	
         	}
         	
-        	LinkedList<MyEdgeType> selectedEdges = tree.evalTree();
-        	/*
-    		// get all the values of the edges
-        	attr = EdgePanel.getComponents();       	
-        	for (Component tmp :attr)
-        	{
-        		if ((tmp instanceof JCheckBox))
-        		{
-        			JCheckBox a = (JCheckBox) tmp;
-        			
-        			// compare which ones where selected
-        			 if (a.isSelected())
-        			 {
-        				 MyEdgeType b = ModelBuilder.getEdgeTypes().getValue(a.getText());
-        				 selectedEdges.add(b);
-        			 }
-        				
-        		}	
-        	}*/
-        	
+        	LinkedList<MyEdgeType> selectedEdges = tree.evalTree();        	
         	
         	String viewName = viewNameTextField.getText();
         	
@@ -113,7 +104,7 @@ public class CreateNewGraphViewPopup extends MyPopup{
 	        	graphView.getGraph().createNewGraphView(container);
 	        	
 	        	// apply the view
-	        	graphView.getGraph().applyNodeAndEdgeFilter(container.getSelectedNodeTypes(), container.getSelectedEdgeTypes());
+	        	//graphView.getGraph().applyNodeAndEdgeFilter(container.getSelectedNodeTypes(), container.getSelectedEdgeTypes(), viewName);
 	        	
 	        	return true;
         	}
@@ -123,6 +114,10 @@ public class CreateNewGraphViewPopup extends MyPopup{
 		return false;
 	}
 	
+	/**
+	 * Show the Popup to the user
+	 * @return
+	 */
 	public boolean showPopup()
 	{
 		JPanel allPanel = createPanel();
@@ -132,6 +127,10 @@ public class CreateNewGraphViewPopup extends MyPopup{
 		return evalDialog(dialogResult);
 	}
 	
+	/**
+	 * Create the Panel(GUI) of the Popup 
+	 * @return a panel with all the components
+	 */
 	private JPanel createPanel()
 	{		
 		LinkedList<MyNodeType> nodePossibilities = ModelBuilder.getNodeTypes().getAllNodeTypes();
@@ -153,7 +152,7 @@ public class CreateNewGraphViewPopup extends MyPopup{
 		
 		EdgePanel = new JPanel(new GridLayout(0, 1));
 		
-		TreeMap<String, LinkedList<MyEdgeType>> sortedEdges = sortByParentType(ModelBuilder.getEdgeTypes().getAllEdgeTypes());
+		TreeMap<String, LinkedList<MyEdgeType>> sortedEdges = sortByEdgeTypeByParentType(ModelBuilder.getEdgeTypes().getAllEdgeTypes());
 		
 		JTree tmpTree = tree.createTree(sortedEdges);
 

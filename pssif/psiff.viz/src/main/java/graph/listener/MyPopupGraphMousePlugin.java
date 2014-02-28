@@ -10,6 +10,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+
 import javax.swing.AbstractAction;
 import javax.swing.ButtonGroup;
 import javax.swing.JCheckBox;
@@ -29,6 +30,7 @@ import model.ModelBuilder;
 
 import org.apache.commons.collections15.map.HashedMap;
 
+import de.tum.pssif.core.model.Model;
 import edu.uci.ics.jung.algorithms.layout.CircleLayout;
 import edu.uci.ics.jung.algorithms.layout.GraphElementAccessor;
 import edu.uci.ics.jung.algorithms.layout.FRLayout ;
@@ -38,16 +40,19 @@ import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.util.EdgeType;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.control.AbstractPopupGraphMousePlugin;
-
 import graph.model.MyEdge;
 import graph.model.MyEdgeType;
 import graph.model.MyNode;
 import graph.model.MyNodeType;
+import gui.graph.GraphVisualization;
 
-public class MyPopupGraphMousePlugin extends AbstractPopupGraphMousePlugin implements MouseListener {
-
-	    public MyPopupGraphMousePlugin() {
+public class MyPopupGraphMousePlugin extends AbstractPopupGraphMousePlugin {
+		
+		private GraphVisualization gViz;
+		
+	    public MyPopupGraphMousePlugin(GraphVisualization gViz) {
 	        this(MouseEvent.BUTTON3_MASK);
+	        this.gViz = gViz;
 	    }
 	    public MyPopupGraphMousePlugin(int modifiers) {
 	        super(modifiers);
@@ -55,29 +60,35 @@ public class MyPopupGraphMousePlugin extends AbstractPopupGraphMousePlugin imple
 	    
 	    
 	    protected void handlePopup(MouseEvent e) {
-	    /*    final VisualizationViewer<MyNode2,MyEdge2> vv = (VisualizationViewer<MyNode2,MyEdge2>)e.getSource();
+	        final VisualizationViewer<MyNode,MyEdge> vv = (VisualizationViewer<MyNode,MyEdge>)e.getSource();
 	        Point2D p = e.getPoint();
 
-	        GraphElementAccessor<MyNode2,MyEdge2> pickSupport = vv.getPickSupport();
+	        GraphElementAccessor<MyNode,MyEdge> pickSupport = vv.getPickSupport();
 	        if(pickSupport != null) {
 	           // System.out.println("POPUP MOUSE is not NULL!");
-	            final MyNode2 node = pickSupport.getVertex(vv.getGraphLayout(), p.getX(), p.getY());
+	            final MyNode node = pickSupport.getVertex(vv.getGraphLayout(), p.getX(), p.getY());
 	            if(node != null) {
-	                JPopupMenu popup = new JPopupMenu();
+	            	JPopupMenu popup = new JPopupMenu();
+	            	JMenu submenu =createEdge(e,node);
+	            	
+	            	popup.add(submenu);
+	            	
+	            	popup.show(vv, e.getX(), e.getY());
+	            	//JPopupMenu popup = new JPopupMenu();
 	                	         
-	                JMenu submenu = new JMenu("Add Edge");
+	             /*   JMenu submenu = new JMenu("Add Edge");
 
-	                final Layout<MyNode2, MyEdge2> l = vv.getGraphLayout();
+	                final Layout<MyNode, MyEdge> l = vv.getGraphLayout();
                 	
-                	final Graph<MyNode2, MyEdge2> g = l.getGraph();
+                	final Graph<MyNode, MyEdge> g = l.getGraph();
                 	
-                	LinkedList<MyNode2> col = new LinkedList<MyNode2>();
+                	LinkedList<MyNode> col = new LinkedList<MyNode>();
                 	col.addAll(g.getVertices());
                 	
                 	col.remove(node);
                 	
                 	
-                	for (final MyNode2 cur : col)
+                	for (final MyNode cur : col)
                 	{
                 		JMenuItem menuItem = new JMenuItem("To : "+cur.getName());
                 		
@@ -98,7 +109,7 @@ public class MyPopupGraphMousePlugin extends AbstractPopupGraphMousePlugin imple
 								
 								if (res!=null)
 								{
-									MyEdge2 newEdge = new MyEdge2(res, node, cur);
+									MyEdge newEdge = new MyEdge(res, node, cur);
 									g.addEdge(newEdge, node, cur ,EdgeType.DIRECTED);
 									
 									
@@ -121,14 +132,14 @@ public class MyPopupGraphMousePlugin extends AbstractPopupGraphMousePlugin imple
 	                  
 	                popup.add(new AbstractAction("Delete Node"){
 	                    public void actionPerformed(ActionEvent e) {
-	                    	Layout<MyNode2, MyEdge2> l = vv.getGraphLayout();
+	                    	Layout<MyNode, MyEdge> l = vv.getGraphLayout();
 	                      	
-	                      	Graph<MyNode2, MyEdge2> g = l.getGraph();
+	                      	Graph<MyNode, MyEdge> g = l.getGraph();
 	                    	
 	                    	
-	                    	Collection<MyEdge2> col = g.getIncidentEdges(node);
+	                    	Collection<MyEdge> col = g.getIncidentEdges(node);
 	                    	
-	                    	for (MyEdge2 edge :col)
+	                    	for (MyEdge edge :col)
 	                    	{
 	                    		g.removeEdge(edge);
 	                    	}
@@ -151,13 +162,13 @@ public class MyPopupGraphMousePlugin extends AbstractPopupGraphMousePlugin imple
                 	
                 	//final Graph<MyNode, MyEdge> graph = l.getGraph();
                 	
-                	col = new LinkedList<MyNode2>();
+                	col = new LinkedList<MyNode>();
                 	col.addAll(g.getVertices());
                 	
                 	col.remove(node);
                 	
                 	
-                	for (final MyNode2 cur : col)
+                	for (final MyNode cur : col)
                 	{
                 		JMenuItem menuItem = new JMenuItem("with: "+cur.getName());
                 		
@@ -278,7 +289,7 @@ public class MyPopupGraphMousePlugin extends AbstractPopupGraphMousePlugin imple
 										JPanel oldOutgoingPanel = new JPanel(new GridLayout(0, 1));
 										JPanel oldIncomingPanel = new JPanel(new GridLayout(0, 1));
 										
-										for (MyEdge2 edge: oldOutgoing_edges)
+										for (MyEdge edge: oldOutgoing_edges)
 										{
 											if (g.getDest(edge)!=cur)
 											{
@@ -290,7 +301,7 @@ public class MyPopupGraphMousePlugin extends AbstractPopupGraphMousePlugin imple
 											}
 										}
 										
-										for (MyEdge2 edge: oldIncoming_edges)
+										for (MyEdge edge: oldIncoming_edges)
 										{
 											if (g.getSource(edge)!=cur)
 											{
@@ -308,8 +319,8 @@ public class MyPopupGraphMousePlugin extends AbstractPopupGraphMousePlugin imple
 										
 										//New Node
 										HashMap<String, InfoContainer> newmapping = new HashMap<String,InfoContainer>();
-										Collection<MyEdge2> newOutgoing_edges = g.getOutEdges(cur);
-										Collection<MyEdge2> newIncoming_edges = g.getInEdges(cur);
+										Collection<MyEdge> newOutgoing_edges = g.getOutEdges(cur);
+										Collection<MyEdge> newIncoming_edges = g.getInEdges(cur);
 										
 										checkPanel2.add(new JLabel("Outgoing Edges"));
 										checkPanel2.add(new JLabel("InComing Edges"));
@@ -317,7 +328,7 @@ public class MyPopupGraphMousePlugin extends AbstractPopupGraphMousePlugin imple
 										JPanel newOutgoingPanel = new JPanel(new GridLayout(0, 1));
 										JPanel newIncomingPanel = new JPanel(new GridLayout(0, 1));
 										
-										for (MyEdge2 edge: newOutgoing_edges)
+										for (MyEdge edge: newOutgoing_edges)
 										{
 											if (g.getDest(edge)!=node)
 											{
@@ -329,7 +340,7 @@ public class MyPopupGraphMousePlugin extends AbstractPopupGraphMousePlugin imple
 											}
 										}
 										
-										for (MyEdge2 edge: newIncoming_edges)
+										for (MyEdge edge: newIncoming_edges)
 										{
 											if (g.getSource(edge)!=node)
 											{
@@ -475,19 +486,19 @@ public class MyPopupGraphMousePlugin extends AbstractPopupGraphMousePlugin imple
                 	}
 	                
      
-	                popup.add(submenu2);
+	                popup.add(submenu2);*/
 	                
 	                popup.show(vv, e.getX(), e.getY());
 	            } 
 	            else {
-	                final MyEdge2 edge = pickSupport.getEdge(vv.getGraphLayout(), p.getX(), p.getY());
+	                final MyEdge edge = pickSupport.getEdge(vv.getGraphLayout(), p.getX(), p.getY());
 	                if(edge != null) {
 	                    JPopupMenu popup = new JPopupMenu();
-	                    popup.add(new AbstractAction("Delete \""+edge.toString()+"\" Edge") {
+	                   /* popup.add(new AbstractAction("Delete \""+edge.toString()+"\" Edge") {
 	                        public void actionPerformed(ActionEvent e) {
-	                        	Layout<MyNode2, MyEdge2> l = vv.getGraphLayout();
+	                        	Layout<MyNode, MyEdge> l = vv.getGraphLayout();
 		                    	
-		                    	Graph<MyNode2, MyEdge2> g = l.getGraph();
+		                    	Graph<MyNode, MyEdge> g = l.getGraph();
 		                    	g.removeEdge(edge);
 		                    	
 		                    	//l.setGraph(g);
@@ -497,72 +508,118 @@ public class MyPopupGraphMousePlugin extends AbstractPopupGraphMousePlugin imple
 	                        }
 
 	                    });//popup.add
-	                    popup.show(vv, e.getX(), e.getY());
+	                    popup.show(vv, e.getX(), e.getY());*/
 
 	                }//if edge != null)
 	                else
 	                {
-	                	//rightclicked on Canvas 
-	                	System.out.println("On Canvas!");
-	                	
-	                	JPopupMenu popup = new JPopupMenu();
-	                    popup.add(new AbstractAction("Create Node") {
-	                        public void actionPerformed(ActionEvent e) {
-	                        	
-	                        	JTextField NodeName = new JTextField();
-	                        	JTextField NodeAttr = new JTextField();
-	                        	MyNodeType[] possibilities = ModelBuilder.getNodeTypes().getAllNodeTypesArray();
-	                        	JComboBox<MyNodeType> Nodetype = new JComboBox<MyNodeType>(possibilities);
-	                        	final JComponent[] inputs = new JComponent[] {
-	                        			new JLabel("Node Name"),
-	                        			NodeName,
-	                        			new JLabel("Nodetype"),
-	                        			Nodetype,
-	                        			new JLabel("Node Attributes (split with ; )"),
-	                        			NodeAttr
-	                        	};						
-	                        	
-	                        	JOptionPane.showMessageDialog(null, inputs, "Create new Node Dialog", JOptionPane.PLAIN_MESSAGE);
-
-	                        	if (NodeName.getText()!=null && NodeName.getText().length()>0
-	                        			&& NodeAttr.getText()!=null && NodeAttr.getText().length()>0)
-	                        	{
-	                        		String s = NodeAttr.getText();
-	                        		List<String> attributes = new LinkedList<String>();
-	                        		
-	                        		String[] temp = s.split(";");
-	                        		
-	                        		for (String a :temp)
-	                        		{
-	                        			attributes.add(a);
-	                        		}
-	                        	
-	                        		MyNode2 newNode = new MyNode2(NodeName.getText(), attributes,(MyNodeType)Nodetype.getSelectedItem());
-	                        		
-	                        		Layout<MyNode2, MyEdge2> l = vv.getGraphLayout();
-			                    	
-			                    	Graph<MyNode2, MyEdge2> g = l.getGraph();
-			                    	
-			                    	g.addVertex(newNode);
-			                    	
-			                    	//l = new FRLayout   <MyNode, MyEdge>(g);
-			                    	
-			                    	//vv.setGraphLayout(l);
-			                    	vv.repaint();
-			                    	
-	                        	}                                       	
-	                        	
-	                        }
-
-	                    });//popup.add
-	                    popup.show(vv, e.getX(), e.getY());
-	                	
+	                	createNode(e);
 	                }
 	            }
 
 
 
 	        }// if(pickSupport != null)
-	*/
+	
+	    }
+	   
+	    private void createNode( MouseEvent e )
+	    {
+	        VisualizationViewer<MyNode,MyEdge> vv = (VisualizationViewer<MyNode,MyEdge>) e.getSource();
+        	
+        	JPopupMenu popup = new JPopupMenu();
+            popup.add(new AbstractAction("Create Node") {
+                public void actionPerformed(ActionEvent e) {
+                	
+                	JTextField NodeName = new JTextField();
+
+                	MyNodeType[] possibilities = ModelBuilder.getNodeTypes().getAllNodeTypesArray();
+                	JComboBox<MyNodeType> Nodetype = new JComboBox<MyNodeType>(possibilities);
+                	final JComponent[] inputs = new JComponent[] {
+                			new JLabel("Node Name"),
+                			NodeName,
+                			new JLabel("Nodetype"),
+                			Nodetype
+                	};						
+                	
+                	JOptionPane.showMessageDialog(null, inputs, "Create new Node Dialog", JOptionPane.PLAIN_MESSAGE);
+
+                	if (NodeName.getText()!=null && NodeName.getText().length()>0)
+                	{
+                		ModelBuilder.addNewNodeFromGUI(NodeName.getText(), (MyNodeType) Nodetype.getSelectedItem());
+                		gViz.updateGraph();
+                	}                                       	
+                	
+                }
+
+            });
+            popup.show(vv, e.getX(), e.getY());
+	    }
+	    
+	    private JMenu createEdge ( MouseEvent e, MyNode selectedNode)
+	    {
+	    	JMenu submenu = new JMenu("Add Edge");
+
+           	LinkedList<MyNode> col = new LinkedList<MyNode>();
+           	
+           	col.addAll(ModelBuilder.getAllNodes());
+
+           	col.remove(selectedNode);
+           	        	
+           	for (MyNode cur : col)
+           	{
+           		JMenuItem menuItem = new JMenuItem("To : "+cur.getRealName());
+           		MyAddEdgeListener el = new MyAddEdgeListener(selectedNode, cur, gViz);
+           		
+           		menuItem.addActionListener(el);
+           		submenu.add(menuItem);
+           	}
+               
+
+           	return submenu;
+	    }
+	    
+	    private class MyAddEdgeListener implements ActionListener
+	    {
+	    	private MyNode source;
+	    	private MyNode dest;
+	    	private GraphVisualization gViz;
+	    	
+	    	public MyAddEdgeListener (MyNode source, MyNode dest, GraphVisualization gViz)
+	    	{
+	    		this.source = source;
+	    		this.dest = dest;
+	    		this.gViz = gViz;
+	    	}
+	    	
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				MyEdgeType[] possibilities = ModelBuilder.getEdgeTypes().getAllEdgeTypesArray();
+
+				MyEdgeType edgetype = (MyEdgeType)JOptionPane.showInputDialog(
+				                    null,"",
+				                    "Choose Edge Type",
+				                    JOptionPane.PLAIN_MESSAGE,
+				                    null,
+				                    possibilities,
+				                    "implements");
+				
+				if (edgetype!=null)
+				{
+					boolean res = ModelBuilder.addNewEdgeGUI(source, dest, edgetype);
+					if (res)
+						gViz.updateGraph();
+					else
+					{
+						JPanel errorPanel = new JPanel();
+		        		
+		        		errorPanel.add(new JLabel("This connection between the nodes is not allowed in this model"));
+		        		
+		        		JOptionPane.showMessageDialog(null, errorPanel, "Ups something went wrong", JOptionPane.ERROR_MESSAGE);
+					}
+				}	
+				
+			}
+	    	
 	    }
 }

@@ -3,6 +3,7 @@ package de.tum.pssif.vsdx.impl;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Map;
 import java.util.Set;
 
 import javax.xml.stream.XMLOutputFactory;
@@ -11,6 +12,7 @@ import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 import de.tum.pssif.vsdx.VsdxConnector;
@@ -25,7 +27,11 @@ import de.tum.pssif.vsdx.zip.ZipWriter;
 
 public class VsdxDocumentWriterImpl implements VsdxDocumentWriter {
 
-  private final VsdxDocumentImpl document;
+  private final VsdxDocumentImpl     document;
+
+  private Map<VsdxShape, Integer>    connectCounts       = Maps.newHashMap();
+  private Map<VsdxConnector, String> sourceConnectCellId = Maps.newHashMap();
+  private Map<VsdxConnector, String> targetConnectCellId = Maps.newHashMap();
 
   VsdxDocumentWriterImpl(VsdxDocumentImpl document) {
     this.document = document;
@@ -85,12 +91,20 @@ public class VsdxDocumentWriterImpl implements VsdxDocumentWriter {
       }
       if (container instanceof VsdxPage) {
         for (VsdxConnector connector : ((VsdxPage) container).getConnectors()) {
-          //TODO will this do? connectors seem to have more stuff...
           writeShape(connector, writer);
         }
       }
       writer.writeEndElement();
     }
+  }
+
+  private Integer getConnectsCount(VsdxShape shape) {
+    if (connectCounts.get(shape) == null) {
+      connectCounts.put(shape, Integer.valueOf(1));
+    }
+    Integer result = connectCounts.get(shape);
+    connectCounts.put(shape, Integer.valueOf(result.intValue() + 1));
+    return result;
   }
 
   private void writeShape(VsdxShape shape, XMLStreamWriter writer) throws XMLStreamException {
@@ -103,23 +117,31 @@ public class VsdxDocumentWriterImpl implements VsdxDocumentWriter {
     writer.writeAttribute(VsdxTokens.MASTER, String.valueOf(shape.getMaster().getId()));
 
     //write static elements
-    //TODO diversify coordinates. maybe layout shapes on a grid?
-    writeCell(writer, VsdxTokens.STATIC_PIN_X, "2");
-    writeCell(writer, VsdxTokens.STATIC_PIN_Y, "2");
+    writeCell(writer, VsdxTokens.STATIC_PIN_X, "2", null, "Inh");
+    writeCell(writer, VsdxTokens.STATIC_PIN_Y, "2", null, "Inh");
     if (shape.isConnector()) {
+      //connector-specific stuff
+      VsdxConnector connector = (VsdxConnector) shape;
+      String sourceConnectCountStr = String.valueOf(getConnectsCount(connector.getSourceShape()));
+      String targetConnectCountStr = String.valueOf(getConnectsCount(connector.getTargetShape()));
+      sourceConnectCellId.put(connector, sourceConnectCountStr);
+      targetConnectCellId.put(connector, targetConnectCountStr);
+
+      writeCell(writer, VsdxTokens.BEGIN_X, "2", null, "PAR(PNT(Sheet." + connector.getSourceShape().getId() + "!Connections.X"
+          + sourceConnectCountStr + ",Sheet." + connector.getSourceShape().getId() + "!Connections.Y" + sourceConnectCountStr + "))");
+      writeCell(writer, VsdxTokens.BEGIN_Y, "2", null, "PAR(PNT(Sheet." + connector.getSourceShape().getId() + "!Connections.X"
+          + sourceConnectCountStr + ",Sheet." + connector.getSourceShape().getId() + "!Connections.Y" + sourceConnectCountStr + "))");
+      writeCell(writer, VsdxTokens.END_X, "2", null, "PAR(PNT(Sheet." + connector.getTargetShape().getId() + "!Connections.X" + targetConnectCountStr
+          + ",Sheet." + connector.getTargetShape().getId() + "!Connections.Y" + targetConnectCountStr + "))");
+      writeCell(writer, VsdxTokens.END_Y, "2", null, "PAR(PNT(Sheet." + connector.getTargetShape().getId() + "!Connections.X" + targetConnectCountStr
+          + ",Sheet." + connector.getTargetShape().getId() + "!Connections.Y" + targetConnectCountStr + "))");
       writeCell(writer, VsdxTokens.STATIC_LAYER_MEMBER, "1");
     }
     else {
+      //2D-shape-specific stuff
       writeCell(writer, VsdxTokens.STATIC_LAYER_MEMBER, "0");
       writeCell(writer, VsdxTokens.STATIC_OBJECT_TYPE, "1");
     }
-    //TODO can those be skipped and automatically inherited from the master?
-    //    writeCell(writer, VsdxTokens.STATIC_LINE_CAP, "2");
-    //    writeCell(writer, VsdxTokens.STATIC_SHADOW_PATTERN, "1");
-    //    writeCell(writer, VsdxTokens.STATIC_SHADOW_FOREGROUND_TRANS, "0.8");
-    //    writeCell(writer, VsdxTokens.STATIC_SHAPE_SHADOW_TYPE, "1");
-    //    writeCell(writer, VsdxTokens.STATIC_SHAPE_SHADOW_OFFSET_X, "0.003", VsdxTokens.UNIT_IN, null);
-    //    writeCell(writer, VsdxTokens.STATIC_SHAPE_SHADOW_OFFSET_Y, "-0.03", VsdxTokens.UNIT_IN, null);
 
     //write custom properties
     if (shape.getCustomPropertyNames().size() > 0) {
@@ -177,7 +199,7 @@ public class VsdxDocumentWriterImpl implements VsdxDocumentWriter {
         writer.writeAttribute(VsdxTokens.FROM_CELL, VsdxTokens.BEGIN_X);
         writer.writeAttribute(VsdxTokens.FROM_PART, String.valueOf(9));
         writer.writeAttribute(VsdxTokens.TO_SHEET, String.valueOf(connector.getSourceShape().getId()));
-        writer.writeAttribute(VsdxTokens.TO_CELL, VsdxTokens.STATIC_PIN_X);
+        writer.writeAttribute(VsdxTokens.TO_CELL, "Connections.X" + sourceConnectCellId.get(connector));
         writer.writeAttribute(VsdxTokens.TO_PART, String.valueOf(3));
 
         writer.writeEmptyElement(VsdxTokens.CONNECT);
@@ -185,7 +207,7 @@ public class VsdxDocumentWriterImpl implements VsdxDocumentWriter {
         writer.writeAttribute(VsdxTokens.FROM_CELL, VsdxTokens.END_X);
         writer.writeAttribute(VsdxTokens.FROM_PART, String.valueOf(12));
         writer.writeAttribute(VsdxTokens.TO_SHEET, String.valueOf(connector.getTargetShape().getId()));
-        writer.writeAttribute(VsdxTokens.TO_CELL, VsdxTokens.STATIC_PIN_X);
+        writer.writeAttribute(VsdxTokens.TO_CELL, "Connections.X" + targetConnectCellId.get(connector));
         writer.writeAttribute(VsdxTokens.TO_PART, String.valueOf(3));
       }
       writer.writeEndElement();

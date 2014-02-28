@@ -15,8 +15,19 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 
+/**
+ * Allows to export the matrix as a Excel file
+ * @author Luc
+ *
+ */
 public class ExcelExport
 {
+ /**
+  *  Writes the matrix into an Excel file
+  * @param values the content of the matrix
+  * @param nodes the legend of the matrix ( order matters)
+  * @param saveLocation the location where the file should be saved
+  */
   public void createXMLExport(String[][] values, LinkedList<MyNode> nodes, File saveLocation)
   {
     LinkedList<LinkedList<String>> res = createLegend(nodes);
@@ -33,6 +44,12 @@ public class ExcelExport
     writeToFile(res, saveLocation);
   }
   
+  /**
+   * Creates an List<List<String>> where every entry in the first list can be interpreted as a row. 
+   * The second List holds the specific content of every row
+   * @param the legend of the matrix
+   * @return an List interpretation of a matrix, which only holds the legend information.
+   */
   private LinkedList<LinkedList<String>> createLegend(LinkedList<MyNode> nodes)
   {
     LinkedList<LinkedList<String>> res = new LinkedList<LinkedList<String>>();
@@ -53,6 +70,11 @@ public class ExcelExport
     return res;
   }
   
+  /**
+   * Write the List interpretation of the Matrix to a Excel file
+   * @param values the content from the matrix
+   * @param location the location where the excel file should be stored
+   */
   private void writeToFile(LinkedList<LinkedList<String>> values, File location)
   {
     HSSFWorkbook workbook = new HSSFWorkbook();
