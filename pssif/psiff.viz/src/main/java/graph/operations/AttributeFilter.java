@@ -4,9 +4,11 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.text.DateFormat;
 import java.text.ParseException;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map.Entry;
 
 import javax.lang.model.type.PrimitiveType;
 
@@ -24,6 +26,15 @@ import graph.model.MyNode;
  *
  */
 public class AttributeFilter {
+	/**
+	 * Mapping from Condition String to all Condition Data
+	 */
+	private static HashMap<String,ConditionContainer> nodeConditions;
+	/**
+	 * Mapping from Condition String to all Condition Data
+	 */
+	private static HashMap<String,ConditionContainer> edgeConditions;
+	
 	
 	/**
 	 * Filters the graph by a given condition on an attribute of a Node.
@@ -35,7 +46,10 @@ public class AttributeFilter {
 	 */
 	public static void filterNode(String attributeName, AttributeOperations op, Object RefValue) throws Exception
 	{
+		/*init();
+		
 		LinkedList<MyNode> allNodes = ModelBuilder.getAllNodes();
+		LinkedList<MyNode> invisibleNodes = new LinkedList<MyNode>();
 		
 		for (MyNode currentNode : allNodes)
 		{
@@ -87,6 +101,73 @@ public class AttributeFilter {
 					if (result == false)
 					{
 						currentNode.setVisible(false);
+						invisibleNodes.add(currentNode);
+					}
+				}
+			}
+		}*/
+
+		filterNodeWithResult(attributeName, op, RefValue, false);
+		
+
+	}
+	
+	private static void filterNodeWithResult(String attributeName, AttributeOperations op, Object RefValue, boolean visiblity) throws Exception
+	{
+		init();
+		
+		LinkedList<MyNode> allNodes = ModelBuilder.getAllNodes();
+		
+		for (MyNode currentNode : allNodes)
+		{
+			HashMap<String, Attribute> attributes = currentNode.getAttributesHashMap();
+			
+			Attribute attr = attributes.get(attributeName);
+			
+			if (attr== null)
+			{
+				currentNode.setVisible(visiblity);
+			}
+			else
+			{
+				if (testPossibleOperation(attr, op))
+				{
+					boolean result = false;
+					
+					if (attr.get(currentNode.getNode())!=null)
+					{
+						if (attr.get(currentNode.getNode()).isOne())
+						{
+							PSSIFValue attrValue=attr.get(currentNode.getNode()).getOne();
+							
+							PrimitiveDataType currentType = (PrimitiveDataType) attr.getType();
+							
+							
+							if (currentType.equals(PrimitiveDataType.BOOLEAN))
+								result = BooleanEval(attrValue, op, RefValue);
+							if (currentType.equals(PrimitiveDataType.DATE))
+								result = DateEval(attrValue, op, RefValue);
+							if (currentType.equals(PrimitiveDataType.DECIMAL))
+								result = DecimalEval(attrValue, op, RefValue);
+							if (currentType.equals(PrimitiveDataType.INTEGER))
+								result = IntegerEval(attrValue, op, RefValue);
+							if (currentType.equals(PrimitiveDataType.STRING))
+								result = StringEval(attrValue, op, RefValue);
+						}
+						if (attr.get(currentNode.getNode()).isMany())
+						{
+							throw new NullPointerException("Don't know what do to do with many values in one Attribut");
+						}
+						
+						if (attr.get(currentNode.getNode()).isNone())
+						{
+							result=false;
+						}
+					}
+					
+					if (result == false)
+					{
+						currentNode.setVisible(visiblity);
 					}
 				}
 			}
@@ -103,7 +184,10 @@ public class AttributeFilter {
 	 */
 	public static void filterEdge(String attributeName, AttributeOperations op, Object RefValue) throws Exception
 	{
+		/*init();
+		
 		LinkedList<MyEdge> allEdges = ModelBuilder.getAllEdges();
+		//LinkedList<MyEdge> inVisibleEdges = new LinkedList<MyEdge>();
 		
 		for (MyEdge currentEdge : allEdges)
 		{
@@ -157,6 +241,74 @@ public class AttributeFilter {
 					if (result == false)
 					{
 						currentEdge.setVisible(false);
+					//	inVisibleEdges.add(currentEdge);
+					}
+				}
+			}
+		}*/
+		
+		filterEdgeWithResult(attributeName, op, RefValue, false);
+	}
+	
+	private static void filterEdgeWithResult(String attributeName, AttributeOperations op, Object RefValue, boolean visiblity) throws Exception
+	{
+		init();
+		
+		LinkedList<MyEdge> allEdges = ModelBuilder.getAllEdges();
+		
+		for (MyEdge currentEdge : allEdges)
+		{
+			HashMap<String, Attribute> attributes = currentEdge.getAttributesHashMap();
+			
+			Attribute attr = attributes.get(attributeName);
+			
+			if (attr== null)
+			{
+				currentEdge.setVisible(visiblity);
+			}
+			else
+			{
+				if (testPossibleOperation(attr, op))
+				{
+					boolean result = false;
+					
+					if (attr.get(currentEdge.getEdge())!=null)
+					{
+						if (attr.get(currentEdge.getEdge()).isOne())
+						{
+							PSSIFValue attrValue=attr.get(currentEdge.getEdge()).getOne();
+							
+							PrimitiveDataType currentType = (PrimitiveDataType) attr.getType();
+							
+							
+							if (currentType.equals(PrimitiveDataType.BOOLEAN))
+								result = BooleanEval(attrValue, op, RefValue);
+							if (currentType.equals(PrimitiveDataType.DATE))
+								result = DateEval(attrValue, op, RefValue);
+							if (currentType.equals(PrimitiveDataType.DECIMAL))
+								result = DecimalEval(attrValue, op, RefValue);
+							if (currentType.equals(PrimitiveDataType.INTEGER))
+								result = IntegerEval(attrValue, op, RefValue);
+							if (currentType.equals(PrimitiveDataType.STRING))
+								result = StringEval(attrValue, op, RefValue);
+						}
+						
+						if (attr.get(currentEdge.getEdge()).isNone())
+						{
+							System.out.println("Found no value of Attribute");
+							result = false;
+						}
+						
+						if (attr.get(currentEdge.getEdge()).isMany())
+						{
+							throw new NullPointerException("Don't know what do to do with many values in one Attribut");
+						}
+							
+					}
+					
+					if (result == false)
+					{
+						currentEdge.setVisible(visiblity);
 					}
 				}
 			}
@@ -376,5 +528,156 @@ public class AttributeFilter {
 		}
 		
 		return result;
+	}
+	
+	private static void init()
+	{
+		if (edgeConditions==null)
+			edgeConditions = new HashMap<String, ConditionContainer>();
+		if (nodeConditions ==null)
+			nodeConditions = new HashMap<String, ConditionContainer>();
+	}
+	
+	public static LinkedList<String> getAllNodeConditions()
+	{
+		LinkedList<String> res = new LinkedList<String>();
+		
+		if (nodeConditions!=null)
+		{
+			String[] s = nodeConditions.keySet().toArray(new String[0]);
+			
+			res.addAll(Arrays.asList(s));
+		}
+		return res;
+	}
+	
+	public static LinkedList<String> getAllEdgeConditions()
+	{
+		LinkedList<String> res = new LinkedList<String>();
+		
+		if (edgeConditions!=null)
+		{
+			String[] s = edgeConditions.keySet().toArray(new String[0]);
+			
+			res.addAll(Arrays.asList(s));
+		}
+		return res;
+	}
+	
+	public static void applyNodeCondition(String condition) throws Exception
+	{
+		System.out.println("Entries "+nodeConditions.size());
+		System.out.println("Got ||"+condition);
+		ConditionContainer c = nodeConditions.get(condition);
+		if (c!=null)
+		{
+			System.out.println("Found correct container");
+			filterNode(c.attributeName, c.operation, c.refValue);
+		}
+		else
+		{
+			System.out.println("Could not find correct container");
+		}
+	}
+	
+	public static void applyEdgeCondition(String condition) throws Exception
+	{
+		//System.out.println("Entries "+edgeConditions.size());
+		System.out.println("Got ||"+condition);
+		ConditionContainer c = edgeConditions.get(condition);
+		if (c!=null)
+		{
+			System.out.println("found Container");
+			filterEdge(c.attributeName, c.operation, c.refValue);
+		}
+	}
+	
+	public static void removeNodeCondition(String condition) throws Exception
+	{
+		init();
+		undoNodeCondition(condition);
+		nodeConditions.remove(condition);
+	}
+	
+	public static void removeEdgeCondition(String condition) throws Exception
+	{
+		init();
+		undoEdgeCondition(condition);
+		edgeConditions.remove(condition);
+	}
+	
+	public static void undoEdgeCondition (String condition) throws Exception
+	{
+		ConditionContainer c = edgeConditions.get(condition);
+		filterEdgeWithResult(c.attributeName, c.operation, c.refValue, true);
+		
+		applyAllOtherEdgeConditions(condition);
+		
+	}
+	
+	public static void undoNodeCondition (String condition) throws Exception
+	{
+		ConditionContainer c = nodeConditions.get(condition);
+		filterNodeWithResult(c.attributeName, c.operation, c.refValue, true);
+		
+		applyAllOtherNodeConditions(condition);
+	}
+	
+	private static void applyAllOtherNodeConditions (String condition) throws Exception
+	{
+		for (Entry<String, ConditionContainer> e : nodeConditions.entrySet())
+		{
+			if (!e.getKey().equals(condition))
+			{
+				ConditionContainer c = e.getValue();
+				filterNode(c.attributeName, c.operation, c.refValue);
+			}
+		}
+	}
+	
+	private static void applyAllOtherEdgeConditions (String condition) throws Exception
+	{
+		for (Entry<String, ConditionContainer> e : edgeConditions.entrySet())
+		{
+			if (!e.getKey().equals(condition))
+			{
+				ConditionContainer c = e.getValue();
+				filterEdge(c.attributeName, c.operation, c.refValue);
+			}
+		}
+	}
+	
+	public static String addNodeCondition (String attributeName, AttributeOperations op, Object RefValue)
+	{
+		init();
+		String condition = attributeName+" "+op.getName()+" "+String.valueOf(RefValue);
+		ConditionContainer c = new ConditionContainer(attributeName, op, RefValue);
+		nodeConditions.put(condition, c);
+
+		
+		return condition;
+	}
+	
+	public static String addEdgeCondition (String attributeName, AttributeOperations op, Object RefValue)
+	{
+		init();
+		String condition = attributeName+" "+op.getName()+" "+String.valueOf(RefValue);
+		ConditionContainer c = new ConditionContainer(attributeName, op, RefValue);
+		edgeConditions.put(condition, c);
+		
+		return condition;
+	}
+	
+	private static class ConditionContainer{
+		public String attributeName;
+		public AttributeOperations operation;
+		public Object refValue;
+		
+		public ConditionContainer(String attributeName, AttributeOperations op, Object RefValue)
+		{
+			this.attributeName = attributeName;
+			this.operation = op;
+			this.refValue = RefValue;
+		}
 	}
 }
