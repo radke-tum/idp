@@ -32,8 +32,8 @@ public class NodeTypeImpl extends AbstractNodeType {
   public PSSIFOption<Node> apply(Model model, boolean includeSubTypes) {
     PSSIFOption<Node> result = new ReadNodesOperation(this).apply(model);
     if (includeSubTypes) {
-      for (NodeType currentType : PSSIFUtil.specializationsClosure((NodeType) this)) {
-        result = PSSIFOption.merge(result, new ReadNodesOperation(currentType).apply(model));
+      for (NodeType currentType : getSpecials()) {
+        result = PSSIFOption.merge(result, currentType.apply(model, includeSubTypes));
       }
     }
     return result;
