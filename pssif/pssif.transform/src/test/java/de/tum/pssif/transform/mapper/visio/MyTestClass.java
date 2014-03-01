@@ -29,20 +29,16 @@ public class MyTestClass {
   public void testReadEpkToGraph() throws FileNotFoundException {
     VisioIoMapper mapper = new VisioIoMapper("", EPK_NODE_MASTERS, EPK_EDGE_MASTERS);
     Graph graph = mapper.read(getClass().getResourceAsStream("/visio/epk-data.vsdx"));
-    System.out.println("EPK: \n");
-    System.out.println(graph);
     mapper = new VisioIoMapper("/visio/epk-template.vsdx", EPK_NODE_MASTERS, EPK_EDGE_MASTERS);
     mapper.write(graph, new FileOutputStream("target/testWriteEpkWithGraph.vsdx"));
   }
 
-  //  @Test
-  //  public void testReadBpmnToGraph() throws FileNotFoundException {
-  //    VisioIoMapper mapper = new VisioIoMapper("", BPMN_NODE_MASTERS, BPMN_EDGE_MASTERS);
-  //    Graph graph = mapper.read(getClass().getResourceAsStream("/visio/bpmn-data.vsdx"));
-  //    System.out.println("BPMN: \n");
-  //    System.out.println(graph);
-  //    mapper = new VisioIoMapper("/visio/bpmn-template.vsdx", BPMN_NODE_MASTERS, BPMN_EDGE_MASTERS);
-  //    mapper.write(graph, new FileOutputStream("target/testWriteBpmnWithGraph.vsdx"));
-  //  }
+  @Test
+  public void testReadBpmnToGraph() throws FileNotFoundException {
+    VisioIoMapper mapper = new VisioIoMapper("", BPMN_NODE_MASTERS, BPMN_EDGE_MASTERS);
+    Graph graph = mapper.read(getClass().getResourceAsStream("/visio/bpmn-data.vsdx"));
+    mapper = new VisioIoMapper("/visio/bpmn-template.vsdx", BPMN_NODE_MASTERS, BPMN_EDGE_MASTERS);
+    mapper.write(graph, new FileOutputStream("target/testWriteBpmnWithGraph.vsdx"));
+  }
 
 }
