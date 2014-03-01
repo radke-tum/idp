@@ -1,5 +1,7 @@
 package de.tum.pssif.transform.mapper.visio;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.util.Set;
 
 import org.junit.Test;
@@ -12,72 +14,35 @@ import de.tum.pssif.transform.io.VisioIoMapper;
 
 public class MyTestClass {
 
-  public static final Set<String> EPK_NODE_MASTERS = Sets.newHashSet("Event", "Function", "Organizational Unit", "Process path", "XOR", "OR", "AND",
-                                                       "Information/ Material", "Main process", "Component", "Enterprise area", "Process group");
+  public static final Set<String> BPMN_NODE_MASTERS = Sets.newHashSet("Task", "Gateway", "Intermediate Event", "End Event", "Start Event",
+                                                        "Collapsed Sub-Process", "Expanded Sub-Process", "Text Annotation", "Message", "Data Object",
+                                                        "Data Store", "Pool / Lane");
 
-  public static final Set<String> EPK_EDGE_MASTERS = Sets.newHashSet("Dynamic connector");
+  public static final Set<String> BPMN_EDGE_MASTERS = Sets.newHashSet("Sequence Flow", "Association", "Message Flow");
+
+  public static final Set<String> EPK_NODE_MASTERS  = Sets.newHashSet("Event", "Function", "Organizational unit", "Process path", "XOR", "OR", "AND",
+                                                        "Information/ Material", "Main process", "Component", "Enterprise area", "Process group");
+
+  public static final Set<String> EPK_EDGE_MASTERS  = Sets.newHashSet("Dynamic connector");
 
   @Test
-  public void testReadToGraph() {
+  public void testReadEpkToGraph() throws FileNotFoundException {
     VisioIoMapper mapper = new VisioIoMapper("", EPK_NODE_MASTERS, EPK_EDGE_MASTERS);
     Graph graph = mapper.read(getClass().getResourceAsStream("/visio/epk-data.vsdx"));
+    System.out.println("EPK: \n");
     System.out.println(graph);
-    //    for (Node node : graph.getNodes()) {
-    //      System.out.println("nodeId: " + node.getId() + "|name : " + node.getAttributeValue(PSSIFConstants.BUILTIN_ATTRIBUTE_NAME));
-    //    }
+    mapper = new VisioIoMapper("/visio/epk-template.vsdx", EPK_NODE_MASTERS, EPK_EDGE_MASTERS);
+    mapper.write(graph, new FileOutputStream("target/testWriteEpkWithGraph.vsdx"));
   }
 
-  @Test
-  public void regexTest() {
-    //TODO
-    String testString1 = "MasterName";
-    String testString2 = "MasterName.324";
-    String regexSuffix = "(\\.(\\d)*+)?";
-    System.out.println(testString1 + " matches: " + testString1.matches(testString1 + regexSuffix));
-    System.out.println(testString2 + " matches: " + testString2.matches(testString1 + regexSuffix));
-
-  }
   //  @Test
-  //  public void testTheBugger() throws SAXException, MasterNotFoundException {
-  //    try {
-  //      InputStream stream = getClass().getResourceAsStream("/visio/EPK-1.vdx");
-  //      //      InputStream stream = getClass().getResourceAsStream("/visio/iteraplanLandscapeDiagram.vdx");
-  //      //      ByteArrayOutputStream o = new ByteArrayOutputStream();
-  //      //      int current = stream.read();
-  //      //      while (current != -1) {
-  //      //        o.write(current);
-  //      //        current = stream.read();
-  //      //      }
-  //      //      byte[] bytes = o.toByteArray();
-  //      //      javax.xml.parsers.DocumentBuilderFactory factory = javax.xml.parsers.DocumentBuilderFactory.newInstance();
-  //      //      factory.setNamespaceAware(false);
-  //      //      javax.xml.parsers.DocumentBuilder builder = null;
-  //      //      try {
-  //      //        builder = factory.newDocumentBuilder();
-  //      //      } catch (javax.xml.parsers.ParserConfigurationException ex) {
-  //      //      }
-  //      //      org.w3c.dom.Document doc = builder.parse(new ByteArrayInputStream(bytes));
-  //      //Document doc = Document.get
-  //      //System.out.println(stream.read(bytes));
-  //      //System.out.println(doc);
-  //      Document doc = DocumentLoader.getVdxLoader().loadDocument(stream);
-  //      //      Master process = doc.getMaster("Process");
-  //      Master event = doc.getMaster("Event");
-  //      System.out.println(event);
-  //      System.out.println("------------------------------");
-  //      for (Master master : doc.getMasters()) {
-  //        System.out.println(master);
-  //      }
-  //    } catch (IOException e) {
-  //      // TODO Auto-generated catch block
-  //      e.printStackTrace();
-  //    } catch (ParserConfigurationException e) {
-  //      // TODO Auto-generated catch block
-  //      e.printStackTrace();
-  //    } catch (SAXException e) {
-  //      // TODO Auto-generated catch block
-  //      e.printStackTrace();
-  //    }
-  //
+  //  public void testReadBpmnToGraph() throws FileNotFoundException {
+  //    VisioIoMapper mapper = new VisioIoMapper("", BPMN_NODE_MASTERS, BPMN_EDGE_MASTERS);
+  //    Graph graph = mapper.read(getClass().getResourceAsStream("/visio/bpmn-data.vsdx"));
+  //    System.out.println("BPMN: \n");
+  //    System.out.println(graph);
+  //    mapper = new VisioIoMapper("/visio/bpmn-template.vsdx", BPMN_NODE_MASTERS, BPMN_EDGE_MASTERS);
+  //    mapper.write(graph, new FileOutputStream("target/testWriteBpmnWithGraph.vsdx"));
   //  }
+
 }

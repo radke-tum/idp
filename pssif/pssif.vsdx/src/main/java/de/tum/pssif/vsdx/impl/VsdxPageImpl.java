@@ -58,6 +58,7 @@ public class VsdxPageImpl implements VsdxPage {
   public VsdxShape createNewShape(VsdxMaster master) {
     VsdxShapeImpl shape = new VsdxShapeImpl(document.getNewShapeId(), master.getId());
     shapes.add(shape);
+    shape.setDocument(document);
     return shape;
   }
 
@@ -67,6 +68,7 @@ public class VsdxPageImpl implements VsdxPage {
     connect.setSource((VsdxShapeImpl) fromShape);
     connect.setTarget((VsdxShapeImpl) toShape);
     connects.add(connect);
+    connect.setDocument(document);
     return connect;
   }
 

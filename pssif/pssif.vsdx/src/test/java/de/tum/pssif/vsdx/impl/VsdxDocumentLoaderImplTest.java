@@ -10,7 +10,7 @@ import de.tum.pssif.vsdx.VsdxShape;
 public class VsdxDocumentLoaderImplTest {
 
   @Test
-  public void testReadTemplate() {
+  public void testReadEpkTemplate() {
     System.out.println("--- Template ---");
     VsdxDocument document = VsdxDocumentLoaderFactory.INSTANCE.create().loadDocument(getClass().getResourceAsStream("/epk-template.vsdx"));
     System.out.println(document.getMasters());
@@ -18,9 +18,30 @@ public class VsdxDocumentLoaderImplTest {
   }
 
   @Test
-  public void testReadData() {
+  public void testReadEpkData() {
     System.out.println("--- Data ---");
     VsdxDocument document = VsdxDocumentLoaderFactory.INSTANCE.create().loadDocument(getClass().getResourceAsStream("/epk-data.vsdx"));
+    System.out.println(document.getMasters());
+    for (VsdxShape shape : document.getPage().getShapes()) {
+      System.out.println(printShape("", shape));
+    }
+    for (VsdxConnector connect : document.getPage().getConnectors()) {
+      System.out.println(printConnect("", connect));
+    }
+  }
+
+  @Test
+  public void testReadBpmnTemplate() {
+    System.out.println("--- Template ---");
+    VsdxDocument document = VsdxDocumentLoaderFactory.INSTANCE.create().loadDocument(getClass().getResourceAsStream("/bpmn-template.vsdx"));
+    System.out.println(document.getMasters());
+    System.out.println(document.getPage().getShapes());
+  }
+
+  @Test
+  public void testReadBpmnData() {
+    System.out.println("--- Data ---");
+    VsdxDocument document = VsdxDocumentLoaderFactory.INSTANCE.create().loadDocument(getClass().getResourceAsStream("/bpmn-data.vsdx"));
     System.out.println(document.getMasters());
     for (VsdxShape shape : document.getPage().getShapes()) {
       System.out.println(printShape("", shape));
