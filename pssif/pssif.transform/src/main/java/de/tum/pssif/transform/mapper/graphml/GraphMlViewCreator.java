@@ -6,6 +6,7 @@ import de.tum.pssif.core.metamodel.EdgeType;
 import de.tum.pssif.core.metamodel.Metamodel;
 import de.tum.pssif.core.metamodel.NodeType;
 import de.tum.pssif.transform.transformation.CreateArtificialNodeTransformation;
+import de.tum.pssif.transform.transformation.HideConnectionMappingTransformation;
 import de.tum.pssif.transform.transformation.HideEdgeTypeAttributeTransformation;
 import de.tum.pssif.transform.transformation.HideNodeTypeAttributeTransformation;
 import de.tum.pssif.transform.transformation.LeftJoinConnectionMappingTransformation;
@@ -76,6 +77,16 @@ public class GraphMlViewCreator {
     view = moveEdge(view, informationFlow);
     view = moveEdge(view, energyFlow);
     view = moveEdge(view, materialFlow);
+
+    informationFlow = view.findEdgeType("InformationFlow");
+    block = view.findNodeType("Block");
+    view = new HideConnectionMappingTransformation(informationFlow, informationFlow.getMapping(block, block)).apply(view);
+    energyFlow = view.findEdgeType("EnergyFlow");
+    block = view.findNodeType("Block");
+    view = new HideConnectionMappingTransformation(energyFlow, energyFlow.getMapping(block, block)).apply(view);
+    materialFlow = view.findEdgeType("MaterialFlow");
+    block = view.findNodeType("Block");
+    view = new HideConnectionMappingTransformation(materialFlow, materialFlow.getMapping(block, block)).apply(view);
 
     return view;
   }
