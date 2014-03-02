@@ -134,9 +134,6 @@ class VsdxPageReader {
     for (int i = 0; i < children.getLength(); i++) {
       Node connectNode = children.item(i);
       String connectorIdString = getAttributeValue(connectNode, VsdxTokens.FROM_SHEET);
-      if (connectorIdString.trim().equalsIgnoreCase("38")) {
-        System.out.println("aha");
-      }
       String shapeIdString = getAttributeValue(connectNode, VsdxTokens.TO_SHEET);
       String sourceOrTargetString = getAttributeValue(connectNode, VsdxTokens.FROM_CELL);
       Integer connectorId = connectorIdString.trim().isEmpty() ? -1 : Integer.valueOf(connectorIdString);

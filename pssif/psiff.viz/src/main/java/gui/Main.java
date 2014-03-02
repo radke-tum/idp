@@ -1,6 +1,7 @@
 package gui;
 
 
+import graph.operations.AttributeFilter;
 import graph.operations.GraphViewContainer;
 import gui.graph.AttributeFilterPopup;
 import gui.graph.CreateNewGraphViewPopup;
@@ -8,6 +9,7 @@ import gui.graph.GraphVisualization;
 import gui.graph.HighlightNodePopup;
 import gui.graph.NodeColorPopup;
 
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.GraphicsDevice;
@@ -19,13 +21,17 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.LinkedList;
 
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 
 import model.ModelBuilder;
 import de.tum.pssif.core.metamodel.Metamodel;
@@ -60,6 +66,10 @@ public class Main {
 	private JMenu deleteView;
 	private JMenu graphLayout;
 	private JMenu graphOperations;
+	private JMenu applyNodeFilter;
+	private JMenu applyEdgeFilter;
+	private JMenu deleteNodeFilter;
+	private JMenu deleteEdgeFilter;
 	
 	
 	public static void main(String[] args) {
@@ -409,22 +419,96 @@ public class Main {
 	{
 		graphOperations = new JMenu("Graph Operations");
 		
-		attributFilter = new JMenuItem("Filter Nodes and Edges by Attribute");
+		attributFilter = new JMenuItem("Create new Attribute Filter");
 		attributFilter.addActionListener(new ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				AttributeFilterPopup filter = new AttributeFilterPopup();
 		
-				filter.showPopup();
+				String result = filter.showPopup();
+				
+				if (result !=null && result.contains(AttributeFilterPopup.newEdge))
+				{
+					String condition = result.substring(result.indexOf("|")+1);
+					resetApplyEdgeFilters(condition);
+					resetDeleteEdgeFilters();
+					
+					/*System.out.println(condition);
+					
+					Component[] tmp = applyEdgeFilter.getComponents();		
+					System.out.println("Found Components "+tmp.length);
+					for (Component c :tmp)
+					{
+						if (c instanceof JCheckBoxMenuItem)
+						{
+							JCheckBoxMenuItem item = (JCheckBoxMenuItem) c;
+							System.out.println("Checkbox "+item.getText());
+							if (item.getText().equals(condition))
+							{
+								System.out.println("found Edge update");
+								item.setSelected(true);
+								item.validate();
+							}
+						}
+					}
+					*/
+					graphView.getGraph().updateGraph();
+				}
+				
+				if (result !=null && result.contains(AttributeFilterPopup.newNode))
+				{
+					String condition = result.substring(result.indexOf("|")+1);
+					resetApplyNodeFilters(condition);
+					resetDeleteNodeFilters();
+					
+					
+					
+				/*	System.out.println(condition);
+					Component[] tmp = applyNodeFilter.getComponents();
+					System.out.println("Found Components "+tmp.length);
+					for (Component c :tmp)
+					{
+						if (c instanceof JCheckBoxMenuItem)
+						{
+							JCheckBoxMenuItem item = (JCheckBoxMenuItem) c;
+							
+							System.out.println("Checkbox "+item.getText());
+							if (item.getText().equals(condition))
+							{
+								System.out.println("found Node update");
+								item.setSelected(true);
+								item.validate();
+							}
+						}
+					}*/
+					
+					graphView.getGraph().updateGraph();
+				}
 
-				graphView.getGraph().updateGraph();
+				
 			}
 		});
 		
 		graphOperations.add(attributFilter);
 		
-		followEdges = new JMenuItem("Choose Follow Edge Types");
+		applyNodeFilter = new JMenu("Apply Node Attribute Filters");
+		addApplyNodeFilters(null);
+		graphOperations.add(applyNodeFilter);
+		
+		deleteNodeFilter = new JMenu("Remove Node Attribute Filters");
+		addRemoveNodeFilters();
+		graphOperations.add(deleteNodeFilter);
+		
+		applyEdgeFilter = new JMenu("Apply Edge Attribute Filters");
+		addApplyEdgeFilters(null);
+		graphOperations.add(applyEdgeFilter);
+		
+		deleteEdgeFilter = new JMenu("Remove Edge Attribute Filters");
+		addRemoveEdgeFilters();
+		graphOperations.add(deleteEdgeFilter);
+		
+		followEdges = new JMenuItem("Choose Follow EdgeTypes");
 		followEdges.addActionListener(new ActionListener() {
 			
 			@Override
@@ -589,6 +673,225 @@ public class Main {
 		deleteView.removeAll();
 		deleteGraphView();
 	}
+	
+	private void addApplyNodeFilters(String newCondition)
+	{
+		LinkedList<String> conditions = AttributeFilter.getAllNodeConditions();
+		
+		if (conditions.size()==0)
+		{
+			applyNodeFilter.setEnabled(false);
+		}
+		else
+		{
+			applyNodeFilter.setEnabled(true);
+			
+			for (String name : conditions)
+			{
+				JCheckBoxMenuItem menuItem = new JCheckBoxMenuItem(name);
+				
+				menuItem.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						
+						try
+						{
+							JCheckBoxMenuItem item = (JCheckBoxMenuItem)e.getSource();
+							String condition = item.getText();
+							if (item.isSelected())
+							{
+								AttributeFilter.applyNodeCondition(condition);
+							}
+							else
+							{
+								AttributeFilter.undoNodeCondition(condition);
+							}
+							graphView.getGraph().updateGraph();
+						}
+						catch (Exception ex)
+						{
+							System.out.println(ex);
+							JPanel errorPanel = new JPanel();
+			        		
+			        		errorPanel.add(new JLabel("There was a problem applying the attribute filter"));
+			        		
+			        		JOptionPane.showMessageDialog(null, errorPanel, "Ups something went wrong", JOptionPane.ERROR_MESSAGE);
+						}
+					}
+					});
+				
+				if (newCondition!=null && name.equals(newCondition))
+				{
+					menuItem.setSelected(true);
+				}
+				applyNodeFilter.add(menuItem);
+			}
+		}
+	}
+	
+	private void addApplyEdgeFilters(String newCondition)
+	{
+		LinkedList<String> conditions = AttributeFilter.getAllEdgeConditions();
+		
+		if (conditions.size()==0)
+		{
+			applyEdgeFilter.setEnabled(false);
+		}
+		else
+		{
+			applyEdgeFilter.setEnabled(true);
+			
+			for (String name : conditions)
+			{
+				JCheckBoxMenuItem menuItem = new JCheckBoxMenuItem(name);
+				
+				menuItem.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						
+						try
+						{
+							JCheckBoxMenuItem item = (JCheckBoxMenuItem)e.getSource();
+							String condition = item.getText();
+							if (item.isSelected())
+							{
+								AttributeFilter.applyEdgeCondition(condition);
+							}
+							else
+							{
+								AttributeFilter.undoEdgeCondition(condition);
+							}
+							graphView.getGraph().updateGraph();
+						}
+						catch (Exception ex)
+						{
+							System.out.println(ex.getMessage());
+							JPanel errorPanel = new JPanel();
+			        		
+			        		errorPanel.add(new JLabel("There was a problem applying the attribute filter"));
+			        		
+			        		JOptionPane.showMessageDialog(null, errorPanel, "Ups something went wrong", JOptionPane.ERROR_MESSAGE);
+						}
+					}
+					});
+				
+				if (newCondition!=null && name.equals(newCondition))
+				{
+					menuItem.setSelected(true);
+				}
+				applyEdgeFilter.add(menuItem);
+			}
+		}
+	}
+	
+	private void addRemoveNodeFilters()
+	{
+		LinkedList<String> conditions = AttributeFilter.getAllNodeConditions();
+		
+		if (conditions.size()==0)
+		{
+			deleteNodeFilter.setEnabled(false);
+		}
+		else
+		{
+			deleteNodeFilter.setEnabled(true);
+			
+			for (final String name : conditions)
+			{
+				JMenuItem menuItem = new JMenuItem(name);
+				
+				menuItem.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						try {
+							AttributeFilter.removeNodeCondition(name);
+							graphView.getGraph().updateGraph();
+							
+							resetApplyNodeFilters(null);
+							resetDeleteNodeFilters();
+						} catch (Exception ex) {
+							
+							System.out.println(ex.getMessage());
+							JPanel errorPanel = new JPanel();
+			        		
+			        		errorPanel.add(new JLabel("There was a problem deleting the attribute filter"));
+			        		
+			        		JOptionPane.showMessageDialog(null, errorPanel, "Ups something went wrong", JOptionPane.ERROR_MESSAGE);
+						}
+					}
+				});
+				
+				deleteNodeFilter.add(menuItem);
+			}
+		}
+	}
+	
+	private void addRemoveEdgeFilters()
+	{
+		LinkedList<String> conditions = AttributeFilter.getAllEdgeConditions();
+		
+		if (conditions.size()==0)
+		{
+			deleteEdgeFilter.setEnabled(false);
+		}
+		else
+		{
+			deleteEdgeFilter.setEnabled(true);
+			
+			for (final String name : conditions)
+			{
+				JMenuItem menuItem = new JMenuItem(name);
+				
+				menuItem.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						try {
+							AttributeFilter.removeEdgeCondition(name);
+							graphView.getGraph().updateGraph();
+							
+							resetApplyEdgeFilters(null);
+							resetDeleteEdgeFilters();
+						} catch (Exception ex) {
+							System.out.println(ex.getMessage());
+							JPanel errorPanel = new JPanel();
+			        		
+			        		errorPanel.add(new JLabel("There was a problem deleting the attribute filter"));
+			        		
+			        		JOptionPane.showMessageDialog(null, errorPanel, "Ups something went wrong", JOptionPane.ERROR_MESSAGE);
+						}
+					}
+				});
+				
+				deleteEdgeFilter.add(menuItem);
+			}
+		}
+	}
+	
+	private void resetApplyNodeFilters(String newConditon)
+	{
+		applyNodeFilter.removeAll();
+		addApplyNodeFilters(newConditon);
+	}
+	
+	private void resetDeleteNodeFilters()
+	{
+		deleteNodeFilter.removeAll();
+		addRemoveNodeFilters();
+	}
+	
+	private void resetApplyEdgeFilters(String newConditon)
+	{
+		applyEdgeFilter.removeAll();
+		addApplyEdgeFilters(newConditon);
+	}
+	
+	private void resetDeleteEdgeFilters()
+	{
+		deleteEdgeFilter.removeAll();
+		addRemoveEdgeFilters();
+	}
+	
+
 }
 
 

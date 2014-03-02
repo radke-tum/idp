@@ -44,69 +44,20 @@ public class AttributeFilterPopup extends MyPopup{
 	private JRadioButton edgeFilter;
 	
 	private TreeMap<String, DataType> attributeNames;
-	
-	/**
-	 * 
-	 * @param Nodefilter should it be a filter for Node attributes
-	 * @param Edgefilter should it be a filter for Edge attributes
-	 */
-	public AttributeFilterPopup(/*boolean Nodefilter, boolean Edgefilter*/)
-	{
-		/*if (Nodefilter)
-		{
-			nodePossibilities = ModelBuilder.getNodeTypes().getAllNodeTypesArray();
-			edgePossibilities =null;
-			
-			attributeNames = new TreeMap<String, DataType>();
-			
-			// get all the attributes and their type
-			for (MyNodeType type : nodePossibilities)
-			{
-				LinkedList<Attribute> temp = new LinkedList<Attribute>(type.getType().getAttributes());
-				
-				for (Attribute attr :temp)
-				{
-					attributeNames.put(attr.getName(), attr.getType());
-				}
-				
-			}
-		}
-		
-		if (Edgefilter)
-		{
-			
-			edgePossibilities = ModelBuilder.getEdgeTypes().getAllEdgeTypesArray();
-			nodePossibilities=null;
-			
-			attributeNames = new TreeMap<String, DataType>();
-			
-			// get all the attributes and their type
-			for (MyEdgeType type : edgePossibilities)
-			{
-				LinkedList<Attribute> temp = new LinkedList<Attribute>(type.getType().getAttributes());
-				
-				for (Attribute attr :temp)
-				{
-					attributeNames.put(attr.getName(), attr.getType());
-				}
-				
-			}
-		}
-		*/
-			
-	}
+	public static String newEdge ="Edge";
+	public static String newNode ="Node";
 	
 	/**
 	 * Show the Popup to the user
-	 * @return
+	 * @return "Edge" if an Edge Condition was added, "Node" of a Node condition was added, null otherwise
 	 */
-	public void showPopup()
+	public String showPopup()
 	{
 		JPanel panel = createPanel();
 		
 		int dialogResult = JOptionPane.showConfirmDialog(null, panel, "Filter by Attribute", JOptionPane.DEFAULT_OPTION);
 		
-		evalDialog(dialogResult);
+		return evalDialog(dialogResult);
 	}
 	
 	/**
@@ -329,8 +280,9 @@ public class AttributeFilterPopup extends MyPopup{
 	/**
 	 * Evaluate the Popup after the users input
 	 * @param dialogResult the result of the users interaction with the popup gui
+	 * @return "Edge|"+condition if an Edge Condition was added, "Node|"+condition of a Node condition was added, null otherwise
 	 */
-	private void evalDialog (int dialogResult)
+	private String evalDialog (int dialogResult)
 	{
 		if (dialogResult==0)
     	{
@@ -347,6 +299,8 @@ public class AttributeFilterPopup extends MyPopup{
         		errorPanel.add(new JLabel("No name entered or no edge and node types selected"));
         		
         		JOptionPane.showMessageDialog(null, errorPanel, "Ups something went wrong", JOptionPane.ERROR_MESSAGE);
+        		
+        		return null;
 			}
 			else
 			{
@@ -356,22 +310,32 @@ public class AttributeFilterPopup extends MyPopup{
 				try
 				{
 					if (nodeFilter.isSelected())
+					{
 						AttributeFilter.filterNode( selectedAttribute, op, refValue);
+						String condition = AttributeFilter.addNodeCondition(selectedAttribute, op, refValue);
+						return newNode+"|"+condition;
+					}
 
 					if (edgeFilter.isSelected())
+					{
 						AttributeFilter.filterEdge( selectedAttribute, op, refValue);
+						String condition = AttributeFilter.addEdgeCondition(selectedAttribute, op, refValue);
+						return newEdge+"|"+condition;
+					}
 				}
 				catch (Exception e)
 				{
-					System.out.println(e.getMessage());
-					
+					//System.out.println(e.getMessage());
+					System.out.println("Here");
 					JPanel errorPanel = new JPanel();
 	        		
 	        		errorPanel.add(new JLabel("There was a problem converting the entered value into the attribute data type"));
 	        		
 	        		JOptionPane.showMessageDialog(null, errorPanel, "Ups something went wrong", JOptionPane.ERROR_MESSAGE);
+	        		return null;
 				}
 			}
     	}
+		return null;
 	}
 }

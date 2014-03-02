@@ -56,7 +56,7 @@ public class VsdxDocumentWriterImpl implements VsdxDocumentWriter {
     XMLOutputFactory factory = XMLOutputFactory.newInstance();
 
     try {
-      XMLStreamWriter writer = factory.createXMLStreamWriter(out);
+      XMLStreamWriter writer = factory.createXMLStreamWriter(out, "UTF-8");
       writeDocumentHeader(page, writer);
       writeShapes(page, writer);
       writeConnectors(page, writer);
