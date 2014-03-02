@@ -8,8 +8,6 @@ import graph.model.MyNodeType;
 import graph.model.MyNodeTypes;
 
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 
 import de.tum.pssif.core.PSSIFConstants;
@@ -44,96 +42,184 @@ import de.tum.pssif.core.metamodel.impl.SetValueOperation;
  * @author Luc
  *
  */
-public class ModelBuilder {
+public class OldModelBuilder {
 	
-	/*public static Model model;
+	public static Model model;
 	public static MutableMetamodel meta;
 	private static MyNodeTypes nodeTypes;
 	private static MyEdgeTypes edgeTypes;
 	private static LinkedList<MyNode> nodes;
 	private static LinkedList<MyEdge> edges;
-	*/
-	private static LinkedList<MyModelContainer> activeModels;
-	/*private static HashMap<MyNode, MyModelContainer> mappingNodeModel;
-	private static HashMap<MyEdge, MyModelContainer> mappingEdgeModel;*/
 	
 	/**
 	 * Initializes all the content
 	 * @param meta
 	 * @param model
 	 */
-	public ModelBuilder(Metamodel Pmeta, Model Pmodel)
+	public OldModelBuilder(Metamodel Pmeta, Model Pmodel)
 	{
-		if (activeModels==null)
-		{
-			activeModels = new LinkedList<MyModelContainer>();
-			/*mappingEdgeModel = new HashMap<MyEdge, MyModelContainer>();
-			mappingNodeModel = new HashMap<MyNode, MyModelContainer>();*/
-		}
+		model = Pmodel;
 		
-		MyModelContainer newModel = new MyModelContainer(Pmodel, Pmeta);
-		activeModels.add(newModel);	
+		meta = (MutableMetamodel) Pmeta;
 		
+		nodes = new LinkedList<MyNode>();
+		edges = new LinkedList<MyEdge>();
+		
+		createNodeTypes();
+		createEdgeTypes();
+		
+		createNodes();
+		createEdges();
 		
 	}
 	
 	/**
 	 * Should not be used!! Only for test purposes
 	 */
-	public ModelBuilder()
+	public OldModelBuilder()
 	{
-		activeModels = new LinkedList<MyModelContainer>();
-		/*mappingEdgeModel = new HashMap<MyEdge, MyModelContainer>();
-		mappingNodeModel = new HashMap<MyNode, MyModelContainer>();*/
+		//mockData();
+		
+		if (meta!= null || model !=null)
+		{
+			nodes = new LinkedList<MyNode>();
+			edges = new LinkedList<MyEdge>();
+			
+			createNodeTypes();
+			createEdgeTypes();
+			
+			createNodes();
+			createEdges();
+		}
+		else
+		{
+			throw new NullPointerException("Should not be used!!!");
+		}
 	}
-
+	
+	private void createNodeTypes()
+	{
+		Collection<NodeType> types = meta.getNodeTypes();
+		
+		nodeTypes = new MyNodeTypes(types);
+	}
+	
+	private void createEdgeTypes()
+	{
+		Collection<EdgeType> types = meta.getEdgeTypes();
+		
+		edgeTypes = new MyEdgeTypes(types);
+	}
+	
+	private void createNodes()
+	{
+		for (MyNodeType t : nodeTypes.getAllNodeTypes())
+		{
+			PSSIFOption<Node> tempNodes = t.getType().apply(model,true);
+			
+			for (Node tempNode : tempNodes.getMany())
+			{
+				nodes.add(new MyNode(tempNode, t));
+			}
+			
+		}
+	}
+	
+	private void createEdges()
+	{
+		for (MyNode n: nodes)
+		{
+			createEdge(n.getNode());
+		}
+	}
+	
+	private void createEdge(Node sourceNode)
+	{
+		for (MyEdgeType t : edgeTypes.getAllEdgeTypes())
+		{
+			PSSIFOption<Edge> outgoingEdges = t.getType().getOutgoing().apply(sourceNode);
+			
+			for (Edge e : outgoingEdges.getMany())
+			{
+				PSSIFOption<Node> destinations = t.getType().getIncoming().apply(e);
+				
+				if (destinations.getMany().size()>1)
+					throw new NullPointerException("Edge with more than one EndPoint???");
+				
+				Node destinationNode = destinations.getOne();
+				
+				MyEdge tmp;
+				
+				/*if (t.getType().getName().equals(MyEdgeTypes.CONTAINMENT))
+				{
+					// Their Edges are organized the other way. Don't be confused by the MyEdge2 call
+					tmp = new MyEdge2(e, t, findNode(sourceNode), findNode(destinationNode));
+				}
+				else*/
+					tmp = new MyEdge(e, t, findNode(destinationNode), findNode(sourceNode));
+				
+				edges.add(tmp);
+			}
+		}
+		
+	}
+	
+/*	public void addNode(MyNode node)
+	{
+		if (!isContained(node))
+			nodes.add(node);
+	}
+	
+	public void addEdge (MyEdge edge)
+	{
+		if (!isContained(edge))
+			edges.add(edge);
+	}*/
 	
 	public static  LinkedList<MyNode> getAllNodes()
 	{
-		LinkedList<MyNode> res = new LinkedList<MyNode>();
-		
-		for (MyModelContainer mc : activeModels)
-		{ 
-			res.addAll(mc.getAllNodes());
-		}
-		return res;
+		return nodes;
 	}
 	
 	public static LinkedList<MyEdge> getAllEdges()
 	{
-		LinkedList<MyEdge> res = new LinkedList<MyEdge>();
-		
-		for (MyModelContainer mc : activeModels)
-		{ 
-			res.addAll(mc.getAllEdges());
-		}
-		return res;
+		return edges;
 	}
 	
-	
-	public static MyNode findNode (MyNode n)
+/*	public boolean isContained (MyNode node)
 	{
-		for (MyNode current : getAllNodes())
+		return nodes.contains(node);
+	}
+	
+	public boolean isContained (MyEdge edge)
+	{
+		return edges.contains(edge);
+	}*/
+	
+	
+	public static MyNode findNode (Node n)
+	{
+		for (MyNode current : nodes)
 		{
-			if (current.equals(n))
+			if (current.getNode().equals(n))
 				return current;
 		}
 		
 		return null;
 	}
 	
-	public static MyEdge findEdge (MyEdge e)
+	public static MyEdge findEdge (Edge e)
 	{
-		for (MyEdge current : getAllEdges())
+		for (MyEdge current : edges)
 		{
-			if (current.equals(e))
+			if (current.getEdge().equals(e))
 				return current;
 		}
 		
 		return null;
 	}
 	
-/*	private void mockData ()
+	private void mockData ()
 	{
 		meta = new MetamodelImpl();
 	    NodeType development = meta.createNodeType("development artifact");
@@ -206,57 +292,40 @@ public class ModelBuilder {
 	
    private static NodeType node(String name, MutableMetamodel metamodel) {
 	   return metamodel.findNodeType(name);
-   }*/
+   }
 
 	public static MyNodeTypes getNodeTypes() {
-		HashSet<MyNodeType> tmp = new HashSet<MyNodeType>();
-		
-		for (MyModelContainer mc : activeModels)
-		{ 	
-			tmp.addAll(mc.getNodeTypes().getAllNodeTypes());
-		}
-		
-		MyNodeTypes nt = new MyNodeTypes(tmp);
-		return nt;
+		return nodeTypes;
 	}
 
 	public static MyEdgeTypes getEdgeTypes() {
-		HashSet<MyEdgeType> tmp = new HashSet<MyEdgeType>();
-		
-		for (MyModelContainer mc : activeModels)
-		{ 	
-			tmp.addAll(mc.getEdgeTypes().getAllEdgeTypes());
-		}
-		
-		MyEdgeTypes et = new MyEdgeTypes(tmp);
-		return et;
+		return edgeTypes;
 	}
 	
 	public static void addCollapserEdge(MyEdge newEdge)
 	{
 		//MyEdge2 newEdge = new MyEdge2(edge, type, source, destination);
-		//TODO no very good implementation
 		newEdge.setCollapseEdge(true);
-		activeModels.getFirst().addEdge(newEdge);
+		edges.add(newEdge);
 	}
 	
 	public static void removeCollapserEdge(MyEdge edge)
 	{
-		//TODO no very good implementation
-		activeModels.getFirst().removeCollapserEdge(edge);
+		if (edge.isCollapseEdge())
+			edges.remove(edge);
 	}
 	
 	public static void printVisibleStuff ()
 	{
 		System.out.println("------visible Nodes----------");
-		for (MyNode n : getAllNodes())
+		for (MyNode n : nodes)
 		{
 			if (n.isVisible())
 				System.out.println(n.getRealName());
 		}
 		System.out.println("--------------------------");
 		System.out.println("------invisible Nodes----------");
-		for (MyNode n : getAllNodes())
+		for (MyNode n : nodes)
 		{
 			if (!n.isVisible())
 				System.out.println(n.getRealName());
@@ -266,12 +335,11 @@ public class ModelBuilder {
 	
 	public static void addNewNodeFromGUI (String nodeName, MyNodeType type)
 	{
-		/*Node newNode = node(type.getName(), meta).create(model);
+		Node newNode = node(type.getName(), meta).create(model);
 		
 		node(type.getName(), meta).findAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_NAME).set(newNode, PSSIFOption.one(PSSIFValue.create(nodeName)));
 		
-		nodes.add(new MyNode(newNode, type));*/
-		activeModels.getFirst().addNewNodeFromGUI(nodeName, type);
+		nodes.add(new MyNode(newNode, type));
 	}
 	
 	public static void removeNode (MyNode node)
@@ -288,7 +356,7 @@ public class ModelBuilder {
 	
 	public static boolean addNewEdgeGUI(MyNode source, MyNode destination, MyEdgeType edgetype)
 	{
-		/*ConnectionMapping mapping = edgetype.getType().getMapping(source.getNodeType().getType(), destination.getNodeType().getType());
+		ConnectionMapping mapping = edgetype.getType().getMapping(source.getNodeType().getType(), destination.getNodeType().getType());
 		
 		if (mapping!=null)
 		{
@@ -300,8 +368,6 @@ public class ModelBuilder {
 			return true;
 		}
 		else
-			return false;*/
-		return activeModels.getFirst().addNewEdgeGUI(source, destination, edgetype);
-		
+			return false;
 	}
 }
