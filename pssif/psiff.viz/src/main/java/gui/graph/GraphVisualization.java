@@ -8,6 +8,7 @@ import edu.uci.ics.jung.algorithms.layout.KKLayout;
 import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.algorithms.layout.SpringLayout;
 import edu.uci.ics.jung.graph.Graph;
+import edu.uci.ics.jung.graph.Hypergraph;
 import edu.uci.ics.jung.visualization.RenderContext;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.control.AbstractModalGraphMouse;
@@ -77,7 +78,7 @@ public class GraphVisualization
     configWriterReader = new ConfigWriterReader();
     this.nodeColorMapping = configWriterReader.readColors();
     
-    this.g = this.gb.createGraph(this.detailedNodes);
+    this.g =  this.gb.createGraph(this.detailedNodes);
     
 
     this.layout = new FRLayout<MyNode, MyEdge>(this.g);
@@ -276,9 +277,9 @@ public class GraphVisualization
       this.detailedNodes = details;
       
       if (collapser.CollapserActive())
-    	  this.g = this.gb.changeNodeDetails(details, g);
+    	  this.g = (Graph)this.gb.changeNodeDetails(details, g);
       else
-    	  this.g = this.gb.createGraph(details);
+    	  this.g = (Graph)this.gb.createGraph(details);
       
       this.vv.repaint();
     }
@@ -393,7 +394,7 @@ public class GraphVisualization
 	
 	public void updateGraph()
 	{
-		g = gb.updateGraph(detailedNodes);
+		g = (Graph) gb.updateGraph(detailedNodes);
 		
 		vv.getPickedVertexState().clear();
 	    vv.repaint();

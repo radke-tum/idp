@@ -1,7 +1,10 @@
 package graph.model;
 
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
+
 import de.tum.pssif.core.metamodel.NodeType;
 
 /**
@@ -16,13 +19,22 @@ public class MyNodeTypes {
 	{
 		this.types = new LinkedList<MyNodeType>();
 		
-		for (NodeType nt : types)
-		{
-			MyNodeType tmp = new MyNodeType(nt);
-				
-			this.types.add(tmp);
-		}
+		addNodeTypes(types);
+	}
+	
+	public MyNodeTypes (HashSet<MyNodeType> newTypes)
+	{
+		this.types = new LinkedList<MyNodeType>();
 		
+		Iterator<MyNodeType> it = newTypes.iterator();
+		
+		while (it.hasNext())
+		{
+			MyNodeType tmp = it.next();
+			
+			if (!types.contains(tmp))
+				types.add(tmp);
+		}
 	}
 	
 	/**
