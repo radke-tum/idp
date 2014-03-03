@@ -8,6 +8,9 @@
 	</parent>
 	<artifactId>pssif.transform</artifactId>
 	<packaging>pom</packaging>
+	<properties>
+		<emf.version>2.5.0.v20100521-1846</emf.version>
+	</properties>
 
 	<dependencies>
 		<dependency>
@@ -21,6 +24,13 @@
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
+		</dependency>
+		
+		<!-- EMF / XMI -->
+		<dependency>
+			<groupId>org.eclipse.emf</groupId>
+			<artifactId>org.eclipse.emf.ecore.xmi</artifactId>
+			<version>${emf.version}</version>
 		</dependency>
 	</dependencies>
 </project>
