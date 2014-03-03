@@ -1,6 +1,8 @@
 package graph.model;
 
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 
 import de.tum.pssif.core.metamodel.EdgeType;
@@ -30,6 +32,21 @@ public class MyEdgeTypes {
 			MyEdgeType tmp = new MyEdgeType(et, idcounter++);
 				
 			this.types.add(tmp);
+		}
+	}
+	
+	public MyEdgeTypes (HashSet<MyEdgeType> newTypes)
+	{
+		this.types = new LinkedList<MyEdgeType>();
+		
+		Iterator<MyEdgeType> it = newTypes.iterator();
+		
+		while (it.hasNext())
+		{
+			MyEdgeType tmp = it.next();
+			
+			if (!types.contains(tmp))
+				types.add(tmp);
 		}
 	}
 	

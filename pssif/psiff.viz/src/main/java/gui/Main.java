@@ -11,6 +11,7 @@ import gui.graph.NodeColorPopup;
 
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Frame;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
@@ -23,7 +24,9 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.LinkedList;
 
+import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -33,6 +36,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+import model.FileImporter;
 import model.ModelBuilder;
 import de.tum.pssif.core.metamodel.Metamodel;
 import de.tum.pssif.core.model.Model;
@@ -114,56 +118,29 @@ public class Main {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				JFileChooser openFile = new JFileChooser();
-				
-				openFile.setCurrentDirectory(new File("C:\\Users\\Luc\\Desktop\\Uni Dropbox\\Dropbox\\IDP-PSS-IF-Shared\\Modelle PE"));
-				int returnVal = openFile.showOpenDialog(frame);
-				
-			    if (returnVal == JFileChooser.APPROVE_OPTION) {
-			      
-			    	File file = openFile.getSelectedFile();
-			        InputStream in;
-					try {
-						// Read the Inputfile
-						in = new FileInputStream(file);
-						
-						String path = file.getAbsolutePath();
-						String fileEnding = path.substring(path.lastIndexOf('.')+1);
-						
-						// Create the Model and MetaModel
-						Mapper importer = MapperFactory.getMapper(fileEnding);
-						// TODO Needs to be changed	
-				        Metamodel metamodel = PSSIFCanonicMetamodelCreator.create();
-				        Metamodel view = GraphMlViewCreator.createGraphMlView(metamodel);
-
-				        Model model = importer.read(view, in);
-				        
-				        // Create the Viz Model
-				        new ModelBuilder(metamodel,model);
-				        
-				        // Create the Views
-				        matrixView = new MatrixView();
-						graphView = new GraphView();
-						
-						Dimension d = frame.getSize();
-						
-						// Setup the frame
-						frame.getContentPane().removeAll();
-						// Standart start with Graph
-						frame.getContentPane().add(graphView.getGraphPanel());
-						graphView.setActive(true);
-						matrixView.setActive(false);
-						
-						frame.setJMenuBar(createMenu());
-						adjustButtons();
-						
-						frame.setPreferredSize(d);
-						frame.pack();
-						frame.repaint();
-					} catch (FileNotFoundException e1) {
-						e1.printStackTrace();
-					}			       
-			    }
+				FileImporter importer = new FileImporter();
+				if (importer.showPopup(frame))
+				{
+			        // Create the Views
+			        matrixView = new MatrixView();
+					graphView = new GraphView();
+					
+					Dimension d = frame.getSize();
+					
+					// Setup the frame
+					frame.getContentPane().removeAll();
+					// Standart start with Graph
+					frame.getContentPane().add(graphView.getGraphPanel());
+					graphView.setActive(true);
+					matrixView.setActive(false);
+					
+					frame.setJMenuBar(createMenu());
+					adjustButtons();
+					
+					frame.setPreferredSize(d);
+					frame.pack();
+					frame.repaint();
+				}
 			}
 		});
 		
@@ -434,25 +411,6 @@ public class Main {
 					resetApplyEdgeFilters(condition);
 					resetDeleteEdgeFilters();
 					
-					/*System.out.println(condition);
-					
-					Component[] tmp = applyEdgeFilter.getComponents();		
-					System.out.println("Found Components "+tmp.length);
-					for (Component c :tmp)
-					{
-						if (c instanceof JCheckBoxMenuItem)
-						{
-							JCheckBoxMenuItem item = (JCheckBoxMenuItem) c;
-							System.out.println("Checkbox "+item.getText());
-							if (item.getText().equals(condition))
-							{
-								System.out.println("found Edge update");
-								item.setSelected(true);
-								item.validate();
-							}
-						}
-					}
-					*/
 					graphView.getGraph().updateGraph();
 				}
 				
@@ -461,27 +419,6 @@ public class Main {
 					String condition = result.substring(result.indexOf("|")+1);
 					resetApplyNodeFilters(condition);
 					resetDeleteNodeFilters();
-					
-					
-					
-				/*	System.out.println(condition);
-					Component[] tmp = applyNodeFilter.getComponents();
-					System.out.println("Found Components "+tmp.length);
-					for (Component c :tmp)
-					{
-						if (c instanceof JCheckBoxMenuItem)
-						{
-							JCheckBoxMenuItem item = (JCheckBoxMenuItem) c;
-							
-							System.out.println("Checkbox "+item.getText());
-							if (item.getText().equals(condition))
-							{
-								System.out.println("found Node update");
-								item.setSelected(true);
-								item.validate();
-							}
-						}
-					}*/
 					
 					graphView.getGraph().updateGraph();
 				}
@@ -603,8 +540,6 @@ public class Main {
 				menuItem.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					//graphView.getGraph().applyNodeAndEdgeFilter(ModelBuilder.getNodeTypes().getAllNodeTypes(), ModelBuilder.getEdgeTypes().getAllEdgeTypes());
-					
 					GraphViewContainer view = views.get(name);
 					
 					JCheckBoxMenuItem item = (JCheckBoxMenuItem)e.getSource();
@@ -618,8 +553,6 @@ public class Main {
 					//	System.out.println("UnSelected");
 						graphView.getGraph().undoNodeAndEdgeFilter(name);
 					}
-					//System.out.println("Number of Node Types: "+view.getSelectedNodeTypes().size());
-					//System.out.println("Number of Edge Types: "+view.getSelectedEdgeTypes().size());
 					
 				}
 				});

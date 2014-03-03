@@ -4,11 +4,13 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-import model.ModelBuilder;
-
 import edu.uci.ics.jung.graph.Graph;
+import edu.uci.ics.jung.graph.Hypergraph;
+import edu.uci.ics.jung.graph.SetHypergraph;
 import edu.uci.ics.jung.graph.SparseMultigraph;
 import edu.uci.ics.jung.graph.util.EdgeType;
+import model.ModelBuilder;
+
 
 public class GraphBuilder {
 	
@@ -25,7 +27,8 @@ public class GraphBuilder {
 	{
 		if (g==null)
 			g = new SparseMultigraph<MyNode,MyEdge>();
-
+			//g = new SetHypergraph<MyNode,MyEdge>();
+		
 		removeAllNodesAndEdges();
 		
 		buildGraphFromModel(detailedNodes);
@@ -136,14 +139,25 @@ public class GraphBuilder {
 					System.out.println("Dest "+e.getDestinationNode().getRealName());
 				}
 				if (e.isDirected())
+				{
+					//LinkedList<MyNode> tmp = new LinkedList<MyNode>();
+					//tmp.add(e.getSourceNode());
+					//tmp.add(e.getDestinationNode());
 					g.addEdge(e, e.getSourceNode(), e.getDestinationNode(), EdgeType.DIRECTED);
+				}
 				else
+				{
+					/*LinkedList<MyNode> tmp = new LinkedList<MyNode>();
+					tmp.add(e.getSourceNode());
+					tmp.add(e.getDestinationNode());*/
 					g.addEdge(e, e.getSourceNode(), e.getDestinationNode(), EdgeType.UNDIRECTED);
+				}
 				
 				if (commentsVisible)
 					System.out.println("Edge-----------------");
 			}
 		}
+		
 		if (commentsVisible)
 			System.out.println("----------------");
 		

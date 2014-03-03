@@ -302,7 +302,7 @@ public class MyCollapser {
 			{
 				if (n!=null)
 				{
-					MyNode tmp = ModelBuilder.findNode(n.getNode());
+					MyNode tmp = ModelBuilder.findNode(n);
 					
 					tmp.setDetailedOutput(nodeDetails);
 					tmp.setVisible(true);
@@ -314,7 +314,7 @@ public class MyCollapser {
 			workEdges = container.getOldEdges();
 			for (MyEdge ic :workEdges)
 			{
-				MyEdge tmp = ModelBuilder.findEdge(ic.getEdge());
+				MyEdge tmp = ModelBuilder.findEdge(ic);
 				
 				tmp.setVisible(true);
 			}
