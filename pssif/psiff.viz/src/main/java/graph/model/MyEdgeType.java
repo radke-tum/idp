@@ -24,11 +24,9 @@ public class MyEdgeType {
     	
     }
 
-
 	public EdgeType getType() {
 		return type;
 	}
-
 
 	public int getLineType() {
 		return lineType;

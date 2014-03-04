@@ -1,14 +1,22 @@
 package gui.matrix;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.beans.*;
+import java.awt.Component;
+import java.awt.Font;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.Enumeration;
 import java.util.LinkedList;
 
-import javax.swing.*;
-import javax.swing.event.*;
-import javax.swing.table.*;
+import javax.swing.JLabel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JViewport;
+import javax.swing.UIManager;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.JTableHeader;
+import javax.swing.table.TableColumn;
 /*
  *	Use a JTable as a renderer for row numbers of a given main table.
  *  This table must be added to the row header of the scrollpane that
@@ -36,10 +44,11 @@ public class RowLegendTable extends JTable
 		column.setCellRenderer(new RowNumberRenderer());
 
 		
-		setPreferredScrollableViewportSize(getPreferredSize());
+		
 		
 		// get the header values
 		Enumeration<TableColumn> columns =main.getTableHeader().getColumnModel().getColumns();
+		
 		
 		int maxsize=0;
 		rowheader = new LinkedList<String>();
@@ -54,7 +63,8 @@ public class RowLegendTable extends JTable
 				maxsize=s.length();
 		}
 		
-		//getColumnModel().getColumn(0).setPreferredWidth(50);
+		//setPreferredScrollableViewportSize(getPreferredSize());
+		//getColumnModel().getColumn(0).setPreferredWidth(maxsize);
 	}
 
 	@Override

@@ -1,6 +1,5 @@
 package gui.graph;
 
-import graph.model.MyEdge;
 import graph.model.MyEdgeType;
 import graph.model.MyNodeType;
 import graph.operations.GraphViewContainer;
@@ -12,19 +11,11 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
-import java.awt.List;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.TreeMap;
-import java.util.TreeSet;
 
-import javax.print.attribute.HashAttributeSet;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;

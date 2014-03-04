@@ -7,37 +7,11 @@ import graph.model.MyNode;
 import graph.model.MyNodeType;
 import graph.model.MyNodeTypes;
 
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 
-import de.tum.pssif.core.PSSIFConstants;
-import de.tum.pssif.core.metamodel.AttributeCategory;
-import de.tum.pssif.core.metamodel.ConnectionMapping;
-import de.tum.pssif.core.metamodel.EdgeType;
 import de.tum.pssif.core.metamodel.Metamodel;
-import de.tum.pssif.core.metamodel.MutableMetamodel;
-import de.tum.pssif.core.metamodel.NodeType;
-
-
-import de.tum.pssif.core.metamodel.PrimitiveDataType;
-import de.tum.pssif.core.metamodel.Units;
-import de.tum.pssif.core.model.Edge;
 import de.tum.pssif.core.model.Model;
-import de.tum.pssif.core.model.Node;
-import de.tum.pssif.core.model.impl.ModelImpl;
-import de.tum.pssif.core.util.PSSIFCanonicMetamodelCreator;
-import de.tum.pssif.core.util.PSSIFOption;
-import de.tum.pssif.core.util.PSSIFValue;
-import de.tum.pssif.core.metamodel.Attribute;
-import de.tum.pssif.core.metamodel.Multiplicity.MultiplicityContainer;
-import de.tum.pssif.core.metamodel.Multiplicity.UnlimitedNatural;
-import de.tum.pssif.core.metamodel.impl.DisconnectOperation;
-import de.tum.pssif.core.metamodel.impl.GetValueOperation;
-import de.tum.pssif.core.metamodel.impl.MetamodelImpl;
-import de.tum.pssif.core.metamodel.impl.ReadConnectedOperation;
-import de.tum.pssif.core.metamodel.impl.SetValueOperation;
 
 /**
  * Builds out of a Model and an MetaModel a Model which can be displayed as Graph and Matrix
@@ -46,9 +20,8 @@ import de.tum.pssif.core.metamodel.impl.SetValueOperation;
  */
 public class ModelBuilder {
 	
-	private static LinkedList<MyModelContainer> activeModels;
+	private static MyModelContainer activeModel;
 
-	
 	/**
 	 * Initializes all the content
 	 * @param meta
@@ -56,14 +29,20 @@ public class ModelBuilder {
 	 */
 	public ModelBuilder(Metamodel Pmeta, Model Pmodel)
 	{
-		if (activeModels==null)
+		// check if we have to merge the model with an existing
+		if (activeModel==null)
 		{
-			activeModels = new LinkedList<MyModelContainer>();
+			MyModelContainer newModel = new MyModelContainer(Pmodel, Pmeta);
+			activeModel =newModel;
 		}
-		
-		MyModelContainer newModel = new MyModelContainer(Pmodel, Pmeta);
-		activeModels.add(newModel);	
-		
+		else
+		{
+			ModelMerger merger = new ModelMerger();
+			Model mergedModel = merger.mergeModels(activeModel.getModel(), Pmodel, Pmeta);
+			
+			MyModelContainer newModel = new MyModelContainer(mergedModel, Pmeta);
+			activeModel =newModel;
+		}
 	}
 	
 	/**
@@ -71,33 +50,34 @@ public class ModelBuilder {
 	 */
 	public ModelBuilder()
 	{
-		activeModels = new LinkedList<MyModelContainer>();
+		activeModel = null;
 	}
 
-	
-	public static  LinkedList<MyNode> getAllNodes()
+	/**
+	 * get all Nodes from the Model
+	 * @return List with the Nodes
+	 */
+	public static LinkedList<MyNode> getAllNodes()
 	{
-		LinkedList<MyNode> res = new LinkedList<MyNode>();
-		
-		for (MyModelContainer mc : activeModels)
-		{ 
-			res.addAll(mc.getAllNodes());
-		}
-		return res;
+		if (activeModel !=null)
+			return activeModel.getAllNodes();
+		else
+			return new LinkedList<MyNode>();
 	}
 	
+	/**
+	 * get all Edges from the Model
+	 * @return List with the Edges
+	 */
 	public static LinkedList<MyEdge> getAllEdges()
 	{
-		LinkedList<MyEdge> res = new LinkedList<MyEdge>();
-		
-		for (MyModelContainer mc : activeModels)
-		{ 
-			res.addAll(mc.getAllEdges());
-		}
-		return res;
+		if (activeModel !=null)
+			return activeModel.getAllEdges();
+		else
+			return new LinkedList<MyEdge>();
 	}
 	
-	
+/*
 	public static MyNode findNode (MyNode n)
 	{
 		for (MyNode current : getAllNodes())
@@ -118,43 +98,57 @@ public class ModelBuilder {
 		}
 		
 		return null;
-	}
+	}*/
 	
+	/**
+	 * get all Node Types from the Model
+	 * @return the NodeTypes object
+	 */
 	public static MyNodeTypes getNodeTypes() {
-		HashSet<MyNodeType> tmp = new HashSet<MyNodeType>();
-		
-		for (MyModelContainer mc : activeModels)
-		{ 	
-			tmp.addAll(mc.getNodeTypes().getAllNodeTypes());
+		if (activeModel !=null)
+			return activeModel.getNodeTypes();
+		else
+		{
+			return new MyNodeTypes(new HashSet<MyNodeType>());
 		}
-		
-		MyNodeTypes nt = new MyNodeTypes(tmp);
-		return nt;
-	}
-
-	public static MyEdgeTypes getEdgeTypes() {
-		HashSet<MyEdgeType> tmp = new HashSet<MyEdgeType>();
-		
-		for (MyModelContainer mc : activeModels)
-		{ 	
-			tmp.addAll(mc.getEdgeTypes().getAllEdgeTypes());
-		}
-		
-		MyEdgeTypes et = new MyEdgeTypes(tmp);
-		return et;
 	}
 	
+	/**
+	 * get all Edge Types from the Model
+	 * @return the EdgeTypes object
+	 */
+	public static MyEdgeTypes getEdgeTypes() {
+		if (activeModel !=null)
+			return activeModel.getEdgeTypes();
+		else
+		{
+			return new MyEdgeTypes(new HashSet<MyEdgeType>());
+		}
+	}
+	
+	/**
+	 * add an Edge which is added during a collapse operation
+	 * @param newEdge the new Edge 
+	 */
 	public static void addCollapserEdge(MyEdge newEdge)
 	{
-		//TODO no very good implementation
-		newEdge.setCollapseEdge(true);
-		activeModels.getFirst().addEdge(newEdge);
+		if (activeModel !=null)
+		{
+			newEdge.setCollapseEdge(true);
+			activeModel.addEdge(newEdge);
+		}
 	}
 	
+	/**
+	 * remove an Edge which was added during a collapse operation
+	 * @param edge the edge in question
+	 */
 	public static void removeCollapserEdge(MyEdge edge)
 	{
-		//TODO no very good implementation
-		activeModels.getFirst().removeCollapserEdge(edge);
+		if (activeModel !=null)
+		{
+			activeModel.removeCollapserEdge(edge);
+		}
 	}
 	
 	public static void printVisibleStuff ()
@@ -175,18 +169,33 @@ public class ModelBuilder {
 		System.out.println("--------------------------");
 	}
 	
+	/**
+	 * Add a new Node which was created through the Gui
+	 * @param nodeName The name of the new Node
+	 * @param type The type of the new Node
+	 */
 	public static void addNewNodeFromGUI (String nodeName, MyNodeType type)
 	{
-		activeModels.getFirst().addNewNodeFromGUI(nodeName, type);
+		if (activeModel !=null)
+		{
+			activeModel.addNewNodeFromGUI(nodeName, type);
+		}
 	}
 	
-	public static void removeNode (MyNode node)
-	{
-		throw new NullPointerException("Is not implemented in the core");
-	}
-	
+	/**
+	 * Add a new Edge which was created through the Gui
+	 * @param source The start Node of the Edge
+	 * @param destination The destination Node of the Edge
+	 * @param edgetype The type of the Edge
+	 * @return true if the add operation was successful, false otherwise
+	 */
 	public static boolean addNewEdgeGUI(MyNode source, MyNode destination, MyEdgeType edgetype)
 	{
-		return activeModels.getFirst().addNewEdgeGUI(source, destination, edgetype);
+		if (activeModel !=null)
+		{
+			return activeModel.addNewEdgeGUI(source, destination, edgetype);
+		}
+		else
+			return false;
 	}
 }

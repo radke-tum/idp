@@ -6,9 +6,7 @@ import gui.GraphView;
 import java.awt.Color;
 import java.awt.GridLayout;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedList;
 
 import javax.swing.JColorChooser;
 import javax.swing.JList;
@@ -33,6 +31,10 @@ public class NodeColorPopup extends MyPopup{
 		this.graphView = graphView;
 	}
 	
+	/**
+	 * Evaluate the Popup after the users input
+	 * @param dialogResult the result of the users interaction with the popup gui
+	 */
 	private void evalDialog (int dialogResult)
 	{
 		if (dialogResult==0)
@@ -43,6 +45,10 @@ public class NodeColorPopup extends MyPopup{
 	 	}
 	}
 	
+	/**
+	 * Create the Panel(GUI) of the Popup 
+	 * @return a panel with all the components
+	 */
 	private JPanel createPanel()
 	{
 		JPanel bannerPanel = new JPanel(new GridLayout());;
@@ -84,6 +90,9 @@ public class NodeColorPopup extends MyPopup{
 	     return bannerPanel;
 	}
 	
+	/**
+	 * Display the Popup to the user
+	 */
 	public void showPopup()
 	{
 		panel = createPanel();

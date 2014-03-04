@@ -6,9 +6,7 @@ import graph.model.MyEdge;
 import graph.model.MyEdgeType;
 import graph.model.MyNode;
 import graph.model.MyNodeType;
-import gui.graph.EdgeAndNodeTypePopup;
 import gui.graph.GraphVisualization;
-import gui.graph.HighlightNodePopup;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -16,7 +14,6 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -26,9 +23,7 @@ import java.util.LinkedList;
 import java.util.Set;
 
 import javax.swing.Box;
-import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
-import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;

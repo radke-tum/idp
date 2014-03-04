@@ -9,25 +9,16 @@ import gui.graph.GraphVisualization;
 import gui.graph.HighlightNodePopup;
 import gui.graph.NodeColorPopup;
 
-import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Frame;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
 import java.util.HashMap;
 import java.util.LinkedList;
 
-import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JComboBox;
-import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -37,13 +28,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import model.FileImporter;
-import model.ModelBuilder;
-import de.tum.pssif.core.metamodel.Metamodel;
-import de.tum.pssif.core.model.Model;
-import de.tum.pssif.core.util.PSSIFCanonicMetamodelCreator;
-import de.tum.pssif.transform.Mapper;
-import de.tum.pssif.transform.MapperFactory;
-import de.tum.pssif.transform.mapper.graphml.GraphMlViewCreator;
 
 public class Main {
 	
@@ -83,7 +67,7 @@ public class Main {
 	
 	public Main ()
 	{
-		frame = new JFrame("Product Service Systems - Integration Framework ---- Visualisation");
+		frame = new JFrame("Product Service Systems - Integration Framework ---- Visualization");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
@@ -304,7 +288,7 @@ public class Main {
 	
 	private JMenu addVizModes()
 	{
-		JMenu visualisationMenu = new JMenu("Visualisation Mode");
+		JMenu visualisationMenu = new JMenu("Visualization Mode");
 		graphVizualistation = new JMenuItem("Graph");
 		graphVizualistation.addActionListener(new ActionListener() {
 			
@@ -367,7 +351,7 @@ public class Main {
 		
 		resetMenu.add(resetGraph);
 		
-		resetMatrix = new JMenuItem("Reset Matrix");
+		resetMatrix = new JMenuItem("Reset Matrix Filter");
 		resetMatrix.addActionListener(new ActionListener() {
 			
 			@Override

@@ -1,24 +1,13 @@
 package gui;
 
 import graph.model.MyEdge;
-import graph.model.MyEdgeType;
 import graph.model.MyNode;
-import graph.model.MyNodeType;
 import gui.matrix.MatrixChooseNodeAndEgeTypePopup;
 import gui.matrix.RowLegendTable;
 import gui.matrix.TableColumnAdjuster;
 import gui.matrix.VerticalTableHeaderCellRenderer;
 
-import java.awt.Color;
-
 import java.awt.BorderLayout;
-
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -26,20 +15,15 @@ import java.util.Enumeration;
 import java.util.LinkedList;
 
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComponent;
 import javax.swing.JFileChooser;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
-import matrix.model.MatrixBuilder;
 import matrix.model.ExcelExport;
-import model.ModelBuilder;
+import matrix.model.MatrixBuilder;
 
 public class MatrixView {
 

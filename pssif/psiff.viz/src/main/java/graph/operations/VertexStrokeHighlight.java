@@ -177,7 +177,7 @@ public class VertexStrokeHighlight<V,E> implements Transformer<V,Stroke>
 	         */
 	        private boolean searchOutEdges(V source, V dest, boolean depthsearch)
 	        {
-	        	@SuppressWarnings("unchecked")
+
 	        	LinkedList<MyEdge> eout = findOutgoingEdges(source);
 				//Collection<MyEdge> eout = ( Collection<MyEdge>) graph.getOutEdges(source);
 	        	 
@@ -275,23 +275,5 @@ public class VertexStrokeHighlight<V,E> implements Transformer<V,Stroke>
 				}
 				
 				return res;
-			}
-			
-			/**
-			 * Find for a given Node all the incoming edges
-			 * @param node the node which should be searched
-			 * @return a list with all the incoming Edges
-			 */
-			private LinkedList<MyEdge> findIncomingEdges (MyNode node)
-			{
-				LinkedList<MyEdge> res = new LinkedList<MyEdge>();
-				
-				for (MyEdge e :ModelBuilder.getAllEdges())
-				{
-					if (e.isVisible() && e.getDestinationNode().equals(node))
-						res.add(e);
-				}
-				return res;
-			}
-	        
+			}        
 }

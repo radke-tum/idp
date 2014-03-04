@@ -1,6 +1,8 @@
 package graph.model;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -20,21 +22,27 @@ public class MyEdgeTypes {
 	
 	/**
 	 * Create a new MyEdgeTypes Object
-	 * @param types : Collection<EdgeType> || all the EdgeTypes found in the PSSIF Model
+	 * @param types  all the EdgeTypes found in the PSSIF Model
 	 */
-	public MyEdgeTypes (Collection<EdgeType> types)
+	public MyEdgeTypes (Collection<EdgeType> newtypes)
 	{
 		idcounter =0;
 		this.types = new LinkedList<MyEdgeType>();
 		
-		for (EdgeType et : types)
+		for (EdgeType et : newtypes)
 		{
 			MyEdgeType tmp = new MyEdgeType(et, idcounter++);
 				
 			this.types.add(tmp);
 		}
+		
+		Collections.sort(this.types,new MyEdgeTypeComparator());
 	}
 	
+	/**
+	 * Create a new MyEdgeTypes Object
+	 * @param types  all the EdgeTypes found in the PSSIF Model
+	 */
 	public MyEdgeTypes (HashSet<MyEdgeType> newTypes)
 	{
 		this.types = new LinkedList<MyEdgeType>();
@@ -48,6 +56,7 @@ public class MyEdgeTypes {
 			if (!types.contains(tmp))
 				types.add(tmp);
 		}
+		Collections.sort(this.types,new MyEdgeTypeComparator());
 	}
 	
 	/**
@@ -107,5 +116,18 @@ public class MyEdgeTypes {
 	public MyEdgeType[] getAllEdgeTypesArray()
 	{
 		return types.toArray(new MyEdgeType[types.size()]);
+	}
+	
+	/**
+	 * provides a possibility to compare the EdgeTypes
+	 * @author Luc
+	 *
+	 */
+	protected class MyEdgeTypeComparator implements Comparator<MyEdgeType>
+	{
+	  @Override public int compare( MyEdgeType type1, MyEdgeType type2 )
+	  {
+	    return type1.getName().compareTo(type2.getName());
+	  }
 	}
 }

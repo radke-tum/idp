@@ -1,5 +1,11 @@
 package graph.model;
 
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.LinkedList;
+
+import model.ModelBuilder;
+import de.tum.pssif.core.metamodel.EdgeType;
 import de.tum.pssif.core.metamodel.NodeType;
 
 /**
@@ -18,14 +24,6 @@ public class MyNodeType {
 	public String getName() {
 		return type.getName();
 	}
-
-	/*public int getID() {
-		return id;
-	}
-
-	private int getParentID() {
-		return parentType;
-	}*/
 
 	public NodeType getParentType() {
 
@@ -57,4 +55,38 @@ public class MyNodeType {
 	    	return false;
 	}
 	
+	/**
+	 * which outgoing edge types are possible from this Node Type
+	 * @return list with all the edge types
+	 */
+	public LinkedList<MyEdgeType> getpossibleEdgeTypes()
+	{
+		LinkedList<MyEdgeType> res = new LinkedList<MyEdgeType>();
+		//FIXME needs some improvement
+		//for(EdgeType et: type.getOutgoings())
+		for(MyEdgeType et: ModelBuilder.getEdgeTypes().getAllEdgeTypes())
+		{
+			
+			MyEdgeType met = ModelBuilder.getEdgeTypes().getValue(et.getName());
+			res.add(met);
+		}
+		
+		
+		Collections.sort(res, new MyEdgeTypeComparator());
+		
+		return res;
+	}
+	
+	/**
+	 * provides a possibility to compare the EdgeTypes
+	 * @author Luc
+	 *
+	 */
+	protected class MyEdgeTypeComparator implements Comparator<MyEdgeType>
+	{
+	  @Override public int compare( MyEdgeType type1, MyEdgeType type2 )
+	  {
+	    return type1.getName().compareTo(type2.getName());
+	  }
+	}
 }
