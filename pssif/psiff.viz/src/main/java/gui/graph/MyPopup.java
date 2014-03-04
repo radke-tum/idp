@@ -9,8 +9,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.TreeMap;
 
-import javax.swing.JPanel;
-
 /**
  * Provides basic functionalities for a Popup
  * Should not be instantiated

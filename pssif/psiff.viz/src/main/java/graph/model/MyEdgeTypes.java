@@ -22,7 +22,7 @@ public class MyEdgeTypes {
 	
 	/**
 	 * Create a new MyEdgeTypes Object
-	 * @param types : Collection<EdgeType> || all the EdgeTypes found in the PSSIF Model
+	 * @param types  all the EdgeTypes found in the PSSIF Model
 	 */
 	public MyEdgeTypes (Collection<EdgeType> newtypes)
 	{
@@ -39,6 +39,10 @@ public class MyEdgeTypes {
 		Collections.sort(this.types,new MyEdgeTypeComparator());
 	}
 	
+	/**
+	 * Create a new MyEdgeTypes Object
+	 * @param types  all the EdgeTypes found in the PSSIF Model
+	 */
 	public MyEdgeTypes (HashSet<MyEdgeType> newTypes)
 	{
 		this.types = new LinkedList<MyEdgeType>();

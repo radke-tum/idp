@@ -1,20 +1,11 @@
 package model;
 
-
-
-import graph.model.MyEdge;
-import graph.model.MyEdgeType;
-
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.apache.commons.collections15.functors.NullIsExceptionPredicate;
-
-import de.tum.pssif.core.PSSIFConstants;
 import de.tum.pssif.core.metamodel.Annotation;
 import de.tum.pssif.core.metamodel.Attribute;
 import de.tum.pssif.core.metamodel.AttributeGroup;
@@ -28,7 +19,11 @@ import de.tum.pssif.core.model.Model;
 import de.tum.pssif.core.model.Node;
 import de.tum.pssif.core.util.PSSIFOption;
 import de.tum.pssif.core.util.PSSIFValue;
-
+/**
+ * Very basic Model Merger. Can merge two models into one model. Does only copy everything from one model to the other. No matching at all!
+ * @author Luc
+ *
+ */
 public class ModelMerger {
 	
 	private Model model1;
@@ -37,6 +32,13 @@ public class ModelMerger {
 	private HashMap<Node, NodeType> transferNodes;
 	private HashMap<Node, Node> oldToNewNodes;
 	
+	/**
+	 * merge two models into one model in respect of the given metamodel
+	 * @param model1 first model
+	 * @param model2 second model
+	 * @param meta metamodel
+	 * @return the merged model
+	 */
 	public Model mergeModels (Model model1, Model model2, Metamodel meta)
 	{
 		this.model1 = model1;
@@ -52,17 +54,21 @@ public class ModelMerger {
 		return this.model1;
 	}
 
-	
+	/**
+	 * add all the Nodes from model2 to model1
+	 */
 	private void addAllNodes()
-	{
+	{	
+		// loop over all Node types
 		for (NodeType t : meta.getNodeTypes())
 		{
-			//TODO add all Node from model2 to model1
+			// get all the Nodes of this type
 			PSSIFOption<Node> tempNodes = t.apply(model2,true);
 			
 			if (tempNodes.isOne())
 			{
 				Node current = tempNodes.getOne();
+				// copy it to model1
 				addNode(current, t);
 				transferNodes.put(current, t);
 			}
@@ -72,6 +78,7 @@ public class ModelMerger {
 				Set<Node> many = tempNodes.getMany();
 				for (Node n : many)
 				{
+					// copy it to model1
 					addNode(n, t);
 					transferNodes.put(n, t);
 				}
@@ -79,15 +86,23 @@ public class ModelMerger {
 		}
 	}
 	
+	/**
+	 * add all the Edges from model2 to model1
+	 */
 	private void addAllEdges()
 	{
+		//check all the Nodes which were transferde from model1 to model2
 		for (Entry<Node, NodeType> entry : transferNodes.entrySet())
 		{
-			//TODO add all Edges
 			addEdge(entry.getKey(),entry.getValue());
 		}
 	}
 	
+	/**
+	 * Add a given Node to Model1
+	 * @param dataNode the model which should be transfered to model1
+	 * @param currentType the type of the dataNode
+	 */
 	private void addNode(Node dataNode, NodeType currentType)
 	{
 		// create Node
@@ -146,11 +161,18 @@ public class ModelMerger {
 		}
 	}
 	
+	/**
+	 * Add all the outgoing Edges of the given Node to the model1
+	 * @param sourceNode the Node where the edges start
+	 * @param sourceNodeType the type of the sourceNode
+	 */
 	private void addEdge(Node sourceNode, NodeType sourceNodeType)
 	{
+		// loop over all Edge types
 		for(EdgeType currentEdgeType : meta.getEdgeTypes())
 		{
-			//System.out.println("found EdgeType "+currentEdgeType.getName());
+			
+			// get all the outgoing edges of the sourceNode with the current EdgeType
 			PSSIFOption<Edge> outgoingEdges = currentEdgeType.getOutgoing().apply(sourceNode);
 			
 			LinkedList<Edge> tmpedges = new LinkedList<Edge>();
@@ -168,9 +190,10 @@ public class ModelMerger {
 				
 			}
 			
-			//System.out.println("nb of edges found "+ tmpedges.size());
+			// loop over all the outgoing edges
 			for (Edge currentEdge : tmpedges)
 			{
+				// get all the destinations of the current Edge
 				PSSIFOption<Node> destinations = currentEdgeType.getIncoming().apply(currentEdge);
 				
 				LinkedList<Node> tmpdestinations = new LinkedList<Node>();
@@ -189,17 +212,25 @@ public class ModelMerger {
 					throw new NullPointerException("What to do with edges with multiple ends");
 				}
 				
-			//	System.out.println("nb of destinations found "+ tmpdestinations.size());
+				// loop over all the destinations and add them to the model1
 				for (Node destNode : tmpdestinations)
 				{
+					//TODO check what should be done with edges with multiple destinations
+					
+					
+					// Add the Edge to model1
 					NodeType destNodeType = findNodeType(destNode);
 					
-					ConnectionMapping mapping = currentEdgeType.getMapping(sourceNodeType, destNodeType);
-					
-					//System.out.println("			created edge from "+ sourceNode +" to "+destNode);
-					Edge newEdge = mapping.create(model1, oldToNewNodes.get(sourceNode), oldToNewNodes.get(destNode));
-					
-					transferEdgeAttributes(currentEdge, newEdge, currentEdgeType);
+					if (destNodeType!=null)
+					{
+						ConnectionMapping mapping = currentEdgeType.getMapping(sourceNodeType, destNodeType);
+						
+						Edge newEdge = mapping.create(model1, oldToNewNodes.get(sourceNode), oldToNewNodes.get(destNode));
+						
+						transferEdgeAttributes(currentEdge, newEdge, currentEdgeType);
+					}
+					else
+						throw new NullPointerException("Could not find the correct NodeType");
 					
 				}
 			}
@@ -207,6 +238,12 @@ public class ModelMerger {
 	
 	}
 	
+	/**
+	 * transfer all the attributes and annotations from one Edge to the other
+	 * @param oldEdge contains all the information which should be transfered
+	 * @param newEdge the edge which should get all the information
+	 * @param type the type of both edges
+	 */
 	private void transferEdgeAttributes (Edge oldEdge, Edge newEdge, EdgeType type)
 	{
 		// transfer attribute groups
@@ -260,6 +297,11 @@ public class ModelMerger {
 		}
 	}
 	
+	/**
+	 * Get the NodeType of the given Node. Only works for Nodes which are transfered from model2 to model1
+	 * @param n the Node in context
+	 * @return the NodeType or null
+	 */
 	private NodeType findNodeType (Node n)
 	{
 		return transferNodes.get(n);

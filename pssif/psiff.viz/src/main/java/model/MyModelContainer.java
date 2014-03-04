@@ -22,6 +22,12 @@ import de.tum.pssif.core.model.Node;
 import de.tum.pssif.core.util.PSSIFOption;
 import de.tum.pssif.core.util.PSSIFValue;
 
+/**
+ * A container which holds a model and a metamodel
+ * The container provides also all the information from the model and metamodel in a format which can be displayed in a Graph or Matrix
+ * @author Luc
+ *
+ */
 public class MyModelContainer {
 
 	private Model model;
@@ -52,7 +58,9 @@ public class MyModelContainer {
 			throw new NullPointerException("Metamodel or model null!");
 		}
 	}
-	
+	/**
+	 * parse the metamodel and create all the NodeTypes
+	 */
 	private void createNodeTypes()
 	{
 		Collection<NodeType> types = meta.getNodeTypes();
@@ -60,6 +68,9 @@ public class MyModelContainer {
 		nodeTypes = new MyNodeTypes(types);
 	}
 	
+	/**
+	 * parse the metamodel and create all the EdgeTypes
+	 */
 	private void createEdgeTypes()
 	{
 		Collection<EdgeType> types = meta.getEdgeTypes();
@@ -67,6 +78,9 @@ public class MyModelContainer {
 		edgeTypes = new MyEdgeTypes(types);
 	}
 	
+	/**
+	 * parse the model and create all the Nodes
+	 */
 	private void createNodes()
 	{
 		for (MyNodeType t : nodeTypes.getAllNodeTypes())
@@ -88,6 +102,9 @@ public class MyModelContainer {
 		}
 	}
 	
+	/**
+	 * create all the Edges which are contained in the Model
+	 */
 	private void createEdges()
 	{
 		for (MyNode n: nodes)
@@ -95,7 +112,10 @@ public class MyModelContainer {
 			createEdge(n.getNode());
 		}
 	}
-	
+	/**
+	 * parse all the Edges which start from the given Node 
+	 * @param sourceNode the node in context
+	 */
 	private void createEdge(Node sourceNode)
 	{
 		for (MyEdgeType t : edgeTypes.getAllEdgeTypes())
@@ -142,39 +162,69 @@ public class MyModelContainer {
 		
 	}
 	
+	/**
+	 * Add a MyNode. Should not be used for MyNodes which where created via the Gui. Is not added to the Model!!!
+	 * @param node the MyNode in context
+	 */
 	public void addNode(MyNode node)
 	{
 		if (!isContained(node))
 			nodes.add(node);
 	}
 	
+	/**
+	 * Add a MyEdge. Should not be used for MyEdges which where created via the Gui. Is not added to the Model!!!
+	 * @param edge the MyEdge in context
+	 */
 	public void addEdge (MyEdge edge)
 	{
 		if (!isContained(edge))
 			edges.add(edge);
 	}
 	
+	/**
+	 * get all Nodes from the Model
+	 * @return List with the Nodes
+	 */
 	public LinkedList<MyNode> getAllNodes()
 	{
 		return nodes;
 	}
 	
+	/**
+	 * get all Edges from the Model
+	 * @return List with the Edges
+	 */
 	public LinkedList<MyEdge> getAllEdges()
 	{
 		return edges;
 	}
 	
+	/**
+	 * check if the given MyNode is already contained in the model
+	 * @param node the MyNode in context
+	 * @return true if it is contained, false otherwise
+	 */
 	public boolean isContained (MyNode node)
 	{
 		return nodes.contains(node);
 	}
 	
+	/**
+	 * check if the given MyEdge is already contained in the model
+	 * @param node the MyEdge in context
+	 * @return true if it is contained, false otherwise
+	 */
 	public boolean isContained (MyEdge edge)
 	{
 		return edges.contains(edge);
 	}
 	
-	
+	/**
+	 * find the MyNode object which owns the given Node
+	 * @param n the Node in context
+	 * @return the MyNode object or null if no MyNode object exists for the given Node
+	 */
 	public MyNode findNode (Node n)
 	{
 		for (MyNode current : nodes)
@@ -186,6 +236,11 @@ public class MyModelContainer {
 		return null;
 	}
 	
+	/**
+	 * find the MyEdge object which owns the given Edge
+	 * @param e the Edge in context
+	 * @return the MyEdge object or null if no MyEdge object exists for the given Edge
+	 */
 	public MyEdge findEdge (Edge e)
 	{
 		for (MyEdge current : edges)
@@ -197,27 +252,47 @@ public class MyModelContainer {
 		return null;
 	}
 	
+	/**
+	 * get all Node Types from the Model
+	 * @return the NodeTypes object
+	 */
 	public MyNodeTypes getNodeTypes() {
 		return nodeTypes;
 	}
-
+	
+	/**
+	 * get all Edge Types from the Model
+	 * @return the EdgeTypes object
+	 */
 	public MyEdgeTypes getEdgeTypes() {
 		return edgeTypes;
 	}
 	
+	/**
+	 * add an Edge which is added during a collapse operation
+	 * @param newEdge the new Edge 
+	 */
 	public void addCollapserEdge(MyEdge newEdge)
 	{
-		//MyEdge2 newEdge = new MyEdge2(edge, type, source, destination);
 		newEdge.setCollapseEdge(true);
 		edges.add(newEdge);
 	}
 	
+	/**
+	 * remove an Edge which was added during a collapse operation
+	 * @param edge the edge in question
+	 */
 	public void removeCollapserEdge(MyEdge edge)
 	{
 		if (edge.isCollapseEdge())
 			edges.remove(edge);
 	}
 	
+	/**
+	 * Add a new Node which was created through the Gui
+	 * @param nodeName The name of the new Node
+	 * @param type The type of the new Node
+	 */
 	public void addNewNodeFromGUI (String nodeName, MyNodeType type)
 	{
 		NodeType nodeType = meta.findNodeType(type.getName());
@@ -229,18 +304,13 @@ public class MyModelContainer {
 		nodes.add(new MyNode(newNode, type));
 	}
 	
-	public static void removeNode (MyNode node)
-	{
-		//node.getNode().apply(new Disco);
-		
-		//Node newNode = node(type.getName(), meta)
-		
-		//node(type.getName(), meta).findAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_NAME).set(newNode, PSSIFOption.one(PSSIFValue.create(nodeName)));
-		
-		//newNode.apply();
-		//node.getNode().apply(new DisconnectOperation(null, null, null));
-	}
-	
+	/**
+	 * Add a new Edge which was created from the Gui
+	 * @param source The start Node of the Edge
+	 * @param destination The destination Node of the Edge
+	 * @param edgetype The type of the Edge
+	 * @return true if the add operation was successful, false otherwise
+	 */
 	public boolean addNewEdgeGUI(MyNode source, MyNode destination, MyEdgeType edgetype)
 	{
 		ConnectionMapping mapping = edgetype.getType().getMapping(source.getNodeType().getType(), destination.getNodeType().getType());

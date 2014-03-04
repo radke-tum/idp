@@ -1,15 +1,12 @@
 package graph.model;
 
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.LinkedList;
 
+import model.ModelBuilder;
 import edu.uci.ics.jung.graph.Graph;
-import edu.uci.ics.jung.graph.Hypergraph;
-import edu.uci.ics.jung.graph.SetHypergraph;
 import edu.uci.ics.jung.graph.SparseMultigraph;
 import edu.uci.ics.jung.graph.util.EdgeType;
-import model.ModelBuilder;
 
 
 public class GraphBuilder {

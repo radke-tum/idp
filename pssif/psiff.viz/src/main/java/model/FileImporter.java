@@ -19,7 +19,6 @@ import de.tum.pssif.core.model.Model;
 import de.tum.pssif.core.util.PSSIFCanonicMetamodelCreator;
 import de.tum.pssif.transform.Mapper;
 import de.tum.pssif.transform.MapperFactory;
-import de.tum.pssif.transform.mapper.AbstractMapper;
 import de.tum.pssif.transform.mapper.BpmnMapper;
 import de.tum.pssif.transform.mapper.EpkMapper;
 import de.tum.pssif.transform.mapper.SysMlMapper;
@@ -28,8 +27,6 @@ import de.tum.pssif.transform.mapper.graphml.GraphMlViewCreator;
 
 public class FileImporter {
 	
-	//private Model importedModel;
-	//private Metamodel importerMetaModel;
 	private JComboBox<String> filetype;
 	private HashMap<String, String> comboBoxValues;
 	
@@ -44,7 +41,11 @@ public class FileImporter {
 		comboBoxValues.put("SysML", MapperFactory.SYSML);
 		
 	}
-	
+	/**
+	 * Read the selected file. Select the correct importer. Load the Nodes and Edges with the ModelBuilder
+	 * @param file the selected file which should be imported
+	 * @return true if no errors occured, false otherwise
+	 */
 	private boolean importFile(File file)
 	{
 		// Read the Inputfile 
@@ -54,7 +55,7 @@ public class FileImporter {
 
 			
 	        Metamodel metamodel = PSSIFCanonicMetamodelCreator.create();
-	       // Metamodel view = GraphMlViewCreator.createGraphMlView(metamodel);
+
 	        Metamodel view =null;;
 	        
 	        String selectedFileType = String.valueOf(filetype.getSelectedItem());
@@ -95,16 +96,6 @@ public class FileImporter {
 		        return true;
 	        }
 	        
-	        catch (NullPointerException e)
-	        {
-	        	//e.printStackTrace();
-	        	JPanel errorPanel = new JPanel();
-	    		
-	    		errorPanel.add(new JLabel("There was a problem transforming the selected file. Was the file type chosen correctly?"));
-	    		
-	    		JOptionPane.showMessageDialog(null, errorPanel, "Ups something went wrong", JOptionPane.ERROR_MESSAGE);
-				return false;
-	        }
 	        catch (Exception e)
 	        {
 	        	//e.printStackTrace();
@@ -125,6 +116,11 @@ public class FileImporter {
 		}
 	}
 	
+	/**
+	 * Display the popup to the User
+	 * @param caller the component which called to display the popup
+	 * @return true if the entire import went fine, otherwise false
+	 */
 	public boolean showPopup(Component caller)
 	{
 		JFileChooser openFile = new JFileChooser();

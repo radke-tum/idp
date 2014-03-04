@@ -3,18 +3,13 @@ package gui.graph;
 import graph.model.MyEdgeType;
 import gui.checkboxtree.CheckBoxTree;
 
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.LinkedList;
 import java.util.TreeMap;
 
-import javax.swing.Box;
-import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -23,8 +18,6 @@ import javax.swing.JSpinner;
 import javax.swing.JTree;
 import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import model.ModelBuilder;
 
@@ -76,20 +69,6 @@ public class HighlightNodePopup extends MyPopup{
 	                                       currentDepth + 100, //max
 	                                       1);
 	    spinner = new JSpinner(depthModel);
-	    
-	    /*spinner.addChangeListener(new ChangeListener() {
-			
-			@Override
-			public void stateChanged(ChangeEvent e) {
-				Object value = spinner.getValue();
-				if (value instanceof Integer)
-				{
-					int depth = (Integer) value;
-					grgraph.setFollowEdgeTypes(depth);
-				}
-				
-			}
-		});*/
 		
 		c.gridx = 1;
 		c.gridy = 0;
@@ -130,8 +109,7 @@ public class HighlightNodePopup extends MyPopup{
 	}
 	
 	/**
-	 * Show the Popup to the user
-	 * @return
+	 * Display the Popup to the user
 	 */
 	public void showPopup()
 	{

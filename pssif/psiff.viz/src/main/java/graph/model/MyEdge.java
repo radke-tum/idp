@@ -13,7 +13,6 @@ import de.tum.pssif.core.metamodel.Attribute;
 import de.tum.pssif.core.metamodel.DataType;
 import de.tum.pssif.core.metamodel.PrimitiveDataType;
 import de.tum.pssif.core.model.Edge;
-import de.tum.pssif.core.model.Node;
 import de.tum.pssif.core.util.PSSIFOption;
 import de.tum.pssif.core.util.PSSIFValue;
 
@@ -185,11 +184,18 @@ public class MyEdge {
 	public void setVisible(boolean visible) {
 		this.visible = visible;
 	}
-
+	
+	/**
+	 * check if this Edge was introduced by a collapse operation
+	 * @return true or false
+	 */
 	public boolean isCollapseEdge() {
 		return collapseEdge;
 	}
-
+	
+	/**
+	 * Set the information if the Edge was introduced by a collapse operation or not
+	 */
 	public void setCollapseEdge(boolean collapseEdge) {
 		this.collapseEdge = collapseEdge;
 	}
@@ -212,8 +218,6 @@ public class MyEdge {
 				PSSIFValue res = PrimitiveDataType.BOOLEAN.fromObject(value);
 				
 				type.getType().findAttribute(attributeName).set(edge, PSSIFOption.one(res));
-				
-				//return true;
 			}
 			catch (IllegalArgumentException e)
 			{
@@ -229,8 +233,6 @@ public class MyEdge {
 				
 				PSSIFValue res = PrimitiveDataType.DATE.fromObject(tmp);
 				type.getType().findAttribute(attributeName).set(edge, PSSIFOption.one(res));
-				
-				//return true;
 			}
 			catch (IllegalArgumentException e)
 			{
@@ -246,8 +248,6 @@ public class MyEdge {
 				PSSIFValue res = PrimitiveDataType.DECIMAL.fromObject(value);
 				
 				type.getType().findAttribute(attributeName).set(edge, PSSIFOption.one(res));
-				
-				//return true;
 			}
 			catch (IllegalArgumentException e)
 			{
@@ -262,8 +262,6 @@ public class MyEdge {
 				PSSIFValue res = PrimitiveDataType.INTEGER.fromObject(value);
 				
 				type.getType().findAttribute(attributeName).set(edge, PSSIFOption.one(res));
-				
-				//return true;
 			}
 			catch (IllegalArgumentException e)
 			{
@@ -278,16 +276,12 @@ public class MyEdge {
 				PSSIFValue res = PrimitiveDataType.STRING.fromObject(value);
 				
 				type.getType().findAttribute(attributeName).set(edge, PSSIFOption.one(res));
-				
-				//return true;
 			}
 			catch (IllegalArgumentException e)
 			{
 				return false;
 			}
 		}
-		
-		//type.getType().findAttribute(attributeName).set(node, PSSIFOption.one(PSSIFValue.create(value)));
 
 		return true;
 	}

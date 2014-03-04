@@ -1,5 +1,8 @@
 package graph.operations;
 
+import graph.model.MyEdge;
+import graph.model.MyNode;
+
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.text.DateFormat;
@@ -10,15 +13,10 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map.Entry;
 
-import javax.lang.model.type.PrimitiveType;
-
 import model.ModelBuilder;
 import de.tum.pssif.core.metamodel.Attribute;
 import de.tum.pssif.core.metamodel.PrimitiveDataType;
-import de.tum.pssif.core.util.PSSIFOption;
 import de.tum.pssif.core.util.PSSIFValue;
-import graph.model.MyEdge;
-import graph.model.MyNode;
 
 /**
  * Allows to filter the Nodes and Edges by a specific attribute
@@ -46,74 +44,20 @@ public class AttributeFilter {
 	 */
 	public static void filterNode(String attributeName, AttributeOperations op, Object RefValue) throws Exception
 	{
-		/*init();
-		
-		LinkedList<MyNode> allNodes = ModelBuilder.getAllNodes();
-		LinkedList<MyNode> invisibleNodes = new LinkedList<MyNode>();
-		
-		for (MyNode currentNode : allNodes)
-		{
-			HashMap<String, Attribute> attributes = currentNode.getAttributesHashMap();
-			
-			Attribute attr = attributes.get(attributeName);
-			
-			if (attr== null)
-			{
-				currentNode.setVisible(false);
-			}
-			else
-			{
-				if (testPossibleOperation(attr, op))
-				{
-					boolean result = false;
-					
-					if (attr.get(currentNode.getNode())!=null)
-					{
-						if (attr.get(currentNode.getNode()).isOne())
-						{
-							PSSIFValue attrValue=attr.get(currentNode.getNode()).getOne();
-							
-							PrimitiveDataType currentType = (PrimitiveDataType) attr.getType();
-							
-							
-							if (currentType.equals(PrimitiveDataType.BOOLEAN))
-								result = BooleanEval(attrValue, op, RefValue);
-							if (currentType.equals(PrimitiveDataType.DATE))
-								result = DateEval(attrValue, op, RefValue);
-							if (currentType.equals(PrimitiveDataType.DECIMAL))
-								result = DecimalEval(attrValue, op, RefValue);
-							if (currentType.equals(PrimitiveDataType.INTEGER))
-								result = IntegerEval(attrValue, op, RefValue);
-							if (currentType.equals(PrimitiveDataType.STRING))
-								result = StringEval(attrValue, op, RefValue);
-						}
-						if (attr.get(currentNode.getNode()).isMany())
-						{
-							throw new NullPointerException("Don't know what do to do with many values in one Attribut");
-						}
-						
-						if (attr.get(currentNode.getNode()).isNone())
-						{
-							result=false;
-						}
-					}
-					
-					if (result == false)
-					{
-						currentNode.setVisible(false);
-						invisibleNodes.add(currentNode);
-					}
-				}
-			}
-		}*/
-
 		filterNodeWithResult(attributeName, op, RefValue, false);
-		
-
 	}
 	
+	/**
+	 * Filters the graph by a given condition on an attribute of a Node.
+	 * @param attributeName  the attribute name on which the Nodes should be filtered
+	 * @param op the operation ( less, greater, equal,...) which should be executed on the attribute
+	 * @param RefValue the given value to which the node attribute values should be compared to
+	 * @param visiblity defines if the Nodes which fulfill the condition should be visible or invisible
+	 * @throws Exception if the given condition contains a problem. Datatypes cannot be compared, Wrong data format,..
+	 */
 	private static void filterNodeWithResult(String attributeName, AttributeOperations op, Object RefValue, boolean visiblity) throws Exception
 	{
+		// check if the HashMaps are initialized
 		init();
 		
 		LinkedList<MyNode> allNodes = ModelBuilder.getAllNodes();
@@ -141,8 +85,7 @@ public class AttributeFilter {
 							PSSIFValue attrValue=attr.get(currentNode.getNode()).getOne();
 							
 							PrimitiveDataType currentType = (PrimitiveDataType) attr.getType();
-							
-							
+														
 							if (currentType.equals(PrimitiveDataType.BOOLEAN))
 								result = BooleanEval(attrValue, op, RefValue);
 							if (currentType.equals(PrimitiveDataType.DATE))
@@ -156,6 +99,7 @@ public class AttributeFilter {
 						}
 						if (attr.get(currentNode.getNode()).isMany())
 						{
+							//FIXME check with tutors
 							throw new NullPointerException("Don't know what do to do with many values in one Attribut");
 						}
 						
@@ -184,72 +128,18 @@ public class AttributeFilter {
 	 */
 	public static void filterEdge(String attributeName, AttributeOperations op, Object RefValue) throws Exception
 	{
-		/*init();
-		
-		LinkedList<MyEdge> allEdges = ModelBuilder.getAllEdges();
-		//LinkedList<MyEdge> inVisibleEdges = new LinkedList<MyEdge>();
-		
-		for (MyEdge currentEdge : allEdges)
-		{
-			HashMap<String, Attribute> attributes = currentEdge.getAttributesHashMap();
-			
-			Attribute attr = attributes.get(attributeName);
-			
-			if (attr== null)
-			{
-				currentEdge.setVisible(false);
-			}
-			else
-			{
-				if (testPossibleOperation(attr, op))
-				{
-					boolean result = false;
-					
-					if (attr.get(currentEdge.getEdge())!=null)
-					{
-						if (attr.get(currentEdge.getEdge()).isOne())
-						{
-							PSSIFValue attrValue=attr.get(currentEdge.getEdge()).getOne();
-							
-							PrimitiveDataType currentType = (PrimitiveDataType) attr.getType();
-							
-							
-							if (currentType.equals(PrimitiveDataType.BOOLEAN))
-								result = BooleanEval(attrValue, op, RefValue);
-							if (currentType.equals(PrimitiveDataType.DATE))
-								result = DateEval(attrValue, op, RefValue);
-							if (currentType.equals(PrimitiveDataType.DECIMAL))
-								result = DecimalEval(attrValue, op, RefValue);
-							if (currentType.equals(PrimitiveDataType.INTEGER))
-								result = IntegerEval(attrValue, op, RefValue);
-							if (currentType.equals(PrimitiveDataType.STRING))
-								result = StringEval(attrValue, op, RefValue);
-						}
-						
-						if (attr.get(currentEdge.getEdge()).isNone())
-						{
-							result = false;
-						}
-						
-						if (attr.get(currentEdge.getEdge()).isMany())
-						{
-							throw new NullPointerException("Don't know what do to do with many values in one Attribut");
-						}
-							
-					}
-					
-					if (result == false)
-					{
-						currentEdge.setVisible(false);
-					//	inVisibleEdges.add(currentEdge);
-					}
-				}
-			}
-		}*/
-		
 		filterEdgeWithResult(attributeName, op, RefValue, false);
 	}
 	
+	/**
+	 * Filters the graph by a given condition on an attribute of an Edge.
+	 * All the Edges which do not fulfill the condition will not be displayed later in the graph
+	 * @param attributeName  the attribute name on which the Edges should be filtered
+	 * @param op the operation ( less, greater, equal,...) which should be executed on the attribute
+	 * @param RefValue the given value to which the node attribute values should be compared to
+	 * * @param visiblity defines if the Edges which fulfill the condition should be visible or invisible
+	 * @throws Exception if the given condition contains a problem. Datatypes cannot be compared, Wrong data format,..
+	 */
 	private static void filterEdgeWithResult(String attributeName, AttributeOperations op, Object RefValue, boolean visiblity) throws Exception
 	{
 		init();
@@ -295,12 +185,13 @@ public class AttributeFilter {
 						
 						if (attr.get(currentEdge.getEdge()).isNone())
 						{
-							System.out.println("Found no value of Attribute");
+							//System.out.println("Found no value of Attribute");
 							result = false;
 						}
 						
 						if (attr.get(currentEdge.getEdge()).isMany())
 						{
+							//FIXME check with tutors
 							throw new NullPointerException("Don't know what do to do with many values in one Attribut");
 						}
 							
@@ -530,6 +421,9 @@ public class AttributeFilter {
 		return result;
 	}
 	
+	/**
+	 * check if the HashMaps are initialized, if not initialize them
+	 */
 	private static void init()
 	{
 		if (edgeConditions==null)
@@ -538,6 +432,10 @@ public class AttributeFilter {
 			nodeConditions = new HashMap<String, ConditionContainer>();
 	}
 	
+	/**
+	 * Get all the Node conditions which were initialized
+	 * @return a List with all the conditions
+	 */
 	public static LinkedList<String> getAllNodeConditions()
 	{
 		LinkedList<String> res = new LinkedList<String>();
@@ -551,6 +449,10 @@ public class AttributeFilter {
 		return res;
 	}
 	
+	/**
+	 * Get all the Edge conditions which were initialized
+	 * @return a List with all the conditions
+	 */
 	public static LinkedList<String> getAllEdgeConditions()
 	{
 		LinkedList<String> res = new LinkedList<String>();
@@ -564,34 +466,49 @@ public class AttributeFilter {
 		return res;
 	}
 	
+	/**
+	 * Apply the Node Condition to the graph
+	 * @param condition the condition as a String
+	 * @throws Exception if the given condition contains a problem. Datatypes cannot be compared, Wrong data format,..
+	 */
 	public static void applyNodeCondition(String condition) throws Exception
 	{
-		System.out.println("Entries "+nodeConditions.size());
-		System.out.println("Got ||"+condition);
+		//System.out.println("Entries "+nodeConditions.size());
+		//System.out.println("Got ||"+condition);
 		ConditionContainer c = nodeConditions.get(condition);
 		if (c!=null)
 		{
-			System.out.println("Found correct container");
+			//System.out.println("Found correct container");
 			filterNode(c.attributeName, c.operation, c.refValue);
 		}
-		else
-		{
-			System.out.println("Could not find correct container");
-		}
+		//else
+		//{
+			//System.out.println("Could not find correct container");
+		//}
 	}
 	
+	/**
+	 * Apply the Edge Condition to the graph
+	 * @param condition the condition as a String
+	 * @throws Exception if the given condition contains a problem. Datatypes cannot be compared, Wrong data format,..
+	 */
 	public static void applyEdgeCondition(String condition) throws Exception
 	{
 		//System.out.println("Entries "+edgeConditions.size());
-		System.out.println("Got ||"+condition);
+		//System.out.println("Got ||"+condition);
 		ConditionContainer c = edgeConditions.get(condition);
 		if (c!=null)
 		{
-			System.out.println("found Container");
+			//System.out.println("found Container");
 			filterEdge(c.attributeName, c.operation, c.refValue);
 		}
 	}
 	
+	/**
+	 * Remove a the Node Condition to the graph
+	 * @param condition the condition as a String
+	 * @throws Exception if the given condition contains a problem. Datatypes cannot be compared, Wrong data format,..
+	 */
 	public static void removeNodeCondition(String condition) throws Exception
 	{
 		init();
@@ -599,6 +516,11 @@ public class AttributeFilter {
 		nodeConditions.remove(condition);
 	}
 	
+	/**
+	 * Remove a the Edge Condition to the graph
+	 * @param condition the condition as a String
+	 * @throws Exception if the given condition contains a problem. Datatypes cannot be compared, Wrong data format,..
+	 */
 	public static void removeEdgeCondition(String condition) throws Exception
 	{
 		init();
@@ -606,23 +528,40 @@ public class AttributeFilter {
 		edgeConditions.remove(condition);
 	}
 	
+	/**
+	 * Undo a the Edge Condition to the graph
+	 * @param condition the condition as a String
+	 * @throws Exception if the given condition contains a problem. Datatypes cannot be compared, Wrong data format,..
+	 */
 	public static void undoEdgeCondition (String condition) throws Exception
 	{
 		ConditionContainer c = edgeConditions.get(condition);
 		filterEdgeWithResult(c.attributeName, c.operation, c.refValue, true);
 		
+		//TODO I don't think this is the correct behaviour! Only selected ones should be applied!
 		applyAllOtherEdgeConditions(condition);
 		
 	}
 	
+	/**
+	 * Undo a the Node Condition to the graph
+	 * @param condition the condition as a String
+	 * @throws Exception if the given condition contains a problem. Datatypes cannot be compared, Wrong data format,..
+	 */
 	public static void undoNodeCondition (String condition) throws Exception
 	{
 		ConditionContainer c = nodeConditions.get(condition);
 		filterNodeWithResult(c.attributeName, c.operation, c.refValue, true);
 		
+		//TODO I don't think this is the correct behaviour! Only selected ones should be applied!
 		applyAllOtherNodeConditions(condition);
 	}
 	
+	/**
+	 * Apply all the existing Node conditions to the graph
+	 * @param condition the condition as a String
+	 * @throws Exception if the given condition contains a problem. Datatypes cannot be compared, Wrong data format,..
+	 */
 	private static void applyAllOtherNodeConditions (String condition) throws Exception
 	{
 		for (Entry<String, ConditionContainer> e : nodeConditions.entrySet())
@@ -635,6 +574,11 @@ public class AttributeFilter {
 		}
 	}
 	
+	/**
+	 * Apply all the existing Edge conditions to the graph
+	 * @param condition the condition as a String
+	 * @throws Exception if the given condition contains a problem. Datatypes cannot be compared, Wrong data format,..
+	 */
 	private static void applyAllOtherEdgeConditions (String condition) throws Exception
 	{
 		for (Entry<String, ConditionContainer> e : edgeConditions.entrySet())
@@ -647,6 +591,13 @@ public class AttributeFilter {
 		}
 	}
 	
+	/**
+	 * Add a new Node Condition
+	 * @param attributeName  the attribute name on which the Nodes should be filtered
+	 * @param op the operation ( less, greater, equal,...) which should be executed on the attribute
+	 * @param RefValue the given value to which the node attribute values should be compared to
+	 * @return the condition String which can be displayed to the user
+	 */
 	public static String addNodeCondition (String attributeName, AttributeOperations op, Object RefValue)
 	{
 		init();
@@ -654,10 +605,16 @@ public class AttributeFilter {
 		ConditionContainer c = new ConditionContainer(attributeName, op, RefValue);
 		nodeConditions.put(condition, c);
 
-		
 		return condition;
 	}
 	
+	/**
+	 * Add a new Edge Condition
+	 * @param attributeName  the attribute name on which the Edges should be filtered
+	 * @param op the operation ( less, greater, equal,...) which should be executed on the attribute
+	 * @param RefValue the given value to which the node attribute values should be compared to
+	 * @return the condition String which can be displayed to the user
+	 */
 	public static String addEdgeCondition (String attributeName, AttributeOperations op, Object RefValue)
 	{
 		init();
@@ -668,6 +625,12 @@ public class AttributeFilter {
 		return condition;
 	}
 	
+	/**
+	 * A Helper class. Should only be used in the AttributeFilter class
+	 * Holds basically all condition informations in a raw form
+	 * @author Luc
+	 *
+	 */
 	private static class ConditionContainer{
 		public String attributeName;
 		public AttributeOperations operation;

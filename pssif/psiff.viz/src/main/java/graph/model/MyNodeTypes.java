@@ -21,7 +21,13 @@ public class MyNodeTypes {
 	{
 		this.types = new LinkedList<MyNodeType>();
 		
-		addNodeTypes(newtypes);
+		for (NodeType ntype : newtypes)
+		{
+			MyNodeType tmp = new MyNodeType(ntype);
+			
+			if (!types.contains(tmp))
+				types.add(tmp);
+		}
 		
 		Collections.sort(this.types, new MyNodeTypeComparator());
 	}
@@ -59,28 +65,6 @@ public class MyNodeTypes {
 		
 		//No value found
 		return null;
-	}
-	
-	public void addNodeTypes (Collection<NodeType> newTypes)
-	{
-		for (NodeType ntype : newTypes)
-		{
-			MyNodeType tmp = new MyNodeType(ntype);
-			
-			if (!types.contains(tmp))
-				types.add(tmp);
-		}
-	}
-	
-	public void removeNodeType (Collection<NodeType> oldTypes)
-	{
-		for (NodeType ntype : oldTypes)
-		{
-			MyNodeType tmp = new MyNodeType(ntype);
-			
-			types.remove(tmp);
-		}
-		
 	}
 	
 	public LinkedList<MyNodeType> getAllNodeTypes()

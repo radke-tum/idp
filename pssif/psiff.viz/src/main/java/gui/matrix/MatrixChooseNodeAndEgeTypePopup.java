@@ -39,6 +39,10 @@ public class MatrixChooseNodeAndEgeTypePopup extends MyPopup{
 		this.tree = new CheckBoxTree();
 	}
 	
+	/**
+	 * Evaluate the Popup after the users input
+	 * @param dialogResult the result of the users interaction with the popup gui
+	 */
 	private boolean evalDialog (int dialogResult)
 	{
 		if (dialogResult==0)
@@ -86,6 +90,9 @@ public class MatrixChooseNodeAndEgeTypePopup extends MyPopup{
 		return false;
 	}
 	
+	/**
+	 * Display the Popup to the user
+	 */
 	public boolean showPopup()
 	{
 		JPanel allPanel = createPanel();
@@ -95,6 +102,10 @@ public class MatrixChooseNodeAndEgeTypePopup extends MyPopup{
 		return evalDialog(dialogResult);
 	}
 	
+	/**
+	 * Create the Panel(GUI) of the Popup 
+	 * @return a panel with all the components
+	 */
 	private JPanel createPanel()
 	{
 		LinkedList<MyNodeType> nodePossibilities = ModelBuilder.getNodeTypes().getAllNodeTypes();

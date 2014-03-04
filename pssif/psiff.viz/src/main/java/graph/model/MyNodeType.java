@@ -25,14 +25,6 @@ public class MyNodeType {
 		return type.getName();
 	}
 
-	/*public int getID() {
-		return id;
-	}
-
-	private int getParentID() {
-		return parentType;
-	}*/
-
 	public NodeType getParentType() {
 
 		return type.getGeneral();
@@ -63,10 +55,16 @@ public class MyNodeType {
 	    	return false;
 	}
 	
+	/**
+	 * which outgoing edge types are possible from this Node Type
+	 * @return list with all the edge types
+	 */
 	public LinkedList<MyEdgeType> getpossibleEdgeTypes()
 	{
 		LinkedList<MyEdgeType> res = new LinkedList<MyEdgeType>();
-		for(EdgeType et: type.getOutgoings())
+		//FIXME needs some improvement
+		//for(EdgeType et: type.getOutgoings())
+		for(MyEdgeType et: ModelBuilder.getEdgeTypes().getAllEdgeTypes())
 		{
 			
 			MyEdgeType met = ModelBuilder.getEdgeTypes().getValue(et.getName());

@@ -13,7 +13,6 @@ import de.tum.pssif.core.metamodel.Attribute;
 import de.tum.pssif.core.metamodel.DataType;
 import de.tum.pssif.core.metamodel.PrimitiveDataType;
 import de.tum.pssif.core.model.Node;
-import de.tum.pssif.core.metamodel.NodeType;
 import de.tum.pssif.core.util.PSSIFOption;
 import de.tum.pssif.core.util.PSSIFValue;
 
@@ -25,7 +24,6 @@ import de.tum.pssif.core.util.PSSIFValue;
  */
 public class MyNode{
 	private Node node;
-	//private String name;
 	private double sizeheight;
 	private double sizewidth;
 	private MyNodeType type;
@@ -34,16 +32,12 @@ public class MyNode{
 	private boolean collapseNode;
 	
 	private static int limit = 5;
-	//private static int heightlimit = 2;
-	
 	
 	public MyNode(Node node, MyNodeType type) {
 		this.node = node;
 		this.type = type;
 		this.visible = true;
 		this.collapseNode = false;
-		
-		
 		
 		this.update();
 	}
@@ -147,8 +141,6 @@ public class MyNode{
 				PSSIFValue res = PrimitiveDataType.BOOLEAN.fromObject(value);
 				
 				type.getType().findAttribute(attributeName).set(node, PSSIFOption.one(res));
-				
-				//return true;
 			}
 			catch (IllegalArgumentException e)
 			{
@@ -164,8 +156,6 @@ public class MyNode{
 				
 				PSSIFValue res = PrimitiveDataType.DATE.fromObject(tmp);
 				type.getType().findAttribute(attributeName).set(node, PSSIFOption.one(res));
-				
-				//return true;
 			}
 			catch (IllegalArgumentException e)
 			{
@@ -181,8 +171,6 @@ public class MyNode{
 				PSSIFValue res = PrimitiveDataType.DECIMAL.fromObject(value);
 				
 				type.getType().findAttribute(attributeName).set(node, PSSIFOption.one(res));
-				
-				//return true;
 			}
 			catch (IllegalArgumentException e)
 			{
@@ -197,8 +185,7 @@ public class MyNode{
 				PSSIFValue res = PrimitiveDataType.INTEGER.fromObject(value);
 				
 				type.getType().findAttribute(attributeName).set(node, PSSIFOption.one(res));
-				
-				//return true;
+
 			}
 			catch (IllegalArgumentException e)
 			{
@@ -213,8 +200,7 @@ public class MyNode{
 				PSSIFValue res = PrimitiveDataType.STRING.fromObject(value);
 				
 				type.getType().findAttribute(attributeName).set(node, PSSIFOption.one(res));
-				
-				//return true;
+
 			}
 			catch (IllegalArgumentException e)
 			{
@@ -222,7 +208,6 @@ public class MyNode{
 			}
 		}
 		
-		//type.getType().findAttribute(attributeName).set(node, PSSIFOption.one(PSSIFValue.create(value)));
 		this.update();
 		return true;
 	}
@@ -294,7 +279,9 @@ public class MyNode{
 		return res;
 	}
 
-	
+	/**
+	 * define the width and height of the Node during the graph viz, according to the node information (name, type,...)
+	 */
 	private void setSize()
 	{
 		
@@ -326,6 +313,9 @@ public class MyNode{
 	
 	}
 	
+	/**
+	 * After a change of the Node information, the visualization might be changed. Do an update
+	 */
 	public void update()
 	{
 		setSize();
@@ -386,6 +376,10 @@ public class MyNode{
 		return findName();
 	}
 	
+	/**
+	 * Get the name from the Node object
+	 * @return the actual name or "Name not available" if the name was not defined
+	 */
 	private String findName()
 	{
 		String name="";
@@ -434,17 +428,6 @@ public class MyNode{
 	public void setDetailedOutput(boolean detailedOutput) {
 		this.detailedOutput = detailedOutput;
 	}
-	
-/*	public boolean equals (Object n)
-	{
-		if (n instanceof Node)
-		{
-			Node tmp = (Node) n;
-			return this.node.equals(tmp);
-		}
-		
-		return false;
-	}*/
 
 	public Node getNode() {
 		return node;

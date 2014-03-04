@@ -7,7 +7,6 @@ import java.awt.Graphics2D;
 import javax.swing.Icon;
 import javax.swing.JTable;
 import javax.swing.RowSorter;
-import javax.swing.RowSorter.SortKey;
 import javax.swing.SortOrder;
 import javax.swing.UIManager;
 
