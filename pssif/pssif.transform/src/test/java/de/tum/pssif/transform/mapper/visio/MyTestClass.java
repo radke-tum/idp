@@ -33,6 +33,21 @@ public class MyTestClass {
     mapper.write(graph, new FileOutputStream("target/testWriteEpkWithGraph.vsdx"));
   }
 
+  //  @Test
+  //  public void testEpkGraphConsistency() {
+  //    VisioIoMapper mapper = new VisioIoMapper("", EPK_NODE_MASTERS, EPK_EDGE_MASTERS);
+  //    Graph graph = mapper.read(getClass().getResourceAsStream("/visio/epk-data.vsdx"));
+  //    List<String> hyperEdgeMasters = Lists.newArrayList("AND", "OR", "XOR");
+  //    for (Node node : graph.getNodes()) {
+  //      if (hyperEdgeMasters.contains(node.getType())) {
+  //        System.out.println("nodeId: " + node.getId() + " | incomming: " + node.getIncoming() + " | outgoing: " + node.getOutgoing());
+  //      }
+  //      else {
+  //        System.out.println("master: " + node.getType() + " id: " + node.getId());
+  //      }
+  //    }
+  //  }
+
   @Test
   public void testReadBpmnToGraph() throws FileNotFoundException {
     VisioIoMapper mapper = new VisioIoMapper("", BPMN_NODE_MASTERS, BPMN_EDGE_MASTERS);

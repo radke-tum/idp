@@ -31,6 +31,16 @@ public class VsdxDocumentLoaderImplTest {
   }
 
   @Test
+  public void testEpkDataContents() {
+    VsdxDocument document = VsdxDocumentLoaderFactory.INSTANCE.create().loadDocument(getClass().getResourceAsStream("/epk-data.vsdx"));
+    for (VsdxConnector connector : document.getPage().getConnectors()) {
+      if (connector.getSourceShape() == null || connector.getTargetShape() == null) {
+        System.out.println("dandling connector with id " + connector.getId());
+      }
+    }
+  }
+
+  @Test
   public void testReadBpmnTemplate() {
     System.out.println("--- Template ---");
     VsdxDocument document = VsdxDocumentLoaderFactory.INSTANCE.create().loadDocument(getClass().getResourceAsStream("/bpmn-template.vsdx"));
