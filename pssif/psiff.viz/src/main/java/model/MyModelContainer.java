@@ -73,9 +73,16 @@ public class MyModelContainer {
 		{
 			PSSIFOption<Node> tempNodes = t.getType().apply(model,true);
 			
-			for (Node tempNode : tempNodes.getMany())
+			if (tempNodes.isMany())
 			{
-				nodes.add(new MyNode(tempNode, t));
+				for (Node tempNode : tempNodes.getMany())
+				{
+					nodes.add(new MyNode(tempNode, t));
+				}
+			}
+			if (tempNodes.isOne())
+			{
+				nodes.add(new MyNode(tempNodes.getOne(), t));
 			}
 			
 		}
@@ -114,22 +121,22 @@ public class MyModelContainer {
 			{
 				PSSIFOption<Node> destinations = t.getType().getIncoming().apply(e);
 				
-				if (destinations.getMany().size()>1)
-					throw new NullPointerException("Edge with more than one EndPoint???");
-				
-				Node destinationNode = destinations.getOne();
-				
-				MyEdge tmp;
-				
-				/*if (t.getType().getName().equals(MyEdgeTypes.CONTAINMENT))
+				if (destinations.isMany())
 				{
-					// Their Edges are organized the other way. Don't be confused by the MyEdge2 call
-					tmp = new MyEdge2(e, t, findNode(sourceNode), findNode(destinationNode));
+					//TODO add possibility for more destinations
+					if (destinations.getMany().size()>1)
+						throw new NullPointerException("Edge with more than one EndPoint???");
 				}
-				else*/
-					tmp = new MyEdge(e, t, findNode(destinationNode), findNode(sourceNode));
 				
-				edges.add(tmp);
+				if (destinations.isOne())
+				{
+					Node destinationNode = destinations.getOne();
+					
+					MyEdge tmp = new MyEdge(e, t, findNode(destinationNode), findNode(sourceNode));
+					
+					edges.add(tmp);
+				}
+
 			}
 		}
 		
@@ -241,7 +248,12 @@ public class MyModelContainer {
 		if (mapping!=null)
 		{
 			Edge newEdge = mapping.create(model, source.getNode(), destination.getNode());
-				
+			if (edgetype.getType().findAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_DIRECTED)!=null)
+			{
+				PSSIFOption<PSSIFValue>value = PSSIFOption.one(PSSIFValue.create(true));
+				edgetype.getType().findAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_DIRECTED).set(newEdge, value);
+			}
+			
 			MyEdge e  = new MyEdge(newEdge, edgetype, source, destination);
 			
 			edges.add(e);

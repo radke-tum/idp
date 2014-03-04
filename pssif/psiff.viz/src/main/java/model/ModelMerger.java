@@ -189,7 +189,7 @@ public class ModelMerger {
 					throw new NullPointerException("What to do with edges with multiple ends");
 				}
 				
-				System.out.println("nb of destinations found "+ tmpdestinations.size());
+			//	System.out.println("nb of destinations found "+ tmpdestinations.size());
 				for (Node destNode : tmpdestinations)
 				{
 					NodeType destNodeType = findNodeType(destNode);

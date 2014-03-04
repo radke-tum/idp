@@ -302,10 +302,13 @@ public class MyCollapser {
 			{
 				if (n!=null)
 				{
-					MyNode tmp = ModelBuilder.findNode(n);
+					//FIXME maybe has to be used
+					//MyNode tmp = ModelBuilder.findNode(n);
+					//tmp.setDetailedOutput(nodeDetails);
+					//tmp.setVisible(true);
 					
-					tmp.setDetailedOutput(nodeDetails);
-					tmp.setVisible(true);
+					n.setDetailedOutput(nodeDetails);
+					n.setVisible(true);
 					
 				}
 			}
@@ -314,9 +317,10 @@ public class MyCollapser {
 			workEdges = container.getOldEdges();
 			for (MyEdge ic :workEdges)
 			{
-				MyEdge tmp = ModelBuilder.findEdge(ic);
-				
-				tmp.setVisible(true);
+				//FIXME maybe has to be used
+				//MyEdge tmp = ModelBuilder.findEdge(ic);
+				//tmp.setVisible(true);
+				ic.setVisible(true);
 			}
 			
 			this.history.remove(startNode);

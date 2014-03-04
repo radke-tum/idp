@@ -115,7 +115,7 @@ public class MyEdgeTypes {
 	}
 	
 	/**
-	 * provides a possibility to compare the NodeTypes
+	 * provides a possibility to compare the EdgeTypes
 	 * @author Luc
 	 *
 	 */

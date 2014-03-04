@@ -7,6 +7,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.geom.Point2D;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -74,60 +75,8 @@ public class MyPopupGraphMousePlugin extends AbstractPopupGraphMousePlugin {
 	            	popup.add(submenu);
 	            	
 	            	popup.show(vv, e.getX(), e.getY());
-	            	//JPopupMenu popup = new JPopupMenu();
-	                	         
-	             /*   JMenu submenu = new JMenu("Add Edge");
-
-	                final Layout<MyNode, MyEdge> l = vv.getGraphLayout();
-                	
-                	final Graph<MyNode, MyEdge> g = l.getGraph();
-                	
-                	LinkedList<MyNode> col = new LinkedList<MyNode>();
-                	col.addAll(g.getVertices());
-                	
-                	col.remove(node);
-                	
-                	
-                	for (final MyNode cur : col)
-                	{
-                		JMenuItem menuItem = new JMenuItem("To : "+cur.getName());
-                		
-                		menuItem.addActionListener(new ActionListener() {
-							
-							@Override
-							public void actionPerformed(ActionEvent arg0) {
-								
-								MyEdgeType[] possibilities = ModelBuilder.getEdgeTypes().getAllEdgeTypesArray();
-
-								MyEdgeType res = (MyEdgeType)JOptionPane.showInputDialog(
-								                    vv,"",
-								                    "Choose Edge Type",
-								                    JOptionPane.PLAIN_MESSAGE,
-								                    null,
-								                    possibilities,
-								                    "implements");
-								
-								if (res!=null)
-								{
-									MyEdge newEdge = new MyEdge(res, node, cur);
-									g.addEdge(newEdge, node, cur ,EdgeType.DIRECTED);
-									
-									
-									
-								//	Layout<MyNode, MyEdge> l = new FRLayout   <MyNode, MyEdge>(g);
-			                    	
-			                    	//vv.setGraphLayout(l);
-			                    	vv.repaint();
-								}	
-							} 
-						});
-                		
-    	                submenu.add(menuItem);
-                	}
-	                
-     
-	                popup.add(submenu);
-	                
+	           
+	                /*
 	                ////////////////////////////////////////////////////////
 	                  
 	                popup.add(new AbstractAction("Delete Node"){
@@ -565,11 +514,22 @@ public class MyPopupGraphMousePlugin extends AbstractPopupGraphMousePlugin {
            	col.addAll(ModelBuilder.getAllNodes());
 
            	col.remove(selectedNode);
-           	        	
+           	
+           	LinkedList<String> destinations = new LinkedList<String>();
+           	HashMap<String, MyNode> help = new HashMap<String, MyNode>();
            	for (MyNode cur : col)
            	{
-           		JMenuItem menuItem = new JMenuItem("To : "+cur.getRealName());
-           		MyAddEdgeListener el = new MyAddEdgeListener(selectedNode, cur, gViz);
+           		destinations.add("To : "+cur.getRealName());
+           		help.put("To : "+cur.getRealName(), cur);
+           		
+           	}
+           	
+           	Collections.sort(destinations);
+           	
+           	for (String dest : destinations)
+           	{
+           		JMenuItem menuItem = new JMenuItem(dest);
+           		MyAddEdgeListener el = new MyAddEdgeListener(selectedNode, help.get(dest), gViz);
            		
            		menuItem.addActionListener(el);
            		submenu.add(menuItem);
@@ -594,8 +554,9 @@ public class MyPopupGraphMousePlugin extends AbstractPopupGraphMousePlugin {
 	    	
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				MyEdgeType[] possibilities = ModelBuilder.getEdgeTypes().getAllEdgeTypesArray();
-
+				//MyEdgeType[] possibilities = ModelBuilder.getEdgeTypes().getAllEdgeTypesArray();
+				MyEdgeType[] possibilities = source.getNodeType().getpossibleEdgeTypes().toArray(new MyEdgeType[0]);
+				
 				MyEdgeType edgetype = (MyEdgeType)JOptionPane.showInputDialog(
 				                    null,"",
 				                    "Choose an Edge Type",
