@@ -94,9 +94,20 @@ public class FileImporter {
 		        
 		        return true;
 	        }
+	        
+	        catch (NullPointerException e)
+	        {
+	        	//e.printStackTrace();
+	        	JPanel errorPanel = new JPanel();
+	    		
+	    		errorPanel.add(new JLabel("There was a problem transforming the selected file. Was the file type chosen correctly?"));
+	    		
+	    		JOptionPane.showMessageDialog(null, errorPanel, "Ups something went wrong", JOptionPane.ERROR_MESSAGE);
+				return false;
+	        }
 	        catch (Exception e)
 	        {
-	        	e.printStackTrace();
+	        	//e.printStackTrace();
 	        	JPanel errorPanel = new JPanel();
 	    		
 	    		errorPanel.add(new JLabel("There was a problem transforming the selected file. Was the file type chosen correctly?"));
@@ -118,7 +129,7 @@ public class FileImporter {
 	{
 		JFileChooser openFile = new JFileChooser();
 		
-	//	openFile.setCurrentDirectory(new File("C:\\Users\\Luc\\Desktop\\Uni Dropbox\\Dropbox\\IDP-PSS-IF-Shared\\Modelle PE"));
+		openFile.setCurrentDirectory(new File("C:\\Users\\Luc\\Desktop\\Uni Dropbox\\Dropbox\\IDP-PSS-IF-Shared\\Modelle PE"));
 		
 		JPanel panel1 = (JPanel) openFile.getComponent(3);
 		JPanel panel2 = (JPanel) panel1.getComponent(2);

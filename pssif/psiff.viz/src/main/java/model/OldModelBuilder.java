@@ -139,7 +139,22 @@ public class OldModelBuilder {
 		{
 			PSSIFOption<Edge> outgoingEdges = t.getType().getOutgoing().apply(sourceNode);
 			
-			for (Edge e : outgoingEdges.getMany())
+			LinkedList<Edge> tmpedges = new LinkedList<Edge>();
+			if (outgoingEdges!=null && outgoingEdges.isMany())
+			{
+				for (Edge e : outgoingEdges.getMany())
+				{
+					tmpedges.add(e);
+				}
+			}
+			
+			if (outgoingEdges!=null && outgoingEdges.isOne())
+			{
+				tmpedges.add(outgoingEdges.getOne());
+				
+			}
+			
+			for (Edge e : tmpedges)
 			{
 				PSSIFOption<Node> destinations = t.getType().getIncoming().apply(e);
 				
@@ -276,10 +291,6 @@ public class OldModelBuilder {
 	    ConnectionMapping hw2hw = hwContainment.getMapping(node("hardware", meta), node("hardware", meta));
 	    ConnectionMapping hw2sw = hwContainment.getMapping(node("hardware", meta), node("software", meta));
 	    
-
-	    
-	    
-	    
 	    hw2hw.create(model, ebike, battery);
 	    hw2hw.create(model, ebike, smartphone);
 	    hw2sw.create(model, smartphone, rentalApp);
@@ -288,6 +299,7 @@ public class OldModelBuilder {
 	    ConnectionMapping hw2swUses = hwUses.getMapping(node("hardware", meta), node("software", meta));
 	    
 	    hw2swUses.create(model, smartphone, gpsApp);
+	    
 	  }
 	
    private static NodeType node(String name, MutableMetamodel metamodel) {

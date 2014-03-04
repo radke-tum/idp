@@ -83,7 +83,7 @@ public class Main {
 	
 	public Main ()
 	{
-		frame = new JFrame("Product Service Systems - Integration Framework ---- Visualisation");
+		frame = new JFrame("Product Service Systems - Integration Framework ---- Visualization");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
@@ -304,7 +304,7 @@ public class Main {
 	
 	private JMenu addVizModes()
 	{
-		JMenu visualisationMenu = new JMenu("Visualisation Mode");
+		JMenu visualisationMenu = new JMenu("Visualization Mode");
 		graphVizualistation = new JMenuItem("Graph");
 		graphVizualistation.addActionListener(new ActionListener() {
 			
@@ -367,7 +367,7 @@ public class Main {
 		
 		resetMenu.add(resetGraph);
 		
-		resetMatrix = new JMenuItem("Reset Matrix");
+		resetMatrix = new JMenuItem("Reset Matrix Filter");
 		resetMatrix.addActionListener(new ActionListener() {
 			
 			@Override

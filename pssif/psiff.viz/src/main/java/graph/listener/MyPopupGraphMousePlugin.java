@@ -598,11 +598,10 @@ public class MyPopupGraphMousePlugin extends AbstractPopupGraphMousePlugin {
 
 				MyEdgeType edgetype = (MyEdgeType)JOptionPane.showInputDialog(
 				                    null,"",
-				                    "Choose Edge Type",
+				                    "Choose an Edge Type",
 				                    JOptionPane.PLAIN_MESSAGE,
 				                    null,
-				                    possibilities,
-				                    "implements");
+				                    possibilities, null);
 				
 				if (edgetype!=null)
 				{
@@ -613,7 +612,7 @@ public class MyPopupGraphMousePlugin extends AbstractPopupGraphMousePlugin {
 					{
 						JPanel errorPanel = new JPanel();
 		        		
-		        		errorPanel.add(new JLabel("This connection between the nodes is not allowed in this model"));
+		        		errorPanel.add(new JLabel("This edge type is not allowed between these nodes in this model"));
 		        		
 		        		JOptionPane.showMessageDialog(null, errorPanel, "Ups something went wrong", JOptionPane.ERROR_MESSAGE);
 					}

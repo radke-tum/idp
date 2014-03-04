@@ -1,6 +1,8 @@
 package graph.model;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -15,11 +17,13 @@ import de.tum.pssif.core.metamodel.NodeType;
 public class MyNodeTypes {
 	private LinkedList<MyNodeType> types;
 	
-	public MyNodeTypes (Collection<NodeType> types)
+	public MyNodeTypes (Collection<NodeType> newtypes)
 	{
 		this.types = new LinkedList<MyNodeType>();
 		
-		addNodeTypes(types);
+		addNodeTypes(newtypes);
+		
+		Collections.sort(this.types, new MyNodeTypeComparator());
 	}
 	
 	public MyNodeTypes (HashSet<MyNodeType> newTypes)
@@ -35,6 +39,8 @@ public class MyNodeTypes {
 			if (!types.contains(tmp))
 				types.add(tmp);
 		}
+		
+		Collections.sort(types, new MyNodeTypeComparator());
 	}
 	
 	/**
@@ -85,5 +91,18 @@ public class MyNodeTypes {
 	public MyNodeType[] getAllNodeTypesArray()
 	{
 		return types.toArray(new MyNodeType[types.size()]);
+	}
+	
+	/**
+	 * provides a possibility to compare the NodeTypes
+	 * @author Luc
+	 *
+	 */
+	protected class MyNodeTypeComparator implements Comparator<MyNodeType>
+	{
+	  @Override public int compare( MyNodeType type1, MyNodeType type2 )
+	  {
+	    return type1.getName().compareTo(type2.getName());
+	  }
 	}
 }

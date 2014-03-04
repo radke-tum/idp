@@ -33,18 +33,24 @@ public class MyModelContainer {
 	
 	public MyModelContainer( Model model,  Metamodel meta)
 	{
-		this.model = model;
-		this.meta = (MutableMetamodel) meta;
-		
-		nodes = new LinkedList<MyNode>();
-		edges = new LinkedList<MyEdge>();
-		
-		createNodeTypes();
-		createEdgeTypes();
-		
-		createNodes();
-		createEdges();
-		
+		if (model!=null && meta != null)
+		{
+			this.model = model;
+			this.meta = (MutableMetamodel) meta;
+			
+			nodes = new LinkedList<MyNode>();
+			edges = new LinkedList<MyEdge>();
+			
+			createNodeTypes();
+			createEdgeTypes();
+			
+			createNodes();
+			createEdges();
+		}
+		else
+		{
+			throw new NullPointerException("Metamodel or model null!");
+		}
 	}
 	
 	private void createNodeTypes()
@@ -89,7 +95,22 @@ public class MyModelContainer {
 		{
 			PSSIFOption<Edge> outgoingEdges = t.getType().getOutgoing().apply(sourceNode);
 			
-			for (Edge e : outgoingEdges.getMany())
+			LinkedList<Edge> tmpedges = new LinkedList<Edge>();
+			if (outgoingEdges!=null && outgoingEdges.isMany())
+			{
+				for (Edge e : outgoingEdges.getMany())
+				{
+					tmpedges.add(e);
+				}
+			}
+			
+			if (outgoingEdges!=null && outgoingEdges.isOne())
+			{
+				tmpedges.add(outgoingEdges.getOne());
+				
+			}
+			
+			for (Edge e : tmpedges)
 			{
 				PSSIFOption<Node> destinations = t.getType().getIncoming().apply(e);
 				
@@ -228,5 +249,9 @@ public class MyModelContainer {
 		}
 		else
 			return false;
+	}
+
+	public Model getModel() {
+		return model;
 	}
 }

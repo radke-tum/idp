@@ -36,10 +36,11 @@ public class RowLegendTable extends JTable
 		column.setCellRenderer(new RowNumberRenderer());
 
 		
-		setPreferredScrollableViewportSize(getPreferredSize());
+		
 		
 		// get the header values
 		Enumeration<TableColumn> columns =main.getTableHeader().getColumnModel().getColumns();
+		
 		
 		int maxsize=0;
 		rowheader = new LinkedList<String>();
@@ -54,7 +55,8 @@ public class RowLegendTable extends JTable
 				maxsize=s.length();
 		}
 		
-		//getColumnModel().getColumn(0).setPreferredWidth(50);
+		//setPreferredScrollableViewportSize(getPreferredSize());
+		//getColumnModel().getColumn(0).setPreferredWidth(maxsize);
 	}
 
 	@Override

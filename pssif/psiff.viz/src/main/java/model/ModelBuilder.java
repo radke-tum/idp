@@ -62,7 +62,20 @@ public class ModelBuilder {
 		}
 		
 		MyModelContainer newModel = new MyModelContainer(Pmodel, Pmeta);
-		activeModels.add(newModel);	
+		activeModels.add(newModel);
+		
+		if (activeModels.size()>1)
+		{
+			ModelMerger merger = new ModelMerger();
+			Model first = activeModels.getFirst().getModel();
+			Model mergedModel = merger.mergeModels(first, Pmodel, Pmeta);
+			
+			activeModels.remove();
+			activeModels.remove();
+			
+			MyModelContainer mergedModelContainer = new MyModelContainer(mergedModel, Pmeta);
+			activeModels.addFirst(mergedModelContainer);
+		}
 		
 	}
 	
@@ -129,6 +142,7 @@ public class ModelBuilder {
 		}
 		
 		MyNodeTypes nt = new MyNodeTypes(tmp);
+		
 		return nt;
 	}
 
@@ -146,14 +160,12 @@ public class ModelBuilder {
 	
 	public static void addCollapserEdge(MyEdge newEdge)
 	{
-		//TODO no very good implementation
 		newEdge.setCollapseEdge(true);
 		activeModels.getFirst().addEdge(newEdge);
 	}
 	
 	public static void removeCollapserEdge(MyEdge edge)
 	{
-		//TODO no very good implementation
 		activeModels.getFirst().removeCollapserEdge(edge);
 	}
 	
