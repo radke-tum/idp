@@ -9,6 +9,7 @@ import gui.graph.GraphVisualization;
 import gui.graph.HighlightNodePopup;
 import gui.graph.NodeColorPopup;
 
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.GraphicsDevice;
@@ -59,6 +60,8 @@ public class Main {
 	private JMenu deleteNodeFilter;
 	private JMenu deleteEdgeFilter;
 	
+	private LinkedList<String> activeNodeFilters;
+	private LinkedList<String> activeEdgeFilters;
 	
 	public static void main(String[] args) {
 		
@@ -94,6 +97,9 @@ public class Main {
 	 */
 	private JMenuBar createFileMenu()
 	{
+		this.activeEdgeFilters = new LinkedList<String>();
+		this.activeNodeFilters = new LinkedList<String>();
+		
 		JMenuBar menuBar = new JMenuBar();
 		
 		JMenu fileMenu = new JMenu("File");
@@ -392,6 +398,7 @@ public class Main {
 				if (result !=null && result.contains(AttributeFilterPopup.newEdge))
 				{
 					String condition = result.substring(result.indexOf("|")+1);
+					activeEdgeFilters.add(condition);
 					resetApplyEdgeFilters(condition);
 					resetDeleteEdgeFilters();
 					
@@ -401,6 +408,7 @@ public class Main {
 				if (result !=null && result.contains(AttributeFilterPopup.newNode))
 				{
 					String condition = result.substring(result.indexOf("|")+1);
+					activeNodeFilters.add(condition);
 					resetApplyNodeFilters(condition);
 					resetDeleteNodeFilters();
 					
@@ -617,11 +625,15 @@ public class Main {
 							String condition = item.getText();
 							if (item.isSelected())
 							{
+								activeNodeFilters.add(condition);
 								AttributeFilter.applyNodeCondition(condition);
+								
 							}
 							else
 							{
-								AttributeFilter.undoNodeCondition(condition);
+								activeNodeFilters.remove(condition);
+								AttributeFilter.undoNodeCondition(condition, activeNodeFilters);
+								
 							}
 							graphView.getGraph().updateGraph();
 						}
@@ -637,7 +649,7 @@ public class Main {
 					}
 					});
 				
-				if (newCondition!=null && name.equals(newCondition))
+				if ((newCondition!=null && name.equals(newCondition)) || activeNodeFilters.contains(name))
 				{
 					menuItem.setSelected(true);
 				}
@@ -672,12 +684,15 @@ public class Main {
 							String condition = item.getText();
 							if (item.isSelected())
 							{
-								AttributeFilter.applyEdgeCondition(condition);
+								activeEdgeFilters.add(condition);
+								AttributeFilter.applyEdgeCondition(condition);		
 							}
 							else
 							{
-								AttributeFilter.undoEdgeCondition(condition);
+								activeEdgeFilters.remove(condition);
+								AttributeFilter.undoEdgeCondition(condition, activeEdgeFilters);
 							}
+							
 							graphView.getGraph().updateGraph();
 						}
 						catch (Exception ex)
@@ -691,8 +706,8 @@ public class Main {
 						}
 					}
 					});
-				
-				if (newCondition!=null && name.equals(newCondition))
+								
+				if ((newCondition!=null && name.equals(newCondition)) || activeEdgeFilters.contains(name))
 				{
 					menuItem.setSelected(true);
 				}
@@ -721,7 +736,8 @@ public class Main {
 					@Override
 					public void actionPerformed(ActionEvent e) {
 						try {
-							AttributeFilter.removeNodeCondition(name);
+							activeNodeFilters.remove(name);
+							AttributeFilter.removeNodeCondition(name, activeNodeFilters);
 							graphView.getGraph().updateGraph();
 							
 							resetApplyNodeFilters(null);
@@ -763,7 +779,8 @@ public class Main {
 					@Override
 					public void actionPerformed(ActionEvent e) {
 						try {
-							AttributeFilter.removeEdgeCondition(name);
+							activeEdgeFilters.remove(name);
+							AttributeFilter.removeEdgeCondition(name, activeEdgeFilters);
 							graphView.getGraph().updateGraph();
 							
 							resetApplyEdgeFilters(null);
@@ -808,6 +825,44 @@ public class Main {
 		addRemoveEdgeFilters();
 	}
 	
+	
+	/*private LinkedList<String> getSelectedNodeFilters()
+	{
+		LinkedList<String> res = new LinkedList<String>();
+		for (Component comp : applyNodeFilter.getComponents())
+		{
+			if (comp instanceof JCheckBoxMenuItem)
+			{
+				JCheckBoxMenuItem item = (JCheckBoxMenuItem) comp;
+				
+				if (item.isSelected())
+					res.add(item.getText());
+			}
+		}
+		
+		System.out.println("active Node Filters");
+		System.out.println(res);
+		return res;
+	}
+	
+	private LinkedList<String> getSelectedEdgeFilters()
+	{
+		LinkedList<String> res = new LinkedList<String>();
+		for (Component comp : applyEdgeFilter.getComponents())
+		{
+			if (comp instanceof JCheckBoxMenuItem)
+			{
+				JCheckBoxMenuItem item = (JCheckBoxMenuItem) comp;
+				
+				if (item.isSelected())
+					res.add(item.getText());
+			}
+		}
+		
+		System.out.println("active Edge Filters");
+		System.out.println(res);
+		return res;
+	}*/
 
 }
 
