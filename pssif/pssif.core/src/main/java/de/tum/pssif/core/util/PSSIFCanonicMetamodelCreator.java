@@ -212,6 +212,8 @@ public final class PSSIFCanonicMetamodelCreator {
     attributionalRelationship.inherit(relationship);
 
     EdgeType performsRelationship = metamodel.createEdgeType(E_RELATIONSHIP_ATTRIBUTIONAL_PERFORMS);
+    performsRelationship.createMapping("from", node("Node", metamodel), defaultOneToOneMultiplicity(), "to", node("Node", metamodel),
+        defaultOneToOneMultiplicity());
     performsRelationship.inherit(attributionalRelationship);
 
     EdgeType avoidsRelationship = metamodel.createEdgeType(E_RELATIONSHIP_ATTRIBUTIONAL_AVOIDS);
@@ -357,4 +359,7 @@ public final class PSSIFCanonicMetamodelCreator {
     return MultiplicityContainer.of(1, UnlimitedNatural.UNLIMITED, 0, UnlimitedNatural.UNLIMITED);
   }
 
+  private static Multiplicity defaultOneToOneMultiplicity() {
+    return MultiplicityContainer.of(1, 1, 0, 1);
+  }
 }

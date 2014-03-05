@@ -5,7 +5,8 @@ import de.tum.pssif.core.util.PSSIFUtil;
 import de.tum.pssif.transform.mapper.BpmnMapper;
 import de.tum.pssif.transform.mapper.EpkMapper;
 import de.tum.pssif.transform.mapper.SysMlMapper;
-import de.tum.pssif.transform.mapper.graphml.GraphMLMapper;
+import de.tum.pssif.transform.mapper.graphml.PssifMapper;
+import de.tum.pssif.transform.mapper.graphml.UfpMapper;
 
 
 public final class MapperFactory {
@@ -30,9 +31,14 @@ public final class MapperFactory {
    */
   public static final String BPMN  = "bpmn";
 
+  /**
+   * PSSIF.
+   */
+  public static final String PSSIF = "PSSIF";
+
   public static Mapper getMapper(String name) {
     if (PSSIFUtil.areSame(UOFP, name)) {
-      return new GraphMLMapper();
+      return new UfpMapper();
     }
     else if (PSSIFUtil.areSame(SYSML, name)) {
       return new SysMlMapper();
@@ -42,6 +48,9 @@ public final class MapperFactory {
     }
     else if (PSSIFUtil.areSame(BPMN, name)) {
       return new BpmnMapper();
+    }
+    else if (PSSIFUtil.areSame(PSSIF, name)) {
+      return new PssifMapper();
     }
     throw new PSSIFException("No mapper found for name: " + name);
   }

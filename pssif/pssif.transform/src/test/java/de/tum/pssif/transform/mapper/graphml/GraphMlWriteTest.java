@@ -1,5 +1,6 @@
 package de.tum.pssif.transform.mapper.graphml;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 
@@ -13,15 +14,17 @@ import de.tum.pssif.transform.MapperFactory;
 
 
 public class GraphMlWriteTest {
+  private final Metamodel     metamodel     = PSSIFCanonicMetamodelCreator.create();
+  private final GraphMLMapper canonicMapper = new PssifMapper();
 
   @Test
   public void testWrite() {
 
     InputStream in = getClass().getResourceAsStream("/flow.graphml");
-    GraphMLMapper importer = new GraphMLMapper();
+    GraphMLMapper importer = new UfpMapper();
 
     Metamodel metamodel = PSSIFCanonicMetamodelCreator.create();
-    Metamodel view = GraphMlViewCreator.createGraphMlView(metamodel);
+    Metamodel view = GraphMLMapper.createGraphMlView(metamodel);
 
     Model model = importer.read(view, in);
 
@@ -33,5 +36,18 @@ public class GraphMlWriteTest {
     String str = new String(result);
     System.out.println(str);
     //TODO
+  }
+
+  @Test
+  public void testWriteEpk() {
+    InputStream in = getClass().getResourceAsStream("/visio/epk-data.vsdx");
+    Mapper mapper = MapperFactory.getMapper(MapperFactory.EPK);
+    Model model = mapper.read(metamodel, in);
+
+    ByteArrayOutputStream os = new ByteArrayOutputStream();
+    canonicMapper.write(metamodel, model, os);
+    System.out.println(os.toString());
+
+    Model readModel = canonicMapper.read(metamodel, new ByteArrayInputStream(os.toByteArray()));
   }
 }

@@ -19,6 +19,8 @@ public class GraphMLTokens {
   public static final String GRAPH                           = "graph";
   public static final String NODE                            = "node";
   public static final String EDGE                            = "edge";
+  public static final String HYPEREDGE                       = "hyperedge";
+  public static final String ENDPOINT                        = "endpoint";
   public static final String SOURCE                          = "source";
   public static final String TARGET                          = "target";
   public static final String DATA                            = "data";
@@ -32,4 +34,5 @@ public class GraphMLTokens {
   public static final String _DEFAULT                        = "_default";
 
   public static final String ELEMENT_TYPE                    = "bg_type";
+  public static final String ENDPOINT_TYPE                   = "pssif_endpoint_type";
 }

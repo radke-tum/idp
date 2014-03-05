@@ -23,15 +23,16 @@ import com.google.common.collect.Sets;
  * TODO edgedefault
  */
 public class GraphMLGraph {
-  private Boolean                      edgeDefaultDirected = Boolean.TRUE;
+  private Boolean                       edgeDefaultDirected = Boolean.TRUE;
 
-  private Map<String, GraphMlNodeImpl> nodes               = Maps.newHashMap();
-  private Map<String, GraphMlEdgeImpl> edges               = Maps.newHashMap(); //TODO a set might be sufficient here
+  private Map<String, GraphMlNodeImpl>  nodes               = Maps.newHashMap();
+  private Map<String, GraphMlEdgeImpl>  edges               = Maps.newHashMap(); //TODO a set might be sufficient here
+  private Map<String, GraphMlHyperedge> hyperedges          = Maps.newHashMap();
 
-  private Set<GraphMlAttribute>        nodeAttributes      = Sets.newHashSet();
-  private Set<GraphMlAttribute>        edgeAttributes      = Sets.newHashSet();
+  private Set<GraphMlAttribute>         nodeAttributes      = Sets.newHashSet();
+  private Set<GraphMlAttribute>         edgeAttributes      = Sets.newHashSet();
 
-  private Element                      current;
+  private Element                       current;
 
   public static GraphMLGraph read(InputStream in) {
     GraphMLGraph result = new GraphMLGraph();
@@ -68,6 +69,10 @@ public class GraphMLGraph {
     this.edges.put(edge.getId(), edge);
   }
 
+  void addHyperedge(GraphMlHyperedge edge) {
+    this.hyperedges.put(edge.getId(), edge);
+  }
+
   public Set<GraphMLNode> getNodes() {
     Set<GraphMLNode> result = Sets.newHashSet();
     result.addAll(nodes.values());
@@ -82,6 +87,10 @@ public class GraphMLGraph {
     Set<GraphMLEdge> result = Sets.newHashSet();
     result.addAll(edges.values());
     return result;
+  }
+
+  public Set<GraphMlHyperedge> getHyperedges() {
+    return Sets.newHashSet(hyperedges.values());
   }
 
   private void readInternal(InputStream in) {
@@ -128,6 +137,19 @@ public class GraphMLGraph {
       current = new GraphMlEdgeImpl(reader.getAttributeValue(null, GraphMLTokens.ID), reader.getAttributeValue(null, GraphMLTokens.SOURCE),
           reader.getAttributeValue(null, GraphMLTokens.TARGET), directed);
     }
+    else if (GraphMLTokens.HYPEREDGE.equals(elementName)) {
+      boolean directed = edgeDefaultDirected.booleanValue() || Boolean.valueOf(reader.getAttributeValue(null, GraphMLTokens.DIRECTED)).booleanValue();
+      current = new GraphMlHyperedgeImpl(reader.getAttributeValue(null, GraphMLTokens.ID), directed);
+    }
+    else if (GraphMLTokens.ENDPOINT.equals(elementName)) {
+      String type = reader.getAttributeValue(null, GraphMLTokens.ENDPOINT_TYPE);
+      if (GraphMLTokens.SOURCE.equals(type)) {
+        ((GraphMlHyperedgeImpl) current).connectFrom(reader.getAttributeValue(null, GraphMLTokens.NODE));
+      }
+      if (GraphMLTokens.TARGET.equals(type)) {
+        ((GraphMlHyperedgeImpl) current).connectTo(reader.getAttributeValue(null, GraphMLTokens.NODE));
+      }
+    }
     else if (GraphMLTokens.DATA.equals(elementName)) {
       String key = reader.getAttributeValue(null, GraphMLTokens.KEY);
       if (GraphMLTokens.ID.equals(key)) {
@@ -153,6 +175,13 @@ public class GraphMLGraph {
       edges.put(current.getId(), (GraphMlEdgeImpl) current);
       current = null;
     }
+    else if (GraphMLTokens.HYPEREDGE.equals(elementName)) {
+      if (!(current instanceof GraphMlHyperedge)) {
+        throw new IllegalStateException();
+      }
+      hyperedges.put(current.getId(), (GraphMlHyperedge) current);
+      current = null;
+    }
   }
 
   private void writeInternal(OutputStream out) {
@@ -163,6 +192,7 @@ public class GraphMLGraph {
       writeDocumentHeader(writer);
       writeNodes(writer);
       writeEdges(writer);
+      writeHyperedges(writer);
       writeDocumentFooter(writer);
       writer.flush();
     } catch (XMLStreamException e) {
@@ -178,11 +208,13 @@ public class GraphMLGraph {
     //write attribute keys
     writeKeyElement(writer, GraphMLTokens.ELEMENT_TYPE, GraphMLTokens.STRING, GraphMLTokens.NODE, GraphMLTokens.ELEMENT_TYPE);
     writeKeyElement(writer, GraphMLTokens.ELEMENT_TYPE, GraphMLTokens.STRING, GraphMLTokens.EDGE, GraphMLTokens.ELEMENT_TYPE);
+    writeKeyElement(writer, GraphMLTokens.ELEMENT_TYPE, GraphMLTokens.STRING, GraphMLTokens.HYPEREDGE, GraphMLTokens.ELEMENT_TYPE);
     for (GraphMlAttribute attr : nodeAttributes) {
       writeKeyElement(writer, attr.getName(), attr.getType(), GraphMLTokens.NODE, attr.getId());
     }
     for (GraphMlAttribute attr : edgeAttributes) {
       writeKeyElement(writer, attr.getName(), attr.getType(), GraphMLTokens.EDGE, attr.getId());
+      writeKeyElement(writer, attr.getName(), attr.getType(), GraphMLTokens.HYPEREDGE, attr.getId());
     }
     writer.writeStartElement(GraphMLTokens.GRAPH);
     writer.writeAttribute(GraphMLTokens.EDGEDEFAULT, GraphMLTokens.DIRECTED);
@@ -231,6 +263,33 @@ public class GraphMLGraph {
     }
   }
 
+  private void writeHyperedges(XMLStreamWriter writer) throws XMLStreamException {
+    for (Entry<String, GraphMlHyperedge> entry : hyperedges.entrySet()) {
+      writer.writeStartElement(GraphMLTokens.HYPEREDGE);
+      writer.writeAttribute(GraphMLTokens.ID, entry.getValue().getId());
+      writeEndpoints(writer, entry.getValue());
+      writeDataElemnent(writer, GraphMLTokens.ELEMENT_TYPE, entry.getValue().getType());
+      writeDataElements(writer, entry.getValue().getValues());
+      writer.writeEndElement();
+    }
+  }
+
+  private void writeEndpoints(XMLStreamWriter writer, GraphMlHyperedge edge) throws XMLStreamException {
+    for (String nodeid : edge.getSourceIds()) {
+      writeEndpoint(writer, GraphMLTokens.SOURCE, nodeid);
+    }
+    for (String nodeid : edge.getTargetIds()) {
+      writeEndpoint(writer, GraphMLTokens.TARGET, nodeid);
+    }
+  }
+
+  private void writeEndpoint(XMLStreamWriter writer, String type, String nodeId) throws XMLStreamException {
+    writer.writeStartElement(GraphMLTokens.ENDPOINT);
+    writer.writeAttribute(GraphMLTokens.ENDPOINT_TYPE, type);
+    writer.writeAttribute(GraphMLTokens.NODE, nodeId);
+    writer.writeEndElement();
+  }
+
   private void writeDocumentFooter(XMLStreamWriter writer) throws XMLStreamException {
     writer.writeEndElement();
     writer.writeEndElement();
@@ -268,6 +327,40 @@ public class GraphMLGraph {
     @Override
     public Boolean isDirected() {
       return directed;
+    }
+  }
+
+  static class GraphMlHyperedgeImpl extends Element implements GraphMlHyperedge {
+    private Collection<String> sourceIds = Sets.newHashSet();
+    private Collection<String> targetIds = Sets.newHashSet();
+    private final Boolean      directed;
+
+    GraphMlHyperedgeImpl(String id, Boolean directed) {
+      super(id);
+      this.directed = directed;
+    }
+
+    @Override
+    public Collection<String> getSourceIds() {
+      return sourceIds;
+    }
+
+    @Override
+    public Collection<String> getTargetIds() {
+      return targetIds;
+    }
+
+    @Override
+    public Boolean isDirected() {
+      return directed;
+    }
+
+    void connectFrom(String id) {
+      sourceIds.add(id);
+    }
+
+    void connectTo(String id) {
+      targetIds.add(id);
     }
   }
 
