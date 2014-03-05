@@ -442,7 +442,7 @@ public class Main {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				HighlightNodePopup popup = new HighlightNodePopup(graphView.getGraph());
+				HighlightNodePopup popup = new HighlightNodePopup(graphView);
 				
 				popup.showPopup();
 			}

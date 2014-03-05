@@ -70,6 +70,7 @@ public class GraphView {
 	private JRadioButton edgeSelection;
 	private ItemListener nodeListener;
 	private ItemListener edgeListener;
+	private JSpinner depthSpinner;
 	
 	private Dimension screenSize;
 	private static int betweenComps =7;
@@ -98,7 +99,6 @@ public class GraphView {
         parent.setLayout(new BorderLayout());
 		
         parent.add(addGraphViz(),BorderLayout.CENTER);
-        
         
         parent.add(addInformationPanel(), BorderLayout.SOUTH);
         
@@ -426,8 +426,9 @@ public class GraphView {
 	                                       1, //min
 	                                       currentDepth + 100, //max
 	                                       1);
-	    JSpinner spinner = new JSpinner(depthModel);
-	    spinner.addChangeListener(new ChangeListener() {			
+	    depthSpinner = new JSpinner(depthModel);
+	    
+	    depthSpinner.addChangeListener(new ChangeListener() {			
 			@Override
 			public void stateChanged(ChangeEvent e) {
 				
@@ -442,7 +443,7 @@ public class GraphView {
 		});
 	    ypos++;
 		c.gridy = ypos;
-	    basicOperations.add(spinner,c);
+	    basicOperations.add(depthSpinner,c);
 	    
 	    ypos++;
 		c.gridy = ypos;
@@ -604,7 +605,7 @@ public class GraphView {
 	
 	public void resetGraph()
 	{
-		new ModelBuilder();
+		ModelBuilder.resetModel();
 		this.getGraph().updateGraph();
 	}
 	
@@ -805,6 +806,24 @@ public class GraphView {
 
 	public void setActive(boolean active) {
 		this.active = active;
+	}
+	
+	public void setDepthSpinnerValue(int value)
+	{
+		if (value>0 && value<101 && depthSpinner!=null)
+		{
+			depthSpinner.getModel().setValue(value);
+		}
+	}
+	
+	public int getDepthSpinnerValue()
+	{
+		if (depthSpinner!=null)
+		{
+			return (int) depthSpinner.getModel().getValue();
+		}
+		else
+			return 1;
 	}
 	
 }

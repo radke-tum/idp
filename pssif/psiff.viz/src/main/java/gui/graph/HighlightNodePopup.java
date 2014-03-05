@@ -1,6 +1,7 @@
 package gui.graph;
 
 import graph.model.MyEdgeType;
+import gui.GraphView;
 import gui.checkboxtree.CheckBoxTree;
 
 import java.awt.Dimension;
@@ -30,13 +31,13 @@ public class HighlightNodePopup extends MyPopup{
 	
 	private JPanel popupPanel;
 	private JPanel edgePanel;
-	private GraphVisualization graphViz;
+	private GraphView graphView;
 	private CheckBoxTree tree;
-	private  JSpinner spinner;
+	private JSpinner spinner;
 	
-	public HighlightNodePopup(GraphVisualization graphViz)
+	public HighlightNodePopup(GraphView graphView)
 	{
-		this.graphViz = graphViz;
+		this.graphView = graphView;
 		this.tree = new CheckBoxTree();
 	}
 	/**
@@ -51,7 +52,7 @@ public class HighlightNodePopup extends MyPopup{
 		
 		edgePanel = new JPanel(new GridLayout(0, 1));
 		
-		LinkedList<MyEdgeType> highlightEdges = graphViz.getFollowEdgeTypes();
+		LinkedList<MyEdgeType> highlightEdges = this.graphView.getGraph().getFollowEdgeTypes();
 		
 		TreeMap<String, LinkedList<MyEdgeType>> sortedEdges = sortByEdgeTypeByParentType(ModelBuilder.getEdgeTypes().getAllEdgeTypes());
 		
@@ -104,7 +105,9 @@ public class HighlightNodePopup extends MyPopup{
 			
 			int depth = (Integer) spinner.getValue();
 			
-			graphViz.setFollowEdgeTypes(res,depth);
+			this.graphView.getGraph().setFollowEdgeTypes(res,depth);
+			
+			this.graphView.setDepthSpinnerValue(depth);
     	}	
 	}
 	
