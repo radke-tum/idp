@@ -7,7 +7,6 @@
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 	<artifactId>pssif.transform</artifactId>
-	<packaging>pom</packaging>
 	<properties>
 		<emf.version>2.5.0.v20100521-1846</emf.version>
 	</properties>

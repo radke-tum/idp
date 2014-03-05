@@ -507,66 +507,69 @@ public class AttributeFilter {
 	/**
 	 * Remove a the Node Condition to the graph
 	 * @param condition the condition as a String
+	 * @param activeConditions conditions which are currently active
 	 * @throws Exception if the given condition contains a problem. Datatypes cannot be compared, Wrong data format,..
 	 */
-	public static void removeNodeCondition(String condition) throws Exception
+	public static void removeNodeCondition(String condition, LinkedList<String> activeConditions) throws Exception
 	{
 		init();
-		undoNodeCondition(condition);
+		undoNodeCondition(condition, activeConditions);
 		nodeConditions.remove(condition);
 	}
 	
 	/**
 	 * Remove a the Edge Condition to the graph
 	 * @param condition the condition as a String
+	 * @param activeConditions conditions which are currently active
 	 * @throws Exception if the given condition contains a problem. Datatypes cannot be compared, Wrong data format,..
 	 */
-	public static void removeEdgeCondition(String condition) throws Exception
+	public static void removeEdgeCondition(String condition, LinkedList<String> activeConditions) throws Exception
 	{
 		init();
-		undoEdgeCondition(condition);
+		undoEdgeCondition(condition, activeConditions);
 		edgeConditions.remove(condition);
 	}
 	
 	/**
 	 * Undo a the Edge Condition to the graph
 	 * @param condition the condition as a String
+	 * @param activeConditions conditions which are currently active
 	 * @throws Exception if the given condition contains a problem. Datatypes cannot be compared, Wrong data format,..
 	 */
-	public static void undoEdgeCondition (String condition) throws Exception
+	public static void undoEdgeCondition (String condition, LinkedList<String> activeConditions) throws Exception
 	{
 		ConditionContainer c = edgeConditions.get(condition);
 		filterEdgeWithResult(c.attributeName, c.operation, c.refValue, true);
 		
-		//TODO I don't think this is the correct behaviour! Only selected ones should be applied!
-		applyAllOtherEdgeConditions(condition);
+		applyAllOtherEdgeConditions(condition, activeConditions);
 		
 	}
 	
 	/**
 	 * Undo a the Node Condition to the graph
 	 * @param condition the condition as a String
+	 * @param activeConditions conditions which are currently active
 	 * @throws Exception if the given condition contains a problem. Datatypes cannot be compared, Wrong data format,..
 	 */
-	public static void undoNodeCondition (String condition) throws Exception
+	public static void undoNodeCondition (String condition, LinkedList<String> activeConditions) throws Exception
 	{
 		ConditionContainer c = nodeConditions.get(condition);
 		filterNodeWithResult(c.attributeName, c.operation, c.refValue, true);
 		
-		//TODO I don't think this is the correct behaviour! Only selected ones should be applied!
-		applyAllOtherNodeConditions(condition);
+		applyAllOtherNodeConditions(condition, activeConditions);
 	}
 	
 	/**
 	 * Apply all the existing Node conditions to the graph
 	 * @param condition the condition as a String
+	 * @param activeConditions conditions which are currently active
 	 * @throws Exception if the given condition contains a problem. Datatypes cannot be compared, Wrong data format,..
 	 */
-	private static void applyAllOtherNodeConditions (String condition) throws Exception
+	private static void applyAllOtherNodeConditions (String condition, LinkedList<String> activeConditions) throws Exception
 	{
 		for (Entry<String, ConditionContainer> e : nodeConditions.entrySet())
 		{
-			if (!e.getKey().equals(condition))
+			if (!e.getKey().equals(condition) && activeConditions.contains(e.getKey()))
 			{
 				ConditionContainer c = e.getValue();
 				filterNode(c.attributeName, c.operation, c.refValue);
@@ -577,13 +580,14 @@ public class AttributeFilter {
 	/**
 	 * Apply all the existing Edge conditions to the graph
 	 * @param condition the condition as a String
+	 * @param activeConditions conditions which are currently active
 	 * @throws Exception if the given condition contains a problem. Datatypes cannot be compared, Wrong data format,..
 	 */
-	private static void applyAllOtherEdgeConditions (String condition) throws Exception
+	private static void applyAllOtherEdgeConditions (String condition, LinkedList<String> activeConditions) throws Exception
 	{
 		for (Entry<String, ConditionContainer> e : edgeConditions.entrySet())
 		{
-			if (!e.getKey().equals(condition))
+			if (!e.getKey().equals(condition)  && activeConditions.contains(e.getKey()))
 			{
 				ConditionContainer c = e.getValue();
 				filterEdge(c.attributeName, c.operation, c.refValue);

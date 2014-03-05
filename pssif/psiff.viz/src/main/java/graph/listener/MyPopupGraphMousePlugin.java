@@ -124,9 +124,7 @@ public class MyPopupGraphMousePlugin extends AbstractPopupGraphMousePlugin {
        	LinkedList<MyNode> col = new LinkedList<MyNode>();
        	
        	col.addAll(ModelBuilder.getAllNodes());
-       	// FIXME check with Tutors
-       	// no self loops allowed
-       	col.remove(selectedNode);
+       	// self loops are allowed
        	
        	LinkedList<String> destinations = new LinkedList<String>();
        	HashMap<String, MyNode> help = new HashMap<String, MyNode>();

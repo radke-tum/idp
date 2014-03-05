@@ -45,10 +45,7 @@ public class ModelBuilder {
 		}
 	}
 	
-	/**
-	 * Should not be used!! Only for test purposes
-	 */
-	public ModelBuilder()
+	public static void resetModel()
 	{
 		activeModel = null;
 	}
