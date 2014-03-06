@@ -18,6 +18,7 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JTextField;
 
+import de.tum.pssif.core.metamodel.EdgeType;
 import model.ModelBuilder;
 import edu.uci.ics.jung.algorithms.layout.GraphElementAccessor;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
@@ -171,32 +172,9 @@ public class MyPopupGraphMousePlugin extends AbstractPopupGraphMousePlugin {
     	
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			// get only the edges which are allowed from the source Node
-			MyEdgeType[] possibilities = source.getNodeType().getpossibleEdgeTypes().toArray(new MyEdgeType[0]);
+			CreateEdgePopup popup = new CreateEdgePopup(source, dest, gViz);
 			
-			MyEdgeType edgetype = (MyEdgeType)JOptionPane.showInputDialog(
-			                    null,"",
-			                    "Choose an Edge Type",
-			                    JOptionPane.PLAIN_MESSAGE,
-			                    null,
-			                    possibilities, null);
-			
-			// check if the user selected an EdgeType
-			if (edgetype!=null)
-			{
-				// Build the Edge
-				boolean res = ModelBuilder.addNewEdgeGUI(source, dest, edgetype);
-				if (res)
-					gViz.updateGraph();
-				else
-				{
-					JPanel errorPanel = new JPanel();
-	        		
-	        		errorPanel.add(new JLabel("This edge type is not allowed between these nodes in this model"));
-	        		
-	        		JOptionPane.showMessageDialog(null, errorPanel, "Ups something went wrong", JOptionPane.ERROR_MESSAGE);
-				}
-			}	
+			popup.showPopup();
 			
 		}
     	

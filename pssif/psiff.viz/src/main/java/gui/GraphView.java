@@ -787,12 +787,12 @@ public class GraphView {
   }
 
   public int getDepthSpinnerValue() {
-    //		if (depthSpinner!=null)
-    //		{
-    //			return (int) depthSpinner.getModel().getValue();
-    //		}
-    //		else
-    return 1;
+	if (depthSpinner!=null)
+	{
+		return (Integer) depthSpinner.getModel().getValue();
+	}
+	else
+		return 1;
   }
 
 }

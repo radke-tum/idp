@@ -7,10 +7,14 @@ import graph.model.MyNode;
 import graph.model.MyNodeType;
 import graph.model.MyNodeTypes;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 
+import de.tum.pssif.core.metamodel.ConnectionMapping;
+import de.tum.pssif.core.metamodel.EdgeType;
 import de.tum.pssif.core.metamodel.Metamodel;
+import de.tum.pssif.core.metamodel.NodeType;
 import de.tum.pssif.core.model.Model;
 import de.tum.pssif.core.util.PSSIFCanonicMetamodelCreator;
 
@@ -25,6 +29,7 @@ public class ModelBuilder {
 	private static LinkedList<MyModelContainer> activeModels;
 	private static boolean mergerOn=true;
 	private static Metamodel metaModel = PSSIFCanonicMetamodelCreator.create();
+	private static HashMap<MyPair, LinkedList<MyEdgeType>> possibleMappings;
 
 	/**
 	 * Initializes all the content
@@ -299,15 +304,16 @@ public class ModelBuilder {
 	 * @param source The start Node of the Edge
 	 * @param destination The destination Node of the Edge
 	 * @param edgetype The type of the Edge
+	 * @param directed should the new edge be directed
 	 * @return true if the add operation was successful, false otherwise
 	 */
-	public static boolean addNewEdgeGUI(MyNode source, MyNode destination, MyEdgeType edgetype)
+	public static boolean addNewEdgeGUI(MyNode source, MyNode destination, MyEdgeType edgetype, boolean directed)
 	{
 		if (mergerOn)
 		{
 			if (activeModel !=null)
 			{
-				return activeModel.addNewEdgeGUI(source, destination, edgetype);
+				return activeModel.addNewEdgeGUI(source, destination, edgetype, directed);
 			}
 			else
 				return false;
@@ -321,5 +327,131 @@ public class ModelBuilder {
 	public static Metamodel getMetamodel()
 	{
 		return metaModel;
+	}
+	
+	
+	private static void calcPossibleEdges()
+	{
+		if (possibleMappings== null)
+		{
+			possibleMappings = new HashMap<ModelBuilder.MyPair, LinkedList<MyEdgeType>>();
+		}
+		
+		int counter =0;
+		
+		for (NodeType start :getMetamodel().getNodeTypes())
+		{
+			for (NodeType end :getMetamodel().getNodeTypes())
+			{
+				for (EdgeType et: getMetamodel().getEdgeTypes())
+				{
+					ConnectionMapping mapping = et.getMapping(start, end);
+					if (mapping!=null)
+					{
+						MyPair p = new MyPair(start, end);
+						LinkedList<MyEdgeType> tmp = possibleMappings.get(p);
+						
+						if (tmp ==null)
+						{
+							tmp = new LinkedList<MyEdgeType>();
+						}
+						MyEdgeType value = getEdgeTypes().getValue(et.getName());
+						tmp.add(value);
+					//	System.out.println(counter+" :" +start+" || "+end+"				possible "+et);
+						counter++;
+						possibleMappings.put(p, tmp);
+					}
+					
+				}
+			}
+		}
+	}
+	
+	public static LinkedList<MyEdgeType> getPossibleEdges(NodeType start, NodeType end) 
+	{
+		if (possibleMappings== null)
+			calcPossibleEdges();
+		
+		LinkedList<MyEdgeType> res = possibleMappings.get(new MyPair(start, end));
+		
+		if (res ==null)
+		{
+			res = new LinkedList<MyEdgeType>();
+		}
+		
+		return res;
+	}
+	
+	private static class MyPair
+	{
+		private NodeType start;
+		private NodeType end;
+		
+		public MyPair (NodeType start, NodeType end)
+		{
+			this.start = start;
+			this.end = end;
+		}
+
+		public NodeType getStartNode() {
+			return start;
+		}
+
+		public NodeType getEndNode() {
+			return end;
+		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + ((end == null) ? 0 : end.getName().hashCode());
+			result = prime * result + ((start == null) ? 0 : start.getName().hashCode());
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			MyPair other = (MyPair) obj;
+			if (end == null) {
+				if (other.end != null)
+					return false;
+			} else if (!end.equals(other.end))
+				return false;
+			if (start == null) {
+				if (other.start != null)
+					return false;
+			} else if (!start.equals(other.start))
+				return false;
+			return true;
+		}
+		
+		/*public boolean equals(Object o)
+		{
+			System.out.println("Equals called");
+			if (o instanceof MyPair)
+			{
+				MyPair p = (MyPair) o;
+				
+				boolean first = start.getName().equals(p.getStartNode().getName());
+				boolean second = end.getName().equals(p.getEndNode().getName());
+				
+				System.out.println(start.getName() +" == "+p.getStartNode().getName());
+				System.out.println(end.getName() +" == "+p.getEndNode().getName());
+				
+				return (first && second);
+			}
+			else
+			{
+				System.out.println("not MyPair type");
+				return false;
+			}
+		}*/
 	}
 }

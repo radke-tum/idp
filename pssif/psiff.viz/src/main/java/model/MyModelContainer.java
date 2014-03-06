@@ -269,17 +269,18 @@ public class MyModelContainer {
    * @param source The start Node of the Edge
    * @param destination The destination Node of the Edge
    * @param edgetype The type of the Edge
+   * @param directed should the new edge be directed
    * @return true if the add operation was successful, false otherwise
    */
-  public boolean addNewEdgeGUI(MyNode source, MyNode destination, MyEdgeType edgetype) {
+  public boolean addNewEdgeGUI(MyNode source, MyNode destination, MyEdgeType edgetype, Boolean directed) {
     ConnectionMapping mapping = edgetype.getType().getMapping(source.getNodeType().getType(), destination.getNodeType().getType());
 
     if (mapping != null) {
       Edge newEdge = mapping.create(model, source.getNode(), destination.getNode());
-      if (edgetype.getType().findAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_DIRECTED) != null) {
-        PSSIFOption<PSSIFValue> value = PSSIFOption.one(PSSIFValue.create(true));
-        edgetype.getType().findAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_DIRECTED).set(newEdge, value);
-      }
+
+      PSSIFOption<PSSIFValue> value = PSSIFOption.one(PSSIFValue.create(directed));
+      edgetype.getType().findAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_DIRECTED).set(newEdge, value);
+
 
       MyEdge e = new MyEdge(newEdge, edgetype, source, destination);
 
