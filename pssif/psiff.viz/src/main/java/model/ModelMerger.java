@@ -1,5 +1,8 @@
 package model;
 
+import graph.model.MyEdge;
+import graph.model.MyEdgeType;
+
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -10,6 +13,7 @@ import de.tum.pssif.core.metamodel.Annotation;
 import de.tum.pssif.core.metamodel.Attribute;
 import de.tum.pssif.core.metamodel.AttributeGroup;
 import de.tum.pssif.core.metamodel.ConnectionMapping;
+import de.tum.pssif.core.metamodel.EdgeEnd;
 import de.tum.pssif.core.metamodel.EdgeType;
 import de.tum.pssif.core.metamodel.Metamodel;
 import de.tum.pssif.core.metamodel.MutableMetamodel;
@@ -28,7 +32,7 @@ public class ModelMerger {
 	
 	private Model model1;
 	private Model model2;
-	private MutableMetamodel meta;
+	private Metamodel meta;
 	private HashMap<Node, NodeType> transferNodes;
 	private HashMap<Node, Node> oldToNewNodes;
 	
@@ -43,15 +47,75 @@ public class ModelMerger {
 	{
 		this.model1 = model1;
 		this.model2 = model2;
-		this.meta = (MutableMetamodel)meta;
+		this.meta = meta;
 		this.transferNodes = new HashMap<Node, NodeType>();
 		this.oldToNewNodes = new HashMap<Node, Node>();
 		
+		//printNbEdges(model1);
+	//	printNbNodes(model1);
 		// start transformation operations
 		addAllNodes();
 		addAllEdges();
 		
+	//	printNbEdges(model1);
+	//	printNbNodes(model1);
+		
 		return this.model1;
+	}
+	
+	private void printNbEdges(Model model)
+	{
+		int counter =0;
+		for (EdgeType t : meta.getEdgeTypes()) 
+		{
+		      for (ConnectionMapping mapping : t.getMappings()) 
+		      {
+		        PSSIFOption<Edge> edges = mapping.apply(model);
+		        
+		        if (edges.isMany())
+		        {
+			        for (Edge e : edges.getMany()) {
+			        	counter++;
+			        }
+		        }
+		        else 
+		        	{
+		        		if (edges.isOne())
+		        		{
+		        			counter++;
+		        		}
+		        	}
+		        	
+		        
+		      }
+		}
+		System.out.println("Nb edges :"+counter);	        
+	}
+	
+	private void printNbNodes(Model model)
+	{
+		int counter =0;
+		for (NodeType t : meta.getNodeTypes())
+		{
+			// get all the Nodes of this type
+			PSSIFOption<Node> tempNodes = t.apply(model,true);
+			
+			 if (tempNodes.isMany())
+				{
+					Set<Node> many = tempNodes.getMany();
+					for (Node n : many)
+					{
+						counter++;
+					}
+				}
+			else 
+			if (tempNodes.isOne())
+			{
+				counter++;
+			}
+
+		}
+		System.out.println("Nb nodes :"+counter);	        
 	}
 
 	/**
@@ -63,15 +127,7 @@ public class ModelMerger {
 		for (NodeType t : meta.getNodeTypes())
 		{
 			// get all the Nodes of this type
-			PSSIFOption<Node> tempNodes = t.apply(model2,true);
-			
-			if (tempNodes.isOne())
-			{
-				Node current = tempNodes.getOne();
-				// copy it to model1
-				addNode(current, t);
-				transferNodes.put(current, t);
-			}
+			PSSIFOption<Node> tempNodes = t.apply(model2,false);
 			
 			if (tempNodes.isMany())
 			{
@@ -83,20 +139,92 @@ public class ModelMerger {
 					transferNodes.put(n, t);
 				}
 			}
+			else 
+			{
+				if (tempNodes.isOne())
+				{
+					Node current = tempNodes.getOne();
+					// copy it to model1
+					addNode(current, t);
+					transferNodes.put(current, t);
+				}
+			}
 		}
+	}
+	
+	/**
+	 * Add all the outgoing Edges of the given Node to the model1
+	 * @param sourceNode the Node where the edges start
+	 * @param sourceNodeType the type of the sourceNode
+	 */
+	private void addAllEdges()
+	{
+		 //TODO handle hyperedges correctly
+		for (EdgeType t : meta.getEdgeTypes()) {
+		      for (ConnectionMapping mapping : t.getMappings()) {
+		        EdgeEnd from = mapping.getFrom();
+		        EdgeEnd to = mapping.getTo();
+		        
+		        PSSIFOption<Edge> edges = mapping.apply(model2);
+		        if (edges.isMany())
+		        {
+		        	//System.out.println("Multi Edge");
+		        	for (Edge e : edges.getMany()) {
+			        	if (from.apply(e).isOne() && to.apply(e).isOne())
+			        	{
+			        		Node source = from.apply(e).getOne();
+			        		Node target = to.apply(e).getOne();
+			        		//System.out.println("only one source and dest");
+			        		//System.out.println("Create edge from "+oldToNewNodes.get(source)+ " to "+ oldToNewNodes.get(target) +" EdgeType "+ t );
+			        		Edge newEdge = mapping.create(model1, oldToNewNodes.get(source), oldToNewNodes.get(target));
+							
+							transferEdgeAttributes(e, newEdge, t);
+			        		
+			        	}
+			        	else
+			        	{
+				        	for (Node source : from.apply(e).getMany()) 
+					          {
+					            for (Node target : to.apply(e).getMany()) 
+					            {
+					            //	System.out.println("more sources and dests");
+					            //	System.out.println("Create edge from "+oldToNewNodes.get(source)+ " to "+ oldToNewNodes.get(target) +" EdgeType "+ t );
+					            	Edge newEdge = mapping.create(model1, oldToNewNodes.get(source), oldToNewNodes.get(target));
+									
+									transferEdgeAttributes(e, newEdge, t);
+					            }
+					          }
+			        	}
+			        }
+		        }
+		        else if (edges.isOne())
+		        {
+		        //	System.out.println("Single Edge");
+		        	Edge e = edges.getOne();
+		        	for (Node source : from.apply(e).getMany()) {
+			            for (Node target : to.apply(e).getMany()) {
+			            	//System.out.println("Create edge from "+oldToNewNodes.get(source)+ " to "+ oldToNewNodes.get(target) +" EdgeType "+ t );
+			            	Edge newEdge = mapping.create(model1, oldToNewNodes.get(source), oldToNewNodes.get(target));
+							
+							transferEdgeAttributes(e, newEdge, t);
+			            }
+			        }
+		        }
+		      }
+		    }
 	}
 	
 	/**
 	 * add all the Edges from model2 to model1
 	 */
-	private void addAllEdges()
+	/*private void addAllEdges()
 	{
 		//check all the Nodes which were transferde from model1 to model2
 		for (Entry<Node, NodeType> entry : transferNodes.entrySet())
 		{
 			addEdge(entry.getKey(),entry.getValue());
 		}
-	}
+	}*/
 	
 	/**
 	 * Add a given Node to Model1
@@ -110,6 +238,7 @@ public class ModelMerger {
 		
 		oldToNewNodes.put(dataNode, newNode);
 		
+		
 		// transfer attribute groups
 		Collection<AttributeGroup> attrgroups = currentType.getAttributeGroups();
 		
@@ -122,15 +251,12 @@ public class ModelMerger {
 				
 				for (Attribute a : attr)
 				{
-					//if (!a.getName().equals(PSSIFConstants.BUILTIN_ATTRIBUTE_ID))
-				//	{
-						PSSIFOption<PSSIFValue> attrvalue = a.get(dataNode);
-						
-						if (attrvalue!= null)
-						{
-							currentType.findAttribute(a.getName()).set(newNode, attrvalue);
-						}
-				//	}
+					PSSIFOption<PSSIFValue> attrvalue = a.get(dataNode);
+					
+					if (attrvalue!= null)
+					{
+						currentType.findAttribute(a.getName()).set(newNode, attrvalue);
+					}
 				}
 			}
 		}
@@ -166,7 +292,7 @@ public class ModelMerger {
 	 * @param sourceNode the Node where the edges start
 	 * @param sourceNodeType the type of the sourceNode
 	 */
-	private void addEdge(Node sourceNode, NodeType sourceNodeType)
+	/*private void addEdge(Node sourceNode, NodeType sourceNodeType)
 	{
 		// loop over all Edge types
 		for(EdgeType currentEdgeType : meta.getEdgeTypes())
@@ -225,6 +351,9 @@ public class ModelMerger {
 					{
 						ConnectionMapping mapping = currentEdgeType.getMapping(sourceNodeType, destNodeType);
 						
+						System.out.println("Test mapping null ? "+mapping==null);
+						System.out.println("sourceNode ? "+sourceNode==null);
+						System.out.println("destNode ? "+destNode==null);
 						Edge newEdge = mapping.create(model1, oldToNewNodes.get(sourceNode), oldToNewNodes.get(destNode));
 						
 						transferEdgeAttributes(currentEdge, newEdge, currentEdgeType);
@@ -236,7 +365,8 @@ public class ModelMerger {
 			}
 		}
 	
-	}
+	}*/
+	
 	
 	/**
 	 * transfer all the attributes and annotations from one Edge to the other
@@ -258,15 +388,12 @@ public class ModelMerger {
 				
 				for (Attribute a : attr)
 				{
-					//if (!a.getName().equals(PSSIFConstants.BUILTIN_ATTRIBUTE_ID))
-					//{
-						PSSIFOption<PSSIFValue> attrvalue = a.get(oldEdge);
-						
-						if (attrvalue!= null)
-						{
-							type.findAttribute(a.getName()).set(newEdge, attrvalue);
-						}
-					//}
+					PSSIFOption<PSSIFValue> attrvalue = a.get(oldEdge);
+					
+					if (attrvalue!= null)
+					{
+						type.findAttribute(a.getName()).set(newEdge, attrvalue);
+					}
 				}
 			}
 		}

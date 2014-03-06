@@ -270,9 +270,9 @@ public class GraphVisualization
       this.detailedNodes = details;
       
       if (collapser.CollapserActive())
-    	  this.g = (Graph)this.gb.changeNodeDetails(details, g);
+    	  this.g = this.gb.changeNodeDetails(details, g);
       else
-    	  this.g = (Graph)this.gb.createGraph(details);
+    	  this.g = this.gb.createGraph(details);
       
       this.vv.repaint();
     }
@@ -387,7 +387,7 @@ public class GraphVisualization
 	
 	public void updateGraph()
 	{
-		g = (Graph) gb.updateGraph(detailedNodes);
+		g = gb.updateGraph(detailedNodes);
 		
 		vv.getPickedVertexState().clear();
 	    vv.repaint();

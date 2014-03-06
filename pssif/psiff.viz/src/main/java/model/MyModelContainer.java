@@ -33,7 +33,7 @@ import de.tum.pssif.core.util.PSSIFValue;
 public class MyModelContainer {
 
   private Model              model;
-  private MutableMetamodel   meta;
+  private Metamodel   meta;
   private MyNodeTypes        nodeTypes;
   private MyEdgeTypes        edgeTypes;
   private LinkedList<MyNode> nodes;
@@ -103,14 +103,28 @@ public class MyModelContainer {
       for (ConnectionMapping mapping : t.getType().getMappings()) {
         EdgeEnd from = mapping.getFrom();
         EdgeEnd to = mapping.getTo();
+        
         PSSIFOption<Edge> edges = mapping.apply(model);
-        for (Edge e : edges.getMany()) {
-          //TODO luc: handle hyperedges correctly
-          for (Node source : from.apply(e).getMany()) {
-            for (Node target : to.apply(e).getMany()) {
-              this.edges.add(new MyEdge(e, t, findNode(source), findNode(target)));
-            }
-          }
+        if (edges.isMany())
+        {
+	        for (Edge e : edges.getMany()) {
+	          //TODO luc: handle hyperedges correctly
+	          for (Node source : from.apply(e).getMany()) {
+	            for (Node target : to.apply(e).getMany()) {
+	            	addEdge(new MyEdge(e, t, findNode(source), findNode(target)));
+	            }
+	          }
+	        }
+        }
+        
+        if (edges.isOne())
+        {
+        	Edge e = edges.getOne();
+        	for (Node source : from.apply(e).getMany()) {
+	            for (Node target : to.apply(e).getMany()) {
+	            	addEdge(new MyEdge(e, t, findNode(source), findNode(target)));
+	            }
+	        }
         }
       }
     }

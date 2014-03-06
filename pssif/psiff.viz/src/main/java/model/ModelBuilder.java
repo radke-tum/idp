@@ -12,6 +12,7 @@ import java.util.LinkedList;
 
 import de.tum.pssif.core.metamodel.Metamodel;
 import de.tum.pssif.core.model.Model;
+import de.tum.pssif.core.util.PSSIFCanonicMetamodelCreator;
 
 /**
  * Builds out of a Model and an MetaModel a Model which can be displayed as Graph and Matrix
@@ -21,33 +22,68 @@ import de.tum.pssif.core.model.Model;
 public class ModelBuilder {
 	
 	private static MyModelContainer activeModel;
+	private static LinkedList<MyModelContainer> activeModels;
+	private static boolean mergerOn=true;
+	private static Metamodel metaModel = PSSIFCanonicMetamodelCreator.create();
 
 	/**
 	 * Initializes all the content
 	 * @param meta
 	 * @param model
 	 */
-	public ModelBuilder(Metamodel Pmeta, Model Pmodel)
+	/*public ModelBuilder()
 	{
-		// check if we have to merge the model with an existing
-		if (activeModel==null)
+		
+	}*/
+	
+	public static void addModel(Metamodel Pmeta, Model Pmodel)
+	{
+		if (mergerOn)
 		{
-			MyModelContainer newModel = new MyModelContainer(Pmodel, Pmeta);
-			activeModel =newModel;
+			// check if we have to merge the model with an existing
+			if (activeModel==null)
+			{
+				MyModelContainer newModel = new MyModelContainer(Pmodel, Pmeta);
+				activeModel =newModel;
+			}
+			else
+			{
+				ModelMerger merger = new ModelMerger();
+				Model mergedModel = merger.mergeModels(activeModel.getModel(), Pmodel, Pmeta);
+				
+				MyModelContainer newModel = new MyModelContainer(mergedModel, Pmeta);
+				activeModel =newModel;
+			}
 		}
 		else
 		{
-			ModelMerger merger = new ModelMerger();
-			Model mergedModel = merger.mergeModels(activeModel.getModel(), Pmodel, Pmeta);
+			if (activeModels ==null)
+			{
+				activeModels = new LinkedList<MyModelContainer>();
+			}
 			
-			MyModelContainer newModel = new MyModelContainer(mergedModel, Pmeta);
-			activeModel =newModel;
+			if (activeModels.size()>0)
+			{
+				ModelMerger merger = new ModelMerger();
+				Model mergedModel = merger.mergeModels(activeModels.getFirst().getModel(), Pmodel, Pmeta);
+				
+				MyModelContainer newModel = new MyModelContainer(mergedModel, Pmeta);
+				activeModels.remove();
+				activeModels.add(newModel);
+			}
+			else
+			{
+				MyModelContainer newModel = new MyModelContainer(Pmodel, Pmeta);
+				activeModels.add(newModel);
+			}
+			
 		}
 	}
 	
 	public static void resetModel()
 	{
 		activeModel = null;
+		activeModels =null;
 	}
 
 	/**
@@ -56,10 +92,27 @@ public class ModelBuilder {
 	 */
 	public static LinkedList<MyNode> getAllNodes()
 	{
-		if (activeModel !=null)
-			return activeModel.getAllNodes();
+		if (mergerOn)
+		{
+			if (activeModel !=null)
+				return activeModel.getAllNodes();
+			else
+				return new LinkedList<MyNode>();
+		}
 		else
-			return new LinkedList<MyNode>();
+		{
+			LinkedList<MyNode> tmp = new LinkedList<MyNode>();
+			if (activeModels!=null)
+			{
+				
+				for (MyModelContainer mc : activeModels)
+				{
+					tmp.addAll(mc.getAllNodes());
+				}	
+			}
+			
+			return tmp;
+		}
 	}
 	
 	/**
@@ -68,10 +121,27 @@ public class ModelBuilder {
 	 */
 	public static LinkedList<MyEdge> getAllEdges()
 	{
-		if (activeModel !=null)
-			return activeModel.getAllEdges();
+		if (mergerOn)
+		{
+			if (activeModel !=null)
+				return activeModel.getAllEdges();
+			else
+				return new LinkedList<MyEdge>();
+		}
 		else
-			return new LinkedList<MyEdge>();
+		{
+			LinkedList<MyEdge> tmp = new LinkedList<MyEdge>();
+			if (activeModels!=null)
+			{
+				
+				for (MyModelContainer mc : activeModels)
+				{
+					tmp.addAll(mc.getAllEdges());
+				}	
+			}
+			
+			return tmp;
+		}
 	}
 	
 /*
@@ -102,11 +172,23 @@ public class ModelBuilder {
 	 * @return the NodeTypes object
 	 */
 	public static MyNodeTypes getNodeTypes() {
-		if (activeModel !=null)
-			return activeModel.getNodeTypes();
+		if (mergerOn)
+		{
+			if (activeModel !=null)
+				return activeModel.getNodeTypes();
+			else
+			{
+				return new MyNodeTypes(new HashSet<MyNodeType>());
+			}
+		}
 		else
 		{
-			return new MyNodeTypes(new HashSet<MyNodeType>());
+			if (activeModels !=null)
+				return activeModels.getFirst().getNodeTypes();
+			else
+			{
+				return new MyNodeTypes(new HashSet<MyNodeType>());
+			}
 		}
 	}
 	
@@ -115,11 +197,23 @@ public class ModelBuilder {
 	 * @return the EdgeTypes object
 	 */
 	public static MyEdgeTypes getEdgeTypes() {
-		if (activeModel !=null)
-			return activeModel.getEdgeTypes();
+		if (mergerOn)
+		{
+			if (activeModel !=null)
+				return activeModel.getEdgeTypes();
+			else
+			{
+				return new MyEdgeTypes(new HashSet<MyEdgeType>());
+			}
+		}
 		else
 		{
-			return new MyEdgeTypes(new HashSet<MyEdgeType>());
+			if (activeModels !=null)
+				return activeModels.getFirst().getEdgeTypes();
+			else
+			{
+				return new MyEdgeTypes(new HashSet<MyEdgeType>());
+			}
 		}
 	}
 	
@@ -129,10 +223,17 @@ public class ModelBuilder {
 	 */
 	public static void addCollapserEdge(MyEdge newEdge)
 	{
-		if (activeModel !=null)
+		if (mergerOn)
 		{
-			newEdge.setCollapseEdge(true);
-			activeModel.addEdge(newEdge);
+			if (activeModel !=null)
+			{
+				newEdge.setCollapseEdge(true);
+				activeModel.addEdge(newEdge);
+			}
+		}
+		else
+		{
+			throw new NullPointerException("Not implemented");
 		}
 	}
 	
@@ -142,9 +243,16 @@ public class ModelBuilder {
 	 */
 	public static void removeCollapserEdge(MyEdge edge)
 	{
-		if (activeModel !=null)
+		if (mergerOn)
 		{
-			activeModel.removeCollapserEdge(edge);
+			if (activeModel !=null)
+			{
+				activeModel.removeCollapserEdge(edge);
+			}
+		}
+		else
+		{
+			throw new NullPointerException("Not implemented");
 		}
 	}
 	
@@ -173,9 +281,16 @@ public class ModelBuilder {
 	 */
 	public static void addNewNodeFromGUI (String nodeName, MyNodeType type)
 	{
-		if (activeModel !=null)
+		if (mergerOn)
 		{
-			activeModel.addNewNodeFromGUI(nodeName, type);
+			if (activeModel !=null)
+			{
+				activeModel.addNewNodeFromGUI(nodeName, type);
+			}
+		}
+		else
+		{
+			throw new NullPointerException("Not implemented");
 		}
 	}
 	
@@ -188,11 +303,23 @@ public class ModelBuilder {
 	 */
 	public static boolean addNewEdgeGUI(MyNode source, MyNode destination, MyEdgeType edgetype)
 	{
-		if (activeModel !=null)
+		if (mergerOn)
 		{
-			return activeModel.addNewEdgeGUI(source, destination, edgetype);
+			if (activeModel !=null)
+			{
+				return activeModel.addNewEdgeGUI(source, destination, edgetype);
+			}
+			else
+				return false;
 		}
 		else
-			return false;
+		{
+			throw new NullPointerException("Not implemented");
+		}
+	}
+	
+	public static Metamodel getMetamodel()
+	{
+		return metaModel;
 	}
 }
