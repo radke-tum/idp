@@ -34,10 +34,15 @@ public class MetamodelProvider {
     MutableJunctionNodeType jun = result.createJunctionNodeType("jun");
 
     MutableEdgeType cf = result.createEdgeType("CF");
+    MutableEdgeType mf = result.createEdgeType("MF");
     cf.createMapping(s, a, Sets.<JunctionNodeType> newHashSet(jun));
     cf.createMapping(s, b, Sets.<JunctionNodeType> newHashSet(jun));
     cf.createMapping(a, s, Sets.<JunctionNodeType> newHashSet(jun));
     cf.createMapping(b, s, Sets.<JunctionNodeType> newHashSet(jun));
+    mf.createMapping(s, a, Sets.<JunctionNodeType> newHashSet(jun));
+    mf.createMapping(s, b, Sets.<JunctionNodeType> newHashSet(jun));
+    mf.createMapping(a, s, Sets.<JunctionNodeType> newHashSet(jun));
+    mf.createMapping(b, s, Sets.<JunctionNodeType> newHashSet(jun));
 
     return result;
   }

@@ -21,7 +21,7 @@ import de.tum.pssif.core.model.Node;
 public class ModelImpl implements Model {
   private Multimap<String, Node>                         nodes         = HashMultimap.create();
   private Multimap<String, JunctionNode>                 junctionNodes = HashMultimap.create();
-  private Multimap<ConnectionMappingSerialization, Edge> edges         = HashMultimap.create();
+  private Multimap<ConnectionMappingSignature, Edge> edges         = HashMultimap.create();
 
   @Override
   public Node apply(CreateNodeOperation op) {
@@ -40,7 +40,7 @@ public class ModelImpl implements Model {
   @Override
   public Edge apply(CreateEdgeOperation op) {
     Edge result = new EdgeImpl(op.getFrom(), op.getTo());
-    edges.put(new ConnectionMappingSerialization(op.getMapping()), result);
+    edges.put(new ConnectionMappingSignature(op.getMapping()), result);
     return result;
   }
 
@@ -76,7 +76,7 @@ public class ModelImpl implements Model {
 
   @Override
   public PSSIFOption<Edge> apply(ReadEdgesOperation op) {
-    for (ConnectionMappingSerialization candidate : edges.keySet()) {
+    for (ConnectionMappingSignature candidate : edges.keySet()) {
       if (candidate.isCompatibleWith(op.getMapping())) {
         return PSSIFOption.many(edges.get(candidate));
       }

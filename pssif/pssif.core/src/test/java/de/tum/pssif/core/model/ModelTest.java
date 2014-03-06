@@ -166,6 +166,33 @@ public class ModelTest {
     }
   }
 
+  @Test
+  public void testSimpleJunctionNegativeEdgeType() {
+    NodeType a = nt("A");
+    NodeType s = nt("S");
+    NodeType jun = nt("jun");
+
+    Node s1 = node(s, "s1");
+    Node s2 = node(s, "s2");
+    Node a1 = node(a, "a1");
+    Node a2 = node(a, "a2");
+    Node j1 = node(jun, "j1");
+
+    EdgeType cf = et("CF");
+    EdgeType mf = et("MF");
+    ConnectionMapping s_j = cf.getMapping(s, jun).getOne();
+    ConnectionMapping j_a = mf.getMapping(jun, a).getOne();
+
+    s_j.create(model, s1, j1);
+    s_j.create(model, s2, j1);
+    try {
+      j_a.create(model, j1, a2);
+      Assert.fail();
+    } catch (PSSIFStructuralIntegrityException e) {
+      //expected
+    }
+  }
+
   private NodeType nt(String name) {
     return metamodel.getNodeType(name).getOne();
   }

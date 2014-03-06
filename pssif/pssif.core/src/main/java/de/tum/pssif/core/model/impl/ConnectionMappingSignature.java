@@ -3,12 +3,12 @@ package de.tum.pssif.core.model.impl;
 import de.tum.pssif.core.metamodel.ConnectionMapping;
 
 
-/* package */class ConnectionMappingSerialization {
+/* package */final class ConnectionMappingSignature {
   private final String edgeTypeName;
   private final String fromTypeName;
   private final String toTypeName;
 
-  /*package*/ConnectionMappingSerialization(ConnectionMapping mapping) {
+  /*package*/ConnectionMappingSignature(ConnectionMapping mapping) {
     edgeTypeName = mapping.getType().getName();
     fromTypeName = mapping.getFrom().getName();
     toTypeName = mapping.getTo().getName();
@@ -40,7 +40,7 @@ import de.tum.pssif.core.metamodel.ConnectionMapping;
     if (getClass() != obj.getClass()) {
       return false;
     }
-    ConnectionMappingSerialization other = (ConnectionMappingSerialization) obj;
+    ConnectionMappingSignature other = (ConnectionMappingSignature) obj;
     if (edgeTypeName == null) {
       if (other.edgeTypeName != null) {
         return false;

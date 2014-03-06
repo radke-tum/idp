@@ -5,6 +5,7 @@ import java.util.Collection;
 import com.google.common.collect.Sets;
 
 import de.tum.pssif.core.common.PSSIFOption;
+import de.tum.pssif.core.exception.PSSIFStructuralIntegrityException;
 import de.tum.pssif.core.metamodel.ConnectionMapping;
 import de.tum.pssif.core.metamodel.EdgeType;
 import de.tum.pssif.core.metamodel.NodeType;
@@ -47,7 +48,6 @@ public class JunctionNodeTypeImpl extends NodeTypeImpl implements MutableJunctio
     return PSSIFOption.merge(result, new ReadJunctionNodeOperation(this, id).apply(model));
   }
 
-
   @Override
   public Collection<NodeType> leftClosure(EdgeType edgeType, Node node) {
     Collection<NodeType> result = Sets.<NodeType> newHashSet(this);
@@ -70,7 +70,6 @@ public class JunctionNodeTypeImpl extends NodeTypeImpl implements MutableJunctio
 
     return result;
   }
-
 
   @Override
   public Collection<NodeType> rightClosure(EdgeType edgeType, Node node) {
@@ -97,13 +96,19 @@ public class JunctionNodeTypeImpl extends NodeTypeImpl implements MutableJunctio
 
   @Override
   public void onIncomingEdgeCreated(Node targetNode, ConnectionMapping mapping, Edge edge) {
-    // TODO Auto-generated method stub
     super.onIncomingEdgeCreated(targetNode, mapping, edge);
+    if (!targetNode.isEdgeTypeCompatible(mapping.getType())) {
+      throw new PSSIFStructuralIntegrityException("edge types incompatible");
+    }
+    targetNode.initializeEdgeTypeSignature(mapping.getType());
   }
 
   @Override
   public void onOutgoingEdgeCreated(Node sourceNode, ConnectionMapping mapping, Edge edge) {
-    // TODO Auto-generated method stub
     super.onOutgoingEdgeCreated(sourceNode, mapping, edge);
+    if (!sourceNode.isEdgeTypeCompatible(mapping.getType())) {
+      throw new PSSIFStructuralIntegrityException("edge types incompatible");
+    }
+    sourceNode.initializeEdgeTypeSignature(mapping.getType());
   }
 }

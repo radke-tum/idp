@@ -48,6 +48,10 @@ public class ConnectionMappingImpl implements ConnectionMapping {
       throw new PSSIFStructuralIntegrityException("could not find one of the nodes to connect");
     }
 
+    //check edgeType compatibility
+    from.isEdgeTypeCompatible(getType());
+    to.isEdgeTypeCompatible(getType());
+
     //check multiplicity on junctions
     int fromIncomingCount = getFrom().junctionIncomingEdgeCount(getType(), from);
     int fromOutgoingCount = getFrom().junctionOutgoingEdgeCount(getType(), from);
