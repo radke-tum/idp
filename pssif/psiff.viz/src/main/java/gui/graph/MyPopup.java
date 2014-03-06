@@ -74,7 +74,7 @@ public abstract class MyPopup {
 	 * @author Luc
 	 *
 	 */
-	protected class MyEdgeTypeComparator implements Comparator<MyEdgeType>
+	public class MyEdgeTypeComparator implements Comparator<MyEdgeType>
 	{
 	  @Override public int compare( MyEdgeType type1, MyEdgeType type2 )
 	  {

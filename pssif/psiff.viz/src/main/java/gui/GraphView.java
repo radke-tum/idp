@@ -74,7 +74,7 @@ public class GraphView {
   private JSpinner           depthSpinner;
 
   private Dimension          screenSize;
-  private static int         betweenComps = 7;
+  private static int         betweenComps = 5;
   private static Color       bgColor      = Color.LIGHT_GRAY;
 
   public GraphView(/*Dimension parentDimension*/) {
@@ -88,7 +88,7 @@ public class GraphView {
     int x = (screenSize.width);
     int y = (int) (screenSize.height * 0.78);
     if (nodeDetails == null) {
-      graph = new GraphVisualization(new Dimension(x, y), false);
+      graph = new GraphVisualization(new Dimension(x, y), true);
     }
     else {
       graph = new GraphVisualization(new Dimension(x, y), nodeDetails.isSelected());
@@ -121,7 +121,7 @@ public class GraphView {
     informationPanel = new JPanel();
 
     int x = (screenSize.width);
-    int y = (int) (screenSize.height * 0.17);
+    int y = (int) (screenSize.height * 0.19);
     Dimension d = new Dimension(x, y);
 
     informationPanel.setMaximumSize(d);
@@ -786,13 +786,13 @@ public class GraphView {
     }
   }
 
-  public int getDepthSpinnerValue() {
-    //		if (depthSpinner!=null)
-    //		{
-    //			return (int) depthSpinner.getModel().getValue();
-    //		}
-    //		else
-    return 1;
+  public Integer getDepthSpinnerValue() {
+	if (depthSpinner!=null)
+	{
+		return (Integer) depthSpinner.getModel().getValue();
+	}
+	else
+		return 1;
   }
 
 }

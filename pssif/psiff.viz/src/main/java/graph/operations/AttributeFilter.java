@@ -99,8 +99,7 @@ public class AttributeFilter {
 						}
 						if (attr.get(currentNode.getNode()).isMany())
 						{
-							//FIXME check with tutors
-							throw new NullPointerException("Don't know what do to do with many values in one Attribut");
+							throw new NullPointerException("Not allowed");
 						}
 						
 						if (attr.get(currentNode.getNode()).isNone())
@@ -191,8 +190,7 @@ public class AttributeFilter {
 						
 						if (attr.get(currentEdge.getEdge()).isMany())
 						{
-							//FIXME check with tutors
-							throw new NullPointerException("Don't know what do to do with many values in one Attribut");
+							throw new NullPointerException("Not allowed");
 						}
 							
 					}

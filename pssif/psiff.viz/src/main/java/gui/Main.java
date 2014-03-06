@@ -9,16 +9,20 @@ import gui.graph.GraphVisualization;
 import gui.graph.HighlightNodePopup;
 import gui.graph.NodeColorPopup;
 
+import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Frame;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.LinkedList;
 
+import javax.swing.BorderFactory;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -88,6 +92,16 @@ public class Main {
 		
 		// create the Basic Menu Bar
 		frame.setJMenuBar(createFileMenu());
+		// create an information Panel
+		JPanel allPanel = new JPanel(new GridBagLayout());
+		allPanel.setSize(frame.getPreferredSize());
+		allPanel.setPreferredSize(frame.getPreferredSize());
+		allPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+		JLabel label = new JLabel("Please import a file");
+		label.setFont(new Font("Arial", Font.ITALIC, 25));
+		allPanel.add(label);
+		
+		frame.add(allPanel);
 		
 		frame.pack();
 		frame.setLocationRelativeTo(null);
@@ -332,7 +346,7 @@ public class Main {
 			public void actionPerformed(ActionEvent e) {
 				frame.getContentPane().removeAll();
 				Dimension d = frame.getSize();
-				System.out.println("current Size "+d);
+				//System.out.println("current Size "+d);
 				frame.getContentPane().add(matrixView.getVisualization());
 				graphView.setActive(false);
 				matrixView.setActive(true);
@@ -376,12 +390,21 @@ public class Main {
 				{
 					frame.getContentPane().removeAll();
 					frame.getContentPane().add(matrixView.getVisualization());
-					
-					
-					frame.pack();
-					//frame.setExtendedState(Frame.MAXIMIZED_BOTH);
-					frame.repaint();
 				}
+				else
+				{
+					frame.getContentPane().removeAll();
+					// create an information Panel
+					JPanel allPanel = new JPanel(new GridBagLayout());
+					allPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+					JLabel label = new JLabel("Please select a least one EdgeType and one NodeType");
+					label.setFont(new Font("Arial", Font.ITALIC, 25));
+					allPanel.add(label);
+					frame.add(allPanel);
+				}
+				frame.pack();
+				frame.repaint();
+				
 			}
 		});
 		resetMenu.add(resetMatrix);

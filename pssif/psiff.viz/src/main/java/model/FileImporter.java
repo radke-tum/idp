@@ -7,6 +7,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.TreeMap;
 
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
@@ -24,10 +25,10 @@ import de.tum.pssif.transform.MapperFactory;
 public class FileImporter {
 
   private JComboBox<String>       filetype;
-  private HashMap<String, String> comboBoxValues;
+  private TreeMap<String, String> comboBoxValues;
 
   public FileImporter() {
-    comboBoxValues = new HashMap<String, String>();
+    comboBoxValues = new TreeMap<String, String>();
 
     comboBoxValues.put("Umsatzorientierte Funktionsplanung", MapperFactory.UOFP);
     comboBoxValues.put("BPMN", MapperFactory.BPMN);
