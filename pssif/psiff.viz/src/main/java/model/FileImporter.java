@@ -92,9 +92,9 @@ public class FileImporter {
   public boolean showPopup(Component caller) {
     JFileChooser openFile = new JFileChooser();
 
-    openFile.setCurrentDirectory(new File("C:\\Users\\Luc\\Desktop\\Dropbox\\IDP-PSS-IF-Shared"));
+    //openFile.setCurrentDirectory(new File("C:\\Users\\Luc\\Desktop\\Dropbox\\IDP-PSS-IF-Shared"));
 
-    //openFile.setCurrentDirectory(new File("C:\\Users\\Luc\\Desktop\\Uni Dropbox\\Dropbox\\IDP-PSS-IF-Shared\\Modelle PE"));
+    openFile.setCurrentDirectory(new File("C:\\Users\\Luc\\Desktop\\Uni Dropbox\\Dropbox\\IDP-PSS-IF-Shared\\Modelle PE"));
 
     JPanel panel1 = (JPanel) openFile.getComponent(3);
     JPanel panel2 = (JPanel) panel1.getComponent(2);

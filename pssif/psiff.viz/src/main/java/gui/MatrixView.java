@@ -8,14 +8,18 @@ import gui.matrix.TableColumnAdjuster;
 import gui.matrix.VerticalTableHeaderCellRenderer;
 
 import java.awt.BorderLayout;
+import java.awt.Font;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.Enumeration;
 import java.util.LinkedList;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -120,7 +124,15 @@ public class MatrixView {
 			return matrixPanel;
 		}
 		else
-			return new JPanel();
+		{
+			// create an information Panel
+			JPanel allPanel = new JPanel(new GridBagLayout());
+			allPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+			JLabel label = new JLabel("Please select a least one EdgeType and one NodeType");
+			label.setFont(new Font("Arial", Font.ITALIC, 25));
+			allPanel.add(label);
+			return allPanel;
+		}	
 	}
 	
 	public boolean chooseNodes()
