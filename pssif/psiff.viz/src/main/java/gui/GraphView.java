@@ -74,7 +74,7 @@ public class GraphView {
   private JSpinner           depthSpinner;
 
   private Dimension          screenSize;
-  private static int         betweenComps = 7;
+  private static int         betweenComps = 5;
   private static Color       bgColor      = Color.LIGHT_GRAY;
 
   public GraphView(/*Dimension parentDimension*/) {
@@ -121,7 +121,7 @@ public class GraphView {
     informationPanel = new JPanel();
 
     int x = (screenSize.width);
-    int y = (int) (screenSize.height * 0.17);
+    int y = (int) (screenSize.height * 0.19);
     Dimension d = new Dimension(x, y);
 
     informationPanel.setMaximumSize(d);

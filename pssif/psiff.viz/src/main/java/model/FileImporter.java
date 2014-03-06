@@ -7,6 +7,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.TreeMap;
 
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
@@ -24,10 +25,10 @@ import de.tum.pssif.transform.MapperFactory;
 public class FileImporter {
 
   private JComboBox<String>       filetype;
-  private HashMap<String, String> comboBoxValues;
+  private TreeMap<String, String> comboBoxValues;
 
   public FileImporter() {
-    comboBoxValues = new HashMap<String, String>();
+    comboBoxValues = new TreeMap<String, String>();
 
     comboBoxValues.put("Umsatzorientierte Funktionsplanung", MapperFactory.UOFP);
     comboBoxValues.put("BPMN", MapperFactory.BPMN);
@@ -91,9 +92,9 @@ public class FileImporter {
   public boolean showPopup(Component caller) {
     JFileChooser openFile = new JFileChooser();
 
-    //openFile.setCurrentDirectory(new File("C:\\Users\\Luc\\Desktop\\Dropbox\\IDP-PSS-IF-Shared"));
+    openFile.setCurrentDirectory(new File("C:\\Users\\Luc\\Desktop\\Dropbox\\IDP-PSS-IF-Shared"));
 
-    openFile.setCurrentDirectory(new File("C:\\Users\\Luc\\Desktop\\Uni Dropbox\\Dropbox\\IDP-PSS-IF-Shared\\Modelle PE"));
+    //openFile.setCurrentDirectory(new File("C:\\Users\\Luc\\Desktop\\Uni Dropbox\\Dropbox\\IDP-PSS-IF-Shared\\Modelle PE"));
 
     JPanel panel1 = (JPanel) openFile.getComponent(3);
     JPanel panel2 = (JPanel) panel1.getComponent(2);
