@@ -1,0 +1,3108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="conceptual"
+    nsURI="urn:iteraplan" nsPrefix="iteraplan">
+	<eAnnotations source="urn:metamodelAnnotation">
+		<details key="iteraplanVersion" value="3.3.SNAPSHOT"/>
+		<details key="timestamp" value="2014-03-05T22:54:51.433+0100"/>
+	</eAnnotations>
+	<eClassifiers xsi:type="ecore:EEnum" name="State of health">
+		<eAnnotations source="urn:metamodelAnnotation">
+			<details key="type" value="Ordinal"/>
+		</eAnnotations>
+		<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+			<details key="name" value="de.iteratec.iteraplan.model.attribute.EnumAT.State_32_of_32_health"/>
+			<details key="description" value="State_32_of_32_health_32_based_32_on_32_functionality_32_of_32_the_32_given_32_element."/>
+		</eAnnotations>
+		<eLiterals name="~~not_specified~~" literal="~~not_specified~~"/>
+		<eLiterals name="good" value="1">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="good"/>
+				<details key="description" value="The_32_component_32_provides_32_the_32_expected_32_functionality."/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="default_color" value="-5255512"/>
+			</eAnnotations>
+		</eLiterals>
+		<eLiterals name="average" value="2">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="average"/>
+				<details key="description" value="There_32_might_32_be_32_some_32_logical_32_inconsistences_32_in_32_the_32_provided_32_functionality."/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="default_color" value="-598123"/>
+			</eAnnotations>
+		</eLiterals>
+		<eLiterals name="bad" value="3">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="bad"/>
+				<details key="description" value="Bad_32_functional_32_state_32_of_32_health_32_requires_32_action_32_due_32_to_32_a_32_high_32_number_32_of_32_inconsistences_32_in_32_the_32_corresponding_32_component._32_"/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="default_color" value="-2646611"/>
+			</eAnnotations>
+		</eLiterals>
+	</eClassifiers>
+	<eClassifiers xsi:type="ecore:EEnum" name="Technical state of health">
+		<eAnnotations source="urn:metamodelAnnotation">
+			<details key="type" value="Ordinal"/>
+		</eAnnotations>
+		<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+			<details key="name" value="de.iteratec.iteraplan.model.attribute.EnumAT.Technical_32_state_32_of_32_health"/>
+			<details key="description" value="Current_32_state_32_of_32_a_32_technical_32_component_44__32_e.g._32_derived_32_from_32_other_32_technical_32_data_32_such_32_as_32_number_32_of_32_defects."/>
+		</eAnnotations>
+		<eLiterals name="~~not_specified~~" literal="~~not_specified~~"/>
+		<eLiterals name="good" value="1">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="good"/>
+				<details key="description" value="The_32_technical_32_component_32_is_32_in_32_a_32_good_32_state_44__32_no_32_need_32_for_32_action."/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="default_color" value="-5255512"/>
+			</eAnnotations>
+		</eLiterals>
+		<eLiterals name="average" value="2">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="average"/>
+				<details key="description" value="The_32_technical_32_component_32_shows_32_some_32_defects_32_or_32_there_32_is_32_a_32_newer_32_version_32_which_32_might_32_provide_32_a_32_better_32_functional_32_support_59__32_therefore_32_the_32_component_32_might_32_require_32_some_32_attention."/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="default_color" value="-598123"/>
+			</eAnnotations>
+		</eLiterals>
+		<eLiterals name="bad" value="3">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="bad"/>
+				<details key="description" value="The_32_technical_32_component_32_is_32_in_32_a_32_bad_32_technical_32_state_32_or_32_maintanance_32_support_32_is_32_running_32_out_59__32_there_32_is_32_need_32_for_32_action_32_in_32_any_32_case."/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="default_color" value="-2646611"/>
+			</eAnnotations>
+		</eLiterals>
+	</eClassifiers>
+	<eClassifiers xsi:type="ecore:EEnum" name="Compliance to guidelines">
+		<eAnnotations source="urn:metamodelAnnotation">
+			<details key="type" value="Ordinal"/>
+		</eAnnotations>
+		<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+			<details key="name" value="de.iteratec.iteraplan.model.attribute.EnumAT.Compliance_32_to_32_guidelines"/>
+			<details key="description" value="Conformity_32_of_32_the_32_building_32_block_32_in_32_reference_32_to_32_Architecture-_47_Technology_32_standards_32_and_32_guidelines._13__10_"/>
+		</eAnnotations>
+		<eLiterals name="~~not_specified~~" literal="~~not_specified~~"/>
+		<eLiterals name="compliant" value="1">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="compliant"/>
+				<details key="description" value="The_32_building_32_block_32_is_32_compliant_32_to_32_the_32_existing_32_standards_47_guidelines."/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="default_color" value="-5255512"/>
+			</eAnnotations>
+		</eLiterals>
+		<eLiterals name="non-compliant" value="2">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="non-compliant"/>
+				<details key="description" value="The_32_building_32_block_32_is_32_NOT_32_compliant_32_to_32_the_32_existing_32_standards_47_guidelines."/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="default_color" value="-598123"/>
+			</eAnnotations>
+		</eLiterals>
+		<eLiterals name="decision required" value="3">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="decision_32_required"/>
+				<details key="description" value="The_32_given_32_building_32_block_32_is_32_currently_32_NOT_32_compliant_32_to_32_existing_32_standards_47_guidelines_32_and_32_a_32_decision_32_has_32_to_32_be_32_made_32_how_32_to_32_classify_32_this_32_building_32_block."/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="default_color" value="-2646611"/>
+			</eAnnotations>
+		</eLiterals>
+	</eClassifiers>
+	<eClassifiers xsi:type="ecore:EEnum" name="Strategic drivers">
+		<eAnnotations source="urn:metamodelAnnotation">
+			<details key="type" value="Ordinal"/>
+		</eAnnotations>
+		<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+			<details key="name" value="de.iteratec.iteraplan.model.attribute.EnumAT.Strategic_32_drivers"/>
+			<details key="description" value="Strategic_32_driver_32_explain_32_the_32_purpose_32_of_32_the_32_information_32_system.._32_Possible_32_values_58__32_mobile_44__32_social_44__32_operational_44__32_excellence_44__32_cloud_32_enabled_44__32_greenIT_44__32_new_32_target_32_group"/>
+		</eAnnotations>
+		<eLiterals name="~~not_specified~~" literal="~~not_specified~~"/>
+		<eLiterals name="mobile" value="1">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="mobile"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="default_color" value="-5255512"/>
+			</eAnnotations>
+		</eLiterals>
+		<eLiterals name="social" value="2">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="social"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="default_color" value="-598123"/>
+			</eAnnotations>
+		</eLiterals>
+		<eLiterals name="operational" value="3">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="operational"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="default_color" value="-2646611"/>
+			</eAnnotations>
+		</eLiterals>
+		<eLiterals name="excellence" value="4">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="excellence"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="default_color" value="-7819559"/>
+			</eAnnotations>
+		</eLiterals>
+		<eLiterals name="cloud enabled" value="5">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="cloud_32_enabled"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="default_color" value="-5463608"/>
+			</eAnnotations>
+		</eLiterals>
+		<eLiterals name="greenIT" value="6">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="greenIT"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="default_color" value="-2892397"/>
+			</eAnnotations>
+		</eLiterals>
+		<eLiterals name="new target group" value="7">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="new_32_target_32_group"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="default_color" value="-1524834"/>
+			</eAnnotations>
+		</eLiterals>
+	</eClassifiers>
+	<eClassifiers xsi:type="ecore:EEnum" name="System size">
+		<eAnnotations source="urn:metamodelAnnotation">
+			<details key="type" value="Ordinal"/>
+		</eAnnotations>
+		<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+			<details key="name" value="de.iteratec.iteraplan.model.attribute.EnumAT.System_32_size"/>
+			<details key="description" value="System_32_size_44__32_measured_32_for_32_a_32_specific_32_category_32_e.g._32__13__10__32__42__32_LOC_32__40_lines_32_of_32_code_41__32__13__10__32__42__32_LLOC_32__40_logical_41__32__13__10__32__42__32_NOC_32__40_number_32_of_32_classes_41__32__13__10__32__42__32_NOI_32__40_number_32_of_32_interfaces_41__32__13__10__32__42__32_..."/>
+		</eAnnotations>
+		<eLiterals name="~~not_specified~~" literal="~~not_specified~~"/>
+		<eLiterals name="small" value="1">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="small"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="default_color" value="-5255512"/>
+			</eAnnotations>
+		</eLiterals>
+		<eLiterals name="average" value="2">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="average"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="default_color" value="-598123"/>
+			</eAnnotations>
+		</eLiterals>
+	</eClassifiers>
+	<eClassifiers xsi:type="ecore:EEnum" name="Complexity">
+		<eAnnotations source="urn:metamodelAnnotation">
+			<details key="type" value="Ordinal"/>
+		</eAnnotations>
+		<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+			<details key="name" value="de.iteratec.iteraplan.model.attribute.EnumAT.Complexity"/>
+			<details key="description" value="Complexity_32_of_32_the_32_professional_32_scope_44__32_measured_32_for_32_a_32_specific_32_category_32_e.g._32__13__10__32__42__32_Function_32_Points_32__13__10__32__42__32_Story_32_Points_32__13__10__32__42__32_Delphi_32_Method"/>
+		</eAnnotations>
+		<eLiterals name="~~not_specified~~" literal="~~not_specified~~"/>
+		<eLiterals name="high" value="1">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="high"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="default_color" value="-5255512"/>
+			</eAnnotations>
+		</eLiterals>
+		<eLiterals name="average" value="2">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="average"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="default_color" value="-598123"/>
+			</eAnnotations>
+		</eLiterals>
+		<eLiterals name="low" value="3">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="low"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="default_color" value="-2646611"/>
+			</eAnnotations>
+		</eLiterals>
+	</eClassifiers>
+	<eClassifiers xsi:type="ecore:EEnum" name="Degree of automation">
+		<eAnnotations source="urn:metamodelAnnotation">
+			<details key="type" value="Ordinal"/>
+		</eAnnotations>
+		<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+			<details key="name" value="de.iteratec.iteraplan.model.attribute.EnumAT.Degree_32_of_32_automation"/>
+			<details key="description" value="Degree_32_of_32_exchanging_32_data_32_automatically"/>
+		</eAnnotations>
+		<eLiterals name="~~not_specified~~" literal="~~not_specified~~"/>
+		<eLiterals name="manual" value="1">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="manual"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="default_color" value="-5255512"/>
+			</eAnnotations>
+		</eLiterals>
+		<eLiterals name="automatic" value="2">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="automatic"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="default_color" value="-598123"/>
+			</eAnnotations>
+		</eLiterals>
+		<eLiterals name="semi-automatically/ manually started" value="3">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="semi-automatically_47__32_manually_32_started"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="default_color" value="-2646611"/>
+			</eAnnotations>
+		</eLiterals>
+	</eClassifiers>
+	<eClassifiers xsi:type="ecore:EEnum" name="Data exchange">
+		<eAnnotations source="urn:metamodelAnnotation">
+			<details key="type" value="Ordinal"/>
+		</eAnnotations>
+		<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+			<details key="name" value="de.iteratec.iteraplan.model.attribute.EnumAT.Data_32_exchange"/>
+			<details key="description" value="Frequency_32_of_32_data_32_exchange"/>
+		</eAnnotations>
+		<eLiterals name="~~not_specified~~" literal="~~not_specified~~"/>
+		<eLiterals name="Online" value="1">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="Online"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="default_color" value="-5255512"/>
+			</eAnnotations>
+		</eLiterals>
+		<eLiterals name="On demand batch job" value="2">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="On_32_demand_32_batch_32_job"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="default_color" value="-598123"/>
+			</eAnnotations>
+		</eLiterals>
+		<eLiterals name="Daily batch" value="3">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="Daily_32_batch"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="default_color" value="-2646611"/>
+			</eAnnotations>
+		</eLiterals>
+		<eLiterals name="Weekly batch" value="4">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="Weekly_32_batch"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="default_color" value="-7819559"/>
+			</eAnnotations>
+		</eLiterals>
+		<eLiterals name="Monthly batch" value="5">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="Monthly_32_batch"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="default_color" value="-5463608"/>
+			</eAnnotations>
+		</eLiterals>
+	</eClassifiers>
+	<eClassifiers xsi:type="ecore:EEnum" name="Manufacturer">
+		<eAnnotations source="urn:metamodelAnnotation">
+			<details key="type" value="Ordinal"/>
+		</eAnnotations>
+		<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+			<details key="name" value="de.iteratec.iteraplan.model.attribute.EnumAT.Manufacturer"/>
+			<details key="description" value="The_32_company_32_where_32_this_32_technical_32_component_32_has_32_been_32_created."/>
+		</eAnnotations>
+		<eLiterals name="~~not_specified~~" literal="~~not_specified~~"/>
+		<eLiterals name="Apache" value="1">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="Apache"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="default_color" value="-5255512"/>
+			</eAnnotations>
+		</eLiterals>
+		<eLiterals name="HP" value="2">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="HP"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="default_color" value="-598123"/>
+			</eAnnotations>
+		</eLiterals>
+		<eLiterals name="IBM" value="3">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="IBM"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="default_color" value="-2646611"/>
+			</eAnnotations>
+		</eLiterals>
+		<eLiterals name="Inhouse" value="4">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="Inhouse"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="default_color" value="-7819559"/>
+			</eAnnotations>
+		</eLiterals>
+		<eLiterals name="JBoss Inc." value="5">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="JBoss_32_Inc."/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="default_color" value="-5463608"/>
+			</eAnnotations>
+		</eLiterals>
+		<eLiterals name="Microsoft" value="6">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="Microsoft"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="default_color" value="-2892397"/>
+			</eAnnotations>
+		</eLiterals>
+		<eLiterals name="Novell" value="7">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="Novell"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="default_color" value="-1524834"/>
+			</eAnnotations>
+		</eLiterals>
+		<eLiterals name="Oracle" value="8">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="Oracle"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="default_color" value="-5255512"/>
+			</eAnnotations>
+		</eLiterals>
+		<eLiterals name="SAP" value="9">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="SAP"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="default_color" value="-598123"/>
+			</eAnnotations>
+		</eLiterals>
+		<eLiterals name="SAS" value="10">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="SAS"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="default_color" value="-2646611"/>
+			</eAnnotations>
+		</eLiterals>
+		<eLiterals name="Software AG" value="11">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="Software_32_AG"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="default_color" value="-7819559"/>
+			</eAnnotations>
+		</eLiterals>
+		<eLiterals name="VM Ware" value="12">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="VM_32_Ware"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="default_color" value="-5463608"/>
+			</eAnnotations>
+		</eLiterals>
+		<eLiterals name="Fujitsu Technology Solutions" value="13">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="Fujitsu_32_Technology_32_Solutions"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="default_color" value="-2892397"/>
+			</eAnnotations>
+		</eLiterals>
+		<eLiterals name="Object Management Group (OMG)" value="14">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="Object_32_Management_32_Group_32__40_OMG_41_"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="default_color" value="-1524834"/>
+			</eAnnotations>
+		</eLiterals>
+		<eLiterals name="iteratec GmbH" value="15">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="iteratec_32_GmbH"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="default_color" value="-5255512"/>
+			</eAnnotations>
+		</eLiterals>
+	</eClassifiers>
+	<eClassifiers xsi:type="ecore:EEnum" name="CRUD">
+		<eAnnotations source="urn:metamodelAnnotation">
+			<details key="type" value="Ordinal"/>
+		</eAnnotations>
+		<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+			<details key="name" value="de.iteratec.iteraplan.model.attribute.EnumAT.CRUD"/>
+			<details key="description" value="Specifies_32_the_32_kind_32_of_32_action_32__40_Create_44__32_Read_44__32_Update_44__32_Delete_41__32_taken_32_by_32_an_32_Information_32_System_32_on_32_certain_32_Business_32_Objects"/>
+		</eAnnotations>
+		<eLiterals name="~~not_specified~~" literal="~~not_specified~~"/>
+		<eLiterals name="C" value="1">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="C"/>
+				<details key="description" value="Create"/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="default_color" value="-5255512"/>
+			</eAnnotations>
+		</eLiterals>
+		<eLiterals name="R" value="2">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="R"/>
+				<details key="description" value="Read"/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="default_color" value="-598123"/>
+			</eAnnotations>
+		</eLiterals>
+		<eLiterals name="U" value="3">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="U"/>
+				<details key="description" value="Update"/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="default_color" value="-2646611"/>
+			</eAnnotations>
+		</eLiterals>
+		<eLiterals name="D" value="4">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="D"/>
+				<details key="description" value="Delete"/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="default_color" value="-7819559"/>
+			</eAnnotations>
+		</eLiterals>
+	</eClassifiers>
+	<eClassifiers xsi:type="ecore:EEnum" name="de.iteratec.iteraplan.model.InformationSystemRelease$TypeOfStatus">
+		<eAnnotations source="urn:metamodelAnnotation">
+			<details key="type" value="Ordinal"/>
+		</eAnnotations>
+		<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+			<details key="name" value="de.iteratec.iteraplan.model.InformationSystemRelease_36_TypeOfStatus"/>
+			<details key="description" value=""/>
+		</eAnnotations>
+		<eLiterals name="~~not_specified~~" literal="~~not_specified~~"/>
+		<eLiterals name="CURRENT" value="1">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="CURRENT"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="default_color" value="-5255512"/>
+			</eAnnotations>
+		</eLiterals>
+		<eLiterals name="PLANNED" value="2">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="PLANNED"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="default_color" value="-598123"/>
+			</eAnnotations>
+		</eLiterals>
+		<eLiterals name="TARGET" value="3">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="TARGET"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="default_color" value="-2646611"/>
+			</eAnnotations>
+		</eLiterals>
+		<eLiterals name="INACTIVE" value="4">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="INACTIVE"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="default_color" value="-7819559"/>
+			</eAnnotations>
+		</eLiterals>
+	</eClassifiers>
+	<eClassifiers xsi:type="ecore:EEnum" name="de.iteratec.iteraplan.model.Direction">
+		<eAnnotations source="urn:metamodelAnnotation">
+			<details key="type" value="Ordinal"/>
+		</eAnnotations>
+		<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+			<details key="name" value="de.iteratec.iteraplan.model.Direction"/>
+			<details key="description" value=""/>
+		</eAnnotations>
+		<eLiterals name="~~not_specified~~" literal="~~not_specified~~"/>
+		<eLiterals name="NO_DIRECTION" value="1">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="NO_95_DIRECTION"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="default_color" value="-5255512"/>
+			</eAnnotations>
+		</eLiterals>
+		<eLiterals name="FIRST_TO_SECOND" value="2">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="FIRST_95_TO_95_SECOND"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="default_color" value="-598123"/>
+			</eAnnotations>
+		</eLiterals>
+		<eLiterals name="SECOND_TO_FIRST" value="3">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="SECOND_95_TO_95_FIRST"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="default_color" value="-2646611"/>
+			</eAnnotations>
+		</eLiterals>
+		<eLiterals name="BOTH_DIRECTIONS" value="4">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="BOTH_95_DIRECTIONS"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="default_color" value="-7819559"/>
+			</eAnnotations>
+		</eLiterals>
+	</eClassifiers>
+	<eClassifiers xsi:type="ecore:EEnum" name="de.iteratec.iteraplan.model.TechnicalComponentRelease$TypeOfStatus">
+		<eAnnotations source="urn:metamodelAnnotation">
+			<details key="type" value="Ordinal"/>
+		</eAnnotations>
+		<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+			<details key="name" value="de.iteratec.iteraplan.model.TechnicalComponentRelease_36_TypeOfStatus"/>
+			<details key="description" value=""/>
+		</eAnnotations>
+		<eLiterals name="~~not_specified~~" literal="~~not_specified~~"/>
+		<eLiterals name="CURRENT" value="1">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="CURRENT"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="default_color" value="-5255512"/>
+			</eAnnotations>
+		</eLiterals>
+		<eLiterals name="PLANNED" value="2">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="PLANNED"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="default_color" value="-598123"/>
+			</eAnnotations>
+		</eLiterals>
+		<eLiterals name="TARGET" value="3">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="TARGET"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="default_color" value="-2646611"/>
+			</eAnnotations>
+		</eLiterals>
+		<eLiterals name="INACTIVE" value="4">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="INACTIVE"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="default_color" value="-7819559"/>
+			</eAnnotations>
+		</eLiterals>
+		<eLiterals name="UNDEFINED" value="5">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="UNDEFINED"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="default_color" value="-5463608"/>
+			</eAnnotations>
+		</eLiterals>
+	</eClassifiers>
+	<eClassifiers xsi:type="ecore:EClass" name="Business Domain">
+		<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+			<details key="name" value="BusinessDomain"/>
+			<details key="description" value="Business_32_Domains_32_are_32_functional_32_groupings_44__32_which_32_structure_32_the_32_business_32_landscape._32_The_32_business_32_landscape_32_describes_32_the_32_main_32_functional_32_units_32_of_32_the_32_company_44__32_driving_32_the_32_business._32_The_32_main_32_elements_32_of_32_the_32_business_32_landscape_32_are_32_business_32_processes_44__32_business_32_functions_44__32_products_44__32_business_32_units_32_and_32_business_32_data."/>
+		</eAnnotations>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Id" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBigInteger"
+        iD="true">
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="isUnique" value="true"/>
+				<details key="isTechnical" value="true"/>
+				<details key="suitableForDisplay" value="false"/>
+				<details key="dataType" value="integer"/>
+			</eAnnotations>
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="id"/>
+				<details key="description" value="Id_32_Property"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Last Modification User"
+        unique="false" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="isTechnical" value="true"/>
+				<details key="suitableForDisplay" value="false"/>
+				<details key="dataType" value="string"/>
+			</eAnnotations>
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="lastModificationUser"/>
+				<details key="description" value="User_32_which_32_has_32_last_32_modified_32_the_32_entity."/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Description" unique="false"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="description"/>
+				<details key="description" value="Description_32_of_32_the_32_Type"/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="dataType" value="richtext"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Name" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="isUnique" value="true"/>
+				<details key="definingRelationshipEnd" value="true"/>
+				<details key="dataType" value="string"/>
+			</eAnnotations>
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="name"/>
+				<details key="description" value="Name_32_of_32_the_32_Type"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Last Modification Time"
+        unique="false" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDate">
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="isTechnical" value="true"/>
+				<details key="suitableForDisplay" value="false"/>
+				<details key="dataType" value="date_time"/>
+			</eAnnotations>
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="lastModificationTime"/>
+				<details key="description" value="Time_32_of_32_last_32_modification"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="position" unique="false"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBigInteger">
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="suitableForDisplay" value="false"/>
+				<details key="dataType" value="integer"/>
+			</eAnnotations>
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="position"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Accountability" unique="false"
+        upperBound="2147483647" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="Accountability"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="dataType" value="string"/>
+				<details key="origin" value="[Default Attribute Group]"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EReference" name="businessProcesses" unique="false"
+        upperBound="2147483647" eType="#//Business%20Process" eOpposite="#//Business%20Process/businessDomains">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="businessProcesses"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EReference" name="businessObjects" unique="false"
+        upperBound="2147483647" eType="#//Business%20Object" eOpposite="#//Business%20Object/businessDomains">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="businessObjects"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EReference" name="businessUnits" unique="false"
+        upperBound="2147483647" eType="#//Business%20Unit" eOpposite="#//Business%20Unit/businessDomains">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="businessUnits"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EReference" name="children" unique="false"
+        upperBound="2147483647" eType="#//Business%20Domain" eOpposite="#//Business%20Domain/parent">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="children"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EReference" name="parent" unique="false"
+        eType="#//Business%20Domain" eOpposite="#//Business%20Domain/children">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="parent"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="isAcyclic" value="true"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EReference" name="products" unique="false"
+        upperBound="2147483647" eType="#//Product" eOpposite="#//Product/businessDomains">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="products"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EReference" name="businessFunctions" unique="false"
+        upperBound="2147483647" eType="#//Business%20Function" eOpposite="#//Business%20Function/businessDomains">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="businessFunctions"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+		</eStructuralFeatures>
+	</eClassifiers>
+	<eClassifiers xsi:type="ecore:EClass" name="Business Process">
+		<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+			<details key="name" value="BusinessProcess"/>
+			<details key="description" value="A_32_business_32_process_32_is_32_a_32_sequence_32_of_32_logical_32_coherent_32_activities_44__32_contributing_32_to_32_the_32_added_32_value_32_chain_32_of_32_the_32_company_44__32_having_32_a_32_defined_32_start_32_and_32_end_44__32_generally_32_repeatable_32_and_32_normally_32_customer_32_oriented._32__32_"/>
+		</eAnnotations>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Id" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBigInteger"
+        iD="true">
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="isUnique" value="true"/>
+				<details key="isTechnical" value="true"/>
+				<details key="suitableForDisplay" value="false"/>
+				<details key="dataType" value="integer"/>
+			</eAnnotations>
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="id"/>
+				<details key="description" value="Id_32_Property"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Last Modification User"
+        unique="false" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="isTechnical" value="true"/>
+				<details key="suitableForDisplay" value="false"/>
+				<details key="dataType" value="string"/>
+			</eAnnotations>
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="lastModificationUser"/>
+				<details key="description" value="User_32_which_32_has_32_last_32_modified_32_the_32_entity."/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Description" unique="false"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="description"/>
+				<details key="description" value="Description_32_of_32_the_32_Type"/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="dataType" value="richtext"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Name" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="isUnique" value="true"/>
+				<details key="definingRelationshipEnd" value="true"/>
+				<details key="dataType" value="string"/>
+			</eAnnotations>
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="name"/>
+				<details key="description" value="Name_32_of_32_the_32_Type"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Last Modification Time"
+        unique="false" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDate">
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="isTechnical" value="true"/>
+				<details key="suitableForDisplay" value="false"/>
+				<details key="dataType" value="date_time"/>
+			</eAnnotations>
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="lastModificationTime"/>
+				<details key="description" value="Time_32_of_32_last_32_modification"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="position" unique="false"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBigInteger">
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="suitableForDisplay" value="false"/>
+				<details key="dataType" value="integer"/>
+			</eAnnotations>
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="position"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Strategic value" unique="false"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBigDecimal">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="Strategic_32_value"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="dataType" value="decimal"/>
+				<details key="origin" value="Strategic measurement categories"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Accountability" unique="false"
+        upperBound="2147483647" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="Accountability"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="dataType" value="string"/>
+				<details key="origin" value="[Default Attribute Group]"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EReference" name="businessDomains" unique="false"
+        upperBound="2147483647" eType="#//Business%20Domain" eOpposite="#//Business%20Domain/businessProcesses">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="businessDomains"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EReference" name="businessMappings" unique="false"
+        upperBound="2147483647" eType="#//Business%20Mapping" eOpposite="#//Business%20Mapping/businessProcess">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="businessMappings"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EReference" name="children" unique="false"
+        upperBound="2147483647" eType="#//Business%20Process" eOpposite="#//Business%20Process/parent">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="children"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EReference" name="parent" unique="false"
+        eType="#//Business%20Process" eOpposite="#//Business%20Process/children">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="parent"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="isAcyclic" value="true"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+	</eClassifiers>
+	<eClassifiers xsi:type="ecore:EClass" name="Business Unit">
+		<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+			<details key="name" value="BusinessUnit"/>
+			<details key="description" value="An_32_organisational_32_structure_32_is_32_the_32_way_32_the_32_company_32_is_32_structured._32_Business_32_Units_32_are_32_structural_32_units_32_related_32_to_32_the_32_organisation_32_of_32_the_32_company_44__32_e.g._32_departments_32_but_32_also_32_sites_32_or_32_factories."/>
+		</eAnnotations>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Id" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBigInteger"
+        iD="true">
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="isUnique" value="true"/>
+				<details key="isTechnical" value="true"/>
+				<details key="suitableForDisplay" value="false"/>
+				<details key="dataType" value="integer"/>
+			</eAnnotations>
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="id"/>
+				<details key="description" value="Id_32_Property"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Last Modification User"
+        unique="false" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="isTechnical" value="true"/>
+				<details key="suitableForDisplay" value="false"/>
+				<details key="dataType" value="string"/>
+			</eAnnotations>
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="lastModificationUser"/>
+				<details key="description" value="User_32_which_32_has_32_last_32_modified_32_the_32_entity."/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Description" unique="false"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="description"/>
+				<details key="description" value="Description_32_of_32_the_32_Type"/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="dataType" value="richtext"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Name" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="isUnique" value="true"/>
+				<details key="definingRelationshipEnd" value="true"/>
+				<details key="dataType" value="string"/>
+			</eAnnotations>
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="name"/>
+				<details key="description" value="Name_32_of_32_the_32_Type"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Last Modification Time"
+        unique="false" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDate">
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="isTechnical" value="true"/>
+				<details key="suitableForDisplay" value="false"/>
+				<details key="dataType" value="date_time"/>
+			</eAnnotations>
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="lastModificationTime"/>
+				<details key="description" value="Time_32_of_32_last_32_modification"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="position" unique="false"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBigInteger">
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="suitableForDisplay" value="false"/>
+				<details key="dataType" value="integer"/>
+			</eAnnotations>
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="position"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Accountability" unique="false"
+        upperBound="2147483647" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="Accountability"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="dataType" value="string"/>
+				<details key="origin" value="[Default Attribute Group]"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EReference" name="businessDomains" unique="false"
+        upperBound="2147483647" eType="#//Business%20Domain" eOpposite="#//Business%20Domain/businessUnits">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="businessDomains"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EReference" name="businessMappings" unique="false"
+        upperBound="2147483647" eType="#//Business%20Mapping" eOpposite="#//Business%20Mapping/businessUnit">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="businessMappings"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EReference" name="children" unique="false"
+        upperBound="2147483647" eType="#//Business%20Unit" eOpposite="#//Business%20Unit/parent">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="children"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EReference" name="parent" unique="false"
+        eType="#//Business%20Unit" eOpposite="#//Business%20Unit/children">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="parent"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="isAcyclic" value="true"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+	</eClassifiers>
+	<eClassifiers xsi:type="ecore:EClass" name="Product">
+		<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+			<details key="name" value="Product"/>
+			<details key="description" value=""/>
+		</eAnnotations>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Id" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBigInteger"
+        iD="true">
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="isUnique" value="true"/>
+				<details key="isTechnical" value="true"/>
+				<details key="suitableForDisplay" value="false"/>
+				<details key="dataType" value="integer"/>
+			</eAnnotations>
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="id"/>
+				<details key="description" value="Id_32_Property"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Last Modification User"
+        unique="false" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="isTechnical" value="true"/>
+				<details key="suitableForDisplay" value="false"/>
+				<details key="dataType" value="string"/>
+			</eAnnotations>
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="lastModificationUser"/>
+				<details key="description" value="User_32_which_32_has_32_last_32_modified_32_the_32_entity."/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Description" unique="false"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="description"/>
+				<details key="description" value="Description_32_of_32_the_32_Type"/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="dataType" value="richtext"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Name" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="isUnique" value="true"/>
+				<details key="definingRelationshipEnd" value="true"/>
+				<details key="dataType" value="string"/>
+			</eAnnotations>
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="name"/>
+				<details key="description" value="Name_32_of_32_the_32_Type"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Last Modification Time"
+        unique="false" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDate">
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="isTechnical" value="true"/>
+				<details key="suitableForDisplay" value="false"/>
+				<details key="dataType" value="date_time"/>
+			</eAnnotations>
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="lastModificationTime"/>
+				<details key="description" value="Time_32_of_32_last_32_modification"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="position" unique="false"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBigInteger">
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="suitableForDisplay" value="false"/>
+				<details key="dataType" value="integer"/>
+			</eAnnotations>
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="position"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Strategic value" unique="false"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBigDecimal">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="Strategic_32_value"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="dataType" value="decimal"/>
+				<details key="origin" value="Strategic measurement categories"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Development (Start)" unique="false"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDate">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="Development_32__40_Start_41_"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="dataType" value="date"/>
+				<details key="origin" value="Lifecycle Group"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Development (End)" unique="false"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDate">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="Development_32__40_End_41_"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="dataType" value="date"/>
+				<details key="origin" value="Lifecycle Group"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Live (Start)" unique="false"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDate">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="Live_32__40_Start_41_"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="dataType" value="date"/>
+				<details key="origin" value="Lifecycle Group"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Live (End)" unique="false"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDate">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="Live_32__40_End_41_"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="dataType" value="date"/>
+				<details key="origin" value="Lifecycle Group"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Replacement (Start)" unique="false"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDate">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="Replacement_32__40_Start_41_"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="dataType" value="date"/>
+				<details key="origin" value="Lifecycle Group"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Replacement (End)" unique="false"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDate">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="Replacement_32__40_End_41_"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="dataType" value="date"/>
+				<details key="origin" value="Lifecycle Group"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Rollout date" unique="false"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDate">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="Rollout_32_date"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="dataType" value="date"/>
+				<details key="origin" value="[Default Attribute Group]"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Accountability" unique="false"
+        upperBound="2147483647" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="Accountability"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="dataType" value="string"/>
+				<details key="origin" value="[Default Attribute Group]"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EReference" name="businessDomains" unique="false"
+        upperBound="2147483647" eType="#//Business%20Domain" eOpposite="#//Business%20Domain/products">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="businessDomains"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EReference" name="businessMappings" unique="false"
+        upperBound="2147483647" eType="#//Business%20Mapping" eOpposite="#//Business%20Mapping/product">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="businessMappings"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EReference" name="children" unique="false"
+        upperBound="2147483647" eType="#//Product" eOpposite="#//Product/parent">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="children"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EReference" name="parent" unique="false"
+        eType="#//Product" eOpposite="#//Product/children">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="parent"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="isAcyclic" value="true"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+	</eClassifiers>
+	<eClassifiers xsi:type="ecore:EClass" name="Business Function">
+		<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+			<details key="name" value="BusinessFunction"/>
+			<details key="description" value=""/>
+		</eAnnotations>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Id" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBigInteger"
+        iD="true">
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="isUnique" value="true"/>
+				<details key="isTechnical" value="true"/>
+				<details key="suitableForDisplay" value="false"/>
+				<details key="dataType" value="integer"/>
+			</eAnnotations>
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="id"/>
+				<details key="description" value="Id_32_Property"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Last Modification User"
+        unique="false" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="isTechnical" value="true"/>
+				<details key="suitableForDisplay" value="false"/>
+				<details key="dataType" value="string"/>
+			</eAnnotations>
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="lastModificationUser"/>
+				<details key="description" value="User_32_which_32_has_32_last_32_modified_32_the_32_entity."/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Description" unique="false"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="description"/>
+				<details key="description" value="Description_32_of_32_the_32_Type"/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="dataType" value="richtext"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Name" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="isUnique" value="true"/>
+				<details key="definingRelationshipEnd" value="true"/>
+				<details key="dataType" value="string"/>
+			</eAnnotations>
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="name"/>
+				<details key="description" value="Name_32_of_32_the_32_Type"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Last Modification Time"
+        unique="false" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDate">
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="isTechnical" value="true"/>
+				<details key="suitableForDisplay" value="false"/>
+				<details key="dataType" value="date_time"/>
+			</eAnnotations>
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="lastModificationTime"/>
+				<details key="description" value="Time_32_of_32_last_32_modification"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="position" unique="false"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBigInteger">
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="suitableForDisplay" value="false"/>
+				<details key="dataType" value="integer"/>
+			</eAnnotations>
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="position"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Strategic value" unique="false"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBigDecimal">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="Strategic_32_value"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="dataType" value="decimal"/>
+				<details key="origin" value="Strategic measurement categories"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Accountability" unique="false"
+        upperBound="2147483647" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="Accountability"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="dataType" value="string"/>
+				<details key="origin" value="[Default Attribute Group]"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EReference" name="businessDomains" unique="false"
+        upperBound="2147483647" eType="#//Business%20Domain" eOpposite="#//Business%20Domain/businessFunctions">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="businessDomains"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EReference" name="children" unique="false"
+        upperBound="2147483647" eType="#//Business%20Function" eOpposite="#//Business%20Function/parent">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="children"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EReference" name="parent" unique="false"
+        eType="#//Business%20Function" eOpposite="#//Business%20Function/children">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="parent"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="isAcyclic" value="true"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EReference" name="businessObjects" unique="false"
+        upperBound="2147483647" eType="#//Business%20Object" eOpposite="#//Business%20Object/businessFunctions">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="businessObjects"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EReference" name="informationSystems" unique="false"
+        upperBound="2147483647" eType="#//Information%20System" eOpposite="#//Information%20System/businessFunctions">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="informationSystems"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+		</eStructuralFeatures>
+	</eClassifiers>
+	<eClassifiers xsi:type="ecore:EClass" name="Business Object">
+		<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+			<details key="name" value="BusinessObject"/>
+			<details key="description" value="A_32_business_32_object_32_is_32_an_32_aligned_32_business_32_term_32_for_32_abstract_32_or_32_concrete_32_objects_32_which_32_are_32_business_32_relevant_44__32_i.e._32_have_32_a_32_strong_32_relation_32_to_32_the_32_company_8217_s_32_business._32_Business_32_objects_32_are_32_used_32_by_32_business_32_processes_32_and_32_can_32_be_32_realised_32_by_32_information_32_objects._32_Examples_32_of_32_business_32_objects_32_are_32__39_Customer_39__44__32__39_Product_39__32_or_32__39_Contract_39_._32_"/>
+		</eAnnotations>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Id" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBigInteger"
+        iD="true">
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="isUnique" value="true"/>
+				<details key="isTechnical" value="true"/>
+				<details key="suitableForDisplay" value="false"/>
+				<details key="dataType" value="integer"/>
+			</eAnnotations>
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="id"/>
+				<details key="description" value="Id_32_Property"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Last Modification User"
+        unique="false" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="isTechnical" value="true"/>
+				<details key="suitableForDisplay" value="false"/>
+				<details key="dataType" value="string"/>
+			</eAnnotations>
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="lastModificationUser"/>
+				<details key="description" value="User_32_which_32_has_32_last_32_modified_32_the_32_entity."/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Description" unique="false"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="description"/>
+				<details key="description" value="Description_32_of_32_the_32_Type"/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="dataType" value="richtext"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Name" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="isUnique" value="true"/>
+				<details key="definingRelationshipEnd" value="true"/>
+				<details key="dataType" value="string"/>
+			</eAnnotations>
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="name"/>
+				<details key="description" value="Name_32_of_32_the_32_Type"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Last Modification Time"
+        unique="false" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDate">
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="isTechnical" value="true"/>
+				<details key="suitableForDisplay" value="false"/>
+				<details key="dataType" value="date_time"/>
+			</eAnnotations>
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="lastModificationTime"/>
+				<details key="description" value="Time_32_of_32_last_32_modification"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="position" unique="false"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBigInteger">
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="suitableForDisplay" value="false"/>
+				<details key="dataType" value="integer"/>
+			</eAnnotations>
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="position"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Accountability" unique="false"
+        upperBound="2147483647" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="Accountability"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="dataType" value="string"/>
+				<details key="origin" value="[Default Attribute Group]"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EReference" name="businessDomains" unique="false"
+        upperBound="2147483647" eType="#//Business%20Domain" eOpposite="#//Business%20Domain/businessObjects">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="businessDomains"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EReference" name="businessFunctions" unique="false"
+        upperBound="2147483647" eType="#//Business%20Function" eOpposite="#//Business%20Function/businessObjects">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="businessFunctions"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EReference" name="children" unique="false"
+        upperBound="2147483647" eType="#//Business%20Object" eOpposite="#//Business%20Object/parent">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="children"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EReference" name="parent" unique="false"
+        eType="#//Business%20Object" eOpposite="#//Business%20Object/children">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="parent"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="isAcyclic" value="true"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EReference" name="generalisation" unique="false"
+        eType="#//Business%20Object" eOpposite="#//Business%20Object/specialisations">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="generalisation"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EReference" name="specialisations" unique="false"
+        upperBound="2147483647" eType="#//Business%20Object" eOpposite="#//Business%20Object/generalisation">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="specialisations"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EReference" name="informationSystemReleaseAssociations"
+        unique="false" upperBound="2147483647" eType="#//Isr2BoAssociation" eOpposite="#//Isr2BoAssociation/businessObject">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="informationSystemReleaseAssociations"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EReference" name="informationFlows" unique="false"
+        upperBound="2147483647" eType="#//InformationFlow" eOpposite="#//InformationFlow/businessObject">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="informationFlows"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+		</eStructuralFeatures>
+	</eClassifiers>
+	<eClassifiers xsi:type="ecore:EClass" name="Business Mapping">
+		<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+			<details key="name" value="BusinessMapping"/>
+			<details key="description" value=""/>
+		</eAnnotations>
+		<eAnnotations source="urn:metamodelAnnotation">
+			<details key="type" value="RelationshipType"/>
+		</eAnnotations>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Id" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBigInteger"
+        iD="true">
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="isUnique" value="true"/>
+				<details key="isTechnical" value="true"/>
+				<details key="suitableForDisplay" value="false"/>
+				<details key="dataType" value="integer"/>
+			</eAnnotations>
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="id"/>
+				<details key="description" value="Id_32_Property"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Last Modification Time"
+        unique="false" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDate">
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="isTechnical" value="true"/>
+				<details key="suitableForDisplay" value="false"/>
+				<details key="dataType" value="date_time"/>
+			</eAnnotations>
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="lastModificationTime"/>
+				<details key="description" value="Time_32_of_32_last_32_modification"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Last Modification User"
+        unique="false" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="isTechnical" value="true"/>
+				<details key="suitableForDisplay" value="false"/>
+				<details key="dataType" value="string"/>
+			</eAnnotations>
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="lastModificationUser"/>
+				<details key="description" value="User_32_which_32_has_32_last_32_modified_32_the_32_entity."/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EReference" name="businessProcess" unique="false"
+        eType="#//Business%20Process" eOpposite="#//Business%20Process/businessMappings">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="businessProcess"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="definingRelationshipEnd" value="true"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EReference" name="businessUnit" unique="false"
+        eType="#//Business%20Unit" eOpposite="#//Business%20Unit/businessMappings">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="businessUnit"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="definingRelationshipEnd" value="true"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EReference" name="product" unique="false"
+        eType="#//Product" eOpposite="#//Product/businessMappings">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="product"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="definingRelationshipEnd" value="true"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EReference" name="informationSystemRelease"
+        unique="false" lowerBound="1" eType="#//Information%20System" eOpposite="#//Information%20System/businessMappings">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="informationSystemRelease"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="definingRelationshipEnd" value="true"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+	</eClassifiers>
+	<eClassifiers xsi:type="ecore:EClass" name="Information System Domain">
+		<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+			<details key="name" value="InformationSystemDomain"/>
+			<details key="description" value="An_32_IS_32_domain_32_groups_32_different_32_information_32_systems_32_by_32_one_32_or_32_more_32_criteria._32_IS_32_domains_32_are_32_often_32_used_32_on_32_one_32_hand_32_to_32_arrange_32_the_32_application_32_landscape_32_and_32_on_32_the_32_other_32_hand_32_to_32_allocate_32_responsibilities_32_for_32_the_32_landscape_32_management."/>
+		</eAnnotations>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Id" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBigInteger"
+        iD="true">
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="isUnique" value="true"/>
+				<details key="isTechnical" value="true"/>
+				<details key="suitableForDisplay" value="false"/>
+				<details key="dataType" value="integer"/>
+			</eAnnotations>
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="id"/>
+				<details key="description" value="Id_32_Property"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Last Modification User"
+        unique="false" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="isTechnical" value="true"/>
+				<details key="suitableForDisplay" value="false"/>
+				<details key="dataType" value="string"/>
+			</eAnnotations>
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="lastModificationUser"/>
+				<details key="description" value="User_32_which_32_has_32_last_32_modified_32_the_32_entity."/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Description" unique="false"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="description"/>
+				<details key="description" value="Description_32_of_32_the_32_Type"/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="dataType" value="richtext"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Name" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="isUnique" value="true"/>
+				<details key="definingRelationshipEnd" value="true"/>
+				<details key="dataType" value="string"/>
+			</eAnnotations>
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="name"/>
+				<details key="description" value="Name_32_of_32_the_32_Type"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Last Modification Time"
+        unique="false" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDate">
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="isTechnical" value="true"/>
+				<details key="suitableForDisplay" value="false"/>
+				<details key="dataType" value="date_time"/>
+			</eAnnotations>
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="lastModificationTime"/>
+				<details key="description" value="Time_32_of_32_last_32_modification"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="position" unique="false"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBigInteger">
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="suitableForDisplay" value="false"/>
+				<details key="dataType" value="integer"/>
+			</eAnnotations>
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="position"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Accountability" unique="false"
+        upperBound="2147483647" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="Accountability"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="dataType" value="string"/>
+				<details key="origin" value="[Default Attribute Group]"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EReference" name="informationSystemReleases"
+        unique="false" upperBound="2147483647" eType="#//Information%20System" eOpposite="#//Information%20System/informationSystemDomains">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="informationSystemReleases"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EReference" name="children" unique="false"
+        upperBound="2147483647" eType="#//Information%20System%20Domain" eOpposite="#//Information%20System%20Domain/parent">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="children"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EReference" name="parent" unique="false"
+        eType="#//Information%20System%20Domain" eOpposite="#//Information%20System%20Domain/children">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="parent"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="isAcyclic" value="true"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+	</eClassifiers>
+	<eClassifiers xsi:type="ecore:EClass" name="Information System">
+		<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+			<details key="name" value="InformationSystem"/>
+			<details key="description" value="An_32_information_32_system_32_is_32_a_32_piece_32_of_32_software_32_or_32_a_32_software_32_package_32_for_32_related_32_business_32_functions_32_with_32_clear_32_logical_32_and_32_technical_32_boundaries_32_and_32_which_32_is_32_supported_32_completely_32_or_32_chiefly_32_by_32_IT."/>
+		</eAnnotations>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Id" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBigInteger"
+        iD="true">
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="isUnique" value="true"/>
+				<details key="isTechnical" value="true"/>
+				<details key="suitableForDisplay" value="false"/>
+				<details key="dataType" value="integer"/>
+			</eAnnotations>
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="id"/>
+				<details key="description" value="Id_32_Property"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Last Modification User"
+        unique="false" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="isTechnical" value="true"/>
+				<details key="suitableForDisplay" value="false"/>
+				<details key="dataType" value="string"/>
+			</eAnnotations>
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="lastModificationUser"/>
+				<details key="description" value="User_32_which_32_has_32_last_32_modified_32_the_32_entity."/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Description" unique="false"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="description"/>
+				<details key="description" value="Description_32_of_32_the_32_Type"/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="dataType" value="richtext"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Name" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="isUnique" value="true"/>
+				<details key="definingRelationshipEnd" value="true"/>
+				<details key="dataType" value="string"/>
+			</eAnnotations>
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="name"/>
+				<details key="description" value="Name_32_of_32_the_32_Type"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Last Modification Time"
+        unique="false" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDate">
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="isTechnical" value="true"/>
+				<details key="suitableForDisplay" value="false"/>
+				<details key="dataType" value="date_time"/>
+			</eAnnotations>
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="lastModificationTime"/>
+				<details key="description" value="Time_32_of_32_last_32_modification"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="runtimePeriod" unique="false"
+        eType="#//Duration">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="runtimePeriod"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="dataType" value="duration"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="typeOfStatus" unique="false"
+        lowerBound="1" eType="#//de.iteratec.iteraplan.model.InformationSystemRelease$TypeOfStatus">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="typeOfStatus"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="dataType" value="de.iteratec.iteraplan.model.InformationSystemRelease$TypeOfStatus"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="State of health" unique="false"
+        eType="#//State%20of%20health">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="State_32_of_32_health"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="dataType" value="de.iteratec.iteraplan.model.attribute.EnumAT.State of health"/>
+				<details key="origin" value="Strategic measurement categories"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Strategic drivers" unique="false"
+        eType="#//Strategic%20drivers">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="Strategic_32_drivers"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="dataType" value="de.iteratec.iteraplan.model.attribute.EnumAT.Strategic drivers"/>
+				<details key="origin" value="Strategic measurement categories"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Strategic value" unique="false"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBigDecimal">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="Strategic_32_value"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="dataType" value="decimal"/>
+				<details key="origin" value="Strategic measurement categories"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Costs" unique="false" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBigDecimal">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="Costs"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="dataType" value="decimal"/>
+				<details key="origin" value="Strategic measurement categories"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Value added" unique="false"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBigDecimal">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="Value_32_added"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="dataType" value="decimal"/>
+				<details key="origin" value="Strategic measurement categories"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Operating expenses" unique="false"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBigDecimal">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="Operating_32_expenses"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="dataType" value="decimal"/>
+				<details key="origin" value="Strategic measurement categories"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Development (Start)" unique="false"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDate">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="Development_32__40_Start_41_"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="dataType" value="date"/>
+				<details key="origin" value="Lifecycle Group"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Development (End)" unique="false"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDate">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="Development_32__40_End_41_"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="dataType" value="date"/>
+				<details key="origin" value="Lifecycle Group"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Live (Start)" unique="false"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDate">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="Live_32__40_Start_41_"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="dataType" value="date"/>
+				<details key="origin" value="Lifecycle Group"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Live (End)" unique="false"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDate">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="Live_32__40_End_41_"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="dataType" value="date"/>
+				<details key="origin" value="Lifecycle Group"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Replacement (Start)" unique="false"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDate">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="Replacement_32__40_Start_41_"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="dataType" value="date"/>
+				<details key="origin" value="Lifecycle Group"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Replacement (End)" unique="false"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDate">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="Replacement_32__40_End_41_"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="dataType" value="date"/>
+				<details key="origin" value="Lifecycle Group"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="System size" unique="false"
+        eType="#//System%20size">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="System_32_size"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="dataType" value="de.iteratec.iteraplan.model.attribute.EnumAT.System size"/>
+				<details key="origin" value="[Default Attribute Group]"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Complexity" unique="false"
+        eType="#//Complexity">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="Complexity"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="dataType" value="de.iteratec.iteraplan.model.attribute.EnumAT.Complexity"/>
+				<details key="origin" value="[Default Attribute Group]"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Maintenance activity" unique="false"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBigDecimal">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="Maintenance_32_activity"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="dataType" value="decimal"/>
+				<details key="origin" value="[Default Attribute Group]"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Accountability" unique="false"
+        upperBound="2147483647" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="Accountability"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="dataType" value="string"/>
+				<details key="origin" value="[Default Attribute Group]"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EReference" name="businessFunctions" unique="false"
+        upperBound="2147483647" eType="#//Business%20Function" eOpposite="#//Business%20Function/informationSystems">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="businessFunctions"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EReference" name="businessMappings" unique="false"
+        upperBound="2147483647" eType="#//Business%20Mapping" eOpposite="#//Business%20Mapping/informationSystemRelease">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="businessMappings"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EReference" name="informationSystemDomains"
+        unique="false" upperBound="2147483647" eType="#//Information%20System%20Domain"
+        eOpposite="#//Information%20System%20Domain/informationSystemReleases">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="informationSystemDomains"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EReference" name="businessObjectAssociations"
+        unique="false" upperBound="2147483647" eType="#//Isr2BoAssociation" eOpposite="#//Isr2BoAssociation/informationSystemRelease">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="businessObjectAssociations"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EReference" name="technicalComponentReleases"
+        unique="false" upperBound="2147483647" eType="#//Technical%20Component" eOpposite="#//Technical%20Component/informationSystemReleases">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="technicalComponentReleases"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EReference" name="children" unique="false"
+        upperBound="2147483647" eType="#//Information%20System" eOpposite="#//Information%20System/parent">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="children"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EReference" name="parent" unique="false"
+        eType="#//Information%20System" eOpposite="#//Information%20System/children">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="parent"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="isAcyclic" value="true"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EReference" name="informationFlows2" unique="false"
+        upperBound="2147483647" eType="#//InformationFlow" eOpposite="#//InformationFlow/informationSystemRelease2">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="informationFlows2"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EReference" name="infrastructureElements"
+        unique="false" upperBound="2147483647" eType="#//Infrastructure%20Element"
+        eOpposite="#//Infrastructure%20Element/informationSystemReleases">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="infrastructureElements"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EReference" name="predecessors" unique="false"
+        upperBound="2147483647" eType="#//Information%20System" eOpposite="#//Information%20System/successors">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="predecessors"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="isAcyclic" value="true"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EReference" name="successors" unique="false"
+        upperBound="2147483647" eType="#//Information%20System" eOpposite="#//Information%20System/predecessors">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="successors"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EReference" name="informationFlows1" unique="false"
+        upperBound="2147483647" eType="#//InformationFlow" eOpposite="#//InformationFlow/informationSystemRelease1">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="informationFlows1"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EReference" name="baseComponents" unique="false"
+        upperBound="2147483647" eType="#//Information%20System" eOpposite="#//Information%20System/parentComponents">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="baseComponents"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EReference" name="parentComponents" unique="false"
+        upperBound="2147483647" eType="#//Information%20System" eOpposite="#//Information%20System/baseComponents">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="parentComponents"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EReference" name="projects" unique="false"
+        upperBound="2147483647" eType="#//Project" eOpposite="#//Project/informationSystemReleases">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="projects"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+		</eStructuralFeatures>
+	</eClassifiers>
+	<eClassifiers xsi:type="ecore:EDataType" name="Duration" instanceClassName="de.iteratec.iteraplan.elasticmi.metamodel.common.base.DateInterval">
+		<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+			<details key="name" value="de.iteratec.iteraplan.model.RuntimePeriod"/>
+			<details key="description" value="Duration_32_Atomic_32_Data_32_Type"/>
+		</eAnnotations>
+	</eClassifiers>
+	<eClassifiers xsi:type="ecore:EClass" name="Interface">
+		<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+			<details key="name" value="InformationSystemInterface"/>
+			<details key="description" value="An_32_interface_44__32_where_32_appropriately_32_directed_44__32_defines_32_a_32_dependency_32_between_32_two_32_information_32_systems._32_It_32_is_32_separable_32_into_32_two_32_areas_44__32_information_32_and_32_control_32_flow._32_In_32_the_32_context_32_of_32_IT_32_landscape_32_management_32_the_32_term_32__39_interface_39__32_is_32_used_32_in_32_the_32_sense_32_of_32__39_information_32_flow_39__32_between_32_information_32_systems."/>
+		</eAnnotations>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Id" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBigInteger"
+        iD="true">
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="isUnique" value="true"/>
+				<details key="isTechnical" value="true"/>
+				<details key="suitableForDisplay" value="false"/>
+				<details key="dataType" value="integer"/>
+			</eAnnotations>
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="id"/>
+				<details key="description" value="Id_32_Property"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Last Modification User"
+        unique="false" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="isTechnical" value="true"/>
+				<details key="suitableForDisplay" value="false"/>
+				<details key="dataType" value="string"/>
+			</eAnnotations>
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="lastModificationUser"/>
+				<details key="description" value="User_32_which_32_has_32_last_32_modified_32_the_32_entity."/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Description" unique="false"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="description"/>
+				<details key="description" value="Description_32_of_32_the_32_Type"/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="dataType" value="richtext"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Name" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="isUnique" value="true"/>
+				<details key="definingRelationshipEnd" value="true"/>
+				<details key="dataType" value="string"/>
+			</eAnnotations>
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="name"/>
+				<details key="description" value="Name_32_of_32_the_32_Type"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Last Modification Time"
+        unique="false" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDate">
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="isTechnical" value="true"/>
+				<details key="suitableForDisplay" value="false"/>
+				<details key="dataType" value="date_time"/>
+			</eAnnotations>
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="lastModificationTime"/>
+				<details key="description" value="Time_32_of_32_last_32_modification"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="interfaceDirection" unique="false"
+        lowerBound="1" eType="#//de.iteratec.iteraplan.model.Direction">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="interfaceDirection"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="dataType" value="de.iteratec.iteraplan.model.Direction"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Complexity" unique="false"
+        eType="#//Complexity">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="Complexity"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="dataType" value="de.iteratec.iteraplan.model.attribute.EnumAT.Complexity"/>
+				<details key="origin" value="[Default Attribute Group]"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Degree of automation" unique="false"
+        eType="#//Degree%20of%20automation">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="Degree_32_of_32_automation"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="dataType" value="de.iteratec.iteraplan.model.attribute.EnumAT.Degree of automation"/>
+				<details key="origin" value="[Default Attribute Group]"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Data exchange" unique="false"
+        upperBound="2147483647" eType="#//Data%20exchange">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="Data_32_exchange"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="dataType" value="de.iteratec.iteraplan.model.attribute.EnumAT.Data exchange"/>
+				<details key="origin" value="[Default Attribute Group]"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EReference" name="technicalComponentReleases"
+        unique="false" upperBound="2147483647" eType="#//Technical%20Component" eOpposite="#//Technical%20Component/informationSystemInterfaces">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="technicalComponentReleases"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EReference" name="informationFlows" unique="false"
+        lowerBound="1" upperBound="2147483647" eType="#//InformationFlow" eOpposite="#//InformationFlow/informationSystemInterface">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="informationFlows"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+		</eStructuralFeatures>
+	</eClassifiers>
+	<eClassifiers xsi:type="ecore:EClass" name="InformationFlow">
+		<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+			<details key="name" value="InformationFlow"/>
+			<details key="description" value=""/>
+		</eAnnotations>
+		<eAnnotations source="urn:metamodelAnnotation">
+			<details key="type" value="RelationshipType"/>
+		</eAnnotations>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Id" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBigInteger"
+        iD="true">
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="isUnique" value="true"/>
+				<details key="isTechnical" value="true"/>
+				<details key="suitableForDisplay" value="false"/>
+				<details key="dataType" value="integer"/>
+			</eAnnotations>
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="id"/>
+				<details key="description" value="Id_32_Property"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Last Modification Time"
+        unique="false" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDate">
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="isTechnical" value="true"/>
+				<details key="suitableForDisplay" value="false"/>
+				<details key="dataType" value="date_time"/>
+			</eAnnotations>
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="lastModificationTime"/>
+				<details key="description" value="Time_32_of_32_last_32_modification"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Last Modification User"
+        unique="false" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="isTechnical" value="true"/>
+				<details key="suitableForDisplay" value="false"/>
+				<details key="dataType" value="string"/>
+			</eAnnotations>
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="lastModificationUser"/>
+				<details key="description" value="User_32_which_32_has_32_last_32_modified_32_the_32_entity."/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Direction" unique="false"
+        lowerBound="1" eType="#//de.iteratec.iteraplan.model.Direction">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="direction"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="dataType" value="de.iteratec.iteraplan.model.Direction"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="iteraplan_InformationSystemInterfaceID"
+        unique="false" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBigInteger">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="iteraplan_95_InformationSystemInterfaceID"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="dataType" value="integer"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EReference" name="businessObject" unique="false"
+        eType="#//Business%20Object" eOpposite="#//Business%20Object/informationFlows">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="businessObject"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="definingRelationshipEnd" value="true"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EReference" name="informationSystemRelease2"
+        unique="false" eType="#//Information%20System" eOpposite="#//Information%20System/informationFlows2">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="informationSystemRelease2"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="definingRelationshipEnd" value="true"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EReference" name="informationSystemRelease1"
+        unique="false" eType="#//Information%20System" eOpposite="#//Information%20System/informationFlows1">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="informationSystemRelease1"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="definingRelationshipEnd" value="true"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EReference" name="informationSystemInterface"
+        unique="false" eType="#//Interface" eOpposite="#//Interface/informationFlows">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="informationSystemInterface"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="definingRelationshipEnd" value="true"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+	</eClassifiers>
+	<eClassifiers xsi:type="ecore:EClass" name="Isr2BoAssociation">
+		<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+			<details key="name" value="Isr2BoAssociation"/>
+			<details key="description" value=""/>
+		</eAnnotations>
+		<eAnnotations source="urn:metamodelAnnotation">
+			<details key="type" value="RelationshipType"/>
+		</eAnnotations>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Id" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBigInteger"
+        iD="true">
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="isUnique" value="true"/>
+				<details key="isTechnical" value="true"/>
+				<details key="suitableForDisplay" value="false"/>
+				<details key="dataType" value="integer"/>
+			</eAnnotations>
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="id"/>
+				<details key="description" value="Id_32_Property"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Last Modification Time"
+        unique="false" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDate">
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="isTechnical" value="true"/>
+				<details key="suitableForDisplay" value="false"/>
+				<details key="dataType" value="date_time"/>
+			</eAnnotations>
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="lastModificationTime"/>
+				<details key="description" value="Time_32_of_32_last_32_modification"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Last Modification User"
+        unique="false" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="isTechnical" value="true"/>
+				<details key="suitableForDisplay" value="false"/>
+				<details key="dataType" value="string"/>
+			</eAnnotations>
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="lastModificationUser"/>
+				<details key="description" value="User_32_which_32_has_32_last_32_modified_32_the_32_entity."/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="CRUD" unique="false" upperBound="2147483647"
+        eType="#//CRUD">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="CRUD"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="dataType" value="de.iteratec.iteraplan.model.attribute.EnumAT.CRUD"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EReference" name="businessObject" unique="false"
+        lowerBound="1" eType="#//Business%20Object" eOpposite="#//Business%20Object/informationSystemReleaseAssociations">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="businessObject"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="definingRelationshipEnd" value="true"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EReference" name="informationSystemRelease"
+        unique="false" lowerBound="1" eType="#//Information%20System" eOpposite="#//Information%20System/businessObjectAssociations">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="informationSystemRelease"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="definingRelationshipEnd" value="true"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+	</eClassifiers>
+	<eClassifiers xsi:type="ecore:EClass" name="Architectural Domain">
+		<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+			<details key="name" value="ArchitecturalDomain"/>
+			<details key="description" value=""/>
+		</eAnnotations>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Id" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBigInteger"
+        iD="true">
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="isUnique" value="true"/>
+				<details key="isTechnical" value="true"/>
+				<details key="suitableForDisplay" value="false"/>
+				<details key="dataType" value="integer"/>
+			</eAnnotations>
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="id"/>
+				<details key="description" value="Id_32_Property"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Last Modification User"
+        unique="false" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="isTechnical" value="true"/>
+				<details key="suitableForDisplay" value="false"/>
+				<details key="dataType" value="string"/>
+			</eAnnotations>
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="lastModificationUser"/>
+				<details key="description" value="User_32_which_32_has_32_last_32_modified_32_the_32_entity."/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Description" unique="false"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="description"/>
+				<details key="description" value="Description_32_of_32_the_32_Type"/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="dataType" value="richtext"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Name" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="isUnique" value="true"/>
+				<details key="definingRelationshipEnd" value="true"/>
+				<details key="dataType" value="string"/>
+			</eAnnotations>
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="name"/>
+				<details key="description" value="Name_32_of_32_the_32_Type"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Last Modification Time"
+        unique="false" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDate">
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="isTechnical" value="true"/>
+				<details key="suitableForDisplay" value="false"/>
+				<details key="dataType" value="date_time"/>
+			</eAnnotations>
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="lastModificationTime"/>
+				<details key="description" value="Time_32_of_32_last_32_modification"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="position" unique="false"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBigInteger">
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="suitableForDisplay" value="false"/>
+				<details key="dataType" value="integer"/>
+			</eAnnotations>
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="position"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Accountability" unique="false"
+        upperBound="2147483647" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="Accountability"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="dataType" value="string"/>
+				<details key="origin" value="[Default Attribute Group]"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EReference" name="technicalComponentReleases"
+        unique="false" upperBound="2147483647" eType="#//Technical%20Component" eOpposite="#//Technical%20Component/architecturalDomains">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="technicalComponentReleases"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EReference" name="children" unique="false"
+        upperBound="2147483647" eType="#//Architectural%20Domain" eOpposite="#//Architectural%20Domain/parent">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="children"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EReference" name="parent" unique="false"
+        eType="#//Architectural%20Domain" eOpposite="#//Architectural%20Domain/children">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="parent"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="isAcyclic" value="true"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+	</eClassifiers>
+	<eClassifiers xsi:type="ecore:EClass" name="Technical Component">
+		<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+			<details key="name" value="TechnicalComponent"/>
+			<details key="description" value="Information_32_concerning_32_the_32_realisation_32_of_32_information_32_systems_32_or_32_interfaces._32_The_32_standardisation_32_is_32_part_32_of_32_the_32_IT_32_architecture_32_management._32_This_32_results_32_in_32_a_32_catalogue_32_of_32_standardised_32_technical_32_components_44__32_also_32_called_32_technical_32_blueprint._32_During_32_the_32_documentation_32_of_32_the_32_as-is_32_situation_32_non-standard_32_compliant_32_technical_32_components_32_could_32_also_32_be_32_captured."/>
+		</eAnnotations>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Id" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBigInteger"
+        iD="true">
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="isUnique" value="true"/>
+				<details key="isTechnical" value="true"/>
+				<details key="suitableForDisplay" value="false"/>
+				<details key="dataType" value="integer"/>
+			</eAnnotations>
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="id"/>
+				<details key="description" value="Id_32_Property"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Last Modification User"
+        unique="false" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="isTechnical" value="true"/>
+				<details key="suitableForDisplay" value="false"/>
+				<details key="dataType" value="string"/>
+			</eAnnotations>
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="lastModificationUser"/>
+				<details key="description" value="User_32_which_32_has_32_last_32_modified_32_the_32_entity."/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Description" unique="false"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="description"/>
+				<details key="description" value="Description_32_of_32_the_32_Type"/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="dataType" value="richtext"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Name" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="isUnique" value="true"/>
+				<details key="definingRelationshipEnd" value="true"/>
+				<details key="dataType" value="string"/>
+			</eAnnotations>
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="name"/>
+				<details key="description" value="Name_32_of_32_the_32_Type"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Last Modification Time"
+        unique="false" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDate">
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="isTechnical" value="true"/>
+				<details key="suitableForDisplay" value="false"/>
+				<details key="dataType" value="date_time"/>
+			</eAnnotations>
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="lastModificationTime"/>
+				<details key="description" value="Time_32_of_32_last_32_modification"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Available for Interfaces"
+        unique="false" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBooleanObject">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="availableForInterfaces"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="dataType" value="boolean"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="runtimePeriod" unique="false"
+        eType="#//Duration">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="runtimePeriod"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="dataType" value="duration"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="typeOfStatus" unique="false"
+        lowerBound="1" eType="#//de.iteratec.iteraplan.model.TechnicalComponentRelease$TypeOfStatus">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="typeOfStatus"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="dataType" value="de.iteratec.iteraplan.model.TechnicalComponentRelease$TypeOfStatus"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Technical state of health"
+        unique="false" eType="#//Technical%20state%20of%20health">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="Technical_32_state_32_of_32_health"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="dataType" value="de.iteratec.iteraplan.model.attribute.EnumAT.Technical state of health"/>
+				<details key="origin" value="Strategic measurement categories"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Compliance to guidelines"
+        unique="false" eType="#//Compliance%20to%20guidelines">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="Compliance_32_to_32_guidelines"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="dataType" value="de.iteratec.iteraplan.model.attribute.EnumAT.Compliance to guidelines"/>
+				<details key="origin" value="Strategic measurement categories"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Manufacturer" unique="false"
+        eType="#//Manufacturer">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="Manufacturer"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="dataType" value="de.iteratec.iteraplan.model.attribute.EnumAT.Manufacturer"/>
+				<details key="origin" value="[Default Attribute Group]"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Accountability" unique="false"
+        upperBound="2147483647" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="Accountability"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="dataType" value="string"/>
+				<details key="origin" value="[Default Attribute Group]"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EReference" name="informationSystemReleases"
+        unique="false" upperBound="2147483647" eType="#//Information%20System" eOpposite="#//Information%20System/technicalComponentReleases">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="informationSystemReleases"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EReference" name="informationSystemInterfaces"
+        unique="false" upperBound="2147483647" eType="#//Interface" eOpposite="#//Interface/technicalComponentReleases">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="informationSystemInterfaces"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EReference" name="architecturalDomains" unique="false"
+        upperBound="2147483647" eType="#//Architectural%20Domain" eOpposite="#//Architectural%20Domain/technicalComponentReleases">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="architecturalDomains"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EReference" name="predecessors" unique="false"
+        upperBound="2147483647" eType="#//Technical%20Component" eOpposite="#//Technical%20Component/successors">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="predecessors"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="isAcyclic" value="true"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EReference" name="successors" unique="false"
+        upperBound="2147483647" eType="#//Technical%20Component" eOpposite="#//Technical%20Component/predecessors">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="successors"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EReference" name="baseComponents" unique="false"
+        upperBound="2147483647" eType="#//Technical%20Component" eOpposite="#//Technical%20Component/parentComponents">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="baseComponents"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="isAcyclic" value="true"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EReference" name="parentComponents" unique="false"
+        upperBound="2147483647" eType="#//Technical%20Component" eOpposite="#//Technical%20Component/baseComponents">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="parentComponents"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EReference" name="infrastructureElementAssociations"
+        unique="false" upperBound="2147483647" eType="#//Tcr2IeAssociation" eOpposite="#//Tcr2IeAssociation/technicalComponentRelease">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="infrastructureElementAssociations"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+		</eStructuralFeatures>
+	</eClassifiers>
+	<eClassifiers xsi:type="ecore:EClass" name="Tcr2IeAssociation">
+		<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+			<details key="name" value="Tcr2IeAssociation"/>
+			<details key="description" value=""/>
+		</eAnnotations>
+		<eAnnotations source="urn:metamodelAnnotation">
+			<details key="type" value="RelationshipType"/>
+		</eAnnotations>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Id" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBigInteger"
+        iD="true">
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="isUnique" value="true"/>
+				<details key="isTechnical" value="true"/>
+				<details key="suitableForDisplay" value="false"/>
+				<details key="dataType" value="integer"/>
+			</eAnnotations>
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="id"/>
+				<details key="description" value="Id_32_Property"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Last Modification Time"
+        unique="false" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDate">
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="isTechnical" value="true"/>
+				<details key="suitableForDisplay" value="false"/>
+				<details key="dataType" value="date_time"/>
+			</eAnnotations>
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="lastModificationTime"/>
+				<details key="description" value="Time_32_of_32_last_32_modification"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Last Modification User"
+        unique="false" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="isTechnical" value="true"/>
+				<details key="suitableForDisplay" value="false"/>
+				<details key="dataType" value="string"/>
+			</eAnnotations>
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="lastModificationUser"/>
+				<details key="description" value="User_32_which_32_has_32_last_32_modified_32_the_32_entity."/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EReference" name="technicalComponentRelease"
+        unique="false" lowerBound="1" eType="#//Technical%20Component" eOpposite="#//Technical%20Component/infrastructureElementAssociations">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="technicalComponentRelease"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="definingRelationshipEnd" value="true"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EReference" name="infrastructureElement"
+        unique="false" lowerBound="1" eType="#//Infrastructure%20Element" eOpposite="#//Infrastructure%20Element/technicalComponentReleaseAssociations">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="infrastructureElement"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="definingRelationshipEnd" value="true"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+	</eClassifiers>
+	<eClassifiers xsi:type="ecore:EClass" name="Infrastructure Element">
+		<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+			<details key="name" value="InfrastructureElement"/>
+			<details key="description" value="The_32_Infrastructure_32_Elements_32_consist_32_of_32_logical_32_hardware_32_and_32_network_32_units_32_which_32_are_32_used_32_to_32_operate_32_the_32_information_32_systems._32_The_32_infrastructure_32_elements_32_are_32_generally_32_either_32_captured_32_on_32_a_32_coarse_32_grain_32_logical_32_level_32_or_32_imported_32_from_32_a_32_CMDB._32_The_32_CMDB_32_provides_32_all_32_current_32_saved_32_data_32_concerning_32_configuration_32_items_32_of_32_the_32_IT_32_infrastructure_32__40_applications_44__32_clients_44__32_network_44__32_server_44__32_storage_41__32_and_32_their_32_relationships_32_with_32_each_32_other_32_as_32_well_32_as_32_the_32_base_32_data_32_to_32_support_32_the_32_Service_32_Management_32_processes."/>
+		</eAnnotations>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Id" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBigInteger"
+        iD="true">
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="isUnique" value="true"/>
+				<details key="isTechnical" value="true"/>
+				<details key="suitableForDisplay" value="false"/>
+				<details key="dataType" value="integer"/>
+			</eAnnotations>
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="id"/>
+				<details key="description" value="Id_32_Property"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Last Modification User"
+        unique="false" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="isTechnical" value="true"/>
+				<details key="suitableForDisplay" value="false"/>
+				<details key="dataType" value="string"/>
+			</eAnnotations>
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="lastModificationUser"/>
+				<details key="description" value="User_32_which_32_has_32_last_32_modified_32_the_32_entity."/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Description" unique="false"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="description"/>
+				<details key="description" value="Description_32_of_32_the_32_Type"/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="dataType" value="richtext"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Name" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="isUnique" value="true"/>
+				<details key="definingRelationshipEnd" value="true"/>
+				<details key="dataType" value="string"/>
+			</eAnnotations>
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="name"/>
+				<details key="description" value="Name_32_of_32_the_32_Type"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Last Modification Time"
+        unique="false" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDate">
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="isTechnical" value="true"/>
+				<details key="suitableForDisplay" value="false"/>
+				<details key="dataType" value="date_time"/>
+			</eAnnotations>
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="lastModificationTime"/>
+				<details key="description" value="Time_32_of_32_last_32_modification"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="position" unique="false"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBigInteger">
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="suitableForDisplay" value="false"/>
+				<details key="dataType" value="integer"/>
+			</eAnnotations>
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="position"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Accountability" unique="false"
+        upperBound="2147483647" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="Accountability"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="dataType" value="string"/>
+				<details key="origin" value="[Default Attribute Group]"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EReference" name="informationSystemReleases"
+        unique="false" upperBound="2147483647" eType="#//Information%20System" eOpposite="#//Information%20System/infrastructureElements">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="informationSystemReleases"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EReference" name="technicalComponentReleaseAssociations"
+        unique="false" upperBound="2147483647" eType="#//Tcr2IeAssociation" eOpposite="#//Tcr2IeAssociation/infrastructureElement">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="technicalComponentReleaseAssociations"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EReference" name="children" unique="false"
+        upperBound="2147483647" eType="#//Infrastructure%20Element" eOpposite="#//Infrastructure%20Element/parent">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="children"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EReference" name="parent" unique="false"
+        eType="#//Infrastructure%20Element" eOpposite="#//Infrastructure%20Element/children">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="parent"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="isAcyclic" value="true"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EReference" name="baseComponents" unique="false"
+        upperBound="2147483647" eType="#//Infrastructure%20Element" eOpposite="#//Infrastructure%20Element/parentComponents">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="baseComponents"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EReference" name="parentComponents" unique="false"
+        upperBound="2147483647" eType="#//Infrastructure%20Element" eOpposite="#//Infrastructure%20Element/baseComponents">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="parentComponents"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+		</eStructuralFeatures>
+	</eClassifiers>
+	<eClassifiers xsi:type="ecore:EClass" name="Project">
+		<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+			<details key="name" value="Project"/>
+			<details key="description" value="A_32_project_32_or_32_program_32_is_32_generally_32_characterized_32_by_32_the_32_singleness_32_of_32_its_32_conditions_32__40_as_32_a_32_whole_41__44__32_e.g._32_goals_44__32_time_44__32_financial_44__32_resource_32_and_32_other_32_constraints_44__32_differentiations_32_from_32_other_32_projects_32_and_32_project_32_specific_32_organizations."/>
+		</eAnnotations>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Id" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBigInteger"
+        iD="true">
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="isUnique" value="true"/>
+				<details key="isTechnical" value="true"/>
+				<details key="suitableForDisplay" value="false"/>
+				<details key="dataType" value="integer"/>
+			</eAnnotations>
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="id"/>
+				<details key="description" value="Id_32_Property"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Last Modification User"
+        unique="false" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="isTechnical" value="true"/>
+				<details key="suitableForDisplay" value="false"/>
+				<details key="dataType" value="string"/>
+			</eAnnotations>
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="lastModificationUser"/>
+				<details key="description" value="User_32_which_32_has_32_last_32_modified_32_the_32_entity."/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Description" unique="false"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="description"/>
+				<details key="description" value="Description_32_of_32_the_32_Type"/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="dataType" value="richtext"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Name" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="isUnique" value="true"/>
+				<details key="definingRelationshipEnd" value="true"/>
+				<details key="dataType" value="string"/>
+			</eAnnotations>
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="name"/>
+				<details key="description" value="Name_32_of_32_the_32_Type"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Last Modification Time"
+        unique="false" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDate">
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="isTechnical" value="true"/>
+				<details key="suitableForDisplay" value="false"/>
+				<details key="dataType" value="date_time"/>
+			</eAnnotations>
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="lastModificationTime"/>
+				<details key="description" value="Time_32_of_32_last_32_modification"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="position" unique="false"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBigInteger">
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="suitableForDisplay" value="false"/>
+				<details key="dataType" value="integer"/>
+			</eAnnotations>
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="position"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="runtimePeriod" unique="false"
+        eType="#//Duration">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="runtimePeriod"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="dataType" value="duration"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Strategic drivers" unique="false"
+        eType="#//Strategic%20drivers">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="Strategic_32_drivers"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="dataType" value="de.iteratec.iteraplan.model.attribute.EnumAT.Strategic drivers"/>
+				<details key="origin" value="Strategic measurement categories"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Strategic value" unique="false"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBigDecimal">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="Strategic_32_value"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="dataType" value="decimal"/>
+				<details key="origin" value="Strategic measurement categories"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Costs" unique="false" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBigDecimal">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="Costs"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="dataType" value="decimal"/>
+				<details key="origin" value="Strategic measurement categories"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Value added" unique="false"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBigDecimal">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="Value_32_added"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="dataType" value="decimal"/>
+				<details key="origin" value="Strategic measurement categories"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EAttribute" name="Accountability" unique="false"
+        upperBound="2147483647" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="Accountability"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="dataType" value="string"/>
+				<details key="origin" value="[Default Attribute Group]"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EReference" name="informationSystemReleases"
+        unique="false" upperBound="2147483647" eType="#//Information%20System" eOpposite="#//Information%20System/projects">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="informationSystemReleases"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EReference" name="children" unique="false"
+        upperBound="2147483647" eType="#//Project" eOpposite="#//Project/parent">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="children"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+		</eStructuralFeatures>
+		<eStructuralFeatures xsi:type="ecore:EReference" name="parent" unique="false"
+        eType="#//Project" eOpposite="#//Project/children">
+			<eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+				<details key="name" value="parent"/>
+				<details key="description" value=""/>
+			</eAnnotations>
+			<eAnnotations source="urn:metamodelAnnotation">
+				<details key="isAcyclic" value="true"/>
+			</eAnnotations>
+		</eStructuralFeatures>
+	</eClassifiers>
+	<eClassifiers xsi:type="ecore:EClass" name="Container">
+		<eStructuralFeatures xsi:type="ecore:EReference" name="contents" upperBound="-1"
+        eType="ecore:EClass http://www.eclipse.org/emf/2002/Ecore#//EObject" containment="true"/>
+	</eClassifiers>
+</ecore:EPackage>

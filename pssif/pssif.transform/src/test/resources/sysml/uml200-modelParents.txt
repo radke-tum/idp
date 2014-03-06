@@ -1,0 +1,16 @@
+Model
+-Package
+--Namespace
+---NamedElement
+----Element
+-----org.eclipse.emf.ecore.impl.EClassImpl@1a907c4e (eProxyURI: ../../../plugin/org.eclipse.emf.ecore/model/Ecore.ecore#//EModelElement)
+--PackageableElement
+---NamedElement
+----Element
+-----org.eclipse.emf.ecore.impl.EClassImpl@1a907c4e (eProxyURI: ../../../plugin/org.eclipse.emf.ecore/model/Ecore.ecore#//EModelElement)
+---ParameterableElement
+----Element
+-----org.eclipse.emf.ecore.impl.EClassImpl@1a907c4e (eProxyURI: ../../../plugin/org.eclipse.emf.ecore/model/Ecore.ecore#//EModelElement)
+--TemplateableElement
+---Element
+----org.eclipse.emf.ecore.impl.EClassImpl@1a907c4e (eProxyURI: ../../../plugin/org.eclipse.emf.ecore/model/Ecore.ecore#//EModelElement)
