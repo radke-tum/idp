@@ -79,6 +79,8 @@ public class GraphView {
 
   public GraphView(/*Dimension parentDimension*/) {
     active = false;
+    
+    
     screenSize = Toolkit.getDefaultToolkit().getScreenSize();
     //screenSize = parentDimension;
     //int x = (int) (screenSize.width*0.85);
@@ -119,7 +121,7 @@ public class GraphView {
     informationPanel = new JPanel();
 
     int x = (screenSize.width);
-    int y = (int) (screenSize.height * 0.15);
+    int y = (int) (screenSize.height * 0.17);
     Dimension d = new Dimension(x, y);
 
     informationPanel.setMaximumSize(d);
@@ -382,8 +384,8 @@ public class GraphView {
     ypos++;
     c.gridy = ypos;
     basicOperations.add(nodeDetails, c);
-    nodeDetails.setSelected(true);
-    graph.setNodeVisualisation(true);
+    nodeDetails.setSelected(false);
+    graph.setNodeVisualisation(false);
     nodeDetails.addItemListener(new ItemListener() {
       @Override
       public void itemStateChanged(ItemEvent item) {

@@ -34,7 +34,6 @@ public class FileImporter {
     comboBoxValues.put("EPK", MapperFactory.EPK);
     comboBoxValues.put("SysML", MapperFactory.SYSML);
     comboBoxValues.put("PSS-IF", MapperFactory.PSSIF);
-
   }
 
   /**
@@ -48,37 +47,38 @@ public class FileImporter {
     try {
       in = new FileInputStream(file);
 
-      Metamodel metamodel = PSSIFCanonicMetamodelCreator.create();
-
       String selectedFileType = String.valueOf(filetype.getSelectedItem());
 
       Mapper importer = MapperFactory.getMapper(comboBoxValues.get(selectedFileType));
+      
+      //metamodel = PSSIFCanonicMetamodelCreator.create();
 
       Model model;
       try {
-        model = importer.read(metamodel, in);
+        model = importer.read(ModelBuilder.getMetamodel(), in);
 
         // Create the Viz Model
-        new ModelBuilder(metamodel, model);
+        ModelBuilder.addModel(ModelBuilder.getMetamodel(), model);
 
         return true;
       }
 
       catch (Exception e) {
-        //e.printStackTrace();
-        JPanel errorPanel = new JPanel();
-
-        errorPanel.add(new JLabel("There was a problem transforming the selected file. Was the file type chosen correctly?"));
-
-        JOptionPane.showMessageDialog(null, errorPanel, "Ups something went wrong", JOptionPane.ERROR_MESSAGE);
+	        e.printStackTrace();
+	        JPanel errorPanel = new JPanel();
+	
+	        errorPanel.add(new JLabel("There was a problem transforming the selected file. Was the file type chosen correctly?"));
+	
+	        JOptionPane.showMessageDialog(null, errorPanel, "Ups something went wrong", JOptionPane.ERROR_MESSAGE);
         return false;
       }
     } catch (FileNotFoundException e) {
-      JPanel errorPanel = new JPanel();
-
-      errorPanel.add(new JLabel("There was a problem importing the selected file."));
-
-      JOptionPane.showMessageDialog(null, errorPanel, "Ups something went wrong", JOptionPane.ERROR_MESSAGE);
+    		e.printStackTrace();
+	      JPanel errorPanel = new JPanel();
+	
+	      errorPanel.add(new JLabel("There was a problem importing the selected file."));
+	
+	      JOptionPane.showMessageDialog(null, errorPanel, "Ups something went wrong", JOptionPane.ERROR_MESSAGE);
       return false;
     }
   }
@@ -91,9 +91,9 @@ public class FileImporter {
   public boolean showPopup(Component caller) {
     JFileChooser openFile = new JFileChooser();
 
-    openFile.setCurrentDirectory(new File("C:\\Users\\Luc\\Desktop\\Dropbox\\IDP-PSS-IF-Shared"));
+    //openFile.setCurrentDirectory(new File("C:\\Users\\Luc\\Desktop\\Dropbox\\IDP-PSS-IF-Shared"));
 
-    //openFile.setCurrentDirectory(new File("C:\\Users\\Luc\\Desktop\\Uni Dropbox\\Dropbox\\IDP-PSS-IF-Shared\\Modelle PE"));
+    openFile.setCurrentDirectory(new File("C:\\Users\\Luc\\Desktop\\Uni Dropbox\\Dropbox\\IDP-PSS-IF-Shared\\Modelle PE"));
 
     JPanel panel1 = (JPanel) openFile.getComponent(3);
     JPanel panel2 = (JPanel) panel1.getComponent(2);

@@ -62,6 +62,7 @@ public class Main {
 	
 	private LinkedList<String> activeNodeFilters;
 	private LinkedList<String> activeEdgeFilters;
+	private FileImporter importer;
 	
 	public static void main(String[] args) {
 		
@@ -79,6 +80,8 @@ public class Main {
 		
 		width= width*3;
 		height = height*3;
+		
+		importer = new FileImporter();
 		
 		frame.setPreferredSize(new Dimension(width, height));
 		frame.setState(Frame.MAXIMIZED_BOTH);
@@ -108,7 +111,7 @@ public class Main {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				FileImporter importer = new FileImporter();
+				//FileImporter importer = new FileImporter();
 				if (importer.showPopup(frame))
 				{
 			        // Create the Views
@@ -228,6 +231,7 @@ public class Main {
 				SpringLayout.setSelected(false);
 				ISOMLayout.setSelected(false);
 				CircleLayout.setSelected(false);
+				KKLayout.setSelected(true);
 			}
 		});
 		graphLayout.add(KKLayout);
@@ -243,6 +247,7 @@ public class Main {
 				SpringLayout.setSelected(false);
 				ISOMLayout.setSelected(false);
 				CircleLayout.setSelected(false);
+				FRLayout.setSelected(true);
 			}
 		});
 		graphLayout.add(FRLayout);
@@ -257,6 +262,7 @@ public class Main {
 				FRLayout.setSelected(false);
 				ISOMLayout.setSelected(false);
 				CircleLayout.setSelected(false);
+				SpringLayout.setSelected(true);
 			}
 		});
 		graphLayout.add(SpringLayout);
@@ -271,6 +277,7 @@ public class Main {
 				FRLayout.setSelected(false);
 				SpringLayout.setSelected(false);
 				CircleLayout.setSelected(false);
+				ISOMLayout.setSelected(true);
 			}
 		});
 		graphLayout.add(ISOMLayout);
@@ -285,6 +292,7 @@ public class Main {
 				FRLayout.setSelected(false);
 				SpringLayout.setSelected(false);
 				ISOMLayout.setSelected(false);
+				CircleLayout.setSelected(true);
 			}
 		});
 		graphLayout.add(CircleLayout);
