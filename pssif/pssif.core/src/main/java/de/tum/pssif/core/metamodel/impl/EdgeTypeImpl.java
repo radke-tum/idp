@@ -1,105 +1,87 @@
 package de.tum.pssif.core.metamodel.impl;
 
-import de.tum.pssif.core.PSSIFConstants;
-import de.tum.pssif.core.exception.PSSIFStructuralIntegrityException;
-import de.tum.pssif.core.metamodel.Attribute;
-import de.tum.pssif.core.metamodel.AttributeCategory;
-import de.tum.pssif.core.metamodel.AttributeGroup;
+import java.util.Collection;
+
+import com.google.common.base.Predicate;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.Sets;
+
+import de.tum.pssif.core.common.PSSIFOption;
 import de.tum.pssif.core.metamodel.ConnectionMapping;
-import de.tum.pssif.core.metamodel.DataType;
-import de.tum.pssif.core.metamodel.EdgeEnd;
 import de.tum.pssif.core.metamodel.EdgeType;
-import de.tum.pssif.core.metamodel.Multiplicity;
+import de.tum.pssif.core.metamodel.JunctionNodeType;
 import de.tum.pssif.core.metamodel.NodeType;
-import de.tum.pssif.core.metamodel.PrimitiveDataType;
-import de.tum.pssif.core.metamodel.Unit;
-import de.tum.pssif.core.metamodel.Units;
-import de.tum.pssif.core.metamodel.impl.base.AbstractEdgeType;
-import de.tum.pssif.core.util.PSSIFUtil;
+import de.tum.pssif.core.metamodel.mutable.MutableEdgeType;
 
 
-public class EdgeTypeImpl extends AbstractEdgeType {
+public class EdgeTypeImpl extends ElementTypeImpl<EdgeType> implements MutableEdgeType {
+  private Collection<ConnectionMapping> mappings = Sets.newHashSet();
+
   public EdgeTypeImpl(String name) {
     super(name);
-    addAttributeGroup(new AttributeGroupImpl(PSSIFConstants.DEFAULT_ATTRIBUTE_GROUP_NAME, this));
   }
 
   @Override
-  public ConnectionMapping createMapping(String inName, NodeType in, Multiplicity inMultiplicity, String outName, NodeType out,
-                                         Multiplicity outMultiplicity) {
-    EdgeEnd from = new EdgeEndImpl(inName, this, inMultiplicity, in);
-    EdgeEnd to = new EdgeEndImpl(outName, this, outMultiplicity, out);
-    ConnectionMapping result = new ConnectionMappingImpl(from, to);
-    addMappingInternal(result);
+  public ConnectionMapping createMapping(NodeType from, NodeType to, Collection<JunctionNodeType> junctions) {
+    for (JunctionNodeType junction : junctions) {
+      mappings.add(new ConnectionMappingImpl(this, junction, junction));
+      for (JunctionNodeType other : junctions) {
+        if (other != junction) {
+          mappings.add(new ConnectionMappingImpl(this, junction, other));
+        }
+      }
+      mappings.add(new ConnectionMappingImpl(this, from, junction));
+      mappings.add(new ConnectionMappingImpl(this, junction, to));
+    }
 
+    ConnectionMappingImpl result = new ConnectionMappingImpl(this, from, to);
+    mappings.add(result);
     return result;
   }
 
   @Override
-  public EdgeEnd createAuxiliary(String name, Multiplicity multiplicity, NodeType to) {
-    EdgeEnd aux = findAuxiliary(name);
-    if (aux != null) {
-      throw new PSSIFStructuralIntegrityException("An auxiliary edge end with this name already exists.");
-    }
-    EdgeEnd result = new EdgeEndImpl(name, this, multiplicity, to);
-    addAuxiliaryInternal(result);
-    to.registerAuxiliary(this);
-    return result;
+  public PSSIFOption<ConnectionMapping> getMappings() {
+    return PSSIFOption.many(mappings);
   }
 
   @Override
-  public Attribute createAttribute(AttributeGroup group, String name, DataType type, Unit unit, boolean visible, AttributeCategory category) {
-    if (name == null || name.trim().isEmpty()) {
-      throw new PSSIFStructuralIntegrityException("name can not be null or empty");
-    }
-    //Note: this disables attribute overloading. If we want
-    //to overload attributes in specialization element types
-    //we need to find only locally, and filter on getAttributes
-    //so that inherited attributes are only taken when no local ones exist.
-    if (findAttribute(name) != null || findAttributeInSpecializations(name) != null) {
-      throw new PSSIFStructuralIntegrityException("duplicate attribute with name " + name);
-    }
-    if (!(PrimitiveDataType.DECIMAL.equals(type) || PrimitiveDataType.INTEGER.equals(type)) && !Units.NONE.equals(unit)) {
-      throw new PSSIFStructuralIntegrityException("Only numeric attributes can have units!");
-    }
-    AttributeImpl result = new AttributeImpl(name, type, unit, visible, category);
-    addAttribute(group, result);
-    return result;
-  }
+  public PSSIFOption<ConnectionMapping> getMapping(NodeType from, NodeType to) {
+    ConnectionMapping result = null;
 
-  private Attribute findAttributeInSpecializations(String name) {
-    for (EdgeType specialization : getSpecials()) {
-      Attribute attr = specialization.findAttribute(name);
-      if (attr != null) {
-        return attr;
+    for (ConnectionMapping candidate : mappings) {
+      if (candidate.getFrom().isAssignableFrom(from) && candidate.getTo().isAssignableFrom(to)) {
+        if (result != null) {
+          if (result.getFrom().isAssignableFrom(candidate.getFrom()) && result.getTo().isAssignableFrom(candidate.getTo())) {
+            result = candidate;
+          }
+        }
+        else {
+          result = candidate;
+        }
       }
     }
-    return null;
+
+    return PSSIFOption.one(result);
   }
 
   @Override
-  public Attribute createAttribute(AttributeGroup group, String name, DataType dataType, boolean visible, AttributeCategory category) {
-    return createAttribute(group, name, dataType, Units.NONE, visible, category);
+  public PSSIFOption<ConnectionMapping> getOutgoingMappings(final NodeType from) {
+    return PSSIFOption.many(Collections2.filter(mappings, new Predicate<ConnectionMapping>() {
+      @Override
+      public boolean apply(ConnectionMapping input) {
+        return input.getFrom().isAssignableFrom(from);
+      }
+    }));
   }
 
   @Override
-  public AttributeGroup createAttributeGroup(String name) {
-    if (PSSIFUtil.normalize(name).isEmpty()) {
-      throw new PSSIFStructuralIntegrityException("The name of an attrobute group can not be null or empty!");
-    }
-    if (findAttributeGroup(name) != null) {
-      throw new PSSIFStructuralIntegrityException("An attribute group with the name " + name + " already exists for element type " + getName());
-    }
-    AttributeGroupImpl result = new AttributeGroupImpl(name, this);
-    addAttributeGroup(result);
-    return result;
+  public PSSIFOption<ConnectionMapping> getIncomingMappings(final NodeType to) {
+    return PSSIFOption.many(Collections2.filter(mappings, new Predicate<ConnectionMapping>() {
+      @Override
+      public boolean apply(ConnectionMapping input) {
+        return input.getTo().isAssignableFrom(to);
+      }
+    }));
   }
 
-  @Override
-  public void removeAttributeGroup(AttributeGroup group) {
-    if (PSSIFUtil.areSame(group.getName(), PSSIFConstants.DEFAULT_ATTRIBUTE_GROUP_NAME)) {
-      throw new PSSIFStructuralIntegrityException("The default attribute group can not be removed!");
-    }
-    super.removeAttributeGroup(findAttributeGroup(group.getName()));
-  }
 }

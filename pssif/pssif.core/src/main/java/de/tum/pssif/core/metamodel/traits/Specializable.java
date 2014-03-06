@@ -2,15 +2,11 @@ package de.tum.pssif.core.metamodel.traits;
 
 import java.util.Collection;
 
+import de.tum.pssif.core.metamodel.ElementType;
 
-/**
- * Defines operations allowed in connection with structural
- * specialization between element types.
- *
- * @param <T>
- *      The concrete element type.
- */
-public interface Specializable<T> {
+
+public interface Specializable<T extends ElementType<T>> {
+  boolean isAssignableFrom(T type);
 
   /**
    * @return

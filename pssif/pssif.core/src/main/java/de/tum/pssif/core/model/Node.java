@@ -1,37 +1,17 @@
 package de.tum.pssif.core.model;
 
-import de.tum.pssif.core.metamodel.impl.ConnectOperation;
-import de.tum.pssif.core.metamodel.impl.DisconnectOperation;
-import de.tum.pssif.core.metamodel.impl.ReadConnectedOperation;
-import de.tum.pssif.core.util.PSSIFOption;
+import de.tum.pssif.core.common.PSSIFOption;
+import de.tum.pssif.core.metamodel.ConnectionMapping;
+import de.tum.pssif.core.metamodel.impl.ReadIncomingNodesOperation;
+import de.tum.pssif.core.metamodel.impl.ReadOutgoingNodesOperation;
 
 
-/**
- * A node in a PSS-IF Model and an (ontological) instance of a
- * Node Type. 
- */
 public interface Node extends Element {
+  PSSIFOption<Edge> apply(ReadOutgoingNodesOperation op);
 
-  /**
-   * Retrieves edges connected to this node.
-   * @param op
-   *    The read connected operation, supplied by an edge end.
-   * @return
-   *    A PSS-IF Option holding the connected edges.
-   */
-  PSSIFOption<Edge> apply(ReadConnectedOperation op);
+  PSSIFOption<Edge> apply(ReadIncomingNodesOperation op);
 
-  /**
-   * Performs a connect operation on this node.
-   * @param op
-   *    The connect operation, supplied by a connection mapping.
-   */
-  void apply(ConnectOperation op);
+  void registerOutgoingEdge(ConnectionMapping mapping, Edge edge);
 
-  /**
-   * Performs a disconnect operation on this node.
-   * @param op
-   *    The disconnect operation, supplied by a connection mapping.
-   */
-  void apply(DisconnectOperation op);
+  void registerIncomingEdge(ConnectionMapping mapping, Edge edge);
 }

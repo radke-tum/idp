@@ -4,92 +4,160 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.google.common.collect.Sets;
+
+import de.tum.pssif.core.common.PSSIFOption;
 import de.tum.pssif.core.exception.PSSIFStructuralIntegrityException;
 import de.tum.pssif.core.metamodel.ConnectionMapping;
 import de.tum.pssif.core.metamodel.EdgeType;
-import de.tum.pssif.core.metamodel.Multiplicity.MultiplicityContainer;
-import de.tum.pssif.core.metamodel.Multiplicity.UnlimitedNatural;
-import de.tum.pssif.core.metamodel.MutableMetamodel;
+import de.tum.pssif.core.metamodel.Metamodel;
+import de.tum.pssif.core.metamodel.MetamodelProvider;
 import de.tum.pssif.core.metamodel.NodeType;
-import de.tum.pssif.core.metamodel.impl.MetamodelImpl;
 import de.tum.pssif.core.model.impl.ModelImpl;
-import de.tum.pssif.core.util.PSSIFOption;
 
 
 public class ModelTest {
-  private MutableMetamodel metamodel;
-  private Model            model;
+  private Metamodel metamodel;
+  private Model     model;
 
   @Before
   public void init() {
-    metamodel = new MetamodelImpl();
-    NodeType development = metamodel.createNodeType("development artifact");
-
-    NodeType solution = metamodel.createNodeType("solution artifact");
-    solution.inherit(development);
-    NodeType hardware = metamodel.createNodeType("hardware");
-    hardware.inherit(solution);
-    NodeType software = metamodel.createNodeType("software");
-    software.inherit(solution);
-    NodeType usecase = metamodel.createNodeType("usecase");
-    usecase.inherit(development);
-    NodeType requirement = metamodel.createNodeType("requirement");
-    requirement.inherit(development);
-
-    EdgeType containment = metamodel.createEdgeType("containment");
-    containment.createMapping("contains", hardware, MultiplicityContainer.of(1, UnlimitedNatural.of(1), 0, UnlimitedNatural.UNLIMITED),
-        "contained in", hardware, MultiplicityContainer.of(1, UnlimitedNatural.of(1), 1, UnlimitedNatural.of(1)));
-    containment.createMapping("contains", hardware, MultiplicityContainer.of(1, UnlimitedNatural.of(1), 0, UnlimitedNatural.UNLIMITED),
-        "contained in", software, MultiplicityContainer.of(1, UnlimitedNatural.of(1), 1, UnlimitedNatural.of(1)));
-    containment.createMapping("contains", software, MultiplicityContainer.of(1, UnlimitedNatural.of(1), 0, UnlimitedNatural.UNLIMITED),
-        "contained in", software, MultiplicityContainer.of(1, UnlimitedNatural.of(1), 1, UnlimitedNatural.of(1)));
-
+    metamodel = MetamodelProvider.create();
     model = new ModelImpl();
+
+    NodeType x = nt("X");
+    NodeType s = nt("S");
+    NodeType a = nt("A");
+    NodeType b = nt("B");
+    NodeType jun = nt("jun");
+
+    node(s, "s1");
+    node(s, "s2");
+    node(s, "s3");
+    node(s, "s4");
+
+    node(a, "a1");
+    node(a, "a2");
+
+    node(b, "b1");
+
+    node(jun, "j1");
+    node(jun, "j2");
+
+    Assert.assertEquals(0, x.apply(model, false).size());
+    Assert.assertEquals(7, x.apply(model, true).size());
+    Assert.assertEquals(4, s.apply(model, false).size());
+    Assert.assertEquals(2, a.apply(model, false).size());
+    Assert.assertEquals(1, b.apply(model, false).size());
+    Assert.assertEquals(2, jun.apply(model, false).size());
   }
 
   @Test
-  public void test() {
-    Node ebike = node("hardware").create(model);
-    Node smartphone = node("hardware").create(model);
-    Node battery = node("hardware").create(model);
-    Node rentalApp = node("software").create(model);
+  public void testSimpleModel() {
+    NodeType s = nt("S");
+    NodeType a = nt("A");
+    NodeType b = nt("B");
 
-    EdgeType hwContainment = node("hardware").findOutgoingEdgeType("containment");
-    ConnectionMapping hw2hw = hwContainment.getMapping(node("hardware"), node("hardware"));
-    ConnectionMapping hw2sw = hwContainment.getMapping(node("hardware"), node("software"));
+    EdgeType cf = et("CF");
 
-    hw2hw.create(model, ebike, battery);
-    hw2hw.create(model, ebike, smartphone);
-    hw2sw.create(model, smartphone, rentalApp);
+    ConnectionMapping s_a = cm(cf, s, a);
+    ConnectionMapping s_b = cm(cf, s, b);
 
-    PSSIFOption<Edge> edges = hwContainment.getIncoming().apply(ebike);
-    Assert.assertEquals(2, edges.size());
-    for (Edge edge : edges.getMany()) {
-      Assert.assertEquals(ebike, hwContainment.getIncoming().apply(edge).getOne());
+    Node a1 = node(a, "a1");
+    Node a2 = node(a, "a2");
+    Node b1 = node(b, "b1");
+    Node s1 = node(s, "s1");
+    Edge cf1 = s_a.create(model, s1, a1);
+    Edge cf2 = s_a.create(model, s1, a2);
+    Edge cf3 = s_b.create(model, s1, b1);
+
+    Assert.assertEquals(Sets.newHashSet(cf1, cf2), s_a.apply(model).getMany());
+    Assert.assertEquals(cf3, s_b.apply(model).getOne());
+
+    Assert.assertEquals(cf1, s_a.applyIncoming(a1).getOne());
+    Assert.assertEquals(Sets.newHashSet(cf1, cf2), s_a.applyOutgoing(s1).getMany());
+    Assert.assertEquals(s1, s_a.applyFrom(cf1));
+    Assert.assertEquals(a1, s_a.applyTo(cf1));
+
+    Assert.assertEquals(cf3, s_b.applyIncoming(b1).getOne());
+    Assert.assertEquals(cf3, s_b.applyOutgoing(s1).getOne());
+    Assert.assertEquals(s1, s_b.applyFrom(cf3));
+    Assert.assertEquals(b1, s_b.applyTo(cf3));
+  }
+
+  @Test
+  public void testSimpleJunctionNegativeFromFirst() {
+    NodeType s = nt("S");
+    NodeType jun = nt("jun");
+
+    Node s1 = node(s, "s1");
+    Node s2 = node(s, "s2");
+    Node j1 = node(jun, "j1");
+    Node j2 = node(jun, "j2");
+
+    EdgeType cf = et("CF");
+    ConnectionMapping s_j = cf.getMapping(s, jun).getOne();
+    ConnectionMapping j_s = cf.getMapping(jun, s).getOne();
+    ConnectionMapping j_j = cf.getMapping(jun, jun).getOne();
+
+    Edge cf1 = s_j.create(model, s1, j1);
+    Assert.assertNotNull(cf1);
+    Edge cf2 = j_j.create(model, j1, j2);
+    Assert.assertNotNull(cf2);
+    try {
+      j_s.create(model, j2, s2);
+      Assert.fail();
+    } catch (PSSIFStructuralIntegrityException e) {
+      //expected
     }
   }
 
-  @Test(expected = PSSIFStructuralIntegrityException.class)
-  public void testConstraintViolation() {
-    Node ebike = node("hardware").create(model);
-    Node smartphone = node("hardware").create(model);
-    Node battery = node("hardware").create(model);
-    Node rentalApp = node("software").create(model);
-    Node gpsApp = node("software").create(model);
+  @Test
+  public void testSimpleJunctionNegativeToFirst() {
+    NodeType s = nt("S");
+    NodeType jun = nt("jun");
 
-    EdgeType hwContainment = node("hardware").findOutgoingEdgeType("containment");
-    ConnectionMapping hw2hw = hwContainment.getMapping(node("hardware"), node("hardware"));
-    ConnectionMapping hw2sw = hwContainment.getMapping(node("hardware"), node("software"));
+    Node s1 = node(s, "s1");
+    Node s2 = node(s, "s2");
+    Node j1 = node(jun, "j1");
+    Node j2 = node(jun, "j2");
 
-    hw2hw.create(model, ebike, battery);
-    hw2hw.create(model, ebike, smartphone);
-    Edge smartphoneContainment = hw2sw.create(model, smartphone, rentalApp);
-    hw2sw.connectTo(smartphoneContainment, gpsApp);
+    EdgeType cf = et("CF");
+    ConnectionMapping s_j = cf.getMapping(s, jun).getOne();
+    ConnectionMapping j_s = cf.getMapping(jun, s).getOne();
+    ConnectionMapping j_j = cf.getMapping(jun, jun).getOne();
+
+    Edge cf1 = s_j.create(model, s1, j1);
+    Assert.assertNotNull(cf1);
+    Edge cf2 = j_s.create(model, j2, s2);
+    Assert.assertNotNull(cf2);
+    try {
+      j_j.create(model, j1, j2);
+      Assert.fail();
+    } catch (PSSIFStructuralIntegrityException e) {
+      //expected
+    }
   }
 
-  //TODO test attributes
+  private NodeType nt(String name) {
+    return metamodel.getNodeType(name).getOne();
+  }
 
-  private NodeType node(String name) {
-    return metamodel.findNodeType(name);
+  private EdgeType et(String name) {
+    return metamodel.getEdgeType(name).getOne();
+  }
+
+  private Node node(NodeType type, String id) {
+    PSSIFOption<Node> result = type.apply(model, id, false);
+    if (result.isNone()) {
+      Node node = type.create(model);
+      node.setId(id);
+      result = PSSIFOption.one(node);
+    }
+    return result.getOne();
+  }
+
+  private ConnectionMapping cm(EdgeType et, NodeType from, NodeType to) {
+    return et.getMapping(from, to).getOne();
   }
 }

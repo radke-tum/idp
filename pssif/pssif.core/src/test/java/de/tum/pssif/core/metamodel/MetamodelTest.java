@@ -1,76 +1,97 @@
 package de.tum.pssif.core.metamodel;
 
-import java.util.Collection;
-
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
-import de.tum.pssif.core.PSSIFConstants;
-import de.tum.pssif.core.metamodel.Multiplicity.MultiplicityContainer;
-import de.tum.pssif.core.metamodel.Multiplicity.UnlimitedNatural;
+import de.tum.pssif.core.common.PSSIFOption;
+import de.tum.pssif.core.common.PSSIFUtil;
+import de.tum.pssif.core.exception.PSSIFStructuralIntegrityException;
 import de.tum.pssif.core.metamodel.impl.MetamodelImpl;
+import de.tum.pssif.core.metamodel.mutable.MutableEdgeType;
+import de.tum.pssif.core.metamodel.mutable.MutableMetamodel;
+import de.tum.pssif.core.metamodel.mutable.MutableNodeType;
 
 
 public class MetamodelTest {
-  private MutableMetamodel metamodel = new MetamodelImpl();
+  private MutableMetamodel metamodel;
 
-  @Test
-  public void test() {
-    NodeType is = metamodel.createNodeType("is");
-    NodeType comp = metamodel.createNodeType("component");
-    NodeType data = metamodel.createNodeType("dataobject");
-    EdgeType infoflow = metamodel.createEdgeType("infoflow");
-    ConnectionMapping is2is = infoflow.createMapping("infoflows", is,
-        MultiplicityContainer.of(1, UnlimitedNatural.of(1), 0, UnlimitedNatural.UNLIMITED), "infoflows", is,
-        MultiplicityContainer.of(1, UnlimitedNatural.of(1), 0, UnlimitedNatural.UNLIMITED));
-    ConnectionMapping is2comp = infoflow.createMapping("infoflows", is,
-        MultiplicityContainer.of(1, UnlimitedNatural.of(1), 0, UnlimitedNatural.UNLIMITED), "infoflows", comp,
-        MultiplicityContainer.of(1, UnlimitedNatural.of(1), 0, UnlimitedNatural.UNLIMITED));
-    EdgeEnd aux = infoflow.createAuxiliary("dataobjects", MultiplicityContainer.of(0, UnlimitedNatural.UNLIMITED, 0, UnlimitedNatural.UNLIMITED),
-        data);
-
-    infoflow = metamodel.findEdgeType("infoflow");
-    Assert.assertEquals(is2is, infoflow.getMapping(is, is));
-    Assert.assertEquals(is2comp, infoflow.getMapping(is, comp));
-    Assert.assertEquals(1, infoflow.getAuxiliaries().size());
-    Assert.assertEquals(aux, infoflow.getAuxiliaries().iterator().next());
-
-    // TODO check on incomings, outgoings and auxiliaries of the NodeTypes.
-    // TODO define behavior of incomings, outgoings and auxiliaries:
-    // are all "infoflow" outgoings bundled into an EdgeTypeBundle?
+  @Before
+  public void init() {
+    metamodel = new MetamodelImpl();
   }
 
   @Test
-  public void generalizationTest() {
-    NodeType development = metamodel.createNodeType("development");
-    NodeType solution = metamodel.createNodeType("solution");
-    NodeType sw = metamodel.createNodeType("software");
+  public void testCreateNodeType() {
+    MutableNodeType mnt = metamodel.createNodeType("Node");
+    Assert.assertNotNull(mnt);
+    Assert.assertEquals(PSSIFUtil.normalize("Node"), mnt.getName());
 
-    sw.inherit(solution);
+    Assert.assertEquals(1, metamodel.getNodeTypes().size());
+    Assert.assertEquals(1, metamodel.getMutableNodeTypes().size());
 
-    NodeType rootNodeType = metamodel.findNodeType(PSSIFConstants.ROOT_NODE_TYPE_NAME);
+    PSSIFOption<NodeType> nt = metamodel.getNodeType("Node");
+    Assert.assertTrue(nt.isOne());
+    Assert.assertEquals(mnt, nt.getOne());
+    Assert.assertEquals(nt, metamodel.getMutableNodeType("Node"));
+  }
 
-    Assert.assertNull(rootNodeType.getGeneral());
-    Collection<NodeType> specials = rootNodeType.getSpecials();
-    Assert.assertEquals(2, specials.size());
-    Assert.assertTrue(specials.contains(development));
-    Assert.assertTrue(specials.contains(solution));
+  @Test
+  public void testCreateEdgeType() {
+    MutableEdgeType met = metamodel.createEdgeType("Edge");
+    Assert.assertNotNull(met);
+    Assert.assertEquals(PSSIFUtil.normalize("Edge"), met.getName());
 
-    Assert.assertEquals(rootNodeType, development.getGeneral());
-    Assert.assertEquals(rootNodeType, solution.getGeneral());
+    Assert.assertEquals(1, metamodel.getEdgeTypes().size());
+    Assert.assertEquals(1, metamodel.getMutableEdgeTypes().size());
 
-    EdgeType flow = metamodel.createEdgeType("flow");
-    flow.createMapping("flows", solution, MultiplicityContainer.of(1, UnlimitedNatural.of(1), 0, UnlimitedNatural.UNLIMITED), "flows", solution,
-        MultiplicityContainer.of(1, UnlimitedNatural.of(1), 0, UnlimitedNatural.UNLIMITED));
-    EdgeType infoflow = metamodel.createEdgeType("infoflow");
-    infoflow.createMapping("infoflows", sw, MultiplicityContainer.of(1, UnlimitedNatural.of(1), 0, UnlimitedNatural.UNLIMITED), "infoflows", sw,
-        MultiplicityContainer.of(1, UnlimitedNatural.of(1), 0, UnlimitedNatural.UNLIMITED));
+    PSSIFOption<EdgeType> et = metamodel.getEdgeType("Edge");
+    Assert.assertTrue(et.isOne());
+    Assert.assertEquals(met, et.getOne());
+    Assert.assertEquals(et, metamodel.getMutableEdgeType("Edge"));
+  }
 
-    infoflow.inherit(flow);
+  @Test(expected = PSSIFStructuralIntegrityException.class)
+  public void testCreateNodeTypeDuplicateName() {
+    MutableNodeType mnt = metamodel.createNodeType("Node");
+    Assert.assertNotNull(mnt);
+    Assert.assertEquals(PSSIFUtil.normalize("Node"), mnt.getName());
 
-    Collection<EdgeType> flowSpecials = flow.getSpecials();
-    Assert.assertEquals(1, flowSpecials.size());
-    Assert.assertTrue(flowSpecials.contains(infoflow));
-    Assert.assertEquals(flow, infoflow.getGeneral());
+    Assert.assertEquals(1, metamodel.getNodeTypes().size());
+    Assert.assertEquals(1, metamodel.getMutableNodeTypes().size());
+
+    metamodel.createNodeType("node");
+  }
+
+  @Test(expected = PSSIFStructuralIntegrityException.class)
+  public void testCreateEdgeTypeDuplicateName() {
+    MutableEdgeType met = metamodel.createEdgeType("Edge");
+    Assert.assertNotNull(met);
+    Assert.assertEquals(PSSIFUtil.normalize("Edge"), met.getName());
+
+    Assert.assertEquals(1, metamodel.getEdgeTypes().size());
+    Assert.assertEquals(1, metamodel.getMutableEdgeTypes().size());
+
+    metamodel.createEdgeType("edge");
+  }
+
+  @Test(expected = PSSIFStructuralIntegrityException.class)
+  public void testCreateNodeTypeWithNullName() {
+    metamodel.createNodeType(null);
+  }
+
+  @Test(expected = PSSIFStructuralIntegrityException.class)
+  public void testCreateEdgeTypeWithNullName() {
+    metamodel.createEdgeType(null);
+  }
+
+  @Test(expected = PSSIFStructuralIntegrityException.class)
+  public void testCreateNodeTypeWithEmptyName() {
+    metamodel.createNodeType(" ");
+  }
+
+  @Test(expected = PSSIFStructuralIntegrityException.class)
+  public void testCreateEdgeTypeWithEmptyName() {
+    metamodel.createEdgeType(" ");
   }
 }

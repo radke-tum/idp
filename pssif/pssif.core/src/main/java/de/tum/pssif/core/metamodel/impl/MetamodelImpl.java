@@ -1,92 +1,96 @@
 package de.tum.pssif.core.metamodel.impl;
 
-import de.tum.pssif.core.PSSIFConstants;
+import java.util.Collection;
+import java.util.Map;
+
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Maps;
+
+import de.tum.pssif.core.common.PSSIFOption;
+import de.tum.pssif.core.common.PSSIFUtil;
 import de.tum.pssif.core.exception.PSSIFStructuralIntegrityException;
-import de.tum.pssif.core.metamodel.AttributeCategory;
 import de.tum.pssif.core.metamodel.EdgeType;
-import de.tum.pssif.core.metamodel.ElementType;
-import de.tum.pssif.core.metamodel.Enumeration;
-import de.tum.pssif.core.metamodel.Multiplicity.MultiplicityContainer;
-import de.tum.pssif.core.metamodel.Multiplicity.UnlimitedNatural;
-import de.tum.pssif.core.metamodel.MutableMetamodel;
 import de.tum.pssif.core.metamodel.NodeType;
-import de.tum.pssif.core.metamodel.PrimitiveDataType;
-import de.tum.pssif.core.metamodel.impl.base.AbstractMetamodel;
-import de.tum.pssif.core.util.PSSIFUtil;
+import de.tum.pssif.core.metamodel.mutable.MutableEdgeType;
+import de.tum.pssif.core.metamodel.mutable.MutableJunctionNodeType;
+import de.tum.pssif.core.metamodel.mutable.MutableMetamodel;
+import de.tum.pssif.core.metamodel.mutable.MutableNodeType;
 
 
-public class MetamodelImpl extends AbstractMetamodel<NodeType, EdgeType> implements MutableMetamodel {
-  public MetamodelImpl() {
-    NodeTypeImpl rootNodeType = new NodeTypeImpl(PSSIFConstants.ROOT_NODE_TYPE_NAME);
-    addNodeTypeInternal(rootNodeType);
-    addDefaultAttributes(rootNodeType);
-    EdgeTypeImpl rootEdgeType = new EdgeTypeImpl(PSSIFConstants.ROOT_EDGE_TYPE_NAME);
-    addEdgeTypeInternal(rootEdgeType);
-    addDefaultAttributes(rootEdgeType);
-    rootEdgeType.createAttribute(rootEdgeType.getDefaultAttributeGroup(), PSSIFConstants.BUILTIN_ATTRIBUTE_DIRECTED, PrimitiveDataType.BOOLEAN, true,
-        AttributeCategory.METADATA);
-    rootEdgeType.createMapping("from", rootNodeType, MultiplicityContainer.of(1, UnlimitedNatural.UNLIMITED, 0, UnlimitedNatural.UNLIMITED), "to",
-        rootNodeType, MultiplicityContainer.of(1, UnlimitedNatural.UNLIMITED, 0, UnlimitedNatural.UNLIMITED));
-  }
-
-  private final void addDefaultAttributes(ElementType<?, ?> type) {
-    type.createAttribute(type.getDefaultAttributeGroup(), PSSIFConstants.BUILTIN_ATTRIBUTE_ID, PrimitiveDataType.STRING, true,
-        AttributeCategory.METADATA);
-    type.createAttribute(type.getDefaultAttributeGroup(), PSSIFConstants.BUILTIN_ATTRIBUTE_NAME, PrimitiveDataType.STRING, true,
-        AttributeCategory.METADATA);
-    type.createAttribute(type.getDefaultAttributeGroup(), PSSIFConstants.BUILTIN_ATTRIBUTE_VALIDITY_START, PrimitiveDataType.DATE, true,
-        AttributeCategory.TIME);
-    type.createAttribute(type.getDefaultAttributeGroup(), PSSIFConstants.BUILTIN_ATTRIBUTE_VALIDITY_END, PrimitiveDataType.DATE, true,
-        AttributeCategory.TIME);
-    type.createAttribute(type.getDefaultAttributeGroup(), PSSIFConstants.BUILTIN_ATTRIBUTE_VERSION, PrimitiveDataType.STRING, true,
-        AttributeCategory.METADATA);
-    type.createAttribute(type.getDefaultAttributeGroup(), PSSIFConstants.BUILTIN_ATTRIBUTE_COMMENT, PrimitiveDataType.STRING, true,
-        AttributeCategory.METADATA);
-  }
+public class MetamodelImpl implements MutableMetamodel {
+  private Map<String, MutableNodeType> nodeTypes = Maps.newHashMap();
+  private Map<String, MutableEdgeType> edgeTypes = Maps.newHashMap();
 
   @Override
-  public NodeType createNodeType(String name) {
-    if (!PSSIFUtil.isValidName(name)) {
-      throw new PSSIFStructuralIntegrityException("a node can not have an empty name");
+  public MutableNodeType createNodeType(String name) {
+    PSSIFUtil.checkNameValidity(name);
+    if (!getNodeType(name).isNone()) {
+      throw new PSSIFStructuralIntegrityException("a nodetype with name '" + name + "' already exists");
     }
-    if (findNodeType(name) != null) {
-      throw new PSSIFStructuralIntegrityException("a node type with the name " + name + " already exists");
-    }
-    NodeTypeImpl result = new NodeTypeImpl(name);
-    addNodeTypeInternal(result);
-    result.inherit(findNodeType(PSSIFConstants.ROOT_NODE_TYPE_NAME));
+    MutableNodeType result = new NodeTypeImpl(PSSIFUtil.normalize(name));
+    nodeTypes.put(result.getName(), result);
     return result;
   }
 
   @Override
-  public EdgeType createEdgeType(String name) {
-    if (!PSSIFUtil.isValidName(name)) {
-      throw new PSSIFStructuralIntegrityException("an edge can not have an empty name");
+  public MutableJunctionNodeType createJunctionNodeType(String name) {
+    PSSIFUtil.checkNameValidity(name);
+    if (!getNodeType(name).isNone()) {
+      throw new PSSIFStructuralIntegrityException("a nodetype with name '" + name + "' already exists");
     }
-    if (findEdgeType(name) != null) {
-      throw new PSSIFStructuralIntegrityException("an edge type with name " + name + " already exitsts");
-    }
-    EdgeTypeImpl result = new EdgeTypeImpl(name);
-    addEdgeTypeInternal(result);
-    result.inherit(findEdgeType(PSSIFConstants.ROOT_EDGE_TYPE_NAME));
+    MutableJunctionNodeType result = new JunctionNodeTypeImpl(PSSIFUtil.normalize(name));
+    nodeTypes.put(result.getName(), result);
     return result;
   }
 
   @Override
-  public EnumerationImpl createEnumeration(String name) {
-    if (!PSSIFUtil.isValidName(name)) {
-      throw new PSSIFStructuralIntegrityException("name can not be null or empty");
+  public MutableEdgeType createEdgeType(String name) {
+    PSSIFUtil.checkNameValidity(name);
+    if (!getEdgeType(name).isNone()) {
+      throw new PSSIFStructuralIntegrityException("an edgetype with name '" + name + "' already exists");
     }
-    if (findDataType(name) != null) {
-      throw new PSSIFStructuralIntegrityException("duplicate data type with name " + name);
-    }
-    EnumerationImpl result = new EnumerationImpl(name);
-    addEnumerationInternal(result);
+    EdgeTypeImpl result = new EdgeTypeImpl(PSSIFUtil.normalize(name));
+    edgeTypes.put(result.getName(), result);
     return result;
   }
 
   @Override
-  public void removeEnumeration(Enumeration enumeration) {
-    super.removeEnumerationInternal(enumeration);
+  public Collection<NodeType> getNodeTypes() {
+    return ImmutableSet.<NodeType> copyOf(nodeTypes.values());
+  }
+
+  @Override
+  public Collection<EdgeType> getEdgeTypes() {
+    return ImmutableSet.<EdgeType> copyOf(edgeTypes.values());
+  }
+
+  @Override
+  public PSSIFOption<NodeType> getNodeType(String name) {
+    return PSSIFOption.<NodeType> one(nodeTypes.get(PSSIFUtil.normalize(name)));
+  }
+
+  @Override
+  public PSSIFOption<EdgeType> getEdgeType(String name) {
+    return PSSIFOption.<EdgeType> one(edgeTypes.get(PSSIFUtil.normalize(name)));
+  }
+
+  @Override
+  public Collection<MutableNodeType> getMutableNodeTypes() {
+    return ImmutableSet.copyOf(nodeTypes.values());
+  }
+
+  @Override
+  public Collection<MutableEdgeType> getMutableEdgeTypes() {
+    return ImmutableSet.copyOf(edgeTypes.values());
+  }
+
+  @Override
+  public PSSIFOption<MutableNodeType> getMutableNodeType(String name) {
+    return PSSIFOption.one(nodeTypes.get(PSSIFUtil.normalize(name)));
+  }
+
+  @Override
+  public PSSIFOption<MutableEdgeType> getMutableEdgeType(String name) {
+    return PSSIFOption.one(edgeTypes.get(PSSIFUtil.normalize(name)));
   }
 }

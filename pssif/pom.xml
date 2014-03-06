@@ -6,6 +6,7 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<modules>
+		<module>pssif.core.old</module>
 		<module>pssif.core</module>
 		<module>pssif.vsdx</module>
 		<module>pssif.transform</module>
