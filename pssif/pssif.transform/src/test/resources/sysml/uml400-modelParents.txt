@@ -1,0 +1,16 @@
+Model
+-Package
+--Namespace
+---NamedElement
+----Element
+-----EModelElement
+--PackageableElement
+---NamedElement
+----Element
+-----EModelElement
+---ParameterableElement
+----Element
+-----EModelElement
+--TemplateableElement
+---Element
+----EModelElement
