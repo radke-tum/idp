@@ -15,13 +15,13 @@ public interface NodeType extends ElementType<NodeType> {
 
   PSSIFOption<Node> apply(Model model, String id, boolean includeSubtypes);
 
-  //  boolean isConnectionToTypeValid(Node sourceNode, EdgeType edgeType, NodeType toType);
-
   Collection<NodeType> leftClosure(EdgeType edgeType, Node node);
 
-  //  boolean isConnectionFromTypeValid(Node targetNode, EdgeType edgeType, NodeType fromType);
-
   Collection<NodeType> rightClosure(EdgeType edgeType, Node node);
+
+  int junctionIncomingEdgeCount(EdgeType edgeType, Node node);
+
+  int junctionOutgoingEdgeCount(EdgeType edgeType, Node node);
 
   void onOutgoingEdgeCreated(Node sourceNode, ConnectionMapping mapping, Edge edge);
 

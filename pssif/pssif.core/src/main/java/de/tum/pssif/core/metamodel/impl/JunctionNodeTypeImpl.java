@@ -47,29 +47,6 @@ public class JunctionNodeTypeImpl extends NodeTypeImpl implements MutableJunctio
     return PSSIFOption.merge(result, new ReadJunctionNodeOperation(this, id).apply(model));
   }
 
-  //  @Override
-  //  public boolean isConnectionFromTypeValid(Node node, EdgeType edgeType, NodeType fromType) {
-  //    //TODO check cardinality constraints (either many incoming or outgoing edges, exclusive or!)
-  //    PSSIFOption<ConnectionMapping> mappings = edgeType.getMapping(fromType, this);
-  //    if (!mappings.isOne()) {
-  //      return false;
-  //    }
-  //
-  //    ConnectionMapping mapping = mappings.getOne();
-  //    for (ConnectionMapping outgoingMapping : mapping.getType().getOutgoingMappings(mapping.getTo()).getMany()) {
-  //      PSSIFOption<Edge> outgoingEdges = outgoingMapping.applyOutgoing(node);
-  //      if (outgoingEdges.size() > 0) {
-  //        for (Edge outgoingEdge : outgoingEdges.getMany()) {
-  //          Node outgoingConnected = outgoingMapping.applyTo(outgoingEdge); //(2)
-  //          if (!outgoingMapping.getTo().isConnectionFromTypeValid(outgoingConnected, edgeType, fromType)) {
-  //            return false;
-  //          }
-  //        }
-  //      }
-  //    }
-  //
-  //    return true;
-  //  }
 
   @Override
   public Collection<NodeType> leftClosure(EdgeType edgeType, Node node) {
@@ -83,32 +60,17 @@ public class JunctionNodeTypeImpl extends NodeTypeImpl implements MutableJunctio
     return result;
   }
 
-  //
-  //  //TODO avoid loops within junction chains!!!
-  //  @Override
-  //  public boolean isConnectionToTypeValid(Node node /* (1) */, EdgeType edgeType, NodeType toType) {
-  //    //TODO check cardinality constraints (either many incoming or outgoing edges, exclusive or!)
-  //
-  //    PSSIFOption<ConnectionMapping> mappings = edgeType.getMapping(this, toType);
-  //    if (!mappings.isOne()) {
-  //      return false;
-  //    }
-  //
-  //    ConnectionMapping mapping = mappings.getOne();
-  //    for (ConnectionMapping incomingMapping : mapping.getType().getIncomingMappings(mapping.getFrom()).getMany()) {
-  //      PSSIFOption<Edge> incomingEdges = incomingMapping.applyIncoming(node);
-  //      if (incomingEdges.size() > 0) {
-  //        for (Edge incomingEdge : incomingEdges.getMany()) {
-  //          Node incomingConnected = incomingMapping.applyFrom(incomingEdge); //(2)
-  //          if (!incomingMapping.getFrom().isConnectionToTypeValid(incomingConnected, edgeType, toType)) {
-  //            return false;
-  //          }
-  //        }
-  //      }
-  //    }
-  //
-  //    return true;
-  //  }
+  @Override
+  public int junctionIncomingEdgeCount(EdgeType edgeType, Node node) {
+    int result = 0;
+
+    for (ConnectionMapping incomingMapping : edgeType.getIncomingMappings(this).getMany()) {
+      result += incomingMapping.applyIncoming(node).size();
+    }
+
+    return result;
+  }
+
 
   @Override
   public Collection<NodeType> rightClosure(EdgeType edgeType, Node node) {
@@ -119,6 +81,17 @@ public class JunctionNodeTypeImpl extends NodeTypeImpl implements MutableJunctio
         result.addAll(outgoingMapping.getTo().rightClosure(edgeType, toConnected));
       }
     }
+    return result;
+  }
+
+  @Override
+  public int junctionOutgoingEdgeCount(EdgeType edgeType, Node node) {
+    int result = 0;
+
+    for (ConnectionMapping outgoingMapping : edgeType.getOutgoingMappings(this).getMany()) {
+      result += outgoingMapping.applyOutgoing(node).size();
+    }
+
     return result;
   }
 

@@ -57,6 +57,16 @@ public class NodeTypeImpl extends ElementTypeImpl<NodeType> implements MutableNo
   }
 
   @Override
+  public int junctionIncomingEdgeCount(EdgeType edgeType, Node node) {
+    return 0;
+  }
+
+  @Override
+  public int junctionOutgoingEdgeCount(EdgeType edgeType, Node node) {
+    return 0;
+  }
+
+  @Override
   public void onOutgoingEdgeCreated(Node sourceNode, ConnectionMapping mapping, Edge edge) {
     sourceNode.registerOutgoingEdge(mapping, edge);
   }

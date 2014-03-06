@@ -48,6 +48,20 @@ public class ConnectionMappingImpl implements ConnectionMapping {
       throw new PSSIFStructuralIntegrityException("could not find one of the nodes to connect");
     }
 
+    //check multiplicity on junctions
+    int fromIncomingCount = getFrom().junctionIncomingEdgeCount(getType(), from);
+    int fromOutgoingCount = getFrom().junctionOutgoingEdgeCount(getType(), from);
+    int toOutgoingCount = getTo().junctionOutgoingEdgeCount(getType(), to);
+    int toIncomingCount = getTo().junctionIncomingEdgeCount(getType(), to);
+
+    if (fromIncomingCount > 1 && fromOutgoingCount >= 1) {
+      throw new PSSIFStructuralIntegrityException("creating the requested edge would violate multiplicities across junctions");
+    }
+    else if (toOutgoingCount > 1 && toIncomingCount >= 1) {
+      throw new PSSIFStructuralIntegrityException("creating the requested edge would violate multiplicities across junctions");
+    }
+
+    //check connectionmapping consistency across junctions
     Collection<NodeType> leftClosure = getFrom().leftClosure(type, from);
     Collection<NodeType> rightClosure = getTo().rightClosure(type, to);
 
