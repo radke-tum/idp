@@ -3,6 +3,8 @@ package gui;
 
 import graph.operations.AttributeFilter;
 import graph.operations.GraphViewContainer;
+import graph.operations.MasterFilter;
+import graph.operations.NodeAndEdgeTypeFilter;
 import gui.graph.AttributeFilterPopup;
 import gui.graph.CreateNewGraphViewPopup;
 import gui.graph.GraphVisualization;
@@ -63,9 +65,10 @@ public class Main {
 	private JMenu deleteNodeFilter;
 	private JMenu deleteEdgeFilter;
 	
-	private LinkedList<String> activeNodeFilters;
-	private LinkedList<String> activeEdgeFilters;
+	//private LinkedList<String> activeNodeFilters;
+	//private LinkedList<String> activeEdgeFilters;
 	private FileImporter importer;
+	private MasterFilter masterFilter;
 	
 	public static void main(String[] args) {
 		
@@ -113,8 +116,8 @@ public class Main {
 	 */
 	private JMenuBar createFileMenu()
 	{
-		this.activeEdgeFilters = new LinkedList<String>();
-		this.activeNodeFilters = new LinkedList<String>();
+	//	this.activeEdgeFilters = new LinkedList<String>();
+	//	this.activeNodeFilters = new LinkedList<String>();
 		
 		JMenuBar menuBar = new JMenuBar();
 		
@@ -130,6 +133,7 @@ public class Main {
 			        // Create the Views
 			        matrixView = new MatrixView();
 					graphView = new GraphView();
+					masterFilter = new MasterFilter(graphView);
 					
 					Dimension d = frame.getSize();
 					
@@ -437,21 +441,23 @@ public class Main {
 				if (result !=null && result.contains(AttributeFilterPopup.newEdge))
 				{
 					String condition = result.substring(result.indexOf("|")+1);
-					activeEdgeFilters.add(condition);
+					//activeEdgeFilters.add(condition);
+					masterFilter.addEdgeAttributFilter(condition, true);
 					resetApplyEdgeFilters(condition);
 					resetDeleteEdgeFilters();
 					
-					graphView.getGraph().updateGraph();
+					//graphView.getGraph().updateGraph();
 				}
 				
 				if (result !=null && result.contains(AttributeFilterPopup.newNode))
 				{
 					String condition = result.substring(result.indexOf("|")+1);
-					activeNodeFilters.add(condition);
+					//activeNodeFilters.add(condition);
+					masterFilter.addNodeAttributFilter(condition, true);
 					resetApplyNodeFilters(condition);
 					resetDeleteNodeFilters();
 					
-					graphView.getGraph().updateGraph();
+					//graphView.getGraph().updateGraph();
 				}
 
 				
@@ -577,13 +583,18 @@ public class Main {
 					if (item.isSelected())
 					{
 						//System.out.println("Selected");
-						graphView.getGraph().applyNodeAndEdgeFilter(view.getSelectedNodeTypes(), view.getSelectedEdgeTypes(), name);
+						//graphView.getGraph().applyNodeAndEdgeFilter(view.getSelectedNodeTypes(), view.getSelectedEdgeTypes(), name);
+						//NodeAndEdgeTypeFilter.filter(view.getSelectedNodeTypes(), view.getSelectedEdgeTypes(), name);
+						masterFilter.applyNodeAndEdgeTypeFilter(name);
 					}
 					else
 					{
 					//	System.out.println("UnSelected");
-						graphView.getGraph().undoNodeAndEdgeFilter(name);
+					//	graphView.getGraph().undoNodeAndEdgeFilter(name);
+					//	NodeAndEdgeTypeFilter.undoFilter(name);
+						masterFilter.undoNodeAndEdgeTypeFilter(name);
 					}
+					//graphView.getGraph().updateGraph();
 					
 				}
 				});
@@ -621,7 +632,11 @@ public class Main {
 				public void actionPerformed(ActionEvent e) {
 					
 					graphView.getGraph().deleteGraphView(views.get(name));
-					graphView.getGraph().undoNodeAndEdgeFilter(name);
+					/*
+					NodeAndEdgeTypeFilter.undoFilter(name);
+					graphView.getGraph().updateGraph();
+					*/
+					masterFilter.removeNodeAndEdgeTypeFilter(name);
 					resetReadGraphViews();
 					resetDeleteGraphViews();
 				}
@@ -664,17 +679,19 @@ public class Main {
 							String condition = item.getText();
 							if (item.isSelected())
 							{
-								activeNodeFilters.add(condition);
-								AttributeFilter.applyNodeCondition(condition);
+								/*activeNodeFilters.add(condition);
+								AttributeFilter.applyNodeCondition(condition);*/
+								masterFilter.applyNodeAttributeFilter(condition);
 								
 							}
 							else
 							{
-								activeNodeFilters.remove(condition);
-								AttributeFilter.undoNodeCondition(condition, activeNodeFilters);
+								/*activeNodeFilters.remove(condition);
+								AttributeFilter.undoNodeCondition(condition, activeNodeFilters);*/
+								masterFilter.undoNodeAttributeFilter(condition);
 								
 							}
-							graphView.getGraph().updateGraph();
+							//graphView.getGraph().updateGraph();
 						}
 						catch (Exception ex)
 						{
@@ -688,10 +705,11 @@ public class Main {
 					}
 					});
 				
-				if ((newCondition!=null && name.equals(newCondition)) || activeNodeFilters.contains(name))
+				if ((newCondition!=null && name.equals(newCondition)) || masterFilter.NodeAttributFilterActive(name))
 				{
 					menuItem.setSelected(true);
 				}
+				
 				applyNodeFilter.add(menuItem);
 			}
 		}
@@ -723,16 +741,18 @@ public class Main {
 							String condition = item.getText();
 							if (item.isSelected())
 							{
-								activeEdgeFilters.add(condition);
-								AttributeFilter.applyEdgeCondition(condition);		
+								/*activeEdgeFilters.add(condition);
+								AttributeFilter.applyEdgeCondition(condition);	*/
+								masterFilter.applyEdgeAttributeFilter(condition);
 							}
 							else
 							{
-								activeEdgeFilters.remove(condition);
-								AttributeFilter.undoEdgeCondition(condition, activeEdgeFilters);
+								/*activeEdgeFilters.remove(condition);
+								AttributeFilter.undoEdgeCondition(condition, activeEdgeFilters);*/
+								masterFilter.undoEdgeAttributeFilter(condition);
 							}
 							
-							graphView.getGraph().updateGraph();
+							//graphView.getGraph().updateGraph();
 						}
 						catch (Exception ex)
 						{
@@ -746,7 +766,7 @@ public class Main {
 					}
 					});
 								
-				if ((newCondition!=null && name.equals(newCondition)) || activeEdgeFilters.contains(name))
+				if ((newCondition!=null && name.equals(newCondition)) || masterFilter.EdgeAttributFilterActive(name))
 				{
 					menuItem.setSelected(true);
 				}
@@ -775,9 +795,10 @@ public class Main {
 					@Override
 					public void actionPerformed(ActionEvent e) {
 						try {
-							activeNodeFilters.remove(name);
+							/*activeNodeFilters.remove(name);
 							AttributeFilter.removeNodeCondition(name, activeNodeFilters);
-							graphView.getGraph().updateGraph();
+							graphView.getGraph().updateGraph();*/
+							masterFilter.removeNodeAttributFilter(name);
 							
 							resetApplyNodeFilters(null);
 							resetDeleteNodeFilters();
@@ -818,9 +839,10 @@ public class Main {
 					@Override
 					public void actionPerformed(ActionEvent e) {
 						try {
-							activeEdgeFilters.remove(name);
+							/*activeEdgeFilters.remove(name);
 							AttributeFilter.removeEdgeCondition(name, activeEdgeFilters);
-							graphView.getGraph().updateGraph();
+							graphView.getGraph().updateGraph();*/
+							masterFilter.removeEdgeAttributFilter(name);
 							
 							resetApplyEdgeFilters(null);
 							resetDeleteEdgeFilters();
@@ -863,45 +885,6 @@ public class Main {
 		deleteEdgeFilter.removeAll();
 		addRemoveEdgeFilters();
 	}
-	
-	
-	/*private LinkedList<String> getSelectedNodeFilters()
-	{
-		LinkedList<String> res = new LinkedList<String>();
-		for (Component comp : applyNodeFilter.getComponents())
-		{
-			if (comp instanceof JCheckBoxMenuItem)
-			{
-				JCheckBoxMenuItem item = (JCheckBoxMenuItem) comp;
-				
-				if (item.isSelected())
-					res.add(item.getText());
-			}
-		}
-		
-		System.out.println("active Node Filters");
-		System.out.println(res);
-		return res;
-	}
-	
-	private LinkedList<String> getSelectedEdgeFilters()
-	{
-		LinkedList<String> res = new LinkedList<String>();
-		for (Component comp : applyEdgeFilter.getComponents())
-		{
-			if (comp instanceof JCheckBoxMenuItem)
-			{
-				JCheckBoxMenuItem item = (JCheckBoxMenuItem) comp;
-				
-				if (item.isSelected())
-					res.add(item.getText());
-			}
-		}
-		
-		System.out.println("active Edge Filters");
-		System.out.println(res);
-		return res;
-	}*/
 
 }
 

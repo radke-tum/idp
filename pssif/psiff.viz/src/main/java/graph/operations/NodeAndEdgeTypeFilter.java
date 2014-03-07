@@ -32,6 +32,7 @@ public class NodeAndEdgeTypeFilter {
 	 * Apply the Node and Edge Type filter to the graph
 	 * @param nodeTypes Node Types which should be displayed
 	 * @param edgeTypes Edge Types which should be displayed
+	 * @param viewName unique name for the view
 	 */
 	public static void filter( LinkedList<MyNodeType> nodeTypes,  LinkedList<MyEdgeType> edgeTypes, String viewName)
 	{		
@@ -39,6 +40,16 @@ public class NodeAndEdgeTypeFilter {
 		
 		mapViewToEdgeType.put(viewName, edgeTypes);
 		mapViewToNodeType.put(viewName, nodeTypes);
+		
+		calcVisibleNodesAndEdges();
+	}
+	
+	/**
+	 * Apply all active Node and Edge Type Filters
+	 */
+	public static void applyAllFilters()
+	{		
+		init();
 		
 		calcVisibleNodesAndEdges();
 	}

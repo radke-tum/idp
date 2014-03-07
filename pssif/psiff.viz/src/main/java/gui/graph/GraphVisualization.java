@@ -370,7 +370,7 @@ public class GraphVisualization
   }
 
 
-
+/*
 	public void applyNodeAndEdgeFilter(LinkedList<MyNodeType> nodes, LinkedList<MyEdgeType> edges, String viewName)
 	{
 		NodeAndEdgeTypeFilter.filter(nodes, edges, viewName);
@@ -384,7 +384,7 @@ public class GraphVisualization
 		
 		updateGraph();
 	}
-	
+	*/
 	public void updateGraph()
 	{
 		g = gb.updateGraph(detailedNodes);

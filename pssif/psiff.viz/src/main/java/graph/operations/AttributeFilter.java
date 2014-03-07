@@ -508,10 +508,10 @@ public class AttributeFilter {
 	 * @param activeConditions conditions which are currently active
 	 * @throws Exception if the given condition contains a problem. Datatypes cannot be compared, Wrong data format,..
 	 */
-	public static void removeNodeCondition(String condition, LinkedList<String> activeConditions) throws Exception
+	public static void removeNodeCondition(String condition/*, LinkedList<String> activeConditions*/) throws Exception
 	{
 		init();
-		undoNodeCondition(condition, activeConditions);
+		undoNodeCondition(condition/*, activeConditions*/);
 		nodeConditions.remove(condition);
 	}
 	
@@ -521,10 +521,10 @@ public class AttributeFilter {
 	 * @param activeConditions conditions which are currently active
 	 * @throws Exception if the given condition contains a problem. Datatypes cannot be compared, Wrong data format,..
 	 */
-	public static void removeEdgeCondition(String condition, LinkedList<String> activeConditions) throws Exception
+	public static void removeEdgeCondition(String condition/*, LinkedList<String> activeConditions*/) throws Exception
 	{
 		init();
-		undoEdgeCondition(condition, activeConditions);
+		undoEdgeCondition(condition/*, activeConditions*/);
 		edgeConditions.remove(condition);
 	}
 	
@@ -534,12 +534,12 @@ public class AttributeFilter {
 	 * @param activeConditions conditions which are currently active
 	 * @throws Exception if the given condition contains a problem. Datatypes cannot be compared, Wrong data format,..
 	 */
-	public static void undoEdgeCondition (String condition, LinkedList<String> activeConditions) throws Exception
+	public static void undoEdgeCondition (String condition/*, LinkedList<String> activeConditions*/) throws Exception
 	{
 		ConditionContainer c = edgeConditions.get(condition);
 		filterEdgeWithResult(c.attributeName, c.operation, c.refValue, true);
 		
-		applyAllOtherEdgeConditions(condition, activeConditions);
+		//applyAllOtherEdgeConditions(condition, activeConditions);
 		
 	}
 	
@@ -549,12 +549,12 @@ public class AttributeFilter {
 	 * @param activeConditions conditions which are currently active
 	 * @throws Exception if the given condition contains a problem. Datatypes cannot be compared, Wrong data format,..
 	 */
-	public static void undoNodeCondition (String condition, LinkedList<String> activeConditions) throws Exception
+	public static void undoNodeCondition (String condition/*, LinkedList<String> activeConditions*/) throws Exception
 	{
 		ConditionContainer c = nodeConditions.get(condition);
 		filterNodeWithResult(c.attributeName, c.operation, c.refValue, true);
 		
-		applyAllOtherNodeConditions(condition, activeConditions);
+		//applyAllOtherNodeConditions(condition, activeConditions);
 	}
 	
 	/**

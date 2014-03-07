@@ -2,6 +2,7 @@ package gui.graph;
 
 import graph.model.MyEdgeType;
 import graph.model.MyNodeType;
+import graph.operations.MasterFilter;
 import graph.operations.NodeAndEdgeTypeFilter;
 import gui.checkboxtree.CheckBoxTree;
 
@@ -36,11 +37,13 @@ public class EdgeAndNodeTypePopup extends MyPopup{
 	private JPanel EdgePanel;
 	private GraphVisualization graphViz;
 	private CheckBoxTree tree;
+	private MasterFilter masterFilter;
 	
-	public EdgeAndNodeTypePopup(GraphVisualization graphViz)
+	public EdgeAndNodeTypePopup(GraphVisualization graphViz, MasterFilter masterFilter)
 	{
 		this.graphViz = graphViz;
 		this.tree = new CheckBoxTree();
+		this.masterFilter = masterFilter;
 	}
 	/**
 	 * Evaluate the Popup after the users input
@@ -71,7 +74,8 @@ public class EdgeAndNodeTypePopup extends MyPopup{
         	
         	LinkedList<MyEdgeType> selectedEdges = tree.evalTree();
     		
-        	graphViz.applyNodeAndEdgeFilter(selectedNodes, selectedEdges, null);
+        	//graphViz.applyNodeAndEdgeFilter(selectedNodes, selectedEdges, null);
+        	//FIXME IF every used add Edge Operations here
     	}
 	}
 	

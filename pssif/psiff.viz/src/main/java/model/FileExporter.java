@@ -117,7 +117,7 @@ public class FileExporter {
 
     panel2.add(importeType);
     
-    saveFile.setSelectedFile(new File("PSS-IF_export.xml"));
+   // saveFile.setSelectedFile(new File("PSS-IF_export.xml"));
 
     int returnVal = saveFile.showSaveDialog(caller);
 
