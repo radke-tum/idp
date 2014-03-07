@@ -5,9 +5,7 @@ import java.util.Collection;
 import de.tum.pssif.core.metamodel.ElementType;
 
 
-public interface Specializable<T extends ElementType<T>> {
-  boolean isAssignableFrom(T type);
-
+public interface Specializable<T extends ElementType> {
   /**
    * @return
    *    The generalization of the context element type. May be <b>null</b>.

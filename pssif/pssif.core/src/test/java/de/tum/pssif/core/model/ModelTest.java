@@ -12,7 +12,7 @@ import de.tum.pssif.core.metamodel.ConnectionMapping;
 import de.tum.pssif.core.metamodel.EdgeType;
 import de.tum.pssif.core.metamodel.Metamodel;
 import de.tum.pssif.core.metamodel.MetamodelProvider;
-import de.tum.pssif.core.metamodel.NodeType;
+import de.tum.pssif.core.metamodel.NodeTypeBase;
 import de.tum.pssif.core.model.impl.ModelImpl;
 
 
@@ -25,11 +25,11 @@ public class ModelTest {
     metamodel = MetamodelProvider.create();
     model = new ModelImpl();
 
-    NodeType x = nt("X");
-    NodeType s = nt("S");
-    NodeType a = nt("A");
-    NodeType b = nt("B");
-    NodeType jun = nt("jun");
+    NodeTypeBase x = nt("X");
+    NodeTypeBase s = nt("S");
+    NodeTypeBase a = nt("A");
+    NodeTypeBase b = nt("B");
+    NodeTypeBase jun = nt("jun");
 
     node(s, "s1");
     node(s, "s2");
@@ -54,9 +54,9 @@ public class ModelTest {
 
   @Test
   public void testSimpleModel() {
-    NodeType s = nt("S");
-    NodeType a = nt("A");
-    NodeType b = nt("B");
+    NodeTypeBase s = nt("S");
+    NodeTypeBase a = nt("A");
+    NodeTypeBase b = nt("B");
 
     EdgeType cf = et("CF");
 
@@ -87,8 +87,8 @@ public class ModelTest {
 
   @Test
   public void testSimpleJunctionNegativeFromFirst() {
-    NodeType s = nt("S");
-    NodeType jun = nt("jun");
+    NodeTypeBase s = nt("S");
+    NodeTypeBase jun = nt("jun");
 
     Node s1 = node(s, "s1");
     Node s2 = node(s, "s2");
@@ -114,8 +114,8 @@ public class ModelTest {
 
   @Test
   public void testSimpleJunctionNegativeToFirst() {
-    NodeType s = nt("S");
-    NodeType jun = nt("jun");
+    NodeTypeBase s = nt("S");
+    NodeTypeBase jun = nt("jun");
 
     Node s1 = node(s, "s1");
     Node s2 = node(s, "s2");
@@ -141,9 +141,9 @@ public class ModelTest {
 
   @Test
   public void testSimpleJunctionNegativeMultiplicity() {
-    NodeType a = nt("A");
-    NodeType s = nt("S");
-    NodeType jun = nt("jun");
+    NodeTypeBase a = nt("A");
+    NodeTypeBase s = nt("S");
+    NodeTypeBase jun = nt("jun");
 
     Node s1 = node(s, "s1");
     Node s2 = node(s, "s2");
@@ -168,9 +168,9 @@ public class ModelTest {
 
   @Test
   public void testSimpleJunctionNegativeEdgeType() {
-    NodeType a = nt("A");
-    NodeType s = nt("S");
-    NodeType jun = nt("jun");
+    NodeTypeBase a = nt("A");
+    NodeTypeBase s = nt("S");
+    NodeTypeBase jun = nt("jun");
 
     Node s1 = node(s, "s1");
     Node s2 = node(s, "s2");
@@ -192,7 +192,7 @@ public class ModelTest {
     }
   }
 
-  private NodeType nt(String name) {
+  private NodeTypeBase nt(String name) {
     return metamodel.getNodeType(name).getOne();
   }
 
@@ -200,8 +200,8 @@ public class ModelTest {
     return metamodel.getEdgeType(name).getOne();
   }
 
-  private Node node(NodeType type, String id) {
-    PSSIFOption<Node> result = type.apply(model, id, false);
+  private Node node(NodeTypeBase type, String id) {
+    PSSIFOption<? extends Node> result = type.apply(model, id, false);
     if (result.isNone()) {
       Node node = type.create(model);
       node.setId(id);
@@ -210,7 +210,7 @@ public class ModelTest {
     return result.getOne();
   }
 
-  private ConnectionMapping cm(EdgeType et, NodeType from, NodeType to) {
+  private ConnectionMapping cm(EdgeType et, NodeTypeBase from, NodeTypeBase to) {
     return et.getMapping(from, to).getOne();
   }
 }

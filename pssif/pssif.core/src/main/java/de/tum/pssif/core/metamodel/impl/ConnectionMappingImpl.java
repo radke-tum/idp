@@ -6,7 +6,7 @@ import de.tum.pssif.core.common.PSSIFOption;
 import de.tum.pssif.core.exception.PSSIFStructuralIntegrityException;
 import de.tum.pssif.core.metamodel.ConnectionMapping;
 import de.tum.pssif.core.metamodel.EdgeType;
-import de.tum.pssif.core.metamodel.NodeType;
+import de.tum.pssif.core.metamodel.NodeTypeBase;
 import de.tum.pssif.core.model.Edge;
 import de.tum.pssif.core.model.Model;
 import de.tum.pssif.core.model.Node;
@@ -14,11 +14,11 @@ import de.tum.pssif.core.model.Node;
 
 // TODO check equals and hashcode (i.e. EdgeType and NodeType)
 public class ConnectionMappingImpl implements ConnectionMapping {
-  private final EdgeType type;
-  private final NodeType from;
-  private final NodeType to;
+  private final EdgeType     type;
+  private final NodeTypeBase from;
+  private final NodeTypeBase to;
 
-  public ConnectionMappingImpl(EdgeType type, NodeType from, NodeType to) {
+  public ConnectionMappingImpl(EdgeType type, NodeTypeBase from, NodeTypeBase to) {
     this.type = type;
     this.from = from;
     this.to = to;
@@ -30,19 +30,19 @@ public class ConnectionMappingImpl implements ConnectionMapping {
   }
 
   @Override
-  public NodeType getTo() {
+  public NodeTypeBase getTo() {
     return to;
   }
 
   @Override
-  public NodeType getFrom() {
+  public NodeTypeBase getFrom() {
     return from;
   }
 
   @Override
   public Edge create(Model model, Node from, Node to) {
-    PSSIFOption<Node> actualFrom = getFrom().apply(model, from.getId(), true);
-    PSSIFOption<Node> actualTo = getTo().apply(model, to.getId(), true);
+    PSSIFOption<? extends Node> actualFrom = getFrom().apply(model, from.getId(), true);
+    PSSIFOption<? extends Node> actualTo = getTo().apply(model, to.getId(), true);
 
     if (!actualFrom.isOne() || !actualTo.isOne()) {
       throw new PSSIFStructuralIntegrityException("could not find one of the nodes to connect");
@@ -66,11 +66,11 @@ public class ConnectionMappingImpl implements ConnectionMapping {
     }
 
     //check connectionmapping consistency across junctions
-    Collection<NodeType> leftClosure = getFrom().leftClosure(type, from);
-    Collection<NodeType> rightClosure = getTo().rightClosure(type, to);
+    Collection<NodeTypeBase> leftClosure = getFrom().leftClosure(type, from);
+    Collection<NodeTypeBase> rightClosure = getTo().rightClosure(type, to);
 
-    for (NodeType leftType : leftClosure) {
-      for (NodeType rightType : rightClosure) {
+    for (NodeTypeBase leftType : leftClosure) {
+      for (NodeTypeBase rightType : rightClosure) {
         if (getType().getMapping(leftType, rightType).isNone()) {
           throw new PSSIFStructuralIntegrityException("creating the requested edge would violate connectionmappings across junctions");
         }

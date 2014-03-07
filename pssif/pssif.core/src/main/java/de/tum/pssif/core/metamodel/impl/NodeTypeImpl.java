@@ -1,27 +1,26 @@
 package de.tum.pssif.core.metamodel.impl;
 
 import java.util.Collection;
+import java.util.Set;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 
 import de.tum.pssif.core.common.PSSIFOption;
-import de.tum.pssif.core.metamodel.ConnectionMapping;
-import de.tum.pssif.core.metamodel.EdgeType;
+import de.tum.pssif.core.exception.PSSIFStructuralIntegrityException;
+import de.tum.pssif.core.metamodel.ElementType;
 import de.tum.pssif.core.metamodel.NodeType;
 import de.tum.pssif.core.metamodel.mutable.MutableNodeType;
-import de.tum.pssif.core.model.Edge;
 import de.tum.pssif.core.model.Model;
 import de.tum.pssif.core.model.Node;
 
 
-public class NodeTypeImpl extends ElementTypeImpl<NodeType> implements MutableNodeType {
+public class NodeTypeImpl extends NodeTypeBaseImpl implements MutableNodeType {
+  private NodeType            general         = null;
+  private final Set<NodeType> specializations = Sets.newHashSet();
+
   public NodeTypeImpl(String name) {
     super(name);
-  }
-
-  @Override
-  public Node create(Model model) {
-    return new CreateNodeOperation(this).apply(model);
   }
 
   @Override
@@ -47,32 +46,50 @@ public class NodeTypeImpl extends ElementTypeImpl<NodeType> implements MutableNo
   }
 
   @Override
-  public Collection<NodeType> leftClosure(EdgeType edgeType, Node node) {
-    return ImmutableSet.<NodeType> of(this);
+  public boolean isAssignableFrom(ElementType type) {
+    if (this.equals(type)) {
+      return true;
+    }
+    else {
+      for (NodeType special : getSpecials()) {
+        if (special.isAssignableFrom(type)) {
+          return true;
+        }
+      }
+    }
+
+    return false;
   }
 
   @Override
-  public Collection<NodeType> rightClosure(EdgeType edgeType, Node node) {
-    return ImmutableSet.<NodeType> of(this);
+  public void inherit(NodeType general) {
+    if (general.isAssignableFrom(this)) {
+      throw new PSSIFStructuralIntegrityException("inheritance cycle detected");
+    }
+    if (this.general != null) {
+      this.general.unregisterSpecialization(this);
+    }
+    this.general = general;
+    this.general.registerSpecialization(this);
   }
 
   @Override
-  public int junctionIncomingEdgeCount(EdgeType edgeType, Node node) {
-    return 0;
+  public NodeType getGeneral() {
+    return general;
   }
 
   @Override
-  public int junctionOutgoingEdgeCount(EdgeType edgeType, Node node) {
-    return 0;
+  public Collection<NodeType> getSpecials() {
+    return ImmutableSet.copyOf(specializations);
   }
 
   @Override
-  public void onOutgoingEdgeCreated(Node sourceNode, ConnectionMapping mapping, Edge edge) {
-    sourceNode.registerOutgoingEdge(mapping, edge);
+  public void registerSpecialization(NodeType special) {
+    specializations.add(special);
   }
 
   @Override
-  public void onIncomingEdgeCreated(Node targetNode, ConnectionMapping mapping, Edge edge) {
-    targetNode.registerIncomingEdge(mapping, edge);
+  public void unregisterSpecialization(NodeType special) {
+    specializations.remove(special);
   }
 }

@@ -10,16 +10,17 @@ import de.tum.pssif.core.common.PSSIFOption;
 import de.tum.pssif.core.common.PSSIFUtil;
 import de.tum.pssif.core.exception.PSSIFStructuralIntegrityException;
 import de.tum.pssif.core.metamodel.EdgeType;
-import de.tum.pssif.core.metamodel.NodeType;
+import de.tum.pssif.core.metamodel.NodeTypeBase;
 import de.tum.pssif.core.metamodel.mutable.MutableEdgeType;
 import de.tum.pssif.core.metamodel.mutable.MutableJunctionNodeType;
 import de.tum.pssif.core.metamodel.mutable.MutableMetamodel;
 import de.tum.pssif.core.metamodel.mutable.MutableNodeType;
+import de.tum.pssif.core.metamodel.mutable.MutableNodeTypeBase;
 
 
 public class MetamodelImpl implements MutableMetamodel {
-  private Map<String, MutableNodeType> nodeTypes = Maps.newHashMap();
-  private Map<String, MutableEdgeType> edgeTypes = Maps.newHashMap();
+  private Map<String, MutableNodeTypeBase> nodeTypes = Maps.newHashMap();
+  private Map<String, MutableEdgeType>     edgeTypes = Maps.newHashMap();
 
   @Override
   public MutableNodeType createNodeType(String name) {
@@ -55,8 +56,8 @@ public class MetamodelImpl implements MutableMetamodel {
   }
 
   @Override
-  public Collection<NodeType> getNodeTypes() {
-    return ImmutableSet.<NodeType> copyOf(nodeTypes.values());
+  public Collection<NodeTypeBase> getNodeTypes() {
+    return ImmutableSet.<NodeTypeBase> copyOf(nodeTypes.values());
   }
 
   @Override
@@ -65,8 +66,8 @@ public class MetamodelImpl implements MutableMetamodel {
   }
 
   @Override
-  public PSSIFOption<NodeType> getNodeType(String name) {
-    return PSSIFOption.<NodeType> one(nodeTypes.get(PSSIFUtil.normalize(name)));
+  public PSSIFOption<NodeTypeBase> getNodeType(String name) {
+    return PSSIFOption.<NodeTypeBase> one(nodeTypes.get(PSSIFUtil.normalize(name)));
   }
 
   @Override
@@ -75,7 +76,7 @@ public class MetamodelImpl implements MutableMetamodel {
   }
 
   @Override
-  public Collection<MutableNodeType> getMutableNodeTypes() {
+  public Collection<MutableNodeTypeBase> getMutableNodeTypes() {
     return ImmutableSet.copyOf(nodeTypes.values());
   }
 
@@ -85,7 +86,7 @@ public class MetamodelImpl implements MutableMetamodel {
   }
 
   @Override
-  public PSSIFOption<MutableNodeType> getMutableNodeType(String name) {
+  public PSSIFOption<MutableNodeTypeBase> getMutableNodeType(String name) {
     return PSSIFOption.one(nodeTypes.get(PSSIFUtil.normalize(name)));
   }
 

@@ -8,7 +8,8 @@ import de.tum.pssif.core.common.PSSIFOption;
 import de.tum.pssif.core.exception.PSSIFStructuralIntegrityException;
 import de.tum.pssif.core.metamodel.ConnectionMapping;
 import de.tum.pssif.core.metamodel.EdgeType;
-import de.tum.pssif.core.metamodel.NodeType;
+import de.tum.pssif.core.metamodel.ElementType;
+import de.tum.pssif.core.metamodel.NodeTypeBase;
 import de.tum.pssif.core.metamodel.mutable.MutableJunctionNodeType;
 import de.tum.pssif.core.model.Edge;
 import de.tum.pssif.core.model.JunctionNode;
@@ -16,7 +17,7 @@ import de.tum.pssif.core.model.Model;
 import de.tum.pssif.core.model.Node;
 
 
-public class JunctionNodeTypeImpl extends NodeTypeImpl implements MutableJunctionNodeType {
+public class JunctionNodeTypeImpl extends NodeTypeBaseImpl implements MutableJunctionNodeType {
   public JunctionNodeTypeImpl(String name) {
     super(name);
   }
@@ -27,30 +28,18 @@ public class JunctionNodeTypeImpl extends NodeTypeImpl implements MutableJunctio
   }
 
   @Override
-  public PSSIFOption<Node> apply(Model model, boolean includeSubtypes) {
-    PSSIFOption<Node> result = PSSIFOption.none();
-    if (includeSubtypes) {
-      for (NodeType special : getSpecials()) {
-        result = PSSIFOption.merge(result, special.apply(model, includeSubtypes));
-      }
-    }
-    return PSSIFOption.merge(result, new ReadJunctionNodesOperation(this).apply(model));
+  public PSSIFOption<JunctionNode> apply(Model model, boolean includeSubtypes) {
+    return new ReadJunctionNodesOperation(this).apply(model);
   }
 
   @Override
-  public PSSIFOption<Node> apply(Model model, String id, boolean includeSubtypes) {
-    PSSIFOption<Node> result = PSSIFOption.none();
-    if (includeSubtypes) {
-      for (NodeType special : getSpecials()) {
-        result = PSSIFOption.merge(result, special.apply(model, id, includeSubtypes));
-      }
-    }
-    return PSSIFOption.merge(result, new ReadJunctionNodeOperation(this, id).apply(model));
+  public PSSIFOption<JunctionNode> apply(Model model, String id, boolean includeSubtypes) {
+    return new ReadJunctionNodeOperation(this, id).apply(model);
   }
 
   @Override
-  public Collection<NodeType> leftClosure(EdgeType edgeType, Node node) {
-    Collection<NodeType> result = Sets.<NodeType> newHashSet(this);
+  public Collection<NodeTypeBase> leftClosure(EdgeType edgeType, Node node) {
+    Collection<NodeTypeBase> result = Sets.<NodeTypeBase> newHashSet(this);
     for (ConnectionMapping incomingMapping : edgeType.getIncomingMappings(this).getMany()) {
       for (Edge incomingEdge : incomingMapping.applyIncoming(node).getMany()) {
         Node fromConnected = incomingMapping.applyFrom(incomingEdge);
@@ -72,8 +61,8 @@ public class JunctionNodeTypeImpl extends NodeTypeImpl implements MutableJunctio
   }
 
   @Override
-  public Collection<NodeType> rightClosure(EdgeType edgeType, Node node) {
-    Collection<NodeType> result = Sets.<NodeType> newHashSet(this);
+  public Collection<NodeTypeBase> rightClosure(EdgeType edgeType, Node node) {
+    Collection<NodeTypeBase> result = Sets.<NodeTypeBase> newHashSet(this);
     for (ConnectionMapping outgoingMapping : edgeType.getOutgoingMappings(this).getMany()) {
       for (Edge outgoingEdge : outgoingMapping.applyOutgoing(node).getMany()) {
         Node toConnected = outgoingMapping.applyTo(outgoingEdge);
@@ -110,5 +99,10 @@ public class JunctionNodeTypeImpl extends NodeTypeImpl implements MutableJunctio
       throw new PSSIFStructuralIntegrityException("edge types incompatible");
     }
     sourceNode.initializeEdgeTypeSignature(mapping.getType());
+  }
+
+  @Override
+  public boolean isAssignableFrom(ElementType type) {
+    return equals(type);
   }
 }

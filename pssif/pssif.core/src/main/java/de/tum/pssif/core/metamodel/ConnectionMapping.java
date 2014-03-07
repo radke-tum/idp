@@ -11,9 +11,9 @@ import de.tum.pssif.core.model.Node;
 public interface ConnectionMapping extends Function<Model, PSSIFOption<Edge>> {
   EdgeType getType();
 
-  NodeType getTo();
+  NodeTypeBase getTo();
 
-  NodeType getFrom();
+  NodeTypeBase getFrom();
 
   Edge create(Model model, Node from, Node to);
 

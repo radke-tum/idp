@@ -13,11 +13,11 @@ public interface MutableMetamodel extends Metamodel {
 
   MutableEdgeType createEdgeType(String name);
 
-  Collection<MutableNodeType> getMutableNodeTypes();
+  Collection<MutableNodeTypeBase> getMutableNodeTypes();
 
   Collection<MutableEdgeType> getMutableEdgeTypes();
 
-  PSSIFOption<MutableNodeType> getMutableNodeType(String name);
+  PSSIFOption<MutableNodeTypeBase> getMutableNodeType(String name);
 
   PSSIFOption<MutableEdgeType> getMutableEdgeType(String name);
 }

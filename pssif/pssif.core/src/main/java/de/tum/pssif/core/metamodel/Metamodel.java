@@ -6,11 +6,11 @@ import de.tum.pssif.core.common.PSSIFOption;
 
 
 public interface Metamodel {
-  Collection<NodeType> getNodeTypes();
+  Collection<NodeTypeBase> getNodeTypes();
 
   Collection<EdgeType> getEdgeTypes();
 
-  PSSIFOption<NodeType> getNodeType(String name);
+  PSSIFOption<NodeTypeBase> getNodeType(String name);
 
   PSSIFOption<EdgeType> getEdgeType(String name);
 }

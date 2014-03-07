@@ -10,7 +10,7 @@ import de.tum.pssif.core.exception.PSSIFStructuralIntegrityException;
 import de.tum.pssif.core.metamodel.impl.MetamodelImpl;
 import de.tum.pssif.core.metamodel.mutable.MutableEdgeType;
 import de.tum.pssif.core.metamodel.mutable.MutableMetamodel;
-import de.tum.pssif.core.metamodel.mutable.MutableNodeType;
+import de.tum.pssif.core.metamodel.mutable.MutableNodeTypeBase;
 
 
 public class MetamodelTest {
@@ -23,14 +23,14 @@ public class MetamodelTest {
 
   @Test
   public void testCreateNodeType() {
-    MutableNodeType mnt = metamodel.createNodeType("Node");
+    MutableNodeTypeBase mnt = metamodel.createNodeType("Node");
     Assert.assertNotNull(mnt);
     Assert.assertEquals(PSSIFUtil.normalize("Node"), mnt.getName());
 
     Assert.assertEquals(1, metamodel.getNodeTypes().size());
     Assert.assertEquals(1, metamodel.getMutableNodeTypes().size());
 
-    PSSIFOption<NodeType> nt = metamodel.getNodeType("Node");
+    PSSIFOption<NodeTypeBase> nt = metamodel.getNodeType("Node");
     Assert.assertTrue(nt.isOne());
     Assert.assertEquals(mnt, nt.getOne());
     Assert.assertEquals(nt, metamodel.getMutableNodeType("Node"));
@@ -53,7 +53,7 @@ public class MetamodelTest {
 
   @Test(expected = PSSIFStructuralIntegrityException.class)
   public void testCreateNodeTypeDuplicateName() {
-    MutableNodeType mnt = metamodel.createNodeType("Node");
+    MutableNodeTypeBase mnt = metamodel.createNodeType("Node");
     Assert.assertNotNull(mnt);
     Assert.assertEquals(PSSIFUtil.normalize("Node"), mnt.getName());
 
