@@ -174,7 +174,6 @@ public class ModelTest {
 
     Node s1 = node(s, "s1");
     Node s2 = node(s, "s2");
-    Node a1 = node(a, "a1");
     Node a2 = node(a, "a2");
     Node j1 = node(jun, "j1");
 
