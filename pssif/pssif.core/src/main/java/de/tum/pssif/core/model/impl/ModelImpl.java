@@ -8,8 +8,6 @@ import de.tum.pssif.core.metamodel.impl.CreateEdgeOperation;
 import de.tum.pssif.core.metamodel.impl.CreateJunctionNodeOperation;
 import de.tum.pssif.core.metamodel.impl.CreateNodeOperation;
 import de.tum.pssif.core.metamodel.impl.ReadEdgesOperation;
-import de.tum.pssif.core.metamodel.impl.ReadJunctionNodeOperation;
-import de.tum.pssif.core.metamodel.impl.ReadJunctionNodesOperation;
 import de.tum.pssif.core.metamodel.impl.ReadNodeOperation;
 import de.tum.pssif.core.metamodel.impl.ReadNodesOperation;
 import de.tum.pssif.core.model.Edge;
@@ -19,9 +17,8 @@ import de.tum.pssif.core.model.Node;
 
 
 public class ModelImpl implements Model {
-  private Multimap<String, Node>                         nodes         = HashMultimap.create();
-  private Multimap<String, JunctionNode>                 junctionNodes = HashMultimap.create();
-  private Multimap<ConnectionMappingSignature, Edge> edges         = HashMultimap.create();
+  private Multimap<String, Node>                     nodes = HashMultimap.create();
+  private Multimap<ConnectionMappingSignature, Edge> edges = HashMultimap.create();
 
   @Override
   public Node apply(CreateNodeOperation op) {
@@ -31,9 +28,9 @@ public class ModelImpl implements Model {
   }
 
   @Override
-  public JunctionNode apply(CreateJunctionNodeOperation op) {
+  public Node apply(CreateJunctionNodeOperation op) {
     JunctionNode result = new JunctionNodeImpl();
-    junctionNodes.put(op.getType().getName(), result);
+    nodes.put(op.getType().getName(), result);
     return result;
   }
 
@@ -52,21 +49,6 @@ public class ModelImpl implements Model {
   @Override
   public PSSIFOption<Node> apply(ReadNodeOperation op) {
     for (Node n : nodes.get(op.getType().getName())) {
-      if (n.getId().equals(op.getId())) {
-        return PSSIFOption.one(n);
-      }
-    }
-    return PSSIFOption.none();
-  }
-
-  @Override
-  public PSSIFOption<JunctionNode> apply(ReadJunctionNodesOperation op) {
-    return PSSIFOption.many(junctionNodes.get(op.getType().getName()));
-  }
-
-  @Override
-  public PSSIFOption<JunctionNode> apply(ReadJunctionNodeOperation op) {
-    for (JunctionNode n : junctionNodes.get(op.getType().getName())) {
       if (n.getId().equals(op.getId())) {
         return PSSIFOption.one(n);
       }

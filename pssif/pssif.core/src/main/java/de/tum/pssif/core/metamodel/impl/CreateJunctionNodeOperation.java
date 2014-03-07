@@ -1,8 +1,8 @@
 package de.tum.pssif.core.metamodel.impl;
 
 import de.tum.pssif.core.metamodel.JunctionNodeType;
-import de.tum.pssif.core.model.JunctionNode;
 import de.tum.pssif.core.model.Model;
+import de.tum.pssif.core.model.Node;
 
 
 public final class CreateJunctionNodeOperation {
@@ -16,7 +16,7 @@ public final class CreateJunctionNodeOperation {
     return type;
   }
 
-  public JunctionNode apply(Model model) {
+  public Node apply(Model model) {
     return model.apply(this);
   }
 }

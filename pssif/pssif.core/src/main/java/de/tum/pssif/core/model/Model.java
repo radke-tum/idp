@@ -5,8 +5,6 @@ import de.tum.pssif.core.metamodel.impl.CreateEdgeOperation;
 import de.tum.pssif.core.metamodel.impl.CreateJunctionNodeOperation;
 import de.tum.pssif.core.metamodel.impl.CreateNodeOperation;
 import de.tum.pssif.core.metamodel.impl.ReadEdgesOperation;
-import de.tum.pssif.core.metamodel.impl.ReadJunctionNodeOperation;
-import de.tum.pssif.core.metamodel.impl.ReadJunctionNodesOperation;
 import de.tum.pssif.core.metamodel.impl.ReadNodeOperation;
 import de.tum.pssif.core.metamodel.impl.ReadNodesOperation;
 
@@ -28,7 +26,7 @@ public interface Model {
    * @return
    *    The created node.
    */
-  JunctionNode apply(CreateJunctionNodeOperation op);
+  Node apply(CreateJunctionNodeOperation op);
 
   /**
    * Creates an edge.
@@ -56,24 +54,6 @@ public interface Model {
    *    A PSS-IF Option containing the node.
    */
   PSSIFOption<Node> apply(ReadNodeOperation op);
-
-  /**
-   * Retrieves a collection of nodes.
-   * @param op
-   *    The node read operation supplied by a Node Type.
-   * @return
-   *    A PSS-IF Option containing the nodes.
-   */
-  PSSIFOption<JunctionNode> apply(ReadJunctionNodesOperation op);
-
-  /**
-   * Retrieves a specific node from the model
-   * @param op
-   *    The node read operation supplied by a Node Type.
-   * @return
-   *    A PSS-IF Option containing the node.
-   */
-  PSSIFOption<JunctionNode> apply(ReadJunctionNodeOperation op);
 
   /**
    * Retrieves a collection of nodes.

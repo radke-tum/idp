@@ -12,7 +12,6 @@ import de.tum.pssif.core.metamodel.ElementType;
 import de.tum.pssif.core.metamodel.NodeTypeBase;
 import de.tum.pssif.core.metamodel.mutable.MutableJunctionNodeType;
 import de.tum.pssif.core.model.Edge;
-import de.tum.pssif.core.model.JunctionNode;
 import de.tum.pssif.core.model.Model;
 import de.tum.pssif.core.model.Node;
 
@@ -23,18 +22,18 @@ public class JunctionNodeTypeImpl extends NodeTypeBaseImpl implements MutableJun
   }
 
   @Override
-  public JunctionNode create(Model model) {
+  public Node create(Model model) {
     return new CreateJunctionNodeOperation(this).apply(model);
   }
 
   @Override
-  public PSSIFOption<JunctionNode> apply(Model model, boolean includeSubtypes) {
-    return new ReadJunctionNodesOperation(this).apply(model);
+  public PSSIFOption<Node> apply(Model model, boolean includeSubtypes) {
+    return new ReadNodesOperation(this).apply(model);
   }
 
   @Override
-  public PSSIFOption<JunctionNode> apply(Model model, String id, boolean includeSubtypes) {
-    return new ReadJunctionNodeOperation(this, id).apply(model);
+  public PSSIFOption<Node> apply(Model model, String id, boolean includeSubtypes) {
+    return new ReadNodeOperation(this, id).apply(model);
   }
 
   @Override

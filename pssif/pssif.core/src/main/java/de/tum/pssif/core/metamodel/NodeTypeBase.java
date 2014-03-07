@@ -11,9 +11,9 @@ import de.tum.pssif.core.model.Node;
 public interface NodeTypeBase extends ElementType {
   Node create(Model model);
 
-  PSSIFOption<? extends Node> apply(Model model, boolean includeSubtypes);
+  PSSIFOption<Node> apply(Model model, boolean includeSubtypes);
 
-  PSSIFOption<? extends Node> apply(Model model, String id, boolean includeSubtypes);
+  PSSIFOption<Node> apply(Model model, String id, boolean includeSubtypes);
 
   Collection<NodeTypeBase> leftClosure(EdgeType edgeType, Node node);
 
