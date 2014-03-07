@@ -33,7 +33,7 @@ import de.tum.pssif.core.util.PSSIFValue;
 public class MyModelContainer {
 
   private Model              model;
-  private Metamodel   meta;
+  private Metamodel   		 meta;
   private MyNodeTypes        nodeTypes;
   private MyEdgeTypes        edgeTypes;
   private LinkedList<MyNode> nodes;

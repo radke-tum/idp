@@ -14,17 +14,14 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JTextField;
 
-import de.tum.pssif.core.metamodel.EdgeType;
 import model.ModelBuilder;
 import edu.uci.ics.jung.algorithms.layout.GraphElementAccessor;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.control.AbstractPopupGraphMousePlugin;
 import graph.model.MyEdge;
-import graph.model.MyEdgeType;
 import graph.model.MyNode;
 import graph.model.MyNodeType;
 import gui.graph.GraphVisualization;

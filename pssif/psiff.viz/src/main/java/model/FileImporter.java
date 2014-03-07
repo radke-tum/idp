@@ -6,7 +6,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-import java.util.HashMap;
 import java.util.TreeMap;
 
 import javax.swing.JComboBox;
@@ -15,9 +14,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-import de.tum.pssif.core.metamodel.Metamodel;
 import de.tum.pssif.core.model.Model;
-import de.tum.pssif.core.util.PSSIFCanonicMetamodelCreator;
 import de.tum.pssif.transform.Mapper;
 import de.tum.pssif.transform.MapperFactory;
 
@@ -51,8 +48,6 @@ public class FileImporter {
       String selectedFileType = String.valueOf(filetype.getSelectedItem());
 
       Mapper importer = MapperFactory.getMapper(comboBoxValues.get(selectedFileType));
-      
-      //metamodel = PSSIFCanonicMetamodelCreator.create();
 
       Model model;
       try {

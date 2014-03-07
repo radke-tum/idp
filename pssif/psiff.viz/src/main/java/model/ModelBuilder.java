@@ -32,15 +32,10 @@ public class ModelBuilder {
 	private static HashMap<MyPair, LinkedList<MyEdgeType>> possibleMappings;
 
 	/**
-	 * Initializes all the content
+	 * Add a new Model and MetaModel. The new Model might be merged with another existing Model
 	 * @param meta
 	 * @param model
 	 */
-	/*public ModelBuilder()
-	{
-		
-	}*/
-	
 	public static void addModel(Metamodel Pmeta, Model Pmodel)
 	{
 		if (mergerOn)
@@ -329,6 +324,31 @@ public class ModelBuilder {
 		return metaModel;
 	}
 	
+	public static Model getModel()
+	{
+		if (mergerOn)
+		{
+			if (activeModel !=null)
+			{
+				return activeModel.getModel();
+			}
+			else
+				return null;
+		}
+		else
+		{
+			if (activeModels !=null)
+			{
+				if (activeModels.size()>0)
+					return activeModels.getFirst().getModel();
+				else
+					return null;
+			}
+			else
+				return null;
+		}
+	}
+	
 	
 	private static void calcPossibleEdges()
 	{
@@ -336,8 +356,6 @@ public class ModelBuilder {
 		{
 			possibleMappings = new HashMap<ModelBuilder.MyPair, LinkedList<MyEdgeType>>();
 		}
-		
-		int counter =0;
 		
 		for (NodeType start :getMetamodel().getNodeTypes())
 		{
@@ -357,8 +375,6 @@ public class ModelBuilder {
 						}
 						MyEdgeType value = getEdgeTypes().getValue(et.getName());
 						tmp.add(value);
-					//	System.out.println(counter+" :" +start+" || "+end+"				possible "+et);
-						counter++;
 						possibleMappings.put(p, tmp);
 					}
 					
@@ -393,14 +409,6 @@ public class ModelBuilder {
 			this.end = end;
 		}
 
-		public NodeType getStartNode() {
-			return start;
-		}
-
-		public NodeType getEndNode() {
-			return end;
-		}
-
 		@Override
 		public int hashCode() {
 			final int prime = 31;
@@ -431,27 +439,5 @@ public class ModelBuilder {
 				return false;
 			return true;
 		}
-		
-		/*public boolean equals(Object o)
-		{
-			System.out.println("Equals called");
-			if (o instanceof MyPair)
-			{
-				MyPair p = (MyPair) o;
-				
-				boolean first = start.getName().equals(p.getStartNode().getName());
-				boolean second = end.getName().equals(p.getEndNode().getName());
-				
-				System.out.println(start.getName() +" == "+p.getStartNode().getName());
-				System.out.println(end.getName() +" == "+p.getEndNode().getName());
-				
-				return (first && second);
-			}
-			else
-			{
-				System.out.println("not MyPair type");
-				return false;
-			}
-		}*/
 	}
 }

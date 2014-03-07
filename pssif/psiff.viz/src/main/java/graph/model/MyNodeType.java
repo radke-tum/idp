@@ -1,11 +1,5 @@
 package graph.model;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.LinkedList;
-
-import model.ModelBuilder;
-import de.tum.pssif.core.metamodel.EdgeType;
 import de.tum.pssif.core.metamodel.NodeType;
 
 /**

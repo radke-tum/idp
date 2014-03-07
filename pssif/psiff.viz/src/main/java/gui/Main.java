@@ -9,8 +9,6 @@ import gui.graph.GraphVisualization;
 import gui.graph.HighlightNodePopup;
 import gui.graph.NodeColorPopup;
 
-import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Frame;
@@ -32,6 +30,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+import model.FileExporter;
 import model.FileImporter;
 
 public class Main {
@@ -197,7 +196,16 @@ public class Main {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO has to be implemented
+				FileExporter exporter = new FileExporter();
+				
+				if (exporter.showPopup(frame))
+				{
+					  JPanel errorPanel = new JPanel();
+						
+				      errorPanel.add(new JLabel("Export successful."));
+
+				      JOptionPane.showMessageDialog(null, errorPanel, "Success!", JOptionPane.INFORMATION_MESSAGE);
+				}
 				
 			}
 		});

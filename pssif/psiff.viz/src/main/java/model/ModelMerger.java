@@ -1,12 +1,7 @@
 package model;
 
-import graph.model.MyEdge;
-import graph.model.MyEdgeType;
-
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import de.tum.pssif.core.metamodel.Annotation;
@@ -16,7 +11,6 @@ import de.tum.pssif.core.metamodel.ConnectionMapping;
 import de.tum.pssif.core.metamodel.EdgeEnd;
 import de.tum.pssif.core.metamodel.EdgeType;
 import de.tum.pssif.core.metamodel.Metamodel;
-import de.tum.pssif.core.metamodel.MutableMetamodel;
 import de.tum.pssif.core.metamodel.NodeType;
 import de.tum.pssif.core.model.Edge;
 import de.tum.pssif.core.model.Model;
