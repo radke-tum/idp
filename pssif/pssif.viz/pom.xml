@@ -6,7 +6,7 @@
 		<artifactId>pssif</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
-	<artifactId>psiff.viz</artifactId>
+	<artifactId>pssif.viz</artifactId>
 
 	<dependencies>
 		<dependency>
