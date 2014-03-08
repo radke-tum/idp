@@ -1,7 +1,7 @@
 package de.tum.pssif.transform;
 
+import de.tum.pssif.core.common.PSSIFUtil;
 import de.tum.pssif.core.exception.PSSIFException;
-import de.tum.pssif.core.util.PSSIFUtil;
 import de.tum.pssif.transform.mapper.BpmnMapper;
 import de.tum.pssif.transform.mapper.EpkMapper;
 import de.tum.pssif.transform.mapper.SysMlMapper;

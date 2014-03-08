@@ -34,13 +34,13 @@ public class EpkMapper extends BaseVisioMapper {
   }
 
   private static Metamodel createEpkView(Metamodel metamodel) {
-    Metamodel view = new RenameEdgeTypeTransformation(metamodel.findEdgeType("Control Flow"), "Dynamic connector").apply(metamodel);
-    view = new RenameNodeTypeTransformation(view.findNodeType("Event"), "Dev Event").apply(view);
-    view = new RenameNodeTypeTransformation(view.findNodeType("Function"), "Abstract Function").apply(view);
-    view = new RenameNodeTypeTransformation(view.findNodeType("Activity"), "Function").apply(view);
-    view = new RenameNodeTypeTransformation(view.findNodeType("State"), "Event").apply(view);
-    view = new AliasNodeTypeTransformation(view.findNodeType("Block"), "Information/ Material").apply(view);
-    view = new AliasNodeTypeTransformation(view.findNodeType("Block"), "Organizational unit").apply(view);
+    Metamodel view = new RenameEdgeTypeTransformation(metamodel.getEdgeType("Control Flow").getOne(), "Dynamic connector").apply(metamodel);
+    view = new RenameNodeTypeTransformation(view.getNodeType("Event").getOne(), "Dev Event").apply(view);
+    view = new RenameNodeTypeTransformation(view.getNodeType("Function").getOne(), "Abstract Function").apply(view);
+    view = new RenameNodeTypeTransformation(view.getNodeType("Activity").getOne(), "Function").apply(view);
+    view = new RenameNodeTypeTransformation(view.getNodeType("State").getOne(), "Event").apply(view);
+    view = new AliasNodeTypeTransformation(view.getNodeType("Block").getOne(), "Information/ Material").apply(view);
+    view = new AliasNodeTypeTransformation(view.getNodeType("Block").getOne(), "Organizational unit").apply(view);
     return view;
   }
 

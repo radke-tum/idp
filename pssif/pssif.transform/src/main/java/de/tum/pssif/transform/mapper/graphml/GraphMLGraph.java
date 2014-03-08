@@ -23,16 +23,15 @@ import com.google.common.collect.Sets;
  * TODO edgedefault
  */
 public class GraphMLGraph {
-  private Boolean                       edgeDefaultDirected = Boolean.TRUE;
+  private Boolean                      edgeDefaultDirected = Boolean.TRUE;
 
-  private Map<String, GraphMlNodeImpl>  nodes               = Maps.newHashMap();
-  private Map<String, GraphMlEdgeImpl>  edges               = Maps.newHashMap(); //TODO a set might be sufficient here
-  private Map<String, GraphMlHyperedge> hyperedges          = Maps.newHashMap();
+  private Map<String, GraphMlNodeImpl> nodes               = Maps.newHashMap();
+  private Map<String, GraphMlEdgeImpl> edges               = Maps.newHashMap(); //TODO a set might be sufficient here
 
-  private Set<GraphMlAttribute>         nodeAttributes      = Sets.newHashSet();
-  private Set<GraphMlAttribute>         edgeAttributes      = Sets.newHashSet();
+  private Set<GraphMlAttribute>        nodeAttributes      = Sets.newHashSet();
+  private Set<GraphMlAttribute>        edgeAttributes      = Sets.newHashSet();
 
-  private Element                       current;
+  private Element                      current;
 
   public static GraphMLGraph read(InputStream in) {
     GraphMLGraph result = new GraphMLGraph();
@@ -69,10 +68,6 @@ public class GraphMLGraph {
     this.edges.put(edge.getId(), edge);
   }
 
-  void addHyperedge(GraphMlHyperedge edge) {
-    this.hyperedges.put(edge.getId(), edge);
-  }
-
   public Set<GraphMLNode> getNodes() {
     Set<GraphMLNode> result = Sets.newHashSet();
     result.addAll(nodes.values());
@@ -87,10 +82,6 @@ public class GraphMLGraph {
     Set<GraphMLEdge> result = Sets.newHashSet();
     result.addAll(edges.values());
     return result;
-  }
-
-  public Set<GraphMlHyperedge> getHyperedges() {
-    return Sets.newHashSet(hyperedges.values());
   }
 
   private void readInternal(InputStream in) {
@@ -175,13 +166,6 @@ public class GraphMLGraph {
       edges.put(current.getId(), (GraphMlEdgeImpl) current);
       current = null;
     }
-    else if (GraphMLTokens.HYPEREDGE.equals(elementName)) {
-      if (!(current instanceof GraphMlHyperedge)) {
-        throw new IllegalStateException();
-      }
-      hyperedges.put(current.getId(), (GraphMlHyperedge) current);
-      current = null;
-    }
   }
 
   private void writeInternal(OutputStream out) {
@@ -192,7 +176,6 @@ public class GraphMLGraph {
       writeDocumentHeader(writer);
       writeNodes(writer);
       writeEdges(writer);
-      writeHyperedges(writer);
       writeDocumentFooter(writer);
       writer.flush();
     } catch (XMLStreamException e) {
@@ -261,33 +244,6 @@ public class GraphMLGraph {
       writeDataElements(writer, entry.getValue().getValues());
       writer.writeEndElement();
     }
-  }
-
-  private void writeHyperedges(XMLStreamWriter writer) throws XMLStreamException {
-    for (Entry<String, GraphMlHyperedge> entry : hyperedges.entrySet()) {
-      writer.writeStartElement(GraphMLTokens.HYPEREDGE);
-      writer.writeAttribute(GraphMLTokens.ID, entry.getValue().getId());
-      writeEndpoints(writer, entry.getValue());
-      writeDataElemnent(writer, GraphMLTokens.ELEMENT_TYPE, entry.getValue().getType());
-      writeDataElements(writer, entry.getValue().getValues());
-      writer.writeEndElement();
-    }
-  }
-
-  private void writeEndpoints(XMLStreamWriter writer, GraphMlHyperedge edge) throws XMLStreamException {
-    for (String nodeid : edge.getSourceIds()) {
-      writeEndpoint(writer, GraphMLTokens.SOURCE, nodeid);
-    }
-    for (String nodeid : edge.getTargetIds()) {
-      writeEndpoint(writer, GraphMLTokens.TARGET, nodeid);
-    }
-  }
-
-  private void writeEndpoint(XMLStreamWriter writer, String type, String nodeId) throws XMLStreamException {
-    writer.writeStartElement(GraphMLTokens.ENDPOINT);
-    writer.writeAttribute(GraphMLTokens.ENDPOINT_TYPE, type);
-    writer.writeAttribute(GraphMLTokens.NODE, nodeId);
-    writer.writeEndElement();
   }
 
   private void writeDocumentFooter(XMLStreamWriter writer) throws XMLStreamException {
