@@ -47,6 +47,15 @@ public class SysMlIoMapper implements IoMapper {
     String elementName = reader.getName().getLocalPart();
     String elementNs = reader.getName().getPrefix();
     //TODO
+
+    if (SysMLTokens.UML.equalsIgnoreCase(elementNs) && SysMLTokens.MODEL.equalsIgnoreCase(elementName)) {
+      readUmlModel();
+    }
+
+    //fucking piece of sh...
+    //1. read the uml class diagram with the UML2/4.0.0 eCore
+    //2. read the rest of the file into some DS.
+    //3. make something out of it...
     System.out.println("Ëlement: " + elementNs + ":" + elementName);
   }
 
