@@ -18,7 +18,7 @@ import de.tum.pssif.core.metamodel.NodeTypeBase;
 import de.tum.pssif.core.metamodel.mutable.MutableEdgeType;
 
 
-public class EdgeTypeImpl extends ElementTypeImpl<EdgeType> implements MutableEdgeType {
+public class EdgeTypeImpl extends ElementTypeImpl implements MutableEdgeType {
   private Collection<ConnectionMapping> mappings        = Sets.newHashSet();
   private EdgeType                      general         = null;
   private final Set<EdgeType>           specializations = Sets.newHashSet();
