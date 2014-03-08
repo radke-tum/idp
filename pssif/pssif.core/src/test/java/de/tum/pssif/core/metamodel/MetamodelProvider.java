@@ -1,7 +1,5 @@
 package de.tum.pssif.core.metamodel;
 
-import com.google.common.collect.Sets;
-
 import de.tum.pssif.core.metamodel.impl.MetamodelImpl;
 import de.tum.pssif.core.metamodel.mutable.MutableEdgeType;
 import de.tum.pssif.core.metamodel.mutable.MutableJunctionNodeType;
@@ -35,14 +33,14 @@ public class MetamodelProvider {
 
     MutableEdgeType cf = result.createEdgeType("CF");
     MutableEdgeType mf = result.createEdgeType("MF");
-    cf.createMapping(s, a, Sets.<JunctionNodeType> newHashSet(jun));
-    cf.createMapping(s, b, Sets.<JunctionNodeType> newHashSet(jun));
-    cf.createMapping(a, s, Sets.<JunctionNodeType> newHashSet(jun));
-    cf.createMapping(b, s, Sets.<JunctionNodeType> newHashSet(jun));
-    mf.createMapping(s, a, Sets.<JunctionNodeType> newHashSet(jun));
-    mf.createMapping(s, b, Sets.<JunctionNodeType> newHashSet(jun));
-    mf.createMapping(a, s, Sets.<JunctionNodeType> newHashSet(jun));
-    mf.createMapping(b, s, Sets.<JunctionNodeType> newHashSet(jun));
+    cf.createMapping(s, a, jun);
+    cf.createMapping(s, b, jun);
+    cf.createMapping(a, s, jun);
+    cf.createMapping(b, s, jun);
+    mf.createMapping(s, a, jun);
+    mf.createMapping(s, b, jun);
+    mf.createMapping(a, s, jun);
+    mf.createMapping(b, s, jun);
 
     return result;
   }

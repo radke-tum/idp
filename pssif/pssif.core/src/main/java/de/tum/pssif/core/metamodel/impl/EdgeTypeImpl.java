@@ -28,7 +28,7 @@ public class EdgeTypeImpl extends ElementTypeImpl implements MutableEdgeType {
   }
 
   @Override
-  public ConnectionMapping createMapping(NodeTypeBase from, NodeTypeBase to, Collection<JunctionNodeType> junctions) {
+  public ConnectionMapping createMapping(NodeTypeBase from, NodeTypeBase to, JunctionNodeType... junctions) {
     for (JunctionNodeType junction : junctions) {
       mappings.add(new ConnectionMappingImpl(this, junction, junction));
       for (JunctionNodeType other : junctions) {

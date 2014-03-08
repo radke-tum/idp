@@ -23,32 +23,33 @@ public class MetamodelTest {
 
   @Test
   public void testCreateNodeType() {
-    MutableNodeTypeBase mnt = metamodel.createNodeType("Node");
+    MutableNodeTypeBase mnt = metamodel.createNodeType("A");
     Assert.assertNotNull(mnt);
-    Assert.assertEquals(PSSIFUtil.normalize("Node"), mnt.getName());
+    Assert.assertEquals("A", mnt.getName());
 
-    Assert.assertEquals(1, metamodel.getNodeTypes().size());
-    Assert.assertEquals(1, metamodel.getMutableNodeTypes().size());
+    Assert.assertEquals(2, metamodel.getNodeTypes().size());
+    Assert.assertEquals(2, metamodel.getMutableNodeTypes().size());
 
-    PSSIFOption<NodeTypeBase> nt = metamodel.getNodeType("Node");
+    PSSIFOption<NodeTypeBase> nt = metamodel.getNodeType("A");
     Assert.assertTrue(nt.isOne());
     Assert.assertEquals(mnt, nt.getOne());
-    Assert.assertEquals(nt, metamodel.getMutableNodeType("Node"));
+    Assert.assertEquals(nt, metamodel.getMutableNodeType("A"));
   }
 
   @Test
   public void testCreateEdgeType() {
-    MutableEdgeType met = metamodel.createEdgeType("Edge");
+    MutableEdgeType met = metamodel.createEdgeType("A");
     Assert.assertNotNull(met);
-    Assert.assertEquals(PSSIFUtil.normalize("Edge"), met.getName());
+    Assert.assertEquals("A", met.getName());
+    Assert.assertNotEquals("a", met.getName());
 
-    Assert.assertEquals(1, metamodel.getEdgeTypes().size());
-    Assert.assertEquals(1, metamodel.getMutableEdgeTypes().size());
+    Assert.assertEquals(2, metamodel.getEdgeTypes().size());
+    Assert.assertEquals(2, metamodel.getMutableEdgeTypes().size());
 
-    PSSIFOption<EdgeType> et = metamodel.getEdgeType("Edge");
+    PSSIFOption<EdgeType> et = metamodel.getEdgeType("A");
     Assert.assertTrue(et.isOne());
     Assert.assertEquals(met, et.getOne());
-    Assert.assertEquals(et, metamodel.getMutableEdgeType("Edge"));
+    Assert.assertEquals(et, metamodel.getMutableEdgeType("A"));
   }
 
   @Test(expected = PSSIFStructuralIntegrityException.class)

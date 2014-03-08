@@ -1,7 +1,5 @@
 package de.tum.pssif.core.metamodel.mutable;
 
-import java.util.Collection;
-
 import de.tum.pssif.core.metamodel.ConnectionMapping;
 import de.tum.pssif.core.metamodel.EdgeType;
 import de.tum.pssif.core.metamodel.JunctionNodeType;
@@ -18,5 +16,5 @@ public interface MutableEdgeType extends EdgeType, MutableElementType {
    * 
    * @return the {@link ConnectionMapping} created directly from the from {@link NodeTypeBase} to the to {@link NodeTypeBase}. To get a {@link ConnectionMapping} from or to one of the specified {@link JunctionNodeType}s use the {@link #getMapping(NodeTypeBase, NodeTypeBase)}-method.
    */
-  ConnectionMapping createMapping(NodeTypeBase from, NodeTypeBase to, Collection<JunctionNodeType> junctions);
+  ConnectionMapping createMapping(NodeTypeBase from, NodeTypeBase to, JunctionNodeType... junctions);
 }

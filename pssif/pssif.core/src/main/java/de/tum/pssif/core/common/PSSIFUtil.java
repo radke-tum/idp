@@ -1,6 +1,9 @@
 package de.tum.pssif.core.common;
 
+import java.util.Collection;
+
 import de.tum.pssif.core.exception.PSSIFStructuralIntegrityException;
+import de.tum.pssif.core.metamodel.traits.Named;
 
 
 /**
@@ -42,5 +45,24 @@ public class PSSIFUtil {
     if (!PSSIFUtil.isValidName(name)) {
       throw new PSSIFStructuralIntegrityException("invalid name '" + name + "'");
     }
+  }
+
+  /**
+   * Locates a named element by name in a collection of named elements.
+   * TODO use throughout the metamodel impl.
+   * @param name
+   *    The name of the element to locate.
+   * @param collection
+   *    The collection to look into.
+   * @return
+   *    The named element, or null, it not found in the collection.
+   */
+  public static <T extends Named> T find(String name, Collection<T> collection) {
+    for (T candidate : collection) {
+      if (PSSIFUtil.areSame(candidate.getName(), name)) {
+        return candidate;
+      }
+    }
+    return null;
   }
 }
