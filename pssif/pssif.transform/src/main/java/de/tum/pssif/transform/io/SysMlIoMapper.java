@@ -20,7 +20,7 @@ public class SysMlIoMapper implements IoMapper {
     XMLInputFactory factory = XMLInputFactory.newInstance();
 
     try {
-      XMLStreamReader reader = factory.createXMLStreamReader(in);
+      XMLStreamReader reader = factory.createXMLStreamReader(in, "UTF-8");
       Graph graph = new Graph();
 
       while (reader.hasNext()) {
@@ -44,7 +44,10 @@ public class SysMlIoMapper implements IoMapper {
   }
 
   private void startElement(XMLStreamReader reader) throws XMLStreamException {
+    String elementName = reader.getName().getLocalPart();
+    String elementNs = reader.getName().getPrefix();
     //TODO
+    System.out.println("Ëlement: " + elementNs + ":" + elementName);
   }
 
   private void endElement(XMLStreamReader reader) throws XMLStreamException {
