@@ -137,4 +137,9 @@ public class EdgeTypeImpl extends ElementTypeImpl implements MutableEdgeType {
   public void unregisterSpecialization(EdgeType special) {
     specializations.remove(special);
   }
+
+  @Override
+  public Class<?> getMetaType() {
+    return EdgeType.class;
+  }
 }

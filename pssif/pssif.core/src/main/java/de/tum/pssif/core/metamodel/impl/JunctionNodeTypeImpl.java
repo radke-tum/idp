@@ -9,6 +9,7 @@ import de.tum.pssif.core.exception.PSSIFStructuralIntegrityException;
 import de.tum.pssif.core.metamodel.ConnectionMapping;
 import de.tum.pssif.core.metamodel.EdgeType;
 import de.tum.pssif.core.metamodel.ElementType;
+import de.tum.pssif.core.metamodel.JunctionNodeType;
 import de.tum.pssif.core.metamodel.NodeTypeBase;
 import de.tum.pssif.core.metamodel.mutable.MutableJunctionNodeType;
 import de.tum.pssif.core.model.Edge;
@@ -103,5 +104,10 @@ public class JunctionNodeTypeImpl extends NodeTypeBaseImpl implements MutableJun
   @Override
   public boolean isAssignableFrom(ElementType type) {
     return equals(type);
+  }
+
+  @Override
+  public Class<?> getMetaType() {
+    return JunctionNodeType.class;
   }
 }

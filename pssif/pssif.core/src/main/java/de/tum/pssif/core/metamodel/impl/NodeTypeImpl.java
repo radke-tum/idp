@@ -92,4 +92,9 @@ public class NodeTypeImpl extends NodeTypeBaseImpl implements MutableNodeType {
   public void unregisterSpecialization(NodeType special) {
     specializations.remove(special);
   }
+
+  @Override
+  public Class<?> getMetaType() {
+    return NodeType.class;
+  }
 }
