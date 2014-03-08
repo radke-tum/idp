@@ -8,7 +8,11 @@ import de.tum.pssif.core.common.PSSIFOption;
 public interface Metamodel {
   Collection<Enumeration> getEnumerations();
 
-  Collection<NodeTypeBase> getNodeTypes();
+  Collection<NodeTypeBase> getBaseNodeTypes();
+
+  Collection<NodeType> getNodeTypes();
+
+  Collection<JunctionNodeType> getJunctionNodeTypes();
 
   Collection<EdgeType> getEdgeTypes();
 

@@ -172,8 +172,20 @@ public class MetamodelImpl implements MutableMetamodel {
   }
 
   @Override
-  public Collection<NodeTypeBase> getNodeTypes() {
-    return ImmutableSet.<NodeTypeBase> copyOf(nodeTypes.values());
+  public Collection<NodeTypeBase> getBaseNodeTypes() {
+    Collection<NodeTypeBase> result = Sets.<NodeTypeBase> newHashSet(getNodeTypes());
+    result.addAll(getJunctionNodeTypes());
+    return ImmutableSet.copyOf(result);
+  }
+
+  @Override
+  public Collection<NodeType> getNodeTypes() {
+    return ImmutableSet.<NodeType> copyOf(getMutableNodeTypes());
+  }
+
+  @Override
+  public Collection<JunctionNodeType> getJunctionNodeTypes() {
+    return ImmutableSet.<JunctionNodeType> copyOf(getMutableJunctionNodeTypes());
   }
 
   @Override
@@ -202,10 +214,20 @@ public class MetamodelImpl implements MutableMetamodel {
   }
 
   @Override
-  public Collection<MutableNodeTypeBase> getMutableNodeTypes() {
-    Collection<MutableNodeTypeBase> result = Sets.<MutableNodeTypeBase> newHashSet(nodeTypes.values());
-    result.addAll(junctionNodeTypes.values());
+  public Collection<MutableNodeTypeBase> getMutableBaseNodeTypes() {
+    Collection<MutableNodeTypeBase> result = Sets.<MutableNodeTypeBase> newHashSet(getMutableNodeTypes());
+    result.addAll(getMutableJunctionNodeTypes());
     return ImmutableSet.<MutableNodeTypeBase> copyOf(result);
+  }
+
+  @Override
+  public Collection<MutableNodeType> getMutableNodeTypes() {
+    return ImmutableSet.copyOf(nodeTypes.values());
+  }
+
+  @Override
+  public Collection<MutableJunctionNodeType> getMutableJunctionNodeTypes() {
+    return ImmutableSet.copyOf(junctionNodeTypes.values());
   }
 
   @Override

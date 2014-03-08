@@ -22,7 +22,11 @@ public interface MutableMetamodel extends Metamodel {
 
   MutableEdgeType createEdgeType(String name);
 
-  Collection<MutableNodeTypeBase> getMutableNodeTypes();
+  Collection<MutableNodeTypeBase> getMutableBaseNodeTypes();
+
+  Collection<MutableNodeType> getMutableNodeTypes();
+
+  Collection<MutableJunctionNodeType> getMutableJunctionNodeTypes();
 
   Collection<MutableEdgeType> getMutableEdgeTypes();
 

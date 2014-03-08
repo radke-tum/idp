@@ -27,8 +27,8 @@ public class MetamodelTest {
     Assert.assertNotNull(mnt);
     Assert.assertEquals("A", mnt.getName());
 
-    Assert.assertEquals(2, metamodel.getNodeTypes().size());
-    Assert.assertEquals(2, metamodel.getMutableNodeTypes().size());
+    Assert.assertEquals(2, metamodel.getBaseNodeTypes().size());
+    Assert.assertEquals(2, metamodel.getMutableBaseNodeTypes().size());
 
     PSSIFOption<NodeTypeBase> nt = metamodel.getBaseNodeType("A");
     Assert.assertTrue(nt.isOne());
@@ -58,8 +58,8 @@ public class MetamodelTest {
     Assert.assertNotNull(mnt);
     Assert.assertEquals(PSSIFUtil.normalize("Node"), mnt.getName());
 
-    Assert.assertEquals(1, metamodel.getNodeTypes().size());
-    Assert.assertEquals(1, metamodel.getMutableNodeTypes().size());
+    Assert.assertEquals(1, metamodel.getBaseNodeTypes().size());
+    Assert.assertEquals(1, metamodel.getMutableBaseNodeTypes().size());
 
     metamodel.createNodeType("node");
   }
