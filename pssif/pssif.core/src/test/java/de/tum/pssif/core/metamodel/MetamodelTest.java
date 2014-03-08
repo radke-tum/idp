@@ -30,7 +30,7 @@ public class MetamodelTest {
     Assert.assertEquals(2, metamodel.getNodeTypes().size());
     Assert.assertEquals(2, metamodel.getMutableNodeTypes().size());
 
-    PSSIFOption<NodeTypeBase> nt = metamodel.getNodeType("A");
+    PSSIFOption<NodeTypeBase> nt = metamodel.getBaseNodeType("A");
     Assert.assertTrue(nt.isOne());
     Assert.assertEquals(mnt, nt.getOne());
     Assert.assertEquals(nt, metamodel.getMutableNodeType("A"));

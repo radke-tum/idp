@@ -73,6 +73,20 @@ public final class PSSIFOption<P> {
     return new PSSIFOption<T>(elements);
   }
 
+  /**
+   * Creates an option for a collection of elements.
+   * If the collection is empty, a none option will be created.
+   * If the collection has only one element, a one option will be created.
+   * @param elements
+   *    The elements for which to create the option.
+   * @return
+   *    The resulting option, can be many, one or none, depending on the
+   *    contents of the collection.
+   */
+  public static <T> PSSIFOption<T> many(T... elements) {
+    return new PSSIFOption<T>(Sets.newHashSet(elements));
+  }
+
   private PSSIFOption(Collection<? extends P> elements) {
     this.elements = Sets.newHashSet();
     if (elements != null) {

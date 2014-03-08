@@ -183,7 +183,7 @@ public class ModelTest {
   }
 
   private NodeTypeBase nt(String name) {
-    return metamodel.getNodeType(name).getOne();
+    return metamodel.getBaseNodeType(name).getOne();
   }
 
   private EdgeType et(String name) {

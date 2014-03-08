@@ -22,7 +22,11 @@ public interface Metamodel {
 
   PSSIFOption<PrimitiveDataType> getPrimitiveType(String name);
 
-  PSSIFOption<NodeTypeBase> getNodeType(String name);
+  PSSIFOption<NodeTypeBase> getBaseNodeType(String name);
+
+  PSSIFOption<NodeType> getNodeType(String name);
+
+  PSSIFOption<JunctionNodeType> getJunctionNodeType(String name);
 
   PSSIFOption<EdgeType> getEdgeType(String name);
 }

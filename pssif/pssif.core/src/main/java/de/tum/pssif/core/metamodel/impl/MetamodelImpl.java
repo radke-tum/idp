@@ -15,6 +15,8 @@ import de.tum.pssif.core.metamodel.AttributeCategory;
 import de.tum.pssif.core.metamodel.DataType;
 import de.tum.pssif.core.metamodel.EdgeType;
 import de.tum.pssif.core.metamodel.Enumeration;
+import de.tum.pssif.core.metamodel.JunctionNodeType;
+import de.tum.pssif.core.metamodel.NodeType;
 import de.tum.pssif.core.metamodel.NodeTypeBase;
 import de.tum.pssif.core.metamodel.PrimitiveDataType;
 import de.tum.pssif.core.metamodel.mutable.MutableEdgeType;
@@ -133,7 +135,7 @@ public class MetamodelImpl implements MutableMetamodel {
 
   private MutableNodeType createNodeTypeInternal(String name) {
     PSSIFUtil.checkNameValidity(name);
-    if (!getNodeType(name).isNone()) {
+    if (!getBaseNodeType(name).isNone()) {
       throw new PSSIFStructuralIntegrityException("a nodetype with name '" + name + "' already exists");
     }
     MutableNodeType result = new NodeTypeImpl(name);
@@ -144,7 +146,7 @@ public class MetamodelImpl implements MutableMetamodel {
   @Override
   public MutableJunctionNodeType createJunctionNodeType(String name) {
     PSSIFUtil.checkNameValidity(name);
-    if (!getNodeType(name).isNone()) {
+    if (!getBaseNodeType(name).isNone()) {
       throw new PSSIFStructuralIntegrityException("a nodetype with name '" + name + "' already exists");
     }
     MutableJunctionNodeType result = new JunctionNodeTypeImpl(name);
@@ -180,8 +182,18 @@ public class MetamodelImpl implements MutableMetamodel {
   }
 
   @Override
-  public PSSIFOption<NodeTypeBase> getNodeType(String name) {
+  public PSSIFOption<NodeTypeBase> getBaseNodeType(String name) {
     return PSSIFOption.<NodeTypeBase> merge(getMutableNodeType(name), getMutableJunctionNodeType(name));
+  }
+
+  @Override
+  public PSSIFOption<NodeType> getNodeType(String name) {
+    return PSSIFOption.<NodeType> many(getMutableNodeType(name).getMany());
+  }
+
+  @Override
+  public PSSIFOption<JunctionNodeType> getJunctionNodeType(String name) {
+    return PSSIFOption.<JunctionNodeType> many(getMutableJunctionNodeType(name).getMany());
   }
 
   @Override
