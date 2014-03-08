@@ -27,12 +27,13 @@ import de.tum.pssif.core.metamodel.mutable.MutableNodeTypeBase;
 
 
 public class MetamodelImpl implements MutableMetamodel {
-  private Map<String, MutableEnumeration>  enumerations = Maps.newHashMap();
-  private Map<String, MutableNodeTypeBase> nodeTypes    = Maps.newHashMap();
-  private Map<String, MutableEdgeType>     edgeTypes    = Maps.newHashMap();
+  private Map<String, MutableEnumeration>      enumerations      = Maps.newHashMap();
+  private Map<String, MutableNodeType>         nodeTypes         = Maps.newHashMap();
+  private Map<String, MutableJunctionNodeType> junctionNodeTypes = Maps.newHashMap();
+  private Map<String, MutableEdgeType>         edgeTypes         = Maps.newHashMap();
 
-  private final MutableNodeType            node;
-  private final MutableEdgeType            edge;
+  private final MutableNodeType                node;
+  private final MutableEdgeType                edge;
 
   public MetamodelImpl() {
     node = createNodeTypeInternal(PSSIFConstants.ROOT_NODE_TYPE_NAME);
@@ -147,7 +148,7 @@ public class MetamodelImpl implements MutableMetamodel {
       throw new PSSIFStructuralIntegrityException("a nodetype with name '" + name + "' already exists");
     }
     MutableJunctionNodeType result = new JunctionNodeTypeImpl(name);
-    nodeTypes.put(PSSIFUtil.normalize(result.getName()), result);
+    junctionNodeTypes.put(PSSIFUtil.normalize(result.getName()), result);
     return result;
   }
 
@@ -180,7 +181,7 @@ public class MetamodelImpl implements MutableMetamodel {
 
   @Override
   public PSSIFOption<NodeTypeBase> getNodeType(String name) {
-    return PSSIFOption.<NodeTypeBase> one(nodeTypes.get(PSSIFUtil.normalize(name)));
+    return PSSIFOption.<NodeTypeBase> merge(getMutableNodeType(name), getMutableJunctionNodeType(name));
   }
 
   @Override
@@ -190,7 +191,9 @@ public class MetamodelImpl implements MutableMetamodel {
 
   @Override
   public Collection<MutableNodeTypeBase> getMutableNodeTypes() {
-    return ImmutableSet.copyOf(nodeTypes.values());
+    Collection<MutableNodeTypeBase> result = Sets.<MutableNodeTypeBase> newHashSet(nodeTypes.values());
+    result.addAll(junctionNodeTypes.values());
+    return ImmutableSet.<MutableNodeTypeBase> copyOf(result);
   }
 
   @Override
@@ -199,7 +202,17 @@ public class MetamodelImpl implements MutableMetamodel {
   }
 
   @Override
-  public PSSIFOption<MutableNodeTypeBase> getMutableNodeType(String name) {
+  public PSSIFOption<MutableNodeTypeBase> getMutableBaseNodeType(String name) {
+    return PSSIFOption.merge(getMutableNodeType(name), getMutableJunctionNodeType(name));
+  }
+
+  @Override
+  public PSSIFOption<MutableJunctionNodeType> getMutableJunctionNodeType(String name) {
+    return PSSIFOption.one(junctionNodeTypes.get(PSSIFUtil.normalize(name)));
+  }
+
+  @Override
+  public PSSIFOption<MutableNodeType> getMutableNodeType(String name) {
     return PSSIFOption.one(nodeTypes.get(PSSIFUtil.normalize(name)));
   }
 

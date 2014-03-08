@@ -26,7 +26,11 @@ public interface MutableMetamodel extends Metamodel {
 
   Collection<MutableEdgeType> getMutableEdgeTypes();
 
-  PSSIFOption<MutableNodeTypeBase> getMutableNodeType(String name);
+  PSSIFOption<MutableNodeTypeBase> getMutableBaseNodeType(String name);
+
+  PSSIFOption<MutableNodeType> getMutableNodeType(String name);
+
+  PSSIFOption<MutableJunctionNodeType> getMutableJunctionNodeType(String name);
 
   PSSIFOption<MutableEdgeType> getMutableEdgeType(String name);
 }

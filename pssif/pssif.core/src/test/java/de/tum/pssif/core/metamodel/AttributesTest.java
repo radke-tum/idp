@@ -8,12 +8,14 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Test;
 
+import de.tum.pssif.core.common.PSSIFConstants;
 import de.tum.pssif.core.common.PSSIFOption;
 import de.tum.pssif.core.exception.PSSIFStructuralIntegrityException;
 import de.tum.pssif.core.metamodel.impl.MetamodelImpl;
 import de.tum.pssif.core.metamodel.mutable.MutableEdgeType;
 import de.tum.pssif.core.metamodel.mutable.MutableEnumeration;
 import de.tum.pssif.core.metamodel.mutable.MutableMetamodel;
+import de.tum.pssif.core.metamodel.mutable.MutableNodeType;
 import de.tum.pssif.core.metamodel.mutable.MutableNodeTypeBase;
 
 
@@ -187,6 +189,7 @@ public class AttributesTest {
     nodeA().createAttribute(nodeA().getDefaultAttributeGroup(), "enumAttr", enumeration, Units.CENTIMETER, true, AttributeCategory.METADATA);
   }
 
+  @Test
   public void testStaticDataTypes() {
     assertNotNull(metamodel.getDataType(PrimitiveDataType.BOOLEAN.getName()));
     assertNotNull(metamodel.getPrimitiveType(PrimitiveDataType.BOOLEAN.getName()));
@@ -204,11 +207,27 @@ public class AttributesTest {
     assertNotNull(metamodel.getPrimitiveType(PrimitiveDataType.STRING.getName()));
   }
 
+  @Test
   public void testUnits() {
     assertNotNull(Units.CENTIMETER.getName());
     assertNotNull(Units.INCH.getName());
     assertNotNull(Units.KILOGRAM.getName());
     //TODO all other units!
+  }
+
+  @Test
+  public void testAttributeInheritance() {
+    MutableNodeType node = metamodel.getMutableNodeType(PSSIFConstants.ROOT_NODE_TYPE_NAME).getOne();
+    AttributeGroup nodeGroup = node.createAttributeGroup("test");
+    node.createAttribute(nodeGroup, "1", PrimitiveDataType.STRING, true, AttributeCategory.METADATA);
+
+    MutableNodeType a = metamodel.getMutableNodeType("A").getOne();
+    AttributeGroup aGroup = a.createAttributeGroup("test");
+    a.createAttribute(aGroup, "2", PrimitiveDataType.STRING, true, AttributeCategory.METADATA);
+
+    PSSIFOption<AttributeGroup> group = a.getAttributeGroup("test");
+    assertTrue(group.isOne());
+    assertEquals(nodeGroup.getAttributes().size() + 1, group.getOne().getAttributes().size());
   }
 
   private MutableNodeTypeBase nodeA() {

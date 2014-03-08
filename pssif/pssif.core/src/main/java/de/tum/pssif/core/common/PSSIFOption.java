@@ -69,11 +69,11 @@ public final class PSSIFOption<P> {
    *    The resulting option, can be many, one or none, depending on the
    *    contents of the collection.
    */
-  public static <T> PSSIFOption<T> many(Collection<T> elements) {
+  public static <T> PSSIFOption<T> many(Collection<? extends T> elements) {
     return new PSSIFOption<T>(elements);
   }
 
-  private PSSIFOption(Collection<P> elements) {
+  private PSSIFOption(Collection<? extends P> elements) {
     this.elements = Sets.newHashSet();
     if (elements != null) {
       for (P elem : elements) {
