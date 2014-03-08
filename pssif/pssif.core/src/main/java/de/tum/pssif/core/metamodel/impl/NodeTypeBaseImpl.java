@@ -13,7 +13,7 @@ import de.tum.pssif.core.model.Model;
 import de.tum.pssif.core.model.Node;
 
 
-public abstract class NodeTypeBaseImpl extends ElementTypeImpl<NodeTypeBase> implements MutableNodeTypeBase {
+public abstract class NodeTypeBaseImpl extends ElementTypeImpl implements MutableNodeTypeBase {
   public NodeTypeBaseImpl(String name) {
     super(name);
   }
