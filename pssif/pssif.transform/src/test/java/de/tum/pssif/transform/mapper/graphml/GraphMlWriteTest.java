@@ -7,8 +7,8 @@ import java.io.InputStream;
 import org.junit.Test;
 
 import de.tum.pssif.core.metamodel.Metamodel;
+import de.tum.pssif.core.metamodel.PSSIFCanonicMetamodelCreator;
 import de.tum.pssif.core.model.Model;
-import de.tum.pssif.core.util.PSSIFCanonicMetamodelCreator;
 import de.tum.pssif.transform.Mapper;
 import de.tum.pssif.transform.MapperFactory;
 
