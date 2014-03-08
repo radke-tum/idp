@@ -2,6 +2,7 @@ package de.tum.pssif.core.model.impl;
 
 import java.util.Map;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 
 import de.tum.pssif.core.common.PSSIFConstants;
@@ -13,7 +14,8 @@ import de.tum.pssif.core.model.Element;
 
 
 public abstract class ElementImpl implements Element {
-  private Map<String, PSSIFOption<PSSIFValue>> values = Maps.newHashMap();
+  private Map<String, PSSIFOption<PSSIFValue>> values      = Maps.newHashMap();
+  private Map<String, String>                  annotations = Maps.newHashMap();
 
   @Override
   public void setId(String id) {
@@ -33,5 +35,23 @@ public abstract class ElementImpl implements Element {
   @Override
   public void apply(SetValueOperation op) {
     values.put(op.getAttribute().getName(), op.getValue());
+  }
+
+  @Override
+  public void annotate(String key, String value) {
+    annotate(key, value, false);
+  }
+
+  @Override
+  public void annotate(String key, String value, boolean overwrite) {
+    if (!overwrite) {
+      Preconditions.checkState(!annotations.containsKey(key) || annotations.get(key).equals(value));
+    }
+    annotations.put(key, value);
+  }
+
+  @Override
+  public PSSIFOption<String> getAnnotation(String key) {
+    return PSSIFOption.one(annotations.get(key));
   }
 }

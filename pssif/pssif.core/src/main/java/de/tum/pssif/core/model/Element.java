@@ -14,4 +14,10 @@ public interface Element {
   void apply(SetValueOperation op);
 
   PSSIFOption<PSSIFValue> apply(GetValueOperation op);
+
+  void annotate(String key, String value);
+
+  void annotate(String key, String value, boolean overwrite);
+
+  PSSIFOption<String> getAnnotation(String key);
 }
