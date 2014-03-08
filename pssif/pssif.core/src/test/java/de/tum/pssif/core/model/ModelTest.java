@@ -24,32 +24,6 @@ public class ModelTest {
   public void init() {
     metamodel = MetamodelProvider.create();
     model = new ModelImpl();
-
-    //    NodeTypeBase x = nt("X");
-    //    NodeTypeBase s = nt("S");
-    //    NodeTypeBase a = nt("A");
-    //    NodeTypeBase b = nt("B");
-    //    NodeTypeBase jun = nt("jun");
-    //
-    //    node(s, "s1");
-    //    node(s, "s2");
-    //    node(s, "s3");
-    //    node(s, "s4");
-    //
-    //    node(a, "a1");
-    //    node(a, "a2");
-    //
-    //    node(b, "b1");
-    //
-    //    node(jun, "j1");
-    //    node(jun, "j2");
-    //
-    //    Assert.assertEquals(0, x.apply(model, false).size());
-    //    Assert.assertEquals(7, x.apply(model, true).size());
-    //    Assert.assertEquals(4, s.apply(model, false).size());
-    //    Assert.assertEquals(2, a.apply(model, false).size());
-    //    Assert.assertEquals(1, b.apply(model, false).size());
-    //    Assert.assertEquals(2, jun.apply(model, false).size());
   }
 
   @Test
