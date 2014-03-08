@@ -41,8 +41,8 @@ public class ConnectionMappingImpl implements ConnectionMapping {
 
   @Override
   public Edge create(Model model, Node from, Node to) {
-    PSSIFOption<? extends Node> actualFrom = getFrom().apply(model, from.getId(), true);
-    PSSIFOption<? extends Node> actualTo = getTo().apply(model, to.getId(), true);
+    PSSIFOption<Node> actualFrom = getFrom().apply(model, from.getId(), true);
+    PSSIFOption<Node> actualTo = getTo().apply(model, to.getId(), true);
 
     if (!actualFrom.isOne() || !actualTo.isOne()) {
       throw new PSSIFStructuralIntegrityException("could not find one of the nodes to connect");
