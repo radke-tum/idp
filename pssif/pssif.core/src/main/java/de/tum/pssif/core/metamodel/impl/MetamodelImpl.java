@@ -31,15 +31,18 @@ public class MetamodelImpl implements MutableMetamodel {
   private Map<String, MutableNodeTypeBase> nodeTypes    = Maps.newHashMap();
   private Map<String, MutableEdgeType>     edgeTypes    = Maps.newHashMap();
 
-  public MetamodelImpl() {
-    MutableNodeType rootNodeType = createNodeType(PSSIFConstants.ROOT_NODE_TYPE_NAME);
-    addDefaultAttributes(rootNodeType);
+  private final MutableNodeType            node;
+  private final MutableEdgeType            edge;
 
-    MutableEdgeType rootEdgeType = createEdgeType(PSSIFConstants.ROOT_EDGE_TYPE_NAME);
-    addDefaultAttributes(rootEdgeType);
-    rootEdgeType.createAttribute(rootEdgeType.getDefaultAttributeGroup(), PSSIFConstants.BUILTIN_ATTRIBUTE_DIRECTED, PrimitiveDataType.BOOLEAN, true,
+  public MetamodelImpl() {
+    node = createNodeTypeInternal(PSSIFConstants.ROOT_NODE_TYPE_NAME);
+    addDefaultAttributes(node);
+
+    edge = createEdgeTypeInternal(PSSIFConstants.ROOT_EDGE_TYPE_NAME);
+    addDefaultAttributes(edge);
+    edge.createAttribute(edge.getDefaultAttributeGroup(), PSSIFConstants.BUILTIN_ATTRIBUTE_DIRECTED, PrimitiveDataType.BOOLEAN, true,
         AttributeCategory.METADATA);
-    rootEdgeType.createMapping(rootNodeType, rootNodeType);
+    edge.createMapping(node, node);
   }
 
   private final void addDefaultAttributes(MutableElementType type) {
@@ -122,6 +125,12 @@ public class MetamodelImpl implements MutableMetamodel {
 
   @Override
   public MutableNodeType createNodeType(String name) {
+    MutableNodeType result = createNodeTypeInternal(name);
+    result.inherit(node);
+    return result;
+  }
+
+  private MutableNodeType createNodeTypeInternal(String name) {
     PSSIFUtil.checkNameValidity(name);
     if (!getNodeType(name).isNone()) {
       throw new PSSIFStructuralIntegrityException("a nodetype with name '" + name + "' already exists");
@@ -144,6 +153,12 @@ public class MetamodelImpl implements MutableMetamodel {
 
   @Override
   public MutableEdgeType createEdgeType(String name) {
+    MutableEdgeType result = createEdgeTypeInternal(name);
+    result.inherit(edge);
+    return result;
+  }
+
+  private MutableEdgeType createEdgeTypeInternal(String name) {
     PSSIFUtil.checkNameValidity(name);
     if (!getEdgeType(name).isNone()) {
       throw new PSSIFStructuralIntegrityException("an edgetype with name '" + name + "' already exists");

@@ -4,8 +4,10 @@ import java.util.Collection;
 
 import com.google.common.collect.Sets;
 
+import de.tum.pssif.core.common.PSSIFConstants;
 import de.tum.pssif.core.common.PSSIFOption;
 import de.tum.pssif.core.exception.PSSIFStructuralIntegrityException;
+import de.tum.pssif.core.metamodel.AttributeGroup;
 import de.tum.pssif.core.metamodel.ConnectionMapping;
 import de.tum.pssif.core.metamodel.EdgeType;
 import de.tum.pssif.core.metamodel.ElementType;
@@ -20,6 +22,17 @@ import de.tum.pssif.core.model.Node;
 public class JunctionNodeTypeImpl extends NodeTypeBaseImpl implements MutableJunctionNodeType {
   public JunctionNodeTypeImpl(String name) {
     super(name);
+    addAttributeGroup(new NonInheritingAttributeGroup(PSSIFConstants.DEFAULT_ATTRIBUTE_GROUP_NAME, this));
+  }
+
+  @Override
+  public AttributeGroup createAttributeGroup(String name) {
+    if (!getAttributeGroup(name).isNone()) {
+      throw new PSSIFStructuralIntegrityException("group with name " + name + " already exists in type " + getName());
+    }
+    MutableAttributeGroup result = new NonInheritingAttributeGroup(name, this);
+    addAttributeGroup(result);
+    return result;
   }
 
   @Override

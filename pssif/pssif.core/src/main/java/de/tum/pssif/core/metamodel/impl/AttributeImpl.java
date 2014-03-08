@@ -34,8 +34,7 @@ public class AttributeImpl extends NamedImpl implements Attribute {
 
   @Override
   public PSSIFOption<PSSIFValue> get(Element element) {
-    // TODO Auto-generated method stub
-    return null;
+    return new GetValueOperation(this).apply(element);
   }
 
   @Override
@@ -60,7 +59,6 @@ public class AttributeImpl extends NamedImpl implements Attribute {
 
   @Override
   public void set(Element element, PSSIFOption<PSSIFValue> value) {
-    // TODO Auto-generated method stub
-
+    new SetValueOperation(this, value).apply(element);
   }
 }

@@ -10,4 +10,8 @@ public interface Attributable {
   Collection<Attribute> getAttributes();
 
   PSSIFOption<Attribute> getAttribute(String name);
+
+  Collection<Attribute> getDirectAttributes();
+
+  PSSIFOption<Attribute> getDirectAttribute(String name);
 }

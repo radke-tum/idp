@@ -6,8 +6,10 @@ import java.util.Set;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
+import de.tum.pssif.core.common.PSSIFConstants;
 import de.tum.pssif.core.common.PSSIFOption;
 import de.tum.pssif.core.exception.PSSIFStructuralIntegrityException;
+import de.tum.pssif.core.metamodel.AttributeGroup;
 import de.tum.pssif.core.metamodel.ElementType;
 import de.tum.pssif.core.metamodel.NodeType;
 import de.tum.pssif.core.metamodel.mutable.MutableNodeType;
@@ -21,6 +23,17 @@ public class NodeTypeImpl extends NodeTypeBaseImpl implements MutableNodeType {
 
   public NodeTypeImpl(String name) {
     super(name);
+    addAttributeGroup(new InheritingAttributeGroup<NodeType>(PSSIFConstants.DEFAULT_ATTRIBUTE_GROUP_NAME, this));
+  }
+
+  @Override
+  public AttributeGroup createAttributeGroup(String name) {
+    if (!getAttributeGroup(name).isNone()) {
+      throw new PSSIFStructuralIntegrityException("group with name " + name + " already exists in type " + getName());
+    }
+    MutableAttributeGroup result = new InheritingAttributeGroup<NodeType>(name, this);
+    addAttributeGroup(result);
+    return result;
   }
 
   @Override
@@ -74,8 +87,8 @@ public class NodeTypeImpl extends NodeTypeBaseImpl implements MutableNodeType {
   }
 
   @Override
-  public NodeType getGeneral() {
-    return general;
+  public PSSIFOption<NodeType> getGeneral() {
+    return PSSIFOption.one(general);
   }
 
   @Override

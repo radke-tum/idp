@@ -28,18 +28,6 @@ public abstract class ElementTypeImpl extends NamedImpl implements MutableElemen
 
   public ElementTypeImpl(String name) {
     super(name);
-    attributeGroups.put(PSSIFUtil.normalize(PSSIFConstants.DEFAULT_ATTRIBUTE_GROUP_NAME), new AttributeGroupImpl(
-        PSSIFConstants.DEFAULT_ATTRIBUTE_GROUP_NAME));
-  }
-
-  @Override
-  public AttributeGroup createAttributeGroup(String name) {
-    if (attributeGroups.containsKey(PSSIFUtil.normalize(name))) {
-      throw new PSSIFStructuralIntegrityException("group with name " + name + " already exists in type " + getName());
-    }
-    MutableAttributeGroup result = new AttributeGroupImpl(name);
-    attributeGroups.put(PSSIFUtil.normalize(result.getName()), result);
-    return result;
   }
 
   @Override
@@ -95,7 +83,7 @@ public abstract class ElementTypeImpl extends NamedImpl implements MutableElemen
   public Collection<Attribute> getAttributes() {
     Collection<Attribute> result = Sets.newHashSet();
 
-    for (AttributeGroup group : attributeGroups.values()) {
+    for (AttributeGroup group : getAttributeGroups()) {
       result.addAll(group.getAttributes());
     }
 
@@ -106,8 +94,30 @@ public abstract class ElementTypeImpl extends NamedImpl implements MutableElemen
   public PSSIFOption<Attribute> getAttribute(String name) {
     PSSIFOption<Attribute> result = PSSIFOption.none();
 
-    for (AttributeGroup group : attributeGroups.values()) {
+    for (AttributeGroup group : getAttributeGroups()) {
       result = PSSIFOption.merge(result, group.getAttribute(name));
+    }
+
+    return result;
+  }
+
+  @Override
+  public Collection<Attribute> getDirectAttributes() {
+    Collection<Attribute> result = Sets.newHashSet();
+
+    for (AttributeGroup group : getAttributeGroups()) {
+      result.addAll(group.getDirectAttributes());
+    }
+
+    return ImmutableSet.copyOf(result);
+  }
+
+  @Override
+  public PSSIFOption<Attribute> getDirectAttribute(String name) {
+    PSSIFOption<Attribute> result = PSSIFOption.none();
+
+    for (AttributeGroup group : getAttributeGroups()) {
+      result = PSSIFOption.merge(result, group.getDirectAttribute(name));
     }
 
     return result;
@@ -121,6 +131,10 @@ public abstract class ElementTypeImpl extends NamedImpl implements MutableElemen
         group.removeAttribute(actualAttribute.getOne());
       }
     }
+  }
+
+  protected final void addAttributeGroup(MutableAttributeGroup group) {
+    attributeGroups.put(PSSIFUtil.normalize(group.getName()), group);
   }
 
   private PSSIFOption<MutableAttributeGroup> getMutableAttributeGroup(String name) {

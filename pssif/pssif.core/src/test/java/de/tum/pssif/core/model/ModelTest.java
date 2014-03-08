@@ -6,8 +6,11 @@ import org.junit.Test;
 
 import com.google.common.collect.Sets;
 
+import de.tum.pssif.core.common.PSSIFConstants;
 import de.tum.pssif.core.common.PSSIFOption;
+import de.tum.pssif.core.common.PSSIFValue;
 import de.tum.pssif.core.exception.PSSIFStructuralIntegrityException;
+import de.tum.pssif.core.metamodel.Attribute;
 import de.tum.pssif.core.metamodel.ConnectionMapping;
 import de.tum.pssif.core.metamodel.EdgeType;
 import de.tum.pssif.core.metamodel.Metamodel;
@@ -164,6 +167,19 @@ public class ModelTest {
     } catch (PSSIFStructuralIntegrityException e) {
       //expected
     }
+  }
+
+  @Test
+  public void testAttributeValues() {
+    NodeTypeBase s = nt("S");
+    Node s1 = node(s, "s1");
+    PSSIFOption<Attribute> name = s.getAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_NAME);
+    Assert.assertTrue(name.isOne());
+    name.getOne().set(s1, PSSIFOption.one(PSSIFValue.create("s1")));
+    PSSIFOption<PSSIFValue> val = name.getOne().get(s1);
+    Assert.assertTrue(val.isOne());
+    Assert.assertTrue(val.getOne().isString());
+    Assert.assertEquals("s1", val.getOne().asString());
   }
 
   private NodeTypeBase nt(String name) {
