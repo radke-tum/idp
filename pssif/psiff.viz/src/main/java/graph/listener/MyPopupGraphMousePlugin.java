@@ -59,8 +59,14 @@ public class MyPopupGraphMousePlugin extends AbstractPopupGraphMousePlugin {
             	// if the user made a right click on a Node
             	JPopupMenu popup = new JPopupMenu();
             	JMenu submenu =createEdge(e,node);
-            	
             	popup.add(submenu);
+            	
+				// TODO
+				if (node.getNodeType().toString().equals("Requirement")) {
+					JMenu submenu2 = traceRequirement(e, node);
+					popup.add(submenu2);
+				}
+				// /
             	
             	popup.show(vv, e.getX(), e.getY());
             } 
@@ -146,6 +152,18 @@ public class MyPopupGraphMousePlugin extends AbstractPopupGraphMousePlugin {
        		submenu.add(menuItem);
        	}
            
+       	return submenu;
+    }
+    
+    /**
+     * provide the SubMenu options to trace a requirement
+     * @param e The MouseEvent which triggered the action
+     * @param selectedNode The Node which was selected when the user pushed the right mouse button
+     * @return a menu with all the option to trace a requirement
+     */
+    private JMenu traceRequirement ( MouseEvent e, MyNode selectedNode)
+    {
+    	JMenu submenu = new JMenu("Trace requirement");
        	return submenu;
     }
     
