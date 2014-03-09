@@ -47,4 +47,8 @@ public class ViewedConnectionMapping extends ConnectionMappingImpl {
   public Edge create(Model model, Node from, Node to) {
     return baseMapping.create(model, from, to);
   }
+
+  protected final ConnectionMapping getBaseMapping() {
+    return baseMapping;
+  }
 }

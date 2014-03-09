@@ -20,6 +20,7 @@ import de.tum.pssif.core.metamodel.Enumeration;
 import de.tum.pssif.core.metamodel.PrimitiveDataType;
 import de.tum.pssif.core.metamodel.Unit;
 import de.tum.pssif.core.metamodel.Units;
+import de.tum.pssif.core.metamodel.mutable.MutableAttributeGroup;
 import de.tum.pssif.core.metamodel.mutable.MutableElementType;
 
 
@@ -137,7 +138,20 @@ public abstract class ElementTypeImpl extends NamedImpl implements MutableElemen
     attributeGroups.put(PSSIFUtil.normalize(group.getName()), group);
   }
 
-  private PSSIFOption<MutableAttributeGroup> getMutableAttributeGroup(String name) {
+  @Override
+  public PSSIFOption<MutableAttributeGroup> getMutableAttributeGroup(String name) {
     return PSSIFOption.one(attributeGroups.get(PSSIFUtil.normalize(name)));
+  }
+
+  @Override
+  public MutableAttributeGroup getMutableDefaultAttributeGroup() {
+    PSSIFOption<MutableAttributeGroup> result = getMutableAttributeGroup(PSSIFConstants.DEFAULT_ATTRIBUTE_GROUP_NAME);
+    Preconditions.checkState(result.isOne());
+    return result.getOne();
+  }
+
+  @Override
+  public Collection<MutableAttributeGroup> getMutableAttributeGroups() {
+    return ImmutableSet.copyOf(attributeGroups.values());
   }
 }

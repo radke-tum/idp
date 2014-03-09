@@ -9,12 +9,17 @@ import de.tum.pssif.core.metamodel.EdgeType;
 import de.tum.pssif.core.metamodel.impl.ReadIncomingNodesOperation;
 import de.tum.pssif.core.metamodel.impl.ReadOutgoingNodesOperation;
 import de.tum.pssif.core.model.Edge;
+import de.tum.pssif.core.model.Model;
 import de.tum.pssif.core.model.Node;
 
 
 public class NodeImpl extends ElementImpl implements Node {
   private Multimap<ConnectionMappingSignature, Edge> outgoingEdges = HashMultimap.create();
   private Multimap<ConnectionMappingSignature, Edge> incomingEdges = HashMultimap.create();
+
+  public NodeImpl(Model model) {
+    super(model);
+  }
 
   @Override
   public PSSIFOption<Edge> apply(ReadOutgoingNodesOperation op) {

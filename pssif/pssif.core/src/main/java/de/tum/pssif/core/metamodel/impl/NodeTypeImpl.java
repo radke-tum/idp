@@ -10,8 +10,11 @@ import de.tum.pssif.core.common.PSSIFConstants;
 import de.tum.pssif.core.common.PSSIFOption;
 import de.tum.pssif.core.exception.PSSIFStructuralIntegrityException;
 import de.tum.pssif.core.metamodel.AttributeGroup;
+import de.tum.pssif.core.metamodel.EdgeType;
 import de.tum.pssif.core.metamodel.ElementType;
 import de.tum.pssif.core.metamodel.NodeType;
+import de.tum.pssif.core.metamodel.NodeTypeBase;
+import de.tum.pssif.core.metamodel.mutable.MutableAttributeGroup;
 import de.tum.pssif.core.metamodel.mutable.MutableNodeType;
 import de.tum.pssif.core.model.Model;
 import de.tum.pssif.core.model.Node;
@@ -109,5 +112,25 @@ public class NodeTypeImpl extends NodeTypeBaseImpl implements MutableNodeType {
   @Override
   public Class<?> getMetaType() {
     return NodeType.class;
+  }
+
+  @Override
+  public Collection<NodeTypeBase> leftClosure(EdgeType edgeType, Node node) {
+    return ImmutableSet.<NodeTypeBase> of(this);
+  }
+
+  @Override
+  public Collection<NodeTypeBase> rightClosure(EdgeType edgeType, Node node) {
+    return ImmutableSet.<NodeTypeBase> of(this);
+  }
+
+  @Override
+  public int junctionIncomingEdgeCount(EdgeType edgeType, Node node) {
+    return 0;
+  }
+
+  @Override
+  public int junctionOutgoingEdgeCount(EdgeType edgeType, Node node) {
+    return 0;
   }
 }

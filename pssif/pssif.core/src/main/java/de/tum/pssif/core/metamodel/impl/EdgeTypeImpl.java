@@ -17,6 +17,7 @@ import de.tum.pssif.core.metamodel.EdgeType;
 import de.tum.pssif.core.metamodel.ElementType;
 import de.tum.pssif.core.metamodel.JunctionNodeType;
 import de.tum.pssif.core.metamodel.NodeTypeBase;
+import de.tum.pssif.core.metamodel.mutable.MutableAttributeGroup;
 import de.tum.pssif.core.metamodel.mutable.MutableConnectionMapping;
 import de.tum.pssif.core.metamodel.mutable.MutableEdgeType;
 

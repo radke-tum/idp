@@ -42,10 +42,7 @@ public class ConnectionMappingImpl implements MutableConnectionMapping {
 
   @Override
   public Edge create(Model model, Node from, Node to) {
-    PSSIFOption<Node> actualFrom = getFrom().apply(model, from.getId(), true);
-    PSSIFOption<Node> actualTo = getTo().apply(model, to.getId(), true);
-
-    if (!actualFrom.isOne() || !actualTo.isOne()) {
+    if (!getFrom().apply(model, true).getMany().contains(from) || !getTo().apply(model, true).getMany().contains(to)) {
       throw new PSSIFStructuralIntegrityException("could not find one of the nodes to connect");
     }
 
@@ -78,10 +75,10 @@ public class ConnectionMappingImpl implements MutableConnectionMapping {
       }
     }
 
-    Edge result = new CreateEdgeOperation(this, actualFrom.getOne(), actualTo.getOne()).apply(model);
+    Edge result = new CreateEdgeOperation(this, from, to).apply(model);
 
-    getFrom().onOutgoingEdgeCreated(actualFrom.getOne(), this, result);
-    getTo().onIncomingEdgeCreated(actualTo.getOne(), this, result);
+    getFrom().onOutgoingEdgeCreated(from, this, result);
+    getTo().onIncomingEdgeCreated(to, this, result);
 
     return result;
   }

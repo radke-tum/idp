@@ -9,6 +9,8 @@ import de.tum.pssif.core.metamodel.impl.SetValueOperation;
 
 
 public interface Element {
+  Model getModel();
+
   void setId(String id);
 
   String getId();

@@ -63,4 +63,6 @@ public interface Model {
    *    A PSS-IF Option containing the nodes.
    */
   PSSIFOption<Edge> apply(ReadEdgesOperation op);
+
+  String generateId();
 }

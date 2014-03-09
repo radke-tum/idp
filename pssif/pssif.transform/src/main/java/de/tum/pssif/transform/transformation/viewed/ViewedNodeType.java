@@ -38,4 +38,8 @@ public class ViewedNodeType extends NodeTypeImpl {
   public Node create(Model model) {
     return baseType.create(model);
   }
+
+  protected final NodeType getBaseType() {
+    return baseType;
+  }
 }

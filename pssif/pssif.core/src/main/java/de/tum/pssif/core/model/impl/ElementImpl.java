@@ -13,11 +13,22 @@ import de.tum.pssif.core.common.PSSIFValue;
 import de.tum.pssif.core.metamodel.impl.GetValueOperation;
 import de.tum.pssif.core.metamodel.impl.SetValueOperation;
 import de.tum.pssif.core.model.Element;
+import de.tum.pssif.core.model.Model;
 
 
 public abstract class ElementImpl implements Element {
+  private final Model                          model;
   private Map<String, PSSIFOption<PSSIFValue>> values      = Maps.newHashMap();
   private Map<String, String>                  annotations = Maps.newHashMap();
+
+  public ElementImpl(Model model) {
+    this.model = model;
+  }
+
+  @Override
+  public Model getModel() {
+    return model;
+  }
 
   @Override
   public void setId(String id) {
