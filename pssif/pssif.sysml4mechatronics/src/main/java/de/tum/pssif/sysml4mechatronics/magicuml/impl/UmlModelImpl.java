@@ -9,14 +9,14 @@ import com.google.common.collect.Sets;
 import de.tum.pssif.sysml4mechatronics.common.IdentifiableNamedImpl;
 import de.tum.pssif.sysml4mechatronics.common.SysML4MIdentifier;
 import de.tum.pssif.sysml4mechatronics.common.SysML4MName;
-import de.tum.pssif.sysml4mechatronics.magicuml.MagicumlClass;
-import de.tum.pssif.sysml4mechatronics.magicuml.MagicumlDataType;
-import de.tum.pssif.sysml4mechatronics.magicuml.MagicumlModel;
-import de.tum.pssif.sysml4mechatronics.magicuml.MagicumlPackagedElement;
-import de.tum.pssif.sysml4mechatronics.magicuml.MagicumlVisibility;
+import de.tum.pssif.sysml4mechatronics.magicuml.MagicUmlClass;
+import de.tum.pssif.sysml4mechatronics.magicuml.MagicUmlDataType;
+import de.tum.pssif.sysml4mechatronics.magicuml.MagicUmlModel;
+import de.tum.pssif.sysml4mechatronics.magicuml.MagicUmlPackagedElement;
+import de.tum.pssif.sysml4mechatronics.magicuml.MagicUmlVisibility;
 
 
-public class UmlModelImpl extends IdentifiableNamedImpl implements MagicumlModel {
+public class UmlModelImpl extends IdentifiableNamedImpl implements MagicUmlModel {
 
   private final Map<SysML4MIdentifier, UmlClassImpl>    classesById     = Maps.newHashMap();
   private final Map<SysML4MName, UmlClassImpl>          classesByName   = Maps.newHashMap();
@@ -28,21 +28,21 @@ public class UmlModelImpl extends IdentifiableNamedImpl implements MagicumlModel
   }
 
   @Override
-  public Set<MagicumlPackagedElement> getPackagedElements() {
-    Set<MagicumlPackagedElement> result = Sets.newHashSet();
+  public Set<MagicUmlPackagedElement> getPackagedElements() {
+    Set<MagicUmlPackagedElement> result = Sets.newHashSet();
     result.addAll(getClasses());
     result.addAll(getDataTypes());
     return result;
   }
 
   @Override
-  public Set<MagicumlClass> getClasses() {
-    return Sets.<MagicumlClass> newHashSet(this.classesById.values());
+  public Set<MagicUmlClass> getClasses() {
+    return Sets.<MagicUmlClass> newHashSet(this.classesById.values());
   }
 
   @Override
-  public Set<MagicumlDataType> getDataTypes() {
-    return Sets.<MagicumlDataType> newHashSet(this.dataTypesById.values());
+  public Set<MagicUmlDataType> getDataTypes() {
+    return Sets.<MagicUmlDataType> newHashSet(this.dataTypesById.values());
   }
 
   @Override
@@ -84,7 +84,7 @@ public class UmlModelImpl extends IdentifiableNamedImpl implements MagicumlModel
   }
 
   @Override
-  public UmlClassImpl createUmlClass(SysML4MIdentifier identitifer, SysML4MName name, MagicumlVisibility visibility) {
+  public UmlClassImpl createUmlClass(SysML4MIdentifier identitifer, SysML4MName name, MagicUmlVisibility visibility) {
     UmlClassImpl clazz = new UmlClassImpl(identitifer, name, visibility);
     this.classesById.put(identitifer, clazz);
     this.classesByName.put(name, clazz);

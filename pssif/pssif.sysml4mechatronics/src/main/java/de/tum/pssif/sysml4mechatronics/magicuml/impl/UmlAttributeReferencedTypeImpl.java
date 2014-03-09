@@ -2,11 +2,11 @@ package de.tum.pssif.sysml4mechatronics.magicuml.impl;
 
 import de.tum.pssif.sysml4mechatronics.common.SysML4MIdentifier;
 import de.tum.pssif.sysml4mechatronics.common.SysML4MName;
-import de.tum.pssif.sysml4mechatronics.magicuml.MagicumlAttributeReferencedType;
-import de.tum.pssif.sysml4mechatronics.magicuml.MagicumlClass;
+import de.tum.pssif.sysml4mechatronics.magicuml.MagicUmlAttributeReferencedType;
+import de.tum.pssif.sysml4mechatronics.magicuml.MagicUmlClass;
 
 
-public class UmlAttributeReferencedTypeImpl extends UmlAttributeImpl implements MagicumlAttributeReferencedType {
+public class UmlAttributeReferencedTypeImpl extends UmlAttributeImpl implements MagicUmlAttributeReferencedType {
 
   private final SysML4MIdentifier refTypeId;
 
@@ -23,7 +23,7 @@ public class UmlAttributeReferencedTypeImpl extends UmlAttributeImpl implements 
   }
 
   @Override
-  public MagicumlClass getReferencedType() {
+  public MagicUmlClass getReferencedType() {
     return this.refType;
   }
 

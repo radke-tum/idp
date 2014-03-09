@@ -3,7 +3,7 @@ package de.tum.pssif.sysml4mechatronics.magicuml;
 import de.tum.pssif.sysml4mechatronics.common.SysML4MIdentifier;
 
 
-public interface MagicumlConnector extends MagicumlOwnedFeature {
+public interface MagicUmlConnector extends MagicUmlOwnedFeature {
 
   SysML4MIdentifier getSourceAttributeIdentifier();
 
@@ -13,12 +13,12 @@ public interface MagicumlConnector extends MagicumlOwnedFeature {
 
   SysML4MIdentifier getTargetPortIdentifier();
 
-  MagicumlAttributeReferencedType getSourceAttribute();
+  MagicUmlAttributeReferencedType getSourceAttribute();
 
-  MagicumlAttributeReferencedType getTargetAttribute();
+  MagicUmlAttributeReferencedType getTargetAttribute();
 
-  MagicumlAttributePort getSourcePort();
+  MagicUmlAttributePort getSourcePort();
 
-  MagicumlAttributePort getTargetPort();
+  MagicUmlAttributePort getTargetPort();
 
 }

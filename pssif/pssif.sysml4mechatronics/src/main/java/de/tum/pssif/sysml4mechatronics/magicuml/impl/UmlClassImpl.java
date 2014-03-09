@@ -8,48 +8,48 @@ import com.google.common.collect.Sets;
 
 import de.tum.pssif.sysml4mechatronics.common.SysML4MIdentifier;
 import de.tum.pssif.sysml4mechatronics.common.SysML4MName;
-import de.tum.pssif.sysml4mechatronics.magicuml.MagicumlAttribute;
-import de.tum.pssif.sysml4mechatronics.magicuml.MagicumlClass;
-import de.tum.pssif.sysml4mechatronics.magicuml.MagicumlConnector;
-import de.tum.pssif.sysml4mechatronics.magicuml.MagicumlOwnedFeature;
-import de.tum.pssif.sysml4mechatronics.magicuml.MagicumlVisibility;
+import de.tum.pssif.sysml4mechatronics.magicuml.MagicUmlAttribute;
+import de.tum.pssif.sysml4mechatronics.magicuml.MagicUmlClass;
+import de.tum.pssif.sysml4mechatronics.magicuml.MagicUmlConnector;
+import de.tum.pssif.sysml4mechatronics.magicuml.MagicUmlOwnedFeature;
+import de.tum.pssif.sysml4mechatronics.magicuml.MagicUmlVisibility;
 
 
-public class UmlClassImpl extends UmlPackagedElementImpl implements MagicumlClass {
+public class UmlClassImpl extends UmlPackagedElementImpl implements MagicUmlClass {
 
-  private final MagicumlVisibility                       visibility;
+  private final MagicUmlVisibility                       visibility;
 
   private final Map<SysML4MIdentifier, UmlAttributeImpl> attributesById   = Maps.newHashMap();
   private final Map<SysML4MName, UmlAttributeImpl>       attributesByName = Maps.newHashMap();
   private final Map<SysML4MIdentifier, UmlConnectorImpl> connectorsById   = Maps.newHashMap();
   private final Map<SysML4MName, UmlConnectorImpl>       connectorsByName = Maps.newHashMap();
 
-  public UmlClassImpl(SysML4MIdentifier identifier, SysML4MName name, MagicumlVisibility visibility) {
+  public UmlClassImpl(SysML4MIdentifier identifier, SysML4MName name, MagicUmlVisibility visibility) {
     super(identifier, name);
     this.visibility = visibility;
   }
 
   @Override
-  public MagicumlVisibility getVisibility() {
+  public MagicUmlVisibility getVisibility() {
     return this.visibility;
   }
 
   @Override
-  public Set<MagicumlOwnedFeature> getOwnedFeatures() {
-    Set<MagicumlOwnedFeature> result = Sets.newHashSet();
+  public Set<MagicUmlOwnedFeature> getOwnedFeatures() {
+    Set<MagicUmlOwnedFeature> result = Sets.newHashSet();
     result.addAll(getAttributes());
     result.addAll(getConnectors());
     return result;
   }
 
   @Override
-  public Set<MagicumlAttribute> getAttributes() {
-    return Sets.<MagicumlAttribute> newHashSet(this.attributesById.values());
+  public Set<MagicUmlAttribute> getAttributes() {
+    return Sets.<MagicUmlAttribute> newHashSet(this.attributesById.values());
   }
 
   @Override
-  public Set<MagicumlConnector> getConnectors() {
-    return Sets.<MagicumlConnector> newHashSet(this.connectorsById.values());
+  public Set<MagicUmlConnector> getConnectors() {
+    return Sets.<MagicUmlConnector> newHashSet(this.connectorsById.values());
   }
 
   @Override

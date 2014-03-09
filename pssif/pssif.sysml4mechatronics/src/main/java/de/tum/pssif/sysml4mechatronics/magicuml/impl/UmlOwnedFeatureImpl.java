@@ -3,10 +3,10 @@ package de.tum.pssif.sysml4mechatronics.magicuml.impl;
 import de.tum.pssif.sysml4mechatronics.common.IdentifiableNamedImpl;
 import de.tum.pssif.sysml4mechatronics.common.SysML4MIdentifier;
 import de.tum.pssif.sysml4mechatronics.common.SysML4MName;
-import de.tum.pssif.sysml4mechatronics.magicuml.MagicumlOwnedFeature;
+import de.tum.pssif.sysml4mechatronics.magicuml.MagicUmlOwnedFeature;
 
 
-public abstract class UmlOwnedFeatureImpl extends IdentifiableNamedImpl implements MagicumlOwnedFeature {
+public abstract class UmlOwnedFeatureImpl extends IdentifiableNamedImpl implements MagicUmlOwnedFeature {
 
   private final UmlClassImpl owner;
 

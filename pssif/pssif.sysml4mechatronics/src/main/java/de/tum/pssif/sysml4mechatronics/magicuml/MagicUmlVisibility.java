@@ -1,6 +1,6 @@
 package de.tum.pssif.sysml4mechatronics.magicuml;
 
-public enum MagicumlVisibility {
+public enum MagicUmlVisibility {
 
   PUBLIC, PRIVATE
 
