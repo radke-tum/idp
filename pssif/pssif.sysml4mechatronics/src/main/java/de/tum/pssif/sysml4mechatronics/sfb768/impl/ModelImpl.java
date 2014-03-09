@@ -6,6 +6,7 @@ import java.util.Set;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
+import de.tum.pssif.sysml4mechatronics.common.IdentifiableNamedImpl;
 import de.tum.pssif.sysml4mechatronics.common.SysML4MIdentifier;
 import de.tum.pssif.sysml4mechatronics.common.SysML4MName;
 import de.tum.pssif.sysml4mechatronics.sfb768.SFB768Block;
@@ -18,7 +19,7 @@ import de.tum.pssif.sysml4mechatronics.sfb768.SFB768PortAssociation;
 public class ModelImpl extends IdentifiableNamedImpl implements SFB768Model {
 
   private final Map<SysML4MIdentifier, BlockImpl> blocks           = Maps.newHashMap();
-  private final Set<PortAssociationImpl>         portAssociations = Sets.newHashSet();
+  private final Set<PortAssociationImpl>          portAssociations = Sets.newHashSet();
 
   ModelImpl(SysML4MIdentifier identifier, SysML4MName name) {
     super(identifier, name);
