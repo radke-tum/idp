@@ -15,13 +15,13 @@ import de.tum.pssif.transform.MapperFactory;
 
 public class GraphMlWriteTest {
   private final Metamodel     metamodel     = PSSIFCanonicMetamodelCreator.create();
-  private final GraphMLMapper canonicMapper = new PssifMapper();
+  private final GraphMLMapper canonicMapper = new PSSIFMapper();
 
   @Test
   public void testWrite() {
 
     InputStream in = getClass().getResourceAsStream("/flow.graphml");
-    GraphMLMapper importer = new UfpMapper();
+    GraphMLMapper importer = new UFMMapper();
 
     Metamodel metamodel = PSSIFCanonicMetamodelCreator.create();
     Metamodel view = GraphMLMapper.createGraphMlView(metamodel);

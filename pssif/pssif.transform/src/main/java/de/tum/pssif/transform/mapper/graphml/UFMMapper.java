@@ -21,7 +21,7 @@ import de.tum.pssif.transform.transformation.RightJoinConnectionMappingTransform
 import de.tum.pssif.transform.transformation.SpecializeConnectionMappingTransformation;
 
 
-public class UfpMapper extends GraphMLMapper {
+public class UFMMapper extends GraphMLMapper {
   @Override
   public Model read(Metamodel metamodel, InputStream inputStream) {
     return readInternal(createUfpView(metamodel), inputStream);

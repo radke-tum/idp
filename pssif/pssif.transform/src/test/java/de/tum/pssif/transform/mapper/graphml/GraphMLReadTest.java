@@ -76,7 +76,7 @@ public class GraphMLReadTest {
   @Test
   public void testReadFlowIntoPSSIF() {
     InputStream in = getClass().getResourceAsStream("/flow.graphml");
-    GraphMLMapper importer = new UfpMapper();
+    GraphMLMapper importer = new UFMMapper();
 
     Metamodel metamodel = PSSIFCanonicMetamodelCreator.create();
     Metamodel view = new RenameEdgeTypeTransformation(metamodel.getEdgeType("Information Flow").getOne(), "InformationFlow").apply(metamodel);
@@ -133,7 +133,7 @@ public class GraphMLReadTest {
   @Test
   public void testReadHierarchicIntoPSSIF() {
     InputStream in = getClass().getResourceAsStream("/hierarchic.graphml");
-    GraphMLMapper importer = new UfpMapper();
+    GraphMLMapper importer = new UFMMapper();
 
     Metamodel metamodel = PSSIFCanonicMetamodelCreator.create();
     Model model = importer.read(metamodel, in);

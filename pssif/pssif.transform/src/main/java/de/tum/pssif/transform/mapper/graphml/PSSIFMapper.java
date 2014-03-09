@@ -7,7 +7,7 @@ import de.tum.pssif.core.metamodel.Metamodel;
 import de.tum.pssif.core.model.Model;
 
 
-public class PssifMapper extends GraphMLMapper {
+public class PSSIFMapper extends GraphMLMapper {
 
   @Override
   public Model read(Metamodel metamodel, InputStream inputStream) {
