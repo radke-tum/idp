@@ -4,7 +4,6 @@ package gui;
 import graph.operations.AttributeFilter;
 import graph.operations.GraphViewContainer;
 import graph.operations.MasterFilter;
-import graph.operations.NodeAndEdgeTypeFilter;
 import gui.graph.AttributeFilterPopup;
 import gui.graph.CreateNewGraphViewPopup;
 import gui.graph.GraphVisualization;
@@ -35,6 +34,11 @@ import javax.swing.JPanel;
 import model.FileExporter;
 import model.FileImporter;
 
+/**
+ * The main class of the project. Execute this class to start the Visualization Software
+ * @author Luc
+ *
+ */
 public class Main {
 	
 	private MatrixView matrixView;
@@ -65,8 +69,6 @@ public class Main {
 	private JMenu deleteNodeFilter;
 	private JMenu deleteEdgeFilter;
 	
-	//private LinkedList<String> activeNodeFilters;
-	//private LinkedList<String> activeEdgeFilters;
 	private FileImporter importer;
 	private MasterFilter masterFilter;
 	
@@ -75,6 +77,9 @@ public class Main {
 		new Main();
 	}
 	
+	/**
+	 * create a new instance of the program
+	 */
 	public Main ()
 	{
 		frame = new JFrame("Product Service Systems - Integration Framework ---- Visualization");
@@ -116,9 +121,6 @@ public class Main {
 	 */
 	private JMenuBar createFileMenu()
 	{
-	//	this.activeEdgeFilters = new LinkedList<String>();
-	//	this.activeNodeFilters = new LinkedList<String>();
-		
 		JMenuBar menuBar = new JMenuBar();
 		
 		JMenu fileMenu = new JMenu("File");
@@ -127,23 +129,24 @@ public class Main {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				//FileImporter importer = new FileImporter();
 				if (importer.showPopup(frame))
 				{
 			        // Create the Views
 			        matrixView = new MatrixView();
 					graphView = new GraphView();
+					// instance which manages all the filters
 					masterFilter = new MasterFilter(graphView);
 					
 					Dimension d = frame.getSize();
 					
 					// Setup the frame
 					frame.getContentPane().removeAll();
-					// Standart start with Graph
+					// Standard start with Graph
 					frame.getContentPane().add(graphView.getGraphPanel());
 					graphView.setActive(true);
 					matrixView.setActive(false);
 					
+					//create the full menuBar after first import
 					frame.setJMenuBar(createMenu());
 					adjustButtons();
 					
@@ -191,7 +194,11 @@ public class Main {
 		return menuBar;
 	}
 	
-	
+	/**
+	 * Adds the missing options to the "File" Menu to the MenuBar (Import File not included)
+	 * @param menuBar where to place the menu
+	 * @return the updated menuBar
+	 */
 	private JMenuBar addFileMenu(JMenuBar menuBar)
 	{
 		exportFile = new JMenuItem("Export File");
@@ -232,6 +239,10 @@ public class Main {
 		return menuBar;
 	}
 	
+	/**
+	 * Adds the Mouse Operations Mode to the MenuBar (Picking and Transforming Mode)
+	 * @return The updated MenuBar
+	 */
 	private JMenu addMouseOperationModes()
 	{
 		JMenu modeMenu = graphView.getGraph().getAbstractModalGraphMouse().getModeMenu(); // Obtain mode menu from the mouse
@@ -243,6 +254,10 @@ public class Main {
 		return modeMenu;
 	}
 	
+	/**
+	 * Adds the Option to change the Graph Layout to the MenuBar
+	 * @return The updated MenuBar
+	 */
 	private JMenu addChangeLayouts()
 	{
 		graphLayout = new JMenu("Graph Layout");
@@ -326,6 +341,10 @@ public class Main {
 		return graphLayout;
 	}
 	
+	/**
+	 * Adds the possibility to change to the GraphView or MatrixView to the MenuBar
+	 * @return The updated MenuBar
+	 */
 	private JMenu addVizModes()
 	{
 		JMenu visualisationMenu = new JMenu("Visualization Mode");
@@ -358,7 +377,7 @@ public class Main {
 			public void actionPerformed(ActionEvent e) {
 				frame.getContentPane().removeAll();
 				Dimension d = frame.getSize();
-				//System.out.println("current Size "+d);
+
 				frame.getContentPane().add(matrixView.getVisualization());
 				graphView.setActive(false);
 				matrixView.setActive(true);
@@ -366,7 +385,6 @@ public class Main {
 				frame.setPreferredSize(d);
 				
 				frame.pack();
-				//frame.setExtendedState(Frame.MAXIMIZED_BOTH);
 				frame.repaint();
 			}
 		});
@@ -376,6 +394,10 @@ public class Main {
 		return visualisationMenu;
 	}
 	
+	/**
+	 * Adds the Reset Matrix and Graph Options to the MenuBar
+	 * @return The updated MenuBar
+	 */
 	private JMenu addResetOptions()
 	{
 		JMenu resetMenu = new JMenu("Reset");
@@ -396,17 +418,17 @@ public class Main {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				boolean res = matrixView.chooseNodes();
+				boolean res = matrixView.chooseEdgesAndNodes();
 				
+				frame.getContentPane().removeAll();
 				if (res)
 				{
-					frame.getContentPane().removeAll();
+					// create the Matrix View
 					frame.getContentPane().add(matrixView.getVisualization());
 				}
 				else
 				{
-					frame.getContentPane().removeAll();
-					// create an information Panel
+					// create an information Panel and display no Matrix
 					JPanel allPanel = new JPanel(new GridBagLayout());
 					allPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 					JLabel label = new JLabel("Please select a least one EdgeType and one NodeType");
@@ -424,12 +446,16 @@ public class Main {
 		
 		return resetMenu;
 	}
-		
+	
+	/**
+	 * Adds the Graph Filters (View, AttributeFilter, FollowEdges)  to the MenuBar
+	 * @return The updated MenuBar
+	 */
 	private JMenu addGraphOperations()
 	{
 		graphOperations = new JMenu("Graph Operations");
 		
-		attributFilter = new JMenuItem("Create new Attribute Filter");
+		attributFilter = new JMenuItem("Create a new Attribute Filter");
 		attributFilter.addActionListener(new ActionListener() {
 			
 			@Override
@@ -441,23 +467,25 @@ public class Main {
 				if (result !=null && result.contains(AttributeFilterPopup.newEdge))
 				{
 					String condition = result.substring(result.indexOf("|")+1);
-					//activeEdgeFilters.add(condition);
+					
+					// Tell the MasterFilter
 					masterFilter.addEdgeAttributFilter(condition, true);
+					
+					//update the MenuBar
 					resetApplyEdgeFilters(condition);
 					resetDeleteEdgeFilters();
-					
-					//graphView.getGraph().updateGraph();
 				}
 				
 				if (result !=null && result.contains(AttributeFilterPopup.newNode))
 				{
 					String condition = result.substring(result.indexOf("|")+1);
-					//activeNodeFilters.add(condition);
+					
+					// Tell the MasterFilter
 					masterFilter.addNodeAttributFilter(condition, true);
+					
+					//update the MenuBar
 					resetApplyNodeFilters(condition);
 					resetDeleteNodeFilters();
-					
-					//graphView.getGraph().updateGraph();
 				}
 
 				
@@ -467,18 +495,22 @@ public class Main {
 		graphOperations.add(attributFilter);
 		
 		applyNodeFilter = new JMenu("Apply Node Attribute Filters");
+		// create the SubMenus
 		addApplyNodeFilters(null);
 		graphOperations.add(applyNodeFilter);
 		
 		deleteNodeFilter = new JMenu("Remove Node Attribute Filters");
+		// create the SubMenus
 		addRemoveNodeFilters();
 		graphOperations.add(deleteNodeFilter);
 		
 		applyEdgeFilter = new JMenu("Apply Edge Attribute Filters");
+		// create the SubMenus
 		addApplyEdgeFilters(null);
 		graphOperations.add(applyEdgeFilter);
 		
 		deleteEdgeFilter = new JMenu("Remove Edge Attribute Filters");
+		// create the SubMenus
 		addRemoveEdgeFilters();
 		graphOperations.add(deleteEdgeFilter);
 		
@@ -495,7 +527,7 @@ public class Main {
 		
 		graphOperations.add(followEdges);
 		
-		createView = new JMenuItem("Create new GraphView");
+		createView = new JMenuItem("Create a new GraphView");
 		createView.addActionListener(new ActionListener() {
 			
 			@Override
@@ -521,6 +553,9 @@ public class Main {
 		return graphOperations;
 	}
 	
+	/**
+	 * defines which Items of the MenuBar are currently visible
+	 */
 	private void adjustButtons()
 	{
 		if (graphView.isActive())
@@ -545,6 +580,9 @@ public class Main {
 			
 	}
 	
+	/**
+	 * Displays the Popup to create a new GraphView and updates the MenuBar accordingly to the users choices
+	 */
 	private void createNewGraphView ()
 	{
 		CreateNewGraphViewPopup popup = new CreateNewGraphViewPopup(graphView);
@@ -557,7 +595,10 @@ public class Main {
         	resetReadGraphViews();
 		}
 	}
-
+	
+	/**
+	 * Reads all the GraphViews and display for each View a MenuItem to apply/undo the GraphView filter
+	 */
 	private void readGraphViews()
 	{
 		final HashMap<String, GraphViewContainer> views = graphView.getGraph().getAllGraphViews();
@@ -577,25 +618,16 @@ public class Main {
 				menuItem.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					GraphViewContainer view = views.get(name);
-					
+
 					JCheckBoxMenuItem item = (JCheckBoxMenuItem)e.getSource();
 					if (item.isSelected())
 					{
-						//System.out.println("Selected");
-						//graphView.getGraph().applyNodeAndEdgeFilter(view.getSelectedNodeTypes(), view.getSelectedEdgeTypes(), name);
-						//NodeAndEdgeTypeFilter.filter(view.getSelectedNodeTypes(), view.getSelectedEdgeTypes(), name);
 						masterFilter.applyNodeAndEdgeTypeFilter(name);
 					}
 					else
 					{
-					//	System.out.println("UnSelected");
-					//	graphView.getGraph().undoNodeAndEdgeFilter(name);
-					//	NodeAndEdgeTypeFilter.undoFilter(name);
 						masterFilter.undoNodeAndEdgeTypeFilter(name);
 					}
-					//graphView.getGraph().updateGraph();
-					
 				}
 				});
 				
@@ -604,13 +636,19 @@ public class Main {
 		}
 	}
 	
+	/**
+	 * Removes all the apply View MenuItems and creates them from scratch
+	 */
 	private void resetReadGraphViews()
 	{
 		applyView.removeAll();
 		readGraphViews();
 		
 	}
-	
+
+	/**
+	 * Reads all the GraphViews and display for each View a MenuItem to delete the selected the GraphView filter
+	 */
 	private void deleteGraphView()
 	{
 		final HashMap<String, GraphViewContainer> views = graphView.getGraph().getAllGraphViews();
@@ -632,11 +670,9 @@ public class Main {
 				public void actionPerformed(ActionEvent e) {
 					
 					graphView.getGraph().deleteGraphView(views.get(name));
-					/*
-					NodeAndEdgeTypeFilter.undoFilter(name);
-					graphView.getGraph().updateGraph();
-					*/
+					
 					masterFilter.removeNodeAndEdgeTypeFilter(name);
+					
 					resetReadGraphViews();
 					resetDeleteGraphViews();
 				}
@@ -647,12 +683,19 @@ public class Main {
 		}
 	}
 	
+	/**
+	 * Removes all the delete View MenuItems and creates them from scratch
+	 */
 	private void resetDeleteGraphViews()
 	{
 		deleteView.removeAll();
 		deleteGraphView();
 	}
 	
+	/**
+	 * Creates all the MenuItems to apply the Node Attribute Filters
+	 * @param newCondition a condition which should be applied immediately ( can be null, so no condition is applied)
+	 */
 	private void addApplyNodeFilters(String newCondition)
 	{
 		LinkedList<String> conditions = AttributeFilter.getAllNodeConditions();
@@ -679,23 +722,16 @@ public class Main {
 							String condition = item.getText();
 							if (item.isSelected())
 							{
-								/*activeNodeFilters.add(condition);
-								AttributeFilter.applyNodeCondition(condition);*/
 								masterFilter.applyNodeAttributeFilter(condition);
-								
 							}
 							else
 							{
-								/*activeNodeFilters.remove(condition);
-								AttributeFilter.undoNodeCondition(condition, activeNodeFilters);*/
 								masterFilter.undoNodeAttributeFilter(condition);
-								
 							}
-							//graphView.getGraph().updateGraph();
 						}
 						catch (Exception ex)
 						{
-							System.out.println(ex);
+							ex.printStackTrace();
 							JPanel errorPanel = new JPanel();
 			        		
 			        		errorPanel.add(new JLabel("There was a problem applying the attribute filter"));
@@ -709,12 +745,15 @@ public class Main {
 				{
 					menuItem.setSelected(true);
 				}
-				
 				applyNodeFilter.add(menuItem);
 			}
 		}
 	}
 	
+	/**
+	 * Creates all the MenuItems to apply the Edge Attribute Filters
+	 * @param newCondition a condition which should be applied immediately ( can be null, so no condition is applied)
+	 */
 	private void addApplyEdgeFilters(String newCondition)
 	{
 		LinkedList<String> conditions = AttributeFilter.getAllEdgeConditions();
@@ -741,22 +780,16 @@ public class Main {
 							String condition = item.getText();
 							if (item.isSelected())
 							{
-								/*activeEdgeFilters.add(condition);
-								AttributeFilter.applyEdgeCondition(condition);	*/
 								masterFilter.applyEdgeAttributeFilter(condition);
 							}
 							else
 							{
-								/*activeEdgeFilters.remove(condition);
-								AttributeFilter.undoEdgeCondition(condition, activeEdgeFilters);*/
 								masterFilter.undoEdgeAttributeFilter(condition);
 							}
-							
-							//graphView.getGraph().updateGraph();
 						}
 						catch (Exception ex)
 						{
-							System.out.println(ex.getMessage());
+							ex.printStackTrace();
 							JPanel errorPanel = new JPanel();
 			        		
 			        		errorPanel.add(new JLabel("There was a problem applying the attribute filter"));
@@ -775,6 +808,9 @@ public class Main {
 		}
 	}
 	
+	/**
+	 * Creates all the MenuItems to remove the Node Attribute Filters
+	 */
 	private void addRemoveNodeFilters()
 	{
 		LinkedList<String> conditions = AttributeFilter.getAllNodeConditions();
@@ -795,16 +831,12 @@ public class Main {
 					@Override
 					public void actionPerformed(ActionEvent e) {
 						try {
-							/*activeNodeFilters.remove(name);
-							AttributeFilter.removeNodeCondition(name, activeNodeFilters);
-							graphView.getGraph().updateGraph();*/
 							masterFilter.removeNodeAttributFilter(name);
 							
 							resetApplyNodeFilters(null);
 							resetDeleteNodeFilters();
-						} catch (Exception ex) {
-							
-							System.out.println(ex.getMessage());
+						} catch (Exception ex) {							
+							ex.printStackTrace();
 							JPanel errorPanel = new JPanel();
 			        		
 			        		errorPanel.add(new JLabel("There was a problem deleting the attribute filter"));
@@ -819,6 +851,9 @@ public class Main {
 		}
 	}
 	
+	/**
+	 * Creates all the MenuItems to remove the Edge Attribute Filters
+	 */
 	private void addRemoveEdgeFilters()
 	{
 		LinkedList<String> conditions = AttributeFilter.getAllEdgeConditions();
@@ -839,15 +874,12 @@ public class Main {
 					@Override
 					public void actionPerformed(ActionEvent e) {
 						try {
-							/*activeEdgeFilters.remove(name);
-							AttributeFilter.removeEdgeCondition(name, activeEdgeFilters);
-							graphView.getGraph().updateGraph();*/
 							masterFilter.removeEdgeAttributFilter(name);
 							
 							resetApplyEdgeFilters(null);
 							resetDeleteEdgeFilters();
 						} catch (Exception ex) {
-							System.out.println(ex.getMessage());
+							ex.printStackTrace();
 							JPanel errorPanel = new JPanel();
 			        		
 			        		errorPanel.add(new JLabel("There was a problem deleting the attribute filter"));
@@ -856,36 +888,48 @@ public class Main {
 						}
 					}
 				});
-				
 				deleteEdgeFilter.add(menuItem);
 			}
 		}
 	}
-	
+
+	/**
+	 * Removes all the apply Node Filter MenuItems and creates them from scratch
+	 * @param newCondition a condition which should be applied immediately ( can be null, so no condition is applied)
+	 */
 	private void resetApplyNodeFilters(String newConditon)
 	{
 		applyNodeFilter.removeAll();
 		addApplyNodeFilters(newConditon);
 	}
 	
+	/**
+	 * Removes all the delete Node Filter MenuItems and creates them from scratch
+	 */
 	private void resetDeleteNodeFilters()
 	{
 		deleteNodeFilter.removeAll();
 		addRemoveNodeFilters();
 	}
 	
+	/**
+	 * Removes all the apply Edge Filter MenuItems and creates them from scratch
+	 * @param newCondition a condition which should be applied immediately ( can be null, so no condition is applied)
+	 */
 	private void resetApplyEdgeFilters(String newConditon)
 	{
 		applyEdgeFilter.removeAll();
 		addApplyEdgeFilters(newConditon);
 	}
 	
+	/**
+	 * Removes all the delete Edge Filter MenuItems and creates them from scratch
+	 */
 	private void resetDeleteEdgeFilters()
 	{
 		deleteEdgeFilter.removeAll();
 		addRemoveEdgeFilters();
 	}
-
 }
 
 

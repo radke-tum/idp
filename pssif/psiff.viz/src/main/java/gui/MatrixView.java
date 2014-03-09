@@ -29,9 +29,13 @@ import javax.swing.table.TableColumn;
 import matrix.model.ExcelExport;
 import matrix.model.MatrixBuilder;
 
+/**
+ * Provides the Matrix View of a PSS-IF Model
+ * @author Luc
+ *
+ */
 public class MatrixView {
 
-	//private GridLayout experimentLayout;
 	private JPanel matrixPanel;
 	private MatrixBuilder mbuilder;
 	private String[][] content;
@@ -40,6 +44,9 @@ public class MatrixView {
 	private ExcelExport xml_exporter;
 	private boolean active;
 
+	/**
+	 * creates a new Instance of the MatrixView
+	 */
 	public MatrixView() {
 		this.matrixPanel = new JPanel();
 		this.mbuilder = new MatrixBuilder();
@@ -47,6 +54,9 @@ public class MatrixView {
 		active = false;	
 	}
 	
+	/**
+	 * Builds the Matrix from scratch
+	 */
 	private void drawMatrix()
 	{
 		edges = mbuilder.findRelevantEdges();
@@ -54,15 +64,26 @@ public class MatrixView {
 		matrixPanel = drawPanels(nodes,edges);
 	}
 	
+	/**
+	 * Creates the Matrix Visualization
+	 * @param nodes the Nodes which should be contained in the matrix (the labels)
+	 * @param edges the Edges which should be contained in the matrix (the values of the matrix)
+	 * @return a JPanel which contains the Matrix Visualization
+	 */
 	private JPanel drawPanels(LinkedList<MyNode> nodes, LinkedList<MyEdge> edges)
 	{
 		JPanel Content = new JPanel(new BorderLayout());
 		createMatrixContent(Content, nodes, edges);
 		
-		
 		return Content;
 	}
 	
+	/**
+	 * Add a Matrix to a given JPanel. The labels are the Nodes and the Edges are the content 
+	 * @param p the JPanel with the labels(Nodes)
+	 * @param nodes the labels of the Matrix
+	 * @param edges the content of the Matrix
+	 */
 	private void createMatrixContent (JPanel p, LinkedList<MyNode> nodes, LinkedList<MyEdge> edges)
 	{
 		if (nodes.size()>0 && edges.size()>0)
@@ -85,10 +106,7 @@ public class MatrixView {
 			
 			JTable rowTable = new RowLegendTable(mainTable);
 			
-			//scrollPane.add(rowTable);
 			scrollPane.setRowHeaderView(rowTable);
-			//scrollPane.setPreferredSize(mainTable.getSize());
-			//scrollPane.setCorner(JScrollPane.UPPER_LEFT_CORNER,rowTable.getTableHeader());
 			
 			mainTable.setEnabled(false);
 			mainTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
@@ -108,14 +126,19 @@ public class MatrixView {
 		}
 	}
 	
+	/**
+	 * Get a Visualization of the current PSS-IF Model, in a Matrix form
+	 * @return a Panel with the Matrix and a Excel Export Button
+	 */
 	public JPanel getVisualization()
 	{
 		boolean display = true;
 		
+		// check if the user did already select correctly some Edge and NodeTypes which should be displayed in the Matrix
 		if (mbuilder.getRelevantNodeTypes()==null || mbuilder.getRelevantEdgesTypes() ==null ||
 				(mbuilder.getRelevantNodeTypes()!=null && mbuilder.getRelevantNodeTypes().size()==0) ||
 				(mbuilder.getRelevantEdgesTypes() !=null && mbuilder.getRelevantEdgesTypes().size()==0))
-			display =chooseNodes();
+			display =chooseEdgesAndNodes();
 		
 		if (display)
 		{
@@ -135,13 +158,21 @@ public class MatrixView {
 		}	
 	}
 	
-	public boolean chooseNodes()
+	/**
+	 * Let the user choose which instance of Edge and NodeTypes should be displayed in the Matrix
+	 * @return true if the user did select a valid selection, false if not (e.g. no NodeType or EdgeType selected)
+	 */
+	public boolean chooseEdgesAndNodes()
 	{
 		MatrixChooseNodeAndEgeTypePopup popup = new MatrixChooseNodeAndEgeTypePopup(mbuilder);
 		
 		return popup.showPopup();
 	}
 	
+	/**
+	 * Create the Excel export Button
+	 * @param panel the Panel to which the Button should be added
+	 */
 	private void exportButton(JPanel panel)
 	  {
 	    JPanel optionPanel = new JPanel();
@@ -154,10 +185,9 @@ public class MatrixView {
 	        JFileChooser saveFile = new JFileChooser();
 	        saveFile.setSelectedFile(new File(System.getProperty("user.home") + "\\matrix_export.xls"));
 	        saveFile.setDialogTitle("Select the file location");
-	        saveFile.setApproveButtonText("Save");
 	        
-	        int returnVal = saveFile.showOpenDialog(null);
-	        if (returnVal == 0)
+	        int returnVal = saveFile.showSaveDialog(null);
+	        if (returnVal == JFileChooser.APPROVE_OPTION)
 	        {
 	          File file = saveFile.getSelectedFile();
 	          MatrixView.this.xml_exporter.createXMLExport(content, nodes, file);
@@ -168,11 +198,19 @@ public class MatrixView {
 	    
 	    panel.add(optionPanel, BorderLayout.EAST);
 	  }
-
+	
+	/**
+	 * Check if currently the MatrixView is displayed to the user
+	 * @return true if it is displayed, else false
+	 */
 	public boolean isActive() {
 		return active;
 	}
-
+	
+	/**
+	 * Change the active status of  the MatrixView
+	 * @param active is the MatrixView currently active or not
+	 */
 	public void setActive(boolean active) {
 		this.active = active;
 	}

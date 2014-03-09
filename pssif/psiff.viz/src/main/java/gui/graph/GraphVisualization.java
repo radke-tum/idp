@@ -37,7 +37,6 @@ import graph.model.MyNode;
 import graph.model.MyNodeType;
 import graph.operations.GraphViewContainer;
 import graph.operations.MyCollapser;
-import graph.operations.NodeAndEdgeTypeFilter;
 import graph.operations.VertexStrokeHighlight;
 
 public class GraphVisualization
