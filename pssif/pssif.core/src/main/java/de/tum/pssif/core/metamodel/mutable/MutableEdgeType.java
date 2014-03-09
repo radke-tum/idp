@@ -30,7 +30,9 @@ public interface MutableEdgeType extends EdgeType, MutableElementType {
    */
   ConnectionMapping createMapping(NodeTypeBase from, NodeTypeBase to, PSSIFOption<JunctionNodeType> junctions);
 
-  void addMapping(MutableConnectionMapping result);
+  void addMapping(MutableConnectionMapping mapping);
+
+  void removeMapping(ConnectionMapping mapping);
 
   PSSIFOption<MutableConnectionMapping> getMutableMapping(NodeTypeBase from, NodeTypeBase to);
 

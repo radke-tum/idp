@@ -1,11 +1,11 @@
 package de.tum.pssif.transform.transformation;
 
+import de.tum.pssif.core.common.PSSIFOption;
 import de.tum.pssif.core.metamodel.Attribute;
-import de.tum.pssif.core.metamodel.ElementType;
-import de.tum.pssif.core.model.Element;
+import de.tum.pssif.core.metamodel.mutable.MutableElementType;
 
 
-public abstract class HideAttributeTransformation<T extends ElementType<T, E>, E extends Element> extends AbstractTransformation {
+public abstract class HideAttributeTransformation<T extends MutableElementType> extends AbstractTransformation {
   private final T         type;
   private final Attribute attribute;
 
@@ -22,10 +22,12 @@ public abstract class HideAttributeTransformation<T extends ElementType<T, E>, E
     return attribute;
   }
 
-  protected abstract T getActualTarget(View view);
+  protected abstract PSSIFOption<T> getActualTarget(View view);
 
   @Override
   public final void apply(View view) {
-    getActualTarget(view).removeAttribute(getAttribute());
+    for (T actualTarget : getActualTarget(view).getMany()) {
+      actualTarget.removeAttribute(getAttribute());
+    }
   }
 }

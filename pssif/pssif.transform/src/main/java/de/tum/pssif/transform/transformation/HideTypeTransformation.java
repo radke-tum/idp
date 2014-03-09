@@ -3,7 +3,7 @@ package de.tum.pssif.transform.transformation;
 import de.tum.pssif.core.metamodel.ElementType;
 
 
-public abstract class HideTypeTransformation<T extends ElementType<T, ?>> extends AbstractTransformation {
+public abstract class HideTypeTransformation<T extends ElementType> extends AbstractTransformation {
   private T type;
 
   protected T getType() {

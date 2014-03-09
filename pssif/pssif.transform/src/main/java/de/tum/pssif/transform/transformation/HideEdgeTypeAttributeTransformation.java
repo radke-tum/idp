@@ -1,18 +1,17 @@
 package de.tum.pssif.transform.transformation;
 
+import de.tum.pssif.core.common.PSSIFOption;
 import de.tum.pssif.core.metamodel.Attribute;
-import de.tum.pssif.core.metamodel.EdgeType;
-import de.tum.pssif.core.model.Edge;
-import de.tum.pssif.transform.transformation.viewed.ViewedEdgeType;
+import de.tum.pssif.core.metamodel.mutable.MutableEdgeType;
 
 
-public class HideEdgeTypeAttributeTransformation extends HideAttributeTransformation<EdgeType, Edge> {
-  public HideEdgeTypeAttributeTransformation(EdgeType type, Attribute attribute) {
+public class HideEdgeTypeAttributeTransformation extends HideAttributeTransformation<MutableEdgeType> {
+  public HideEdgeTypeAttributeTransformation(MutableEdgeType type, Attribute attribute) {
     super(type, attribute);
   }
 
-  protected ViewedEdgeType getActualTarget(View view) {
-    ViewedEdgeType type = view.findEdgeType(getType().getName());
-    return type;
+  @Override
+  protected PSSIFOption<MutableEdgeType> getActualTarget(View view) {
+    return view.getMutableEdgeType(getType().getName());
   }
 }

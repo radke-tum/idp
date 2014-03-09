@@ -65,8 +65,13 @@ public class EdgeTypeImpl extends ElementTypeImpl implements MutableEdgeType {
   }
 
   @Override
-  public final void addMapping(MutableConnectionMapping result) {
-    mappings.add(result);
+  public final void addMapping(MutableConnectionMapping mapping) {
+    mappings.add(mapping);
+  }
+
+  @Override
+  public void removeMapping(ConnectionMapping mapping) {
+    mappings.remove(mapping);
   }
 
   @Override
