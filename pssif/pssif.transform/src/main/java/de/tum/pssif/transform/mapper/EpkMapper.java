@@ -5,8 +5,10 @@ import java.util.Set;
 import com.google.common.collect.Sets;
 
 import de.tum.pssif.core.metamodel.Metamodel;
+import de.tum.pssif.core.metamodel.PSSIFCanonicMetamodelCreator;
 import de.tum.pssif.transform.ModelMapper;
 import de.tum.pssif.transform.model.EpkModelMapper;
+import de.tum.pssif.transform.transformation.AliasJunctionNodeTypeTransformation;
 import de.tum.pssif.transform.transformation.AliasNodeTypeTransformation;
 import de.tum.pssif.transform.transformation.RenameEdgeTypeTransformation;
 import de.tum.pssif.transform.transformation.RenameNodeTypeTransformation;
@@ -41,6 +43,9 @@ public class EpkMapper extends BaseVisioMapper {
     view = new RenameNodeTypeTransformation(view.getNodeType("State").getOne(), "Event").apply(view);
     view = new AliasNodeTypeTransformation(view.getNodeType("Block").getOne(), "Information/ Material").apply(view);
     view = new AliasNodeTypeTransformation(view.getNodeType("Block").getOne(), "Organizational unit").apply(view);
+    view = new AliasJunctionNodeTypeTransformation(view.getJunctionNodeType(PSSIFCanonicMetamodelCreator.N_CONJUNCTION).getOne(), "XOR").apply(view);
+    view = new AliasJunctionNodeTypeTransformation(view.getJunctionNodeType(PSSIFCanonicMetamodelCreator.N_CONJUNCTION).getOne(), "AND").apply(view);
+    view = new AliasJunctionNodeTypeTransformation(view.getJunctionNodeType(PSSIFCanonicMetamodelCreator.N_CONJUNCTION).getOne(), "OR").apply(view);
     return view;
   }
 

@@ -40,8 +40,12 @@ public class EnumerationImpl extends NamedImpl implements MutableEnumeration {
       throw new PSSIFStructuralIntegrityException("a literal with name " + name + " already exists");
     }
     EnumerationLiteral result = new EnumerationLiteralImpl(name, this);
-    literals.put(PSSIFUtil.normalize(result.getName()), result);
+    addLiteral(result);
     return result;
+  }
+
+  protected final void addLiteral(EnumerationLiteral result) {
+    literals.put(PSSIFUtil.normalize(result.getName()), result);
   }
 
   @Override

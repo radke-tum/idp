@@ -1,6 +1,6 @@
 package de.tum.pssif.transform.transformation;
 
-import de.tum.pssif.core.metamodel.Named;
+import de.tum.pssif.core.metamodel.traits.Named;
 
 
 public abstract class RenameTransformation<T extends Named> extends AbstractTransformation {

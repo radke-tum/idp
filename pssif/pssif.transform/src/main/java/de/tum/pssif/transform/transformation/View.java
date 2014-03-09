@@ -1,71 +1,79 @@
 package de.tum.pssif.transform.transformation;
 
+import de.tum.pssif.core.common.PSSIFOption;
 import de.tum.pssif.core.metamodel.ConnectionMapping;
-import de.tum.pssif.core.metamodel.EdgeEnd;
 import de.tum.pssif.core.metamodel.EdgeType;
+import de.tum.pssif.core.metamodel.Enumeration;
+import de.tum.pssif.core.metamodel.JunctionNodeType;
 import de.tum.pssif.core.metamodel.Metamodel;
-import de.tum.pssif.core.metamodel.Multiplicity.MultiplicityContainer;
 import de.tum.pssif.core.metamodel.NodeType;
-import de.tum.pssif.core.metamodel.impl.base.AbstractMetamodel;
+import de.tum.pssif.core.metamodel.impl.MetamodelImpl;
+import de.tum.pssif.core.metamodel.mutable.MutableEdgeType;
+import de.tum.pssif.core.metamodel.mutable.MutableJunctionNodeType;
+import de.tum.pssif.core.metamodel.mutable.MutableNodeType;
 import de.tum.pssif.transform.transformation.viewed.ViewedConnectionMapping;
-import de.tum.pssif.transform.transformation.viewed.ViewedEdgeEnd;
 import de.tum.pssif.transform.transformation.viewed.ViewedEdgeType;
+import de.tum.pssif.transform.transformation.viewed.ViewedEnumeration;
+import de.tum.pssif.transform.transformation.viewed.ViewedJunctionNodeType;
 import de.tum.pssif.transform.transformation.viewed.ViewedNodeType;
 
 
-public class View extends AbstractMetamodel<ViewedNodeType, ViewedEdgeType> {
+public class View extends MetamodelImpl {
   public View(Metamodel baseMetamodel) {
-    for (NodeType nt : baseMetamodel.getNodeTypes()) {
-      addNodeTypeInternal(new ViewedNodeType(nt));
-    }
-    for (NodeType nt : baseMetamodel.getNodeTypes()) {
-      if (nt.getGeneral() != null) {
-        NodeType owned = findNodeType(nt.getName());
-        NodeType ownedGeneral = findNodeType(nt.getGeneral().getName());
-        owned.inherit(ownedGeneral);
-      }
-    }
-    for (EdgeType et : baseMetamodel.getEdgeTypes()) {
-      ViewedEdgeType viewed = new ViewedEdgeType(et);
-      addEdgeTypeInternal(viewed);
+    super(false);
 
-      for (ConnectionMapping mapping : et.getMappings()) {
-        EdgeEnd from = mapping.getFrom();
-        EdgeEnd to = mapping.getTo();
-        ViewedEdgeEnd viewedFrom = new ViewedEdgeEnd(from, from.getName(), viewed, MultiplicityContainer.of(from.getEdgeEndLower(),
-            from.getEdgeEndUpper(), from.getEdgeTypeLower(), from.getEdgeTypeUpper()), findNodeType(from.getNodeType().getName()));
-        ViewedEdgeEnd viewedTo = new ViewedEdgeEnd(to, to.getName(), viewed, MultiplicityContainer.of(to.getEdgeEndLower(), to.getEdgeEndUpper(),
-            to.getEdgeTypeLower(), to.getEdgeTypeUpper()), findNodeType(to.getNodeType().getName()));
-        viewed.addMapping(new ViewedConnectionMapping(mapping, viewedFrom, viewedTo));
-      }
+    for (Enumeration enumeration : baseMetamodel.getEnumerations()) {
+      addEnumeration(new ViewedEnumeration(enumeration));
     }
-    for (EdgeType et : baseMetamodel.getEdgeTypes()) {
-      if (et.getGeneral() != null) {
-        EdgeType owned = findEdgeType(et.getName());
-        EdgeType ownedGeneral = findEdgeType(et.getGeneral().getName());
+
+    for (NodeType nt : baseMetamodel.getNodeTypes()) {
+      addNodeType(new ViewedNodeType(nt));
+    }
+    for (NodeType nt : baseMetamodel.getNodeTypes()) {
+      PSSIFOption<NodeType> general = nt.getGeneral();
+      if (general.isOne()) {
+        NodeType owned = getNodeType(nt.getName()).getOne();
+        NodeType ownedGeneral = getNodeType(general.getOne().getName()).getOne();
         owned.inherit(ownedGeneral);
       }
     }
+
+    for (JunctionNodeType jnt : baseMetamodel.getJunctionNodeTypes()) {
+      addJunctionNodeType(new ViewedJunctionNodeType(jnt));
+    }
+
+    for (EdgeType et : baseMetamodel.getEdgeTypes()) {
+      ViewedEdgeType vet = new ViewedEdgeType(et);
+      for (ConnectionMapping cm : et.getMappings().getMany()) {
+        vet.add(new ViewedConnectionMapping(cm, vet, getBaseNodeType(cm.getFrom().getName()).getOne(), getBaseNodeType(cm.getTo().getName()).getOne()));
+      }
+      addEdgeType(vet);
+    }
+
+    for (EdgeType et : baseMetamodel.getEdgeTypes()) {
+      PSSIFOption<EdgeType> general = et.getGeneral();
+      if (general.isOne()) {
+        EdgeType owned = getEdgeType(et.getName()).getOne();
+        EdgeType ownedGeneral = getEdgeType(general.getOne().getName()).getOne();
+        owned.inherit(ownedGeneral);
+      }
+    }
+  }
+
+  public void add(MutableNodeType nt) {
+    addNodeType(nt);
+  }
+
+  public void add(MutableJunctionNodeType jnt) {
+    addJunctionNodeType(jnt);
+  }
+
+  public void add(MutableEdgeType et) {
+    addEdgeType(et);
   }
 
   public Metamodel transform(AbstractTransformation transformation) {
     transformation.apply(this);
     return this;
-  }
-
-  protected void addNodeType(ViewedNodeType type) {
-    addNodeTypeInternal(type);
-  }
-
-  protected void removeNodeType(ViewedNodeType type) {
-    removeNodeTypeInternal(type);
-  }
-
-  protected void addEdgeType(ViewedEdgeType type) {
-    addEdgeTypeInternal(type);
-  }
-
-  protected void removeEdgeType(ViewedEdgeType type) {
-    removeEdgeTypeInternal(type);
   }
 }

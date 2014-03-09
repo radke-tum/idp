@@ -7,7 +7,7 @@ import de.tum.pssif.core.metamodel.Attribute;
 import de.tum.pssif.core.metamodel.ConnectionMapping;
 import de.tum.pssif.core.metamodel.EdgeType;
 import de.tum.pssif.core.metamodel.Metamodel;
-import de.tum.pssif.core.metamodel.NodeType;
+import de.tum.pssif.core.metamodel.NodeTypeBase;
 import de.tum.pssif.core.model.Model;
 import de.tum.pssif.core.model.impl.ModelImpl;
 import de.tum.pssif.transform.ModelMapper;
@@ -39,8 +39,8 @@ public class EpkModelMapper implements ModelMapper {
       String sourceTypeName = e.getSource().getType();
       String targetTypeName = e.getTarget().getType();
 
-      PSSIFOption<NodeType> sourceType = metamodel.getNodeType(sourceTypeName);
-      PSSIFOption<NodeType> targetType = metamodel.getNodeType(targetTypeName);
+      PSSIFOption<NodeTypeBase> sourceType = metamodel.getBaseNodeType(sourceTypeName);
+      PSSIFOption<NodeTypeBase> targetType = metamodel.getBaseNodeType(targetTypeName);
       if (sourceType.isOne() && targetType.isOne()) {
         if ("Organizational unit".equals(sourceTypeName)) {
           createEdge(result, e, sourceType.getOne(), targetType.getOne(), metamodel.getEdgeType("Performs").getOne(), false);
@@ -71,7 +71,7 @@ public class EpkModelMapper implements ModelMapper {
     }
   }
 
-  private void createEdge(Model result, Edge e, NodeType sourceType, NodeType targetType, EdgeType type, boolean swap) {
+  private void createEdge(Model result, Edge e, NodeTypeBase sourceType, NodeTypeBase targetType, EdgeType type, boolean swap) {
     PSSIFOption<ConnectionMapping> mapping = type.getMapping(sourceType, targetType);
     PSSIFOption<de.tum.pssif.core.model.Node> source = sourceType.apply(result, e.getSource().getId(), true);
     PSSIFOption<de.tum.pssif.core.model.Node> target = targetType.apply(result, e.getTarget().getId(), true);
@@ -86,7 +86,7 @@ public class EpkModelMapper implements ModelMapper {
       setAttributes(e, type, edge);
     }
     else {
-      System.out.println("missed mapping for " + e.getType() + "(" + sourceType + "," + targetType + ")");
+      System.out.println("missed mapping for " + e.getType() + "(" + sourceType.getName() + "," + targetType.getName() + ")");
     }
   }
 
@@ -99,7 +99,7 @@ public class EpkModelMapper implements ModelMapper {
 
   private void createNodes(Metamodel metamodel, Graph graph, Model result) {
     for (Node n : graph.getNodes()) {
-      PSSIFOption<NodeType> type = metamodel.getNodeType(n.getType());
+      PSSIFOption<NodeTypeBase> type = metamodel.getBaseNodeType(n.getType());
       if (type.isNone()) {
         System.out.println("missed " + n.getType());
         continue;

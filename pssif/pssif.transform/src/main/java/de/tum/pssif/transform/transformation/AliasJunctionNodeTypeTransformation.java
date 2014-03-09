@@ -1,29 +1,24 @@
 package de.tum.pssif.transform.transformation;
 
 import de.tum.pssif.core.metamodel.ConnectionMapping;
-import de.tum.pssif.core.metamodel.NodeType;
+import de.tum.pssif.core.metamodel.JunctionNodeType;
 import de.tum.pssif.core.metamodel.NodeTypeBase;
 import de.tum.pssif.core.metamodel.mutable.MutableEdgeType;
-import de.tum.pssif.core.metamodel.mutable.MutableNodeType;
+import de.tum.pssif.core.metamodel.mutable.MutableJunctionNodeType;
 import de.tum.pssif.transform.transformation.viewed.ViewedConnectionMapping;
-import de.tum.pssif.transform.transformation.viewed.ViewedNodeType;
+import de.tum.pssif.transform.transformation.viewed.ViewedJunctionNodeType;
 
 
-public class AliasNodeTypeTransformation extends RenameTransformation<NodeType> {
+public class AliasJunctionNodeTypeTransformation extends RenameTransformation<JunctionNodeType> {
 
-  public AliasNodeTypeTransformation(NodeType target, String name) {
+  public AliasJunctionNodeTypeTransformation(JunctionNodeType target, String name) {
     super(target, name);
   }
 
   @Override
   public void apply(View view) {
-    MutableNodeType actualTarget = view.getMutableNodeType(getTarget().getName()).getOne();
-    ViewedNodeType aliased = new ViewedNodeType(actualTarget, getName());
-
-    for (NodeType general : actualTarget.getGeneral().getMany()) {
-      aliased.inherit(general);
-    }
-
+    MutableJunctionNodeType actualTarget = view.getMutableJunctionNodeType(getTarget().getName()).getOne();
+    ViewedJunctionNodeType aliased = new ViewedJunctionNodeType(actualTarget, getName());
     view.add(aliased);
 
     for (MutableEdgeType met : view.getMutableEdgeTypes()) {

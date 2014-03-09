@@ -135,7 +135,7 @@ public abstract class GraphMLMapper implements Mapper {
   protected void writeInternal(Metamodel metamodel, Model model, OutputStream outputStream) {
     GraphMLGraph graph = GraphMLGraph.create();
     addAttributesToGraph(graph, metamodel);
-    for (NodeTypeBase nodeType : metamodel.getNodeTypes()) {
+    for (NodeTypeBase nodeType : metamodel.getBaseNodeTypes()) {
       addNodesToGraph(graph, nodeType, model);
     }
     for (EdgeType edgeType : metamodel.getEdgeTypes()) {

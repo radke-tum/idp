@@ -7,6 +7,7 @@ import com.google.common.collect.Maps;
 
 import de.tum.pssif.core.common.PSSIFConstants;
 import de.tum.pssif.core.common.PSSIFOption;
+import de.tum.pssif.core.common.PSSIFUtil;
 import de.tum.pssif.core.common.PSSIFValue;
 import de.tum.pssif.core.metamodel.impl.GetValueOperation;
 import de.tum.pssif.core.metamodel.impl.SetValueOperation;
@@ -29,7 +30,12 @@ public abstract class ElementImpl implements Element {
 
   @Override
   public PSSIFOption<PSSIFValue> apply(GetValueOperation op) {
-    return values.get(op.getAttribute().getName());
+    if (values.containsKey(PSSIFUtil.normalize(op.getAttribute().getName()))) {
+      return values.get(op.getAttribute().getName());
+    }
+    else {
+      return PSSIFOption.none();
+    }
   }
 
   @Override

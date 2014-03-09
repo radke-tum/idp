@@ -17,13 +17,14 @@ import de.tum.pssif.core.metamodel.EdgeType;
 import de.tum.pssif.core.metamodel.ElementType;
 import de.tum.pssif.core.metamodel.JunctionNodeType;
 import de.tum.pssif.core.metamodel.NodeTypeBase;
+import de.tum.pssif.core.metamodel.mutable.MutableConnectionMapping;
 import de.tum.pssif.core.metamodel.mutable.MutableEdgeType;
 
 
 public class EdgeTypeImpl extends ElementTypeImpl implements MutableEdgeType {
-  private Collection<ConnectionMapping> mappings        = Sets.newHashSet();
-  private EdgeType                      general         = null;
-  private final Set<EdgeType>           specializations = Sets.newHashSet();
+  private Collection<MutableConnectionMapping> mappings        = Sets.newHashSet();
+  private EdgeType                             general         = null;
+  private final Set<EdgeType>                  specializations = Sets.newHashSet();
 
   public EdgeTypeImpl(String name) {
     super(name);
@@ -58,54 +59,34 @@ public class EdgeTypeImpl extends ElementTypeImpl implements MutableEdgeType {
       mappings.add(new ConnectionMappingImpl(this, junction, to));
     }
 
-    ConnectionMappingImpl result = new ConnectionMappingImpl(this, from, to);
-    mappings.add(result);
+    MutableConnectionMapping result = new ConnectionMappingImpl(this, from, to);
+    addMapping(result);
     return result;
   }
 
   @Override
+  public final void addMapping(MutableConnectionMapping result) {
+    mappings.add(result);
+  }
+
+  @Override
   public PSSIFOption<ConnectionMapping> getMappings() {
-    return PSSIFOption.many(mappings);
+    return PSSIFOption.<ConnectionMapping> many(mappings);
   }
 
   @Override
   public PSSIFOption<ConnectionMapping> getMapping(NodeTypeBase from, NodeTypeBase to) {
-    ConnectionMapping result = null;
-
-    for (ConnectionMapping candidate : mappings) {
-      if (candidate.getFrom().isAssignableFrom(from) && candidate.getTo().isAssignableFrom(to)) {
-        if (result != null) {
-          if (result.getFrom().isAssignableFrom(candidate.getFrom()) && result.getTo().isAssignableFrom(candidate.getTo())) {
-            result = candidate;
-          }
-        }
-        else {
-          result = candidate;
-        }
-      }
-    }
-
-    return PSSIFOption.one(result);
+    return PSSIFOption.<ConnectionMapping> many(getMutableMapping(from, to).getMany());
   }
 
   @Override
   public PSSIFOption<ConnectionMapping> getOutgoingMappings(final NodeTypeBase from) {
-    return PSSIFOption.many(Collections2.filter(mappings, new Predicate<ConnectionMapping>() {
-      @Override
-      public boolean apply(ConnectionMapping input) {
-        return input.getFrom().isAssignableFrom(from);
-      }
-    }));
+    return PSSIFOption.<ConnectionMapping> many(getOutgoingMutableMappings(from).getMany());
   }
 
   @Override
   public PSSIFOption<ConnectionMapping> getIncomingMappings(final NodeTypeBase to) {
-    return PSSIFOption.many(Collections2.filter(mappings, new Predicate<ConnectionMapping>() {
-      @Override
-      public boolean apply(ConnectionMapping input) {
-        return input.getTo().isAssignableFrom(to);
-      }
-    }));
+    return PSSIFOption.<ConnectionMapping> many(getIncomingMutableMappings(to).getMany());
   }
 
   @Override
@@ -159,5 +140,50 @@ public class EdgeTypeImpl extends ElementTypeImpl implements MutableEdgeType {
   @Override
   public Class<?> getMetaType() {
     return EdgeType.class;
+  }
+
+  @Override
+  public PSSIFOption<MutableConnectionMapping> getMutableMapping(NodeTypeBase from, NodeTypeBase to) {
+    MutableConnectionMapping result = null;
+
+    for (MutableConnectionMapping candidate : mappings) {
+      if (candidate.getFrom().isAssignableFrom(from) && candidate.getTo().isAssignableFrom(to)) {
+        if (result != null) {
+          if (result.getFrom().isAssignableFrom(candidate.getFrom()) && result.getTo().isAssignableFrom(candidate.getTo())) {
+            result = candidate;
+          }
+        }
+        else {
+          result = candidate;
+        }
+      }
+    }
+
+    return PSSIFOption.one(result);
+  }
+
+  @Override
+  public PSSIFOption<MutableConnectionMapping> getMutableMappings() {
+    return PSSIFOption.many(mappings);
+  }
+
+  @Override
+  public PSSIFOption<MutableConnectionMapping> getOutgoingMutableMappings(final NodeTypeBase from) {
+    return PSSIFOption.many(Collections2.filter(mappings, new Predicate<ConnectionMapping>() {
+      @Override
+      public boolean apply(ConnectionMapping input) {
+        return input.getFrom().isAssignableFrom(from);
+      }
+    }));
+  }
+
+  @Override
+  public PSSIFOption<MutableConnectionMapping> getIncomingMutableMappings(final NodeTypeBase to) {
+    return PSSIFOption.many(Collections2.filter(mappings, new Predicate<ConnectionMapping>() {
+      @Override
+      public boolean apply(ConnectionMapping input) {
+        return input.getTo().isAssignableFrom(to);
+      }
+    }));
   }
 }

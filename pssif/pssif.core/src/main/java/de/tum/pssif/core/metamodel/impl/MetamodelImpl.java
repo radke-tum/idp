@@ -34,18 +34,21 @@ public class MetamodelImpl implements MutableMetamodel {
   private Map<String, MutableJunctionNodeType> junctionNodeTypes = Maps.newHashMap();
   private Map<String, MutableEdgeType>         edgeTypes         = Maps.newHashMap();
 
-  private final MutableNodeType                node;
-  private final MutableEdgeType                edge;
-
   public MetamodelImpl() {
-    node = createNodeTypeInternal(PSSIFConstants.ROOT_NODE_TYPE_NAME);
-    addDefaultAttributes(node);
+    this(true);
+  }
 
-    edge = createEdgeTypeInternal(PSSIFConstants.ROOT_EDGE_TYPE_NAME);
-    addDefaultAttributes(edge);
-    edge.createAttribute(edge.getDefaultAttributeGroup(), PSSIFConstants.BUILTIN_ATTRIBUTE_DIRECTED, PrimitiveDataType.BOOLEAN, true,
-        AttributeCategory.METADATA);
-    edge.createMapping(node, node);
+  protected MetamodelImpl(boolean createRootTypes) {
+    if (createRootTypes) {
+      MutableNodeType node = createNodeTypeInternal(PSSIFConstants.ROOT_NODE_TYPE_NAME);
+      addDefaultAttributes(node);
+
+      MutableEdgeType edge = createEdgeTypeInternal(PSSIFConstants.ROOT_EDGE_TYPE_NAME);
+      addDefaultAttributes(edge);
+      edge.createAttribute(edge.getDefaultAttributeGroup(), PSSIFConstants.BUILTIN_ATTRIBUTE_DIRECTED, PrimitiveDataType.BOOLEAN, true,
+          AttributeCategory.METADATA);
+      edge.createMapping(node, node);
+    }
   }
 
   private final void addDefaultAttributes(MutableElementType type) {
@@ -70,8 +73,12 @@ public class MetamodelImpl implements MutableMetamodel {
       throw new PSSIFStructuralIntegrityException("a datatype with the name " + name + " already exists");
     }
     MutableEnumeration result = new EnumerationImpl(name);
-    enumerations.put(PSSIFUtil.normalize(result.getName()), result);
+    addEnumeration(result);
     return result;
+  }
+
+  protected final void addEnumeration(MutableEnumeration result) {
+    enumerations.put(PSSIFUtil.normalize(result.getName()), result);
   }
 
   @Override
@@ -129,7 +136,7 @@ public class MetamodelImpl implements MutableMetamodel {
   @Override
   public MutableNodeType createNodeType(String name) {
     MutableNodeType result = createNodeTypeInternal(name);
-    result.inherit(node);
+    result.inherit(getMutableNodeType(PSSIFConstants.ROOT_NODE_TYPE_NAME).getOne());
     return result;
   }
 
@@ -139,8 +146,12 @@ public class MetamodelImpl implements MutableMetamodel {
       throw new PSSIFStructuralIntegrityException("a nodetype with name '" + name + "' already exists");
     }
     MutableNodeType result = new NodeTypeImpl(name);
-    nodeTypes.put(PSSIFUtil.normalize(result.getName()), result);
+    addNodeType(result);
     return result;
+  }
+
+  protected final void addNodeType(MutableNodeType result) {
+    nodeTypes.put(PSSIFUtil.normalize(result.getName()), result);
   }
 
   @Override
@@ -150,14 +161,19 @@ public class MetamodelImpl implements MutableMetamodel {
       throw new PSSIFStructuralIntegrityException("a nodetype with name '" + name + "' already exists");
     }
     MutableJunctionNodeType result = new JunctionNodeTypeImpl(name);
-    junctionNodeTypes.put(PSSIFUtil.normalize(result.getName()), result);
+    addDefaultAttributes(result);
+    addJunctionNodeType(result);
     return result;
+  }
+
+  protected final void addJunctionNodeType(MutableJunctionNodeType result) {
+    junctionNodeTypes.put(PSSIFUtil.normalize(result.getName()), result);
   }
 
   @Override
   public MutableEdgeType createEdgeType(String name) {
     MutableEdgeType result = createEdgeTypeInternal(name);
-    result.inherit(edge);
+    result.inherit(getMutableEdgeType(PSSIFConstants.ROOT_EDGE_TYPE_NAME).getOne());
     return result;
   }
 
@@ -167,8 +183,12 @@ public class MetamodelImpl implements MutableMetamodel {
       throw new PSSIFStructuralIntegrityException("an edgetype with name '" + name + "' already exists");
     }
     EdgeTypeImpl result = new EdgeTypeImpl(name);
-    edgeTypes.put(PSSIFUtil.normalize(result.getName()), result);
+    addEdgeType(result);
     return result;
+  }
+
+  protected final void addEdgeType(MutableEdgeType result) {
+    edgeTypes.put(PSSIFUtil.normalize(result.getName()), result);
   }
 
   @Override
@@ -253,5 +273,32 @@ public class MetamodelImpl implements MutableMetamodel {
   @Override
   public PSSIFOption<MutableEdgeType> getMutableEdgeType(String name) {
     return PSSIFOption.one(edgeTypes.get(PSSIFUtil.normalize(name)));
+  }
+
+  @Override
+  public void removeNodeType(MutableNodeType nodeType) {
+    for (NodeType nt : getNodeType(nodeType.getName()).getMany()) {
+      for (NodeType general : nt.getGeneral().getMany()) {
+        general.unregisterSpecialization(nt);
+      }
+      nodeTypes.remove(PSSIFUtil.normalize(nt.getName()));
+    }
+  }
+
+  @Override
+  public void removeJunctionNodeType(MutableJunctionNodeType junctionNodeType) {
+    for (JunctionNodeType jnt : getJunctionNodeType(junctionNodeType.getName()).getMany()) {
+      junctionNodeTypes.remove(PSSIFUtil.normalize(jnt.getName()));
+    }
+  }
+
+  @Override
+  public void removeEdgeType(MutableEdgeType edgeType) {
+    for (EdgeType et : getEdgeType(edgeType.getName()).getMany()) {
+      for (EdgeType general : et.getGeneral().getMany()) {
+        general.unregisterSpecialization(et);
+      }
+      edgeTypes.remove(PSSIFUtil.normalize(et.getName()));
+    }
   }
 }
