@@ -19,7 +19,7 @@ public class RenameNodeTypeTransformation extends RenameTransformation<NodeType>
 
   @Override
   public void apply(View view) {
-    MutableNodeType actualTarget = view.getMutableNodeType(getTarget().getName()).getOne();
+    MutableNodeType actualTarget = view.getMutableNodeType(getTarget()).getOne();
     view.removeNodeType(actualTarget);
     ViewedNodeType renamed = new ViewedNodeType(actualTarget, getName());
     view.add(renamed);

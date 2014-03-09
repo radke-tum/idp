@@ -10,21 +10,21 @@ import de.tum.pssif.transform.transformation.artificial.ToArtificializedNodeType
 
 
 public class CreateArtificialNodeTransformation extends AbstractTransformation {
-  private NodeType sourceType;
-  private EdgeType edgeType;
-  private NodeType targetType;
+  private String sourceType;
+  private String edgeType;
+  private String targetType;
 
   public CreateArtificialNodeTransformation(NodeType sourceType, EdgeType edgeType, NodeType targetType) {
-    this.sourceType = sourceType;
-    this.edgeType = edgeType;
-    this.targetType = targetType;
+    this.sourceType = sourceType.getName();
+    this.edgeType = edgeType.getName();
+    this.targetType = targetType.getName();
   }
 
   @Override
   public void apply(View view) {
-    NodeType actualSourceType = view.getNodeType(sourceType.getName()).getOne();
-    NodeType actualTargetType = view.getNodeType(targetType.getName()).getOne();
-    MutableEdgeType actualEdgeType = view.getMutableEdgeType(edgeType.getName()).getOne();
+    NodeType actualSourceType = view.getNodeType(sourceType).getOne();
+    NodeType actualTargetType = view.getNodeType(targetType).getOne();
+    MutableEdgeType actualEdgeType = view.getMutableEdgeType(edgeType).getOne();
 
     ArtificializingNodeType artificializing = new ArtificializingNodeType(actualSourceType, actualEdgeType, actualTargetType);
     for (NodeType general : actualSourceType.getGeneral().getMany()) {

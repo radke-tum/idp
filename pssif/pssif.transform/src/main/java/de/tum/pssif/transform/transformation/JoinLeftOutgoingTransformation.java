@@ -9,34 +9,44 @@ import de.tum.pssif.transform.transformation.joined.LeftOutgoingJoinedConnection
 
 
 public class JoinLeftOutgoingTransformation extends AbstractTransformation {
-  private final EdgeType type;
-  private final EdgeType joinedType;
-  private final NodeType from;
-  private final NodeType inner;
-  private final NodeType to;
+  private final String            type;
+  private final ConnectionMapping joinedMapping;
+  private final String            from;
+  private final String            inner;
+  private final String            to;
 
-  public JoinLeftOutgoingTransformation(EdgeType type, EdgeType joinedType, NodeType from, NodeType inner, NodeType to) {
-    this.type = type;
-    this.joinedType = joinedType;
-    this.from = from;
-    this.inner = inner;
-    this.to = to;
+  /**
+   * The joinedMapping is not re-fetched from the view when applying this transformation 
+   * because we may need a joined type out of a previous view without having artificial edges removed
+   * 
+   * @param type
+   * @param joinedType
+   * @param from
+   * @param inner
+   * @param to
+   */
+  public JoinLeftOutgoingTransformation(EdgeType type, ConnectionMapping joinedMapping, NodeType from, NodeType inner, NodeType to) {
+    this.type = type.getName();
+    this.joinedMapping = joinedMapping;
+    this.from = from.getName();
+    this.inner = inner.getName();
+    this.to = to.getName();
   }
 
   @Override
   public void apply(View view) {
-    MutableEdgeType actualType = view.getMutableEdgeType(type.getName()).getOne();
-    MutableEdgeType actualJoinedType = view.getMutableEdgeType(joinedType.getName()).getOne();
-    NodeType actualFrom = view.getNodeType(from.getName()).getOne();
-    NodeType actualInner = view.getNodeType(inner.getName()).getOne();
-    NodeType actualTo = view.getNodeType(to.getName()).getOne();
+    MutableEdgeType actualType = view.getMutableEdgeType(type).getOne();
+    NodeType actualFrom = view.getNodeType(from).getOne();
+    NodeType actualInner = view.getNodeType(inner).getOne();
+    NodeType actualTo = view.getNodeType(to).getOne();
 
     //remove an eventually existing mapping to avoid ambiguity
     PSSIFOption<ConnectionMapping> existing = actualType.getMapping(actualFrom, actualTo);
     if (existing.isOne() && existing.getOne().getFrom().equals(actualFrom) && existing.getOne().getTo().equals(actualTo)) {
       actualType.removeMapping(existing.getOne());
     }
+
     actualType.addMapping(new LeftOutgoingJoinedConnectionMapping(actualType.getMapping(actualInner, actualTo).getOne(), actualType, actualInner,
-        actualTo, actualJoinedType.getMapping(actualInner, actualFrom).getOne()));
+        actualTo, joinedMapping));
   }
 }

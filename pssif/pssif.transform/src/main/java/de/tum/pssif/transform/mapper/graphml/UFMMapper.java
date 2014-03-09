@@ -5,6 +5,7 @@ import java.io.OutputStream;
 
 import de.tum.pssif.core.common.PSSIFConstants;
 import de.tum.pssif.core.metamodel.Attribute;
+import de.tum.pssif.core.metamodel.ConnectionMapping;
 import de.tum.pssif.core.metamodel.EdgeType;
 import de.tum.pssif.core.metamodel.Metamodel;
 import de.tum.pssif.core.metamodel.NodeType;
@@ -65,6 +66,10 @@ public class UFMMapper extends GraphMLMapper {
     view = new HideNodeTypeAttributeTransformation(view.getNodeType("Block").getOne(), view.getNodeType("Block").getOne().getAttribute("cost")
         .getOne()).apply(view);
 
+    EdgeType relationship = view.getEdgeType("Relationship").getOne();
+    ConnectionMapping s2b = relationship.getMapping(view.getNodeType("State").getOne(), view.getNodeType("Block").getOne()).getOne();
+    ConnectionMapping f2b = relationship.getMapping(view.getNodeType("Function").getOne(), view.getNodeType("Block").getOne()).getOne();
+
     NodeType block = view.getNodeType("Block").getOne();
     Attribute id = block.getAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_ID).getOne();
     view = new MoveAttributeTransformation(view.getNodeType("Function").getOne(), "functionary", block, id, view.getEdgeType("Relationship").getOne())
@@ -83,17 +88,17 @@ public class UFMMapper extends GraphMLMapper {
     view = new CreateArtificialNodeTransformation(view.getNodeType("State").getOne(), view.getEdgeType("Relationship").getOne(), view.getNodeType(
         "Block").getOne()).apply(view);
 
-    view = new JoinLeftOutgoingTransformation(view.getEdgeType("InformationFlow").getOne(), view.getEdgeType("Relationship").getOne(), view
-        .getNodeType("Block").getOne(), view.getNodeType("State").getOne(), view.getNodeType("Function").getOne()).apply(view);
-    view = new JoinLeftOutgoingTransformation(view.getEdgeType("InformationFlow").getOne(), view.getEdgeType("Relationship").getOne(), view
-        .getNodeType("Block").getOne(), view.getNodeType("Function").getOne(), view.getNodeType("State").getOne()).apply(view);
+    view = new JoinLeftOutgoingTransformation(view.getEdgeType("InformationFlow").getOne(), s2b, view.getNodeType("Block").getOne(), view
+        .getNodeType("State").getOne(), view.getNodeType("Function").getOne()).apply(view);
+    view = new JoinLeftOutgoingTransformation(view.getEdgeType("InformationFlow").getOne(), f2b, view.getNodeType("Block").getOne(), view
+        .getNodeType("Function").getOne(), view.getNodeType("State").getOne()).apply(view);
 
     view = new CreateArtificialEdgeTransformation(view.getNodeType("State").getOne(), view.getNodeType("Function").getOne(), view.getEdgeType(
         "InformationFlow").getOne(), view.getEdgeType("Control Flow").getOne()).apply(view);
     view = new CreateArtificialEdgeTransformation(view.getNodeType("Function").getOne(), view.getNodeType("State").getOne(), view.getEdgeType(
         "InformationFlow").getOne(), view.getEdgeType("Control Flow").getOne()).apply(view);
 
-    EdgeType relationship = view.getEdgeType("Relationship").getOne();
+    relationship = view.getEdgeType("Relationship").getOne();
     view = new HideConnectionMappingTransformation(relationship, relationship.getMapping(view.getNodeType("Function").getOne(),
         view.getNodeType("Block").getOne()).getOne()).apply(view);
     relationship = view.getEdgeType("Relationship").getOne();

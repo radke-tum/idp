@@ -24,9 +24,9 @@ public class DelegatingEdgeTypeTransformation extends AbstractTransformation {
   public void apply(View view) {
     DelegatingEdgeType delegating = new DelegatingEdgeType(name);
     for (ConnectionMappingDelegateDescriptor descriptor : descriptors) {
-      EdgeType baseType = view.getEdgeType(descriptor.getBaseMapping().getType().getName()).getOne();
-      NodeTypeBase from = view.getBaseNodeType(descriptor.getFrom().getName()).getOne();
-      NodeTypeBase to = view.getBaseNodeType(descriptor.getTo().getName()).getOne();
+      EdgeType baseType = view.getEdgeType(descriptor.getType()).getOne();
+      NodeTypeBase from = view.getBaseNodeType(descriptor.getFrom()).getOne();
+      NodeTypeBase to = view.getBaseNodeType(descriptor.getTo()).getOne();
       ConnectionMapping baseMapping = baseType.getMapping(from, to).getOne();
       delegating.delegate(baseMapping, from, to);
     }

@@ -20,7 +20,7 @@ public class AliasJunctionNodeTypeTransformation extends RenameTransformation<Ju
 
   @Override
   public void apply(View view) {
-    MutableJunctionNodeType actualTarget = view.getMutableJunctionNodeType(getTarget().getName()).getOne();
+    MutableJunctionNodeType actualTarget = view.getMutableJunctionNodeType(getTarget()).getOne();
     ViewedJunctionNodeType aliased = new AliasedJunctionNodeType(actualTarget, getName(), annotation);
     view.add(aliased);
 

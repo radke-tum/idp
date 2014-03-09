@@ -18,7 +18,7 @@ public class RenameEdgeTypeTransformation extends RenameTransformation<EdgeType>
 
   @Override
   public void apply(View view) {
-    MutableEdgeType actualTarget = view.getMutableEdgeType(getTarget().getName()).getOne();
+    MutableEdgeType actualTarget = view.getMutableEdgeType(getTarget()).getOne();
     view.removeEdgeType(actualTarget);
     ViewedEdgeType renamed = new ViewedEdgeType(actualTarget, getName());
     view.add(renamed);

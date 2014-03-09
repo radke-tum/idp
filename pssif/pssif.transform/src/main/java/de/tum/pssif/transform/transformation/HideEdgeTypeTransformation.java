@@ -16,12 +16,12 @@ public class HideEdgeTypeTransformation extends HideTypeTransformation<EdgeType>
     }
   }
 
-  private void removeType(View view, EdgeType type) {
-    PSSIFOption<EdgeType> actualType = view.getEdgeType(type.getName());
+  private void removeType(View view, String type) {
+    PSSIFOption<EdgeType> actualType = view.getEdgeType(type);
 
     for (EdgeType met : actualType.getMany()) {
       for (EdgeType special : met.getSpecials()) {
-        removeType(view, special);
+        removeType(view, special.getName());
       }
     }
 

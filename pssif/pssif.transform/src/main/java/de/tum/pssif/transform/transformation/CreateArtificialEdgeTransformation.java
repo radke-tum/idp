@@ -9,24 +9,24 @@ import de.tum.pssif.transform.transformation.artificial.ArtificializingConnectio
 
 
 public class CreateArtificialEdgeTransformation extends AbstractTransformation {
-  private final NodeType from;  //S
-  private final NodeType to;    //F
-  private final EdgeType base;  //IF
-  private final EdgeType target; //CF
+  private final String from;  //S
+  private final String to;    //F
+  private final String base;  //IF
+  private final String target; //CF
 
   public CreateArtificialEdgeTransformation(NodeType from, NodeType to, EdgeType base, EdgeType target) {
-    this.from = from;
-    this.to = to;
-    this.base = base;
-    this.target = target;
+    this.from = from.getName();
+    this.to = to.getName();
+    this.base = base.getName();
+    this.target = target.getName();
   }
 
   @Override
   public void apply(View view) {
-    NodeType actualFrom = view.getNodeType(from.getName()).getOne();
-    NodeType actualTo = view.getNodeType(to.getName()).getOne();
-    MutableEdgeType actualBase = view.getMutableEdgeType(base.getName()).getOne();
-    MutableEdgeType actualTarget = view.getMutableEdgeType(target.getName()).getOne();
+    NodeType actualFrom = view.getNodeType(from).getOne();
+    NodeType actualTo = view.getNodeType(to).getOne();
+    MutableEdgeType actualBase = view.getMutableEdgeType(base).getOne();
+    MutableEdgeType actualTarget = view.getMutableEdgeType(target).getOne();
 
     ConnectionMapping baseMapping = actualBase.getMapping(actualFrom, actualTo).getOne();
     ConnectionMapping targetMapping = actualTarget.getMapping(actualFrom, actualTo).getOne();

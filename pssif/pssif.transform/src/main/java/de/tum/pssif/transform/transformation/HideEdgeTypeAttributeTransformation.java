@@ -13,6 +13,6 @@ public class HideEdgeTypeAttributeTransformation extends HideAttributeTransforma
 
   @Override
   protected PSSIFOption<MutableEdgeType> getActualTarget(View view) {
-    return view.getMutableEdgeType(getType().getName());
+    return view.getMutableEdgeType(getType());
   }
 }

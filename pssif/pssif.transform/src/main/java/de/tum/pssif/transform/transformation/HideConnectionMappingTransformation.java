@@ -8,19 +8,21 @@ import de.tum.pssif.core.metamodel.mutable.MutableEdgeType;
 
 
 public class HideConnectionMappingTransformation extends AbstractTransformation {
-  private final EdgeType          type;
-  private final ConnectionMapping mapping;
+  private final String type;
+  private final String from;
+  private final String to;
 
   public HideConnectionMappingTransformation(EdgeType type, ConnectionMapping mapping) {
-    this.type = type;
-    this.mapping = mapping;
+    this.type = type.getName();
+    from = mapping.getFrom().getName();
+    to = mapping.getTo().getName();
   }
 
   @Override
   public void apply(View view) {
-    MutableEdgeType actualType = view.getMutableEdgeType(type.getName()).getOne();
-    NodeTypeBase fromType = view.getBaseNodeType(mapping.getFrom().getName()).getOne();
-    NodeTypeBase toType = view.getBaseNodeType(mapping.getTo().getName()).getOne();
+    MutableEdgeType actualType = view.getMutableEdgeType(type).getOne();
+    NodeTypeBase fromType = view.getBaseNodeType(from).getOne();
+    NodeTypeBase toType = view.getBaseNodeType(to).getOne();
     PSSIFOption<ConnectionMapping> actualMapping = actualType.getMapping(fromType, toType);
     for (ConnectionMapping cm : actualMapping.getMany()) {
       actualType.removeMapping(cm);

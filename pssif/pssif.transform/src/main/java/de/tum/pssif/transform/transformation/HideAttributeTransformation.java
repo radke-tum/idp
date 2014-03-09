@@ -7,19 +7,19 @@ import de.tum.pssif.core.metamodel.mutable.MutableElementType;
 
 
 public abstract class HideAttributeTransformation<T extends MutableElementType> extends AbstractTransformation {
-  private final ElementType type;
-  private final Attribute   attribute;
+  private final String type;
+  private final String attribute;
 
   public HideAttributeTransformation(ElementType type, Attribute attribute) {
-    this.type = type;
-    this.attribute = attribute;
+    this.type = type.getName();
+    this.attribute = attribute.getName();
   }
 
-  protected ElementType getType() {
+  protected String getType() {
     return type;
   }
 
-  protected Attribute getAttribute() {
+  protected String getAttribute() {
     return attribute;
   }
 
@@ -28,7 +28,9 @@ public abstract class HideAttributeTransformation<T extends MutableElementType> 
   @Override
   public final void apply(View view) {
     for (T actualTarget : getActualTarget(view).getMany()) {
-      actualTarget.removeAttribute(getAttribute());
+      for (Attribute a : actualTarget.getAttribute(attribute).getMany()) {
+        actualTarget.removeAttribute(a);
+      }
     }
   }
 }

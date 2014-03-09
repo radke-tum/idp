@@ -18,12 +18,12 @@ public class HideNodeTypeTransformation extends HideTypeTransformation<NodeType>
     }
   }
 
-  private void removeType(View view, NodeType type) {
-    PSSIFOption<NodeType> actualType = view.getNodeType(type.getName());
+  private void removeType(View view, String type) {
+    PSSIFOption<NodeType> actualType = view.getNodeType(type);
 
     for (NodeType mnt : actualType.getMany()) {
       for (NodeType special : mnt.getSpecials()) {
-        removeType(view, special);
+        removeType(view, special.getName());
       }
     }
 

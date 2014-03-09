@@ -7,17 +7,21 @@ import de.tum.pssif.transform.transformation.reversed.ReversedConnectionMapping;
 
 
 public class ReverseConnectionMappingTransformation extends AbstractTransformation {
-  private final ConnectionMapping baseMapping;
+  private final String type;
+  private final String from;
+  private final String to;
 
   public ReverseConnectionMappingTransformation(ConnectionMapping baseMapping) {
-    this.baseMapping = baseMapping;
+    type = baseMapping.getType().getName();
+    from = baseMapping.getFrom().getName();
+    to = baseMapping.getTo().getName();
   }
 
   @Override
   public void apply(View view) {
-    MutableEdgeType baseType = view.getMutableEdgeType(baseMapping.getType().getName()).getOne();
-    NodeTypeBase from = view.getBaseNodeType(baseMapping.getFrom().getName()).getOne();
-    NodeTypeBase to = view.getBaseNodeType(baseMapping.getTo().getName()).getOne();
+    MutableEdgeType baseType = view.getMutableEdgeType(type).getOne();
+    NodeTypeBase from = view.getBaseNodeType(this.from).getOne();
+    NodeTypeBase to = view.getBaseNodeType(this.to).getOne();
     baseType.addMapping(new ReversedConnectionMapping(baseType.getMapping(from, to).getOne()));
   }
 }

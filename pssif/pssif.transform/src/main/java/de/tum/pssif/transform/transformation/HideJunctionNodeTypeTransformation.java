@@ -18,8 +18,8 @@ public class HideJunctionNodeTypeTransformation extends HideTypeTransformation<J
     }
   }
 
-  private void removeType(View view, JunctionNodeType type) {
-    PSSIFOption<JunctionNodeType> actualType = view.getJunctionNodeType(type.getName());
+  private void removeType(View view, String type) {
+    PSSIFOption<JunctionNodeType> actualType = view.getJunctionNodeType(type);
 
     for (MutableEdgeType et : view.getMutableEdgeTypes()) {
       for (ConnectionMapping cm : et.getMappings().getMany()) {

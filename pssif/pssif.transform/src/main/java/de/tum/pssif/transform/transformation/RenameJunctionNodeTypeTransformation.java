@@ -15,7 +15,7 @@ public class RenameJunctionNodeTypeTransformation extends RenameTransformation<J
 
   @Override
   public void apply(View view) {
-    MutableJunctionNodeType actualTarget = view.getMutableJunctionNodeType(getTarget().getName()).getOne();
+    MutableJunctionNodeType actualTarget = view.getMutableJunctionNodeType(getTarget()).getOne();
     view.removeJunctionNodeType(actualTarget);
     ViewedJunctionNodeType renamed = new ViewedJunctionNodeType(actualTarget, getName());
     view.add(renamed);

@@ -5,25 +5,25 @@ import de.tum.pssif.core.metamodel.NodeTypeBase;
 
 
 /* package */final class ConnectionMappingDelegateDescriptor {
-  private final ConnectionMapping baseMapping;
-  private final NodeTypeBase      from;
-  private final NodeTypeBase      to;
+  private final String type;
+  private final String from;
+  private final String to;
 
   /*package*/ConnectionMappingDelegateDescriptor(NodeTypeBase from, NodeTypeBase to, ConnectionMapping baseMapping) {
-    this.from = from;
-    this.to = to;
-    this.baseMapping = baseMapping;
+    this.type = baseMapping.getType().getName();
+    this.from = from.getName();
+    this.to = to.getName();
   }
 
-  /*package*/ConnectionMapping getBaseMapping() {
-    return baseMapping;
+  /*package*/String getType() {
+    return type;
   }
 
-  /*package*/NodeTypeBase getFrom() {
+  /*package*/String getFrom() {
     return from;
   }
 
-  /*package*/NodeTypeBase getTo() {
+  /*package*/String getTo() {
     return to;
   }
 }
