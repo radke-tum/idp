@@ -15,4 +15,8 @@ public interface Block extends SFB768Identifiable, SFB768Named, AttributeValue {
 
   Attribute<?> setAttributeValue(SFB768Name name, SFB768Identifier identifier, AttributeValue value);
 
+  Port findPort(SFB768Identifier identifier);
+
+  Attribute<?> findAttribute(SFB768Identifier identifier);
+
 }

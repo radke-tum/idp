@@ -13,4 +13,6 @@ public interface Model extends SFB768Identifiable, SFB768Named {
 
   PortAssociation associatePorts(Port from, Port to);
 
+  Block findBlock(SFB768Identifier identifier);
+
 }

@@ -14,12 +14,13 @@ import de.tum.pssif.sysml4mechatronics.sfb768.PortDirection;
 import de.tum.pssif.sysml4mechatronics.sfb768.SFB768Identifier;
 import de.tum.pssif.sysml4mechatronics.sfb768.SFB768Layer;
 import de.tum.pssif.sysml4mechatronics.sfb768.SFB768Name;
+import de.tum.pssif.sysml4mechatronics.sfb768.StringAttributeValue;
 
 
 public abstract class BlockImpl extends SFB768IdentifiableNamedImpl implements Block {
 
-  private final Map<SFB768Identifier, PortImpl>     ports      = Maps.newHashMap();
-  private final Map<SFB768Identifier, Attribute<?>> attributes = Maps.newHashMap();
+  private final Map<SFB768Identifier, PortImpl>         ports      = Maps.newHashMap();
+  private final Map<SFB768Identifier, AttributeImpl<?>> attributes = Maps.newHashMap();
 
   BlockImpl(SFB768Identifier identifier, SFB768Name name) {
     super(identifier, name);
@@ -44,8 +45,27 @@ public abstract class BlockImpl extends SFB768IdentifiableNamedImpl implements B
 
   @Override
   public Attribute<?> setAttributeValue(SFB768Name name, SFB768Identifier identifier, AttributeValue value) {
-    // TODO Auto-generated method stub
-    return null;
+    AttributeImpl<?> result = null;
+    if (value instanceof StringAttributeValue) {
+      result = new StringAttribute(identifier, name, this, (StringAttributeValue) value);
+    }
+    else if (value instanceof Block) {
+      result = new BlockAttributeImpl(identifier, name, this, (BlockImpl) value);
+    }
+    else {
+      result = new PortAttributeImpl(identifier, name, this, (PortImpl) value);
+    }
+    this.attributes.put(identifier, result);
+    return result;
   }
 
+  @Override
+  public PortImpl findPort(SFB768Identifier identifier) {
+    return ports.get(identifier);
+  }
+
+  @Override
+  public AttributeImpl<?> findAttribute(SFB768Identifier identifier) {
+    return attributes.get(identifier);
+  }
 }
