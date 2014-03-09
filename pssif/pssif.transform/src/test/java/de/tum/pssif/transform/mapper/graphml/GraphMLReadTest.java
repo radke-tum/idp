@@ -15,6 +15,8 @@ import de.tum.pssif.core.metamodel.NodeType;
 import de.tum.pssif.core.metamodel.PSSIFCanonicMetamodelCreator;
 import de.tum.pssif.core.model.Model;
 import de.tum.pssif.core.model.Node;
+import de.tum.pssif.transform.Mapper;
+import de.tum.pssif.transform.MapperFactory;
 import de.tum.pssif.transform.transformation.RenameEdgeTypeTransformation;
 
 
@@ -71,6 +73,25 @@ public class GraphMLReadTest {
     //
     //      System.out.println();
     //    }
+  }
+
+  @Test
+  public void testReadFlowIntoModel() {
+    InputStream in = getClass().getResourceAsStream("/flow.graphml");
+    Mapper ufmMapper = MapperFactory.getMapper(MapperFactory.UOFP);
+    Mapper pssifMapper = MapperFactory.getMapper(MapperFactory.PSSIF);
+
+    Metamodel metamodel = PSSIFCanonicMetamodelCreator.create();
+    Model model = ufmMapper.read(metamodel, in);
+    pssifMapper.write(metamodel, model, System.out);
+    System.out.println();
+    System.out.println("=====");
+    System.out.println("=====");
+    System.out.println("=====");
+    System.out.println("=====");
+    System.out.println("=====");
+    System.out.println();
+    ufmMapper.write(metamodel, model, System.out);
   }
 
   @Test

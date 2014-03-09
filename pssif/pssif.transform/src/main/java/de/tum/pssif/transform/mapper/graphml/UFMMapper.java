@@ -13,12 +13,12 @@ import de.tum.pssif.transform.transformation.CreateArtificialNodeTransformation;
 import de.tum.pssif.transform.transformation.HideConnectionMappingTransformation;
 import de.tum.pssif.transform.transformation.HideEdgeTypeAttributeTransformation;
 import de.tum.pssif.transform.transformation.HideNodeTypeAttributeTransformation;
+import de.tum.pssif.transform.transformation.HideNodeTypeTransformation;
 import de.tum.pssif.transform.transformation.LeftJoinConnectionMappingTransformation;
 import de.tum.pssif.transform.transformation.MoveAttributeTransformation;
 import de.tum.pssif.transform.transformation.RenameEdgeTypeTransformation;
 import de.tum.pssif.transform.transformation.RenameNodeTypeTransformation;
 import de.tum.pssif.transform.transformation.RightJoinConnectionMappingTransformation;
-import de.tum.pssif.transform.transformation.SpecializeConnectionMappingTransformation;
 
 
 public class UFMMapper extends GraphMLMapper {
@@ -64,11 +64,6 @@ public class UFMMapper extends GraphMLMapper {
     view = new HideNodeTypeAttributeTransformation(view.getNodeType("Block").getOne(), view.getNodeType("Block").getOne().getAttribute("cost")
         .getOne()).apply(view);
 
-    view = new CreateArtificialNodeTransformation(view.getNodeType("Function").getOne(), view.getNodeType("Block").getOne(), view.getEdgeType(
-        "Relationship").getOne()).apply(view);
-    view = new CreateArtificialNodeTransformation(view.getNodeType("State").getOne(), view.getNodeType("Block").getOne(), view.getEdgeType(
-        "Relationship").getOne()).apply(view);
-
     NodeType block = view.getNodeType("Block").getOne();
     Attribute id = block.getAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_ID).getOne();
     view = new MoveAttributeTransformation(view.getNodeType("Function").getOne(), "functionary", block, id, view.getEdgeType("Relationship").getOne())
@@ -82,37 +77,52 @@ public class UFMMapper extends GraphMLMapper {
     view = new MoveAttributeTransformation(view.getNodeType("State").getOne(), "functionary", block, name, view.getEdgeType("Relationship").getOne())
         .apply(view);
 
-    EdgeType informationFlow = view.getEdgeType("InformationFlow").getOne();
-    EdgeType energyFlow = view.getEdgeType("EnergyFlow").getOne();
-    EdgeType materialFlow = view.getEdgeType("MaterialFlow").getOne();
-    NodeType state = view.getNodeType("State").getOne();
-    NodeType function = view.getNodeType("Function").getOne();
-    block = view.getNodeType("Block").getOne();
-    view = new SpecializeConnectionMappingTransformation(informationFlow, state, function, informationFlow.getMapping(block, block).getOne())
-        .apply(view);
-    block = view.getNodeType("Block").getOne();
-    view = new SpecializeConnectionMappingTransformation(energyFlow, state, function, energyFlow.getMapping(block, block).getOne()).apply(view);
-    block = view.getNodeType("Block").getOne();
-    view = new SpecializeConnectionMappingTransformation(materialFlow, state, function, materialFlow.getMapping(block, block).getOne()).apply(view);
+    view = new CreateArtificialNodeTransformation(view.getNodeType("Function").getOne(), view.getEdgeType("Relationship").getOne(), view.getNodeType(
+        "Block").getOne()).apply(view);
+    view = new CreateArtificialNodeTransformation(view.getNodeType("State").getOne(), view.getEdgeType("Relationship").getOne(), view.getNodeType(
+        "Block").getOne()).apply(view);
 
-    view = new SpecializeConnectionMappingTransformation(informationFlow, function, state, informationFlow.getMapping(block, block).getOne())
-        .apply(view);
-    view = new SpecializeConnectionMappingTransformation(energyFlow, function, state, energyFlow.getMapping(block, block).getOne()).apply(view);
-    view = new SpecializeConnectionMappingTransformation(materialFlow, function, state, materialFlow.getMapping(block, block).getOne()).apply(view);
+    EdgeType relationship = view.getEdgeType("Relationship").getOne();
+    view = new HideConnectionMappingTransformation(relationship, relationship.getMapping(view.getNodeType("Function").getOne(),
+        view.getNodeType("Block").getOne()).getOne()).apply(view);
+    relationship = view.getEdgeType("Relationship").getOne();
+    view = new HideConnectionMappingTransformation(relationship, relationship.getMapping(view.getNodeType("State").getOne(),
+        view.getNodeType("Block").getOne()).getOne()).apply(view);
+    block = view.getNodeType("Block").getOne();
+    view = new HideNodeTypeTransformation(block).apply(view);
 
-    view = moveEdge(view, informationFlow);
-    view = moveEdge(view, energyFlow);
-    view = moveEdge(view, materialFlow);
-
-    informationFlow = view.getEdgeType("InformationFlow").getOne();
-    block = view.getNodeType("Block").getOne();
-    view = new HideConnectionMappingTransformation(informationFlow, informationFlow.getMapping(block, block).getOne()).apply(view);
-    energyFlow = view.getEdgeType("EnergyFlow").getOne();
-    block = view.getNodeType("Block").getOne();
-    view = new HideConnectionMappingTransformation(energyFlow, energyFlow.getMapping(block, block).getOne()).apply(view);
-    materialFlow = view.getEdgeType("MaterialFlow").getOne();
-    block = view.getNodeType("Block").getOne();
-    view = new HideConnectionMappingTransformation(materialFlow, materialFlow.getMapping(block, block).getOne()).apply(view);
+    //
+    //    EdgeType informationFlow = view.getEdgeType("InformationFlow").getOne();
+    //    EdgeType energyFlow = view.getEdgeType("EnergyFlow").getOne();
+    //    EdgeType materialFlow = view.getEdgeType("MaterialFlow").getOne();
+    //    NodeType state = view.getNodeType("State").getOne();
+    //    NodeType function = view.getNodeType("Function").getOne();
+    //    block = view.getNodeType("Block").getOne();
+    //    view = new SpecializeConnectionMappingTransformation(informationFlow, state, function, informationFlow.getMapping(block, block).getOne())
+    //        .apply(view);
+    //    block = view.getNodeType("Block").getOne();
+    //    view = new SpecializeConnectionMappingTransformation(energyFlow, state, function, energyFlow.getMapping(block, block).getOne()).apply(view);
+    //    block = view.getNodeType("Block").getOne();
+    //    view = new SpecializeConnectionMappingTransformation(materialFlow, state, function, materialFlow.getMapping(block, block).getOne()).apply(view);
+    //
+    //    view = new SpecializeConnectionMappingTransformation(informationFlow, function, state, informationFlow.getMapping(block, block).getOne())
+    //        .apply(view);
+    //    view = new SpecializeConnectionMappingTransformation(energyFlow, function, state, energyFlow.getMapping(block, block).getOne()).apply(view);
+    //    view = new SpecializeConnectionMappingTransformation(materialFlow, function, state, materialFlow.getMapping(block, block).getOne()).apply(view);
+    //
+    //    view = moveEdge(view, informationFlow);
+    //    view = moveEdge(view, energyFlow);
+    //    view = moveEdge(view, materialFlow);
+    //
+    //    informationFlow = view.getEdgeType("InformationFlow").getOne();
+    //    block = view.getNodeType("Block").getOne();
+    //    view = new HideConnectionMappingTransformation(informationFlow, informationFlow.getMapping(block, block).getOne()).apply(view);
+    //    energyFlow = view.getEdgeType("EnergyFlow").getOne();
+    //    block = view.getNodeType("Block").getOne();
+    //    view = new HideConnectionMappingTransformation(energyFlow, energyFlow.getMapping(block, block).getOne()).apply(view);
+    //    materialFlow = view.getEdgeType("MaterialFlow").getOne();
+    //    block = view.getNodeType("Block").getOne();
+    //    view = new HideConnectionMappingTransformation(materialFlow, materialFlow.getMapping(block, block).getOne()).apply(view);
 
     return view;
   }

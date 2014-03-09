@@ -1,12 +1,6 @@
 package de.tum.pssif.core.metamodel.impl;
 
-import java.util.Collection;
-
-import com.google.common.collect.ImmutableSet;
-
 import de.tum.pssif.core.metamodel.ConnectionMapping;
-import de.tum.pssif.core.metamodel.EdgeType;
-import de.tum.pssif.core.metamodel.NodeTypeBase;
 import de.tum.pssif.core.metamodel.mutable.MutableNodeTypeBase;
 import de.tum.pssif.core.model.Edge;
 import de.tum.pssif.core.model.Model;
@@ -21,26 +15,6 @@ public abstract class NodeTypeBaseImpl extends ElementTypeImpl implements Mutabl
   @Override
   public Node create(Model model) {
     return new CreateNodeOperation(this).apply(model);
-  }
-
-  @Override
-  public Collection<NodeTypeBase> leftClosure(EdgeType edgeType, Node node) {
-    return ImmutableSet.<NodeTypeBase> of(this);
-  }
-
-  @Override
-  public Collection<NodeTypeBase> rightClosure(EdgeType edgeType, Node node) {
-    return ImmutableSet.<NodeTypeBase> of(this);
-  }
-
-  @Override
-  public int junctionIncomingEdgeCount(EdgeType edgeType, Node node) {
-    return 0;
-  }
-
-  @Override
-  public int junctionOutgoingEdgeCount(EdgeType edgeType, Node node) {
-    return 0;
   }
 
   @Override

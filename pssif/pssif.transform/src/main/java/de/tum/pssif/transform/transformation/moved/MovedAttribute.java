@@ -1,16 +1,16 @@
 package de.tum.pssif.transform.transformation.moved;
 
+import de.tum.pssif.core.common.PSSIFOption;
+import de.tum.pssif.core.common.PSSIFValue;
 import de.tum.pssif.core.metamodel.Attribute;
 import de.tum.pssif.core.metamodel.ConnectionMapping;
-import de.tum.pssif.core.metamodel.impl.base.AbstractAttribute;
+import de.tum.pssif.core.metamodel.impl.AttributeImpl;
 import de.tum.pssif.core.model.Edge;
 import de.tum.pssif.core.model.Element;
 import de.tum.pssif.core.model.Node;
-import de.tum.pssif.core.util.PSSIFOption;
-import de.tum.pssif.core.util.PSSIFValue;
 
 
-public class MovedAttribute extends AbstractAttribute {
+public class MovedAttribute extends AttributeImpl {
   private final Attribute         baseAttribute;
   private final ConnectionMapping mapping;
 
@@ -22,21 +22,16 @@ public class MovedAttribute extends AbstractAttribute {
 
   @Override
   public void set(Element element, PSSIFOption<PSSIFValue> value) {
-    for (Edge e : mapping.getFrom().apply((Node) element).getMany()) {
-      for (Node n : mapping.getTo().apply(e).getMany()) {
-        baseAttribute.set(n, value);
-      }
+    for (Edge e : mapping.applyOutgoing((Node) element).getMany()) {
+      baseAttribute.set(mapping.applyTo(e), value);
     }
   }
 
   @Override
   public PSSIFOption<PSSIFValue> get(Element element) {
-    for (Edge e : mapping.getFrom().apply((Node) element).getMany()) {
-      for (Node n : mapping.getTo().apply(e).getMany()) {
-        return baseAttribute.get(n);
-      }
+    for (Edge e : mapping.applyOutgoing((Node) element).getMany()) {
+      return baseAttribute.get(mapping.applyTo(e));
     }
     return PSSIFOption.none();
   }
-
 }

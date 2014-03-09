@@ -11,6 +11,7 @@ import de.tum.pssif.core.common.PSSIFUtil;
 import de.tum.pssif.core.metamodel.Attribute;
 import de.tum.pssif.core.metamodel.AttributeGroup;
 import de.tum.pssif.core.metamodel.ElementType;
+import de.tum.pssif.core.metamodel.mutable.MutableAttributeGroup;
 
 
 public abstract class AbstractAttributeGroup<T extends ElementType> extends NamedImpl implements MutableAttributeGroup {
