@@ -1,12 +1,12 @@
 package de.tum.pssif.sysml4mechatronics.sfb768.impl;
 
-import de.tum.pssif.sysml4mechatronics.sfb768.Port;
-import de.tum.pssif.sysml4mechatronics.sfb768.PortAttribute;
+import de.tum.pssif.sysml4mechatronics.sfb768.SFB768Port;
+import de.tum.pssif.sysml4mechatronics.sfb768.SFB768PortAttribute;
 import de.tum.pssif.sysml4mechatronics.sfb768.SFB768Identifier;
 import de.tum.pssif.sysml4mechatronics.sfb768.SFB768Name;
 
 
-public class PortAttributeImpl extends AttributeImpl<Port> implements PortAttribute {
+public class PortAttributeImpl extends AttributeImpl<SFB768Port> implements SFB768PortAttribute {
 
   private final PortImpl port;
 
@@ -16,7 +16,7 @@ public class PortAttributeImpl extends AttributeImpl<Port> implements PortAttrib
   }
 
   @Override
-  public Port getValue() {
+  public SFB768Port getValue() {
     return this.port;
   }
 

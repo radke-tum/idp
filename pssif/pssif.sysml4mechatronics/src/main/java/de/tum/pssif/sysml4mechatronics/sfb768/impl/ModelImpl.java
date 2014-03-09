@@ -6,16 +6,16 @@ import java.util.Set;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
-import de.tum.pssif.sysml4mechatronics.sfb768.Block;
-import de.tum.pssif.sysml4mechatronics.sfb768.Model;
-import de.tum.pssif.sysml4mechatronics.sfb768.Port;
-import de.tum.pssif.sysml4mechatronics.sfb768.PortAssociation;
+import de.tum.pssif.sysml4mechatronics.sfb768.SFB768Block;
+import de.tum.pssif.sysml4mechatronics.sfb768.SFB768Model;
+import de.tum.pssif.sysml4mechatronics.sfb768.SFB768Port;
+import de.tum.pssif.sysml4mechatronics.sfb768.SFB768PortAssociation;
 import de.tum.pssif.sysml4mechatronics.sfb768.SFB768Identifier;
 import de.tum.pssif.sysml4mechatronics.sfb768.SFB768Layer;
 import de.tum.pssif.sysml4mechatronics.sfb768.SFB768Name;
 
 
-public class ModelImpl extends SFB768IdentifiableNamedImpl implements Model {
+public class ModelImpl extends IdentifiableNamedImpl implements SFB768Model {
 
   private final Map<SFB768Identifier, BlockImpl> blocks           = Maps.newHashMap();
   private final Set<PortAssociationImpl>         portAssociations = Sets.newHashSet();
@@ -25,17 +25,17 @@ public class ModelImpl extends SFB768IdentifiableNamedImpl implements Model {
   }
 
   @Override
-  public Set<Block> getBlocks() {
-    return Sets.<Block> newHashSet(this.blocks.values());
+  public Set<SFB768Block> getBlocks() {
+    return Sets.<SFB768Block> newHashSet(this.blocks.values());
   }
 
   @Override
-  public Set<PortAssociation> getPortAssociations() {
-    return Sets.<PortAssociation> newHashSet(this.portAssociations);
+  public Set<SFB768PortAssociation> getPortAssociations() {
+    return Sets.<SFB768PortAssociation> newHashSet(this.portAssociations);
   }
 
   @Override
-  public Block createBlock(SFB768Name name, SFB768Identifier identifier, SFB768Layer layer) {
+  public SFB768Block createBlock(SFB768Name name, SFB768Identifier identifier, SFB768Layer layer) {
     BlockImpl result = null;
     if (SFB768Layer.ELECTRICAL.equals(layer)) {
       result = new ElectricalBlock(identifier, name);
@@ -54,7 +54,7 @@ public class ModelImpl extends SFB768IdentifiableNamedImpl implements Model {
   }
 
   @Override
-  public PortAssociation associatePorts(Port from, Port to) {
+  public SFB768PortAssociation associatePorts(SFB768Port from, SFB768Port to) {
     PortImpl fromPort = findBlock(from.getBlock().getIdentifier()).findPort(from.getIdentifier());
     PortImpl toPort = findBlock(to.getBlock().getIdentifier()).findPort(to.getIdentifier());
     PortAssociationImpl result = new PortAssociationImpl(fromPort, toPort);

@@ -1,9 +1,9 @@
 package de.tum.pssif.sysml4mechatronics.sfb768.impl;
 
-import de.tum.pssif.sysml4mechatronics.sfb768.PortAssociation;
+import de.tum.pssif.sysml4mechatronics.sfb768.SFB768PortAssociation;
 
 
-public class PortAssociationImpl implements PortAssociation {
+public class PortAssociationImpl implements SFB768PortAssociation {
 
   private final PortImpl fromPort;
   private final PortImpl toPort;

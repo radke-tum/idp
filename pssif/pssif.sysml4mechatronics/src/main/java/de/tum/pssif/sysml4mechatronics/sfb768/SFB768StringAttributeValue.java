@@ -1,10 +1,10 @@
 package de.tum.pssif.sysml4mechatronics.sfb768;
 
-public final class StringAttributeValue implements AttributeValue {
+public final class SFB768StringAttributeValue implements SFB768AttributeValue {
 
   private final String value;
 
-  public StringAttributeValue(String value) {
+  public SFB768StringAttributeValue(String value) {
     this.value = value;
   }
 
@@ -21,9 +21,9 @@ public final class StringAttributeValue implements AttributeValue {
   }
 
   public boolean equals(Object obj) {
-    if (!(obj instanceof StringAttributeValue)) {
+    if (!(obj instanceof SFB768StringAttributeValue)) {
       return false;
     }
-    return ((StringAttributeValue) obj).value.equals(value);
+    return ((SFB768StringAttributeValue) obj).value.equals(value);
   }
 }
