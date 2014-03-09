@@ -10,6 +10,7 @@
 		<module>pssif.vsdx</module>
 		<module>pssif.transform</module>
 		<module>pssif.viz</module>
+		<module>pssif.sysml4mechatronics</module>
 	</modules>
 
 	<properties>
