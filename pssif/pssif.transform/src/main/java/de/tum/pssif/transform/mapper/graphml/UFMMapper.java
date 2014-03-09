@@ -18,6 +18,7 @@ import de.tum.pssif.transform.transformation.HideEdgeTypeTransformation;
 import de.tum.pssif.transform.transformation.HideNodeTypeAttributeTransformation;
 import de.tum.pssif.transform.transformation.HideNodeTypeTransformation;
 import de.tum.pssif.transform.transformation.JoinLeftOutgoingTransformation;
+import de.tum.pssif.transform.transformation.JoinRightOutgoingTransformation;
 import de.tum.pssif.transform.transformation.MoveAttributeTransformation;
 import de.tum.pssif.transform.transformation.RenameEdgeTypeTransformation;
 import de.tum.pssif.transform.transformation.RenameNodeTypeTransformation;
@@ -88,10 +89,15 @@ public class UFMMapper extends GraphMLMapper {
     view = new CreateArtificialNodeTransformation(view.getNodeType("State").getOne(), view.getEdgeType("Relationship").getOne(), view.getNodeType(
         "Block").getOne()).apply(view);
 
-    view = new JoinLeftOutgoingTransformation(view.getEdgeType("InformationFlow").getOne(), s2b, view.getNodeType("Block").getOne(), view
-        .getNodeType("State").getOne(), view.getNodeType("Function").getOne()).apply(view);
-    view = new JoinLeftOutgoingTransformation(view.getEdgeType("InformationFlow").getOne(), f2b, view.getNodeType("Block").getOne(), view
-        .getNodeType("Function").getOne(), view.getNodeType("State").getOne()).apply(view);
+    view = new JoinLeftOutgoingTransformation(view.getEdgeType("InformationFlow").getOne(), s2b, view.getNodeType("State").getOne(), view
+        .getNodeType("Function").getOne()).apply(view);
+    view = new JoinLeftOutgoingTransformation(view.getEdgeType("InformationFlow").getOne(), f2b, view.getNodeType("Function").getOne(), view
+        .getNodeType("State").getOne()).apply(view);
+
+    view = new JoinRightOutgoingTransformation(view.getEdgeType("InformationFlow").getOne(), s2b, view.getNodeType("Function").getOne(), view
+        .getNodeType("State").getOne()).apply(view);
+    view = new JoinRightOutgoingTransformation(view.getEdgeType("InformationFlow").getOne(), f2b, view.getNodeType("State").getOne(), view
+        .getNodeType("Function").getOne()).apply(view);
 
     view = new CreateArtificialEdgeTransformation(view.getNodeType("State").getOne(), view.getNodeType("Function").getOne(), view.getEdgeType(
         "InformationFlow").getOne(), view.getEdgeType("Control Flow").getOne()).apply(view);
