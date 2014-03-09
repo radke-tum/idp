@@ -40,6 +40,10 @@ public class UmlModelImpl extends IdentifiableNamedImpl implements MagicUmlModel
     return Sets.<MagicUmlClass> newHashSet(this.classesById.values());
   }
 
+  Set<UmlClassImpl> classesImpl() {
+    return Sets.newHashSet(this.classesById.values());
+  }
+
   @Override
   public Set<MagicUmlDataType> getDataTypes() {
     return Sets.<MagicUmlDataType> newHashSet(this.dataTypesById.values());
@@ -101,8 +105,8 @@ public class UmlModelImpl extends IdentifiableNamedImpl implements MagicUmlModel
 
   @Override
   public void resolveReferences() {
-    // TODO Auto-generated method stub
-
+    for (UmlClassImpl clazz : this.classesById.values()) {
+      clazz.resolveReferences(this);
+    }
   }
-
 }

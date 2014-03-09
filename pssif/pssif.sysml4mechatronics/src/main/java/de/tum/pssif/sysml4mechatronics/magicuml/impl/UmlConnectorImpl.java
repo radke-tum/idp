@@ -66,6 +66,30 @@ public class UmlConnectorImpl extends UmlOwnedFeatureImpl implements MagicUmlCon
     return this.targetPortId;
   }
 
-  //TODO resolution of attrs!
+  @Override
+  public void resolveReferences(UmlModelImpl contextModel) {
+    int foundCount = 0;
+    for (UmlClassImpl clazz : contextModel.classesImpl()) {
+      if (clazz.findAttributeByIdentifier(sourceAttrId) != null) {
+        this.sourceAttribute = (UmlAttributeReferencedTypeImpl) clazz.findAttributeByIdentifier(sourceAttrId);
+        foundCount++;
+      }
+      if (clazz.findAttributeByIdentifier(targetAttrId) != null) {
+        this.targetAttribute = (UmlAttributeReferencedTypeImpl) clazz.findAttributeByIdentifier(targetAttrId);
+        foundCount++;
+      }
+      if (clazz.findAttributeByIdentifier(sourcePortId) != null) {
+        this.sourcePort = (UmlAttributePortImpl) clazz.findAttributeByIdentifier(sourcePortId);
+        foundCount++;
+      }
+      if (clazz.findAttributeByIdentifier(targetPortId) != null) {
+        this.targetPort = (UmlAttributePortImpl) clazz.findAttributeByIdentifier(targetPortId);
+        foundCount++;
+      }
+      if (foundCount == 4) {
+        break;
+      }
+    }
+  }
 
 }

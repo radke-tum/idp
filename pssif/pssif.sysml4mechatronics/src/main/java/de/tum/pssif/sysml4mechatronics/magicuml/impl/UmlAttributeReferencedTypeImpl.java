@@ -27,6 +27,9 @@ public class UmlAttributeReferencedTypeImpl extends UmlAttributeImpl implements 
     return this.refType;
   }
 
-  //TODO refs resoluion
+  @Override
+  public void resolveReferences(UmlModelImpl contextModel) {
+    this.refType = contextModel.findClassByIdentifier(refTypeId);
+  }
 
 }

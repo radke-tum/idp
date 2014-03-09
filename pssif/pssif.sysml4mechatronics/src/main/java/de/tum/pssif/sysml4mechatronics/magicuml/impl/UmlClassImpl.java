@@ -121,4 +121,14 @@ public class UmlClassImpl extends UmlPackagedElementImpl implements MagicUmlClas
     return attr;
   }
 
+  @Override
+  public void resolveReferences(UmlModelImpl contextModel) {
+    for (UmlAttributeImpl attr : this.attributesById.values()) {
+      attr.resolveReferences(contextModel);
+    }
+    for (UmlConnectorImpl conn : this.connectorsById.values()) {
+      conn.resolveReferences(contextModel);
+    }
+  }
+
 }

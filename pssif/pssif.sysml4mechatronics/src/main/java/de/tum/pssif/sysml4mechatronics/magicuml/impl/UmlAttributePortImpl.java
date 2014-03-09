@@ -11,4 +11,9 @@ public class UmlAttributePortImpl extends UmlAttributeImpl implements MagicUmlAt
     super(identifier, name, owner);
   }
 
+  @Override
+  public void resolveReferences(UmlModelImpl contextModel) {
+    //NOOP
+  }
+
 }

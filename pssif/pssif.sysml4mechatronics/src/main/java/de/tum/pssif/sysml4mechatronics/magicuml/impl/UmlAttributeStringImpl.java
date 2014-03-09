@@ -11,4 +11,9 @@ public class UmlAttributeStringImpl extends UmlAttributeImpl implements MagicUml
     super(identifier, name, owner);
   }
 
+  @Override
+  public void resolveReferences(UmlModelImpl contextModel) {
+    //NOOP
+  }
+
 }

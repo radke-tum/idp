@@ -11,4 +11,9 @@ public class UmlDataTypeImpl extends UmlPackagedElementImpl implements MagicUmlD
     super(identifier, name);
   }
 
+  @Override
+  public void resolveReferences(UmlModelImpl contextModel) {
+    //NOOP
+  }
+
 }

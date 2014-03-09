@@ -6,7 +6,7 @@ import de.tum.pssif.sysml4mechatronics.common.SysML4MName;
 import de.tum.pssif.sysml4mechatronics.magicuml.MagicUmlOwnedFeature;
 
 
-public abstract class UmlOwnedFeatureImpl extends IdentifiableNamedImpl implements MagicUmlOwnedFeature {
+public abstract class UmlOwnedFeatureImpl extends IdentifiableNamedImpl implements MagicUmlOwnedFeature, UmlReferenceResolvable {
 
   private final UmlClassImpl owner;
 
