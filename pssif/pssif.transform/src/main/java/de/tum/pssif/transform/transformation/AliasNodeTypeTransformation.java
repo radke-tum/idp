@@ -5,20 +5,23 @@ import de.tum.pssif.core.metamodel.NodeType;
 import de.tum.pssif.core.metamodel.NodeTypeBase;
 import de.tum.pssif.core.metamodel.mutable.MutableEdgeType;
 import de.tum.pssif.core.metamodel.mutable.MutableNodeType;
+import de.tum.pssif.transform.transformation.viewed.AliasedNodeType;
 import de.tum.pssif.transform.transformation.viewed.ViewedConnectionMapping;
 import de.tum.pssif.transform.transformation.viewed.ViewedNodeType;
 
 
 public class AliasNodeTypeTransformation extends RenameTransformation<NodeType> {
+  private final String annotation;
 
-  public AliasNodeTypeTransformation(NodeType target, String name) {
+  public AliasNodeTypeTransformation(NodeType target, String name, String annotation) {
     super(target, name);
+    this.annotation = annotation;
   }
 
   @Override
   public void apply(View view) {
     MutableNodeType actualTarget = view.getMutableNodeType(getTarget().getName()).getOne();
-    ViewedNodeType aliased = new ViewedNodeType(actualTarget, getName());
+    ViewedNodeType aliased = new AliasedNodeType(actualTarget, getName(), annotation);
 
     for (NodeType general : actualTarget.getGeneral().getMany()) {
       aliased.inherit(general);

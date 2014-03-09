@@ -16,7 +16,6 @@ public class PssifMapper extends GraphMLMapper {
 
   @Override
   public void write(Metamodel metamodel, Model model, OutputStream outputStream) {
-    writeInternal(metamodel, model, outputStream);
+    writeInternal(metamodel, model, outputStream, true);
   }
-
 }

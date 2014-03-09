@@ -1,6 +1,7 @@
 package de.tum.pssif.core.model.impl;
 
 import java.util.Map;
+import java.util.Map.Entry;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
@@ -54,6 +55,11 @@ public abstract class ElementImpl implements Element {
       Preconditions.checkState(!annotations.containsKey(key) || annotations.get(key).equals(value));
     }
     annotations.put(key, value);
+  }
+
+  @Override
+  public PSSIFOption<Entry<String, String>> getAnnotations() {
+    return PSSIFOption.many(annotations.entrySet());
   }
 
   @Override

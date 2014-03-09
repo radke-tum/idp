@@ -41,11 +41,14 @@ public class EpkMapper extends BaseVisioMapper {
     view = new RenameNodeTypeTransformation(view.getNodeType("Function").getOne(), "Abstract Function").apply(view);
     view = new RenameNodeTypeTransformation(view.getNodeType("Activity").getOne(), "Function").apply(view);
     view = new RenameNodeTypeTransformation(view.getNodeType("State").getOne(), "Event").apply(view);
-    view = new AliasNodeTypeTransformation(view.getNodeType("Block").getOne(), "Information/ Material").apply(view);
-    view = new AliasNodeTypeTransformation(view.getNodeType("Block").getOne(), "Organizational unit").apply(view);
-    view = new AliasJunctionNodeTypeTransformation(view.getJunctionNodeType(PSSIFCanonicMetamodelCreator.N_CONJUNCTION).getOne(), "XOR").apply(view);
-    view = new AliasJunctionNodeTypeTransformation(view.getJunctionNodeType(PSSIFCanonicMetamodelCreator.N_CONJUNCTION).getOne(), "AND").apply(view);
-    view = new AliasJunctionNodeTypeTransformation(view.getJunctionNodeType(PSSIFCanonicMetamodelCreator.N_CONJUNCTION).getOne(), "OR").apply(view);
+    view = new AliasNodeTypeTransformation(view.getNodeType("Block").getOne(), "Information/ Material", "Information/ Material").apply(view);
+    view = new AliasNodeTypeTransformation(view.getNodeType("Block").getOne(), "Organizational unit", "Organizational unit").apply(view);
+    view = new AliasJunctionNodeTypeTransformation(view.getJunctionNodeType(PSSIFCanonicMetamodelCreator.N_CONJUNCTION).getOne(), "XOR", "XOR")
+        .apply(view);
+    view = new AliasJunctionNodeTypeTransformation(view.getJunctionNodeType(PSSIFCanonicMetamodelCreator.N_CONJUNCTION).getOne(), "AND", "AND")
+        .apply(view);
+    view = new AliasJunctionNodeTypeTransformation(view.getJunctionNodeType(PSSIFCanonicMetamodelCreator.N_CONJUNCTION).getOne(), "OR", "OR")
+        .apply(view);
     return view;
   }
 

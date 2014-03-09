@@ -128,25 +128,17 @@ public class GraphMLGraph {
       current = new GraphMlEdgeImpl(reader.getAttributeValue(null, GraphMLTokens.ID), reader.getAttributeValue(null, GraphMLTokens.SOURCE),
           reader.getAttributeValue(null, GraphMLTokens.TARGET), directed);
     }
-    else if (GraphMLTokens.HYPEREDGE.equals(elementName)) {
-      boolean directed = edgeDefaultDirected.booleanValue() || Boolean.valueOf(reader.getAttributeValue(null, GraphMLTokens.DIRECTED)).booleanValue();
-      current = new GraphMlHyperedgeImpl(reader.getAttributeValue(null, GraphMLTokens.ID), directed);
-    }
-    else if (GraphMLTokens.ENDPOINT.equals(elementName)) {
-      String type = reader.getAttributeValue(null, GraphMLTokens.ENDPOINT_TYPE);
-      if (GraphMLTokens.SOURCE.equals(type)) {
-        ((GraphMlHyperedgeImpl) current).connectFrom(reader.getAttributeValue(null, GraphMLTokens.NODE));
-      }
-      if (GraphMLTokens.TARGET.equals(type)) {
-        ((GraphMlHyperedgeImpl) current).connectTo(reader.getAttributeValue(null, GraphMLTokens.NODE));
-      }
-    }
     else if (GraphMLTokens.DATA.equals(elementName)) {
       String key = reader.getAttributeValue(null, GraphMLTokens.KEY);
       if (GraphMLTokens.ID.equals(key)) {
         key = "__" + key + "__";
       }
-      current.setValue(key, reader.getElementText());
+      if (reader.getAttributeValue(null, GraphMLTokens.ANNOTATION) == null) {
+        current.setValue(key, reader.getElementText());
+      }
+      else {
+        current.setAnnotations(key, reader.getElementText());
+      }
     }
   }
 
@@ -218,9 +210,23 @@ public class GraphMLGraph {
     writer.writeEndElement();
   }
 
+  private void writeAnnotationElemnent(XMLStreamWriter writer, String key, String text) throws XMLStreamException {
+    writer.writeStartElement(GraphMLTokens.DATA);
+    writer.writeAttribute(GraphMLTokens.KEY, key);
+    writer.writeAttribute(GraphMLTokens.ANNOTATION, GraphMLTokens.ANNOTATION);
+    writer.writeCharacters(text);
+    writer.writeEndElement();
+  }
+
   private void writeDataElements(XMLStreamWriter writer, Map<String, String> elements) throws XMLStreamException {
     for (Entry<String, String> attrVal : elements.entrySet()) {
       writeDataElemnent(writer, attrVal.getKey(), attrVal.getValue());
+    }
+  }
+
+  private void writeAnnotationElements(XMLStreamWriter writer, Map<String, String> elements) throws XMLStreamException {
+    for (Entry<String, String> attrVal : elements.entrySet()) {
+      writeAnnotationElemnent(writer, attrVal.getKey(), attrVal.getValue());
     }
   }
 
@@ -230,6 +236,7 @@ public class GraphMLGraph {
       writer.writeAttribute(GraphMLTokens.ID, entry.getValue().getId());
       writeDataElemnent(writer, GraphMLTokens.ELEMENT_TYPE, entry.getValue().getType());
       writeDataElements(writer, entry.getValue().getValues());
+      writeAnnotationElements(writer, entry.getValue().getAnnotations());
       writer.writeEndElement();
     }
   }
@@ -242,6 +249,7 @@ public class GraphMLGraph {
       writer.writeAttribute(GraphMLTokens.TARGET, entry.getValue().getTargetId());
       writeDataElemnent(writer, GraphMLTokens.ELEMENT_TYPE, entry.getValue().getType());
       writeDataElements(writer, entry.getValue().getValues());
+      writeAnnotationElements(writer, entry.getValue().getAnnotations());
       writer.writeEndElement();
     }
   }
@@ -286,44 +294,11 @@ public class GraphMLGraph {
     }
   }
 
-  static class GraphMlHyperedgeImpl extends Element implements GraphMlHyperedge {
-    private Collection<String> sourceIds = Sets.newHashSet();
-    private Collection<String> targetIds = Sets.newHashSet();
-    private final Boolean      directed;
-
-    GraphMlHyperedgeImpl(String id, Boolean directed) {
-      super(id);
-      this.directed = directed;
-    }
-
-    @Override
-    public Collection<String> getSourceIds() {
-      return sourceIds;
-    }
-
-    @Override
-    public Collection<String> getTargetIds() {
-      return targetIds;
-    }
-
-    @Override
-    public Boolean isDirected() {
-      return directed;
-    }
-
-    void connectFrom(String id) {
-      sourceIds.add(id);
-    }
-
-    void connectTo(String id) {
-      targetIds.add(id);
-    }
-  }
-
   private static class Element implements GraphMLElement {
     private final String        id;
     private String              type;
-    private Map<String, String> values = Maps.newHashMap();
+    private Map<String, String> values      = Maps.newHashMap();
+    private Map<String, String> annotations = Maps.newHashMap();
 
     private Element(String id) {
       this.id = id;
@@ -338,6 +313,15 @@ public class GraphMLGraph {
       }
     }
 
+    void setAnnotations(String key, String value) {
+      if (GraphMLTokens.ELEMENT_TYPE.equals(key)) {
+        type = value;
+      }
+      else {
+        annotations.put(key, value);
+      }
+    }
+
     @Override
     public String getId() {
       return id;
@@ -349,19 +333,29 @@ public class GraphMLGraph {
     }
 
     @Override
+    public Map<String, String> getAnnotations() {
+      return ImmutableMap.copyOf(annotations);
+    }
+
+    @Override
     public String getType() {
       return type;
     }
   }
 
   static class GraphMlAttrImpl implements GraphMlAttribute {
-
     private final String name;
     private final String type;
+    private final String annotation;
 
     GraphMlAttrImpl(String name, String type) {
+      this(name, type, null);
+    }
+
+    GraphMlAttrImpl(String name, String type, String annotation) {
       this.name = name;
       this.type = type;
+      this.annotation = annotation;
     }
 
     @Override
@@ -379,5 +373,55 @@ public class GraphMLGraph {
       return name;
     }
 
+    @Override
+    public boolean isAnnotation() {
+      return annotation != null;
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode() {
+      final int prime = 31;
+      int result = 1;
+      result = prime * result + ((annotation == null) ? 0 : annotation.hashCode());
+      result = prime * result + ((name == null) ? 0 : name.hashCode());
+      return result;
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object obj) {
+      if (this == obj) {
+        return true;
+      }
+      if (obj == null) {
+        return false;
+      }
+      if (getClass() != obj.getClass()) {
+        return false;
+      }
+      GraphMlAttrImpl other = (GraphMlAttrImpl) obj;
+      if (annotation == null) {
+        if (other.annotation != null) {
+          return false;
+        }
+      }
+      else if (!annotation.equals(other.annotation)) {
+        return false;
+      }
+      if (name == null) {
+        if (other.name != null) {
+          return false;
+        }
+      }
+      else if (!name.equals(other.name)) {
+        return false;
+      }
+      return true;
+    }
   }
 }

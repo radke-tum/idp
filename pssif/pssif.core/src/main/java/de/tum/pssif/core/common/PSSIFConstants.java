@@ -16,6 +16,8 @@ public final class PSSIFConstants {
 
   public static final String BUILTIN_ATTRIBUTE_DIRECTED       = "directed";
 
+  public static final String ALIAS_ANNOTATION_KEY             = "PSSIF_aliased_key";
+
   private PSSIFConstants() {
     //Nop
   }
