@@ -37,6 +37,8 @@ public class MyTestClass {
     Mapper epkMapper = MapperFactory.getMapper(MapperFactory.EPK);
     Model model = epkMapper.read(PSSIFCanonicMetamodelCreator.create(), getClass().getResourceAsStream("/visio/epk-data.vsdx"));
 
+    MapperFactory.getMapper(MapperFactory.PSSIF).write(PSSIFCanonicMetamodelCreator.create(), model, System.out);
+
     mapper = new VisioIoMapper("/visio/epk-template.vsdx", EPK_NODE_MASTERS, EPK_EDGE_MASTERS);
     mapper.write(graph, new FileOutputStream("target/testWriteEpkWithGraph.vsdx"));
   }
