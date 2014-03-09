@@ -15,68 +15,56 @@ import de.tum.pssif.transform.transformation.viewed.ViewedConnectionMapping;
 
 
 public class ArtificializedConnectionMapping extends ViewedConnectionMapping {
-  public ArtificializedConnectionMapping(ConnectionMapping baseMapping, EdgeType type, NodeTypeBase from, NodeTypeBase to) {
-    super(baseMapping, type, from, to);
-  }
+  private final ConnectionMapping sourceMapping;
 
-  @Override
-  public Edge create(Model model, Node from, Node to) {
-    return getBaseMapping().create(model, from, to);
+  public ArtificializedConnectionMapping(ConnectionMapping baseMapping, EdgeType type, NodeTypeBase from, NodeTypeBase to, EdgeType sourceType) {
+    super(baseMapping, type, from, to);
+    sourceMapping = sourceType.getMapping(from, to).getOne();
   }
 
   @Override
   public PSSIFOption<Edge> apply(Model model) {
     Collection<Edge> result = Sets.newHashSet();
-    Collection<Node> sources = getBaseMapping().getFrom().apply(model, true).getMany();
-    Collection<Node> targets = getBaseMapping().getTo().apply(model, true).getMany();
-
-    for (Edge e : getBaseMapping().apply(model).getMany()) {
-      Node from = getBaseMapping().applyFrom(e);
-      Node to = getBaseMapping().applyTo(e);
-
-      if (!(sources.contains(from) && targets.contains(to))) {
-        result.add(e);
+    candidate: for (Edge candidate : getBaseMapping().apply(model).getMany()) {
+      Node from = getBaseMapping().applyFrom(candidate);
+      Node to = getBaseMapping().applyTo(candidate);
+      for (Edge edge : sourceMapping.applyOutgoing(from).getMany()) {
+        if (sourceMapping.applyTo(edge).equals(to)) {
+          continue candidate;
+        }
       }
+      result.add(candidate);
     }
-
     return PSSIFOption.many(result);
-  }
-
-  @Override
-  public Node applyFrom(Edge edge) {
-    return getBaseMapping().applyFrom(edge);
-  }
-
-  @Override
-  public Node applyTo(Edge edge) {
-    return getBaseMapping().applyTo(edge);
   }
 
   @Override
   public PSSIFOption<Edge> applyIncoming(Node node) {
     Collection<Edge> result = Sets.newHashSet();
-    Collection<Node> sources = getBaseMapping().getFrom().apply(node.getModel(), true).getMany();
-
-    for (Edge e : getBaseMapping().applyIncoming(node).getMany()) {
-      if (!sources.contains(getBaseMapping().applyFrom(e))) {
-        result.add(e);
+    candidate: for (Edge candidate : getBaseMapping().applyIncoming(node).getMany()) {
+      Node from = getBaseMapping().applyFrom(candidate);
+      for (Edge edge : sourceMapping.applyOutgoing(from).getMany()) {
+        if (sourceMapping.applyTo(edge).equals(node)) {
+          continue candidate;
+        }
       }
+      result.add(candidate);
     }
-
     return PSSIFOption.many(result);
   }
 
   @Override
   public PSSIFOption<Edge> applyOutgoing(Node node) {
     Collection<Edge> result = Sets.newHashSet();
-    Collection<Node> targets = getBaseMapping().getTo().apply(node.getModel(), true).getMany();
-
-    for (Edge e : getBaseMapping().applyOutgoing(node).getMany()) {
-      if (!targets.contains(getBaseMapping().applyTo(e))) {
-        result.add(e);
+    candidate: for (Edge candidate : getBaseMapping().applyOutgoing(node).getMany()) {
+      Node to = getBaseMapping().applyTo(candidate);
+      for (Edge edge : sourceMapping.applyIncoming(to).getMany()) {
+        if (sourceMapping.applyFrom(edge).equals(node)) {
+          continue candidate;
+        }
       }
+      result.add(candidate);
     }
-
     return PSSIFOption.many(result);
   }
 }

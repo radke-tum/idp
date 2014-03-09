@@ -9,16 +9,17 @@ import de.tum.pssif.core.metamodel.EdgeType;
 import de.tum.pssif.core.metamodel.Metamodel;
 import de.tum.pssif.core.metamodel.NodeType;
 import de.tum.pssif.core.model.Model;
+import de.tum.pssif.transform.transformation.CreateArtificialEdgeTransformation;
 import de.tum.pssif.transform.transformation.CreateArtificialNodeTransformation;
 import de.tum.pssif.transform.transformation.HideConnectionMappingTransformation;
 import de.tum.pssif.transform.transformation.HideEdgeTypeAttributeTransformation;
+import de.tum.pssif.transform.transformation.HideEdgeTypeTransformation;
 import de.tum.pssif.transform.transformation.HideNodeTypeAttributeTransformation;
 import de.tum.pssif.transform.transformation.HideNodeTypeTransformation;
-import de.tum.pssif.transform.transformation.LeftJoinConnectionMappingTransformation;
+import de.tum.pssif.transform.transformation.JoinLeftOutgoingTransformation;
 import de.tum.pssif.transform.transformation.MoveAttributeTransformation;
 import de.tum.pssif.transform.transformation.RenameEdgeTypeTransformation;
 import de.tum.pssif.transform.transformation.RenameNodeTypeTransformation;
-import de.tum.pssif.transform.transformation.RightJoinConnectionMappingTransformation;
 
 
 public class UFMMapper extends GraphMLMapper {
@@ -82,6 +83,16 @@ public class UFMMapper extends GraphMLMapper {
     view = new CreateArtificialNodeTransformation(view.getNodeType("State").getOne(), view.getEdgeType("Relationship").getOne(), view.getNodeType(
         "Block").getOne()).apply(view);
 
+    view = new JoinLeftOutgoingTransformation(view.getEdgeType("InformationFlow").getOne(), view.getEdgeType("Relationship").getOne(), view
+        .getNodeType("Block").getOne(), view.getNodeType("State").getOne(), view.getNodeType("Function").getOne()).apply(view);
+    view = new JoinLeftOutgoingTransformation(view.getEdgeType("InformationFlow").getOne(), view.getEdgeType("Relationship").getOne(), view
+        .getNodeType("Block").getOne(), view.getNodeType("Function").getOne(), view.getNodeType("State").getOne()).apply(view);
+
+    view = new CreateArtificialEdgeTransformation(view.getNodeType("State").getOne(), view.getNodeType("Function").getOne(), view.getEdgeType(
+        "InformationFlow").getOne(), view.getEdgeType("Control Flow").getOne()).apply(view);
+    view = new CreateArtificialEdgeTransformation(view.getNodeType("Function").getOne(), view.getNodeType("State").getOne(), view.getEdgeType(
+        "InformationFlow").getOne(), view.getEdgeType("Control Flow").getOne()).apply(view);
+
     EdgeType relationship = view.getEdgeType("Relationship").getOne();
     view = new HideConnectionMappingTransformation(relationship, relationship.getMapping(view.getNodeType("Function").getOne(),
         view.getNodeType("Block").getOne()).getOne()).apply(view);
@@ -89,67 +100,11 @@ public class UFMMapper extends GraphMLMapper {
     view = new HideConnectionMappingTransformation(relationship, relationship.getMapping(view.getNodeType("State").getOne(),
         view.getNodeType("Block").getOne()).getOne()).apply(view);
     block = view.getNodeType("Block").getOne();
+
+    view = new HideEdgeTypeTransformation(view.getEdgeType("Control Flow").getOne()).apply(view);
+
     view = new HideNodeTypeTransformation(block).apply(view);
 
-    //
-    //    EdgeType informationFlow = view.getEdgeType("InformationFlow").getOne();
-    //    EdgeType energyFlow = view.getEdgeType("EnergyFlow").getOne();
-    //    EdgeType materialFlow = view.getEdgeType("MaterialFlow").getOne();
-    //    NodeType state = view.getNodeType("State").getOne();
-    //    NodeType function = view.getNodeType("Function").getOne();
-    //    block = view.getNodeType("Block").getOne();
-    //    view = new SpecializeConnectionMappingTransformation(informationFlow, state, function, informationFlow.getMapping(block, block).getOne())
-    //        .apply(view);
-    //    block = view.getNodeType("Block").getOne();
-    //    view = new SpecializeConnectionMappingTransformation(energyFlow, state, function, energyFlow.getMapping(block, block).getOne()).apply(view);
-    //    block = view.getNodeType("Block").getOne();
-    //    view = new SpecializeConnectionMappingTransformation(materialFlow, state, function, materialFlow.getMapping(block, block).getOne()).apply(view);
-    //
-    //    view = new SpecializeConnectionMappingTransformation(informationFlow, function, state, informationFlow.getMapping(block, block).getOne())
-    //        .apply(view);
-    //    view = new SpecializeConnectionMappingTransformation(energyFlow, function, state, energyFlow.getMapping(block, block).getOne()).apply(view);
-    //    view = new SpecializeConnectionMappingTransformation(materialFlow, function, state, materialFlow.getMapping(block, block).getOne()).apply(view);
-    //
-    //    view = moveEdge(view, informationFlow);
-    //    view = moveEdge(view, energyFlow);
-    //    view = moveEdge(view, materialFlow);
-    //
-    //    informationFlow = view.getEdgeType("InformationFlow").getOne();
-    //    block = view.getNodeType("Block").getOne();
-    //    view = new HideConnectionMappingTransformation(informationFlow, informationFlow.getMapping(block, block).getOne()).apply(view);
-    //    energyFlow = view.getEdgeType("EnergyFlow").getOne();
-    //    block = view.getNodeType("Block").getOne();
-    //    view = new HideConnectionMappingTransformation(energyFlow, energyFlow.getMapping(block, block).getOne()).apply(view);
-    //    materialFlow = view.getEdgeType("MaterialFlow").getOne();
-    //    block = view.getNodeType("Block").getOne();
-    //    view = new HideConnectionMappingTransformation(materialFlow, materialFlow.getMapping(block, block).getOne()).apply(view);
-
-    return view;
-  }
-
-  private static Metamodel moveEdge(Metamodel view, EdgeType type) {
-    type = view.getEdgeType(type.getName()).getOne();
-    NodeType state = view.getNodeType("State").getOne();
-    NodeType function = view.getNodeType("Function").getOne();
-    NodeType block = view.getNodeType("Block").getOne();
-    EdgeType relationship = view.getEdgeType("Relationship").getOne();
-    view = new LeftJoinConnectionMappingTransformation(type, type.getMapping(state, function).getOne(), relationship, relationship.getMapping(state,
-        block).getOne(), type.getMapping(state, block).getOne()).apply(view);
-
-    type = view.getEdgeType(type.getName()).getOne();
-    relationship = view.getEdgeType("Relationship").getOne();
-    view = new RightJoinConnectionMappingTransformation(type, type.getMapping(state, function).getOne(), relationship, relationship.getMapping(
-        function, block).getOne(), type.getMapping(state, function).getOne()).apply(view);
-
-    type = view.getEdgeType(type.getName()).getOne();
-    relationship = view.getEdgeType("Relationship").getOne();
-    view = new LeftJoinConnectionMappingTransformation(type, type.getMapping(function, state).getOne(), relationship, relationship.getMapping(
-        function, block).getOne(), type.getMapping(state, block).getOne()).apply(view);
-
-    type = view.getEdgeType(type.getName()).getOne();
-    relationship = view.getEdgeType("Relationship").getOne();
-    view = new RightJoinConnectionMappingTransformation(type, type.getMapping(function, state).getOne(), relationship, relationship.getMapping(state,
-        block).getOne(), type.getMapping(function, state).getOne()).apply(view);
     return view;
   }
 }

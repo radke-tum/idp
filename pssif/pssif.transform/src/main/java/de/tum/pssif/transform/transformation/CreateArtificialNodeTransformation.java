@@ -4,9 +4,9 @@ import de.tum.pssif.core.metamodel.ConnectionMapping;
 import de.tum.pssif.core.metamodel.EdgeType;
 import de.tum.pssif.core.metamodel.NodeType;
 import de.tum.pssif.core.metamodel.mutable.MutableEdgeType;
-import de.tum.pssif.transform.transformation.artificial.ArtificializedConnectionMapping;
 import de.tum.pssif.transform.transformation.artificial.ArtificializedNodeType;
 import de.tum.pssif.transform.transformation.artificial.ArtificializingNodeType;
+import de.tum.pssif.transform.transformation.artificial.ToArtificializedNodeTypeConnectionMapping;
 
 
 public class CreateArtificialNodeTransformation extends AbstractTransformation {
@@ -26,12 +26,13 @@ public class CreateArtificialNodeTransformation extends AbstractTransformation {
     NodeType actualTargetType = view.getNodeType(targetType.getName()).getOne();
     MutableEdgeType actualEdgeType = view.getMutableEdgeType(edgeType.getName()).getOne();
 
-    ConnectionMapping mapping = actualEdgeType.getMapping(actualSourceType, actualTargetType).getOne();
-    if (mapping.getFrom().equals(actualSourceType) && mapping.getTo().equals(actualTargetType)) {
-      //replace the mapping
-      actualEdgeType.removeMapping(mapping);
+    ArtificializingNodeType artificializing = new ArtificializingNodeType(actualSourceType, actualEdgeType, actualTargetType);
+    for (NodeType general : actualSourceType.getGeneral().getMany()) {
+      artificializing.inherit(general);
     }
-    actualEdgeType.addMapping(new ArtificializedConnectionMapping(mapping, actualEdgeType, actualSourceType, actualTargetType));
+    for (NodeType special : actualSourceType.getSpecials()) {
+      special.inherit(artificializing);
+    }
 
     ArtificializedNodeType artificialized = new ArtificializedNodeType(actualSourceType, actualEdgeType, actualTargetType);
     for (NodeType general : actualTargetType.getGeneral().getMany()) {
@@ -41,13 +42,12 @@ public class CreateArtificialNodeTransformation extends AbstractTransformation {
       special.inherit(artificialized);
     }
 
-    ArtificializingNodeType artificializing = new ArtificializingNodeType(actualSourceType, actualEdgeType, actualTargetType);
-    for (NodeType general : actualSourceType.getGeneral().getMany()) {
-      artificializing.inherit(general);
+    ConnectionMapping mapping = actualEdgeType.getMapping(actualSourceType, actualTargetType).getOne();
+    if (mapping.getFrom().equals(actualSourceType) && mapping.getTo().equals(actualTargetType)) {
+      //replace the mapping
+      actualEdgeType.removeMapping(mapping);
     }
-    for (NodeType special : actualSourceType.getSpecials()) {
-      special.inherit(artificializing);
-    }
+    actualEdgeType.addMapping(new ToArtificializedNodeTypeConnectionMapping(mapping, actualEdgeType, artificializing, artificialized));
 
     view.removeNodeType(actualTargetType);
     view.add(artificialized);

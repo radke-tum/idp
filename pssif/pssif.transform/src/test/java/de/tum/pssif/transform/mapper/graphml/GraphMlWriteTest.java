@@ -24,13 +24,12 @@ public class GraphMlWriteTest {
     GraphMLMapper importer = new UFMMapper();
 
     Metamodel metamodel = PSSIFCanonicMetamodelCreator.create();
-    Metamodel view = GraphMLMapper.createGraphMlView(metamodel);
 
-    Model model = importer.read(view, in);
+    Model model = importer.read(metamodel, in);
 
     ByteArrayOutputStream out = new ByteArrayOutputStream();
     Mapper mapper = MapperFactory.getMapper(MapperFactory.UOFP);
-    mapper.write(view, model, out);
+    mapper.write(metamodel, model, out);
 
     byte[] result = out.toByteArray();
     String str = new String(result);
