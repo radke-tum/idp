@@ -116,7 +116,7 @@ public class JunctionNodeTypeImpl extends NodeTypeBaseImpl implements MutableJun
 
   @Override
   public boolean isAssignableFrom(ElementType type) {
-    return equals(type);
+    return getMetaType().equals(type.getMetaType()) && getName().equals(type.getName());
   }
 
   @Override

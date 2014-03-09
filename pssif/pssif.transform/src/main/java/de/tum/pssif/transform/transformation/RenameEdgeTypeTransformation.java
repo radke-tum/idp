@@ -5,11 +5,8 @@ import java.util.Collection;
 import com.google.common.collect.Sets;
 
 import de.tum.pssif.core.metamodel.ConnectionMapping;
-import de.tum.pssif.core.metamodel.EdgeEnd;
 import de.tum.pssif.core.metamodel.EdgeType;
-import de.tum.pssif.core.metamodel.Multiplicity.MultiplicityContainer;
-import de.tum.pssif.transform.transformation.viewed.ViewedConnectionMapping;
-import de.tum.pssif.transform.transformation.viewed.ViewedEdgeEnd;
+import de.tum.pssif.core.metamodel.mutable.MutableEdgeType;
 import de.tum.pssif.transform.transformation.viewed.ViewedEdgeType;
 
 
@@ -21,14 +18,13 @@ public class RenameEdgeTypeTransformation extends RenameTransformation<EdgeType>
 
   @Override
   public void apply(View view) {
-    ViewedEdgeType actualTarget = view.findEdgeType(getTarget().getName());
+    MutableEdgeType actualTarget = view.getMutableEdgeType(getTarget().getName()).getOne();
     view.removeEdgeType(actualTarget);
     ViewedEdgeType renamed = new ViewedEdgeType(actualTarget, getName());
-    view.addEdgeType(renamed);
+    view.add(renamed);
 
-    if (actualTarget.getGeneral() != null) {
-      actualTarget.getGeneral().unregisterSpecialization(actualTarget);
-      renamed.inherit(actualTarget.getGeneral());
+    for (EdgeType general : actualTarget.getGeneral().getMany()) {
+      renamed.inherit(general);
     }
 
     Collection<EdgeType> specials = Sets.newHashSet(actualTarget.getSpecials());
@@ -36,31 +32,8 @@ public class RenameEdgeTypeTransformation extends RenameTransformation<EdgeType>
       special.inherit(renamed);
     }
 
-    Collection<ConnectionMapping> toRemove = Sets.newHashSet();
-    for (ConnectionMapping mapping : actualTarget.getMappings()) {
-      toRemove.add(mapping);
-      EdgeEnd from = mapping.getFrom();
-      EdgeEnd to = mapping.getTo();
-      ViewedEdgeEnd viewedFrom = new ViewedEdgeEnd(from, from.getName(), renamed, MultiplicityContainer.of(from.getEdgeEndLower(),
-          from.getEdgeEndUpper(), from.getEdgeTypeLower(), from.getEdgeTypeUpper()), from.getNodeType());
-      ViewedEdgeEnd viewedTo = new ViewedEdgeEnd(to, to.getName(), renamed, MultiplicityContainer.of(to.getEdgeEndLower(), to.getEdgeEndUpper(),
-          to.getEdgeTypeLower(), to.getEdgeTypeUpper()), to.getNodeType());
-      from.getNodeType().registerOutgoing(renamed);
-      to.getNodeType().registerIncoming(renamed);
-      renamed.addMapping(new ViewedConnectionMapping(mapping, viewedFrom, viewedTo));
-    }
-    for (ConnectionMapping mapping : toRemove) {
-      mapping.getFrom().getNodeType().deregisterOutgoing(actualTarget);
-      mapping.getTo().getNodeType().deregisterIncoming(actualTarget);
-      actualTarget.removeMapping(mapping);
-    }
-
-    for (EdgeEnd end : actualTarget.getAuxiliaries()) {
-      end.getNodeType().deregisterAuxiliary(actualTarget);
-      end.getNodeType().registerAuxiliary(renamed);
-      renamed.removeAuxiliary(end);
-      renamed.addAuxiliary(new ViewedEdgeEnd(end, end.getName(), renamed, MultiplicityContainer.of(end.getEdgeEndLower(), end.getEdgeEndUpper(),
-          end.getEdgeTypeLower(), end.getEdgeTypeUpper()), end.getNodeType()));
+    for (ConnectionMapping mapping : actualTarget.getMappings().getMany()) {
+      renamed.createMapping(view.getBaseNodeType(mapping.getFrom().getName()).getOne(), view.getBaseNodeType(mapping.getTo().getName()).getOne());
     }
   }
 }

@@ -4,19 +4,20 @@ import java.util.Collection;
 
 import de.tum.pssif.core.common.PSSIFOption;
 import de.tum.pssif.core.exception.PSSIFStructuralIntegrityException;
-import de.tum.pssif.core.metamodel.ConnectionMapping;
 import de.tum.pssif.core.metamodel.EdgeType;
 import de.tum.pssif.core.metamodel.NodeTypeBase;
+import de.tum.pssif.core.metamodel.mutable.MutableConnectionMapping;
+import de.tum.pssif.core.metamodel.mutable.MutableNodeTypeBase;
 import de.tum.pssif.core.model.Edge;
 import de.tum.pssif.core.model.Model;
 import de.tum.pssif.core.model.Node;
 
 
 // TODO check equals and hashcode (i.e. EdgeType and NodeType)
-public class ConnectionMappingImpl implements ConnectionMapping {
-  private final EdgeType     type;
-  private final NodeTypeBase from;
-  private final NodeTypeBase to;
+public class ConnectionMappingImpl implements MutableConnectionMapping {
+  private final EdgeType type;
+  private NodeTypeBase   from;
+  private NodeTypeBase   to;
 
   public ConnectionMappingImpl(EdgeType type, NodeTypeBase from, NodeTypeBase to) {
     this.type = type;
@@ -165,4 +166,13 @@ public class ConnectionMappingImpl implements ConnectionMapping {
     return true;
   }
 
+  @Override
+  public void setFrom(MutableNodeTypeBase from) {
+    this.from = from;
+  }
+
+  @Override
+  public void setTo(MutableNodeTypeBase to) {
+    this.to = to;
+  }
 }

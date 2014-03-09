@@ -29,4 +29,14 @@ public interface MutableEdgeType extends EdgeType, MutableElementType {
    * @return the {@link ConnectionMapping} created directly from the from {@link NodeTypeBase} to the to {@link NodeTypeBase}. To get a {@link ConnectionMapping} from or to one of the specified {@link JunctionNodeType}s use the {@link #getMapping(NodeTypeBase, NodeTypeBase)}-method.
    */
   ConnectionMapping createMapping(NodeTypeBase from, NodeTypeBase to, PSSIFOption<JunctionNodeType> junctions);
+
+  void addMapping(MutableConnectionMapping result);
+
+  PSSIFOption<MutableConnectionMapping> getMutableMapping(NodeTypeBase from, NodeTypeBase to);
+
+  PSSIFOption<MutableConnectionMapping> getMutableMappings();
+
+  PSSIFOption<MutableConnectionMapping> getOutgoingMutableMappings(NodeTypeBase from);
+
+  PSSIFOption<MutableConnectionMapping> getIncomingMutableMappings(NodeTypeBase to);
 }

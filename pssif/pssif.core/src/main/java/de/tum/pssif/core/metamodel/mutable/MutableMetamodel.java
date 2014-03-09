@@ -37,4 +37,10 @@ public interface MutableMetamodel extends Metamodel {
   PSSIFOption<MutableJunctionNodeType> getMutableJunctionNodeType(String name);
 
   PSSIFOption<MutableEdgeType> getMutableEdgeType(String name);
+
+  void removeNodeType(MutableNodeType nodeType);
+
+  void removeJunctionNodeType(MutableJunctionNodeType junctionNodeType);
+
+  void removeEdgeType(MutableEdgeType edgeType);
 }
