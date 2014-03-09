@@ -8,20 +8,25 @@ import de.tum.pssif.sysml4mechatronics.magicuml.MagicumlClass;
 
 public class UmlAttributeReferencedTypeImpl extends UmlAttributeImpl implements MagicumlAttributeReferencedType {
 
-  public UmlAttributeReferencedTypeImpl(SysML4MIdentifier identifier, SysML4MName name) {
-    super(identifier, name);
+  private final SysML4MIdentifier refTypeId;
+
+  private UmlClassImpl            refType = null;
+
+  public UmlAttributeReferencedTypeImpl(SysML4MIdentifier identifier, SysML4MName name, UmlClassImpl owner, SysML4MIdentifier refTypeId) {
+    super(identifier, name, owner);
+    this.refTypeId = refTypeId;
   }
 
   @Override
   public SysML4MIdentifier getReferencedTypeIdentifier() {
-    // TODO Auto-generated method stub
-    return null;
+    return this.refTypeId;
   }
 
   @Override
   public MagicumlClass getReferencedType() {
-    // TODO Auto-generated method stub
-    return null;
+    return this.refType;
   }
+
+  //TODO refs resoluion
 
 }

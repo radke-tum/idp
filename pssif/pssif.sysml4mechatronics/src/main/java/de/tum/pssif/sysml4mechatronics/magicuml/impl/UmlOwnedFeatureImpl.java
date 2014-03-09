@@ -6,10 +6,18 @@ import de.tum.pssif.sysml4mechatronics.common.SysML4MName;
 import de.tum.pssif.sysml4mechatronics.magicuml.MagicumlOwnedFeature;
 
 
-public class UmlOwnedFeatureImpl extends IdentifiableNamedImpl implements MagicumlOwnedFeature {
+public abstract class UmlOwnedFeatureImpl extends IdentifiableNamedImpl implements MagicumlOwnedFeature {
 
-  public UmlOwnedFeatureImpl(SysML4MIdentifier identifier, SysML4MName name) {
+  private final UmlClassImpl owner;
+
+  public UmlOwnedFeatureImpl(SysML4MIdentifier identifier, SysML4MName name, UmlClassImpl owner) {
     super(identifier, name);
+    this.owner = owner;
+  }
+
+  @Override
+  public UmlClassImpl getOwner() {
+    return this.owner;
   }
 
 }

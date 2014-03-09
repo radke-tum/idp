@@ -7,8 +7,8 @@ import de.tum.pssif.sysml4mechatronics.magicuml.MagicumlAttributeString;
 
 public class UmlAttributeStringImpl extends UmlAttributeImpl implements MagicumlAttributeString {
 
-  public UmlAttributeStringImpl(SysML4MIdentifier identifier, SysML4MName name) {
-    super(identifier, name);
+  public UmlAttributeStringImpl(SysML4MIdentifier identifier, SysML4MName name, UmlClassImpl owner) {
+    super(identifier, name, owner);
   }
 
 }
