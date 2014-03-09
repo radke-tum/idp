@@ -1,6 +1,6 @@
 package de.tum.pssif.sysml4mechatronics.magicuml;
 
-public interface UmlAttributePort extends UmlAttribute {
+public interface MagicumlAttributePort extends MagicumlAttribute {
 
   //NOOP
 

@@ -3,10 +3,10 @@ package de.tum.pssif.sysml4mechatronics.magicuml;
 import de.tum.pssif.sysml4mechatronics.common.SysML4MIdentifier;
 
 
-public interface UmlAttributeReferencedType extends UmlAttribute {
+public interface MagicumlAttributeReferencedType extends MagicumlAttribute {
 
   SysML4MIdentifier getReferencedTypeIdentifier();
 
-  UmlClass getReferencedType();
+  MagicumlClass getReferencedType();
 
 }
