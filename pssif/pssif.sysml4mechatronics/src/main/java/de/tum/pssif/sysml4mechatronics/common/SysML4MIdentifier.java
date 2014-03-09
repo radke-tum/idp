@@ -1,9 +1,9 @@
-package de.tum.pssif.sysml4mechatronics.sfb768;
+package de.tum.pssif.sysml4mechatronics.common;
 
 import java.util.UUID;
 
 
-public abstract class SFB768Identifier {
+public abstract class SysML4MIdentifier {
 
   public abstract String serialize();
 
@@ -13,11 +13,11 @@ public abstract class SFB768Identifier {
 
   public abstract boolean equals(Object obj);
 
-  public static SFB768Identifier create(final String string) {
+  public static SysML4MIdentifier create(final String string) {
     try {
       return create(UUID.fromString(string));
     } catch (IllegalArgumentException e) {
-      return new SFB768Identifier() {
+      return new SysML4MIdentifier() {
 
         @Override
         public String toString() {
@@ -39,14 +39,14 @@ public abstract class SFB768Identifier {
           if (!getClass().isAssignableFrom(obj.getClass())) {
             return false;
           }
-          return string.equalsIgnoreCase(((SFB768Identifier) obj).serialize());
+          return string.equalsIgnoreCase(((SysML4MIdentifier) obj).serialize());
         }
       };
     }
   }
 
-  public static SFB768Identifier create(final UUID uuid) {
-    return new SFB768Identifier() {
+  public static SysML4MIdentifier create(final UUID uuid) {
+    return new SysML4MIdentifier() {
 
       @Override
       public String toString() {
@@ -68,7 +68,7 @@ public abstract class SFB768Identifier {
         if (!getClass().isAssignableFrom(obj.getClass())) {
           return false;
         }
-        return serialize().equalsIgnoreCase(((SFB768Identifier) obj).serialize());
+        return serialize().equalsIgnoreCase(((SysML4MIdentifier) obj).serialize());
       }
     };
   }

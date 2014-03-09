@@ -1,15 +1,15 @@
-package de.tum.pssif.sysml4mechatronics.sfb768;
+package de.tum.pssif.sysml4mechatronics.common;
 
-public final class SFB768Name {
+public final class SysML4MName {
 
   private final String name;
 
-  private SFB768Name(String name) {
+  private SysML4MName(String name) {
     this.name = name;
   }
 
-  public static SFB768Name create(String string) {
-    return new SFB768Name(string);
+  public static SysML4MName create(String string) {
+    return new SysML4MName(string);
   }
 
   public String serialize() {
@@ -25,10 +25,10 @@ public final class SFB768Name {
   }
 
   public boolean equals(Object obj) {
-    if (!(obj instanceof SFB768Name)) {
+    if (!(obj instanceof SysML4MName)) {
       return false;
     }
-    return name.equalsIgnoreCase(((SFB768Name) obj).name);
+    return name.equalsIgnoreCase(((SysML4MName) obj).name);
   }
 
 }

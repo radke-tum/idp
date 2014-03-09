@@ -1,8 +1,8 @@
 package de.tum.pssif.sysml4mechatronics.sfb768.impl;
 
+import de.tum.pssif.sysml4mechatronics.common.SysML4MIdentifier;
+import de.tum.pssif.sysml4mechatronics.common.SysML4MName;
 import de.tum.pssif.sysml4mechatronics.sfb768.SFB768Attribute;
-import de.tum.pssif.sysml4mechatronics.sfb768.SFB768Identifier;
-import de.tum.pssif.sysml4mechatronics.sfb768.SFB768Name;
 import de.tum.pssif.sysml4mechatronics.sfb768.SFB768StringAttributeValue;
 
 
@@ -10,12 +10,12 @@ public final class StringAttribute extends AttributeImpl<SFB768StringAttributeVa
 
   private final SFB768StringAttributeValue value;
 
-  StringAttribute(SFB768Identifier identifier, SFB768Name name, BlockImpl owner, SFB768StringAttributeValue value) {
+  StringAttribute(SysML4MIdentifier identifier, SysML4MName name, BlockImpl owner, SFB768StringAttributeValue value) {
     super(identifier, name, owner);
     this.value = value;
   }
 
-  public StringAttribute(SFB768Identifier identifier, SFB768Name name, BlockImpl owner, String string) {
+  public StringAttribute(SysML4MIdentifier identifier, SysML4MName name, BlockImpl owner, String string) {
     this(identifier, name, owner, new SFB768StringAttributeValue(string));
   }
 

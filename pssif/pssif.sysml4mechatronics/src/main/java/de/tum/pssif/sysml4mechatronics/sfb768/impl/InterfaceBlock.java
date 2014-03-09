@@ -1,13 +1,13 @@
 package de.tum.pssif.sysml4mechatronics.sfb768.impl;
 
-import de.tum.pssif.sysml4mechatronics.sfb768.SFB768Identifier;
+import de.tum.pssif.sysml4mechatronics.common.SysML4MIdentifier;
+import de.tum.pssif.sysml4mechatronics.common.SysML4MName;
 import de.tum.pssif.sysml4mechatronics.sfb768.SFB768Layer;
-import de.tum.pssif.sysml4mechatronics.sfb768.SFB768Name;
 
 
 public class InterfaceBlock extends BlockImpl {
 
-  InterfaceBlock(SFB768Identifier identifier, SFB768Name name) {
+  InterfaceBlock(SysML4MIdentifier identifier, SysML4MName name) {
     super(identifier, name);
   }
 

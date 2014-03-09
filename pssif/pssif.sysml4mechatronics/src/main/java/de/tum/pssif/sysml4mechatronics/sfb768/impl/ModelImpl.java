@@ -6,21 +6,21 @@ import java.util.Set;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
+import de.tum.pssif.sysml4mechatronics.common.SysML4MIdentifier;
+import de.tum.pssif.sysml4mechatronics.common.SysML4MName;
 import de.tum.pssif.sysml4mechatronics.sfb768.SFB768Block;
+import de.tum.pssif.sysml4mechatronics.sfb768.SFB768Layer;
 import de.tum.pssif.sysml4mechatronics.sfb768.SFB768Model;
 import de.tum.pssif.sysml4mechatronics.sfb768.SFB768Port;
 import de.tum.pssif.sysml4mechatronics.sfb768.SFB768PortAssociation;
-import de.tum.pssif.sysml4mechatronics.sfb768.SFB768Identifier;
-import de.tum.pssif.sysml4mechatronics.sfb768.SFB768Layer;
-import de.tum.pssif.sysml4mechatronics.sfb768.SFB768Name;
 
 
 public class ModelImpl extends IdentifiableNamedImpl implements SFB768Model {
 
-  private final Map<SFB768Identifier, BlockImpl> blocks           = Maps.newHashMap();
+  private final Map<SysML4MIdentifier, BlockImpl> blocks           = Maps.newHashMap();
   private final Set<PortAssociationImpl>         portAssociations = Sets.newHashSet();
 
-  ModelImpl(SFB768Identifier identifier, SFB768Name name) {
+  ModelImpl(SysML4MIdentifier identifier, SysML4MName name) {
     super(identifier, name);
   }
 
@@ -35,7 +35,7 @@ public class ModelImpl extends IdentifiableNamedImpl implements SFB768Model {
   }
 
   @Override
-  public SFB768Block createBlock(SFB768Name name, SFB768Identifier identifier, SFB768Layer layer) {
+  public SFB768Block createBlock(SysML4MName name, SysML4MIdentifier identifier, SFB768Layer layer) {
     BlockImpl result = null;
     if (SFB768Layer.ELECTRICAL.equals(layer)) {
       result = new ElectricalBlock(identifier, name);
@@ -63,7 +63,7 @@ public class ModelImpl extends IdentifiableNamedImpl implements SFB768Model {
   }
 
   @Override
-  public BlockImpl findBlock(SFB768Identifier identifier) {
+  public BlockImpl findBlock(SysML4MIdentifier identifier) {
     return this.blocks.get(identifier);
   }
 
