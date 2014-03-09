@@ -4,11 +4,10 @@ import de.tum.pssif.core.common.PSSIFOption;
 import de.tum.pssif.core.metamodel.ConnectionMapping;
 import de.tum.pssif.core.metamodel.JunctionNodeType;
 import de.tum.pssif.core.metamodel.mutable.MutableEdgeType;
-import de.tum.pssif.core.metamodel.mutable.MutableJunctionNodeType;
 
 
-public class HideJunctionNodeTypeTransformation<T extends MutableJunctionNodeType> extends HideTypeTransformation<T> {
-  public HideJunctionNodeTypeTransformation(T type) {
+public class HideJunctionNodeTypeTransformation extends HideTypeTransformation<JunctionNodeType> {
+  public HideJunctionNodeTypeTransformation(JunctionNodeType type) {
     super(type);
   }
 
@@ -20,11 +19,11 @@ public class HideJunctionNodeTypeTransformation<T extends MutableJunctionNodeTyp
   }
 
   private void removeType(View view, JunctionNodeType type) {
-    PSSIFOption<MutableJunctionNodeType> actualType = view.getMutableJunctionNodeType(type.getName());
+    PSSIFOption<JunctionNodeType> actualType = view.getJunctionNodeType(type.getName());
 
     for (MutableEdgeType et : view.getMutableEdgeTypes()) {
       for (ConnectionMapping cm : et.getMappings().getMany()) {
-        for (MutableJunctionNodeType mnt : actualType.getMany()) {
+        for (JunctionNodeType mnt : actualType.getMany()) {
           if (cm.getFrom().equals(mnt) || cm.getTo().equals(mnt)) {
             et.removeMapping(cm);
           }
@@ -32,7 +31,7 @@ public class HideJunctionNodeTypeTransformation<T extends MutableJunctionNodeTyp
       }
     }
 
-    for (MutableJunctionNodeType mnt : actualType.getMany()) {
+    for (JunctionNodeType mnt : actualType.getMany()) {
       view.removeJunctionNodeType(mnt);
     }
   }

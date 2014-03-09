@@ -16,4 +16,6 @@ public interface DataType extends Named {
    * @return
    */
   PSSIFValue fromObject(Object object);
+
+  String toString(PSSIFValue val);
 }

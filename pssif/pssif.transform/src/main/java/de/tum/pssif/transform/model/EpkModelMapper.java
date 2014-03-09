@@ -1,5 +1,7 @@
 package de.tum.pssif.transform.model;
 
+import java.util.Collection;
+
 import de.tum.pssif.core.common.PSSIFConstants;
 import de.tum.pssif.core.common.PSSIFOption;
 import de.tum.pssif.core.common.PSSIFValue;
@@ -22,19 +24,25 @@ public class EpkModelMapper implements ModelMapper {
   public Model read(Metamodel metamodel, Graph graph) {
     Model result = new ModelImpl();
 
-    createNodes(metamodel, graph, result);
-    createEdges(metamodel, graph, result);
+    readNodes(metamodel, graph, result);
+    readEdges(metamodel, graph, result);
 
     return result;
   }
 
   @Override
   public Graph write(Metamodel metamodel, Model model) {
-    // TODO Auto-generated method stub
-    return new Graph();
+    Graph result = new Graph();
+
+    writeNodes(metamodel, result, model);
+    writeEdges(metamodel, result, model);
+
+    System.out.println(result);
+
+    return result;
   }
 
-  private void createEdges(Metamodel metamodel, Graph graph, Model result) {
+  private void readEdges(Metamodel metamodel, Graph graph, Model model) {
     for (Edge e : graph.getEdges()) {
       String sourceTypeName = e.getSource().getType();
       String targetTypeName = e.getTarget().getType();
@@ -42,27 +50,12 @@ public class EpkModelMapper implements ModelMapper {
       PSSIFOption<NodeTypeBase> sourceType = metamodel.getBaseNodeType(sourceTypeName);
       PSSIFOption<NodeTypeBase> targetType = metamodel.getBaseNodeType(targetTypeName);
       if (sourceType.isOne() && targetType.isOne()) {
-        if ("Organizational unit".equals(sourceTypeName)) {
-          createEdge(result, e, sourceType.getOne(), targetType.getOne(), metamodel.getEdgeType("Performs").getOne(), false);
-        }
-        else if ("Organizational unit".equals(targetTypeName)) {
-          createEdge(result, e, sourceType.getOne(), targetType.getOne(), metamodel.getEdgeType("Performs").getOne(), true);
-        }
-        else if ("Information/ Material".equals(sourceTypeName)) {
-          createEdge(result, e, sourceType.getOne(), targetType.getOne(), metamodel.getEdgeType("Information Flow").getOne(), false);
-        }
-        else if ("Information/ Material".equals(targetTypeName)) {
-          createEdge(result, e, sourceType.getOne(), targetType.getOne(), metamodel.getEdgeType("Information Flow").getOne(), true);
+        PSSIFOption<EdgeType> type = metamodel.getEdgeType(e.getType());
+        if (type.isOne()) {
+          readEdge(model, e, sourceType.getOne(), targetType.getOne(), type.getOne(), false);
         }
         else {
-          PSSIFOption<EdgeType> type = metamodel.getEdgeType(e.getType());
-
-          if (type.isOne()) {
-            createEdge(result, e, sourceType.getOne(), targetType.getOne(), type.getOne(), false);
-          }
-          else {
-            System.out.println("missed " + e.getType());
-          }
+          System.out.println("missed " + e.getType());
         }
       }
       else {
@@ -71,17 +64,20 @@ public class EpkModelMapper implements ModelMapper {
     }
   }
 
-  private void createEdge(Model result, Edge e, NodeTypeBase sourceType, NodeTypeBase targetType, EdgeType type, boolean swap) {
+  private void readEdge(Model model, Edge e, NodeTypeBase sourceType, NodeTypeBase targetType, EdgeType type, boolean swap) {
     PSSIFOption<ConnectionMapping> mapping = type.getMapping(sourceType, targetType);
-    PSSIFOption<de.tum.pssif.core.model.Node> source = sourceType.apply(result, e.getSource().getId(), true);
-    PSSIFOption<de.tum.pssif.core.model.Node> target = targetType.apply(result, e.getTarget().getId(), true);
+    if (swap) {
+      mapping = type.getMapping(targetType, sourceType);
+    }
+    PSSIFOption<de.tum.pssif.core.model.Node> source = sourceType.apply(model, e.getSource().getId(), true);
+    PSSIFOption<de.tum.pssif.core.model.Node> target = targetType.apply(model, e.getTarget().getId(), true);
     if (source.isOne() && target.isOne() && mapping.isOne()) {
       de.tum.pssif.core.model.Edge edge = null;
       if (swap) {
-        edge = mapping.getOne().create(result, target.getOne(), source.getOne());
+        edge = mapping.getOne().create(model, target.getOne(), source.getOne());
       }
       else {
-        edge = mapping.getOne().create(result, source.getOne(), target.getOne());
+        edge = mapping.getOne().create(model, source.getOne(), target.getOne());
       }
       setAttributes(e, type, edge);
     }
@@ -97,7 +93,7 @@ public class EpkModelMapper implements ModelMapper {
     directed.set(edge, PSSIFOption.one(PSSIFValue.create(Boolean.TRUE)));
   }
 
-  private void createNodes(Metamodel metamodel, Graph graph, Model result) {
+  private void readNodes(Metamodel metamodel, Graph graph, Model model) {
     for (Node n : graph.getNodes()) {
       PSSIFOption<NodeTypeBase> type = metamodel.getBaseNodeType(n.getType());
       if (type.isNone()) {
@@ -105,7 +101,7 @@ public class EpkModelMapper implements ModelMapper {
         continue;
       }
       Attribute id = type.getOne().getAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_ID).getOne();
-      de.tum.pssif.core.model.Node node = type.getOne().create(result);
+      de.tum.pssif.core.model.Node node = type.getOne().create(model);
       id.set(node, PSSIFOption.one(PSSIFValue.create(n.getId())));
       for (String attrName : n.getAttributeNames()) {
         PSSIFOption<Attribute> attr = type.getOne().getAttribute(attrName);
@@ -116,4 +112,42 @@ public class EpkModelMapper implements ModelMapper {
     }
   }
 
+  private void writeNodes(Metamodel metamodel, Graph graph, Model model) {
+    for (NodeTypeBase ntb : metamodel.getBaseNodeTypes()) {
+      Collection<Attribute> attributes = ntb.getAttributes();
+      PSSIFOption<de.tum.pssif.core.model.Node> nodes = ntb.apply(model, false);
+      Attribute id = ntb.getAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_ID).getOne();
+      for (de.tum.pssif.core.model.Node node : nodes.getMany()) {
+        Node n = graph.createNode(id.get(node).getOne().asString());
+        n.setType(ntb.getName());
+        for (Attribute a : attributes) {
+          PSSIFOption<PSSIFValue> value = a.get(node);
+          if (value.isOne()) {
+            n.setAttribute(a.getName(), a.getType().toString(value.getOne()));
+          }
+        }
+      }
+    }
+  }
+
+  private void writeEdges(Metamodel metamodel, Graph graph, Model model) {
+    for (EdgeType et : metamodel.getEdgeTypes()) {
+      Attribute idAttribute = et.getAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_ID).getOne();
+      for (ConnectionMapping mapping : et.getMappings().getMany()) {
+        PSSIFOption<de.tum.pssif.core.model.Edge> edges = mapping.apply(model);
+        NodeTypeBase fromType = mapping.getFrom();
+        Attribute fromIdAttribute = fromType.getAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_ID).getOne();
+        NodeTypeBase toType = mapping.getTo();
+        Attribute toIdAttribute = toType.getAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_ID).getOne();
+        for (de.tum.pssif.core.model.Edge e : edges.getMany()) {
+          de.tum.pssif.core.model.Node from = mapping.applyFrom(e);
+          de.tum.pssif.core.model.Node to = mapping.applyTo(e);
+          Edge edge = graph.createEdge(idAttribute.get(e).getOne().asString());
+          edge.setType(et.getName());
+          graph.connect(graph.findNode(fromIdAttribute.get(from).getOne().asString()), edge,
+              graph.findNode(toIdAttribute.get(to).getOne().asString()));
+        }
+      }
+    }
+  }
 }

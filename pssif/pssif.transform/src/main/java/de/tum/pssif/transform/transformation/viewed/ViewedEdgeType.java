@@ -41,7 +41,6 @@ public class ViewedEdgeType extends EdgeTypeImpl {
         add(new ViewedConnectionMapping(cm.getOne(), this, junction, junction));
       }
       else {
-        //        add(new ConnectionMappingImpl(this, junction, junction));
         throw new PSSIFStructuralIntegrityException("unknown mapping");
       }
       for (JunctionNodeType other : junctions.getMany()) {
@@ -51,7 +50,6 @@ public class ViewedEdgeType extends EdgeTypeImpl {
             add(new ViewedConnectionMapping(cm.getOne(), this, junction, other));
           }
           else {
-            //            add(new ConnectionMappingImpl(this, junction, other));
             throw new PSSIFStructuralIntegrityException("unknown mapping");
           }
         }
@@ -61,7 +59,6 @@ public class ViewedEdgeType extends EdgeTypeImpl {
         add(new ViewedConnectionMapping(cm.getOne(), this, from, junction));
       }
       else {
-        //        add(new ConnectionMappingImpl(this, from, junction));
         throw new PSSIFStructuralIntegrityException("unknown mapping");
       }
       cm = baseType.getMapping(junction, to);
@@ -69,7 +66,6 @@ public class ViewedEdgeType extends EdgeTypeImpl {
         add(new ViewedConnectionMapping(cm.getOne(), this, junction, to));
       }
       else {
-        //        add(new ConnectionMappingImpl(this, junction, to));
         throw new PSSIFStructuralIntegrityException("unknown mapping");
       }
     }
@@ -80,9 +76,6 @@ public class ViewedEdgeType extends EdgeTypeImpl {
       addMapping(viewed);
       return viewed;
     }
-    //    else {
-    //      return super.createMapping(from, to, junctions);
-    //    }
     throw new PSSIFStructuralIntegrityException("unknown mapping " + getName() + ": " + from.getName() + "-" + to.getName());
   }
 

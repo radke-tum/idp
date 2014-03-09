@@ -3,8 +3,11 @@ package de.tum.pssif.core.metamodel.mutable;
 import java.util.Collection;
 
 import de.tum.pssif.core.common.PSSIFOption;
+import de.tum.pssif.core.metamodel.EdgeType;
 import de.tum.pssif.core.metamodel.Enumeration;
+import de.tum.pssif.core.metamodel.JunctionNodeType;
 import de.tum.pssif.core.metamodel.Metamodel;
+import de.tum.pssif.core.metamodel.NodeType;
 
 
 public interface MutableMetamodel extends Metamodel {
@@ -38,9 +41,9 @@ public interface MutableMetamodel extends Metamodel {
 
   PSSIFOption<MutableEdgeType> getMutableEdgeType(String name);
 
-  void removeNodeType(MutableNodeType nodeType);
+  void removeNodeType(NodeType nodeType);
 
-  void removeJunctionNodeType(MutableJunctionNodeType junctionNodeType);
+  void removeJunctionNodeType(JunctionNodeType junctionNodeType);
 
-  void removeEdgeType(MutableEdgeType edgeType);
+  void removeEdgeType(EdgeType edgeType);
 }

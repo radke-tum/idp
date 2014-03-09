@@ -35,14 +35,15 @@ public class MyTestClass {
     VisioIoMapper mapper = new VisioIoMapper("", EPK_NODE_MASTERS, EPK_EDGE_MASTERS);
     Graph graph = mapper.read(getClass().getResourceAsStream("/visio/epk-data.vsdx"));
 
-    Mapper epkMapper = MapperFactory.getMapper(MapperFactory.EPK);
-    Model model = epkMapper.read(PSSIFCanonicMetamodelCreator.create(), getClass().getResourceAsStream("/visio/epk-data.vsdx"));
-
-    Mapper pssifmapper = MapperFactory.getMapper(MapperFactory.PSSIF);
-    pssifmapper.write(PSSIFCanonicMetamodelCreator.create(), model, System.out);
-
     mapper = new VisioIoMapper("/visio/epk-template.vsdx", EPK_NODE_MASTERS, EPK_EDGE_MASTERS);
     mapper.write(graph, new FileOutputStream("target/testWriteEpkWithGraph.vsdx"));
+  }
+
+  @Test
+  public void testEpkRoundtrip() throws FileNotFoundException {
+    Mapper epkMapper = MapperFactory.getMapper(MapperFactory.EPK);
+    Model model = epkMapper.read(PSSIFCanonicMetamodelCreator.create(), getClass().getResourceAsStream("/visio/epk-data.vsdx"));
+    MapperFactory.getMapper(MapperFactory.EPK).write(PSSIFCanonicMetamodelCreator.create(), model, new FileOutputStream("target/epkRoundtrip.vsdx"));
   }
 
   //  @Test

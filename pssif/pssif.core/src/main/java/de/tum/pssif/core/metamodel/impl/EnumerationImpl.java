@@ -29,6 +29,12 @@ public class EnumerationImpl extends NamedImpl implements MutableEnumeration {
   }
 
   @Override
+  public String toString(PSSIFValue val) {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
   public Class<?> getMetaType() {
     return Enumeration.class;
   }

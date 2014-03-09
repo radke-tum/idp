@@ -148,6 +148,28 @@ public interface PrimitiveDataType extends DataType {
         throw new IllegalArgumentException();
       }
     }
+
+    @Override
+    public String toString(PSSIFValue val) {
+      if (this.equals(STRING) && val.isString()) {
+        return val.asString();
+      }
+      else if (this.equals(BOOLEAN) && val.isBoolean()) {
+        return val.asBoolean().toString();
+      }
+      else if (this.equals(INTEGER) && val.isInteger()) {
+        return NumberFormat.getInstance().format(val.asInteger());
+      }
+      else if (this.equals(DECIMAL) && val.isDecimal()) {
+        return NumberFormat.getInstance().format(val.asDecimal());
+      }
+      else if (this.equals(DATE) && val.isDate()) {
+        return DateFormat.getInstance().format(val.asDate());
+      }
+      else {
+        throw new IllegalArgumentException();
+      }
+    }
   }
 
 }

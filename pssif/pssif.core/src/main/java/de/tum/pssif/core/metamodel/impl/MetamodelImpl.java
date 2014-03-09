@@ -276,7 +276,7 @@ public class MetamodelImpl implements MutableMetamodel {
   }
 
   @Override
-  public void removeNodeType(MutableNodeType nodeType) {
+  public void removeNodeType(NodeType nodeType) {
     for (NodeType nt : getNodeType(nodeType.getName()).getMany()) {
       for (NodeType general : nt.getGeneral().getMany()) {
         general.unregisterSpecialization(nt);
@@ -286,14 +286,14 @@ public class MetamodelImpl implements MutableMetamodel {
   }
 
   @Override
-  public void removeJunctionNodeType(MutableJunctionNodeType junctionNodeType) {
+  public void removeJunctionNodeType(JunctionNodeType junctionNodeType) {
     for (JunctionNodeType jnt : getJunctionNodeType(junctionNodeType.getName()).getMany()) {
       junctionNodeTypes.remove(PSSIFUtil.normalize(jnt.getName()));
     }
   }
 
   @Override
-  public void removeEdgeType(MutableEdgeType edgeType) {
+  public void removeEdgeType(EdgeType edgeType) {
     for (EdgeType et : getEdgeType(edgeType.getName()).getMany()) {
       for (EdgeType general : et.getGeneral().getMany()) {
         general.unregisterSpecialization(et);
