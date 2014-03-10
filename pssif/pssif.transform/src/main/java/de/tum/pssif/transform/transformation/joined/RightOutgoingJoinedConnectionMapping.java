@@ -5,7 +5,7 @@ import java.util.Collection;
 import com.google.common.collect.Sets;
 
 import de.tum.pssif.core.common.PSSIFOption;
-import de.tum.pssif.core.exception.PSSIFIllegalAccessException;
+import de.tum.pssif.core.exception.PSSIFStructuralIntegrityException;
 import de.tum.pssif.core.metamodel.ConnectionMapping;
 import de.tum.pssif.core.metamodel.EdgeType;
 import de.tum.pssif.core.metamodel.NodeTypeBase;
@@ -45,33 +45,37 @@ public class RightOutgoingJoinedConnectionMapping extends ViewedConnectionMappin
         result.add(new UnjoinedEdge(e, from, inner));
       }
       else {
-        throw new PSSIFIllegalAccessException("ambiguous edges");
+        throw new PSSIFStructuralIntegrityException("ambiguous edges");
       }
     }
     return PSSIFOption.many(result);
   }
 
   @Override
-  public Node applyFrom(Edge edge) {
-    // TODO Auto-generated method stub
-    return super.applyFrom(edge);
-  }
-
-  @Override
   public Node applyTo(Edge edge) {
-    // TODO Auto-generated method stub
-    return super.applyTo(edge);
+    for (Edge candidate : targetMapping.apply(edge.getModel()).getMany()) {
+      if (candidate.getId().equals(edge.getId())) {
+        Node to = targetMapping.applyTo(candidate);
+        PSSIFOption<Edge> joined = joinedMapping.applyIncoming(to);
+        if (joined.isOne()) {
+          return joinedMapping.applyFrom(joined.getOne());
+        }
+        else {
+          throw new PSSIFStructuralIntegrityException("ambiguous edges");
+        }
+      }
+    }
+    throw new PSSIFStructuralIntegrityException("edge not found");
   }
 
   @Override
   public PSSIFOption<Edge> applyIncoming(Node node) {
-    // TODO Auto-generated method stub
-    return super.applyIncoming(node);
-  }
-
-  @Override
-  public PSSIFOption<Edge> applyOutgoing(Node node) {
-    // TODO Auto-generated method stub
-    return super.applyOutgoing(node);
+    PSSIFOption<Edge> joined = joinedMapping.applyOutgoing(node);
+    if (joined.isOne()) {
+      return targetMapping.applyIncoming(joinedMapping.applyTo(joined.getOne()));
+    }
+    else {
+      throw new PSSIFStructuralIntegrityException("ambiguous edges");
+    }
   }
 }
