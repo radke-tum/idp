@@ -183,13 +183,11 @@ public class GraphMLGraph {
     //write attribute keys
     writeKeyElement(writer, GraphMLTokens.ELEMENT_TYPE, GraphMLTokens.STRING, GraphMLTokens.NODE, GraphMLTokens.ELEMENT_TYPE);
     writeKeyElement(writer, GraphMLTokens.ELEMENT_TYPE, GraphMLTokens.STRING, GraphMLTokens.EDGE, GraphMLTokens.ELEMENT_TYPE);
-    writeKeyElement(writer, GraphMLTokens.ELEMENT_TYPE, GraphMLTokens.STRING, GraphMLTokens.HYPEREDGE, GraphMLTokens.ELEMENT_TYPE);
     for (GraphMlAttribute attr : nodeAttributes) {
       writeKeyElement(writer, attr.getName(), attr.getType(), GraphMLTokens.NODE, attr.getId());
     }
     for (GraphMlAttribute attr : edgeAttributes) {
       writeKeyElement(writer, attr.getName(), attr.getType(), GraphMLTokens.EDGE, attr.getId());
-      writeKeyElement(writer, attr.getName(), attr.getType(), GraphMLTokens.HYPEREDGE, attr.getId());
     }
     writer.writeStartElement(GraphMLTokens.GRAPH);
     writer.writeAttribute(GraphMLTokens.EDGEDEFAULT, GraphMLTokens.DIRECTED);
