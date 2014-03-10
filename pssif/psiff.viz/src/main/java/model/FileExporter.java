@@ -1,15 +1,12 @@
 package model;
 
 import java.awt.Component;
-import java.awt.FlowLayout;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.TreeMap;
 
-import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -18,26 +15,22 @@ import javax.swing.JPanel;
 import de.tum.pssif.transform.Mapper;
 import de.tum.pssif.transform.MapperFactory;
 
-
-public class FileExporter {
-
-  private JComboBox<String>       filetype;
-  private TreeMap<String, String> comboBoxValues;
+/**
+ * Provides the possibility to export the current PSS-IF Model
+ * Different export Formats can be chosen
+ * @author Luc
+ *
+ */
+public class FileExporter extends FileHandler{
 
   public FileExporter() {
-    comboBoxValues = new TreeMap<String, String>();
-
-    comboBoxValues.put("Umsatzorientierte Funktionsplanung", MapperFactory.UOFP);
-    comboBoxValues.put("BPMN", MapperFactory.BPMN);
-    comboBoxValues.put("EPK", MapperFactory.EPK);
-    comboBoxValues.put("SysML", MapperFactory.SYSML);
-    comboBoxValues.put("PSS-IF", MapperFactory.PSSIF);
+	super("Select a Export File Format:");
   }
 
   /**
-   * Read the selected file. Select the correct exporter. Load the Nodes and Edges with the ModelBuilder
+   * Read the selected file. Select the correct exporter.
    * @param file the selected file which should be imported
-   * @return true if no errors occured, false otherwise
+   * @return true if no errors occurred, false otherwise
    */
   private boolean exportFile(File file) {
     // Check if the OutputFile exists
@@ -64,9 +57,7 @@ public class FileExporter {
 				
 			    OutputStream out = new FileOutputStream(file);
 			
-			    String selectedFileType = String.valueOf(filetype.getSelectedItem());
-			
-			    Mapper exporter = MapperFactory.getMapper(comboBoxValues.get(selectedFileType));
+			    Mapper exporter = MapperFactory.getMapper(super.getSelectedMapperFactoryValue());
 			     
 			    exporter.write(ModelBuilder.getMetamodel(), ModelBuilder.getModel(), out);
 			
@@ -103,27 +94,11 @@ public class FileExporter {
    * @return true if the entire export went fine, otherwise false
    */
   public boolean showPopup(Component caller) {
-    JFileChooser saveFile = new JFileChooser();
-
-    JPanel panel1 = (JPanel) saveFile.getComponent(3);
-    JPanel panel2 = (JPanel) panel1.getComponent(2);
-
-    JPanel importeType = new JPanel(new FlowLayout());
-    JLabel label1 = new JLabel("Select Export File Format:");
-    importeType.add(label1);
-    filetype = new JComboBox<String>(comboBoxValues.keySet().toArray(new String[0]));
-    filetype.setSelectedIndex(0);
-    importeType.add(filetype);
-
-    panel2.add(importeType);
-    
-   // saveFile.setSelectedFile(new File("PSS-IF_export.xml"));
-
-    int returnVal = saveFile.showSaveDialog(caller);
+    int returnVal = super.getFileChooser().showSaveDialog(caller);
 
     if (returnVal == JFileChooser.APPROVE_OPTION) {
 
-      File file = saveFile.getSelectedFile();
+      File file = super.getFileChooser().getSelectedFile();
 
       return exportFile(file);
 

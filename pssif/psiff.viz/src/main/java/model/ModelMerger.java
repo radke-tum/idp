@@ -147,9 +147,7 @@ public class ModelMerger {
 	}
 	
 	/**
-	 * Add all the outgoing Edges of the given Node to the model1
-	 * @param sourceNode the Node where the edges start
-	 * @param sourceNodeType the type of the sourceNode
+	 * Add all the Edges from model2 to model1
 	 */
 	private void addAllEdges()
 	{
@@ -207,18 +205,6 @@ public class ModelMerger {
 		      }
 		    }
 	}
-	
-	/**
-	 * add all the Edges from model2 to model1
-	 */
-	/*private void addAllEdges()
-	{
-		//check all the Nodes which were transferde from model1 to model2
-		for (Entry<Node, NodeType> entry : transferNodes.entrySet())
-		{
-			addEdge(entry.getKey(),entry.getValue());
-		}
-	}*/
 	
 	/**
 	 * Add a given Node to Model1
@@ -282,87 +268,6 @@ public class ModelMerger {
 	}
 	
 	/**
-	 * Add all the outgoing Edges of the given Node to the model1
-	 * @param sourceNode the Node where the edges start
-	 * @param sourceNodeType the type of the sourceNode
-	 */
-	/*private void addEdge(Node sourceNode, NodeType sourceNodeType)
-	{
-		// loop over all Edge types
-		for(EdgeType currentEdgeType : meta.getEdgeTypes())
-		{
-			
-			// get all the outgoing edges of the sourceNode with the current EdgeType
-			PSSIFOption<Edge> outgoingEdges = currentEdgeType.getOutgoing().apply(sourceNode);
-			
-			LinkedList<Edge> tmpedges = new LinkedList<Edge>();
-			if (outgoingEdges!=null && outgoingEdges.isMany())
-			{
-				for (Edge e : outgoingEdges.getMany())
-				{
-					tmpedges.add(e);
-				}
-			}
-			
-			if (outgoingEdges!=null && outgoingEdges.isOne())
-			{
-				tmpedges.add(outgoingEdges.getOne());
-				
-			}
-			
-			// loop over all the outgoing edges
-			for (Edge currentEdge : tmpedges)
-			{
-				// get all the destinations of the current Edge
-				PSSIFOption<Node> destinations = currentEdgeType.getIncoming().apply(currentEdge);
-				
-				LinkedList<Node> tmpdestinations = new LinkedList<Node>();
-				
-				if (destinations!= null && destinations.isOne())
-				{
-					tmpdestinations.add(destinations.getOne());
-				}
-				
-				if (destinations!= null && destinations.isMany())
-				{
-					for (Node n : destinations.getMany())
-					{
-						tmpdestinations.add(n);
-					}
-					throw new NullPointerException("What to do with edges with multiple ends");
-				}
-				
-				// loop over all the destinations and add them to the model1
-				for (Node destNode : tmpdestinations)
-				{
-					//TODO check what should be done with edges with multiple destinations
-					
-					
-					// Add the Edge to model1
-					NodeType destNodeType = findNodeType(destNode);
-					
-					if (destNodeType!=null)
-					{
-						ConnectionMapping mapping = currentEdgeType.getMapping(sourceNodeType, destNodeType);
-						
-						System.out.println("Test mapping null ? "+mapping==null);
-						System.out.println("sourceNode ? "+sourceNode==null);
-						System.out.println("destNode ? "+destNode==null);
-						Edge newEdge = mapping.create(model1, oldToNewNodes.get(sourceNode), oldToNewNodes.get(destNode));
-						
-						transferEdgeAttributes(currentEdge, newEdge, currentEdgeType);
-					}
-					else
-						throw new NullPointerException("Could not find the correct NodeType");
-					
-				}
-			}
-		}
-	
-	}*/
-	
-	
-	/**
 	 * transfer all the attributes and annotations from one Edge to the other
 	 * @param oldEdge contains all the information which should be transfered
 	 * @param newEdge the edge which should get all the information
@@ -417,16 +322,4 @@ public class ModelMerger {
 			}
 		}
 	}
-	
-	/**
-	 * Get the NodeType of the given Node. Only works for Nodes which are transfered from model2 to model1
-	 * @param n the Node in context
-	 * @return the NodeType or null
-	 */
-	private NodeType findNodeType (Node n)
-	{
-		return transferNodes.get(n);
-	}
-	
-	
 }

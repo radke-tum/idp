@@ -245,7 +245,7 @@ public class Main {
 	 */
 	private JMenu addMouseOperationModes()
 	{
-		JMenu modeMenu = graphView.getGraph().getAbstractModalGraphMouse().getModeMenu(); // Obtain mode menu from the mouse
+		JMenu modeMenu = graphView.getGraph().getMouseOperationModes(); // Obtain mode menu from the mouse
 		modeMenu.setText("Mouse Mode");
 		modeMenu.setIcon(null); 
 		modeMenu.setPreferredSize(new Dimension(80,20));
