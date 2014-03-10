@@ -101,11 +101,11 @@ public class GraphVisualization
     	this.vv.setPreferredSize(new Dimension(i, i));
     }
     
-    createNodeTransformers();
-    createEdgeTransformers();
-    
     this.vsh = new VertexStrokeHighlight<MyNode,MyEdge>(this.g, this.vv.getPickedVertexState()); 
     this.vsh.setHighlight(true, 1, new LinkedList<MyEdgeType>());
+    
+    createNodeTransformers();
+    createEdgeTransformers();
 
     this.gm = new DefaultModalGraphMouse<MyNode, MyEdge>();
     this.vv.setGraphMouse(this.gm);   
@@ -132,7 +132,7 @@ public class GraphVisualization
 			      }
 			    };
 			    
-			    Transformer<MyNode, Shape> vertexSize = new Transformer<MyNode, Shape>()
+	Transformer<MyNode, Shape> vertexSize = new Transformer<MyNode, Shape>()
 			    {
 			      public Shape transform(MyNode node)
 			      {
@@ -154,7 +154,7 @@ public class GraphVisualization
 			      }
 			    };
 			    
-			    Transformer<MyNode, String> vertexLabelTransformer =  new Transformer<MyNode, String>()
+	 Transformer<MyNode, String> vertexLabelTransformer =  new Transformer<MyNode, String>()
 			    	    {
 			        public String transform(MyNode node)
 			        {
@@ -163,7 +163,7 @@ public class GraphVisualization
 			        
 			    };
 			    
-			    Transformer<MyNode,String> vertexToolTippTransformer =new Transformer<MyNode,String>(){
+	Transformer<MyNode,String> vertexToolTippTransformer =new Transformer<MyNode,String>(){
 			        public String transform(MyNode n) {
 			        	if (!n.isDetailedOutput())
 			        		return "<html>" + n.getNodeInformations(true);
@@ -172,13 +172,13 @@ public class GraphVisualization
 			        }
 			    };
 			    
-				//Vertex
-			    this.vv.getRenderContext().setVertexFillPaintTransformer(vertexColor);
-			    this.vv.getRenderContext().setVertexShapeTransformer(vertexSize);
-			    this.vv.getRenderContext().setVertexLabelTransformer(vertexLabelTransformer);
-			    this.vv.getRenderContext().setVertexStrokeTransformer(this.vsh);
-			    this.vv.getRenderer().getVertexLabelRenderer().setPosition(Position.CNTR);
-			    this.vv.setVertexToolTipTransformer(vertexToolTippTransformer);
+		//Vertex
+	    this.vv.getRenderContext().setVertexFillPaintTransformer(vertexColor);
+	    this.vv.getRenderContext().setVertexShapeTransformer(vertexSize);
+	    this.vv.getRenderContext().setVertexLabelTransformer(vertexLabelTransformer);
+	    this.vv.getRenderContext().setVertexStrokeTransformer(this.vsh);
+	    this.vv.getRenderer().getVertexLabelRenderer().setPosition(Position.CNTR);
+	    this.vv.setVertexToolTipTransformer(vertexToolTippTransformer);
   }
   
   /**
