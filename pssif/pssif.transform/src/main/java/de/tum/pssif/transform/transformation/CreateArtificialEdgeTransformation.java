@@ -9,10 +9,10 @@ import de.tum.pssif.transform.transformation.artificial.ArtificializingConnectio
 
 
 public class CreateArtificialEdgeTransformation extends AbstractTransformation {
-  private final String from;  //S
-  private final String to;    //F
-  private final String base;  //IF
-  private final String target; //CF
+  private final String from;
+  private final String to;
+  private final String base;
+  private final String target;
 
   public CreateArtificialEdgeTransformation(NodeType from, NodeType to, EdgeType base, EdgeType target) {
     this.from = from.getName();
