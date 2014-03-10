@@ -136,21 +136,23 @@ public class GraphVisualization
 			    {
 			      public Shape transform(MyNode node)
 			      {
-			        if (node.isDetailedOutput())
-			        {	
+			      //  if (node.isDetailedOutput())
+			      //  {	
 			         
-			          if (node.getHeight() != 0 && node.getWidth() != 0) { 
-			        	  return new Rectangle2D.Double(-75.0D, -75.0D, node.getWidth()*55, node.getHeight()*55);
-			          }
+			         // if (node.getHeight() != 0 && node.getWidth() != 0) { 
+			        	  //return new Rectangle2D.Double(-75.0D, -75.0D, node.getWidth()*55, node.getHeight()*55);
+			     //   	  return new Rectangle2D.Double(-90.0D, -25.0D, node.getWidth(), node.getHeight());
+			         /* }
 			          else
 			          {
-			        	  return new Rectangle2D.Double(-75.0D, -75.0D, 150.0D, 150.0D);
-			          }
-			        }
-			        else
-			        {
-			        	return new Rectangle2D.Double(-75.0D, -25.0D, node.getWidth()*55, 50.0D);
-			        }
+			        	  return new Rectangle2D.Double(-75.0D, -75.0D, 170.0D, 150.0D);
+			          }*/
+			     //   }
+			      //  else
+			      //  {
+			        	//return new Rectangle2D.Double(-75.0D, -25.0D, node.getWidth()*55, 50.0D);
+			        	return new Rectangle2D.Double(-(node.getWidth()/2), -(node.getHeight()/2), node.getWidth(), node.getHeight());
+			     //   }
 			      }
 			    };
 			    
@@ -294,6 +296,7 @@ public class GraphVisualization
       else
     	  this.g = this.gb.createGraph(details);
       
+      this.updateGraph();
       this.vv.repaint();
     }
   }

@@ -558,6 +558,8 @@ public class GraphView {
 
                 JOptionPane.showMessageDialog(null, errorPanel, "Ups something went wrong", JOptionPane.ERROR_MESSAGE);
               }
+              /*else
+            	  graph.updateGraph();*/
             }
           }
         }

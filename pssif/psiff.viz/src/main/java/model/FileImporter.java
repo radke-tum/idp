@@ -10,6 +10,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.xml.stream.XMLStreamException;
 
 import de.tum.pssif.core.model.Model;
 import de.tum.pssif.transform.Mapper;
@@ -38,14 +39,19 @@ public class FileImporter extends FileHandler{
       Model model;
       try {
         model = importer.read(ModelBuilder.getMetamodel(), in);
-
-        // Create the Viz Model
-        ModelBuilder.addModel(ModelBuilder.getMetamodel(), model);
-
-        return true;
+        
+        if(model!=null)
+        {
+	        // Create the Viz Model
+	        ModelBuilder.addModel(ModelBuilder.getMetamodel(), model);
+	        return true;
+        }
+        else
+        {
+        	throw new Exception("Error during import");
+        }    
       }
-
-      catch (Exception e) {
+      catch (Exception e ) {
 	        e.printStackTrace();
 	        JPanel errorPanel = new JPanel();
 	
@@ -54,6 +60,7 @@ public class FileImporter extends FileHandler{
 	        JOptionPane.showMessageDialog(null, errorPanel, "Ups something went wrong", JOptionPane.ERROR_MESSAGE);
         return false;
       }
+      
     } catch (FileNotFoundException e) {
     		e.printStackTrace();
 	      JPanel errorPanel = new JPanel();

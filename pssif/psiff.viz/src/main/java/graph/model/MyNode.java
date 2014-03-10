@@ -1,5 +1,6 @@
 package graph.model;
 
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
@@ -32,6 +33,7 @@ public class MyNode{
 	private boolean collapseNode;
 	
 	private static int limit = 5;
+	private static int lineLimit = 18;
 	
 	public MyNode(Node node, MyNodeType type) {
 		this.node = node;
@@ -66,15 +68,24 @@ public class MyNode{
 				
 				String attrValue="";
 				if (value !=null)
-					attrValue = String.valueOf(value.getValue());
+				{
+					if (((PrimitiveDataType)current.getType()).getName().equals("Date"))
+					{
+						DateFormat df = new SimpleDateFormat("dd-MM-yyyy");
+						attrValue= df.format(value.getValue());
+					}
+					else
+						attrValue = String.valueOf(value.getValue());
+				}
+				
 				String attrUnit = current.getUnit().getName();
 				
 				String res;
 				
 				if (attrUnit.equals("none"))
-					res = attrName+" = "+attrValue+" : "+((PrimitiveDataType)current.getType()).getName();
+					res = attrName+" = "+attrValue;//+" : "+((PrimitiveDataType)current.getType()).getName();
 				else
-					res = attrName+" = "+attrValue+" in "+attrUnit+ " : "+((PrimitiveDataType)current.getType()).getName();
+					res = attrName+" = "+attrValue+" in "+attrUnit;//+ " : "+((PrimitiveDataType)current.getType()).getName();
 				
 				if (current.get(node)!=null && attrValue.length()>0)
 					attributes.add(res);
@@ -110,8 +121,16 @@ public class MyNode{
 			
 			String attrValue="";
 			if (value !=null)
-				attrValue = String.valueOf(value.getValue());
-			
+			{
+				if (((PrimitiveDataType)current.getType()).getName().equals("Date"))
+				{
+					DateFormat df = new SimpleDateFormat("dd-MM-yyyy");
+					attrValue= df.format(value.getValue());
+				}
+				else
+					attrValue = String.valueOf(value.getValue());
+			}
+				
 			currentAttr.add(attrValue);
 			String attrUnit = current.getUnit().getName();
 			currentAttr.add(attrUnit);
@@ -284,8 +303,55 @@ public class MyNode{
 	 */
 	private void setSize()
 	{
+		int lineheight =30;
 		
-		int temp = findName().length() / limit;
+		//height
+		
+		sizeheight =0;
+		//type
+		sizeheight += lineheight;
+		
+		//name
+		int namelines = nameLines(findName());
+		
+		sizeheight += namelines*lineheight ;
+		
+		//Attributes
+		List<String> attr = calcAttr();
+		if (isDetailedOutput())
+		{
+			//lineheight =30;
+			//Attributes label
+			sizeheight += lineheight;
+			
+			//Attributes
+			
+			
+			int nbAttr = attr.size();
+			
+			sizeheight += nbAttr*lineheight;
+		}
+		
+		sizewidth = 180;
+		
+		
+		
+		//width
+		
+		/*int temp = (type.getName().length()+6)/ limit;
+		
+		if (temp >sizewidth)
+			sizewidth = temp;
+			
+		for (String s : attr)
+		{
+			temp = s.length() / limit;
+			
+			if (temp > sizewidth)
+				sizewidth = temp;
+		}
+		
+		/*int temp = findName().length() / limit;
 		
 		if (temp >0)
 			sizewidth = temp;
@@ -294,20 +360,14 @@ public class MyNode{
 		
 		if (temp >sizewidth)
 			sizewidth = temp;
-		
-		List<String> attr = calcAttr();
+			
 		for (String s : attr)
 		{
 			temp = s.length() / limit;
 			
 			if (temp > sizewidth)
 				sizewidth = temp;
-		}
-				
-		sizeheight = attr.size();
-
-		if (sizeheight==1)
-			sizeheight= sizeheight+1.5;
+		}*/
 		
 		//System.out.println(getRealName()+"|| width "+sizewidth+" height "+sizeheight);	
 	
@@ -333,10 +393,11 @@ public class MyNode{
 		{
 			output ="<table border=\"0\">";
 			output+=" <tr> ";
-			output+= "<th> <h3>&lt;&lt; "+type.getName()+" >> <br>"+findName()+"</h3> </th>";
-			output+=  " </tr> ";
+			output+= "<th> <h3>&lt;&lt; "+type.getName()+" &gt;&gt; <br>";
+			output+= evalName(findName());
+			output+= "</h3> </th> </tr>";
 			output+=" <tr> ";
-			output+= "<td> <b>Attributes </b></td>";
+			output+= "<td> <b>Attributes</b></td>";
 			output+=  " </tr> ";
 			for (String s : calcAttr())
 			{
@@ -349,10 +410,135 @@ public class MyNode{
 		}
 		else
 		{
-			output+="<h3>&lt;&lt; "+type.getName()+" >> <br>"+findName()+"</h3>";
+			output+="<h3>&lt;&lt; "+type.getName()+" &gt;&gt; <br>"+ evalName(findName())+"</h3>";
 		}
 		
 		return output;
+	}
+	
+	private String evalName(String name)
+	{
+		//String name = findName();
+		
+		if (name.length()>lineLimit)
+		{
+			String res;
+			List<Integer> spaceIndexes = getSpaceIndexes(name);
+			
+			int previous =-1;
+			for (int current : spaceIndexes)
+			{
+				if (current > lineLimit)
+				{
+					if (previous!=-1)
+					{
+						res = name.substring(0, previous)+" <br>";
+						
+						return res+evalName(name.substring(previous+1));
+					}
+					else
+					{
+						res = name.substring(0, lineLimit-1)+"- <br>";
+						
+						return res+evalName(name.substring(lineLimit));
+					}						
+				}
+				else
+				{
+					previous=current;
+				}
+			}
+			
+			if (previous==-1)
+			{
+				res = name.substring(0, lineLimit-1)+"- <br>";
+				
+				return res+evalName(name.substring(lineLimit));
+			}
+			
+			if (previous<=lineLimit)
+			{
+				res = name.substring(0, previous)+" <br>";
+				
+				return res+name.substring(previous+1);
+			}
+		}
+
+		return name+" ";
+	}
+	
+	private int nameLines(String name)
+	{
+		//String name = findName();
+		
+		if (name.length()>lineLimit)
+		{
+			String res;
+			List<Integer> spaceIndexes = getSpaceIndexes(name);
+			
+			int previous =-1;
+			for (int current : spaceIndexes)
+			{
+				if (current > lineLimit)
+				{
+					if (previous!=-1)
+					{
+						//res = name.substring(0, previous)+" <br>";
+						
+						return 1+nameLines(name.substring(previous+1));
+					}
+					else
+					{
+						//res = name.substring(0, lineLimit-1)+"- <br>";
+						
+						return 1+nameLines(name.substring(lineLimit));
+					}						
+				}
+				else
+				{
+					previous=current;
+				}
+			}
+			
+			if (previous==-1)
+			{
+				//res = name.substring(0, lineLimit-1)+"- <br>";
+				
+				return 1+nameLines(name.substring(lineLimit));
+			}
+			
+			if (previous<=lineLimit)
+			{
+				//res = name.substring(0, previous)+" <br>";
+				
+				return 2;
+			}
+		}
+
+		return 1;
+	}
+	
+	public List<Integer> getSpaceIndexes(String value)
+	{
+		int position = 0;
+		
+		List<Integer> res = new LinkedList<Integer>();
+		
+		int space = value.indexOf(" ");
+		while (space !=-1)
+		{
+			position = position+space;
+			
+			res.add(position);
+			
+			value = value.substring(space+1);
+			position++;
+			
+			space = value.indexOf(" ");
+			
+		}
+		
+		return res;
 	}
 	
 /**
@@ -427,6 +613,7 @@ public class MyNode{
 	 */
 	public void setDetailedOutput(boolean detailedOutput) {
 		this.detailedOutput = detailedOutput;
+		setSize();
 	}
 
 	public Node getNode() {
