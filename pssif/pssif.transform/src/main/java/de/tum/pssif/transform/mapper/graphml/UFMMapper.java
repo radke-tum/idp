@@ -12,7 +12,6 @@ import de.tum.pssif.core.metamodel.NodeType;
 import de.tum.pssif.core.model.Model;
 import de.tum.pssif.transform.transformation.CreateArtificialEdgeTransformation;
 import de.tum.pssif.transform.transformation.CreateArtificialNodeTransformation;
-import de.tum.pssif.transform.transformation.HideConnectionMappingTransformation;
 import de.tum.pssif.transform.transformation.HideEdgeTypeAttributeTransformation;
 import de.tum.pssif.transform.transformation.HideEdgeTypeTransformation;
 import de.tum.pssif.transform.transformation.HideNodeTypeAttributeTransformation;
@@ -104,13 +103,7 @@ public class UFMMapper extends GraphMLMapper {
     view = new CreateArtificialEdgeTransformation(view.getNodeType("Function").getOne(), view.getNodeType("State").getOne(), view.getEdgeType(
         "InformationFlow").getOne(), view.getEdgeType("Control Flow").getOne()).apply(view);
 
-    relationship = view.getEdgeType("Relationship").getOne();
-    view = new HideConnectionMappingTransformation(relationship, relationship.getMapping(view.getNodeType("Function").getOne(),
-        view.getNodeType("Block").getOne()).getOne()).apply(view);
-    relationship = view.getEdgeType("Relationship").getOne();
-    view = new HideConnectionMappingTransformation(relationship, relationship.getMapping(view.getNodeType("State").getOne(),
-        view.getNodeType("Block").getOne()).getOne()).apply(view);
-    block = view.getNodeType("Block").getOne();
+    view = new HideEdgeTypeTransformation(view.getEdgeType("Relationship").getOne()).apply(view);
 
     view = new HideEdgeTypeTransformation(view.getEdgeType("Control Flow").getOne()).apply(view);
 
