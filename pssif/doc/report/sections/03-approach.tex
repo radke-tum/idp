@@ -1,6 +1,57 @@
 \chapter{Approach}
 \label{chap:approach}
 
+This chapter presents and, to some extent, justifies the approach of the Proof of Concept (PoC) software utility developed in the scope of this interdisciplinary project. To achieve this, first an overview of the different levels of abstraction in a language are made in \secref{sec:approach:abstraction}. Then, a comparison of different transformation methods on an abstract level is provided in \secref{sec:approach:transform}. Thereafter, the chosen approach to the realization of model transformations is defined, on an abstract level, in \secref{sec:approach:pssif}.
+
+\section{Language Levels of Abstraction}
+\label{sec:approach:abstraction}
+
+\color{red}TODO concrete , absract, semantics\color{black}
+
+\section{Transformation Methods}
+\label{sec:approach:transform}
+
+Provided with the task to transform between different Models, there is an number of possible solutions. These can roughly be categorized into direct and indirect transformation methods.
+
+\subsection{Direct Transformation Methods}
+
+Direct transformation methods are such which define rules for the transcription from source to destination domain-specific language directly, i.e. such methods do not produce a (defined) intermediate result, but rather are always language-specific. Furthermore, it can be differentiated between syntax-dependent and syntax-independent technical solutions for this kind of transformations.
+
+\subsubsection{Syntax-Dependent Transformations}
+
+Syntax-independent transformations would build upon a technology which is well-suited for processing the syntax of the source and destination domain-specific languages (DSLs). For ex maple, considering DSLs which are both use the Extensible Markup Language (XML) as their concrete syntax, an appropriate transformation technology might be EXtensible Stylesheet Language (XSLT).
+
+\subsubsection{Syntax-Independent Transformations}
+
+Syntax-independent direct transformation methods are a category of methods, which, while still transforming directly from a source DSL to a destination DSL, are not coupled to the concrete syntax of any particular DSL. Such transformation approaches can be realized in a high-level programming language, which relies on a number of serialization and de-serialization components for the transmission of own language-specific data-structures to the respective DSL concrete syntax serializations.
+
+\subsection{Indirect Transformation Methods}
+
+Indirect methods of transformation are methods which rely on a stable and well defined intermediate format. A particular transformation between two DSLs is performed by first transforming from the source DSL into the intermediate language and then transforming from the intermediate language to the target DSL. Once again, from a technological perspective, a differentiation between two categories of intermediate languages can be made: fixed and flexible intermediate languages.
+
+\subsubsection{Fixed Intermediate Language Transformations}
+
+Transformation methods with a fixed intermediate language can be realized in a high-level programming language. In this case the abstract syntax of the intermediate language is directly implemented as a data structure in the programming language. Thus, the intermediate language is described directly with the vocabulary of the user programming language. Also, in this case, the transformations from and to DSLs can be implemented directly in the syntax of the particular programming language and are, therefore, most likely Turing-complete.
+
+\subsubsection{Flexible Intermediate Language Transformation}
+
+Transformation methods with a flexible intermediate language can also be technologically solved with a high-level programming language. As opposed to the last case, here the intermediate transformation language is not fixed, in the sense that it is not hard-coded. Note that the intermediate language is still likely to be fixed for the scope of a single transformation.
+
+\subsection{Discussion}
+
+In this section the different transformation methods presented above are compared with each other. Let us first consider syntax-dependent transformation methods such as XSLT. On the one hand, this kind of transformations can be advantageous, because of their closeness to the languages at hand. A direct transformation can always be defined to enclose the maximal possible transmittable detail from one DSL to another. On the other hand, such approaches impose a limitation to the entirety of languages which can be supported, due to their binding to the concrete syntax of those languages.
+
+Syntax-independent direct transformations resolve this issue by abstracting the transformation description from the concrete syntax of the particular language, but still have a number of significant disadvantages. The most important one of these is the fact that such transformation methods require an explicit implementation for each pair of source and target DSLs. As a result, with the introduction of each new language, a transformation procedure has to be defined for the combination of this language with every already existing language. Illustratively put, the result is a complete graph (each node being a DSL and each edge a language-to-language transformation) and the number of necessary implementations grows exponentially in the number of DSLs to support. In a dynamic filed, where new languages may appear at any time, direct transformation approaches would thus incur significant costs on the longer run. Another disadvantage of these approaches is that with the growing number of transformation implementations, the code-base also grows proportionally. As a result, the code maintenance for such a utility also becomes more costly with time. 
+
+To address the issue of exponentially growing complexity, indirect transformation methods can be used. As already noted, the methods in this category use an intermediate format to and from which transformations are made for each DSL. As a result, the addition of a new DSL will require the additional implementation of just one transformation, as opposed to as many transformations as there are languages to support. The direct solution in this case would be to directly implement the intermediate language in the programming language of choice. Such a description of the intermediate language and its transformation would, on the one hand, have the advantage of being expressed in the concepts of the used programming language directly and thus being accessible to any person with knowledge of this programming language. On the other hand, a fixed intermediate language is likely to be more costly once the evolution of the transformation framework is taken into consideration. In particular, any conceptual change in the intended meaning of a transformation would directly impact the transformations to and from all DSL on the level of the programming language used. In essence, it would be necessary to potentially rewrite the code used for all transformations, which, considering a growing number of DSLs and a continuously evolving modelling methodology, would once again incur long-term costs. Also, while the code base in this case is significantly smaller than in the case of direct transformation approaches, it still is growing in proportion with the number of DSLs to support.
+
+Finally, the most abstract approach is the usage of flexible intermediate language transformations. As opposed to the last approach, here the intermediate language is not bound by concepts of the underlying programming language, but rather is only expressed in those concepts. As a result, the intermediate language can be defined on a level of abstraction on which most, if not all, new requirements can be expression in terms of instantiation instead of code generation. In particular, only requirements which introduce new concepts in the language would require a modification of the code base. Requirements which merely imply a structural change can the implemented by configuration. The advantages of such an approach are numerous, most importantly that it would provide a viable, flexible and powerful tool with only limited costs for the introduction of new DSLs. The major disadvantage of such an approach is that it incurs a significant initial effort, as it requires the infrastructure for the desciption of the intermediate language to be implemented as well.
+
+With this considerations made, the authors consider a flexible intermediate language approach to be the most appropriate one for the PoC software utility, as it best addresses the purposes of the PSS Integration Framework.
+
+\section{The PSS-IF Transformation Method}
+\label{sec:approach:pssif}
+
 TODO
 
 \begin{itemize}
@@ -10,3 +61,11 @@ TODO
 \item define pssif metamodel (abstract)
 \item define transformations (abstract)
 \end{itemize}
+
+here also: aim: maximize work done by the core, i.e. not just a graph, because then many things have to be done more than once, such as inheritance,type cheching, consistency verification etc.
+
+Note: here: schema of Metamodel, i.e. node and edge types, attributes, inheritance (also w.r.t. features and some definition of the stuff), connection mappings, multiplicities... aka all the language rules
+
+transformations: editable views
+
+final statement: the pssif-canonic is only one instance of a metamodel
