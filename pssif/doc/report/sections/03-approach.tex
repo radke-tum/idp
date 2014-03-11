@@ -52,20 +52,86 @@ With this considerations made, the authors consider a flexible intermediate lang
 \section{The PSS-IF Transformation Method}
 \label{sec:approach:pssif}
 
-TODO
+In the last section the choice of a flexible intermediate language as a transformation method was made. In such a transformation method, there are a few central concepts, around which further definitions revolve.
+
+\subsection{Levels of Meta}
+
+In the rest of this documentation, the terms Metamodel and Model are used continuously. For this reason, here these are defined somewhat more clearly from the perspective of levels of information and structure. The most basic of those levels is reality itself, which is, as such, incomprehensible in its fullness. This is why a model is defined as:
+
+\paragraph{Model} A simplified description of reality, which only contains certain aspects of it, relevant for the creator of the model.\\
+
+A model, while depicting certain aspects of reality, does not necessarily conform to any particular structure. The structure of a model is provided by a metamodel, defined as:
+
+\paragraph{Metamodel} A description which defines how models are structured. A model is said to be an (ontological) instance of a metamodel, if the model structurally conforms to the metamodel.\\
+
+Note that no constraint is given as to the number of meta-levels involved -- one can easily define meta-metamodels etc.
+
+\subsection{Viewpoints and Views}
+
+In the last section we have defined the terms metamodel and model. In this section, the terms Viewpoint and View are added.
+
+\paragraph{View} A view is a subset of a model.
+
+\paragraph{Viewpoint} A viewpoint is a description which defines how views are created.\\
+
+A viewpoint can thus be seen as a restricted or, more generally, transformed metamodel, which makes it possible to perceive model instances of this metamodel from a certain perspective (viewpoint). More precise definitions of this terms can be found in the ISO 42010 standard.
+
+\subsection{PSS-IF in a Nutshell}
+
+Consider a metamodel which describes all aspects of reality, which are of importance for the development of a Product-Service System. Such a metamodel is denoted as the PSS-IF Canonic Metamodel. For each domain-specific language, a viewpoint is defined on the basis of the PSS-IF Canonic Metamodel and captures only those parts of the canonic metamodel, which can be represented in the corresponding DSL. Furthermore, viewpoints are defined in such a way that they can be used for both reading from and writing to a model.
+
+This makes it possible to achieve a transformation between two exemplary DSLs \textit{A} and \textit{B} through the following process:
+
+\begin{enumerate}
+\item Obtain the viewpoint for DSL \textit{A}.
+\item Create an empty model.
+\item Add data to this model from an external source, whose abstract syntax is that of DSL \textit{A}.
+\item Obtain a viewpoint for DSL \textit{B}.
+\item Create a new external target, conforming to the abstract syntax of DSL \textit{B}.
+\item Extract data from the model through the viewpoint for DSL \textit{B} and write it to the target.
+\end{enumerate}
+
+Note that after step 3 the model actually contains data conforming to the PSS-IF Canonic Metamodel. This is because the data is added through a viewpoint which internally transforms it to conform to the canonic metamodel. This is why the data can, in step 6, be read directly with another viewpoint from the same model and is implicitly transformed to the abstract syntax of DSL \textit{B}.
+
+\subsection{Parts of the PSS-IF Proof of Concept}
+
+To realize the PSS-IF transformation approach, a number of concepts need to be defined. While these concepts are briefly described here on an abstract level, they also closely resemble the implementation, presented in detail in the next chapter. The concepts required are provided in the following sections.
+
+\subsubsection{PSS-IF Metamodel}
+
+A PSS-IF Metamodel consists of a multitude Element Types and Data Types. Each Element Type can be either a Node Type or an Edge Type. Both Node and Edge Types can have Attributes, and each Attribute is bound to a particular Data Type. Associations between Node Types are defined through Connection Mappings, which are always bound to a certain Edge Type, i.e. an Edge Type can have many Connection Mappings, allowing it to associate different pairs of Node Types. Furthermore, inheritance can be defined among the Node and Edge Types. It holds that Attributes are inherited, while Connection Mappings are only inherited if no local mappings substitute the ones inherited from an ancestor type. Also, Edge Types define a Multiplicity. Additionally, Node Types can be defined to have Edge Type semantics under certain circumstances, so that chaining of associations is possible. Note that Element and Data Type names are unique in the scope of a PSS-IF Metamodel and Attribute names are unique in the scope of an Element Type. Finally, a PSS-IF Metamodel always contains a top-level Node Type called 'Node' and a top-level Edge Type called 'Edge', both of which define a set of predefined Attributes. Note that more-concrete Connection Mappings on lower levels in the Edge Type hierarchy hide this generic association in accordance with the substitution rule stated above.
+
+\subsubsection{PSS-IF Model}
+
+A PSS-IF Model consists of nodes and edges, both of which have attributes. A model does not have any knowledge of its own structure with respect to any PSS-IF Metamodel, i.e. all structural information in the model is on the level of incoming and outgoing edges and (untyped) attribute values. Since all structural information is held in the metamodel, accessing the same model with different metamodels will yield different results, as is intended for the purpose of the transformations.
+
+\subsubsection{Viewpoints and Operators}
+
+An operator is a generic bijective transformation function, which conforms to a certain signature and can be applied, in accordance with its signature, to elements of a given metamodel. The result of the operator is once again a metamodel, which internally contains the operator and thus operates on a model in accordance with the semantics of the operator. The modified metamodel is called a viewpoint. Note that in this sense the PSS-IF Canonic Metamodel is the unit viewpoint of the resulting algebraic structure. Through the chaining of operators different viewpoints can be constructed, whereby the ordering of the operators can often play a role. 
+
+\color{red}
+On the lighter side: How about Viewpoint-Fixpoint-Arithmetics? How far are we then from graph grammars?
+\color{black}
+
+So far, the following operators have been identified as sufficient for the definition of the viewpoints of all DSLs relevant for this interdisciplinary project:
+
+\color{red}
+TODO list operators, with definitions
+\color{black}
+
+\subsubsection{Generic Graph}
+
+A generic graph is required as an abstraction for the concrete syntax of all external representations. The proof of concept implementation relies on a generic graph in which nodes and edges have a string designating their type, yet no further structural information.
+
+In essence, the generic graph is used as follows: The data from an external representation is first read into a graph, which is then processed generically with the viewpoint of the respective DSL. In the same manner, when exporting a view, the model is first converted to a generic graph in accordance with the viewpoint of the respective DSL, and the generic graph is then serialized in accordance with the specifics of the concrete syntax of the DSL.
+
+This approach has the following advantages:
 
 \begin{itemize}
-\item what are possible ways of providing
-\item advantages and disadvantages for them
-\item argue for metamodelling
-\item define pssif metamodel (abstract)
-\item define transformations (abstract)
+\item Sepraration of concerns: By using the graph it is possible to separate the handling of concrete and abstract syntax of each language from each other. The concrete syntax is handled by a specific utility, which rather relates to the syntax than to the language. For example, more than one language might be serialized in XML by the same utility. The abstract syntax of the DSL is meanwhile handled independently in accordance with the DSL's viewpoint.
+\item Extension point for pre- and post-processing of data: It might be necessary, for certain DSLs, to perform certain pre- or post-processing modifications to the data, i.e. to normalize it. If such normalizations are out of the expressiveness of the operators of PSS-IF (i.e. are generic graph transformations), then they can be achieved directly on the basis of the generic graph.
 \end{itemize}
 
-here also: aim: maximize work done by the core, i.e. not just a graph, because then many things have to be done more than once, such as inheritance,type cheching, consistency verification etc.
+\subsubsection{Mappers}
 
-Note: here: schema of Metamodel, i.e. node and edge types, attributes, inheritance (also w.r.t. features and some definition of the stuff), connection mappings, multiplicities... aka all the language rules
-
-transformations: editable views
-
-final statement: the pssif-canonic is only one instance of a metamodel
+Finally, mappers are utilities which encapsulate the whole transformation process to and from the PSS-IF Canonic Metamodel and a corresponding model. A mapper thus offers two functionalities, one for reading a model from an external representation and one for writing a model to an external representation. Each DSL has its own mapper and each mapper combines, in the appropriate order, the DSL's viewpoint creation, data transformation, any pre- and post-processing strategies, and the correct serialization utility.
