@@ -9,6 +9,11 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.events.XMLEvent;
 
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.events.XMLEvent;
+
 import de.tum.pssif.transform.IoMapper;
 import de.tum.pssif.transform.graph.Graph;
 import de.tum.pssif.transform.io.SysMlIoMapperUml.UmlModel;
@@ -19,6 +24,7 @@ public class SysMlIoMapper implements IoMapper {
 
   @Override
   public Graph read(InputStream in) {
+<<<<<<< HEAD
     XMLInputFactory factory = XMLInputFactory.newInstance();
     try {
       XMLStreamReader reader = factory.createXMLStreamReader(in, "UTF-8");
@@ -63,6 +69,40 @@ public class SysMlIoMapper implements IoMapper {
   }
 
   private void readSfb768Element(XMLStreamReader reader) {
+=======
+
+    XMLInputFactory factory = XMLInputFactory.newInstance();
+
+    try {
+      XMLStreamReader reader = factory.createXMLStreamReader(in);
+      Graph graph = new Graph();
+
+      while (reader.hasNext()) {
+        int event = reader.next();
+
+        switch (event) {
+          case XMLEvent.START_ELEMENT:
+            startElement(reader);
+            break;
+          case XMLEvent.END_ELEMENT:
+            endElement(reader);
+            break;
+        }
+      }
+
+      reader.close();
+      return graph;
+    } catch (XMLStreamException e) {
+      throw new PSSIFIoException("Failed to read SysML XML", e);
+    }
+  }
+
+  private void startElement(XMLStreamReader reader) throws XMLStreamException {
+    //TODO
+  }
+
+  private void endElement(XMLStreamReader reader) throws XMLStreamException {
+>>>>>>> refs/remotes/origin/attempt3
     //TODO
   }
 

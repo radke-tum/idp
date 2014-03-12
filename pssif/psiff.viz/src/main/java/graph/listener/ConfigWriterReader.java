@@ -60,6 +60,8 @@ public class ConfigWriterReader {
 	public ConfigWriterReader()
 	{
 		CONFIG_FILE = new File("config.xml");
+		
+		addStandartColors();
 	}
 	
 	/**
@@ -753,5 +755,50 @@ public class ConfigWriterReader {
 		   } catch (SAXException sae) {
 			sae.printStackTrace();
 		   }
+	}
+	
+	private void addStandartColors()
+	{
+		HashMap<MyNodeType,Color> colormapping = new HashMap<MyNodeType, Color>();
+		
+		LinkedList<MyNodeType> nodetypes =ModelBuilder.getNodeTypes().getAllNodeTypes();
+		
+		LinkedList<Color> colorList = new LinkedList<Color>();
+		
+		for(int i=0; i<20;i++)
+		{
+			int first= (int) (Math.random()*255);
+			int second= (int) (Math.random()*255);
+			int third = (int) (Math.random()*255);
+			
+			String s = first+""+second+""+third;
+			
+			colorList.add(new Color(Integer.valueOf(s)));
+		}
+
+
+		int  counter = 0;
+		
+		for (MyNodeType currentType: nodetypes)
+		{
+			if (counter<colorList.size())
+			{
+				colormapping.put(currentType,colorList.get(counter));
+				counter++;
+			}
+		}
+		
+		
+		if (!CONFIG_FILE.exists())
+			writeNewConfig(colormapping);
+		else
+		{
+			if (!colorConfigExists())
+			{
+				addBasicColorInfo();
+				
+				updateColors(colormapping);
+			}
+		}
 	}
 }

@@ -150,9 +150,15 @@ public class GraphBuilder {
 					g.addEdge(e, e.getSourceNode(), e.getDestinationNode(), EdgeType.UNDIRECTED);
 				}
 				
-				if (commentsVisible)
-					System.out.println("Edge-----------------");
+				
 			}
+			
+			if (commentsVisible)
+			{
+				System.out.println("Visibilty "+ e.isVisible());
+				System.out.println("Edge-----------------");
+			}
+				
 		}
 		
 		if (commentsVisible)

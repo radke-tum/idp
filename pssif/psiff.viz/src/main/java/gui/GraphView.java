@@ -44,7 +44,11 @@ import javax.swing.table.TableModel;
 
 import model.ModelBuilder;
 
-
+/**
+ * Provides the Graph View of a PSS-IF Model
+ * @author Luc
+ *
+ */
 public class GraphView {
   private JPanel             parent;
   private GraphVisualization graph;
@@ -74,27 +78,34 @@ public class GraphView {
   private JSpinner           depthSpinner;
 
   private Dimension          screenSize;
-  private static int         betweenComps = 7;
+  private static int         betweenComps = 5;
   private static Color       bgColor      = Color.LIGHT_GRAY;
 
-  public GraphView(/*Dimension parentDimension*/) {
+  /**
+   * Create a new instance of a GraphView
+   */
+  public GraphView() {
     active = false;
+    
     screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-    //screenSize = parentDimension;
-    //int x = (int) (screenSize.width*0.85);
-    //int y = (int) (screenSize.height*0.9);
     int x = (screenSize.width);
     int y = (int) (screenSize.height * 0.78);
-    if (nodeDetails == null) {
+    if (nodeDetails == null) 
+    {
       graph = new GraphVisualization(new Dimension(x, y), true);
     }
-    else {
+    else 
+    {
       graph = new GraphVisualization(new Dimension(x, y), nodeDetails.isSelected());
     }
 
     addNodeChangeListener();
   }
-
+  
+  /**
+   * Get the Graph Visualization
+   * @return a Panel with the Graph and an additional Information Panel
+   */
   public JPanel getGraphPanel() {
     parent = new JPanel();
     parent.setLayout(new BorderLayout());
@@ -106,6 +117,10 @@ public class GraphView {
     return parent;
   }
 
+  /**
+   * Get the Graph Visualization as a panel
+   * @return a Panel with the Graph Visualization
+   */
   private JPanel addGraphViz() {
     JPanel graphpanel = new JPanel();
 
@@ -114,12 +129,16 @@ public class GraphView {
     graphpanel.add(vv);
     return graphpanel;
   }
-
+  
+  /**
+   * Get an Information Panel ( Additional information about the currently selected Edge or Node) as a Panel
+   * @return a Panel with the Information Panel
+   */
   private JPanel addInformationPanel() {
     informationPanel = new JPanel();
 
     int x = (screenSize.width);
-    int y = (int) (screenSize.height * 0.15);
+    int y = (int) (screenSize.height * 0.19);
     Dimension d = new Dimension(x, y);
 
     informationPanel.setMaximumSize(d);
@@ -131,7 +150,7 @@ public class GraphView {
     // Basic Graph operations
     informationPanel.add(addBasicOperationPanel(), BorderLayout.EAST);
 
-    // Attributs
+    // Attributes
     nodeAttributePanel = addNodeAttributePanel(x, y);
     edgeAttributePanel = addEdgeAttributePanel(x, y);
 
@@ -140,14 +159,18 @@ public class GraphView {
     // Basic information
     nodeInformationPanel = addNodeInformationPanel();
     edgeInformationPanel = addEdgeInformationPanel();
-
+    
+    // as default add the Node Information Panel
     informationPanel.add(nodeInformationPanel, BorderLayout.WEST);
-
     nodeSelection.setSelected(true);
 
     return informationPanel;
   }
-
+  
+  /**
+   * Build the Node Information Panel (Name and Type of the selected Node)
+   * @return a Panel which holds the requested Information
+   */
   private JPanel addNodeInformationPanel() {
     GridBagConstraints c = new GridBagConstraints();
     int ypos = -1;
@@ -188,11 +211,15 @@ public class GraphView {
     return nodeInfos;
   }
 
+  /**
+   * Build the Edge Information Panel (Type, Source and Destination of the selected Edge)
+   * @return a Panel which holds the requested Information
+   */
   private JPanel addEdgeInformationPanel() {
     GridBagConstraints c = new GridBagConstraints();
     int ypos = -1;
 
-    // selected Node Information
+    // selected Edge Information
     JPanel edgeInfos = new JPanel();
     edgeInfos.setLayout(new GridBagLayout());
     edgeInfos.setBackground(bgColor);
@@ -241,6 +268,12 @@ public class GraphView {
     return edgeInfos;
   }
 
+  /**
+   * Build a Panel which allows the user to display all the Node Attributes and allows the user to alter them
+   * @param sizeX The width of the parent Panel
+   * @param sizeY The height of the parent Panel
+   * @return a Panel which holds the requested Information
+   */
   private JPanel addNodeAttributePanel(int sizeX, int sizeY) {
     JPanel attributeInfos = new JPanel();
     attributeInfos.setLayout(new BorderLayout());
@@ -264,6 +297,12 @@ public class GraphView {
     return attributeInfos;
   }
 
+  /**
+   * Build a Panel which allows the user to display all the Edge Attributes and allows the user to alter them
+   * @param sizeX The width of the parent Panel
+   * @param sizeY The height of the parent Panel
+   * @return a Panel which holds the requested Information
+   */
   private JPanel addEdgeAttributePanel(int sizeX, int sizeY) {
     JPanel attributeInfos = new JPanel();
     attributeInfos.setLayout(new BorderLayout());
@@ -286,7 +325,11 @@ public class GraphView {
 
     return attributeInfos;
   }
-
+  
+  /**
+   * Build the a Panel which holds very basic but frequently used Graph operations
+   * @return a Panel which holds the requested Information
+   */
   private JPanel addBasicOperationPanel() {
     GridBagConstraints c = new GridBagConstraints();
     int ypos = -1;
@@ -382,8 +425,8 @@ public class GraphView {
     ypos++;
     c.gridy = ypos;
     basicOperations.add(nodeDetails, c);
-    nodeDetails.setSelected(true);
-    graph.setNodeVisualisation(true);
+    nodeDetails.setSelected(false);
+    graph.setNodeVisualisation(false);
     nodeDetails.addItemListener(new ItemListener() {
       @Override
       public void itemStateChanged(ItemEvent item) {
@@ -462,6 +505,10 @@ public class GraphView {
     return basicOperations;
   }
 
+  /**
+   * Build a Table which displays the Node Attributes
+   * @return  the Table which displays the Node Attributes
+   */
   private JTable createNodeAttributTable() {
     nodeAttributesModel = new DefaultTableModel() {
 
@@ -511,6 +558,8 @@ public class GraphView {
 
                 JOptionPane.showMessageDialog(null, errorPanel, "Ups something went wrong", JOptionPane.ERROR_MESSAGE);
               }
+              /*else
+            	  graph.updateGraph();*/
             }
           }
         }
@@ -520,6 +569,10 @@ public class GraphView {
     return tableNodeAttributes;
   }
 
+  /**
+   * Build a Table which displays the Edge Attributes
+   * @return  the Table which displays the Edge Attributes
+   */
   private JTable createEdgeAttributTable() {
     edgeAttributesModel = new DefaultTableModel() {
 
@@ -577,16 +630,29 @@ public class GraphView {
 
     return tableEdgeAttributes;
   }
-
+  
+  /**
+   * Get the Graph
+   * @return the Jung2 Graph, but with own features
+   */
   public GraphVisualization getGraph() {
     return graph;
   }
-
+  
+  /**
+   * Display an empty Graph
+   */
   public void resetGraph() {
     ModelBuilder.resetModel();
     this.getGraph().updateGraph();
   }
-
+  
+  /**
+   * Update the the Information panel after a Node change
+   * @param nodeName the name of the currently selected Node
+   * @param nodeType the type of the currently selected Node
+   * @param attributes the currently selected Nodes attributes
+   */
   private void updateNodeSidebar(String nodeName, MyNodeType nodeType, LinkedList<LinkedList<String>> attributes) {
 
     if (nodeName == null) {
@@ -639,7 +705,13 @@ public class GraphView {
     }
 
   }
-
+  
+  /**
+   * Update the the Information panel after a Edge change
+   * @param edge the currently selected Edge
+   * @param edgeType the type of the currently selected Edge
+   * @param attributes the currently selected Edges attributes
+   */
   private void updateEdgeSidebar(MyEdge edge, MyEdgeType edgeType, LinkedList<LinkedList<String>> attributes) {
     if (edge == null) {
       this.edgeSource.setText("");
@@ -694,7 +766,10 @@ public class GraphView {
     }
 
   }
-
+  
+  /**
+   * Add Listener to the Graph, which allows to trace every Node Selection change. Triggers the update on the Information Panel 
+   */
   private void addNodeChangeListener() {
     PickedState<MyNode> pickedState = graph.getVisualisationViewer().getPickedVertexState();
 
@@ -733,7 +808,10 @@ public class GraphView {
       updateNodeSidebar(null, null, null);
     }
   }
-
+  
+  /**
+   * Add Listener to the Graph, which allows to trace every Edge Selection change. Triggers the update on the Information Panel 
+   */
   private void addEdgeChangeListener() {
     PickedState<MyEdge> pickedState = graph.getVisualisationViewer().getPickedEdgeState();
     if (nodeListener != null) {
@@ -769,28 +847,44 @@ public class GraphView {
       updateEdgeSidebar(null, null, null);
     }
   }
-
+  
+	/**
+	 * Check if currently the GraphView is displayed to the user
+	 * @return true if it is displayed, else false
+	 */
   public boolean isActive() {
     return active;
   }
 
+	/**
+	 * Change the active status of  the GraphView
+	 * @param active is the GraphView currently active or not
+	 */
   public void setActive(boolean active) {
     this.active = active;
   }
-
+  
+  /**
+   * Set the value of the Search Depth Spinner on the Information Panel
+   * @param value the depth value to which the spinner should be set
+   */
   public void setDepthSpinnerValue(int value) {
     if (value > 0 && value < 101 && depthSpinner != null) {
       depthSpinner.getModel().setValue(value);
     }
   }
-
-  public int getDepthSpinnerValue() {
-    //		if (depthSpinner!=null)
-    //		{
-    //			return (int) depthSpinner.getModel().getValue();
-    //		}
-    //		else
-    return 1;
+  
+  /**
+   * Get the value of the Search Depth Spinner on the Information Panel
+   * @return 1 if the Spinner is not initialized, otherwise the value of the Spinner
+   */
+  public Integer getDepthSpinnerValue() {
+	if (depthSpinner!=null)
+	{
+		return (Integer) depthSpinner.getModel().getValue();
+	}
+	else
+		return 1;
   }
 
 }

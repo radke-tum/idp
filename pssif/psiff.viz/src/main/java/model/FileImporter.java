@@ -1,40 +1,26 @@
 package model;
 
 import java.awt.Component;
-import java.awt.FlowLayout;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-import java.util.HashMap;
 
-import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.xml.stream.XMLStreamException;
 
-import de.tum.pssif.core.metamodel.Metamodel;
 import de.tum.pssif.core.model.Model;
-import de.tum.pssif.core.util.PSSIFCanonicMetamodelCreator;
 import de.tum.pssif.transform.Mapper;
 import de.tum.pssif.transform.MapperFactory;
 
 
-public class FileImporter {
-
-  private JComboBox<String>       filetype;
-  private HashMap<String, String> comboBoxValues;
+public class FileImporter extends FileHandler{
 
   public FileImporter() {
-    comboBoxValues = new HashMap<String, String>();
-
-    comboBoxValues.put("Umsatzorientierte Funktionsplanung", MapperFactory.UOFP);
-    comboBoxValues.put("BPMN", MapperFactory.BPMN);
-    comboBoxValues.put("EPK", MapperFactory.EPK);
-    comboBoxValues.put("SysML", MapperFactory.SYSML);
-    comboBoxValues.put("PSS-IF", MapperFactory.PSSIF);
-
+	super("Select a Import File Format:");
   }
 
   /**
@@ -48,37 +34,40 @@ public class FileImporter {
     try {
       in = new FileInputStream(file);
 
-      Metamodel metamodel = PSSIFCanonicMetamodelCreator.create();
-
-      String selectedFileType = String.valueOf(filetype.getSelectedItem());
-
-      Mapper importer = MapperFactory.getMapper(comboBoxValues.get(selectedFileType));
+      Mapper importer = MapperFactory.getMapper(super.getSelectedMapperFactoryValue());
 
       Model model;
       try {
-        model = importer.read(metamodel, in);
-
-        // Create the Viz Model
-        new ModelBuilder(metamodel, model);
-
-        return true;
+        model = importer.read(ModelBuilder.getMetamodel(), in);
+        
+        if(model!=null)
+        {
+	        // Create the Viz Model
+	        ModelBuilder.addModel(ModelBuilder.getMetamodel(), model);
+	        return true;
+        }
+        else
+        {
+        	throw new Exception("Error during import");
+        }    
       }
-
-      catch (Exception e) {
-        //e.printStackTrace();
-        JPanel errorPanel = new JPanel();
-
-        errorPanel.add(new JLabel("There was a problem transforming the selected file. Was the file type chosen correctly?"));
-
-        JOptionPane.showMessageDialog(null, errorPanel, "Ups something went wrong", JOptionPane.ERROR_MESSAGE);
+      catch (Exception e ) {
+	        e.printStackTrace();
+	        JPanel errorPanel = new JPanel();
+	
+	        errorPanel.add(new JLabel("There was a problem transforming the selected file. Was the file type chosen correctly?"));
+	
+	        JOptionPane.showMessageDialog(null, errorPanel, "Ups something went wrong", JOptionPane.ERROR_MESSAGE);
         return false;
       }
+      
     } catch (FileNotFoundException e) {
-      JPanel errorPanel = new JPanel();
-
-      errorPanel.add(new JLabel("There was a problem importing the selected file."));
-
-      JOptionPane.showMessageDialog(null, errorPanel, "Ups something went wrong", JOptionPane.ERROR_MESSAGE);
+    		e.printStackTrace();
+	      JPanel errorPanel = new JPanel();
+	
+	      errorPanel.add(new JLabel("There was a problem importing the selected file."));
+	
+	      JOptionPane.showMessageDialog(null, errorPanel, "Ups something went wrong", JOptionPane.ERROR_MESSAGE);
       return false;
     }
   }
@@ -89,29 +78,13 @@ public class FileImporter {
    * @return true if the entire import went fine, otherwise false
    */
   public boolean showPopup(Component caller) {
-    JFileChooser openFile = new JFileChooser();
+	super.getFileChooser().setCurrentDirectory(new File("C:\\Users\\Luc\\Desktop\\Uni Dropbox\\Dropbox\\IDP-PSS-IF-Shared\\Modelle PE"));
 
-    openFile.setCurrentDirectory(new File("C:\\Users\\Luc\\Desktop\\Dropbox\\IDP-PSS-IF-Shared"));
-
-    //openFile.setCurrentDirectory(new File("C:\\Users\\Luc\\Desktop\\Uni Dropbox\\Dropbox\\IDP-PSS-IF-Shared\\Modelle PE"));
-
-    JPanel panel1 = (JPanel) openFile.getComponent(3);
-    JPanel panel2 = (JPanel) panel1.getComponent(2);
-
-    JPanel importeType = new JPanel(new FlowLayout());
-    JLabel label1 = new JLabel("Select Import File:");
-    importeType.add(label1);
-    filetype = new JComboBox<String>(comboBoxValues.keySet().toArray(new String[0]));
-    filetype.setSelectedIndex(0);
-    importeType.add(filetype);
-
-    panel2.add(importeType);
-
-    int returnVal = openFile.showOpenDialog(caller);
+    int returnVal = super.getFileChooser().showOpenDialog(caller);
 
     if (returnVal == JFileChooser.APPROVE_OPTION) {
 
-      File file = openFile.getSelectedFile();
+      File file = super.getFileChooser().getSelectedFile();
 
       return importFile(file);
 

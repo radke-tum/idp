@@ -33,7 +33,7 @@ import de.tum.pssif.core.util.PSSIFValue;
 public class MyModelContainer {
 
   private Model              model;
-  private MutableMetamodel   meta;
+  private Metamodel   		 meta;
   private MyNodeTypes        nodeTypes;
   private MyEdgeTypes        edgeTypes;
   private LinkedList<MyNode> nodes;
@@ -103,14 +103,28 @@ public class MyModelContainer {
       for (ConnectionMapping mapping : t.getType().getMappings()) {
         EdgeEnd from = mapping.getFrom();
         EdgeEnd to = mapping.getTo();
+        
         PSSIFOption<Edge> edges = mapping.apply(model);
-        for (Edge e : edges.getMany()) {
-          //TODO luc: handle hyperedges correctly
-          for (Node source : from.apply(e).getMany()) {
-            for (Node target : to.apply(e).getMany()) {
-              this.edges.add(new MyEdge(e, t, findNode(source), findNode(target)));
-            }
-          }
+        if (edges.isMany())
+        {
+	        for (Edge e : edges.getMany()) {
+	          //TODO luc: handle hyperedges correctly
+	          for (Node source : from.apply(e).getMany()) {
+	            for (Node target : to.apply(e).getMany()) {
+	            	addEdge(new MyEdge(e, t, findNode(source), findNode(target)));
+	            }
+	          }
+	        }
+        }
+        
+        if (edges.isOne())
+        {
+        	Edge e = edges.getOne();
+        	for (Node source : from.apply(e).getMany()) {
+	            for (Node target : to.apply(e).getMany()) {
+	            	addEdge(new MyEdge(e, t, findNode(source), findNode(target)));
+	            }
+	        }
         }
       }
     }
@@ -255,17 +269,18 @@ public class MyModelContainer {
    * @param source The start Node of the Edge
    * @param destination The destination Node of the Edge
    * @param edgetype The type of the Edge
+   * @param directed should the new edge be directed
    * @return true if the add operation was successful, false otherwise
    */
-  public boolean addNewEdgeGUI(MyNode source, MyNode destination, MyEdgeType edgetype) {
+  public boolean addNewEdgeGUI(MyNode source, MyNode destination, MyEdgeType edgetype, Boolean directed) {
     ConnectionMapping mapping = edgetype.getType().getMapping(source.getNodeType().getType(), destination.getNodeType().getType());
 
     if (mapping != null) {
       Edge newEdge = mapping.create(model, source.getNode(), destination.getNode());
-      if (edgetype.getType().findAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_DIRECTED) != null) {
-        PSSIFOption<PSSIFValue> value = PSSIFOption.one(PSSIFValue.create(true));
-        edgetype.getType().findAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_DIRECTED).set(newEdge, value);
-      }
+
+      PSSIFOption<PSSIFValue> value = PSSIFOption.one(PSSIFValue.create(directed));
+      edgetype.getType().findAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_DIRECTED).set(newEdge, value);
+
 
       MyEdge e = new MyEdge(newEdge, edgetype, source, destination);
 
