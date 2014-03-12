@@ -11,12 +11,13 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 
+import de.tum.pssif.core.common.PSSIFOption;
 import de.tum.pssif.core.metamodel.ConnectionMapping;
 import de.tum.pssif.core.metamodel.EdgeType;
 import de.tum.pssif.core.metamodel.Metamodel;
 import de.tum.pssif.core.metamodel.NodeType;
+import de.tum.pssif.core.metamodel.PSSIFCanonicMetamodelCreator;
 import de.tum.pssif.core.model.Model;
-import de.tum.pssif.core.util.PSSIFCanonicMetamodelCreator;
 
 /**
  * Builds out of a Model and an MetaModel a Model which can be displayed as Graph and Matrix
@@ -363,19 +364,20 @@ public class ModelBuilder {
 			{
 				for (EdgeType et: getMetamodel().getEdgeTypes())
 				{
-					ConnectionMapping mapping = et.getMapping(start, end);
-					if (mapping!=null)
+					PSSIFOption<ConnectionMapping> tmp = et.getMapping(start, end);
+					if (tmp!=null && tmp.isOne())
 					{
+						//ConnectionMapping mapping = tmp.getOne();
 						MyPair p = new MyPair(start, end);
-						LinkedList<MyEdgeType> tmp = possibleMappings.get(p);
+						LinkedList<MyEdgeType> data = possibleMappings.get(p);
 						
-						if (tmp ==null)
+						if (data ==null)
 						{
-							tmp = new LinkedList<MyEdgeType>();
+							data = new LinkedList<MyEdgeType>();
 						}
 						MyEdgeType value = getEdgeTypes().getValue(et.getName());
-						tmp.add(value);
-						possibleMappings.put(p, tmp);
+						data.add(value);
+						possibleMappings.put(p, data);
 					}
 					
 				}

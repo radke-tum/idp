@@ -2,21 +2,27 @@ package model;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map.Entry;
 import java.util.Set;
 
-import de.tum.pssif.core.metamodel.Annotation;
+
+
+
+
+
+import de.tum.pssif.core.common.PSSIFOption;
+import de.tum.pssif.core.common.PSSIFValue;
 import de.tum.pssif.core.metamodel.Attribute;
 import de.tum.pssif.core.metamodel.AttributeGroup;
 import de.tum.pssif.core.metamodel.ConnectionMapping;
-import de.tum.pssif.core.metamodel.EdgeEnd;
 import de.tum.pssif.core.metamodel.EdgeType;
 import de.tum.pssif.core.metamodel.Metamodel;
 import de.tum.pssif.core.metamodel.NodeType;
 import de.tum.pssif.core.model.Edge;
 import de.tum.pssif.core.model.Model;
 import de.tum.pssif.core.model.Node;
-import de.tum.pssif.core.util.PSSIFOption;
-import de.tum.pssif.core.util.PSSIFValue;
+
 /**
  * Very basic Model Merger. Can merge two models into one model. Does only copy everything from one model to the other. No matching at all!
  * @author Luc
@@ -62,26 +68,39 @@ public class ModelMerger {
 		int counter =0;
 		for (EdgeType t : meta.getEdgeTypes()) 
 		{
-		      for (ConnectionMapping mapping : t.getMappings()) 
-		      {
-		        PSSIFOption<Edge> edges = mapping.apply(model);
-		        
-		        if (edges.isMany())
-		        {
-			        for (Edge e : edges.getMany()) {
-			        	counter++;
+		    PSSIFOption<ConnectionMapping>tmp = t.getMappings();
+		    
+		    if (tmp!= null && (tmp.isMany() || tmp.isOne()))
+		    {
+				Set<ConnectionMapping> mappings;
+				
+				if (tmp.isMany())
+					mappings = tmp.getMany();
+				else
+				{
+					mappings = new HashSet<ConnectionMapping>();
+					mappings.add(tmp.getOne());
+				}
+		    	
+		    	for (ConnectionMapping mapping :mappings) 
+			      {
+			        PSSIFOption<Edge> edges = mapping.apply(model);
+			        
+			        if (edges.isMany())
+			        {
+				        for (Edge e : edges.getMany()) {
+				        	counter++;
+				        }
 			        }
-		        }
-		        else 
-		        	{
-		        		if (edges.isOne())
-		        		{
-		        			counter++;
-		        		}
-		        	}
-		        	
-		        
-		      }
+			        else 
+			        	{
+			        		if (edges.isOne())
+			        		{
+			        			counter++;
+			        		}
+			        	}
+			      }
+		    }
 		}
 		System.out.println("Nb edges :"+counter);	        
 	}
@@ -151,59 +170,52 @@ public class ModelMerger {
 	 */
 	private void addAllEdges()
 	{
-		 //TODO handle hyperedges correctly
 		for (EdgeType t : meta.getEdgeTypes()) {
-		      for (ConnectionMapping mapping : t.getMappings()) {
-		        EdgeEnd from = mapping.getFrom();
-		        EdgeEnd to = mapping.getTo();
-		        
-		        PSSIFOption<Edge> edges = mapping.apply(model2);
-		        if (edges.isMany())
-		        {
-		        	//System.out.println("Multi Edge");
-		        	for (Edge e : edges.getMany()) {
-			        	if (from.apply(e).isOne() && to.apply(e).isOne())
+			PSSIFOption<ConnectionMapping>tmp = t.getMappings();
+		    
+		    if (tmp!= null && (tmp.isMany() || tmp.isOne()))
+		    {
+				Set<ConnectionMapping> mappings;
+				
+				if (tmp.isMany())
+					mappings = tmp.getMany();
+				else
+				{
+					mappings = new HashSet<ConnectionMapping>();
+					mappings.add(tmp.getOne());
+				}
+			
+			      for (ConnectionMapping mapping : mappings) {
+			       // EdgeEnd from = mapping.getFrom();
+			       // EdgeEnd to = mapping.getTo();
+			        
+			        PSSIFOption<Edge> edges = mapping.apply(model2);
+			        if (edges.isMany())
+			        {
+			        	//System.out.println("Multi Edge");
+			        	for (Edge e : edges.getMany()) 
 			        	{
-			        		Node source = from.apply(e).getOne();
-			        		Node target = to.apply(e).getOne();
-			        		//System.out.println("only one source and dest");
-			        		//System.out.println("Create edge from "+oldToNewNodes.get(source)+ " to "+ oldToNewNodes.get(target) +" EdgeType "+ t );
-			        		Edge newEdge = mapping.create(model1, oldToNewNodes.get(source), oldToNewNodes.get(target));
-							
-							transferEdgeAttributes(e, newEdge, t);
+			        		Node source = mapping.applyFrom(e);
+			        		Node target = mapping.applyTo(e);
 			        		
-			        	}
-			        	else
-			        	{
-				        	for (Node source : from.apply(e).getMany()) 
-					          {
-					            for (Node target : to.apply(e).getMany()) 
-					            {
-					            //	System.out.println("more sources and dests");
-					            //	System.out.println("Create edge from "+oldToNewNodes.get(source)+ " to "+ oldToNewNodes.get(target) +" EdgeType "+ t );
-					            	Edge newEdge = mapping.create(model1, oldToNewNodes.get(source), oldToNewNodes.get(target));
-									
-									transferEdgeAttributes(e, newEdge, t);
-					            }
-					          }
-			        	}
-			        }
-		        }
-		        else if (edges.isOne())
-		        {
-		        //	System.out.println("Single Edge");
-		        	Edge e = edges.getOne();
-		        	for (Node source : from.apply(e).getMany()) {
-			            for (Node target : to.apply(e).getMany()) {
-			            	//System.out.println("Create edge from "+oldToNewNodes.get(source)+ " to "+ oldToNewNodes.get(target) +" EdgeType "+ t );
-			            	Edge newEdge = mapping.create(model1, oldToNewNodes.get(source), oldToNewNodes.get(target));
-							
+			        		Edge newEdge = mapping.create(model1, oldToNewNodes.get(source), oldToNewNodes.get(target));
 							transferEdgeAttributes(e, newEdge, t);
-			            }
+				        	
+				        }
 			        }
-		        }
+			        else if (edges.isOne())
+			        {
+			        //	System.out.println("Single Edge");
+			        	Edge e = edges.getOne();
+			        	Node source = mapping.applyFrom(e);
+		        		Node target = mapping.applyTo(e);
+		        		
+		        		Edge newEdge = mapping.create(model1, oldToNewNodes.get(source), oldToNewNodes.get(target));
+						transferEdgeAttributes(e, newEdge, t);
+			        }
 		      }
 		    }
+		 }
 	}
 	
 	/**
@@ -235,7 +247,7 @@ public class ModelMerger {
 					
 					if (attrvalue!= null)
 					{
-						currentType.findAttribute(a.getName()).set(newNode, attrvalue);
+						currentType.getAttribute(a.getName()).getOne().set(newNode, attrvalue);
 					}
 				}
 			}
@@ -243,6 +255,30 @@ public class ModelMerger {
 		
 		// transfer annotations
 		
+		PSSIFOption<Entry<String, String>> tmp = dataNode.getAnnotations();
+		
+		Set<Entry<String, String>> annotations =null;
+		
+		if (tmp!=null && (tmp.isMany() || tmp.isOne()))
+		{
+			if (tmp.isMany())
+				annotations = tmp.getMany();
+			else
+			{
+				annotations = new HashSet<Entry<String,String>>();
+				annotations.add(tmp.getOne());
+			}
+		}
+		
+		if (annotations!=null)
+		{
+			for (Entry<String,String> a : annotations)
+			{
+				newNode.annotate(a.getKey(), a.getValue());
+			}
+		}
+		
+		/*
 		Collection<Annotation> annotations = currentType.getAnnotations(dataNode);
 		
 		if (annotations!=null)
@@ -264,7 +300,7 @@ public class ModelMerger {
 					}
 				}
 			}
-		}
+		}*/
 	}
 	
 	/**
@@ -291,7 +327,7 @@ public class ModelMerger {
 					
 					if (attrvalue!= null)
 					{
-						type.findAttribute(a.getName()).set(newEdge, attrvalue);
+						type.getAttribute(a.getName()).getOne().set(newEdge, attrvalue);
 					}
 				}
 			}
@@ -299,7 +335,30 @@ public class ModelMerger {
 			
 		// transfer annotations
 		
-		Collection<Annotation> annotations = type.getAnnotations(oldEdge);
+		PSSIFOption<Entry<String, String>> tmp = oldEdge.getAnnotations();
+		
+		Set<Entry<String, String>> annotations =null;
+		
+		if (tmp!=null && (tmp.isMany() || tmp.isOne()))
+		{
+			if (tmp.isMany())
+				annotations = tmp.getMany();
+			else
+			{
+				annotations = new HashSet<Entry<String,String>>();
+				annotations.add(tmp.getOne());
+			}
+		}
+		
+		if (annotations!=null)
+		{
+			for (Entry<String,String> a : annotations)
+			{
+				newEdge.annotate(a.getKey(), a.getValue());
+			}
+		}
+		
+	/*	Collection<Annotation> annotations = type.getAnnotations(oldEdge);
 		
 		if (annotations!=null)
 		{
@@ -320,6 +379,6 @@ public class ModelMerger {
 					}
 				}
 			}
-		}
+		}*/
 	}
 }

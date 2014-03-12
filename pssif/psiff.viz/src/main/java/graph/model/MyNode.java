@@ -9,13 +9,17 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
-import de.tum.pssif.core.PSSIFConstants;
+
+
+
+
+import de.tum.pssif.core.common.PSSIFConstants;
+import de.tum.pssif.core.common.PSSIFOption;
+import de.tum.pssif.core.common.PSSIFValue;
 import de.tum.pssif.core.metamodel.Attribute;
 import de.tum.pssif.core.metamodel.DataType;
 import de.tum.pssif.core.metamodel.PrimitiveDataType;
 import de.tum.pssif.core.model.Node;
-import de.tum.pssif.core.util.PSSIFOption;
-import de.tum.pssif.core.util.PSSIFValue;
 
 /**
  * A Data container for the Nodes the PSS-IF Model
@@ -51,13 +55,19 @@ public class MyNode{
 	private List<String> calcAttr()
 	{
 		List<String> attributes = new LinkedList<String>();
-		Attribute nodeName = type.getType().findAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_NAME);
+		
+		PSSIFOption<Attribute> tmp = type.getType().getAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_NAME);
+		Attribute nodeName;
+		if (tmp.isOne())
+			nodeName = tmp.getOne();
+		else
+			nodeName =null;
 		
 		Collection<Attribute> attr = type.getType().getAttributes();
 		
 		for (Attribute current : attr)
 		{
-			if (!nodeName.equals(current))
+			if (!current.equals(nodeName))
 			{
 				String attrName = current.getName();
 				
@@ -151,84 +161,95 @@ public class MyNode{
 	 */
 	public boolean updateAttribute(String attributeName, Object value)
 	{		
-		DataType attrType = type.getType().findAttribute(attributeName).getType();
-		
-		if (attrType.equals(PrimitiveDataType.BOOLEAN))
+		PSSIFOption<Attribute> tmp = type.getType().getAttribute(attributeName);
+		if (tmp.isOne())
 		{
-			try 
+			Attribute attribute = tmp.getOne();
+			DataType attrType = attribute.getType();
+		
+			if (attrType.equals(PrimitiveDataType.BOOLEAN))
 			{
-				PSSIFValue res = PrimitiveDataType.BOOLEAN.fromObject(value);
-				
-				type.getType().findAttribute(attributeName).set(node, PSSIFOption.one(res));
+				try 
+				{
+					PSSIFValue res = PrimitiveDataType.BOOLEAN.fromObject(value);
+					
+					attribute.set(node, PSSIFOption.one(res));
+				}
+				catch (IllegalArgumentException e)
+				{
+					e.printStackTrace();
+					return false;
+				}
 			}
-			catch (IllegalArgumentException e)
+			
+			if (attrType.equals(PrimitiveDataType.DATE))
 			{
-				return false;
+				try 
+				{
+					Date data = parseDate((String) value);
+					
+					PSSIFValue res = PrimitiveDataType.DATE.fromObject(data);
+					attribute.set(node, PSSIFOption.one(res));
+				}
+				catch (IllegalArgumentException e)
+				{
+					e.printStackTrace();
+					return false;
+				}
 			}
+			
+			if (attrType.equals(PrimitiveDataType.DECIMAL))
+			{
+				try 
+				{
+					PSSIFValue res = PrimitiveDataType.DECIMAL.fromObject(value);
+					
+					attribute.set(node, PSSIFOption.one(res));
+				}
+				catch (IllegalArgumentException e)
+				{
+					e.printStackTrace();
+					return false;
+				}
+			}
+			
+			if (attrType.equals(PrimitiveDataType.INTEGER))
+			{
+				try 
+				{
+					PSSIFValue res = PrimitiveDataType.INTEGER.fromObject(value);
+					
+					attribute.set(node, PSSIFOption.one(res));
+	
+				}
+				catch (IllegalArgumentException e)
+				{
+					e.printStackTrace();
+					return false;
+				}
+			}
+			
+			if (attrType.equals(PrimitiveDataType.STRING))
+			{
+				try 
+				{
+					PSSIFValue res = PrimitiveDataType.STRING.fromObject(value);
+					
+					attribute.set(node, PSSIFOption.one(res));
+	
+				}
+				catch (IllegalArgumentException e)
+				{
+					e.printStackTrace();
+					return false;
+				}
+			}
+			
+			this.update();
+			return true;
 		}
-		
-		if (attrType.equals(PrimitiveDataType.DATE))
-		{
-			try 
-			{
-				Date tmp = parseDate((String) value);
-				
-				PSSIFValue res = PrimitiveDataType.DATE.fromObject(tmp);
-				type.getType().findAttribute(attributeName).set(node, PSSIFOption.one(res));
-			}
-			catch (IllegalArgumentException e)
-			{
-				System.out.println(e.getMessage());
-				return false;
-			}
-		}
-		
-		if (attrType.equals(PrimitiveDataType.DECIMAL))
-		{
-			try 
-			{
-				PSSIFValue res = PrimitiveDataType.DECIMAL.fromObject(value);
-				
-				type.getType().findAttribute(attributeName).set(node, PSSIFOption.one(res));
-			}
-			catch (IllegalArgumentException e)
-			{
-				return false;
-			}
-		}
-		
-		if (attrType.equals(PrimitiveDataType.INTEGER))
-		{
-			try 
-			{
-				PSSIFValue res = PrimitiveDataType.INTEGER.fromObject(value);
-				
-				type.getType().findAttribute(attributeName).set(node, PSSIFOption.one(res));
 
-			}
-			catch (IllegalArgumentException e)
-			{
-				return false;
-			}
-		}
-		
-		if (attrType.equals(PrimitiveDataType.STRING))
-		{
-			try 
-			{
-				PSSIFValue res = PrimitiveDataType.STRING.fromObject(value);
-				
-				type.getType().findAttribute(attributeName).set(node, PSSIFOption.one(res));
-
-			}
-			catch (IllegalArgumentException e)
-			{
-				return false;
-			}
-		}
-		
-		this.update();
-		return true;
+		return false;
 	}
 	
 	/**
@@ -568,26 +589,30 @@ public class MyNode{
 	 */
 	private String findName()
 	{
-		String name="";
+		String name="Name not available";
 		// find the name of the Node
-		Attribute nodeName = type.getType().findAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_NAME);
-		
-		if (nodeName.get(node)!=null)
+		PSSIFOption<Attribute> tmp =type.getType().getAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_NAME);
+		if (tmp.isOne())
 		{
-			PSSIFValue value =null;
-			if (nodeName.get(node).isOne())
+			Attribute nodeName = tmp.getOne();
+			
+			if (nodeName.get(node)!=null)
 			{
-				value = nodeName.get(node).getOne();
-				name = value.asString();
+				PSSIFValue value =null;
+				if (nodeName.get(node).isOne())
+				{
+					value = nodeName.get(node).getOne();
+					name = value.asString();
+				}
+				if (nodeName.get(node).isNone())
+				{
+					name ="Name not available";
+				}
 			}
-			if (nodeName.get(node).isNone())
-			{
+			else
 				name ="Name not available";
-			}
 		}
-		else
-			name ="Name not available";
-		
+			
 		return name;
 	}
 

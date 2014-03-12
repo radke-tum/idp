@@ -1,6 +1,8 @@
 package graph.model;
 
+import de.tum.pssif.core.common.PSSIFOption;
 import de.tum.pssif.core.metamodel.EdgeType;
+import de.tum.pssif.core.metamodel.NodeType;
 
 /**
  * A container for the EdgeType from the PSSIF Model
@@ -26,6 +28,15 @@ public class MyEdgeType {
 
 	public EdgeType getType() {
 		return type;
+	}
+	
+	public EdgeType getParentType() {
+		
+		PSSIFOption<EdgeType>tmp = type.getGeneral();
+		if (tmp!=null && tmp.isOne())
+			return tmp.getOne();
+		else
+			return null;
 	}
 
 	public int getLineType() {

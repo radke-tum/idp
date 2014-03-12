@@ -96,7 +96,7 @@ public class MyCollapser {
 			
 			for (MyEdge e : out)
 			{
-				EdgeType parent = e.getEdgeType().getType().getGeneral();
+				EdgeType parent = e.getEdgeType().getParentType();
 				
 				boolean test = false;
 				// test if one of the outgoing edges is an containment

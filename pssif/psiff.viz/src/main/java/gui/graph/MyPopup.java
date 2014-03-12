@@ -34,7 +34,7 @@ public abstract class MyPopup {
 			String parentName;
 			if (t.getType().getGeneral()!=null)
 			{
-				parentName = t.getType().getGeneral().getName();	
+				parentName = t.getParentType().getName();
 			}
 			else
 			{
