@@ -29,20 +29,20 @@ import de.tum.pssif.core.model.Edge;
  */
 public class MyEdge {
 	private MyEdgeType type;
-	private MyNode source;
-	private MyNode destination;
+	private IMyNode source;
+	private IMyNode destination;
 	private Edge edge;
 	private boolean visible;
 	private boolean collapseEdge;
 	
 	/**
 	 * Creates a new MyEdge2 Object
-	 * @param edge : Edge || an edge from the PSS-IF Model
-	 * @param type : MyEdgeType || the type of the edge
-	 * @param source : MyNode2 || the startpoint of the Edge
-	 * @param destination : MyNode2 || the endpoint of the Edge
+	 * @param edge :  an edge from the PSS-IF Model
+	 * @param type :  the type of the edge
+	 * @param source : the startpoint of the Edge
+	 * @param destination : the endpoint of the Edge
 	 */
-	public MyEdge(Edge edge, MyEdgeType type, MyNode source, MyNode destination ) {
+	public MyEdge(Edge edge, MyEdgeType type, IMyNode source, IMyNode destination ) {
 		this.type =type;
 		this.source=source;
 		this.destination = destination;
@@ -143,11 +143,11 @@ public class MyEdge {
 		return type;
 	}
 
-	public MyNode getSourceNode() {
+	public IMyNode getSourceNode() {
 		return source;
 	}
 
-	public MyNode getDestinationNode() {
+	public IMyNode getDestinationNode() {
 		return destination;
 	}
 	
@@ -162,7 +162,7 @@ public class MyEdge {
 	
 	/**
 	 * Get a Mapping from an Attribute name to an Attribute object which contains all the infomations
-	 * @return HashMap<String, Attribute> || Might be empty
+	 * @return a Mapping from an Attribute name to an Attribute.  Might be empty
 	 */
 	public HashMap<String, Attribute> getAttributesHashMap()
 	{

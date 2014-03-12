@@ -6,6 +6,7 @@ import java.awt.Dimension;
 import java.awt.Paint;
 import java.awt.Shape;
 import java.awt.Stroke;
+import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 import java.util.Collection;
 import java.util.HashMap;
@@ -33,8 +34,10 @@ import edu.uci.ics.jung.visualization.util.Animator;
 import graph.listener.ConfigWriterReader;
 import graph.listener.MyPopupGraphMousePlugin;
 import graph.model.GraphBuilder;
+import graph.model.IMyNode;
 import graph.model.MyEdge;
 import graph.model.MyEdgeType;
+import graph.model.MyJunctionNode;
 import graph.model.MyNode;
 import graph.model.MyNodeType;
 import graph.operations.GraphViewContainer;
@@ -55,11 +58,11 @@ public class GraphVisualization
   public static final String CircleLayout  ="CircleLayout";
   public static final String TestLayout  ="TestLayout";
 	
-  private Graph<MyNode, MyEdge> g;
+  private Graph<IMyNode, MyEdge> g;
   private AbstractModalGraphMouse gm;
-  private VisualizationViewer<MyNode, MyEdge> vv;
-  private Layout<MyNode, MyEdge> layout;
-  private VertexStrokeHighlight<MyNode, MyEdge> vsh;
+  private VisualizationViewer<IMyNode, MyEdge> vv;
+  private Layout<IMyNode, MyEdge> layout;
+  private VertexStrokeHighlight<IMyNode, MyEdge> vsh;
   private GraphBuilder gb;
   private boolean detailedNodes;
   private MyCollapser collapser;
@@ -79,7 +82,7 @@ public class GraphVisualization
     
     this.g =  this.gb.createGraph(this.detailedNodes);
     
-    this.layout = new FRLayout<MyNode, MyEdge>(this.g);
+    this.layout = new FRLayout<IMyNode, MyEdge>(this.g);
     if (d != null)
     {
 	      int x = (int)d.getWidth() - 50;
@@ -91,7 +94,7 @@ public class GraphVisualization
     	this.layout.setSize(new Dimension(i, i));
     }
 
-    this.vv = new VisualizationViewer<MyNode, MyEdge>(this.layout);
+    this.vv = new VisualizationViewer<IMyNode, MyEdge>(this.layout);
 
     if (d != null) 
     {
@@ -102,7 +105,7 @@ public class GraphVisualization
     	this.vv.setPreferredSize(new Dimension(i, i));
     }
     
-    this.vsh = new VertexStrokeHighlight<MyNode,MyEdge>(this.g, this.vv.getPickedVertexState()); 
+    this.vsh = new VertexStrokeHighlight<IMyNode,MyEdge>(this.g, this.vv.getPickedVertexState()); 
     this.vsh.setHighlight(true, 1, new LinkedList<MyEdgeType>());
     
     createNodeTransformers();
@@ -118,13 +121,15 @@ public class GraphVisualization
    */
   private void createNodeTransformers()
   {
-	  Transformer<MyNode, Paint> vertexColor = new Transformer<MyNode, Paint>()
+	  Transformer<IMyNode, Paint> vertexColor = new Transformer<IMyNode, Paint>()
 			    {
-			      public Paint transform(MyNode i)
+			      public Paint transform(IMyNode i)
 			      {
-			    	if (nodeColorMapping!=null)
+			    	
+			    	if (nodeColorMapping!=null && i instanceof MyNode)
 			    	{
-				    	Color c = nodeColorMapping.get(i.getNodeType());
+				    	MyNode node = (MyNode) i;
+			    		Color c = nodeColorMapping.get(node.getNodeType());
 				    	if (c!=null)
 				    		return c;
 			    	}
@@ -133,41 +138,36 @@ public class GraphVisualization
 			      }
 			    };
 			    
-	Transformer<MyNode, Shape> vertexSize = new Transformer<MyNode, Shape>()
+	Transformer<IMyNode, Shape> vertexSize = new Transformer<IMyNode, Shape>()
 			    {
-			      public Shape transform(MyNode node)
+			      public Shape transform(IMyNode node)
 			      {
-			      //  if (node.isDetailedOutput())
-			      //  {	
-			         
-			         // if (node.getHeight() != 0 && node.getWidth() != 0) { 
-			        	  //return new Rectangle2D.Double(-75.0D, -75.0D, node.getWidth()*55, node.getHeight()*55);
-			     //   	  return new Rectangle2D.Double(-90.0D, -25.0D, node.getWidth(), node.getHeight());
-			         /* }
-			          else
-			          {
-			        	  return new Rectangle2D.Double(-75.0D, -75.0D, 170.0D, 150.0D);
-			          }*/
-			     //   }
-			      //  else
-			      //  {
-			        	//return new Rectangle2D.Double(-75.0D, -25.0D, node.getWidth()*55, 50.0D);
-			        	return new Rectangle2D.Double(-(node.getWidth()/2), -(node.getHeight()/2), node.getWidth(), node.getHeight());
-			     //   }
+			    	  if (node instanceof MyNode)
+			    	  {
+			    		  MyNode tmp = (MyNode) node;
+			    		  return new Rectangle2D.Double(-(tmp.getWidth()/2), -(tmp.getHeight()/2), tmp.getWidth(), tmp.getHeight());
+			    	  }
+			    	  else
+			    	  {
+			    		  //MyJunctionNode tmp = (MyJunctionNode) node;
+			    		  return new Ellipse2D.Double(-25, -25, 150, 50);
+			    		  //return new Rectangle2D.Double(-(tmp.getWidth()/2), -(tmp.getHeight()/2), tmp.getWidth(), tmp.getHeight());
+
+			    	  }
 			      }
 			    };
 			    
-	 Transformer<MyNode, String> vertexLabelTransformer =  new Transformer<MyNode, String>()
+	 Transformer<IMyNode, String> vertexLabelTransformer =  new Transformer<IMyNode, String>()
 			    	    {
-			        public String transform(MyNode node)
+			        public String transform(IMyNode node)
 			        {
 			        	return "<html>" + node.getNodeInformations(node.isDetailedOutput());
 			        }
 			        
 			    };
 			    
-	Transformer<MyNode,String> vertexToolTippTransformer =new Transformer<MyNode,String>(){
-			        public String transform(MyNode n) {
+	Transformer<IMyNode,String> vertexToolTippTransformer =new Transformer<IMyNode,String>(){
+			        public String transform(IMyNode n) {
 			        	if (!n.isDetailedOutput())
 			        		return "<html>" + n.getNodeInformations(true);
 			        	else
@@ -268,7 +268,7 @@ public class GraphVisualization
    * Get the Jung2 Graph Visualization
    * @return the Jung2 VisualizationViewer
    */
-  public VisualizationViewer<MyNode, MyEdge> getVisualisationViewer()
+  public VisualizationViewer<IMyNode, MyEdge> getVisualisationViewer()
   {
     return this.vv;
   }
@@ -317,7 +317,7 @@ public class GraphVisualization
    */
   public void setFollowEdgeTypes(LinkedList<MyEdgeType> types, int depth)
   {
-	 this.vsh = new VertexStrokeHighlight<MyNode, MyEdge>(g, this.vv.getPickedVertexState());
+	 this.vsh = new VertexStrokeHighlight<IMyNode, MyEdge>(g, this.vv.getPickedVertexState());
 	 this.vsh.setHighlight(true, depth, types);
 	 this.vv.getRenderContext().setVertexStrokeTransformer(this.vsh);
 	 this.vv.repaint();
@@ -346,16 +346,20 @@ public class GraphVisualization
    */
   public void collapseNode ()
   {
-	  Collection<MyNode> picked =new HashSet<MyNode>(vv.getPickedVertexState().getPicked());
+	  Collection<IMyNode> picked =new HashSet<IMyNode>(vv.getPickedVertexState().getPicked());
       if(picked.size() == 1) {
-      	MyNode root = picked.iterator().next();
+    	IMyNode root = picked.iterator().next();
       	
-      	if (collapser.isCollapsable(root))
-      	{
-	      	collapser.collapseGraph( root);
-	      	
-	      	this.updateGraph();
-      	}
+    	if (root instanceof MyNode)
+    	{
+	      	MyNode node = (MyNode) root;
+    		if (collapser.isCollapsable(node))
+	      	{
+		      	collapser.collapseGraph( node);
+		      	
+		      	this.updateGraph();
+	      	}
+    	}
       }
   }
   
@@ -365,16 +369,20 @@ public class GraphVisualization
    */
   public void ExpandNode(boolean nodeDetails)
   {
-	  Collection<MyNode> picked =new HashSet<MyNode>(vv.getPickedVertexState().getPicked());
+	  Collection<IMyNode> picked =new HashSet<IMyNode>(vv.getPickedVertexState().getPicked());
       if(picked.size() == 1) {
-      	MyNode root = picked.iterator().next();
+    	  IMyNode root = picked.iterator().next();
       	
-      	if (collapser.isExpandable(root))
-      	{
-	      	collapser.expandNode( root, nodeDetails);
-	      	
-	      	this.updateGraph();
-      	}
+    	  if (root instanceof MyNode)
+      		{
+	  	      	MyNode node = (MyNode) root;
+		      	if (collapser.isExpandable(node))
+		      	{
+			      	collapser.expandNode( node, nodeDetails);
+			      	
+			      	this.updateGraph();
+		      	}
+      		}
       }
   }
   
@@ -384,11 +392,15 @@ public class GraphVisualization
    */
   public boolean isExpandable ()
   {
-	  Collection<MyNode> picked =new HashSet<MyNode>(vv.getPickedVertexState().getPicked());
+	  Collection<IMyNode> picked =new HashSet<IMyNode>(vv.getPickedVertexState().getPicked());
       if(picked.size() == 1) {
-      	MyNode root = picked.iterator().next();
-      	
-      	return collapser.isExpandable(root);
+    	IMyNode root = picked.iterator().next();
+    	
+    	if (root instanceof MyNode)
+  		{
+  	      	MyNode node = (MyNode) root;
+  	      	return collapser.isExpandable(node);
+  		}
       }
       return false;
   }
@@ -399,11 +411,15 @@ public class GraphVisualization
    */
   public boolean isCollapsable()
   {
-	  Collection<MyNode> picked =new HashSet<MyNode>(vv.getPickedVertexState().getPicked());
+	  Collection<IMyNode> picked =new HashSet<IMyNode>(vv.getPickedVertexState().getPicked());
       if(picked.size() == 1) {
-      	MyNode root = picked.iterator().next();
+    	  IMyNode root = picked.iterator().next();
       	
-      	return collapser.isCollapsable(root);
+    	  if (root instanceof MyNode)
+    		{
+    	      	MyNode node = (MyNode) root;
+    	      	return collapser.isCollapsable(node);
+    		}
       }
       return false;
   }
@@ -475,34 +491,34 @@ public class GraphVisualization
 	{
 		if (newLayout.equals(KKLayout))
 		{
-			this.layout = new KKLayout<MyNode, MyEdge>(g);
+			this.layout = new KKLayout<IMyNode, MyEdge>(g);
 		}
 		if (newLayout.equals(FRLayout))
 		{
-			this.layout = new FRLayout<MyNode, MyEdge>(g);
+			this.layout = new FRLayout<IMyNode, MyEdge>(g);
 		}
 		if (newLayout.equals(SpringLayout))
 		{
-			this.layout = new SpringLayout<MyNode, MyEdge>(g);
+			this.layout = new SpringLayout<IMyNode, MyEdge>(g);
 		}
 		if (newLayout.equals(ISOMLayout))
 		{
-			this.layout = new ISOMLayout<MyNode, MyEdge>(g);
+			this.layout = new ISOMLayout<IMyNode, MyEdge>(g);
 		}
 		if (newLayout.equals(CircleLayout))
 		{
-			this.layout = new CircleLayout<MyNode, MyEdge>(g);
+			this.layout = new CircleLayout<IMyNode, MyEdge>(g);
 		}
 		
 		if (newLayout.equals(TestLayout))
 		{
-			this.layout = new gui.TestLayout<MyNode, MyEdge>(g);
+			this.layout = new gui.TestLayout<IMyNode, MyEdge>(g);
 		}
 		
 		layout.setInitializer(vv.getGraphLayout());
 		layout.setSize(vv.getSize());
         
-		LayoutTransition<MyNode,MyEdge> lt =new LayoutTransition<MyNode,MyEdge>(vv, vv.getGraphLayout(), layout);
+		LayoutTransition<IMyNode,MyEdge> lt =new LayoutTransition<IMyNode,MyEdge>(vv, vv.getGraphLayout(), layout);
 		Animator animator = new Animator(lt);
 		animator.start();
 		vv.getRenderContext().getMultiLayerTransformer().setToIdentity();

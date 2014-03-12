@@ -11,12 +11,14 @@ import java.util.Set;
 
 
 
+
 import de.tum.pssif.core.common.PSSIFOption;
 import de.tum.pssif.core.common.PSSIFValue;
 import de.tum.pssif.core.metamodel.Attribute;
 import de.tum.pssif.core.metamodel.AttributeGroup;
 import de.tum.pssif.core.metamodel.ConnectionMapping;
 import de.tum.pssif.core.metamodel.EdgeType;
+import de.tum.pssif.core.metamodel.JunctionNodeType;
 import de.tum.pssif.core.metamodel.Metamodel;
 import de.tum.pssif.core.metamodel.NodeType;
 import de.tum.pssif.core.model.Edge;
@@ -33,7 +35,7 @@ public class ModelMerger {
 	private Model model1;
 	private Model model2;
 	private Metamodel meta;
-	private HashMap<Node, NodeType> transferNodes;
+
 	private HashMap<Node, Node> oldToNewNodes;
 	
 	/**
@@ -48,13 +50,13 @@ public class ModelMerger {
 		this.model1 = model1;
 		this.model2 = model2;
 		this.meta = meta;
-		this.transferNodes = new HashMap<Node, NodeType>();
 		this.oldToNewNodes = new HashMap<Node, Node>();
 		
 		//printNbEdges(model1);
 	//	printNbNodes(model1);
 		// start transformation operations
 		addAllNodes();
+		addAllJunctionNodes();
 		addAllEdges();
 		
 	//	printNbEdges(model1);
@@ -149,7 +151,6 @@ public class ModelMerger {
 				{
 					// copy it to model1
 					addNode(n, t);
-					transferNodes.put(n, t);
 				}
 			}
 			else 
@@ -159,7 +160,38 @@ public class ModelMerger {
 					Node current = tempNodes.getOne();
 					// copy it to model1
 					addNode(current, t);
-					transferNodes.put(current, t);
+				}
+			}
+		}
+	}
+	
+	/**
+	 * add all the JunctionNodes from model2 to model1
+	 */
+	private void addAllJunctionNodes()
+	{	
+		// loop over all JunctionNode types
+		for (JunctionNodeType t : meta.getJunctionNodeTypes())
+		{
+			// get all the Nodes of this type
+			PSSIFOption<Node> tempNodes = t.apply(model2,false);
+			
+			if (tempNodes.isMany())
+			{
+				Set<Node> many = tempNodes.getMany();
+				for (Node n : many)
+				{
+					// copy it to model1
+					addJunctionNode(n, t);
+				}
+			}
+			else 
+			{
+				if (tempNodes.isOne())
+				{
+					Node current = tempNodes.getOne();
+					// copy it to model1
+					addJunctionNode(current, t);
 				}
 			}
 		}
@@ -186,13 +218,9 @@ public class ModelMerger {
 				}
 			
 			      for (ConnectionMapping mapping : mappings) {
-			       // EdgeEnd from = mapping.getFrom();
-			       // EdgeEnd to = mapping.getTo();
-			        
 			        PSSIFOption<Edge> edges = mapping.apply(model2);
 			        if (edges.isMany())
 			        {
-			        	//System.out.println("Multi Edge");
 			        	for (Edge e : edges.getMany()) 
 			        	{
 			        		Node source = mapping.applyFrom(e);
@@ -200,12 +228,10 @@ public class ModelMerger {
 			        		
 			        		Edge newEdge = mapping.create(model1, oldToNewNodes.get(source), oldToNewNodes.get(target));
 							transferEdgeAttributes(e, newEdge, t);
-				        	
 				        }
 			        }
 			        else if (edges.isOne())
 			        {
-			        //	System.out.println("Single Edge");
 			        	Edge e = edges.getOne();
 			        	Node source = mapping.applyFrom(e);
 		        		Node target = mapping.applyTo(e);
@@ -301,6 +327,67 @@ public class ModelMerger {
 				}
 			}
 		}*/
+	}
+	
+	/**
+	 * Add a given JunctionNode to Model1
+	 * @param dataNode the model which should be transfered to model1
+	 * @param currentType the type of the dataNode
+	 */
+	private void addJunctionNode(Node dataNode, JunctionNodeType currentType)
+	{
+		// create Node
+		Node newNode = currentType.create(model1);
+		
+		oldToNewNodes.put(dataNode, newNode);
+		
+		
+		// transfer attribute groups
+		Collection<AttributeGroup> attrgroups = currentType.getAttributeGroups();
+		
+		if (attrgroups !=null)
+		{
+			for (AttributeGroup ag : attrgroups)
+			{
+				// transfer attribute values
+				Collection<Attribute> attr = ag.getAttributes();
+				
+				for (Attribute a : attr)
+				{
+					PSSIFOption<PSSIFValue> attrvalue = a.get(dataNode);
+					
+					if (attrvalue!= null)
+					{
+						currentType.getAttribute(a.getName()).getOne().set(newNode, attrvalue);
+					}
+				}
+			}
+		}
+		
+		// transfer annotations
+		
+		PSSIFOption<Entry<String, String>> tmp = dataNode.getAnnotations();
+		
+		Set<Entry<String, String>> annotations =null;
+		
+		if (tmp!=null && (tmp.isMany() || tmp.isOne()))
+		{
+			if (tmp.isMany())
+				annotations = tmp.getMany();
+			else
+			{
+				annotations = new HashSet<Entry<String,String>>();
+				annotations.add(tmp.getOne());
+			}
+		}
+		
+		if (annotations!=null)
+		{
+			for (Entry<String,String> a : annotations)
+			{
+				newNode.annotate(a.getKey(), a.getValue());
+			}
+		}
 	}
 	
 	/**

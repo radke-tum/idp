@@ -27,7 +27,7 @@ import de.tum.pssif.core.model.Node;
  * @author Luc
  *
  */
-public class MyNode{
+public class MyNode implements IMyNode{
 	private Node node;
 	private double sizeheight;
 	private double sizewidth;
@@ -36,7 +36,7 @@ public class MyNode{
 	private boolean visible;
 	private boolean collapseNode;
 	
-	private static int limit = 5;
+	//private static int limit = 5;
 	private static int lineLimit = 18;
 	
 	public MyNode(Node node, MyNodeType type) {
@@ -490,11 +490,8 @@ public class MyNode{
 	
 	private int nameLines(String name)
 	{
-		//String name = findName();
-		
 		if (name.length()>lineLimit)
 		{
-			String res;
 			List<Integer> spaceIndexes = getSpaceIndexes(name);
 			
 			int previous =-1;
@@ -504,14 +501,10 @@ public class MyNode{
 				{
 					if (previous!=-1)
 					{
-						//res = name.substring(0, previous)+" <br>";
-						
 						return 1+nameLines(name.substring(previous+1));
 					}
 					else
 					{
-						//res = name.substring(0, lineLimit-1)+"- <br>";
-						
 						return 1+nameLines(name.substring(lineLimit));
 					}						
 				}
@@ -523,15 +516,11 @@ public class MyNode{
 			
 			if (previous==-1)
 			{
-				//res = name.substring(0, lineLimit-1)+"- <br>";
-				
 				return 1+nameLines(name.substring(lineLimit));
 			}
 			
 			if (previous<=lineLimit)
 			{
-				//res = name.substring(0, previous)+" <br>";
-				
 				return 2;
 			}
 		}
