@@ -31,7 +31,7 @@ public class JoinLeftOutgoingTransformation extends AbstractTransformation {
   }
 
   @Override
-  public void apply(View view) {
+  public void apply(Viewpoint view) {
     MutableEdgeType actualType = view.getMutableEdgeType(type).getOne();
     NodeType actualInner = view.getNodeType(inner).getOne();
     NodeType actualTo = view.getNodeType(to).getOne();

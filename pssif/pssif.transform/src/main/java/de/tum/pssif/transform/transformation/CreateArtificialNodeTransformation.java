@@ -21,7 +21,7 @@ public class CreateArtificialNodeTransformation extends AbstractTransformation {
   }
 
   @Override
-  public void apply(View view) {
+  public void apply(Viewpoint view) {
     NodeType actualSourceType = view.getNodeType(sourceType).getOne();
     NodeType actualTargetType = view.getNodeType(targetType).getOne();
     MutableEdgeType actualEdgeType = view.getMutableEdgeType(edgeType).getOne();

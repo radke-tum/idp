@@ -23,10 +23,10 @@ public abstract class HideAttributeTransformation<T extends MutableElementType> 
     return attribute;
   }
 
-  protected abstract PSSIFOption<T> getActualTarget(View view);
+  protected abstract PSSIFOption<T> getActualTarget(Viewpoint view);
 
   @Override
-  public final void apply(View view) {
+  public final void apply(Viewpoint view) {
     for (T actualTarget : getActualTarget(view).getMany()) {
       for (Attribute a : actualTarget.getAttribute(attribute).getMany()) {
         actualTarget.removeAttribute(a);

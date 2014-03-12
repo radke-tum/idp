@@ -28,7 +28,7 @@ public class MoveAttributeTransformation extends AbstractTransformation {
   }
 
   @Override
-  public void apply(View view) {
+  public void apply(Viewpoint view) {
     MutableNodeTypeBase actualSourceType = view.getMutableBaseNodeType(sourceType).getOne();
     MutableNodeTypeBase actualTargetType = view.getMutableBaseNodeType(targetType).getOne();
     MutableEdgeType actualEdgeType = view.getMutableEdgeType(edgeType).getOne();

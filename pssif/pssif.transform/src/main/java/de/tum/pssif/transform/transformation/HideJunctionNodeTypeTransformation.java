@@ -12,13 +12,13 @@ public class HideJunctionNodeTypeTransformation extends HideTypeTransformation<J
   }
 
   @Override
-  public void apply(View view) {
+  public void apply(Viewpoint view) {
     if (getType() != null) {
       removeType(view, getType());
     }
   }
 
-  private void removeType(View view, String type) {
+  private void removeType(Viewpoint view, String type) {
     PSSIFOption<JunctionNodeType> actualType = view.getJunctionNodeType(type);
 
     for (MutableEdgeType et : view.getMutableEdgeTypes()) {

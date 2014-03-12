@@ -12,13 +12,13 @@ public class HideNodeTypeTransformation extends HideTypeTransformation<NodeType>
   }
 
   @Override
-  public void apply(View view) {
+  public void apply(Viewpoint view) {
     if (getType() != null) {
       removeType(view, getType());
     }
   }
 
-  private void removeType(View view, String type) {
+  private void removeType(Viewpoint view, String type) {
     PSSIFOption<NodeType> actualType = view.getNodeType(type);
 
     for (NodeType mnt : actualType.getMany()) {

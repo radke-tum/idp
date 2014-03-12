@@ -19,7 +19,7 @@ public class HideConnectionMappingTransformation extends AbstractTransformation 
   }
 
   @Override
-  public void apply(View view) {
+  public void apply(Viewpoint view) {
     MutableEdgeType actualType = view.getMutableEdgeType(type).getOne();
     NodeTypeBase fromType = view.getBaseNodeType(from).getOne();
     NodeTypeBase toType = view.getBaseNodeType(to).getOne();

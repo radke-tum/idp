@@ -18,8 +18,8 @@ import de.tum.pssif.transform.transformation.viewed.ViewedJunctionNodeType;
 import de.tum.pssif.transform.transformation.viewed.ViewedNodeType;
 
 
-public class View extends MetamodelImpl {
-  public View(Metamodel baseMetamodel) {
+public class Viewpoint extends MetamodelImpl {
+  public Viewpoint(Metamodel baseMetamodel) {
     super(false);
 
     for (Enumeration enumeration : baseMetamodel.getEnumerations()) {

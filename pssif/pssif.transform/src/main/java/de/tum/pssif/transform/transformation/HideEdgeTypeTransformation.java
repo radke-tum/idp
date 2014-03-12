@@ -10,13 +10,13 @@ public class HideEdgeTypeTransformation extends HideTypeTransformation<EdgeType>
   }
 
   @Override
-  public void apply(View view) {
+  public void apply(Viewpoint view) {
     if (getType() != null) {
       removeType(view, getType());
     }
   }
 
-  private void removeType(View view, String type) {
+  private void removeType(Viewpoint view, String type) {
     PSSIFOption<EdgeType> actualType = view.getEdgeType(type);
 
     for (EdgeType met : actualType.getMany()) {

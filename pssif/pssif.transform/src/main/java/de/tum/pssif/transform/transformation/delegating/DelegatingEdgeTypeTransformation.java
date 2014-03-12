@@ -9,7 +9,7 @@ import de.tum.pssif.core.metamodel.ConnectionMapping;
 import de.tum.pssif.core.metamodel.EdgeType;
 import de.tum.pssif.core.metamodel.NodeTypeBase;
 import de.tum.pssif.transform.transformation.AbstractTransformation;
-import de.tum.pssif.transform.transformation.View;
+import de.tum.pssif.transform.transformation.Viewpoint;
 
 
 public class DelegatingEdgeTypeTransformation extends AbstractTransformation {
@@ -21,7 +21,7 @@ public class DelegatingEdgeTypeTransformation extends AbstractTransformation {
   }
 
   @Override
-  public void apply(View view) {
+  public void apply(Viewpoint view) {
     DelegatingEdgeType delegating = new DelegatingEdgeType(name);
     for (ConnectionMappingDelegateDescriptor descriptor : descriptors) {
       EdgeType baseType = view.getEdgeType(descriptor.getType()).getOne();

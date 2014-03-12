@@ -18,7 +18,7 @@ public class ReverseConnectionMappingTransformation extends AbstractTransformati
   }
 
   @Override
-  public void apply(View view) {
+  public void apply(Viewpoint view) {
     MutableEdgeType baseType = view.getMutableEdgeType(type).getOne();
     NodeTypeBase from = view.getBaseNodeType(this.from).getOne();
     NodeTypeBase to = view.getBaseNodeType(this.to).getOne();

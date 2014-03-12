@@ -19,7 +19,7 @@ public class AliasNodeTypeTransformation extends RenameTransformation<NodeType> 
   }
 
   @Override
-  public void apply(View view) {
+  public void apply(Viewpoint view) {
     MutableNodeType actualTarget = view.getMutableNodeType(getTarget()).getOne();
     ViewedNodeType aliased = new AliasedNodeType(actualTarget, getName(), annotation);
 

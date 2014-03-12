@@ -22,7 +22,7 @@ public class CreateArtificialEdgeTransformation extends AbstractTransformation {
   }
 
   @Override
-  public void apply(View view) {
+  public void apply(Viewpoint view) {
     NodeType actualFrom = view.getNodeType(from).getOne();
     NodeType actualTo = view.getNodeType(to).getOne();
     MutableEdgeType actualBase = view.getMutableEdgeType(base).getOne();

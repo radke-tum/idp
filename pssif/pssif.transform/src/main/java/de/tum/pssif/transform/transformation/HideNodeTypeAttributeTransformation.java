@@ -12,7 +12,7 @@ public class HideNodeTypeAttributeTransformation extends HideAttributeTransforma
   }
 
   @Override
-  protected PSSIFOption<MutableNodeTypeBase> getActualTarget(View view) {
+  protected PSSIFOption<MutableNodeTypeBase> getActualTarget(Viewpoint view) {
     return view.getMutableBaseNodeType(getType());
   }
 }
