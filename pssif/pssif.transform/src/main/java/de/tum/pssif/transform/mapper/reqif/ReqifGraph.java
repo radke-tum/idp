@@ -137,7 +137,7 @@ public class ReqifGraph {
 	    		source = true;
 	    	} else if (prevStartTag.equals(ReqifTokens.TARGET)){
 	    		target = true;
-	    		//((ReqifEdgeImpl)current).arget(tagContent);
+	    		//((ReqifEdgeImpl)current).target(tagContent);
 	    	}
 	    }
 	    else if (ReqifTokens.EDGE_TYPE.equals(elementName)) {

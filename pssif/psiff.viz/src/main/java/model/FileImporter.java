@@ -32,6 +32,7 @@ public class FileImporter {
     comboBoxValues.put("EPK", MapperFactory.EPK);
     comboBoxValues.put("SysML", MapperFactory.SYSML);
     comboBoxValues.put("PSS-IF", MapperFactory.PSSIF);
+    comboBoxValues.put("ReqIf", MapperFactory.REQ_IF);
   }
 
   /**
@@ -89,7 +90,7 @@ public class FileImporter {
 
     //openFile.setCurrentDirectory(new File("C:\\Users\\Luc\\Desktop\\Dropbox\\IDP-PSS-IF-Shared"));
 
-    openFile.setCurrentDirectory(new File("C:\\Users\\Luc\\Desktop\\Uni Dropbox\\Dropbox\\IDP-PSS-IF-Shared\\Modelle PE"));
+    openFile.setCurrentDirectory(new File("D:\\Dropbox\\IDP-PSS-IF-Shared\\Modelle PE"));
 
     JPanel panel1 = (JPanel) openFile.getComponent(3);
     JPanel panel2 = (JPanel) panel1.getComponent(2);
