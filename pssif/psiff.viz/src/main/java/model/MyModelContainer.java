@@ -1,27 +1,32 @@
 package model;
 
+import graph.model.IMyNode;
 import graph.model.MyEdge;
 import graph.model.MyEdgeType;
 import graph.model.MyEdgeTypes;
+import graph.model.MyJunctionNode;
+import graph.model.MyJunctionNodeType;
+import graph.model.MyJunctionNodeTypes;
 import graph.model.MyNode;
 import graph.model.MyNodeType;
 import graph.model.MyNodeTypes;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.Set;
 
-import de.tum.pssif.core.PSSIFConstants;
+import de.tum.pssif.core.common.PSSIFConstants;
+import de.tum.pssif.core.common.PSSIFOption;
+import de.tum.pssif.core.common.PSSIFValue;
 import de.tum.pssif.core.metamodel.ConnectionMapping;
-import de.tum.pssif.core.metamodel.EdgeEnd;
 import de.tum.pssif.core.metamodel.EdgeType;
+import de.tum.pssif.core.metamodel.JunctionNodeType;
 import de.tum.pssif.core.metamodel.Metamodel;
-import de.tum.pssif.core.metamodel.MutableMetamodel;
 import de.tum.pssif.core.metamodel.NodeType;
 import de.tum.pssif.core.model.Edge;
 import de.tum.pssif.core.model.Model;
 import de.tum.pssif.core.model.Node;
-import de.tum.pssif.core.util.PSSIFOption;
-import de.tum.pssif.core.util.PSSIFValue;
 
 
 /**
@@ -36,22 +41,30 @@ public class MyModelContainer {
   private Metamodel   		 meta;
   private MyNodeTypes        nodeTypes;
   private MyEdgeTypes        edgeTypes;
+  private MyJunctionNodeTypes junctionNodeTypes;
   private LinkedList<MyNode> nodes;
+  private LinkedList<MyJunctionNode> junctionNodes;
   private LinkedList<MyEdge> edges;
+  private static int 	     newNodeIdCounter;
+  private static int 	     newEdgeIdCounter;
 
   public MyModelContainer(Model model, Metamodel meta) {
     if (model != null && meta != null) {
       this.model = model;
-      this.meta = (MutableMetamodel) meta;
+      this.meta = meta;
 
       nodes = new LinkedList<MyNode>();
       edges = new LinkedList<MyEdge>();
+      junctionNodes = new LinkedList<MyJunctionNode>();
 
       createNodeTypes();
+      createJunctionNodeTypes();
       createEdgeTypes();
-
+      
       createNodes();
+      createJunctionNodes();
       createEdges();
+      
     }
     else {
       throw new NullPointerException("Metamodel or model null!");
@@ -75,6 +88,15 @@ public class MyModelContainer {
 
     edgeTypes = new MyEdgeTypes(types);
   }
+  
+  /**
+   * parse the metamodel and create all the JunctionNodeTypes
+   */
+  private void createJunctionNodeTypes() {
+    Collection<JunctionNodeType> types = meta.getJunctionNodeTypes();
+
+    junctionNodeTypes = new MyJunctionNodeTypes(types);
+  }
 
   /**
    * parse the model and create all the Nodes
@@ -96,36 +118,66 @@ public class MyModelContainer {
   }
 
   /**
+   * parse the model and create all the JunctionNodes
+   */
+  private void createJunctionNodes ()
+  {
+	  for (MyJunctionNodeType t : junctionNodeTypes.getAllJunctionNodeTypes()) {
+	      PSSIFOption<Node> tempNodes = t.getType().apply(model, false);
+
+	      if (tempNodes.isMany()) {
+	        for (Node tempNode : tempNodes.getMany()) {
+	          junctionNodes.add(new MyJunctionNode(tempNode, t));
+	        }
+	      }
+	      if (tempNodes.isOne()) {
+	    	  junctionNodes.add(new MyJunctionNode(tempNodes.getOne(), t));
+	      }
+
+	    }
+  }
+  
+  /**
    * create all the Edges which are contained in the Model
    */
   private void createEdges() {
     for (MyEdgeType t : edgeTypes.getAllEdgeTypes()) {
-      for (ConnectionMapping mapping : t.getType().getMappings()) {
-        EdgeEnd from = mapping.getFrom();
-        EdgeEnd to = mapping.getTo();
-        
-        PSSIFOption<Edge> edges = mapping.apply(model);
-        if (edges.isMany())
-        {
-	        for (Edge e : edges.getMany()) {
-	          //TODO luc: handle hyperedges correctly
-	          for (Node source : from.apply(e).getMany()) {
-	            for (Node target : to.apply(e).getMany()) {
-	            	addEdge(new MyEdge(e, t, findNode(source), findNode(target)));
-	            }
-	          }
-	        }
-        }
-        
-        if (edges.isOne())
-        {
-        	Edge e = edges.getOne();
-        	for (Node source : from.apply(e).getMany()) {
-	            for (Node target : to.apply(e).getMany()) {
-	            	addEdge(new MyEdge(e, t, findNode(source), findNode(target)));
-	            }
-	        }
-        }
+    	
+    	PSSIFOption<ConnectionMapping> tmp = t.getType().getMappings();
+    	if (tmp != null && (tmp.isMany() || tmp.isOne()))
+    	{
+    		Set<ConnectionMapping> mappings;
+    		if (tmp.isMany())
+    			mappings = tmp.getMany();
+    		else
+    		{
+    			mappings = new HashSet<ConnectionMapping>();
+    			mappings.add(tmp.getOne());
+    		}
+    		
+    		
+    		for (ConnectionMapping mapping : mappings) {
+    	        
+    	        PSSIFOption<Edge> edges = mapping.apply(model);
+    	        if (edges.isMany())
+    	        {
+    		        for (Edge e : edges.getMany()) {
+    		        	Node source = mapping.applyFrom(e);
+    		        	Node target = mapping.applyTo(e);
+    		        	addEdge(new MyEdge(e, t, findNode(source), findNode(target)));
+    		        }
+    	        }
+    	        
+    	        if (edges.isOne())
+    	        {
+    	        	Edge e = edges.getOne();
+    	        	
+    	        	Node source = mapping.applyFrom(e);
+		        	Node target = mapping.applyTo(e);
+		        	addEdge(new MyEdge(e, t, findNode(source), findNode(target)));
+    	        }
+    	}
+    	
       }
     }
   }
@@ -189,15 +241,36 @@ public class MyModelContainer {
    * @param n the Node in context
    * @return the MyNode object or null if no MyNode object exists for the given Node
    */
-  public MyNode findNode(Node n) {
+  public IMyNode findNode(Node n) {
     for (MyNode current : nodes) {
+      if (current.getNode().equals(n)) {
+        return current;
+      }
+    }
+    
+    for (MyJunctionNode current : junctionNodes) {
+        if (current.getNode().equals(n)) {
+          return current;
+        }
+      }
+    
+    return null;
+  }
+  
+  /**
+   * find the MyJunctionNode object which owns the given Node
+   * @param n the Node in context
+   * @return the MyJunctionNode object or null if no MyNode object exists for the given Node
+   */
+ /* public MyJunctionNode findJunctionNode(Node n) {
+    for (MyJunctionNode current : junctionNodes) {
       if (current.getNode().equals(n)) {
         return current;
       }
     }
 
     return null;
-  }
+  }*/
 
   /**
    * find the MyEdge object which owns the given Edge
@@ -255,11 +328,12 @@ public class MyModelContainer {
    * @param type The type of the new Node
    */
   public void addNewNodeFromGUI(String nodeName, MyNodeType type) {
-    NodeType nodeType = meta.findNodeType(type.getName());
+    NodeType nodeType = meta.getNodeType(type.getName()).getOne();
 
     Node newNode = nodeType.create(model);
 
-    nodeType.findAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_NAME).set(newNode, PSSIFOption.one(PSSIFValue.create(nodeName)));
+    nodeType.getAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_NAME).getOne().set(newNode, PSSIFOption.one(PSSIFValue.create(nodeName)));
+    nodeType.getAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_ID).getOne().set(newNode, PSSIFOption.one(PSSIFValue.create(nodeName+newNodeIdCounter++)));
 
     nodes.add(new MyNode(newNode, type));
   }
@@ -273,14 +347,15 @@ public class MyModelContainer {
    * @return true if the add operation was successful, false otherwise
    */
   public boolean addNewEdgeGUI(MyNode source, MyNode destination, MyEdgeType edgetype, Boolean directed) {
-    ConnectionMapping mapping = edgetype.getType().getMapping(source.getNodeType().getType(), destination.getNodeType().getType());
+    ConnectionMapping mapping = edgetype.getType().getMapping(source.getNodeType().getType(), destination.getNodeType().getType()).getOne();
 
     if (mapping != null) {
       Edge newEdge = mapping.create(model, source.getNode(), destination.getNode());
 
       PSSIFOption<PSSIFValue> value = PSSIFOption.one(PSSIFValue.create(directed));
-      edgetype.getType().findAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_DIRECTED).set(newEdge, value);
-
+      edgetype.getType().getAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_DIRECTED).getOne().set(newEdge, value);
+      PSSIFOption<PSSIFValue> id = PSSIFOption.one(PSSIFValue.create("egde"+newEdgeIdCounter++));
+      edgetype.getType().getAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_ID).getOne().set(newEdge, id);
 
       MyEdge e = new MyEdge(newEdge, edgetype, source, destination);
 
@@ -299,4 +374,13 @@ public class MyModelContainer {
   public Metamodel getMetamodel() {
     return meta;
   }
+  
+
+	public MyJunctionNodeTypes getJunctionNodeTypes() {
+		return junctionNodeTypes;
+	}
+	
+	public LinkedList<MyJunctionNode> getAllJunctionNodes() {
+		return junctionNodes;
+	}
 }

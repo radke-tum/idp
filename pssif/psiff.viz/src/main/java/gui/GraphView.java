@@ -2,6 +2,7 @@ package gui;
 
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.picking.PickedState;
+import graph.model.IMyNode;
 import graph.model.MyEdge;
 import graph.model.MyEdgeType;
 import graph.model.MyNode;
@@ -124,7 +125,7 @@ public class GraphView {
   private JPanel addGraphViz() {
     JPanel graphpanel = new JPanel();
 
-    VisualizationViewer<MyNode, MyEdge> vv = graph.getVisualisationViewer();
+    VisualizationViewer<IMyNode, MyEdge> vv = graph.getVisualisationViewer();
 
     graphpanel.add(vv);
     return graphpanel;
@@ -544,20 +545,26 @@ public class GraphView {
           String testdata = (String) data;
           // do not trigger the event again if we previously wrote null back
           if (data != null && testdata.length() > 0) {
-            Set<MyNode> selectedNodes = graph.getVisualisationViewer().getPickedVertexState().getPicked();
+            Set<IMyNode> selectedNodes = graph.getVisualisationViewer().getPickedVertexState().getPicked();
             if (!selectedNodes.isEmpty() && selectedNodes.size() == 1) {
-              MyNode selectedNode = selectedNodes.iterator().next();
-
-              boolean res = selectedNode.updateAttribute(attributeName, data);
-
-              if (!res) {
-                model.setValueAt(null, row, column);
-                JPanel errorPanel = new JPanel();
-
-                errorPanel.add(new JLabel("The value does not match the attribute data type"));
-
-                JOptionPane.showMessageDialog(null, errorPanel, "Ups something went wrong", JOptionPane.ERROR_MESSAGE);
-              }
+            	IMyNode selectedNode = selectedNodes.iterator().next();
+            	
+            	if (selectedNode instanceof MyNode)
+            	{
+	            	MyNode node = (MyNode)selectedNode;
+            		boolean res = node.updateAttribute(attributeName, data);
+	
+		              if (!res) {
+		                model.setValueAt(null, row, column);
+		                JPanel errorPanel = new JPanel();
+		
+		                errorPanel.add(new JLabel("The value does not match the attribute data type"));
+		
+		                JOptionPane.showMessageDialog(null, errorPanel, "Ups something went wrong", JOptionPane.ERROR_MESSAGE);
+		              }
+            	}
+              /*else
+            	  graph.updateGraph();*/
             }
           }
         }
@@ -769,7 +776,7 @@ public class GraphView {
    * Add Listener to the Graph, which allows to trace every Node Selection change. Triggers the update on the Information Panel 
    */
   private void addNodeChangeListener() {
-    PickedState<MyNode> pickedState = graph.getVisualisationViewer().getPickedVertexState();
+    PickedState<IMyNode> pickedState = graph.getVisualisationViewer().getPickedVertexState();
 
     if (edgeListener != null) {
       pickedState.removeItemListener(edgeListener);
@@ -801,7 +808,7 @@ public class GraphView {
 
     pickedState.addItemListener(nodeListener);
 
-    Set<MyNode> s = pickedState.getPicked();
+    Set<IMyNode> s = pickedState.getPicked();
     if (s == null) {
       updateNodeSidebar(null, null, null);
     }

@@ -11,8 +11,10 @@ import org.apache.commons.collections15.Transformer;
 
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.visualization.picking.PickedInfo;
+import graph.model.IMyNode;
 import graph.model.MyEdge;
 import graph.model.MyEdgeType;
+import graph.model.MyJunctionNode;
 import graph.model.MyNode;
 
 /**
@@ -85,7 +87,7 @@ public class VertexStrokeHighlight<V,E> implements Transformer<V,Stroke>
 	                	if (pi.isPicked(currentNode))
 	                	{
 		                    if (debug)
-		                    	System.out.println(((MyNode) currentNode).getName() +"  Heavy");
+		                    	System.out.println(((IMyNode) currentNode).getName() +"  Heavy");
 	                		return heavy;
 	                	}
 		                else
@@ -96,7 +98,7 @@ public class VertexStrokeHighlight<V,E> implements Transformer<V,Stroke>
             					{
             						 if (debug)
             						 {
-	            						System.out.println(((MyNode) currentNode).getName());
+	            						System.out.println(((IMyNode) currentNode).getName());
 	            						System.out.println("                              depth Predecessor  Medium ");
 	            						//System.out.println("medium");
 	            						System.out.println("----------------------------");
@@ -107,7 +109,7 @@ public class VertexStrokeHighlight<V,E> implements Transformer<V,Stroke>
                 				{
                 					 if (debug)
                 					 {
-		                					System.out.println(((MyNode) currentNode).getName());
+		                					System.out.println(((IMyNode) currentNode).getName());
 		                					System.out.println("                             not depth Predecessor  Light ");
 		                					//System.out.println("light");
 		                					System.out.println("----------------------------");
@@ -129,7 +131,7 @@ public class VertexStrokeHighlight<V,E> implements Transformer<V,Stroke>
     		                					//System.out.println("medium");
     		                					 if (debug)
     		                					 {
-    			                					System.out.println(((MyNode) currentNode).getName());
+    			                					System.out.println(((IMyNode) currentNode).getName());
     			                					System.out.println("                             direct Predecessor  Medium ");
     		                					 }
     		                					return medium;
@@ -151,7 +153,7 @@ public class VertexStrokeHighlight<V,E> implements Transformer<V,Stroke>
 		                    return heavy;
 		                else
 		                {	                
-		                	Collection<V>  col = graph.getPredecessors(currentNode);
+		                	/*Collection<V>  col = graph.getPredecessors(currentNode);
 		                	if (col!=null)
 		                	{
 			                	for(V w : col)
@@ -160,7 +162,29 @@ public class VertexStrokeHighlight<V,E> implements Transformer<V,Stroke>
 			                            return medium;
 			                    }
 		                	}
-		                    return light;
+		                    return light;*/
+		                	if (searchDept(currentNode, depth))
+        					{
+        						 if (debug)
+        						 {
+            						System.out.println(((IMyNode) currentNode).getName());
+            						System.out.println("                              depth Predecessor  Medium ");
+            						//System.out.println("medium");
+            						System.out.println("----------------------------");
+        						 }
+            					return medium;
+            				}
+            				else
+            				{
+            					 if (debug)
+            					 {
+	                					System.out.println(((IMyNode) currentNode).getName());
+	                					System.out.println("                             not depth Predecessor  Light ");
+	                					//System.out.println("light");
+	                					System.out.println("----------------------------");
+            					 }
+            					return light;
+            				}	
 		                }
 		            }
 	            }
@@ -187,13 +211,13 @@ public class VertexStrokeHighlight<V,E> implements Transformer<V,Stroke>
  							" source "+e.getSourceNode().getRealName());*/
 	        		if (depthsearch)
 	        		{
-		        		 if ((this.followEdges.isEmpty() && e.getDestinationNode().equals(((MyNode) dest)) )|| 
-		        				 (!this.followEdges.isEmpty() && this.followEdges.contains(e.getEdgeType()) && e.getDestinationNode().equals(((MyNode) dest))))
+		        		 if ((this.followEdges.isEmpty() && e.getDestinationNode().equals(((IMyNode) dest)) )|| 
+		        				 (!this.followEdges.isEmpty() && this.followEdges.contains(e.getEdgeType()) && e.getDestinationNode().equals(((IMyNode) dest))))
 		        				 return true;
 	        		}
 	        		else
 	        		{
-	        			if (this.followEdges.contains(e.getEdgeType()) && e.getDestinationNode().equals(((MyNode) dest)))
+	        			if (this.followEdges.contains(e.getEdgeType()) && e.getDestinationNode().equals(((IMyNode) dest)))
 		        				 return true;
 	        		}
 	        	 }
@@ -228,11 +252,15 @@ public class VertexStrokeHighlight<V,E> implements Transformer<V,Stroke>
 	        		}
 	        		
 	        		boolean res=false;
+	        		int levelbefore = level;
 	        		level--;
 	        		for (V v :next)
 	        		{
 	        			
-	        			res = res || searchDept(v, level); 
+	        			if (v instanceof MyNode)
+	        				res = res || searchDept(v, level); 
+	        			if (v instanceof MyJunctionNode)
+	        				res = res || searchDept(v, levelbefore); 
 	        		}
 	        		
 	        		return res;
@@ -270,7 +298,7 @@ public class VertexStrokeHighlight<V,E> implements Transformer<V,Stroke>
 				
 				for (MyEdge e :ModelBuilder.getAllEdges())
 				{
-					if (e.isVisible() && e.getSourceNode().equals((MyNode)node))
+					if (e.isVisible() && e.getSourceNode().equals((IMyNode)node))
 						res.add(e);
 				}
 				

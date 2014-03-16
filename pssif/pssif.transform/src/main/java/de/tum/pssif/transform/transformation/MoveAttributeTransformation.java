@@ -1,49 +1,49 @@
 package de.tum.pssif.transform.transformation;
 
-import de.tum.pssif.core.PSSIFConstants;
+import de.tum.pssif.core.common.PSSIFOption;
 import de.tum.pssif.core.metamodel.Attribute;
-import de.tum.pssif.core.metamodel.AttributeGroup;
 import de.tum.pssif.core.metamodel.ConnectionMapping;
 import de.tum.pssif.core.metamodel.EdgeType;
-import de.tum.pssif.core.metamodel.NodeType;
+import de.tum.pssif.core.metamodel.NodeTypeBase;
+import de.tum.pssif.core.metamodel.mutable.MutableAttributeGroup;
+import de.tum.pssif.core.metamodel.mutable.MutableEdgeType;
+import de.tum.pssif.core.metamodel.mutable.MutableNodeTypeBase;
 import de.tum.pssif.transform.transformation.moved.CopiedAttribute;
 import de.tum.pssif.transform.transformation.moved.MovedAttribute;
-import de.tum.pssif.transform.transformation.viewed.ViewedEdgeType;
-import de.tum.pssif.transform.transformation.viewed.ViewedNodeType;
 
 
 public class MoveAttributeTransformation extends AbstractTransformation {
-  private final NodeType  sourceType;
-  private final String    attributeName;
-  private final NodeType  targetType;
-  private final Attribute targetAttribute;
-  private final EdgeType  edgeType;
+  private final String sourceType;
+  private final String attributeName;
+  private final String targetType;
+  private final String targetAttribute;
+  private final String edgeType;
 
-  public MoveAttributeTransformation(NodeType sourceType, String name, NodeType targetType, Attribute targetAttribute, EdgeType edgeType) {
-    this.sourceType = sourceType;
+  public MoveAttributeTransformation(NodeTypeBase sourceType, String name, NodeTypeBase targetType, Attribute targetAttribute, EdgeType edgeType) {
+    this.sourceType = sourceType.getName();
     attributeName = name;
-    this.targetType = targetType;
-    this.targetAttribute = targetAttribute;
-    this.edgeType = edgeType;
+    this.targetType = targetType.getName();
+    this.targetAttribute = targetAttribute.getName();
+    this.edgeType = edgeType.getName();
   }
 
   @Override
-  public void apply(View view) {
-    ViewedNodeType actualSourceType = view.findNodeType(sourceType.getName());
-    ViewedNodeType actualTargetType = view.findNodeType(targetType.getName());
-    ViewedEdgeType actualEdgeType = view.findEdgeType(edgeType.getName());
-    Attribute actualTargetAttribute = actualTargetType.findAttribute(targetAttribute.getName());
+  public void apply(Viewpoint view) {
+    MutableNodeTypeBase actualSourceType = view.getMutableBaseNodeType(sourceType).getOne();
+    MutableNodeTypeBase actualTargetType = view.getMutableBaseNodeType(targetType).getOne();
+    MutableEdgeType actualEdgeType = view.getMutableEdgeType(edgeType).getOne();
+    Attribute actualTargetAttribute = actualTargetType.getAttribute(targetAttribute).getOne();
 
-    AttributeGroup defaultGroup = actualSourceType.findAttributeGroup(PSSIFConstants.DEFAULT_ATTRIBUTE_GROUP_NAME);
-    ConnectionMapping mapping = actualEdgeType.getMapping(actualSourceType, actualTargetType);
+    MutableAttributeGroup defaultGroup = actualSourceType.getMutableDefaultAttributeGroup();
+    ConnectionMapping mapping = actualEdgeType.getMapping(actualSourceType, actualTargetType).getOne();
 
-    Attribute sourceAttribute = actualSourceType.findAttribute(attributeName);
-    if (sourceAttribute != null) {
-      actualSourceType.removeAttribute(sourceAttribute);
-      actualSourceType.add(defaultGroup, new CopiedAttribute(attributeName, sourceAttribute, actualTargetAttribute, mapping));
+    PSSIFOption<Attribute> sourceAttribute = actualSourceType.getAttribute(attributeName);
+    if (sourceAttribute.isOne()) {
+      defaultGroup.removeAttribute(sourceAttribute.getOne());
+      defaultGroup.addAttribute(new CopiedAttribute(attributeName, sourceAttribute.getOne(), actualTargetAttribute, mapping));
     }
     else {
-      actualSourceType.add(defaultGroup, new MovedAttribute(attributeName, actualTargetAttribute, mapping));
+      defaultGroup.addAttribute(new MovedAttribute(attributeName, actualTargetAttribute, mapping));
     }
   }
 }

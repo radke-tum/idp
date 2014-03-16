@@ -1,5 +1,6 @@
 package de.tum.pssif.transform.transformation;
 
+import de.tum.pssif.core.common.PSSIFOption;
 import de.tum.pssif.core.metamodel.EdgeType;
 
 
@@ -9,19 +10,23 @@ public class HideEdgeTypeTransformation extends HideTypeTransformation<EdgeType>
   }
 
   @Override
-  public void apply(View view) {
+  public void apply(Viewpoint view) {
     if (getType() != null) {
       removeType(view, getType());
     }
   }
 
-  private void removeType(View view, EdgeType type) {
-    if (view.findEdgeType(type.getName()) != null) {
-      for (EdgeType special : type.getSpecials()) {
-        removeType(view, special);
+  private void removeType(Viewpoint view, String type) {
+    PSSIFOption<EdgeType> actualType = view.getEdgeType(type);
+
+    for (EdgeType met : actualType.getMany()) {
+      for (EdgeType special : met.getSpecials()) {
+        removeType(view, special.getName());
       }
-      //TODO
-      view.removeEdgeType(view.findEdgeType(type.getName()));
+    }
+
+    for (EdgeType met : actualType.getMany()) {
+      view.removeEdgeType(met);
     }
   }
 }

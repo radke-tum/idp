@@ -1,5 +1,7 @@
 package de.tum.pssif.core.metamodel;
 
+import de.tum.pssif.core.metamodel.traits.Named;
+
 /**
  * A unit of measurement used as a feature of numeric
  * Attribute Types throughout the PSS-IF metamodel. For convenience,

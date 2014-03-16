@@ -4,20 +4,21 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Map;
 
-import de.tum.pssif.core.PSSIFConstants;
+import de.tum.pssif.core.common.PSSIFConstants;
+import de.tum.pssif.core.common.PSSIFOption;
+import de.tum.pssif.core.common.PSSIFValue;
 import de.tum.pssif.core.metamodel.Attribute;
 import de.tum.pssif.core.metamodel.ConnectionMapping;
 import de.tum.pssif.core.metamodel.EdgeType;
 import de.tum.pssif.core.metamodel.ElementType;
 import de.tum.pssif.core.metamodel.Metamodel;
 import de.tum.pssif.core.metamodel.NodeType;
+import de.tum.pssif.core.metamodel.NodeTypeBase;
 import de.tum.pssif.core.model.Edge;
 import de.tum.pssif.core.model.Element;
 import de.tum.pssif.core.model.Model;
 import de.tum.pssif.core.model.Node;
 import de.tum.pssif.core.model.impl.ModelImpl;
-import de.tum.pssif.core.util.PSSIFOption;
-import de.tum.pssif.core.util.PSSIFValue;
 import de.tum.pssif.transform.Mapper;
 
 public class ReqifMapper implements Mapper {
@@ -38,24 +39,24 @@ public class ReqifMapper implements Mapper {
 	    ReqifGraph graph = ReqifGraph.read(inputStream);
 
 	    for (ReqifNode inNode : graph.getNodes()) {
-	      NodeType type = metamodel.findNodeType(inNode.getType());
-	      if (type != null) {
-	        readNode(result, inNode, type);
+	      PSSIFOption<NodeTypeBase> type = metamodel.getBaseNodeType(inNode.getType());
+	      if (type.isOne()) {
+	        readNode(result, inNode, type.getOne());
 	      }
 	      else {
 	        System.out.println("NodeType " + inNode.getType() + " not found! Defaulting to Node");
-	        readNode(result, inNode, metamodel.findNodeType(PSSIFConstants.ROOT_NODE_TYPE_NAME));
+	        readNode(result, inNode, metamodel.getNodeType(PSSIFConstants.ROOT_NODE_TYPE_NAME).getOne());
 	      }
 	    }
 
 	    for (ReqifEdge inEdge : graph.getEdges()) {
-	      EdgeType type = metamodel.findEdgeType(inEdge.getType());
-	      if (type != null) {
-	        readEdge(metamodel, result, graph, inEdge, type);
+	      PSSIFOption<EdgeType>type = metamodel.getEdgeType(inEdge.getType());
+	      if (type.isOne()) {
+	        readEdge(metamodel, result, graph, inEdge, type.getOne());
 	      }
 	      else {
 	        System.out.println("EdgeType " + inEdge.getType() + " not found! Defaulting to Edge");
-	        readEdge(metamodel, result, graph, inEdge, metamodel.findEdgeType(PSSIFConstants.ROOT_EDGE_TYPE_NAME));
+	        readEdge(metamodel, result, graph, inEdge, metamodel.getEdgeType(PSSIFConstants.ROOT_EDGE_TYPE_NAME).getOne());
 	      }
 	    }
 
@@ -66,23 +67,23 @@ public class ReqifMapper implements Mapper {
 	    ReqifNode inSourceNode = graph.getNode(inEdge.getSourceId());
 	    ReqifNode inTargetNode = graph.getNode(inEdge.getTargetId());
 
-	    NodeType sourceType = metamodel.findNodeType(inSourceNode.getType());
-	    if (sourceType == null) {
-	      sourceType = metamodel.findNodeType(PSSIFConstants.ROOT_NODE_TYPE_NAME);
+	    PSSIFOption<NodeTypeBase> sourceType = metamodel.getBaseNodeType(inSourceNode.getType());
+	    if (sourceType.isNone()) {
+	      sourceType = metamodel.getBaseNodeType(PSSIFConstants.ROOT_NODE_TYPE_NAME);
 	    }
-	    PSSIFOption<Node> sourceNode = sourceType.apply(result, inSourceNode.getId());
+	    PSSIFOption<Node> sourceNode = sourceType.getOne().apply(result, inSourceNode.getId(), true);
 
-	    NodeType targetType = metamodel.findNodeType(inTargetNode.getType());
-	    if (targetType == null) {
-	      targetType = metamodel.findNodeType(PSSIFConstants.ROOT_NODE_TYPE_NAME);
+	    PSSIFOption<NodeTypeBase> targetType = metamodel.getBaseNodeType(inTargetNode.getType());
+	    if (targetType.isNone()) {
+	      targetType = metamodel.getBaseNodeType(PSSIFConstants.ROOT_NODE_TYPE_NAME);
 	    }
-	    PSSIFOption<Node> targetNode = targetType.apply(result, inTargetNode.getId());
+	    PSSIFOption<Node> targetNode = targetType.getOne().apply(result, inTargetNode.getId(), true);
 
-	    ConnectionMapping mapping = type.getMapping(sourceType, targetType);
-	    if (mapping == null) {
-	      System.out.println(type.getName() + ": mapping " + sourceType.getName() + "-" + targetType.getName() + " not found! Defaulting to Edge");
-	      type = metamodel.findEdgeType(PSSIFConstants.ROOT_EDGE_TYPE_NAME);
-	      mapping = type.getMapping(sourceType, targetType);
+	    PSSIFOption<ConnectionMapping> mapping = type.getMapping(sourceType.getOne(), targetType.getOne());
+	    if (mapping.isNone()) {
+	      System.out.println(type.getName() + ": mapping " + sourceType.getOne().getName() + "-" + targetType.getOne().getName() + " not found! Defaulting to Edge");
+	      type = metamodel.getEdgeType(PSSIFConstants.ROOT_EDGE_TYPE_NAME).getOne();
+	      mapping = type.getMapping(sourceType.getOne(), targetType.getOne());
 	    }
 	    if (!sourceNode.isOne()) {
 	      System.out.println("source node " + inSourceNode.getId() + " not found!");
@@ -91,18 +92,19 @@ public class ReqifMapper implements Mapper {
 	      System.out.println("target node " + inTargetNode.getId() + " not found!");
 	    }
 	    if (sourceNode.isOne() && targetNode.isOne() && mapping != null) {
-	      Edge edge = mapping.create(result, sourceNode.getOne(), targetNode.getOne());
-	      type.findAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_ID).set(edge, PSSIFOption.one(PSSIFValue.create(inEdge.getId())));
-	      type.findAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_DIRECTED).set(edge, PSSIFOption.one(PSSIFValue.create(inEdge.isDirected())));
+	      Edge edge = mapping.getOne().create(result, sourceNode.getOne(), targetNode.getOne());
+	      type.getAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_ID).getOne().set(edge, PSSIFOption.one(PSSIFValue.create(inEdge.getId())));
+	      type.getAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_DIRECTED).getOne().set(edge, PSSIFOption.one(PSSIFValue.create(inEdge.isDirected())));
 	      readAttributes(type, edge, inEdge);
+	      
 	    }
 	  }
 
-	  private void readNode(Model result, ReqifNode inNode, NodeType type) {
-	    Attribute idAttribute = type.findAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_ID);
+	  private void readNode(Model result, ReqifNode inNode, NodeTypeBase type) {
+	    PSSIFOption<Attribute> idAttribute = type.getAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_ID);
 	    Node resultNode = type.create(result);
-	    if (idAttribute != null) {
-	      idAttribute.set(resultNode, PSSIFOption.one(idAttribute.getType().fromObject(inNode.getId())));
+	    if (idAttribute.isOne()) {
+	      idAttribute.getOne().set(resultNode, PSSIFOption.one(idAttribute.getOne().getType().fromObject(inNode.getId())));
 	    }
 	    else {
 	      System.out.println("Attribute " + PSSIFConstants.BUILTIN_ATTRIBUTE_ID + " not found!");
@@ -111,12 +113,12 @@ public class ReqifMapper implements Mapper {
 	    readAttributes(type, resultNode, inNode);
 	  }
 	  
-	  private static void readAttributes(ElementType<?, ?> type, Element element, ReqifElement inElement) {
+	  private static void readAttributes(ElementType type, Element element, ReqifElement inElement) {
 		    Map<String, String> values = inElement.getValues();
 		    for (String key : values.keySet()) {
-		      Attribute attribute = type.findAttribute(key);
-		      if (attribute != null) {
-		        attribute.set(element, PSSIFOption.one(attribute.getType().fromObject(values.get(key))));
+		      PSSIFOption<Attribute> attribute = type.getAttribute(key);
+		      if (attribute.isOne()) {
+		        attribute.getOne().set(element, PSSIFOption.one(attribute.getOne().getType().fromObject(values.get(key))));
 		      }
 		      else {
 		        System.out.println("Attribute " + key + " not found!");

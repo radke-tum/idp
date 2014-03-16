@@ -14,9 +14,9 @@ import java.util.LinkedList;
 import java.util.Map.Entry;
 
 import model.ModelBuilder;
+import de.tum.pssif.core.common.PSSIFValue;
 import de.tum.pssif.core.metamodel.Attribute;
 import de.tum.pssif.core.metamodel.PrimitiveDataType;
-import de.tum.pssif.core.util.PSSIFValue;
 
 /**
  * Allows to filter the Nodes and Edges by a specific attribute

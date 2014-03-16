@@ -1,56 +1,57 @@
 package de.tum.pssif.transform.transformation;
 
-import java.util.Collection;
-
-import com.google.common.collect.Sets;
-
+import de.tum.pssif.core.metamodel.ConnectionMapping;
 import de.tum.pssif.core.metamodel.EdgeType;
 import de.tum.pssif.core.metamodel.NodeType;
+import de.tum.pssif.core.metamodel.mutable.MutableEdgeType;
 import de.tum.pssif.transform.transformation.artificial.ArtificializedNodeType;
-import de.tum.pssif.transform.transformation.artificial.CreateArtificialNodeType;
-import de.tum.pssif.transform.transformation.viewed.ViewedEdgeType;
-import de.tum.pssif.transform.transformation.viewed.ViewedNodeType;
+import de.tum.pssif.transform.transformation.artificial.ArtificializingNodeType;
+import de.tum.pssif.transform.transformation.artificial.ToArtificializedNodeTypeConnectionMapping;
 
 
 public class CreateArtificialNodeTransformation extends AbstractTransformation {
-  private NodeType sourceType;
-  private NodeType targetType;
-  private EdgeType edgeType;
+  private String sourceType;
+  private String edgeType;
+  private String targetType;
 
-  public CreateArtificialNodeTransformation(NodeType sourceType, NodeType targetType, EdgeType edgeType) {
-    this.sourceType = sourceType;
-    this.targetType = targetType;
-    this.edgeType = edgeType;
+  public CreateArtificialNodeTransformation(NodeType sourceType, EdgeType edgeType, NodeType targetType) {
+    this.sourceType = sourceType.getName();
+    this.edgeType = edgeType.getName();
+    this.targetType = targetType.getName();
   }
 
   @Override
-  public void apply(View view) {
-    ViewedNodeType actualSourceType = view.findNodeType(sourceType.getName());
-    ViewedNodeType actualTargetType = view.findNodeType(targetType.getName());
-    ViewedEdgeType actualEdgeType = view.findEdgeType(edgeType.getName());
+  public void apply(Viewpoint view) {
+    NodeType actualSourceType = view.getNodeType(sourceType).getOne();
+    NodeType actualTargetType = view.getNodeType(targetType).getOne();
+    MutableEdgeType actualEdgeType = view.getMutableEdgeType(edgeType).getOne();
 
-    view.removeNodeType(actualSourceType);
-    view.removeNodeType(actualTargetType);
+    ArtificializingNodeType artificializing = new ArtificializingNodeType(actualSourceType, actualEdgeType, actualTargetType);
+    for (NodeType general : actualSourceType.getGeneral().getMany()) {
+      artificializing.inherit(general);
+    }
+    for (NodeType special : actualSourceType.getSpecials()) {
+      special.inherit(artificializing);
+    }
 
     ArtificializedNodeType artificialized = new ArtificializedNodeType(actualSourceType, actualEdgeType, actualTargetType);
-    if (actualTargetType.getGeneral() != null) {
-      artificialized.inherit(actualTargetType.getGeneral());
+    for (NodeType general : actualTargetType.getGeneral().getMany()) {
+      artificialized.inherit(general);
     }
-    Collection<NodeType> specials = Sets.newHashSet(actualTargetType.getSpecials());
-    for (NodeType special : specials) {
+    for (NodeType special : actualTargetType.getSpecials()) {
       special.inherit(artificialized);
     }
-    view.addNodeType(artificialized);
 
-    CreateArtificialNodeType newType = new CreateArtificialNodeType(actualSourceType, actualTargetType, actualEdgeType);
-    if (actualSourceType.getGeneral() != null) {
-      newType.inherit(actualSourceType.getGeneral());
+    ConnectionMapping mapping = actualEdgeType.getMapping(actualSourceType, actualTargetType).getOne();
+    if (mapping.getFrom().equals(actualSourceType) && mapping.getTo().equals(actualTargetType)) {
+      //replace the mapping
+      actualEdgeType.removeMapping(mapping);
     }
-    specials = Sets.newHashSet(actualSourceType.getSpecials());
-    for (NodeType special : specials) {
-      special.inherit(newType);
-    }
-    view.addNodeType(newType);
+    actualEdgeType.addMapping(new ToArtificializedNodeTypeConnectionMapping(mapping, actualEdgeType, artificializing, artificialized));
+
+    view.removeNodeType(actualTargetType);
+    view.add(artificialized);
+    view.removeNodeType(actualSourceType);
+    view.add(artificializing);
   }
-
 }

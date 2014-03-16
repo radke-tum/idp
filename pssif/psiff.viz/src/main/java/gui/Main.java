@@ -60,6 +60,7 @@ public class Main {
 	private JCheckBoxMenuItem SpringLayout;
 	private JCheckBoxMenuItem ISOMLayout;
 	private JCheckBoxMenuItem CircleLayout;
+	private JCheckBoxMenuItem TestLayout;
 	private JMenu applyView;
 	private JMenu deleteView;
 	private JMenu graphLayout;
@@ -245,7 +246,7 @@ public class Main {
 	 */
 	private JMenu addMouseOperationModes()
 	{
-		JMenu modeMenu = graphView.getGraph().getAbstractModalGraphMouse().getModeMenu(); // Obtain mode menu from the mouse
+		JMenu modeMenu = graphView.getGraph().getMouseOperationModes(); // Obtain mode menu from the mouse
 		modeMenu.setText("Mouse Mode");
 		modeMenu.setIcon(null); 
 		modeMenu.setPreferredSize(new Dimension(80,20));
@@ -273,6 +274,7 @@ public class Main {
 				ISOMLayout.setSelected(false);
 				CircleLayout.setSelected(false);
 				KKLayout.setSelected(true);
+				TestLayout.setSelected(false);
 			}
 		});
 		graphLayout.add(KKLayout);
@@ -289,6 +291,7 @@ public class Main {
 				ISOMLayout.setSelected(false);
 				CircleLayout.setSelected(false);
 				FRLayout.setSelected(true);
+				TestLayout.setSelected(false);
 			}
 		});
 		graphLayout.add(FRLayout);
@@ -304,6 +307,7 @@ public class Main {
 				ISOMLayout.setSelected(false);
 				CircleLayout.setSelected(false);
 				SpringLayout.setSelected(true);
+				TestLayout.setSelected(false);
 			}
 		});
 		graphLayout.add(SpringLayout);
@@ -319,6 +323,7 @@ public class Main {
 				SpringLayout.setSelected(false);
 				CircleLayout.setSelected(false);
 				ISOMLayout.setSelected(true);
+				TestLayout.setSelected(false);
 			}
 		});
 		graphLayout.add(ISOMLayout);
@@ -334,9 +339,25 @@ public class Main {
 				SpringLayout.setSelected(false);
 				ISOMLayout.setSelected(false);
 				CircleLayout.setSelected(true);
+				TestLayout.setSelected(false);
 			}
 		});
 		graphLayout.add(CircleLayout);
+		
+		TestLayout = new JCheckBoxMenuItem(GraphVisualization.TestLayout);
+		TestLayout.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				graphView.getGraph().changeLayout(GraphVisualization.TestLayout);
+				KKLayout.setSelected(false);
+				FRLayout.setSelected(false);
+				SpringLayout.setSelected(false);
+				ISOMLayout.setSelected(false);
+				TestLayout.setSelected(true);
+			}
+		});
+		graphLayout.add(TestLayout);
 		
 		return graphLayout;
 	}

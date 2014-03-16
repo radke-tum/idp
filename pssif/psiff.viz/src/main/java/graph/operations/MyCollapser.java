@@ -1,5 +1,6 @@
 package graph.operations;
 
+import graph.model.IMyNode;
 import graph.model.MyEdge;
 import graph.model.MyEdgeTypes;
 import graph.model.MyNode;
@@ -86,7 +87,7 @@ public class MyCollapser {
 	 */
 	private void recCollapseGraph ( MyNode startNode, boolean start, LinkedList<MyNode> work)
 	{
-		//System.out.println("Start: "+start);
+		
 		if (start)
 		{
 			LinkedList<MyEdge> out = findOutgoingEdges(startNode);
@@ -96,7 +97,7 @@ public class MyCollapser {
 			
 			for (MyEdge e : out)
 			{
-				EdgeType parent = e.getEdgeType().getType().getGeneral();
+				EdgeType parent = e.getEdgeType().getParentType();
 				
 				boolean test = false;
 				// test if one of the outgoing edges is an containment
@@ -108,7 +109,7 @@ public class MyCollapser {
 				// if it was a containment edge, the connected nodes have to get further treatment
 				if (test)
 				{
-					MyNode next = e.getDestinationNode();
+					MyNode next = (MyNode)e.getDestinationNode();
 					// add them to the list of Edges which have to be deleted
 					del.add(e);
 					tmp.add(next);
@@ -146,7 +147,7 @@ public class MyCollapser {
 					//System.out.println("loop in "+i);
 					MyEdge e= in.get(i);
 					
-					MyNode source = e.getSourceNode();
+					MyNode source = (MyNode)e.getSourceNode();
 					
 					container.addOldEdge(e);
 					
@@ -162,7 +163,7 @@ public class MyCollapser {
 				{
 				//	System.out.println("loop out "+out.size());
 					MyEdge e= out.get(i);
-					MyNode dest = e.getDestinationNode();//g.getDest(e);
+					MyNode dest = (MyNode)e.getDestinationNode();//g.getDest(e);
 			//		System.out.println("Remove Edge  "+e.getEdgeType().getName());
 					container.addOldEdge(e);
 					
@@ -245,14 +246,20 @@ public class MyCollapser {
 	 * @param startNode the Node which should be tested
 	 * @return true if the node is expandable, fals if not
 	 */
-	public boolean isExpandable (MyNode startNode)
+	public boolean isExpandable (IMyNode startNode)
 	{
-		CollapseContainer container = this.history.get(startNode);
-		
-		if (container==null)
-			return false;
+		if (startNode instanceof MyNode)
+		{
+			MyNode node = (MyNode) startNode;
+			CollapseContainer container = this.history.get(node);
+			
+			if (container==null)
+				return false;
+			else
+				return true;
+		}
 		else
-			return true;
+			return false;
 	}
 	
 	/**
@@ -260,18 +267,24 @@ public class MyCollapser {
 	 * @param startNode the node which should be tested
 	 * @return true if the node can be collapsed, false otherwise
 	 */
-	public boolean isCollapsable (MyNode startNode)
+	public boolean isCollapsable (IMyNode startNode)
 	{
-		LinkedList<MyEdge> out = findOutgoingEdges(startNode);
-		for (MyEdge e : out)
+		if (startNode instanceof MyNode)
 		{
-			if (e.getEdgeType().getName().equals(MyEdgeTypes.CONTAINMENT))
+			MyNode node = (MyNode) startNode;
+			LinkedList<MyEdge> out = findOutgoingEdges(node);
+			for (MyEdge e : out)
 			{
-				return true;
+				if (e.getEdgeType().getName().equals(MyEdgeTypes.CONTAINMENT))
+				{
+					return true;
+				}
 			}
+			
+			return false;
 		}
-		
-		return false;
+		else
+			return false;
 	}
 	
 	/**

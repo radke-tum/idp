@@ -1,9 +1,9 @@
 package de.tum.pssif.core.metamodel.impl;
 
+import de.tum.pssif.core.common.PSSIFOption;
 import de.tum.pssif.core.metamodel.ConnectionMapping;
 import de.tum.pssif.core.model.Edge;
 import de.tum.pssif.core.model.Model;
-import de.tum.pssif.core.util.PSSIFOption;
 
 
 public final class ReadEdgesOperation {

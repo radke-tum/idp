@@ -1,30 +1,71 @@
 package de.tum.pssif.core.metamodel.impl;
 
+import java.util.Collection;
+import java.util.Map;
+
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Maps;
+
+import de.tum.pssif.core.common.PSSIFOption;
+import de.tum.pssif.core.common.PSSIFUtil;
+import de.tum.pssif.core.common.PSSIFValue;
 import de.tum.pssif.core.exception.PSSIFStructuralIntegrityException;
+import de.tum.pssif.core.metamodel.Enumeration;
 import de.tum.pssif.core.metamodel.EnumerationLiteral;
-import de.tum.pssif.core.metamodel.impl.base.AbstractEnumeration;
+import de.tum.pssif.core.metamodel.mutable.MutableEnumeration;
 
 
-public class EnumerationImpl extends AbstractEnumeration {
+public class EnumerationImpl extends NamedImpl implements MutableEnumeration {
+  private Map<String, EnumerationLiteral> literals = Maps.newHashMap();
+
   public EnumerationImpl(String name) {
     super(name);
   }
 
   @Override
+  public PSSIFValue fromObject(Object object) {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public String toString(PSSIFValue val) {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public Class<?> getMetaType() {
+    return Enumeration.class;
+  }
+
+  @Override
   public EnumerationLiteral createLiteral(String name) {
-    if (name == null || name.trim().isEmpty()) {
-      throw new PSSIFStructuralIntegrityException("name of a literal can not be null or empty");
+    PSSIFUtil.checkNameValidity(name);
+    if (!getLiteral(name).isNone()) {
+      throw new PSSIFStructuralIntegrityException("a literal with name " + name + " already exists");
     }
-    if (findLiteral(name) != null) {
-      throw new PSSIFStructuralIntegrityException("literal with this name already exists");
-    }
-    EnumerationLiteralImpl result = new EnumerationLiteralImpl(this, name);
+    EnumerationLiteral result = new EnumerationLiteralImpl(name, this);
     addLiteral(result);
     return result;
   }
 
+  protected final void addLiteral(EnumerationLiteral result) {
+    literals.put(PSSIFUtil.normalize(result.getName()), result);
+  }
+
   @Override
   public void removeLiteral(EnumerationLiteral literal) {
-    removeLiteralInternal(literal);
+    literals.remove(literal.getName());
+  }
+
+  @Override
+  public Collection<EnumerationLiteral> getLiterals() {
+    return ImmutableSet.copyOf(literals.values());
+  }
+
+  @Override
+  public PSSIFOption<EnumerationLiteral> getLiteral(String name) {
+    return PSSIFOption.one(literals.get(PSSIFUtil.normalize(name)));
   }
 }

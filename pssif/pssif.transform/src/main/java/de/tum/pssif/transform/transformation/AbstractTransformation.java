@@ -6,8 +6,8 @@ import de.tum.pssif.core.metamodel.Metamodel;
 public abstract class AbstractTransformation implements Transformation {
   @Override
   public Metamodel apply(Metamodel input) {
-    return new View(input).transform(this);
+    return new Viewpoint(input).transform(this);
   }
 
-  public abstract void apply(View view);
+  public abstract void apply(Viewpoint view);
 }

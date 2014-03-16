@@ -8,13 +8,18 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
-import de.tum.pssif.core.PSSIFConstants;
+
+
+
+
+import de.tum.pssif.core.common.PSSIFConstants;
+import de.tum.pssif.core.common.PSSIFOption;
+import de.tum.pssif.core.common.PSSIFValue;
 import de.tum.pssif.core.metamodel.Attribute;
 import de.tum.pssif.core.metamodel.DataType;
 import de.tum.pssif.core.metamodel.PrimitiveDataType;
 import de.tum.pssif.core.model.Edge;
-import de.tum.pssif.core.util.PSSIFOption;
-import de.tum.pssif.core.util.PSSIFValue;
+
 
 /**
  * A Data container for the Edge from the PSS-IF Model
@@ -24,20 +29,20 @@ import de.tum.pssif.core.util.PSSIFValue;
  */
 public class MyEdge {
 	private MyEdgeType type;
-	private MyNode source;
-	private MyNode destination;
+	private IMyNode source;
+	private IMyNode destination;
 	private Edge edge;
 	private boolean visible;
 	private boolean collapseEdge;
 	
 	/**
 	 * Creates a new MyEdge2 Object
-	 * @param edge : Edge || an edge from the PSS-IF Model
-	 * @param type : MyEdgeType || the type of the edge
-	 * @param source : MyNode2 || the startpoint of the Edge
-	 * @param destination : MyNode2 || the endpoint of the Edge
+	 * @param edge :  an edge from the PSS-IF Model
+	 * @param type :  the type of the edge
+	 * @param source : the startpoint of the Edge
+	 * @param destination : the endpoint of the Edge
 	 */
-	public MyEdge(Edge edge, MyEdgeType type, MyNode source, MyNode destination ) {
+	public MyEdge(Edge edge, MyEdgeType type, IMyNode source, IMyNode destination ) {
 		this.type =type;
 		this.source=source;
 		this.destination = destination;
@@ -89,9 +94,15 @@ public class MyEdge {
 	 */
 	public boolean isDirected()
 	{
-		Attribute edgeDirection = type.getType().findAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_DIRECTED);
-		if (edgeDirection.get(edge).isOne())
-			return edgeDirection.get(edge).getOne().asBoolean();
+		PSSIFOption<Attribute> tmp =type.getType().getAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_DIRECTED);
+		if (tmp.isOne())
+		{
+			Attribute edgeDirection = tmp.getOne();
+			if (edgeDirection.get(edge).isOne())
+				return edgeDirection.get(edge).getOne().asBoolean();
+			else
+				return false;
+		}
 		else
 			return false;
 	}
@@ -132,11 +143,11 @@ public class MyEdge {
 		return type;
 	}
 
-	public MyNode getSourceNode() {
+	public IMyNode getSourceNode() {
 		return source;
 	}
 
-	public MyNode getDestinationNode() {
+	public IMyNode getDestinationNode() {
 		return destination;
 	}
 	
@@ -151,7 +162,7 @@ public class MyEdge {
 	
 	/**
 	 * Get a Mapping from an Attribute name to an Attribute object which contains all the infomations
-	 * @return HashMap<String, Attribute> || Might be empty
+	 * @return a Mapping from an Attribute name to an Attribute.  Might be empty
 	 */
 	public HashMap<String, Attribute> getAttributesHashMap()
 	{
@@ -209,81 +220,90 @@ public class MyEdge {
 	 */
 	public boolean updateAttribute(String attributeName, Object value)
 	{		
-		DataType attrType = type.getType().findAttribute(attributeName).getType();
-		
-		if (attrType.equals(PrimitiveDataType.BOOLEAN))
+		PSSIFOption<Attribute> tmp = type.getType().getAttribute(attributeName);
+		if (tmp.isOne())
 		{
-			try 
+			Attribute attribute = tmp.getOne();
+			DataType attrType = attribute.getType();
+			
+			if (attrType.equals(PrimitiveDataType.BOOLEAN))
 			{
-				PSSIFValue res = PrimitiveDataType.BOOLEAN.fromObject(value);
-				
-				type.getType().findAttribute(attributeName).set(edge, PSSIFOption.one(res));
+				try 
+				{
+					PSSIFValue res = PrimitiveDataType.BOOLEAN.fromObject(value);
+					
+					attribute.set(edge, PSSIFOption.one(res));
+				}
+				catch (IllegalArgumentException e)
+				{
+					e.printStackTrace();
+					return false;
+				}
 			}
-			catch (IllegalArgumentException e)
+			
+			if (attrType.equals(PrimitiveDataType.DATE))
 			{
-				return false;
+				try 
+				{
+					Date data = parseDate((String) value);
+					
+					PSSIFValue res = PrimitiveDataType.DATE.fromObject(data);
+					attribute.set(edge, PSSIFOption.one(res));
+				}
+				catch (IllegalArgumentException e)
+				{
+					e.printStackTrace();
+					return false;
+				}
 			}
+			
+			if (attrType.equals(PrimitiveDataType.DECIMAL))
+			{
+				try 
+				{
+					PSSIFValue res = PrimitiveDataType.DECIMAL.fromObject(value);
+					
+					attribute.set(edge, PSSIFOption.one(res));
+				}
+				catch (IllegalArgumentException e)
+				{
+					e.printStackTrace();
+					return false;
+				}
+			}
+			
+			if (attrType.equals(PrimitiveDataType.INTEGER))
+			{
+				try 
+				{
+					PSSIFValue res = PrimitiveDataType.INTEGER.fromObject(value);
+					
+					attribute.set(edge, PSSIFOption.one(res));
+				}
+				catch (IllegalArgumentException e)
+				{
+					e.printStackTrace();
+					return false;
+				}
+			}
+			
+			if (attrType.equals(PrimitiveDataType.STRING))
+			{
+				try 
+				{
+					PSSIFValue res = PrimitiveDataType.STRING.fromObject(value);
+					
+					attribute.set(edge, PSSIFOption.one(res));
+				}
+				catch (IllegalArgumentException e)
+				{
+					e.printStackTrace();
+					return false;
+				}
+			}
+			return true;
 		}
-		
-		if (attrType.equals(PrimitiveDataType.DATE))
-		{
-			try 
-			{
-				Date tmp = parseDate((String) value);
-				
-				PSSIFValue res = PrimitiveDataType.DATE.fromObject(tmp);
-				type.getType().findAttribute(attributeName).set(edge, PSSIFOption.one(res));
-			}
-			catch (IllegalArgumentException e)
-			{
-				System.out.println(e.getMessage());
-				return false;
-			}
-		}
-		
-		if (attrType.equals(PrimitiveDataType.DECIMAL))
-		{
-			try 
-			{
-				PSSIFValue res = PrimitiveDataType.DECIMAL.fromObject(value);
-				
-				type.getType().findAttribute(attributeName).set(edge, PSSIFOption.one(res));
-			}
-			catch (IllegalArgumentException e)
-			{
-				return false;
-			}
-		}
-		
-		if (attrType.equals(PrimitiveDataType.INTEGER))
-		{
-			try 
-			{
-				PSSIFValue res = PrimitiveDataType.INTEGER.fromObject(value);
-				
-				type.getType().findAttribute(attributeName).set(edge, PSSIFOption.one(res));
-			}
-			catch (IllegalArgumentException e)
-			{
-				return false;
-			}
-		}
-		
-		if (attrType.equals(PrimitiveDataType.STRING))
-		{
-			try 
-			{
-				PSSIFValue res = PrimitiveDataType.STRING.fromObject(value);
-				
-				type.getType().findAttribute(attributeName).set(edge, PSSIFOption.one(res));
-			}
-			catch (IllegalArgumentException e)
-			{
-				return false;
-			}
-		}
-
-		return true;
+		return false;
 	}
 	
 	/**

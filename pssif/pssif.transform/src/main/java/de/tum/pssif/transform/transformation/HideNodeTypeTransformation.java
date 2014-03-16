@@ -1,14 +1,9 @@
 package de.tum.pssif.transform.transformation;
 
-import java.util.Collection;
-
-import com.google.common.collect.Sets;
-
+import de.tum.pssif.core.common.PSSIFOption;
 import de.tum.pssif.core.metamodel.ConnectionMapping;
-import de.tum.pssif.core.metamodel.EdgeEnd;
 import de.tum.pssif.core.metamodel.NodeType;
-import de.tum.pssif.transform.transformation.viewed.ViewedEdgeType;
-import de.tum.pssif.transform.transformation.viewed.ViewedNodeType;
+import de.tum.pssif.core.metamodel.mutable.MutableEdgeType;
 
 
 public class HideNodeTypeTransformation extends HideTypeTransformation<NodeType> {
@@ -17,45 +12,33 @@ public class HideNodeTypeTransformation extends HideTypeTransformation<NodeType>
   }
 
   @Override
-  public void apply(View view) {
+  public void apply(Viewpoint view) {
     if (getType() != null) {
       removeType(view, getType());
     }
   }
 
-  private void removeType(View view, NodeType type) {
-    for (NodeType special : type.getSpecials()) {
-      removeType(view, special);
-    }
+  private void removeType(Viewpoint view, String type) {
+    PSSIFOption<NodeType> actualType = view.getNodeType(type);
 
-    ViewedNodeType actualTarget = view.findNodeType(type.getName());
-
-    Collection<ViewedEdgeType> connected = Sets.newHashSet(actualTarget.getIncomingsInternal());
-    connected.addAll(actualTarget.getOutgoingsInternal());
-
-    for (ViewedEdgeType et : connected) {
-      Collection<ConnectionMapping> toRemove = Sets.newHashSet();
-      for (ConnectionMapping mapping : et.getMappings()) {
-        if (mapping.getFrom().getNodeType().equals(type) || mapping.getTo().getNodeType().equals(type)) {
-          toRemove.add(mapping);
-        }
-      }
-      for (ConnectionMapping mapping : toRemove) {
-        mapping.getFrom().getNodeType().deregisterOutgoing(et);
-        mapping.getTo().getNodeType().deregisterIncoming(et);
-        et.removeMapping(mapping);
+    for (NodeType mnt : actualType.getMany()) {
+      for (NodeType special : mnt.getSpecials()) {
+        removeType(view, special.getName());
       }
     }
 
-    for (ViewedEdgeType et : actualTarget.getAuxiliariesInternal()) {
-      for (EdgeEnd e : et.getAuxiliaries()) {
-        if (e.getNodeType().equals(type)) {
-          e.getNodeType().deregisterAuxiliary(et);
-          et.removeAuxiliary(e);
+    for (MutableEdgeType et : view.getMutableEdgeTypes()) {
+      for (ConnectionMapping cm : et.getMappings().getMany()) {
+        for (NodeType mnt : actualType.getMany()) {
+          if (cm.getFrom().equals(mnt) || cm.getTo().equals(mnt)) {
+            et.removeMapping(cm);
+          }
         }
       }
     }
 
-    view.removeNodeType(actualTarget);
+    for (NodeType mnt : actualType.getMany()) {
+      view.removeNodeType(mnt);
+    }
   }
 }

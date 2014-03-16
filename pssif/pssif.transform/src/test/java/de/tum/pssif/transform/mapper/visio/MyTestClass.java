@@ -2,12 +2,17 @@ package de.tum.pssif.transform.mapper.visio;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Set;
 
 import org.junit.Test;
 
 import com.google.common.collect.Sets;
 
+import de.tum.pssif.core.metamodel.PSSIFCanonicMetamodelCreator;
+import de.tum.pssif.core.model.Model;
+import de.tum.pssif.transform.Mapper;
+import de.tum.pssif.transform.MapperFactory;
 import de.tum.pssif.transform.graph.Graph;
 import de.tum.pssif.transform.io.VisioIoMapper;
 
@@ -26,11 +31,19 @@ public class MyTestClass {
   public static final Set<String> EPK_EDGE_MASTERS  = Sets.newHashSet("Dynamic connector");
 
   @Test
-  public void testReadEpkToGraph() throws FileNotFoundException {
+  public void testReadEpkToGraph() throws IOException {
     VisioIoMapper mapper = new VisioIoMapper("", EPK_NODE_MASTERS, EPK_EDGE_MASTERS);
     Graph graph = mapper.read(getClass().getResourceAsStream("/visio/epk-data.vsdx"));
+
     mapper = new VisioIoMapper("/visio/epk-template.vsdx", EPK_NODE_MASTERS, EPK_EDGE_MASTERS);
     mapper.write(graph, new FileOutputStream("target/testWriteEpkWithGraph.vsdx"));
+  }
+
+  @Test
+  public void testEpkRoundtrip() throws FileNotFoundException {
+    Mapper epkMapper = MapperFactory.getMapper(MapperFactory.EPK);
+    Model model = epkMapper.read(PSSIFCanonicMetamodelCreator.create(), getClass().getResourceAsStream("/visio/epk-data.vsdx"));
+    MapperFactory.getMapper(MapperFactory.EPK).write(PSSIFCanonicMetamodelCreator.create(), model, new FileOutputStream("target/epkRoundtrip.vsdx"));
   }
 
   //  @Test

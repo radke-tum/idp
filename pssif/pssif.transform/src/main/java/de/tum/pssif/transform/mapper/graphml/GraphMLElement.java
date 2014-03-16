@@ -9,4 +9,6 @@ public interface GraphMLElement {
   public String getType();
 
   public Map<String, String> getValues();
+
+  public Map<String, String> getAnnotations();
 }

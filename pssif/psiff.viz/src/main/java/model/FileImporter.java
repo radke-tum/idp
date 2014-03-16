@@ -1,38 +1,26 @@
 package model;
 
 import java.awt.Component;
-import java.awt.FlowLayout;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-import java.util.TreeMap;
 
-import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.xml.stream.XMLStreamException;
 
 import de.tum.pssif.core.model.Model;
 import de.tum.pssif.transform.Mapper;
 import de.tum.pssif.transform.MapperFactory;
 
 
-public class FileImporter {
-
-  private JComboBox<String>       filetype;
-  private TreeMap<String, String> comboBoxValues;
+public class FileImporter extends FileHandler{
 
   public FileImporter() {
-    comboBoxValues = new TreeMap<String, String>();
-
-    comboBoxValues.put("Umsatzorientierte Funktionsplanung", MapperFactory.UOFP);
-    comboBoxValues.put("BPMN", MapperFactory.BPMN);
-    comboBoxValues.put("EPK", MapperFactory.EPK);
-    comboBoxValues.put("SysML", MapperFactory.SYSML);
-    comboBoxValues.put("PSS-IF", MapperFactory.PSSIF);
-    comboBoxValues.put("ReqIf", MapperFactory.REQ_IF);
+	super("Select a Import File Format:");
   }
 
   /**
@@ -46,21 +34,24 @@ public class FileImporter {
     try {
       in = new FileInputStream(file);
 
-      String selectedFileType = String.valueOf(filetype.getSelectedItem());
-
-      Mapper importer = MapperFactory.getMapper(comboBoxValues.get(selectedFileType));
+      Mapper importer = MapperFactory.getMapper(super.getSelectedMapperFactoryValue());
 
       Model model;
       try {
         model = importer.read(ModelBuilder.getMetamodel(), in);
-
-        // Create the Viz Model
-        ModelBuilder.addModel(ModelBuilder.getMetamodel(), model);
-
-        return true;
+        
+        if(model!=null)
+        {
+	        // Create the Viz Model
+	        ModelBuilder.addModel(ModelBuilder.getMetamodel(), model);
+	        return true;
+        }
+        else
+        {
+        	throw new Exception("Error during import");
+        }    
       }
-
-      catch (Exception e) {
+      catch (Exception e ) {
 	        e.printStackTrace();
 	        JPanel errorPanel = new JPanel();
 	
@@ -69,6 +60,7 @@ public class FileImporter {
 	        JOptionPane.showMessageDialog(null, errorPanel, "Ups something went wrong", JOptionPane.ERROR_MESSAGE);
         return false;
       }
+      
     } catch (FileNotFoundException e) {
     		e.printStackTrace();
 	      JPanel errorPanel = new JPanel();
@@ -85,7 +77,10 @@ public class FileImporter {
    * @param caller the component which called to display the popup
    * @return true if the entire import went fine, otherwise false
    */
+  
   public boolean showPopup(Component caller) {
+	  /*
+<<<<<<< HEAD
     JFileChooser openFile = new JFileChooser();
 
     //openFile.setCurrentDirectory(new File("C:\\Users\\Luc\\Desktop\\Dropbox\\IDP-PSS-IF-Shared"));
@@ -103,12 +98,15 @@ public class FileImporter {
     importeType.add(filetype);
 
     panel2.add(importeType);
+======= */
+	super.getFileChooser().setCurrentDirectory(new File("D:\\Dropbox\\IDP-PSS-IF-Shared\\Modelle PE"));
+// >>>>>>> origin/attempt4
 
-    int returnVal = openFile.showOpenDialog(caller);
+    int returnVal = super.getFileChooser().showOpenDialog(caller);
 
     if (returnVal == JFileChooser.APPROVE_OPTION) {
 
-      File file = openFile.getSelectedFile();
+      File file = super.getFileChooser().getSelectedFile();
 
       return importFile(file);
 

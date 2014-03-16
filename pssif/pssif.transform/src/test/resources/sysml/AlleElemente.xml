@@ -1,0 +1,101 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<xmi:XMI xmi:Version="2.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:uml="http://www.eclipse.org/uml2/4.0.0/UML" xmlns:xmi="http://www.omg.org/spec/XMI/2.1">
+  <uml:Model xmi:id="3d9097e4-5067-4421-b1f6-87514d97e36d" name="DataModel">
+    <packagedElement xmi:type="uml:Class" xmi:id="None" name="None" visibility="Public" />
+    <packagedElement xmi:type="uml:Class" xmi:id="Force-closure" name="Force-closure" visibility="Public" />
+    <packagedElement xmi:type="uml:Class" xmi:id="Form-closure" name="Form-closure" visibility="Public" />
+    <packagedElement xmi:type="uml:Class" xmi:id="Material-closure" name="Material-closure" visibility="Public" />
+    <packagedElement xmi:type="uml:Class" xmi:id="AC" name="AC" visibility="Public" />
+    <packagedElement xmi:type="uml:Class" xmi:id="DC" name="DC" visibility="Public" />
+    <packagedElement xmi:type="uml:Class" xmi:id="CanBus" name="CanBus" visibility="Public" />
+    <packagedElement xmi:type="uml:Class" xmi:id="IP" name="IP" visibility="Public" />
+    <packagedElement xmi:type="uml:Class" xmi:id="ProfiBus" name="ProfiBus" visibility="Public" />
+    <packagedElement xmi:type="uml:Class" xmi:id="ProfiNet" name="ProfiNet" visibility="Public" />
+    <packagedElement xmi:type="uml:Class" xmi:id="TCP" name="TCP" visibility="Public" />
+    <packagedElement xmi:type="uml:Class" xmi:id="SFB768_1" name="SFB768_1" visibility="Private">
+      <ownedAttribute xmi:id="9919fb34-3607-47c2-9434-c42670253b11" name="Module1" xmi:type="Module1" aggregation="composite" />
+      <ownedAttribute xmi:id="e245d396-171d-46db-8ba5-074345cea766" name="Block1" xmi:type="Block1" aggregation="composite" />
+      <ownedAttribute xmi:id="b9382e5b-e7db-4cee-8a23-61c9ca5f8332" name="Block2" xmi:type="Block2" aggregation="composite" />
+      <ownedAttribute xmi:id="1d90a583-1a87-4b7e-8571-7f40f6edce76" name="Block3" xmi:type="Block3" aggregation="composite" />
+    </packagedElement>
+    <packagedElement xmi:type="uml:Class" xmi:id="Module1" name="Module1" visibility="Public">
+      <ownedAttribute xmi:id="76645cf2-5b2f-4512-a44f-2efe53775848" name="TimeStamp" xmi:type="String" aggregation="composite" />
+      <ownedAttribute xmi:id="2ed4dee5-8360-49a6-8cb3-d45fb8945d31" name="Version" xmi:type="String" aggregation="composite" />
+    </packagedElement>
+    <packagedElement xmi:type="uml:Class" xmi:id="Block1" name="Block1" visibility="Public">
+      <ownedAttribute xmi:id="7010dc6e-bf0b-48d4-a42e-4bc74bb8d95b" name="TimeStamp" xmi:type="String" aggregation="composite" />
+      <ownedAttribute xmi:type="uml:Port" xmi:id="Block1.Block1.P1" name="Block1.P1" aggregation="composite" />
+    </packagedElement>
+    <packagedElement xmi:type="uml:Class" xmi:id="Block2" name="Block2" visibility="Public">
+      <ownedAttribute xmi:id="a830f374-3c9a-40b2-975a-9267392e74e0" name="TimeStamp" xmi:type="String" aggregation="composite" />
+      <ownedAttribute xmi:id="Block2.Block2.P1" name="Block2.P1" xmi:type="TEstInterfaceEE" aggregation="composite">
+        <DefaultValue xmi:type="TEstInterfaceEE" value="24" />
+        <LowerValue xmi:type="Real" value="12" />
+        <UpperValue xmi:type="Real" value="30" />
+      </ownedAttribute>
+      <ownedAttribute xmi:type="uml:Port" xmi:id="Block2.Block2.P2" name="Block2.P2" aggregation="composite" />
+      <ownedAttribute xmi:type="uml:Port" xmi:id="Block2.Block2.P3" name="Block2.P3" aggregation="composite" />
+    </packagedElement>
+    <packagedElement xmi:type="uml:Class" xmi:id="Block3" name="Block3" visibility="Public">
+      <ownedAttribute xmi:id="d65e2e8f-4083-4bce-b470-cdaa473a30ae" name="TimeStamp" xmi:type="String" aggregation="composite" />
+      <ownedAttribute xmi:id="Testattribut:CInteger" name="Testattribut" xmi:type="CInteger" />
+      <ownedAttribute xmi:id="Block3.Block3.P1" name="Block3.P1" xmi:type="TestHW" aggregation="composite">
+        <DefaultValue xmi:type="TestHW" value="0" />
+      </ownedAttribute>
+    </packagedElement>
+    <packagedElement xmi:type="uml:DataType" xmi:id="Testdatentyp" name="Testdatentyp" />
+    <packagedElement xmi:type="uml:Enumeration" xmi:id="TEstDatentypEnumaeration" name="TEstDatentypEnumaeration">
+      <ownedLiteral xmi:id="TEstDatentypEnumaeration.TestLiteral1" xmi:type="uml:EnumerationLiteral" name="TestLiteral1" />
+      <ownedLiteral xmi:id="TEstDatentypEnumaeration.TEstliteral2" xmi:type="uml:EnumerationLiteral" name="TEstliteral2" />
+    </packagedElement>
+    <packagedElement xmi:type="uml:Class" xmi:id="TestInterfaceSW" name="TestInterfaceSW" visibility="Public">
+      <ownedOperation xmi:id="TestInterfaceSW.TEstOperation" name="TEstOperation" xmi:type="Integer" />
+    </packagedElement>
+    <packagedElement xmi:type="uml:Class" xmi:id="TEstInterfaceEE" name="TEstInterfaceEE" visibility="Public" />
+    <packagedElement xmi:type="uml:Class" xmi:id="TestHW" name="TestHW" visibility="Public" />
+  </uml:Model>
+  <SysML:InterfaceBlock xmi:id="SysMLNone" base_Class="None" direction="NONE" sfb768Layer="Electrical" datatype="Real" xmlns:SysML="http://www.ais.mw.tum.de/SysMl" />
+  <SysML:InterfaceBlock xmi:id="SysMLForce-closure" base_Class="Force-closure" direction="NONE" sfb768Layer="Mechanical" datatype="Real" xmlns:SysML="http://www.ais.mw.tum.de/SysMl" />
+  <SysML:InterfaceBlock xmi:id="SysMLForm-closure" base_Class="Form-closure" direction="NONE" sfb768Layer="Mechanical" datatype="Real" xmlns:SysML="http://www.ais.mw.tum.de/SysMl" />
+  <SysML:InterfaceBlock xmi:id="SysMLMaterial-closure" base_Class="Material-closure" direction="NONE" sfb768Layer="Mechanical" datatype="Real" xmlns:SysML="http://www.ais.mw.tum.de/SysMl" />
+  <SysML:InterfaceBlock xmi:id="SysMLAC" base_Class="AC" direction="OUT" sfb768Layer="Electrical" datatype="Real" xmlns:SysML="http://www.ais.mw.tum.de/SysMl" />
+  <SysML:InterfaceBlock xmi:id="SysMLDC" base_Class="DC" direction="OUT" sfb768Layer="Electrical" datatype="Real" xmlns:SysML="http://www.ais.mw.tum.de/SysMl" />
+  <SysML:InterfaceBlock xmi:id="SysMLCanBus" base_Class="CanBus" direction="OUT" sfb768Layer="Electrical" datatype="Real" xmlns:SysML="http://www.ais.mw.tum.de/SysMl" />
+  <SysML:InterfaceBlock xmi:id="SysMLIP" base_Class="IP" direction="OUT" sfb768Layer="Electrical" datatype="Real" xmlns:SysML="http://www.ais.mw.tum.de/SysMl" />
+  <SysML:InterfaceBlock xmi:id="SysMLProfiBus" base_Class="ProfiBus" direction="OUT" sfb768Layer="Electrical" datatype="Real" xmlns:SysML="http://www.ais.mw.tum.de/SysMl" />
+  <SysML:InterfaceBlock xmi:id="SysMLProfiNet" base_Class="ProfiNet" direction="OUT" sfb768Layer="Electrical" datatype="Real" xmlns:SysML="http://www.ais.mw.tum.de/SysMl" />
+  <SysML:InterfaceBlock xmi:id="SysMLTCP" base_Class="TCP" direction="OUT" sfb768Layer="Electrical" datatype="Real" xmlns:SysML="http://www.ais.mw.tum.de/SysMl" />
+  <SysML:Block xmi:id="SysMLSFB768_1" base_Class="SFB768_1" xmlns:SysML="http://www.ais.mw.tum.de/SysMl" />
+  <SFB768:Module xmi:id="SysMLModule1" base_Class="Module1" xmlns:SFB768="http://www.ais.mw.tum.de/SFB768">
+    <ownedFunctionalities>
+      <ownedFunctionality name="NotDefined" />
+    </ownedFunctionalities>
+  </SFB768:Module>
+  <SysML:ProxyPort xmi:id="SysMLBlock1.Block1.P1" base_Port="Block1.Block1.P1" conjugated="False" sfb768Layer="Software" xmlns:SysML="http://www.ais.mw.tum.de/SysMl" />
+  <SFB768:SoftwareBlock xmi:id="SysMLBlock1" base_Class="Block1" xmlns:SFB768="http://www.ais.mw.tum.de/SFB768">
+    <ownedFunctionalities>
+      <ownedFunctionality name="NotDefined" />
+    </ownedFunctionalities>
+  </SFB768:SoftwareBlock>
+  <SysML:ProxyPort xmi:id="SysMLBlock2.Block2.P1" base_Port="Block2.Block2.P1" conjugated="False" sfb768Layer="Electrical" xmlns:SysML="http://www.ais.mw.tum.de/SysMl">
+    <MandatoryForFunctionality>
+      <functionality name="TestFunktionalität" />
+    </MandatoryForFunctionality>
+  </SysML:ProxyPort>
+  <SysML:ProxyPort xmi:id="SysMLBlock2.Block2.P2" base_Port="Block2.Block2.P2" conjugated="False" sfb768Layer="Mechanical" xmlns:SysML="http://www.ais.mw.tum.de/SysMl" />
+  <SysML:ProxyPort xmi:id="SysMLBlock2.Block2.P3" base_Port="Block2.Block2.P3" conjugated="False" sfb768Layer="Software" xmlns:SysML="http://www.ais.mw.tum.de/SysMl" />
+  <SFB768:EEBlock xmi:id="SysMLBlock2" base_Class="Block2" xmlns:SFB768="http://www.ais.mw.tum.de/SFB768">
+    <ownedFunctionalities>
+      <ownedFunctionality name="TestFunktionalität" />
+    </ownedFunctionalities>
+  </SFB768:EEBlock>
+  <SysML:ProxyPort xmi:id="SysMLBlock3.Block3.P1" base_Port="Block3.Block3.P1" conjugated="False" sfb768Layer="Mechanical" xmlns:SysML="http://www.ais.mw.tum.de/SysMl" />
+  <SFB768:MechanicalBlock xmi:id="SysMLBlock3" base_Class="Block3" xmlns:SFB768="http://www.ais.mw.tum.de/SFB768">
+    <ownedFunctionalities>
+      <ownedFunctionality name="Testfunktionalität" />
+    </ownedFunctionalities>
+  </SFB768:MechanicalBlock>
+  <SysML:InterfaceBlock xmi:id="SysMLTestInterfaceSW" base_Class="TestInterfaceSW" direction="NONE" sfb768Layer="Software" datatype="Integer" provided="TestInterfaceSW.TEstOperation" xmlns:SysML="http://www.ais.mw.tum.de/SysMl" />
+  <SysML:InterfaceBlock xmi:id="SysMLTEstInterfaceEE" base_Class="TEstInterfaceEE" direction="INOUT" sfb768Layer="Electrical" datatype="Integer" xmlns:SysML="http://www.ais.mw.tum.de/SysMl" />
+  <SysML:InterfaceBlock xmi:id="SysMLTestHW" base_Class="TestHW" direction="NONE" sfb768Layer="Mechanical" datatype="Testdatentyp" xmlns:SysML="http://www.ais.mw.tum.de/SysMl" />
+</xmi:XMI>

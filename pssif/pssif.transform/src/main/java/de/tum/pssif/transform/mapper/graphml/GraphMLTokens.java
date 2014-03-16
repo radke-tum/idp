@@ -35,4 +35,5 @@ public class GraphMLTokens {
 
   public static final String ELEMENT_TYPE                    = "bg_type";
   public static final String ENDPOINT_TYPE                   = "pssif_endpoint_type";
+  public static final String ANNOTATION                      = "annotation";
 }

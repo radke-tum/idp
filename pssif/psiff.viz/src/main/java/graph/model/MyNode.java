@@ -1,5 +1,6 @@
 package graph.model;
 
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
@@ -8,13 +9,17 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
-import de.tum.pssif.core.PSSIFConstants;
+
+
+
+
+import de.tum.pssif.core.common.PSSIFConstants;
+import de.tum.pssif.core.common.PSSIFOption;
+import de.tum.pssif.core.common.PSSIFValue;
 import de.tum.pssif.core.metamodel.Attribute;
 import de.tum.pssif.core.metamodel.DataType;
 import de.tum.pssif.core.metamodel.PrimitiveDataType;
 import de.tum.pssif.core.model.Node;
-import de.tum.pssif.core.util.PSSIFOption;
-import de.tum.pssif.core.util.PSSIFValue;
 
 /**
  * A Data container for the Nodes the PSS-IF Model
@@ -22,7 +27,7 @@ import de.tum.pssif.core.util.PSSIFValue;
  * @author Luc
  *
  */
-public class MyNode{
+public class MyNode implements IMyNode{
 	private Node node;
 	private double sizeheight;
 	private double sizewidth;
@@ -31,7 +36,8 @@ public class MyNode{
 	private boolean visible;
 	private boolean collapseNode;
 	
-	private static int limit = 5;
+	//private static int limit = 5;
+	private static int lineLimit = 18;
 	
 	public MyNode(Node node, MyNodeType type) {
 		this.node = node;
@@ -49,13 +55,19 @@ public class MyNode{
 	private List<String> calcAttr()
 	{
 		List<String> attributes = new LinkedList<String>();
-		Attribute nodeName = type.getType().findAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_NAME);
+		
+		PSSIFOption<Attribute> tmp = type.getType().getAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_NAME);
+		Attribute nodeName;
+		if (tmp.isOne())
+			nodeName = tmp.getOne();
+		else
+			nodeName =null;
 		
 		Collection<Attribute> attr = type.getType().getAttributes();
 		
 		for (Attribute current : attr)
 		{
-			if (!nodeName.equals(current))
+			if (!current.equals(nodeName))
 			{
 				String attrName = current.getName();
 				
@@ -66,15 +78,24 @@ public class MyNode{
 				
 				String attrValue="";
 				if (value !=null)
-					attrValue = String.valueOf(value.getValue());
+				{
+					if (((PrimitiveDataType)current.getType()).getName().equals("Date"))
+					{
+						DateFormat df = new SimpleDateFormat("dd-MM-yyyy");
+						attrValue= df.format(value.getValue());
+					}
+					else
+						attrValue = String.valueOf(value.getValue());
+				}
+				
 				String attrUnit = current.getUnit().getName();
 				
 				String res;
 				
 				if (attrUnit.equals("none"))
-					res = attrName+" = "+attrValue+" : "+((PrimitiveDataType)current.getType()).getName();
+					res = attrName+" = "+attrValue;//+" : "+((PrimitiveDataType)current.getType()).getName();
 				else
-					res = attrName+" = "+attrValue+" in "+attrUnit+ " : "+((PrimitiveDataType)current.getType()).getName();
+					res = attrName+" = "+attrValue+" in "+attrUnit;//+ " : "+((PrimitiveDataType)current.getType()).getName();
 				
 				if (current.get(node)!=null && attrValue.length()>0)
 					attributes.add(res);
@@ -110,8 +131,16 @@ public class MyNode{
 			
 			String attrValue="";
 			if (value !=null)
-				attrValue = String.valueOf(value.getValue());
-			
+			{
+				if (((PrimitiveDataType)current.getType()).getName().equals("Date"))
+				{
+					DateFormat df = new SimpleDateFormat("dd-MM-yyyy");
+					attrValue= df.format(value.getValue());
+				}
+				else
+					attrValue = String.valueOf(value.getValue());
+			}
+				
 			currentAttr.add(attrValue);
 			String attrUnit = current.getUnit().getName();
 			currentAttr.add(attrUnit);
@@ -132,84 +161,95 @@ public class MyNode{
 	 */
 	public boolean updateAttribute(String attributeName, Object value)
 	{		
-		DataType attrType = type.getType().findAttribute(attributeName).getType();
-		
-		if (attrType.equals(PrimitiveDataType.BOOLEAN))
+		PSSIFOption<Attribute> tmp = type.getType().getAttribute(attributeName);
+		if (tmp.isOne())
 		{
-			try 
+			Attribute attribute = tmp.getOne();
+			DataType attrType = attribute.getType();
+		
+			if (attrType.equals(PrimitiveDataType.BOOLEAN))
 			{
-				PSSIFValue res = PrimitiveDataType.BOOLEAN.fromObject(value);
-				
-				type.getType().findAttribute(attributeName).set(node, PSSIFOption.one(res));
+				try 
+				{
+					PSSIFValue res = PrimitiveDataType.BOOLEAN.fromObject(value);
+					
+					attribute.set(node, PSSIFOption.one(res));
+				}
+				catch (IllegalArgumentException e)
+				{
+					e.printStackTrace();
+					return false;
+				}
 			}
-			catch (IllegalArgumentException e)
+			
+			if (attrType.equals(PrimitiveDataType.DATE))
 			{
-				return false;
+				try 
+				{
+					Date data = parseDate((String) value);
+					
+					PSSIFValue res = PrimitiveDataType.DATE.fromObject(data);
+					attribute.set(node, PSSIFOption.one(res));
+				}
+				catch (IllegalArgumentException e)
+				{
+					e.printStackTrace();
+					return false;
+				}
 			}
+			
+			if (attrType.equals(PrimitiveDataType.DECIMAL))
+			{
+				try 
+				{
+					PSSIFValue res = PrimitiveDataType.DECIMAL.fromObject(value);
+					
+					attribute.set(node, PSSIFOption.one(res));
+				}
+				catch (IllegalArgumentException e)
+				{
+					e.printStackTrace();
+					return false;
+				}
+			}
+			
+			if (attrType.equals(PrimitiveDataType.INTEGER))
+			{
+				try 
+				{
+					PSSIFValue res = PrimitiveDataType.INTEGER.fromObject(value);
+					
+					attribute.set(node, PSSIFOption.one(res));
+	
+				}
+				catch (IllegalArgumentException e)
+				{
+					e.printStackTrace();
+					return false;
+				}
+			}
+			
+			if (attrType.equals(PrimitiveDataType.STRING))
+			{
+				try 
+				{
+					PSSIFValue res = PrimitiveDataType.STRING.fromObject(value);
+					
+					attribute.set(node, PSSIFOption.one(res));
+	
+				}
+				catch (IllegalArgumentException e)
+				{
+					e.printStackTrace();
+					return false;
+				}
+			}
+			
+			this.update();
+			return true;
 		}
-		
-		if (attrType.equals(PrimitiveDataType.DATE))
-		{
-			try 
-			{
-				Date tmp = parseDate((String) value);
-				
-				PSSIFValue res = PrimitiveDataType.DATE.fromObject(tmp);
-				type.getType().findAttribute(attributeName).set(node, PSSIFOption.one(res));
-			}
-			catch (IllegalArgumentException e)
-			{
-				System.out.println(e.getMessage());
-				return false;
-			}
-		}
-		
-		if (attrType.equals(PrimitiveDataType.DECIMAL))
-		{
-			try 
-			{
-				PSSIFValue res = PrimitiveDataType.DECIMAL.fromObject(value);
-				
-				type.getType().findAttribute(attributeName).set(node, PSSIFOption.one(res));
-			}
-			catch (IllegalArgumentException e)
-			{
-				return false;
-			}
-		}
-		
-		if (attrType.equals(PrimitiveDataType.INTEGER))
-		{
-			try 
-			{
-				PSSIFValue res = PrimitiveDataType.INTEGER.fromObject(value);
-				
-				type.getType().findAttribute(attributeName).set(node, PSSIFOption.one(res));
 
-			}
-			catch (IllegalArgumentException e)
-			{
-				return false;
-			}
-		}
-		
-		if (attrType.equals(PrimitiveDataType.STRING))
-		{
-			try 
-			{
-				PSSIFValue res = PrimitiveDataType.STRING.fromObject(value);
-				
-				type.getType().findAttribute(attributeName).set(node, PSSIFOption.one(res));
-
-			}
-			catch (IllegalArgumentException e)
-			{
-				return false;
-			}
-		}
-		
-		this.update();
-		return true;
+		return false;
 	}
 	
 	/**
@@ -284,8 +324,55 @@ public class MyNode{
 	 */
 	private void setSize()
 	{
+		int lineheight =30;
 		
-		int temp = findName().length() / limit;
+		//height
+		
+		sizeheight =0;
+		//type
+		sizeheight += lineheight;
+		
+		//name
+		int namelines = nameLines(findName());
+		
+		sizeheight += namelines*lineheight ;
+		
+		//Attributes
+		List<String> attr = calcAttr();
+		if (isDetailedOutput())
+		{
+			//lineheight =30;
+			//Attributes label
+			sizeheight += lineheight;
+			
+			//Attributes
+			
+			
+			int nbAttr = attr.size();
+			
+			sizeheight += nbAttr*lineheight;
+		}
+		
+		sizewidth = 180;
+		
+		
+		
+		//width
+		
+		/*int temp = (type.getName().length()+6)/ limit;
+		
+		if (temp >sizewidth)
+			sizewidth = temp;
+			
+		for (String s : attr)
+		{
+			temp = s.length() / limit;
+			
+			if (temp > sizewidth)
+				sizewidth = temp;
+		}
+		
+		/*int temp = findName().length() / limit;
 		
 		if (temp >0)
 			sizewidth = temp;
@@ -294,20 +381,14 @@ public class MyNode{
 		
 		if (temp >sizewidth)
 			sizewidth = temp;
-		
-		List<String> attr = calcAttr();
+			
 		for (String s : attr)
 		{
 			temp = s.length() / limit;
 			
 			if (temp > sizewidth)
 				sizewidth = temp;
-		}
-				
-		sizeheight = attr.size();
-
-		if (sizeheight==1)
-			sizeheight= sizeheight+1.5;
+		}*/
 		
 		//System.out.println(getRealName()+"|| width "+sizewidth+" height "+sizeheight);	
 	
@@ -333,10 +414,11 @@ public class MyNode{
 		{
 			output ="<table border=\"0\">";
 			output+=" <tr> ";
-			output+= "<th> <h3>&lt;&lt; "+type.getName()+" >> <br>"+findName()+"</h3> </th>";
-			output+=  " </tr> ";
+			output+= "<th> <h3>&lt;&lt; "+type.getName()+" &gt;&gt; <br>";
+			output+= evalName(findName());
+			output+= "</h3> </th> </tr>";
 			output+=" <tr> ";
-			output+= "<td> <b>Attributes </b></td>";
+			output+= "<td> <b>Attributes</b></td>";
 			output+=  " </tr> ";
 			for (String s : calcAttr())
 			{
@@ -349,10 +431,124 @@ public class MyNode{
 		}
 		else
 		{
-			output+="<h3>&lt;&lt; "+type.getName()+" >> <br>"+findName()+"</h3>";
+			output+="<h3>&lt;&lt; "+type.getName()+" &gt;&gt; <br>"+ evalName(findName())+"</h3>";
 		}
 		
 		return output;
+	}
+	
+	private String evalName(String name)
+	{
+		//String name = findName();
+		
+		if (name.length()>lineLimit)
+		{
+			String res;
+			List<Integer> spaceIndexes = getSpaceIndexes(name);
+			
+			int previous =-1;
+			for (int current : spaceIndexes)
+			{
+				if (current > lineLimit)
+				{
+					if (previous!=-1)
+					{
+						res = name.substring(0, previous)+" <br>";
+						
+						return res+evalName(name.substring(previous+1));
+					}
+					else
+					{
+						res = name.substring(0, lineLimit-1)+"- <br>";
+						
+						return res+evalName(name.substring(lineLimit));
+					}						
+				}
+				else
+				{
+					previous=current;
+				}
+			}
+			
+			if (previous==-1)
+			{
+				res = name.substring(0, lineLimit-1)+"- <br>";
+				
+				return res+evalName(name.substring(lineLimit));
+			}
+			
+			if (previous<=lineLimit)
+			{
+				res = name.substring(0, previous)+" <br>";
+				
+				return res+name.substring(previous+1);
+			}
+		}
+
+		return name+" ";
+	}
+	
+	private int nameLines(String name)
+	{
+		if (name.length()>lineLimit)
+		{
+			List<Integer> spaceIndexes = getSpaceIndexes(name);
+			
+			int previous =-1;
+			for (int current : spaceIndexes)
+			{
+				if (current > lineLimit)
+				{
+					if (previous!=-1)
+					{
+						return 1+nameLines(name.substring(previous+1));
+					}
+					else
+					{
+						return 1+nameLines(name.substring(lineLimit));
+					}						
+				}
+				else
+				{
+					previous=current;
+				}
+			}
+			
+			if (previous==-1)
+			{
+				return 1+nameLines(name.substring(lineLimit));
+			}
+			
+			if (previous<=lineLimit)
+			{
+				return 2;
+			}
+		}
+
+		return 1;
+	}
+	
+	public List<Integer> getSpaceIndexes(String value)
+	{
+		int position = 0;
+		
+		List<Integer> res = new LinkedList<Integer>();
+		
+		int space = value.indexOf(" ");
+		while (space !=-1)
+		{
+			position = position+space;
+			
+			res.add(position);
+			
+			value = value.substring(space+1);
+			position++;
+			
+			space = value.indexOf(" ");
+			
+		}
+		
+		return res;
 	}
 	
 /**
@@ -382,26 +578,30 @@ public class MyNode{
 	 */
 	private String findName()
 	{
-		String name="";
+		String name="Name not available";
 		// find the name of the Node
-		Attribute nodeName = type.getType().findAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_NAME);
-		
-		if (nodeName.get(node)!=null)
+		PSSIFOption<Attribute> tmp =type.getType().getAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_NAME);
+		if (tmp.isOne())
 		{
-			PSSIFValue value =null;
-			if (nodeName.get(node).isOne())
+			Attribute nodeName = tmp.getOne();
+			
+			if (nodeName.get(node)!=null)
 			{
-				value = nodeName.get(node).getOne();
-				name = value.asString();
+				PSSIFValue value =null;
+				if (nodeName.get(node).isOne())
+				{
+					value = nodeName.get(node).getOne();
+					name = value.asString();
+				}
+				if (nodeName.get(node).isNone())
+				{
+					name ="Name not available";
+				}
 			}
-			if (nodeName.get(node).isNone())
-			{
+			else
 				name ="Name not available";
-			}
 		}
-		else
-			name ="Name not available";
-		
+			
 		return name;
 	}
 
@@ -427,6 +627,7 @@ public class MyNode{
 	 */
 	public void setDetailedOutput(boolean detailedOutput) {
 		this.detailedOutput = detailedOutput;
+		setSize();
 	}
 
 	public Node getNode() {

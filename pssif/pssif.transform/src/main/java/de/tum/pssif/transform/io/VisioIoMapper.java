@@ -8,7 +8,7 @@ import java.util.Set;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
-import de.tum.pssif.core.PSSIFConstants;
+import de.tum.pssif.core.common.PSSIFConstants;
 import de.tum.pssif.transform.IoMapper;
 import de.tum.pssif.transform.graph.AElement;
 import de.tum.pssif.transform.graph.Edge;

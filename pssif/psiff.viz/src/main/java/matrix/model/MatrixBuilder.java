@@ -1,5 +1,6 @@
 package matrix.model;
 
+import graph.model.IMyNode;
 import graph.model.MyEdge;
 import graph.model.MyEdgeType;
 import graph.model.MyNode;
@@ -105,24 +106,28 @@ public class MatrixBuilder {
 		
 		for (MyEdge e :edges)
 		{
-			MyNode source = e.getSourceNode();
-			//MyNode dest = e.getDestinationNode();
-			
-			LinkedList<MyEdge> tmp = mapping.get(source);
-			
-			// check if there is already a Connection
-			if (tmp==null)
-			{ 
-				// no entry yet
-				tmp = new LinkedList<MyEdge>();
-				tmp.add(e);
-				mapping.put(source, tmp);
-			}
-			else
+			IMyNode node = e.getSourceNode();
+			if (node instanceof MyNode)
 			{
-				// there is an entry
-				tmp.add(e);
-				mapping.put(source, tmp);
+				MyNode source = (MyNode) node;
+				//MyNode dest = e.getDestinationNode();
+				
+				LinkedList<MyEdge> tmp = mapping.get(source);
+				
+				// check if there is already a Connection
+				if (tmp==null)
+				{ 
+					// no entry yet
+					tmp = new LinkedList<MyEdge>();
+					tmp.add(e);
+					mapping.put(source, tmp);
+				}
+				else
+				{
+					// there is an entry
+					tmp.add(e);
+					mapping.put(source, tmp);
+				}
 			}
 		}
 		

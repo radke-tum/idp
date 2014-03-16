@@ -1,62 +1,80 @@
 package de.tum.pssif.core.model.impl;
 
-import java.util.Collection;
 import java.util.Map;
-import java.util.Set;
+import java.util.Map.Entry;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 
-import de.tum.pssif.core.PSSIFConstants;
-import de.tum.pssif.core.metamodel.EdgeEnd;
-import de.tum.pssif.core.metamodel.impl.EdgeEndImpl;
+import de.tum.pssif.core.common.PSSIFConstants;
+import de.tum.pssif.core.common.PSSIFOption;
+import de.tum.pssif.core.common.PSSIFUtil;
+import de.tum.pssif.core.common.PSSIFValue;
 import de.tum.pssif.core.metamodel.impl.GetValueOperation;
 import de.tum.pssif.core.metamodel.impl.SetValueOperation;
 import de.tum.pssif.core.model.Element;
 import de.tum.pssif.core.model.Model;
-import de.tum.pssif.core.util.PSSIFOption;
-import de.tum.pssif.core.util.PSSIFUtil;
-import de.tum.pssif.core.util.PSSIFValue;
 
 
-abstract class ElementImpl implements Element {
+public abstract class ElementImpl implements Element {
   private final Model                          model;
-  private Map<String, PSSIFOption<PSSIFValue>> values = Maps.newHashMap();
+  private Map<String, PSSIFOption<PSSIFValue>> values      = Maps.newHashMap();
+  private Map<String, String>                  annotations = Maps.newHashMap();
 
   public ElementImpl(Model model) {
     this.model = model;
   }
 
   @Override
-  public String getId() {
-    return values.get(PSSIFConstants.BUILTIN_ATTRIBUTE_ID).isOne() ? values.get(PSSIFConstants.BUILTIN_ATTRIBUTE_ID).getOne().asString()
-        : "undefined";
+  public Model getModel() {
+    return model;
+  }
+
+  @Override
+  public void setId(String id) {
+    values.put(PSSIFConstants.BUILTIN_ATTRIBUTE_ID, PSSIFOption.one(PSSIFValue.create(id)));
+  }
+
+  @Override
+  public final String getId() {
+    return values.get(PSSIFConstants.BUILTIN_ATTRIBUTE_ID).getOne().asString();
   }
 
   @Override
   public PSSIFOption<PSSIFValue> apply(GetValueOperation op) {
-    return values.get(op.getAttributeType().getName()) != null ? values.get(op.getAttributeType().getName()) : PSSIFOption.<PSSIFValue> none();
+    if (values.containsKey(PSSIFUtil.normalize(op.getAttribute().getName()))) {
+      return values.get(op.getAttribute().getName());
+    }
+    else {
+      return PSSIFOption.none();
+    }
   }
 
   @Override
   public void apply(SetValueOperation op) {
-    values.put(op.getAttributeType().getName(), op.getValue());
-  }
-
-  protected Set<EdgeEndImpl> locateEdgeEnds(EdgeEnd edgeEnd, Collection<EdgeEndImpl> candidates) {
-    Set<EdgeEndImpl> result = Sets.newHashSet();
-
-    for (EdgeEndImpl impl : candidates) {
-      if (PSSIFUtil.areSame(edgeEnd.getName(), impl.getName())) {
-        result.add(impl);
-      }
-    }
-
-    return result;
+    values.put(op.getAttribute().getName(), op.getValue());
   }
 
   @Override
-  public Model getModel() {
-    return model;
+  public void annotate(String key, String value) {
+    annotate(key, value, false);
+  }
+
+  @Override
+  public void annotate(String key, String value, boolean overwrite) {
+    if (!overwrite) {
+      Preconditions.checkState(!annotations.containsKey(key) || annotations.get(key).equals(value));
+    }
+    annotations.put(key, value);
+  }
+
+  @Override
+  public PSSIFOption<Entry<String, String>> getAnnotations() {
+    return PSSIFOption.many(annotations.entrySet());
+  }
+
+  @Override
+  public PSSIFOption<String> getAnnotation(String key) {
+    return PSSIFOption.one(annotations.get(key));
   }
 }

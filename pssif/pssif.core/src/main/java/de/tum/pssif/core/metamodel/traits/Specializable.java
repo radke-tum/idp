@@ -2,21 +2,16 @@ package de.tum.pssif.core.metamodel.traits;
 
 import java.util.Collection;
 
+import de.tum.pssif.core.common.PSSIFOption;
+import de.tum.pssif.core.metamodel.ElementType;
 
-/**
- * Defines operations allowed in connection with structural
- * specialization between element types.
- *
- * @param <T>
- *      The concrete element type.
- */
-public interface Specializable<T> {
 
+public interface Specializable<T extends ElementType> {
   /**
    * @return
    *    The generalization of the context element type. May be <b>null</b>.
    */
-  T getGeneral();
+  PSSIFOption<T> getGeneral();
 
   /**
    * @return

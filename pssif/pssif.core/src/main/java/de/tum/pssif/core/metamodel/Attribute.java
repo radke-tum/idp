@@ -1,17 +1,12 @@
 package de.tum.pssif.core.metamodel;
 
+import de.tum.pssif.core.common.PSSIFOption;
+import de.tum.pssif.core.common.PSSIFValue;
+import de.tum.pssif.core.metamodel.traits.Named;
 import de.tum.pssif.core.model.Element;
-import de.tum.pssif.core.util.PSSIFOption;
-import de.tum.pssif.core.util.PSSIFValue;
 
 
-/**
- * Concept which is used in the meta-model
- * to describe attributes.
- *
- */
 public interface Attribute extends Named {
-
   /**
    * @return
    *    The data type of this attribute type.

@@ -1,19 +1,18 @@
 package de.tum.pssif.core.metamodel;
 
-import de.tum.pssif.core.metamodel.traits.Annotatable;
-import de.tum.pssif.core.metamodel.traits.AttributeGroups;
-import de.tum.pssif.core.metamodel.traits.Specializable;
-import de.tum.pssif.core.model.Element;
+import java.util.Collection;
+
+import de.tum.pssif.core.common.PSSIFOption;
+import de.tum.pssif.core.metamodel.traits.Attributable;
+import de.tum.pssif.core.metamodel.traits.Named;
 
 
-/**
- * A type which describes the (graph) structure of a PSS-IF Metamodel.
- * Can be either a Node Type or an Edge Type.
- *
- * @param <T>
- */
-public interface ElementType<T extends ElementType<T, E>, E extends Element> extends Named, AttributeGroups, Specializable<T>, Annotatable<E> {
+public interface ElementType extends Named, Attributable {
+  boolean isAssignableFrom(ElementType type);
 
-  //Nothing specific here
+  Collection<AttributeGroup> getAttributeGroups();
 
+  AttributeGroup getDefaultAttributeGroup();
+
+  PSSIFOption<AttributeGroup> getAttributeGroup(String name);
 }
