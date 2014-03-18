@@ -1,7 +1,90 @@
 \chapter{Implementation}
 \label{chap:impl}
 
+In the last chapter the conceptual approach to the realisation of the PSS-IF Proof-of-Concept was described. In particular, the latter sections of \chapref{chap:approach} describe the principles behind the chosen transformation method. In this context, this chapter focuses on the implementation of the framework. The chapter is structured as follows: \secref{sec:impl:technology} describes the technology stack used for the implementation. In the consequent \secref{sec:impl:principles} the adopted software development guiding principles are presented. Thereafter, \secref{sec:impl:structure} provides an overview of the project structure. \secref{sec:impl:components} follows with a description of each component of the PSS-IF PoC and, finally, \secref{sec:impl:process} describes the import and export processes and the collaboration of all components of the framework.
+
+\section{Technology Stack}
+\label{sec:impl:technology}
+
+This section defines the technologies used for the implementation of the PSS-IF Proof-of-Concept. Each of the following subsections addresses a particular aspect of the technological stack. Note that all the software and tools used for the realization of the PoC are widely accepted industry standards.
+
+\subsection{Programming Language}
+
+To enable an easier and more rapid development of the prototype, a high-level programming language can better be utilized. Due to previous experience and know-how, the authors have chosen the Java Programming Language. Furthermore, the code is compliant with Java version 7, as distributed by Oracle. 
+
+\subsection{Revision Control}
+
+For improved parallelisation, better code maintenance and easier documentation, a distributed revision control can be used. While there are numerous alternatives, the authors have chosen GIT as a modern and powerful solution.
+
+\subsection{Build Process and Dependency Management}
+
+For the automated build process, as well as for the management of dependencies to external libraries, Apache Maven has been used.
+
+\subsection{Test Framework}
+
+For the execution of automated tests, JUnit, an industry standard framework, has been used.
+
+\subsection{Used Libraries}
+
+Next to the libraries provided by Oracle's Standard Java Runtime Environment, the following additional libraries have been used:
+
+\paragraph{apache-compress} An API for the manipulation of different kinds of compressed files. In the scope of the Proof-of-Concept, the API is used in the Visio VSDX processing component, for the zipping and unzipping of VSDX files.
+
+\paragraph{guava} Google Guava is a set of common libraries, mainly developed by Google. The package includes useful APIs for the manipulation of collections, the usage of function and predicates, and others.
+
+\paragraph{junit} JUnit is an industry standard unit-testing framework.
+
+\section{Guiding Principles}
+\label{sec:impl:principles}
+
+During the design and implementation of the PSS-IF PoC the authors have followed the principles and best-practices for software development. Some of the guiding principles were the following:
+
+\paragraph{Standardization:} Usage of widely used and accepted industry-standard tools, technologies and formats, to render the produced solution more accessible to new developers and compliant to other pieces of software.
+
+\paragraph{Patterns:} To maximize code quality and understandability, common architecture and design patterns have been utilized.
+
+\paragraph{Object-Orientation:} The code is developed in accordance with the paradigms of the Java programming language -- it is mostly object-oriented and imperative.
+
+\paragraph{Separation of Concerns:} The implementation follows the separation of concerns paradigm.
+
+\section{Project Structure}
+\label{sec:impl:structure}
+
+Maven project with ... packaging. Stuff. TODO Note: maven modules do not neccessarily correspond to function modules: maven modules are coarse-grained. Each maven module contains one or more functional modules.
+
+\section{Components}
+\label{sec:impl:components}
+
 TODO
+
+\subsection{Core}
+
+TODO
+
+\subsection{Transformations}
+
+TODO
+
+\subsection{Generic Graph}
+
+TODO
+
+\subsection{I/O Mappers}
+
+TODO
+
+\subsection{Model Mappers}
+
+TODO
+
+\subsection{Microsoft Visio VSDX I/O}
+
+TODO
+
+\section{Import and Export Process}
+\label{sec:impl:process}
+
+TODO describe process, mit TEXT und BILD! 
 
 \begin{itemize}
 \item technology: java. maven... expplain why
