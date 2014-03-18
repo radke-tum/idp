@@ -16,8 +16,8 @@ import de.tum.pssif.core.model.Node;
 public class MyJunctionNode implements IMyNode{
 	
 	private Node node;
-	private double sizeheight;
-	private double sizewidth;
+	//private double sizeheight;
+	//private double sizewidth;
 	private MyJunctionNodeType type;
 	private boolean detailedOutput;
 	private boolean visible;
@@ -37,10 +37,11 @@ public class MyJunctionNode implements IMyNode{
 	 */
 		public String getName()
 		{
-			String res = findName().replaceAll("&lt;", "<");
-			res = res.replaceAll("<br>", "");
+			//String res = findName().replaceAll("&lt;", "<");
+			//res = res.replaceAll("<br>", "");
 			
-			return res;
+			//return findName();
+			return type.getName();
 		}
 		
 		/**
@@ -49,7 +50,8 @@ public class MyJunctionNode implements IMyNode{
 		 */
 		public String getRealName()
 		{
-			return findName();
+			//return findName();
+			return type.getName();
 		}
 		
 		/**
@@ -198,7 +200,7 @@ public class MyJunctionNode implements IMyNode{
 			return name+" ";
 		}
 		
-		private int nameLines(String name)
+	/*	private int nameLines(String name)
 		{
 			if (name.length()>lineLimit)
 			{
@@ -237,7 +239,7 @@ public class MyJunctionNode implements IMyNode{
 
 			return 1;
 		}
-		
+		*/
 		public List<Integer> getSpaceIndexes(String value)
 		{
 			int position = 0;

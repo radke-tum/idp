@@ -50,7 +50,6 @@ public class VertexStrokeHighlight<V,E> implements Transformer<V,Stroke>
 	            this.depth = 1;
 	            this.followEdges = new LinkedList<MyEdgeType>();
 	            this.specialSearch=false;
-	            
 	        }
 	        
 	        /**
@@ -75,8 +74,7 @@ public class VertexStrokeHighlight<V,E> implements Transformer<V,Stroke>
 	         * Do the visualization on the graph
 	         */
 	        public Stroke transform(V currentNode)
-	        {
-	            
+	        {  
 	        	if (highlight)
 	            {
 	        	//	System.out.println("-----------------------");
@@ -88,7 +86,10 @@ public class VertexStrokeHighlight<V,E> implements Transformer<V,Stroke>
 	                	{
 		                    if (debug)
 		                    	System.out.println(((IMyNode) currentNode).getName() +"  Heavy");
-	                		return heavy;
+		                    if (currentNode instanceof MyJunctionNode)
+		                    	return medium;
+		                    else
+		                    	return heavy;
 	                	}
 		                else
 		                {	                
@@ -100,7 +101,6 @@ public class VertexStrokeHighlight<V,E> implements Transformer<V,Stroke>
             						 {
 	            						System.out.println(((IMyNode) currentNode).getName());
 	            						System.out.println("                              depth Predecessor  Medium ");
-	            						//System.out.println("medium");
 	            						System.out.println("----------------------------");
             						 }
                 					return medium;
@@ -111,7 +111,6 @@ public class VertexStrokeHighlight<V,E> implements Transformer<V,Stroke>
                 					 {
 		                					System.out.println(((IMyNode) currentNode).getName());
 		                					System.out.println("                             not depth Predecessor  Light ");
-		                					//System.out.println("light");
 		                					System.out.println("----------------------------");
                 					 }
                 					return light;
@@ -126,7 +125,7 @@ public class VertexStrokeHighlight<V,E> implements Transformer<V,Stroke>
     		                		{
     		                			if (pi.isPicked(v))
     		                			{
-    		                				if(searchOutEdges(v, currentNode,false))
+    		                				if(v instanceof MyNode && searchOutEdges(v, currentNode,false))
     		                				{
     		                					//System.out.println("medium");
     		                					 if (debug)
@@ -150,19 +149,14 @@ public class VertexStrokeHighlight<V,E> implements Transformer<V,Stroke>
 	                else
 	                {
 		            	if (pi.isPicked(currentNode))
-		                    return heavy;
+		                    {
+			                    if (currentNode instanceof MyJunctionNode)
+			                    	return medium;
+			                    else
+			                    	return heavy;
+		                    }
 		                else
 		                {	                
-		                	/*Collection<V>  col = graph.getPredecessors(currentNode);
-		                	if (col!=null)
-		                	{
-			                	for(V w : col)
-			                	{
-			                        if (pi.isPicked(w))
-			                            return medium;
-			                    }
-		                	}
-		                    return light;*/
 		                	if (searchDept(currentNode, depth))
         					{
         						 if (debug)
@@ -201,7 +195,7 @@ public class VertexStrokeHighlight<V,E> implements Transformer<V,Stroke>
 	         */
 	        private boolean searchOutEdges(V source, V dest, boolean depthsearch)
 	        {
-
+	        	
 	        	LinkedList<MyEdge> eout = findOutgoingEdges(source);
 				//Collection<MyEdge> eout = ( Collection<MyEdge>) graph.getOutEdges(source);
 	        	 
@@ -244,7 +238,12 @@ public class VertexStrokeHighlight<V,E> implements Transformer<V,Stroke>
 	        			if (searchOutEdges(v, current, true))
 	        			{
 		        			if (pi.isPicked(v))
-		        				return true;
+		        			{
+		        				if (v instanceof MyNode)
+		        					return true;
+		        				else
+		        					return false;
+		        			}
 		        			else
 		        				next.add(v);
 
