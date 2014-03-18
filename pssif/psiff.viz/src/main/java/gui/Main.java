@@ -98,12 +98,18 @@ public class Main {
 		frame.setPreferredSize(new Dimension(width, height));
 		frame.setState(Frame.MAXIMIZED_BOTH);
 		
+		initFrame();
+	}
+	
+	private void initFrame()
+	{	
+		frame.getContentPane().removeAll();
 		// create the Basic Menu Bar
 		frame.setJMenuBar(createFileMenu());
 		// create an information Panel
 		JPanel allPanel = new JPanel(new GridBagLayout());
-		allPanel.setSize(frame.getPreferredSize());
-		allPanel.setPreferredSize(frame.getPreferredSize());
+		allPanel.setSize(frame.getSize());
+		//allPanel.setPreferredSize(frame.getPreferredSize());
 		allPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 		JLabel label = new JLabel("Please import a file");
 		label.setFont(new Font("Arial", Font.ITALIC, 25));
@@ -112,7 +118,6 @@ public class Main {
 		frame.add(allPanel);
 		
 		frame.pack();
-		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
 	}
 	
@@ -122,6 +127,7 @@ public class Main {
 	 */
 	private JMenuBar createFileMenu()
 	{
+		
 		JMenuBar menuBar = new JMenuBar();
 		
 		JMenu fileMenu = new JMenu("File");
@@ -133,7 +139,7 @@ public class Main {
 				if (importer.showPopup(frame))
 				{
 			        // Create the Views
-			        matrixView = new MatrixView();
+					matrixView = new MatrixView();	
 					graphView = new GraphView();
 					// instance which manages all the filters
 					masterFilter = new MasterFilter(graphView);
@@ -428,6 +434,7 @@ public class Main {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				graphView.resetGraph();
+				initFrame();
 			}
 		});
 
@@ -606,7 +613,7 @@ public class Main {
 	 */
 	private void createNewGraphView ()
 	{
-		CreateNewGraphViewPopup popup = new CreateNewGraphViewPopup(graphView);
+		CreateNewGraphViewPopup popup = new CreateNewGraphViewPopup(graphView, masterFilter);
 		boolean res = popup.showPopup();
 		
 		if (res)

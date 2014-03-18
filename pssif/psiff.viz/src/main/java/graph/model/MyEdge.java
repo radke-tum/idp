@@ -33,6 +33,7 @@ public class MyEdge {
 	private IMyNode destination;
 	private Edge edge;
 	private boolean visible;
+	private boolean partnersVisible;
 	private boolean collapseEdge;
 	
 	/**
@@ -49,6 +50,7 @@ public class MyEdge {
 		this.edge = edge;
 		this.visible = true;
 		this.collapseEdge = false;
+		this.partnersVisible = true;
 	}
 	
 	/**
@@ -391,6 +393,14 @@ public class MyEdge {
 		}
 		
 		return attributes;
+	}
+
+	public boolean isPartnersVisible() {
+		return partnersVisible;
+	}
+
+	public void setPartnersVisible(boolean partnersVisible) {
+		this.partnersVisible = partnersVisible;
 	}
 	
 }

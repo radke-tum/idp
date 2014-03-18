@@ -32,7 +32,7 @@ public abstract class MyPopup {
 		for (MyEdgeType t : edgeTypes)
 		{
 			String parentName;
-			if (t.getType().getGeneral()!=null)
+			if (t.getParentType()!=null)
 			{
 				parentName = t.getParentType().getName();
 			}

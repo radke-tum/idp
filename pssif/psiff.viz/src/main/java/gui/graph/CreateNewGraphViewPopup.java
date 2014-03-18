@@ -3,6 +3,7 @@ package gui.graph;
 import graph.model.MyEdgeType;
 import graph.model.MyNodeType;
 import graph.operations.GraphViewContainer;
+import graph.operations.MasterFilter;
 import gui.GraphView;
 import gui.checkboxtree.CheckBoxTree;
 
@@ -38,11 +39,13 @@ public class CreateNewGraphViewPopup extends MyPopup{
 	private JTextField viewNameTextField;
 	private GraphView graphView;
 	private CheckBoxTree tree;
+	private MasterFilter masterFilter;
 	
-	public CreateNewGraphViewPopup(GraphView graphView)
+	public CreateNewGraphViewPopup(GraphView graphView, MasterFilter masterFilter)
 	{
 		this.graphView = graphView;
 		tree = new CheckBoxTree();
+		this.masterFilter = masterFilter;
 	}
 	
 	/**
@@ -94,6 +97,7 @@ public class CreateNewGraphViewPopup extends MyPopup{
         		GraphViewContainer container = new GraphViewContainer(selectedNodes,selectedEdges,viewName);
 	        	graphView.getGraph().createNewGraphView(container);
 	        	
+	        	masterFilter.addNodeAndEdgeTypeFilter(selectedNodes, selectedEdges, viewName, false);
 	        	// apply the view
 	        	//graphView.getGraph().applyNodeAndEdgeFilter(container.getSelectedNodeTypes(), container.getSelectedEdgeTypes(), viewName);
 	        	

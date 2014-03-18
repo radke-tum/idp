@@ -10,7 +10,6 @@ import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.xml.stream.XMLStreamException;
 
 import de.tum.pssif.core.model.Model;
 import de.tum.pssif.transform.Mapper;
@@ -39,7 +38,6 @@ public class FileImporter extends FileHandler{
       Model model;
       try {
         model = importer.read(ModelBuilder.getMetamodel(), in);
-        
         if(model!=null)
         {
 	        // Create the Viz Model
@@ -48,27 +46,20 @@ public class FileImporter extends FileHandler{
         }
         else
         {
-        	throw new Exception("Error during import");
+        	createErrorPopup("There was a problem transforming the selected file. Was the file type chosen correctly?");
+	        return false;
         }    
       }
       catch (Exception e ) {
 	        e.printStackTrace();
-	        JPanel errorPanel = new JPanel();
-	
-	        errorPanel.add(new JLabel("There was a problem transforming the selected file. Was the file type chosen correctly?"));
-	
-	        JOptionPane.showMessageDialog(null, errorPanel, "Ups something went wrong", JOptionPane.ERROR_MESSAGE);
-        return false;
+	        createErrorPopup("There was a problem transforming the selected file. Was the file type chosen correctly?");
+	        return false;
       }
       
     } catch (FileNotFoundException e) {
-    		e.printStackTrace();
-	      JPanel errorPanel = new JPanel();
-	
-	      errorPanel.add(new JLabel("There was a problem importing the selected file."));
-	
-	      JOptionPane.showMessageDialog(null, errorPanel, "Ups something went wrong", JOptionPane.ERROR_MESSAGE);
-      return false;
+    	e.printStackTrace();
+    	createErrorPopup("There was a problem importing the selected file.");
+    	return false;
     }
   }
 
@@ -78,8 +69,8 @@ public class FileImporter extends FileHandler{
    * @return true if the entire import went fine, otherwise false
    */
   public boolean showPopup(Component caller) {
-	super.getFileChooser().setCurrentDirectory(new File("C:\\Users\\Luc\\Desktop\\Uni Dropbox\\Dropbox\\IDP-PSS-IF-Shared\\Modelle PE"));
-
+	//super.getFileChooser().setCurrentDirectory(new File("C:\\Users\\Luc\\Desktop\\Uni Dropbox\\Dropbox\\IDP-PSS-IF-Shared\\Modelle PE"));
+	  super.getFileChooser().setCurrentDirectory(new File("C:\\Users\\Luc\\Desktop\\Dropbox\\IDP-PSS-IF-Shared\\Modelle PE"));
     int returnVal = super.getFileChooser().showOpenDialog(caller);
 
     if (returnVal == JFileChooser.APPROVE_OPTION) {
@@ -92,6 +83,15 @@ public class FileImporter extends FileHandler{
     else {
       return false;
     }
+  }
+  
+  private void createErrorPopup (String text)
+  {
+	  JPanel errorPanel = new JPanel();
+		
+      errorPanel.add(new JLabel(text));
+
+      JOptionPane.showMessageDialog(null, errorPanel, "Ups something went wrong", JOptionPane.ERROR_MESSAGE);
   }
 
 }
