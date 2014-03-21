@@ -9,16 +9,18 @@ import de.tum.pssif.transform.transformation.artificial.ArtificializingConnectio
 
 
 public class CreateArtificialEdgeTransformation extends AbstractTransformation {
-  private final String from;
-  private final String to;
-  private final String base;
-  private final String target;
+  private final String  from;
+  private final String  to;
+  private final String  base;
+  private final String  target;
+  private final Boolean directed;
 
-  public CreateArtificialEdgeTransformation(NodeType from, NodeType to, EdgeType base, EdgeType target) {
+  public CreateArtificialEdgeTransformation(NodeType from, NodeType to, EdgeType base, EdgeType target, Boolean directed) {
     this.from = from.getName();
     this.to = to.getName();
     this.base = base.getName();
     this.target = target.getName();
+    this.directed = directed;
   }
 
   @Override
@@ -35,7 +37,7 @@ public class CreateArtificialEdgeTransformation extends AbstractTransformation {
       //replace the mapping
       actualBase.removeMapping(baseMapping);
     }
-    actualBase.addMapping(new ArtificializingConnectionMapping(baseMapping, baseMapping.getType(), actualFrom, actualTo, actualTarget));
+    actualBase.addMapping(new ArtificializingConnectionMapping(baseMapping, baseMapping.getType(), actualFrom, actualTo, actualTarget, directed));
 
     if (targetMapping.getFrom().equals(actualFrom) && targetMapping.getTo().equals(actualTo)) {
       //replace the mapping

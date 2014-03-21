@@ -107,10 +107,18 @@ public class UFMMapper extends GraphMLMapper {
     view = joinToArtificialBlocks(E_MATERIAL_FLOW, s2b, f2b, view);
 
     //create the artificial control flows
-    view = new CreateArtificialEdgeTransformation(nt(N_STATE, view), nt(N_FUNCTION, view), et(E_INFORMATION_FLOW, view), et(E_CONTROL_FLOW, view))
-        .apply(view);
-    view = new CreateArtificialEdgeTransformation(nt(N_FUNCTION, view), nt(N_STATE, view), et(E_INFORMATION_FLOW, view), et(E_CONTROL_FLOW, view))
-        .apply(view);
+    view = new CreateArtificialEdgeTransformation(nt(N_STATE, view), nt(N_FUNCTION, view), et(E_INFORMATION_FLOW, view), et(E_CONTROL_FLOW, view),
+        Boolean.TRUE).apply(view);
+    view = new CreateArtificialEdgeTransformation(nt(N_FUNCTION, view), nt(N_STATE, view), et(E_INFORMATION_FLOW, view), et(E_CONTROL_FLOW, view),
+        Boolean.TRUE).apply(view);
+    view = new CreateArtificialEdgeTransformation(nt(N_STATE, view), nt(N_FUNCTION, view), et(E_ENERGY_FLOW, view), et(E_CONTROL_FLOW, view),
+        Boolean.TRUE).apply(view);
+    view = new CreateArtificialEdgeTransformation(nt(N_FUNCTION, view), nt(N_STATE, view), et(E_ENERGY_FLOW, view), et(E_CONTROL_FLOW, view),
+        Boolean.TRUE).apply(view);
+    view = new CreateArtificialEdgeTransformation(nt(N_STATE, view), nt(N_FUNCTION, view), et(E_MATERIAL_FLOW, view), et(E_CONTROL_FLOW, view),
+        Boolean.TRUE).apply(view);
+    view = new CreateArtificialEdgeTransformation(nt(N_FUNCTION, view), nt(N_STATE, view), et(E_MATERIAL_FLOW, view), et(E_CONTROL_FLOW, view),
+        Boolean.TRUE).apply(view);
 
     //avoid instances of control flow within the viewed model
     //TODO deinstantify
