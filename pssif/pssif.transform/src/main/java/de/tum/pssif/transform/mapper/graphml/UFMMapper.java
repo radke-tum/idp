@@ -13,10 +13,10 @@ import de.tum.pssif.core.metamodel.PSSIFCanonicMetamodelCreator;
 import de.tum.pssif.core.model.Model;
 import de.tum.pssif.transform.transformation.CreateArtificialEdgeTransformation;
 import de.tum.pssif.transform.transformation.CreateArtificialNodeTransformation;
+import de.tum.pssif.transform.transformation.DeinstantifyEdgeTypeTransformation;
+import de.tum.pssif.transform.transformation.DeinstantifyNodeTypeTransformation;
 import de.tum.pssif.transform.transformation.HideEdgeTypeAttributeTransformation;
-import de.tum.pssif.transform.transformation.HideEdgeTypeTransformation;
 import de.tum.pssif.transform.transformation.HideNodeTypeAttributeTransformation;
-import de.tum.pssif.transform.transformation.HideNodeTypeTransformation;
 import de.tum.pssif.transform.transformation.JoinLeftOutgoingTransformation;
 import de.tum.pssif.transform.transformation.JoinRightOutgoingTransformation;
 import de.tum.pssif.transform.transformation.MoveAttributeTransformation;
@@ -120,13 +120,17 @@ public class UFMMapper extends GraphMLMapper {
     view = new CreateArtificialEdgeTransformation(nt(N_FUNCTION, view), nt(N_STATE, view), et(E_MATERIAL_FLOW, view), et(E_CONTROL_FLOW, view),
         Boolean.TRUE).apply(view);
 
-    //avoid instances of control flow within the viewed model
-    //TODO deinstantify
-    view = new HideEdgeTypeTransformation(et(E_CONTROL_FLOW, view)).apply(view);
+    for (NodeType nt : view.getNodeTypes()) {
+      if (!(nt.getName().equals(N_FUNCTION) || nt.getName().equals(N_STATE))) {
+        view = new DeinstantifyNodeTypeTransformation(nt).apply(view);
+      }
+    }
 
-    //avoid instances of block within the viewed model
-    //TODO deinstantify
-    view = new HideNodeTypeTransformation(block).apply(view);
+    for (EdgeType et : view.getEdgeTypes()) {
+      if (!(et.getName().equals(E_ENERGY_FLOW) || et.getName().equals(E_INFORMATION_FLOW) || et.getName().equals(E_MATERIAL_FLOW))) {
+        view = new DeinstantifyEdgeTypeTransformation(et).apply(view);
+      }
+    }
 
     return view;
   }
