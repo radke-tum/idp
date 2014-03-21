@@ -15,6 +15,7 @@ import de.tum.pssif.transform.transformation.CreateArtificialEdgeTransformation;
 import de.tum.pssif.transform.transformation.CreateArtificialNodeTransformation;
 import de.tum.pssif.transform.transformation.DeinstantifyEdgeTypeTransformation;
 import de.tum.pssif.transform.transformation.DeinstantifyNodeTypeTransformation;
+import de.tum.pssif.transform.transformation.HideConnectionMappingTransformation;
 import de.tum.pssif.transform.transformation.HideEdgeTypeAttributeTransformation;
 import de.tum.pssif.transform.transformation.HideNodeTypeAttributeTransformation;
 import de.tum.pssif.transform.transformation.JoinLeftOutgoingTransformation;
@@ -29,6 +30,7 @@ public class UFMMapper extends GraphMLMapper {
   private static final String E_ENERGY_FLOW      = "EnergyFlow";
   private static final String E_CONTROL_FLOW     = PSSIFCanonicMetamodelCreator.E_FLOW_CONTROL;
   private static final String E_INFORMATION_FLOW = "InformationFlow";
+  private static final String N_SOL_ARTIFACT     = PSSIFCanonicMetamodelCreator.N_SOL_ARTIFACT;
   private static final String A_COST             = PSSIFCanonicMetamodelCreator.A_BLOCK_COST;
   private static final String A_DURATION         = PSSIFCanonicMetamodelCreator.A_DURATION;
   private static final String A_PRIORITY         = PSSIFCanonicMetamodelCreator.A_REQUIREMENT_PRIORITY;
@@ -106,6 +108,16 @@ public class UFMMapper extends GraphMLMapper {
     view = joinToArtificialBlocks(E_ENERGY_FLOW, s2b, f2b, view);
     view = joinToArtificialBlocks(E_MATERIAL_FLOW, s2b, f2b, view);
 
+    EdgeType informationFlow = et(E_INFORMATION_FLOW, view);
+    view = new HideConnectionMappingTransformation(informationFlow, informationFlow.getMapping(nt(N_SOL_ARTIFACT, view), nt(N_SOL_ARTIFACT, view))
+        .getOne()).apply(view);
+    EdgeType energyFlow = et(E_ENERGY_FLOW, view);
+    view = new HideConnectionMappingTransformation(energyFlow, energyFlow.getMapping(nt(N_SOL_ARTIFACT, view), nt(N_SOL_ARTIFACT, view)).getOne())
+        .apply(view);
+    EdgeType materialFlow = et(E_MATERIAL_FLOW, view);
+    view = new HideConnectionMappingTransformation(materialFlow, materialFlow.getMapping(nt(N_SOL_ARTIFACT, view), nt(N_SOL_ARTIFACT, view)).getOne())
+        .apply(view);
+
     //create the artificial control flows
     view = new CreateArtificialEdgeTransformation(nt(N_STATE, view), nt(N_FUNCTION, view), et(E_INFORMATION_FLOW, view), et(E_CONTROL_FLOW, view),
         Boolean.TRUE).apply(view);
@@ -136,10 +148,10 @@ public class UFMMapper extends GraphMLMapper {
   }
 
   protected static Metamodel joinToArtificialBlocks(String etName, ConnectionMapping s2b, ConnectionMapping f2b, Metamodel view) {
-    view = new JoinLeftOutgoingTransformation(et(etName, view), s2b, nt(N_STATE, view), nt(N_FUNCTION, view)).apply(view);
-    view = new JoinLeftOutgoingTransformation(et(etName, view), f2b, nt(N_FUNCTION, view), nt(N_STATE, view)).apply(view);
-    view = new JoinRightOutgoingTransformation(et(etName, view), s2b, nt(N_FUNCTION, view), nt(N_STATE, view)).apply(view);
-    view = new JoinRightOutgoingTransformation(et(etName, view), f2b, nt(N_STATE, view), nt(N_FUNCTION, view)).apply(view);
+    view = new JoinLeftOutgoingTransformation(et(etName, view), s2b, nt(N_BLOCK, view), nt(N_STATE, view), nt(N_FUNCTION, view)).apply(view);
+    view = new JoinLeftOutgoingTransformation(et(etName, view), f2b, nt(N_BLOCK, view), nt(N_FUNCTION, view), nt(N_STATE, view)).apply(view);
+    view = new JoinRightOutgoingTransformation(et(etName, view), s2b, nt(N_FUNCTION, view), nt(N_STATE, view), nt(N_BLOCK, view)).apply(view);
+    view = new JoinRightOutgoingTransformation(et(etName, view), f2b, nt(N_STATE, view), nt(N_FUNCTION, view), nt(N_BLOCK, view)).apply(view);
     return view;
   }
 

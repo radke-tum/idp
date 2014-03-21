@@ -10,6 +10,7 @@ import de.tum.pssif.transform.transformation.joined.LeftOutgoingJoinedConnection
 public class JoinLeftOutgoingTransformation extends AbstractTransformation {
   private final String            type;
   private final ConnectionMapping joinedMapping;
+  private final String            from;
   private final String            inner;
   private final String            to;
 
@@ -23,9 +24,10 @@ public class JoinLeftOutgoingTransformation extends AbstractTransformation {
    * @param inner
    * @param to
    */
-  public JoinLeftOutgoingTransformation(EdgeType type, ConnectionMapping joinedMapping, NodeType inner, NodeType to) {
+  public JoinLeftOutgoingTransformation(EdgeType type, ConnectionMapping joinedMapping, NodeType from, NodeType inner, NodeType to) {
     this.type = type.getName();
     this.joinedMapping = joinedMapping;
+    this.from = from.getName();
     this.inner = inner.getName();
     this.to = to.getName();
   }
@@ -33,10 +35,11 @@ public class JoinLeftOutgoingTransformation extends AbstractTransformation {
   @Override
   public void apply(Viewpoint view) {
     MutableEdgeType actualType = view.getMutableEdgeType(type).getOne();
+    NodeType actualFrom = view.getNodeType(from).getOne();
     NodeType actualInner = view.getNodeType(inner).getOne();
     NodeType actualTo = view.getNodeType(to).getOne();
 
-    actualType.addMapping(new LeftOutgoingJoinedConnectionMapping(actualType.getMapping(actualInner, actualTo).getOne(), actualType, actualInner,
-        actualTo, joinedMapping));
+    actualType.addMapping(new LeftOutgoingJoinedConnectionMapping(actualType.getMapping(actualInner, actualTo).getOne(), actualType, actualFrom,
+        actualInner, actualTo, joinedMapping));
   }
 }
