@@ -18,6 +18,8 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
+import de.tum.pssif.transform.io.PSSIFIoException;
+
 
 /**
  * TODO edgedefault
@@ -105,8 +107,7 @@ public class GraphMLGraph {
 
       reader.close();
     } catch (XMLStreamException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+      throw new PSSIFIoException("Failed to load graphml document.", e);
     }
   }
 
