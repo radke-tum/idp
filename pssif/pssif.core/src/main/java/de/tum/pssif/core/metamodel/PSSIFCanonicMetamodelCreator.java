@@ -226,13 +226,16 @@ public final class PSSIFCanonicMetamodelCreator {
     EdgeType chronologicalRelationship = metamodel.createEdgeType(E_RELATIONSHIP_CHRONOLOGICAL);
     chronologicalRelationship.inherit(relationship);
 
-    EdgeType evolvesToRelationship = metamodel.createEdgeType(E_RELATIONSHIP_CHRONOLOGICAL_EVOLVES_TO);
+    MutableEdgeType evolvesToRelationship = metamodel.createEdgeType(E_RELATIONSHIP_CHRONOLOGICAL_EVOLVES_TO);
+    evolvesToRelationship.createMapping(node(N_REQUIREMENT, metamodel), node(N_REQUIREMENT, metamodel));
+    evolvesToRelationship.createMapping(node(N_SOL_ARTIFACT, metamodel), node(N_SOL_ARTIFACT, metamodel));
     evolvesToRelationship.inherit(chronologicalRelationship);
 
     EdgeType replacesRelationship = metamodel.createEdgeType(E_RELATIONSHIP_CHRONOLOGICAL_REPLACES);
     replacesRelationship.inherit(chronologicalRelationship);
 
-    EdgeType basedOnRelationship = metamodel.createEdgeType(E_RELATIONSHIP_CHRONOLOGICAL_BASED_ON);
+    MutableEdgeType basedOnRelationship = metamodel.createEdgeType(E_RELATIONSHIP_CHRONOLOGICAL_BASED_ON);
+    basedOnRelationship.createMapping(node(N_REQUIREMENT, metamodel), node(N_REQUIREMENT, metamodel));
     basedOnRelationship.inherit(chronologicalRelationship);
 
     EdgeType refinesRelationship = metamodel.createEdgeType(E_RELATIONSHIP_CHRONOLOGICAL_REFINES);
@@ -277,7 +280,8 @@ public final class PSSIFCanonicMetamodelCreator {
     EdgeType causalRelationship = metamodel.createEdgeType(E_RELATIONSHIP_CAUSAL);
     causalRelationship.inherit(relationship);
 
-    EdgeType createsRelationship = metamodel.createEdgeType(E_RELATIONSHIP_CAUSAL_CREATES);
+    MutableEdgeType createsRelationship = metamodel.createEdgeType(E_RELATIONSHIP_CAUSAL_CREATES);
+    createsRelationship.createMapping(node(N_ACTOR, metamodel), node(N_REQUIREMENT, metamodel));
     createsRelationship.inherit(causalRelationship);
 
     EdgeType requestsRelationship = metamodel.createEdgeType(E_RELATIONSHIP_CAUSAL_REQUESTS);
@@ -303,10 +307,12 @@ public final class PSSIFCanonicMetamodelCreator {
     EdgeType extendsRelationship = metamodel.createEdgeType(E_RELATIONSHIP_LOGICAL_EXTENDS);
     extendsRelationship.inherit(logicalRelationship);
 
-    EdgeType satisfiesRelationship = metamodel.createEdgeType(E_RELATIONSHIP_LOGICAL_SATISFIES);
+    MutableEdgeType satisfiesRelationship = metamodel.createEdgeType(E_RELATIONSHIP_LOGICAL_SATISFIES);
+    satisfiesRelationship.createMapping(node(N_REQUIREMENT, metamodel), node(N_SOL_ARTIFACT, metamodel));
     satisfiesRelationship.inherit(logicalRelationship);
 
-    EdgeType verifiesRelationship = metamodel.createEdgeType(E_RELATIONSHIP_LOGICAL_VERIFIES);
+    MutableEdgeType verifiesRelationship = metamodel.createEdgeType(E_RELATIONSHIP_LOGICAL_VERIFIES);
+    verifiesRelationship.createMapping(node(N_TEST_CASE, metamodel), node(N_SOL_ARTIFACT, metamodel));
     verifiesRelationship.inherit(logicalRelationship);
 
     EdgeType overlapsRelationship = metamodel.createEdgeType(E_RELATIONSHIP_LOGICAL_OVERLAPS);

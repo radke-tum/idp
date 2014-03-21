@@ -163,7 +163,9 @@ public class MyPopupGraphMousePlugin extends AbstractPopupGraphMousePlugin {
      */
     private JMenu traceRequirement ( MouseEvent e, MyNode selectedNode)
     {
-    	JMenu submenu = new JMenu("Trace requirement");
+    	JMenu submenu = new JMenu("Requirement Tool");
+    	JMenuItem menuItem = new JMenuItem("Trace Requirement");
+    	submenu.add(menuItem);
        	return submenu;
     }
     
