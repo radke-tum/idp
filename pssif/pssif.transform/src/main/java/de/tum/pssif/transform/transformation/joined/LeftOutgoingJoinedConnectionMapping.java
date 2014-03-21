@@ -43,9 +43,6 @@ public class LeftOutgoingJoinedConnectionMapping extends ViewedConnectionMapping
         if (getFrom().apply(model, true).getMany().contains(inner)) {
           result.add(new UnjoinedEdge(e, inner, to));
         }
-        else {
-          System.out.println("missed");
-        }
       }
       else {
         throw new PSSIFStructuralIntegrityException("ambiguous edges");
