@@ -17,6 +17,7 @@ import javax.swing.JMenu;
 
 import org.apache.commons.collections15.Transformer;
 
+import reqtool.RequirementTracer;
 import edu.uci.ics.jung.algorithms.layout.CircleLayout;
 import edu.uci.ics.jung.algorithms.layout.FRLayout;
 import edu.uci.ics.jung.algorithms.layout.ISOMLayout;
@@ -116,28 +117,25 @@ public class GraphVisualization
     this.gm.add(new MyPopupGraphMousePlugin(this));
   }
   
-  /**
-   * Create all Transformes which help to visualize the Nodes
-   */
+	/**
+	 * Create all Transformes which help to visualize the Nodes
+	 */
+	Transformer<IMyNode, Paint> vertexColor = new Transformer<IMyNode, Paint>() {
+		public Paint transform(IMyNode i) {
+
+			if (nodeColorMapping != null && i instanceof MyNode) {
+				MyNode node = (MyNode) i;
+				Color c = nodeColorMapping.get(node.getNodeType());
+				if (c != null)
+					return c;
+			}
+
+			return Color.LIGHT_GRAY;
+		}
+	};
+  
   private void createNodeTransformers()
   {
-	  Transformer<IMyNode, Paint> vertexColor = new Transformer<IMyNode, Paint>()
-			    {
-			      public Paint transform(IMyNode i)
-			      {
-			    	
-			    	if (nodeColorMapping!=null && i instanceof MyNode)
-			    	{
-				    	MyNode node = (MyNode) i;
-			    		Color c = nodeColorMapping.get(node.getNodeType());
-				    	if (c!=null)
-				    		return c;
-			    	}
-			    	
-			    	return Color.LIGHT_GRAY;
-			      }
-			    };
-			    
 	Transformer<IMyNode, Shape> vertexSize = new Transformer<IMyNode, Shape>()
 			    {
 			      public Shape transform(IMyNode node)
@@ -341,6 +339,40 @@ public class GraphVisualization
     return this.vsh.getFollowEdges();
   }
   
+	/**
+	 * Which Nodes should be followed during requirements traceability
+	 * 
+	 * @return List with Edge Types
+	 */
+	public void traceNodes() {
+		Transformer<IMyNode, Paint> tracedVertexColor = new Transformer<IMyNode, Paint>() {
+			public Paint transform(IMyNode i) {
+				if (RequirementTracer.isTracedNode(i)) {
+					return Color.GREEN;
+				} else if (RequirementTracer.isOnTraceList(i)) {
+					return Color.CYAN;
+				} else {
+					Color c = nodeColorMapping.get(((MyNode) i).getNodeType());
+					if (c != null)
+						return c;
+				}
+				return Color.LIGHT_GRAY;
+			}
+		};
+		this.vv.getRenderContext().setVertexFillPaintTransformer(
+				tracedVertexColor);
+		this.vv.repaint();
+	}
+
+	/**
+	 * Stop requirements traceability
+	 * 
+	 * @return List with Edge Types
+	 */
+	public void stopTracingNodes() {
+		this.vv.getRenderContext().setVertexFillPaintTransformer(vertexColor);
+		this.vv.repaint();
+	}
   /**
    * Try to collapse the currently selected Node
    */

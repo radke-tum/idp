@@ -17,6 +17,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.JTextField;
 
+import reqtool.RequirementTracer;
 import model.ModelBuilder;
 import edu.uci.ics.jung.algorithms.layout.GraphElementAccessor;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
@@ -63,7 +64,7 @@ public class MyPopupGraphMousePlugin extends AbstractPopupGraphMousePlugin {
             	
 				// TODO
 				if (node.getNodeType().toString().equals("Requirement")) {
-					JMenu submenu2 = traceRequirement(e, node);
+					JMenuItem submenu2 = traceRequirement(e, node);
 					popup.add(submenu2);
 				}
 				// /
@@ -161,12 +162,33 @@ public class MyPopupGraphMousePlugin extends AbstractPopupGraphMousePlugin {
      * @param selectedNode The Node which was selected when the user pushed the right mouse button
      * @return a menu with all the option to trace a requirement
      */
-    private JMenu traceRequirement ( MouseEvent e, MyNode selectedNode)
+    private JMenuItem traceRequirement ( MouseEvent e, final MyNode selectedNode)
     {
-    	JMenu submenu = new JMenu("Requirement Tool");
-    	JMenuItem menuItem = new JMenuItem("Trace Requirement");
-    	submenu.add(menuItem);
-       	return submenu;
+    	JMenuItem submenu;
+        if (RequirementTracer.isTracedNode(selectedNode)) {
+         submenu = new JMenuItem("Untrace requirement");
+         submenu.addActionListener(new ActionListener() {
+          
+       @Override
+       public void actionPerformed(ActionEvent e) {
+        RequirementTracer.stopTracing();
+        gViz.stopTracingNodes(); 
+       }
+       
+      });
+        } else {
+         submenu = new JMenuItem("Trace requirement");
+         submenu.addActionListener(new ActionListener() {
+       
+       @Override
+       public void actionPerformed(ActionEvent e) {
+        RequirementTracer.traceRequirement(selectedNode.getNode());;
+        gViz.traceNodes(); 
+       }
+      });
+        }
+         
+           return submenu;
     }
     
     /**
