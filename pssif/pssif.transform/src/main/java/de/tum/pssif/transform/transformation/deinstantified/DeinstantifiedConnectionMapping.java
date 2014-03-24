@@ -17,7 +17,7 @@ public class DeinstantifiedConnectionMapping extends ViewedConnectionMapping {
   }
 
   @Override
-  public PSSIFOption<Edge> apply(Model model) {
+  public PSSIFOption<Edge> apply(Model model, boolean includeSubtypes) {
     return PSSIFOption.none();
   }
 
@@ -32,12 +32,12 @@ public class DeinstantifiedConnectionMapping extends ViewedConnectionMapping {
   }
 
   @Override
-  public PSSIFOption<Edge> applyIncoming(Node node) {
+  public PSSIFOption<Edge> applyIncoming(Node node, boolean includeSubtypes) {
     return PSSIFOption.none();
   }
 
   @Override
-  public PSSIFOption<Edge> applyOutgoing(Node node) {
+  public PSSIFOption<Edge> applyOutgoing(Node node, boolean includeSubtypes) {
     return PSSIFOption.none();
   }
 }

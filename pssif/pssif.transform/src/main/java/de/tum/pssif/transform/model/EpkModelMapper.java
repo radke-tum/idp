@@ -134,7 +134,7 @@ public class EpkModelMapper implements ModelMapper {
     for (EdgeType et : metamodel.getEdgeTypes()) {
       Attribute idAttribute = et.getAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_ID).getOne();
       for (ConnectionMapping mapping : et.getMappings().getMany()) {
-        PSSIFOption<de.tum.pssif.core.model.Edge> edges = mapping.apply(model);
+        PSSIFOption<de.tum.pssif.core.model.Edge> edges = mapping.apply(model, false);
         NodeTypeBase fromType = mapping.getFrom();
         Attribute fromIdAttribute = fromType.getAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_ID).getOne();
         NodeTypeBase toType = mapping.getTo();

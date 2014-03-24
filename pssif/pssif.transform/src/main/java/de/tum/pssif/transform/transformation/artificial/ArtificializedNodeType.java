@@ -38,7 +38,7 @@ public class ArtificializedNodeType extends ViewedNodeType {
     Collection<Node> sources = sourceType.apply(model, true).getMany();
     Collection<Node> result = Sets.newHashSet();
     candidate: for (Node candidate : candidates.getMany()) {
-      for (Edge e : mapping.applyIncoming(candidate).getMany()) {
+      for (Edge e : mapping.applyIncoming(candidate, true).getMany()) {
         if (sources.contains(mapping.applyFrom(e))) {
           continue candidate;
         }
