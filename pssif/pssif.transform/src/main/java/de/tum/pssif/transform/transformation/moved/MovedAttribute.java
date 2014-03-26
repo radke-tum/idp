@@ -22,14 +22,14 @@ public class MovedAttribute extends AttributeImpl {
 
   @Override
   public void set(Element element, PSSIFOption<PSSIFValue> value) {
-    for (Edge e : mapping.applyOutgoing((Node) element, true).getMany()) {
+    for (Edge e : mapping.applyOutgoing((Node) element).getMany()) {
       baseAttribute.set(mapping.applyTo(e), value);
     }
   }
 
   @Override
   public PSSIFOption<PSSIFValue> get(Element element) {
-    for (Edge e : mapping.applyOutgoing((Node) element, true).getMany()) {
+    for (Edge e : mapping.applyOutgoing((Node) element).getMany()) {
       return baseAttribute.get(mapping.applyTo(e));
     }
     return PSSIFOption.none();

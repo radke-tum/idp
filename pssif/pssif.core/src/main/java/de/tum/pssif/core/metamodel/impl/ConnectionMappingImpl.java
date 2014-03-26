@@ -97,39 +97,33 @@ public class ConnectionMappingImpl implements MutableConnectionMapping {
   }
 
   @Override
-  public PSSIFOption<Edge> applyOutgoing(Node node, boolean includeSubtypes) {
+  public PSSIFOption<Edge> applyOutgoing(Node node) {
     PSSIFOption<Edge> result = new ReadOutgoingNodesOperation(this).apply(node);
 
-    if (includeSubtypes) {
-      for (ConnectionMapping special : getSpecializedMappings()) {
-        result = PSSIFOption.merge(result, special.applyOutgoing(node, includeSubtypes));
-      }
+    for (ConnectionMapping special : getSpecializedMappings()) {
+      result = PSSIFOption.merge(result, special.applyOutgoing(node));
     }
 
     return result;
   }
 
   @Override
-  public PSSIFOption<Edge> applyIncoming(Node node, boolean includeSubtypes) {
+  public PSSIFOption<Edge> applyIncoming(Node node) {
     PSSIFOption<Edge> result = new ReadIncomingNodesOperation(this).apply(node);
 
-    if (includeSubtypes) {
-      for (ConnectionMapping special : getSpecializedMappings()) {
-        result = PSSIFOption.merge(result, special.applyIncoming(node, includeSubtypes));
-      }
+    for (ConnectionMapping special : getSpecializedMappings()) {
+      result = PSSIFOption.merge(result, special.applyIncoming(node));
     }
 
     return result;
   }
 
   @Override
-  public PSSIFOption<Edge> apply(Model model, boolean includeSubtypes) {
+  public PSSIFOption<Edge> apply(Model model) {
     PSSIFOption<Edge> result = new ReadEdgesOperation(this).apply(model);
 
-    if (includeSubtypes) {
-      for (ConnectionMapping special : getSpecializedMappings()) {
-        result = PSSIFOption.merge(result, special.apply(model, includeSubtypes));
-      }
+    for (ConnectionMapping special : getSpecializedMappings()) {
+      result = PSSIFOption.merge(result, special.apply(model));
     }
 
     return result;

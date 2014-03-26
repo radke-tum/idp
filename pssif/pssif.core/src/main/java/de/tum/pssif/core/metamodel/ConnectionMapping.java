@@ -19,9 +19,9 @@ public interface ConnectionMapping {
 
   Node applyTo(Edge edge);
 
-  PSSIFOption<Edge> apply(Model model, boolean includeSubtypes);
+  PSSIFOption<Edge> apply(Model model);
 
-  PSSIFOption<Edge> applyOutgoing(Node node, boolean includeSubtypes);
+  PSSIFOption<Edge> applyOutgoing(Node node);
 
-  PSSIFOption<Edge> applyIncoming(Node node, boolean includeSubtypes);
+  PSSIFOption<Edge> applyIncoming(Node node);
 }

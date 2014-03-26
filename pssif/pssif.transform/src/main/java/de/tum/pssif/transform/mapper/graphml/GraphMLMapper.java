@@ -170,7 +170,7 @@ public abstract class GraphMLMapper implements Mapper {
   private GraphMlContext addEdgesToGraph(GraphMLGraph graph, EdgeType edgeType, Model model, GraphMlContext context) {
     Attribute idAttribute = edgeType.getAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_ID).getOne();
     for (ConnectionMapping mapping : edgeType.getMappings().getMany()) {
-      PSSIFOption<Edge> edges = mapping.apply(model, false);
+      PSSIFOption<Edge> edges = mapping.apply(model);
       for (Edge pssifEdge : edges.getMany()) {
         Node sourceNode = mapping.applyFrom(pssifEdge);
         Node targetNode = mapping.applyTo(pssifEdge);

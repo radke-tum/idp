@@ -25,12 +25,12 @@ public class ToArtificializedNodeTypeConnectionMapping extends ViewedConnectionM
   }
 
   @Override
-  public PSSIFOption<Edge> apply(Model model, boolean includeSubtypes) {
+  public PSSIFOption<Edge> apply(Model model) {
     Collection<Edge> result = Sets.newHashSet();
     Collection<Node> sources = getBaseMapping().getFrom().apply(model, true).getMany();
     Collection<Node> targets = getBaseMapping().getTo().apply(model, true).getMany();
 
-    for (Edge e : getBaseMapping().apply(model, includeSubtypes).getMany()) {
+    for (Edge e : getBaseMapping().apply(model).getMany()) {
       Node from = getBaseMapping().applyFrom(e);
       Node to = getBaseMapping().applyTo(e);
 
@@ -43,11 +43,11 @@ public class ToArtificializedNodeTypeConnectionMapping extends ViewedConnectionM
   }
 
   @Override
-  public PSSIFOption<Edge> applyIncoming(Node node, boolean includeSubtypes) {
+  public PSSIFOption<Edge> applyIncoming(Node node) {
     Collection<Edge> result = Sets.newHashSet();
     Collection<Node> sources = getBaseMapping().getFrom().apply(node.getModel(), true).getMany();
 
-    for (Edge e : getBaseMapping().applyIncoming(node, includeSubtypes).getMany()) {
+    for (Edge e : getBaseMapping().applyIncoming(node).getMany()) {
       if (!sources.contains(getBaseMapping().applyFrom(e))) {
         result.add(e);
       }
@@ -57,11 +57,11 @@ public class ToArtificializedNodeTypeConnectionMapping extends ViewedConnectionM
   }
 
   @Override
-  public PSSIFOption<Edge> applyOutgoing(Node node, boolean includeSubtypes) {
+  public PSSIFOption<Edge> applyOutgoing(Node node) {
     Collection<Edge> result = Sets.newHashSet();
     Collection<Node> targets = getBaseMapping().getTo().apply(node.getModel(), true).getMany();
 
-    for (Edge e : getBaseMapping().applyOutgoing(node, includeSubtypes).getMany()) {
+    for (Edge e : getBaseMapping().applyOutgoing(node).getMany()) {
       if (!targets.contains(getBaseMapping().applyTo(e))) {
         result.add(e);
       }

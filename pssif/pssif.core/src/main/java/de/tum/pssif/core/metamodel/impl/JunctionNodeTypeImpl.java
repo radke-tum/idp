@@ -55,7 +55,7 @@ public class JunctionNodeTypeImpl extends NodeTypeBaseImpl implements MutableJun
   public Collection<NodeTypeBase> leftClosure(EdgeType edgeType, Node node) {
     Collection<NodeTypeBase> result = Sets.<NodeTypeBase> newHashSet(this);
     for (ConnectionMapping incomingMapping : edgeType.getIncomingMappings(this).getMany()) {
-      for (Edge incomingEdge : incomingMapping.applyIncoming(node, true).getMany()) {
+      for (Edge incomingEdge : incomingMapping.applyIncoming(node).getMany()) {
         Node fromConnected = incomingMapping.applyFrom(incomingEdge);
         result.addAll(incomingMapping.getFrom().leftClosure(edgeType, fromConnected));
       }
@@ -68,7 +68,7 @@ public class JunctionNodeTypeImpl extends NodeTypeBaseImpl implements MutableJun
     int result = 0;
 
     for (ConnectionMapping incomingMapping : edgeType.getIncomingMappings(this).getMany()) {
-      result += incomingMapping.applyIncoming(node, true).size();
+      result += incomingMapping.applyIncoming(node).size();
     }
 
     return result;
@@ -78,7 +78,7 @@ public class JunctionNodeTypeImpl extends NodeTypeBaseImpl implements MutableJun
   public Collection<NodeTypeBase> rightClosure(EdgeType edgeType, Node node) {
     Collection<NodeTypeBase> result = Sets.<NodeTypeBase> newHashSet(this);
     for (ConnectionMapping outgoingMapping : edgeType.getOutgoingMappings(this).getMany()) {
-      for (Edge outgoingEdge : outgoingMapping.applyOutgoing(node, true).getMany()) {
+      for (Edge outgoingEdge : outgoingMapping.applyOutgoing(node).getMany()) {
         Node toConnected = outgoingMapping.applyTo(outgoingEdge);
         result.addAll(outgoingMapping.getTo().rightClosure(edgeType, toConnected));
       }
@@ -91,7 +91,7 @@ public class JunctionNodeTypeImpl extends NodeTypeBaseImpl implements MutableJun
     int result = 0;
 
     for (ConnectionMapping outgoingMapping : edgeType.getOutgoingMappings(this).getMany()) {
-      result += outgoingMapping.applyOutgoing(node, true).size();
+      result += outgoingMapping.applyOutgoing(node).size();
     }
 
     return result;

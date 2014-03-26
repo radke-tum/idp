@@ -27,17 +27,17 @@ public class RightOutgoingJoinedConnectionMapping extends ViewedConnectionMappin
   @Override
   public Edge create(Model model, Node from, Node to) {
     //we expect exactly one node being connected to from via the joined mapping, otherwise we need to return PSSIFOption<Edge> with possibly none or many
-    Node actualToNode = joinedMapping.applyTo(joinedMapping.applyOutgoing(to, true).getOne());
+    Node actualToNode = joinedMapping.applyTo(joinedMapping.applyOutgoing(to).getOne());
     return getBaseMapping().create(model, from, actualToNode);
   }
 
   @Override
-  public PSSIFOption<Edge> apply(Model model, boolean includeSubtypes) {
+  public PSSIFOption<Edge> apply(Model model) {
     Collection<Edge> result = Sets.newHashSet();
-    for (Edge e : getBaseMapping().apply(model, includeSubtypes).getMany()) {
+    for (Edge e : getBaseMapping().apply(model).getMany()) {
       Node from = getBaseMapping().applyFrom(e);
       Node to = getBaseMapping().applyTo(e);
-      PSSIFOption<Edge> joined = joinedMapping.applyIncoming(to, includeSubtypes);
+      PSSIFOption<Edge> joined = joinedMapping.applyIncoming(to);
       if (joined.isOne()) {
         Node inner = joinedMapping.applyFrom(joined.getOne());
         if (getTo().apply(model, true).getMany().contains(inner)) {
@@ -53,10 +53,10 @@ public class RightOutgoingJoinedConnectionMapping extends ViewedConnectionMappin
 
   @Override
   public Node applyTo(Edge edge) {
-    for (Edge candidate : getBaseMapping().apply(edge.getModel(), true).getMany()) {
+    for (Edge candidate : getBaseMapping().apply(edge.getModel()).getMany()) {
       if (candidate.getId().equals(edge.getId())) {
         Node to = getBaseMapping().applyTo(candidate);
-        PSSIFOption<Edge> joined = joinedMapping.applyIncoming(to, true);
+        PSSIFOption<Edge> joined = joinedMapping.applyIncoming(to);
         if (joined.isOne()) {
           return joinedMapping.applyFrom(joined.getOne());
         }
@@ -69,10 +69,10 @@ public class RightOutgoingJoinedConnectionMapping extends ViewedConnectionMappin
   }
 
   @Override
-  public PSSIFOption<Edge> applyIncoming(Node node, boolean includeSubtypes) {
-    PSSIFOption<Edge> joined = joinedMapping.applyOutgoing(node, includeSubtypes);
+  public PSSIFOption<Edge> applyIncoming(Node node) {
+    PSSIFOption<Edge> joined = joinedMapping.applyOutgoing(node);
     if (joined.isOne()) {
-      return getBaseMapping().applyIncoming(joinedMapping.applyTo(joined.getOne()), includeSubtypes);
+      return getBaseMapping().applyIncoming(joinedMapping.applyTo(joined.getOne()));
     }
     else {
       throw new PSSIFStructuralIntegrityException("ambiguous edges");

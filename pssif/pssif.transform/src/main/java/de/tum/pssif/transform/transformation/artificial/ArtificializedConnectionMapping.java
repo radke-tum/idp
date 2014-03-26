@@ -23,12 +23,12 @@ public class ArtificializedConnectionMapping extends ViewedConnectionMapping {
   }
 
   @Override
-  public PSSIFOption<Edge> apply(Model model, boolean includeSubtypes) {
+  public PSSIFOption<Edge> apply(Model model) {
     Collection<Edge> result = Sets.newHashSet();
-    candidate: for (Edge candidate : getBaseMapping().apply(model, includeSubtypes).getMany()) {
+    candidate: for (Edge candidate : getBaseMapping().apply(model).getMany()) {
       Node from = getBaseMapping().applyFrom(candidate);
       Node to = getBaseMapping().applyTo(candidate);
-      for (Edge edge : sourceMapping.applyOutgoing(from, includeSubtypes).getMany()) {
+      for (Edge edge : sourceMapping.applyOutgoing(from).getMany()) {
         if (sourceMapping.applyTo(edge).equals(to)) {
           continue candidate;
         }
@@ -39,11 +39,11 @@ public class ArtificializedConnectionMapping extends ViewedConnectionMapping {
   }
 
   @Override
-  public PSSIFOption<Edge> applyIncoming(Node node, boolean includeSubtypes) {
+  public PSSIFOption<Edge> applyIncoming(Node node) {
     Collection<Edge> result = Sets.newHashSet();
-    candidate: for (Edge candidate : getBaseMapping().applyIncoming(node, includeSubtypes).getMany()) {
+    candidate: for (Edge candidate : getBaseMapping().applyIncoming(node).getMany()) {
       Node from = getBaseMapping().applyFrom(candidate);
-      for (Edge edge : sourceMapping.applyOutgoing(from, includeSubtypes).getMany()) {
+      for (Edge edge : sourceMapping.applyOutgoing(from).getMany()) {
         if (sourceMapping.applyTo(edge).equals(node)) {
           continue candidate;
         }
@@ -54,11 +54,11 @@ public class ArtificializedConnectionMapping extends ViewedConnectionMapping {
   }
 
   @Override
-  public PSSIFOption<Edge> applyOutgoing(Node node, boolean includeSubtypes) {
+  public PSSIFOption<Edge> applyOutgoing(Node node) {
     Collection<Edge> result = Sets.newHashSet();
-    candidate: for (Edge candidate : getBaseMapping().applyOutgoing(node, includeSubtypes).getMany()) {
+    candidate: for (Edge candidate : getBaseMapping().applyOutgoing(node).getMany()) {
       Node to = getBaseMapping().applyTo(candidate);
-      for (Edge edge : sourceMapping.applyIncoming(to, includeSubtypes).getMany()) {
+      for (Edge edge : sourceMapping.applyIncoming(to).getMany()) {
         if (sourceMapping.applyFrom(edge).equals(node)) {
           continue candidate;
         }

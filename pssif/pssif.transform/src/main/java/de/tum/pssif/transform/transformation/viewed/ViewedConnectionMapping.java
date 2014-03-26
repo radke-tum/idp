@@ -19,8 +19,8 @@ public class ViewedConnectionMapping extends ConnectionMappingImpl {
   }
 
   @Override
-  public PSSIFOption<Edge> apply(Model model, boolean includeSubtypes) {
-    return baseMapping.apply(model, includeSubtypes);
+  public PSSIFOption<Edge> apply(Model model) {
+    return baseMapping.apply(model);
   }
 
   @Override
@@ -34,13 +34,13 @@ public class ViewedConnectionMapping extends ConnectionMappingImpl {
   }
 
   @Override
-  public PSSIFOption<Edge> applyIncoming(Node node, boolean includeSubtypes) {
-    return baseMapping.applyIncoming(node, includeSubtypes);
+  public PSSIFOption<Edge> applyIncoming(Node node) {
+    return baseMapping.applyIncoming(node);
   }
 
   @Override
-  public PSSIFOption<Edge> applyOutgoing(Node node, boolean includeSubtypes) {
-    return baseMapping.applyOutgoing(node, includeSubtypes);
+  public PSSIFOption<Edge> applyOutgoing(Node node) {
+    return baseMapping.applyOutgoing(node);
   }
 
   @Override
