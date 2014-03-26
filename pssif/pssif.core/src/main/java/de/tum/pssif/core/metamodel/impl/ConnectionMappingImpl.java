@@ -2,11 +2,8 @@ package de.tum.pssif.core.metamodel.impl;
 
 import java.util.Collection;
 
-import com.google.common.collect.Sets;
-
 import de.tum.pssif.core.common.PSSIFOption;
 import de.tum.pssif.core.exception.PSSIFStructuralIntegrityException;
-import de.tum.pssif.core.metamodel.ConnectionMapping;
 import de.tum.pssif.core.metamodel.EdgeType;
 import de.tum.pssif.core.metamodel.NodeTypeBase;
 import de.tum.pssif.core.metamodel.mutable.MutableConnectionMapping;
@@ -98,49 +95,17 @@ public class ConnectionMappingImpl implements MutableConnectionMapping {
 
   @Override
   public PSSIFOption<Edge> applyOutgoing(Node node) {
-    PSSIFOption<Edge> result = new ReadOutgoingNodesOperation(this).apply(node);
-
-    for (ConnectionMapping special : getSpecializedMappings()) {
-      result = PSSIFOption.merge(result, special.applyOutgoing(node));
-    }
-
-    return result;
+    return new ReadOutgoingNodesOperation(this).apply(node);
   }
 
   @Override
   public PSSIFOption<Edge> applyIncoming(Node node) {
-    PSSIFOption<Edge> result = new ReadIncomingNodesOperation(this).apply(node);
-
-    for (ConnectionMapping special : getSpecializedMappings()) {
-      result = PSSIFOption.merge(result, special.applyIncoming(node));
-    }
-
-    return result;
+    return new ReadIncomingNodesOperation(this).apply(node);
   }
 
   @Override
   public PSSIFOption<Edge> apply(Model model) {
-    PSSIFOption<Edge> result = new ReadEdgesOperation(this).apply(model);
-
-    for (ConnectionMapping special : getSpecializedMappings()) {
-      result = PSSIFOption.merge(result, special.apply(model));
-    }
-
-    return result;
-  }
-
-  private Collection<ConnectionMapping> getSpecializedMappings() {
-    Collection<ConnectionMapping> result = Sets.newHashSet();
-
-    for (EdgeType special : getType().getSpecials()) {
-      for (ConnectionMapping mapping : special.getMappings().getMany()) {
-        if (getFrom().isAssignableFrom(mapping.getFrom()) && getTo().isAssignableFrom(mapping.getTo())) {
-          result.add(mapping);
-        }
-      }
-    }
-
-    return result;
+    return new ReadEdgesOperation(this).apply(model);
   }
 
   /* (non-Javadoc)
