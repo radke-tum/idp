@@ -39,7 +39,7 @@ public class ToArtificializedNodeTypeConnectionMapping extends ViewedConnectionM
       }
     }
 
-    return PSSIFOption.many(result);
+    return filter(PSSIFOption.many(result));
   }
 
   @Override
@@ -53,7 +53,7 @@ public class ToArtificializedNodeTypeConnectionMapping extends ViewedConnectionM
       }
     }
 
-    return PSSIFOption.many(result);
+    return filter(PSSIFOption.many(result));
   }
 
   @Override
@@ -67,6 +67,6 @@ public class ToArtificializedNodeTypeConnectionMapping extends ViewedConnectionM
       }
     }
 
-    return PSSIFOption.many(result);
+    return filter(PSSIFOption.many(result));
   }
 }

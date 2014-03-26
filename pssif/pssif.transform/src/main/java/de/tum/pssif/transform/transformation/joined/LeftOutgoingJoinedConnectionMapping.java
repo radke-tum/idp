@@ -48,7 +48,7 @@ public class LeftOutgoingJoinedConnectionMapping extends ViewedConnectionMapping
         throw new PSSIFStructuralIntegrityException("ambiguous edges");
       }
     }
-    return PSSIFOption.many(result);
+    return filter(PSSIFOption.many(result));
   }
 
   @Override
@@ -72,7 +72,7 @@ public class LeftOutgoingJoinedConnectionMapping extends ViewedConnectionMapping
   public PSSIFOption<Edge> applyOutgoing(Node node) {
     PSSIFOption<Edge> joined = joinedMapping.applyOutgoing(node);
     if (joined.isOne()) {
-      return getBaseMapping().applyOutgoing(joinedMapping.applyTo(joined.getOne()));
+      return filter(getBaseMapping().applyOutgoing(joinedMapping.applyTo(joined.getOne())));
     }
     else {
       throw new PSSIFStructuralIntegrityException("ambiguous edges");

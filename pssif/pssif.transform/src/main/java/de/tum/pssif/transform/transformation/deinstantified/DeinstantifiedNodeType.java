@@ -15,11 +15,23 @@ public class DeinstantifiedNodeType extends ViewedNodeType {
 
   @Override
   public PSSIFOption<Node> apply(Model model, boolean includeSubtypes) {
-    return PSSIFOption.none();
+    PSSIFOption<Node> result = PSSIFOption.none();
+    if (includeSubtypes) {
+      for (NodeType nt : getSpecials()) {
+        result = PSSIFOption.merge(result, nt.apply(model, includeSubtypes));
+      }
+    }
+    return result;
   }
 
   @Override
   public PSSIFOption<Node> apply(Model model, String id, boolean includeSubtypes) {
-    return PSSIFOption.none();
+    PSSIFOption<Node> result = PSSIFOption.none();
+    if (includeSubtypes) {
+      for (NodeType nt : getSpecials()) {
+        result = PSSIFOption.merge(result, nt.apply(model, id, includeSubtypes));
+      }
+    }
+    return result;
   }
 }

@@ -246,4 +246,34 @@ public class EdgeTypeImpl extends ElementTypeImpl implements MutableEdgeType {
 
     return result;
   }
+
+  @Override
+  public Node applyFrom(Edge edge) {
+    for (ConnectionMapping mapping : getMappings().getMany()) {
+      if (mapping.apply(edge.getModel()).getMany().contains(edge)) {
+        return mapping.applyFrom(edge);
+      }
+    }
+    for (EdgeType et : getSpecials()) {
+      if (et.applyFrom(edge) != null) {
+        return et.applyFrom(edge);
+      }
+    }
+    return null;
+  }
+
+  @Override
+  public Node applyTo(Edge edge) {
+    for (ConnectionMapping mapping : getMappings().getMany()) {
+      if (mapping.apply(edge.getModel()).getMany().contains(edge)) {
+        return mapping.applyTo(edge);
+      }
+    }
+    for (EdgeType et : getSpecials()) {
+      if (et.applyTo(edge) != null) {
+        return et.applyTo(edge);
+      }
+    }
+    return null;
+  }
 }

@@ -133,20 +133,13 @@ public class EpkModelMapper implements ModelMapper {
   private void writeEdges(Metamodel metamodel, Graph graph, Model model) {
     for (EdgeType et : metamodel.getEdgeTypes()) {
       Attribute idAttribute = et.getAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_ID).getOne();
-      for (ConnectionMapping mapping : et.getMappings().getMany()) {
-        PSSIFOption<de.tum.pssif.core.model.Edge> edges = mapping.apply(model);
-        NodeTypeBase fromType = mapping.getFrom();
-        Attribute fromIdAttribute = fromType.getAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_ID).getOne();
-        NodeTypeBase toType = mapping.getTo();
-        Attribute toIdAttribute = toType.getAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_ID).getOne();
-        for (de.tum.pssif.core.model.Edge e : edges.getMany()) {
-          de.tum.pssif.core.model.Node from = mapping.applyFrom(e);
-          de.tum.pssif.core.model.Node to = mapping.applyTo(e);
-          Edge edge = graph.createEdge(idAttribute.get(e).getOne().asString());
-          edge.setType(et.getName());
-          graph.connect(graph.findNode(fromIdAttribute.get(from).getOne().asString()), edge,
-              graph.findNode(toIdAttribute.get(to).getOne().asString()));
-        }
+      PSSIFOption<de.tum.pssif.core.model.Edge> edges = et.apply(model, false);
+      for (de.tum.pssif.core.model.Edge e : edges.getMany()) {
+        de.tum.pssif.core.model.Node from = et.applyFrom(e);
+        de.tum.pssif.core.model.Node to = et.applyTo(e);
+        Edge edge = graph.createEdge(idAttribute.get(e).getOne().asString());
+        edge.setType(et.getName());
+        graph.connect(graph.findNode(from.getId()), edge, graph.findNode(to.getId()));
       }
     }
   }
