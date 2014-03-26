@@ -48,18 +48,17 @@ public class ModelTest {
     Edge cf2 = s_a.create(model, s1, a2);
     Edge cf3 = s_b.create(model, s1, b1);
 
-    Assert.assertEquals(Sets.newHashSet(cf1, cf2), s_a.apply(model).getMany());
-    Assert.assertEquals(cf3, s_b.apply(model).getOne());
+    Assert.assertEquals(Sets.newHashSet(cf1, cf2, cf3), cf.apply(model, false).getMany());
 
     Assert.assertEquals(cf1, s_a.applyIncoming(a1).getOne());
     Assert.assertEquals(Sets.newHashSet(cf1, cf2), s_a.applyOutgoing(s1).getMany());
-    Assert.assertEquals(s1, s_a.applyFrom(cf1));
-    Assert.assertEquals(a1, s_a.applyTo(cf1));
+    Assert.assertEquals(s1, cf.applyFrom(cf1));
+    Assert.assertEquals(a1, cf.applyTo(cf1));
 
-    Assert.assertEquals(cf3, s_b.applyIncoming(b1).getOne());
-    Assert.assertEquals(cf3, s_b.applyOutgoing(s1).getOne());
-    Assert.assertEquals(s1, s_b.applyFrom(cf3));
-    Assert.assertEquals(b1, s_b.applyTo(cf3));
+    Assert.assertEquals(cf3, cf.applyIncoming(b1, true).getOne());
+    Assert.assertEquals(Sets.newHashSet(cf1, cf2, cf3), cf.applyOutgoing(s1, true).getMany());
+    Assert.assertEquals(s1, cf.applyFrom(cf3));
+    Assert.assertEquals(b1, cf.applyTo(cf3));
   }
 
   @Test
