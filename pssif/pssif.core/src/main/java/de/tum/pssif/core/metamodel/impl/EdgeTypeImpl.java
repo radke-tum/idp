@@ -197,16 +197,6 @@ public class EdgeTypeImpl extends ElementTypeImpl implements MutableEdgeType {
   }
 
   @Override
-  public Node applyFrom(Edge edge) {
-    return new ReadFromNodesOperation().apply(edge);
-  }
-
-  @Override
-  public Node applyTo(Edge edge) {
-    return new ReadToNodesOperation().apply(edge);
-  }
-
-  @Override
   public PSSIFOption<Edge> apply(Model model, boolean includeSubtypes) {
     PSSIFOption<Edge> result = PSSIFOption.none();
 

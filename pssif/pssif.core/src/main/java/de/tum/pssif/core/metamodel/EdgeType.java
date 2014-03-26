@@ -16,10 +16,6 @@ public interface EdgeType extends ElementType, Specializable<EdgeType> {
 
   PSSIFOption<ConnectionMapping> getIncomingMappings(NodeTypeBase to);
 
-  Node applyFrom(Edge edge);
-
-  Node applyTo(Edge edge);
-
   PSSIFOption<Edge> apply(Model model, boolean includeSubtypes);
 
   PSSIFOption<Edge> applyOutgoing(Node node, boolean includeSubtypes);
