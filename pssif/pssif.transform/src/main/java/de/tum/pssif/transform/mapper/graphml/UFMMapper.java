@@ -18,11 +18,11 @@ import de.tum.pssif.transform.transformation.DeinstantifyNodeTypeTransformation;
 import de.tum.pssif.transform.transformation.HideConnectionMappingTransformation;
 import de.tum.pssif.transform.transformation.HideEdgeTypeAttributeTransformation;
 import de.tum.pssif.transform.transformation.HideNodeTypeAttributeTransformation;
-import de.tum.pssif.transform.transformation.JoinLeftOutgoingTransformation;
-import de.tum.pssif.transform.transformation.JoinRightOutgoingTransformation;
+import de.tum.pssif.transform.transformation.JoinConnectionMappingTransformation;
 import de.tum.pssif.transform.transformation.MoveAttributeTransformation;
 import de.tum.pssif.transform.transformation.RenameEdgeTypeTransformation;
 import de.tum.pssif.transform.transformation.RenameNodeTypeTransformation;
+import de.tum.pssif.transform.transformation.joined.JoinPath;
 
 
 public class UFMMapper extends GraphMLMapper {
@@ -148,10 +148,24 @@ public class UFMMapper extends GraphMLMapper {
   }
 
   protected static Metamodel joinToArtificialBlocks(String etName, ConnectionMapping s2b, ConnectionMapping f2b, Metamodel view) {
-    view = new JoinLeftOutgoingTransformation(et(etName, view), s2b, nt(N_BLOCK, view), nt(N_STATE, view), nt(N_FUNCTION, view)).apply(view);
-    view = new JoinLeftOutgoingTransformation(et(etName, view), f2b, nt(N_BLOCK, view), nt(N_FUNCTION, view), nt(N_STATE, view)).apply(view);
-    view = new JoinRightOutgoingTransformation(et(etName, view), s2b, nt(N_FUNCTION, view), nt(N_STATE, view), nt(N_BLOCK, view)).apply(view);
-    view = new JoinRightOutgoingTransformation(et(etName, view), f2b, nt(N_STATE, view), nt(N_FUNCTION, view), nt(N_BLOCK, view)).apply(view);
+    EdgeType et = et(etName, view);
+    NodeType state = nt(N_STATE, view);
+    NodeType function = nt(N_FUNCTION, view);
+    NodeType block = nt(N_BLOCK, view);
+
+    JoinPath leftPath = new JoinPath();
+    leftPath.joinOutgoing(s2b);
+    JoinPath rightPath = new JoinPath();
+    rightPath.joinOutgoing(f2b);
+    view = new JoinConnectionMappingTransformation(et.getMapping(state, function).getOne(), et, state, function, leftPath, rightPath, block, block)
+        .apply(view);
+
+    leftPath = new JoinPath();
+    leftPath.joinOutgoing(f2b);
+    rightPath = new JoinPath();
+    rightPath.joinOutgoing(s2b);
+    view = new JoinConnectionMappingTransformation(et.getMapping(state, function).getOne(), et, function, state, leftPath, rightPath, block, block)
+        .apply(view);
     return view;
   }
 

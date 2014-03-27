@@ -2,6 +2,7 @@ package de.tum.pssif.transform.transformation.viewed;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
+import com.google.common.collect.Sets;
 
 import de.tum.pssif.core.common.PSSIFOption;
 import de.tum.pssif.core.metamodel.ConnectionMapping;
@@ -55,14 +56,14 @@ public class ViewedConnectionMapping extends ConnectionMappingImpl {
     return baseMapping;
   }
 
-  protected final PSSIFOption<Edge> filter(PSSIFOption<Edge> edges) {
-    return PSSIFOption.many(Collections2.filter(edges.getMany(), new Predicate<Edge>() {
+  protected PSSIFOption<Edge> filter(PSSIFOption<Edge> edges) {
+    return PSSIFOption.many(Sets.newHashSet(Collections2.filter(edges.getMany(), new Predicate<Edge>() {
       @Override
       public boolean apply(Edge input) {
         boolean result = getFrom().apply(input.getModel(), true).getMany().contains(applyFrom(input))
             && getTo().apply(input.getModel(), true).getMany().contains(applyTo(input));
         return result;
       }
-    }));
+    })));
   }
 }
