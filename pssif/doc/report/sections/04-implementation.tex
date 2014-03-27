@@ -50,7 +50,19 @@ During the design and implementation of the PSS-IF PoC the authors have followed
 \section{Project Structure}
 \label{sec:impl:structure}
 
-Maven project with ... packaging. Stuff. TODO Note: maven modules do not neccessarily correspond to function modules: maven modules are coarse-grained. Each maven module contains one or more functional modules.
+The PSS-IF PoC is developed as an Apache Maven project, further divided into a root project, called ''\textbf{pssif}'' and a number of sub-modules. The root project is used for the provision of common development and  build configuration, as for example the specification of common dependencies with a fixed version over all modules. This avoids redundancy and improves the manageability of the developed code. Each of the modules represents a component of the PSS-IF PoC architecture on a coarse level of abstraction. Note that while it is possible to establish a project with fine-grained Maven modularity, division in fine-grained modules would make it more difficult to capture the project structure. This is why the authors have tried to find a balance between capturing coarse-level architectural concepts through Maven modularization, while fine-grained modularization of components is achieved through the packaging mechanism of the Java programming language.
+
+This section covers the coarse-grained separation realized through Maven modularization, while \secref{sec:impl:components} is concerned with the fine-grained architectural modularization of the project. Currently, the PSS-IF PoC consists of four modules, as depicted in \color{red} TODO figref\color{black}.
+
+\color{red} TODO screenshot of project strucutre\color{black}
+
+\paragraph{Core} The ''\textbf{core}'' Maven module contains the fundamental Application Programming Interface (API) of the framework. This API defines the concepts through which the PSS-IF Domain-Specific Language (DSL) is described, such as Metamodel, Model, NodeTypes, Nodes etc. Furthermore, the core module provides an implementation layer for the concepts of the PSS-IF DSL, as well as a number of common utilities, like for example a generator for the canonic PSS-IF Metamodel, as depicted in \chapref{chap:intro}.
+
+\paragraph{Transform} The ''\textbf{transformation}'' Maven module provides the Application Programming Interface (API) used for the definition and execution of transformations, as well as for input and output (I/O) operations. Next to the APIs, this module also contains their implementation, as well as a number of commonly used helping utilities, concerned with transformation or the serialization to or de-serialization from external formats. Finally, this module contains implementations for the supported source and target languages.
+
+\paragraph{VSDX} The ''\textbf{vsdx}'' module is a dedicated module which provides an API and an implementation for the processing of Microsoft Visio 2013 VSDX documents. The module defines an abstraction layer describing the strucutre of a Visio document in an object-oriented fashion, and is used for the serialization and de-serialization of VSDX files.
+
+\paragraph{SysML4Mechatronics} The ''\textbf{sysml4mechatronics}'' module contains a number of APIs and implementations for them, used for the serialization and deserialization of SFB769 SysML4Mechatronics files.
 
 \section{Components}
 \label{sec:impl:components}
