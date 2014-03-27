@@ -33,6 +33,10 @@ public class RequirementTracer {
   }
  }
  }
+
+
+ 
+ 
  
  private static MyNode getMyNode(Node node) {
   for (MyNode n : ModelBuilder.getAllNodes()) {
