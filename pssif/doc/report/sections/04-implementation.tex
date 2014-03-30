@@ -32,6 +32,8 @@ Next to the libraries provided by Oracle's Standard Java Runtime Environment, th
 
 \paragraph{guava} Google Guava is a set of common libraries, mainly developed by Google. The package includes useful APIs for the manipulation of collections, the usage of function and predicates, and others.
 
+\paragraph{emf} The Eclipse Modelling Framework (EMF) library is used for the serialization and de-serialization of eCore and XML Metadata Interchange (XMI) files, enabling the processing of SysML4Mechatronics data.
+
 \paragraph{junit} JUnit is an industry standard unit-testing framework.
 
 \section{Guiding Principles}
@@ -66,6 +68,8 @@ This section covers the coarse-grained separation realized through Maven modular
 
 \section{Components}
 \label{sec:impl:components}
+
+\color{red} TODO verbatimize class names \color{black}
 
 After, in the last section, the coarse-level division of the PSS-IF PoC parts through Maven modules was presented, this section focuses on a more detailed overview of the fine-level architectural components of the tool. Each of the following subsections describes the function and structure of a specific component of the transformation framework PoC.
 
@@ -118,39 +122,150 @@ The root Node and Edge Types are also the roots of the inheritance hierarchies f
 
 \subsubsection{Model}
 
-TODO simple and dumb. all is done through mm -- this is soo cool, because it provides for security and data integrity...
+The second key component of the PSS-IF PoC core is the Model, which can be seen as a simple graph, consisting of Nodes and Edges. Nodes are ontological instances of the Node Types and Edges are ontological instances of the Edge Types of a PSS-IF Metamodel. Note that the elements of the Model are not type-aware themselves and can thus be accessed with different Metamodels.
+
+In the PSS-IF PoC this strategy is used extensively, and Models do not provide any information or allow any operations themselves. All access points to a Model have to be navigated through a Metamodel, i.e. a Metamodel \textit{operates} on a Model. This makes it possible to switch between Metamodels as the user sees fit, but also to ensure data integrity at all times, by enforcing all modifications to be applied through the Metamodel, which plays the role of the schema for the data contained in the model.
 
 \subsection{Transformations}
 
-TODO
+After the core, the next most important component of the PSS-IF PoC is the transformation API. As already noted in \chapref{chap:approach}, the authors have adopted the ISO 42010 approach, which defines different stakeholders as having different views on their data. Since the utility defines structures on the meta-level, the PoC describes the views of different stakeholders (source and destination languages) through corresponding Metamodels, called Viewpoints. These are mutable Metamodels, which can be \textit{transformed}. For this purpose, Viewpoints accept a \texttt{Transformation}, which is a function mapping a Metamodel to a Metamodel.
+
+Thus, the application of a \texttt{Transformation} results in a \texttt{Viewpoint}, i.e. a Metamodel, which modifies the behaviour of the input Metamodel in accordance with the particular kind of transformation used. As a result, transformations can be applied consequently, each one operating on the result of the previous. This process is illustrated in \color{red} TODO seq. diag. of 2+ transformations, with calls to viewpoints?\color{black}.
+
+Since the behaviour of the \texttt{Viewpoint} is independent of the particular kind of transformation used, the definition of a \texttt{Viewpoint} is reduced to the definition of all necessary transformations and their combination in the appropriate order. The current set of available transformation covers all the ones described in \chapref{chap:approach}.
 
 \subsection{Generic Graph}
 
-TODO
+A simple component used for intermediate steps in the transformation process is the generic graph component of the PSS-IF PoC. This component is a simple undirected graph consisting of nodes and edges, which can have string-named attributes with string values, as well as the name of their assumed type (see \color{red}TODO fig UML Class of simple graph\color{black}). In this sense, the graph is an untyped and unstructured equivalent of a PSS-IF Model.
+
+In the transformation process, the generic graph is used as an intermediate format, separating the concrete syntax and the abstract syntax of each supported language. The concrete syntax is defined by the file provided by the user and is handled by an \texttt{IoMapper} (see \secref{sec:impl:comp:io}), which the abstract syntax is defined by the \texttt{Viewpoint} and is processed by a \texttt{ModelMapper} (see \secref{sec:impl:comp:model}). The details of the process are provided in \secref{sec:impl:process}.
 
 \subsection{I/O Mappers}
+\label{sec:impl:comp:io}
 
-TODO
+The I/O Mapper component is responsible for the serialization and de-serialization of a generic graph to and from a stream. In this sense, the component has the task to abstract over the concrete syntax used for the representation of the user's data in any particular language. The API of the component is the \texttt{IoMapper} interface, which has the following signature:
+
+\begin{itemize}
+\item \texttt{Graph read(InputStream in);}
+\item \texttt{void write(Graph graph, OutputStream out);}
+\end{itemize}
+
+Note that the same \texttt{IoMapper} may be used for more than one language. For example, the \texttt{VsdxIoMapper} could be used for both EPC and BPMN.
 
 \subsection{Model Mappers}
+\label{sec:impl:comp:model}
 
-TODO
+The Model Mapper component is responsible for the translation between generic graphs and PSS-IF Models under the provision of a corresponding PSS-IF \texttt{Viewpoint} (Metamodel). In this sense, it handles the translation between the abstract syntax of the external representation and the abstract syntax of the language's viewpoint in PSS-IF. The component is realized through the \texttt{ModelMapper} interface, which has the following signature:
+
+\begin{itemize}
+\item \texttt{Model read(Metamodel metamodel, Graph graph);}
+\item \texttt{Graph write(Metamodel metamodel, Model model);}
+\end{itemize}
+
+In the simplest case, a particular model mapper would simply use the provided viewpoint to directly transfer information between a Model and a graph, processing all nodes, edges and attributes. In more complex cases, pre- or post-processing of the graph may be necessary, so that is ''normalized'' to a structure compatible with the viewpoint defined for the particular language (and, hence, with the provided Model). This may, for example, be the case, if the external representation requires the nodes of a graph to be ordered in accordance with a certain rule, or if there are implicit existential dependencies between nodes, implied by the nature of the \texttt{Viewpoint} or a specific \texttt{Transformation}.
+
+In general, it is assumed that one \texttt{ModelMapper} implementation is necessary for each format to support. Theoretically, if the same language is to be imported from or exported to more than one format, and the generic graph is sufficient to express the abstract syntax of both external formats, the same \texttt{ModelMapper} and \texttt{Viewpoint} can be used with different \texttt{IoMapper} implementations, to obtain different serializations of the same data.
 
 \subsection{Microsoft Visio VSDX I/O}
 
-TODO
-
-\section{Import and Export Process}
-\label{sec:impl:process}
-
-TODO describe process, mit TEXT und BILD! 
+For the serialization and de-serialization of Microsoft Visio 2013 VSDX files needed to support EPC and BPMN, a special component was developed in a dedicated Maven module. The component defines an API for the manipulation of VSDX files, operating with the following abstractions:
 
 \begin{itemize}
-\item technology: java. maven... expplain why
-\item guiding principles of development
-\item project structure
-\item core
-\item transform
-\item vsdx
-\item viz?
+\item \texttt{VsdxDocument} An object-oriented representation of an entire VSDX document.
+\item \texttt{VsdxPage} A page within a VSDX document.
+\item \texttt{VsdxMaster} A master shape defined within a VSDX document.
+\item \texttt{VsdxShape} A shape, contained either in a page, or in another shape.
+\item \texttt{VsdxConnector} A connector shape, i.e. a shape which connects two other shapes.
 \end{itemize}
+
+The interrelation of the different concepts of the VSDX API are depicted in \color{red} TODO UML Class Diagram of Visio interfaces\color{black}.
+
+It should be noted that the current VSDX component does not provide any mechanisms for layouting, colouring, or other finer operations on a Visio file. This is because the component is aimed explicitly at the extraction and generation of data. The layout of Visio files exported from PSS-IF can be fixed through the usage of algorithms which are built-in in Microsoft Visio. If special decoration of shapes is required, the user's can provide their own template files with correspondingly modified master shapes. These template files can then be used in combination with the VSDX component to produce appropriately formatted Visio files. Finally, the API can be extended in future works, to support fines layouting and formatting operations.
+
+\section{Mapping Process}
+\label{sec:impl:process}
+
+After, in the last section, the different components of the PSS-IF PoC were presented, this section focuses on how the components hang together and describes the mapping (import and export) process in detail. Here, the term mapping is used, as it covers the processes in both directions and the PSS-IF PoC implementation handles both cases in the same fashion.
+
+\paragraph{API} The mapping processes are triggered over the corresponding API, represented by the \texttt{Mapper} interface, which has the following signature:
+
+\begin{itemize}
+\item \texttt{Model read(Metamodel metamodel, InputStream inputStream);}
+\item \texttt{void write(Metamodel metamodel, Model model,}\\ \texttt{OutputStream outputStream);}
+\end{itemize}
+
+\paragraph{Implementation} While each specific language, for each file format, requires its own \texttt{Mapper} implementation, the internal procedure for all languages and file formats is the same and is described by the \texttt{AbstractMapper} class, which is the super-class of all \texttt{Mapper} implementations. The \texttt{AbstractMapper} defines the methods of the \texttt{Mapper} API as follows:
+
+\begin{verbatim}
+public abstract class AbstractMapper implements Mapper {
+
+ @Override
+  public final Model read(Metamodel mm, InputStream in) {
+    Graph graph = getIoMapper().read(in);
+    Metamodel view = getView(mm);
+    ModelMapper modelMapper = getModelMapper();
+    return modelMapper.read(view, graph);
+  }
+
+  @Override
+  public final void write(Metamodel mm, Model m, OutputStream out) {
+    Metamodel view = getView(mm);
+    ModelMapper modelMapper = getModelMapper();
+    Graph graph = modelMapper.write(view, m);
+    getIoMapper().write(graph, out);
+  }
+
+  protected abstract Metamodel getView(Metamodel metamodel);
+
+  protected abstract ModelMapper getModelMapper();
+
+  protected abstract IoMapper getIoMapper();
+ }
+\end{verbatim}
+
+As the code snippet demonstrates, a PSS-IF \texttt{Model} instance is obtained from an external representation by transcoding the external representation into a generic graph, obtaining the \texttt{Viewpoint} of the current language and finally mapping the generic graph to a model in accordance with the viewpoint.
+
+Symmetrically, a file is generated from a PSS-IF \texttt{Model} by first obtaining the \texttt{Viewpoint} for the current language and using it to translate the model into a generic graph, and then serializing the graph to a stream through the corresponding \texttt{IoMapper}.
+
+\paragraph{Process}
+
+Recall the 6-step process described in \secref{sec:approach:pssif:nutshell}, which describes the transformation process on the conceptual level. In the PSS-IF PoC, the transformation process is implemented through the consequent invocation of two mappers. The first one is the mapper which de-serializes the source data and transforms it into a Model conforming to the PSS-IF Canonic Metamodel. The second mapper is the one for the target format and is used to write the obtained model into an external representation. For an exemplary source language A and target language B, the Java code describing the transformation process is the following:
+
+\begin{verbatim}
+public void transform(Mapper aMapper, Mapper bMapper,
+  InputStream inputStream, OutputStream outputStream) {
+  
+  Metamodel metamodel = PSSIFCanonicMetamodelCreator.create();
+  Model model = aMapper.read(metamodel, inputStream);
+  bMapper.write(metamodel, model, outputStream);
+}
+\end{verbatim}
+
+\color{red}TODO picutre of the process?\color{black}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
