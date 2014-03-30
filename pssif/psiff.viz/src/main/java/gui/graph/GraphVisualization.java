@@ -18,6 +18,7 @@ import javax.swing.JMenu;
 import org.apache.commons.collections15.Transformer;
 
 import reqtool.RequirementTracer;
+import reqtool.operations.ReqTraceVertexStrokeHighlight;
 import edu.uci.ics.jung.algorithms.layout.CircleLayout;
 import edu.uci.ics.jung.algorithms.layout.FRLayout;
 import edu.uci.ics.jung.algorithms.layout.ISOMLayout;
@@ -359,8 +360,15 @@ public class GraphVisualization
 				return Color.LIGHT_GRAY;
 			}
 		};
-		this.vv.getRenderContext().setVertexFillPaintTransformer(
-				tracedVertexColor);
+		//this.vv.getRenderContext().setVertexFillPaintTransformer(	tracedVertexColor);
+		ReqTraceVertexStrokeHighlight<IMyNode, Paint> trans = new ReqTraceVertexStrokeHighlight(g, vertexColor);
+		trans.setHighlight(true);
+		this.vv.getRenderContext().setVertexFillPaintTransformer(trans);
+		
+		//this.vv.getRenderContext().setVertexStrokeTransformer(new VertexStrokeHighlight<IMyNode, E>(g, pi));
+		
+		
+		
 		this.vv.repaint();
 	}
 

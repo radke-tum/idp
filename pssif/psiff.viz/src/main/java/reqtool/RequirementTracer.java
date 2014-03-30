@@ -1,7 +1,10 @@
 package reqtool;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 
+import de.tum.pssif.core.metamodel.PSSIFCanonicMetamodelCreator;
 import de.tum.pssif.core.model.Node;
 import model.ModelBuilder;
 import graph.model.IMyNode;
@@ -13,20 +16,26 @@ public class RequirementTracer {
  private static MyNode mNode;
  private static LinkedList<MyNode> mTracedNodes = new LinkedList<MyNode>();
  
+ private static List<String> traceableEdges = new ArrayList<String>();
+ 
+ 
  public static void traceRequirement(Node node) {
   mNode = getMyNode(node);
   mTracedNodes.clear();
+  traceableEdges.add(PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_CHRONOLOGICAL_BASED_ON);
+  traceableEdges.add(PSSIFCanonicMetamodelCreator.E_RELATIONSHIP);
+  traceableEdges.add(PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_LOGICAL_SATISFIES);
   
-  System.out.println("Tracing "+mNode.getName());
+    System.out.println("Tracing "+mNode.getName());
   
   for (MyEdge edge : ModelBuilder.getAllEdges()){
-   if (edge.getSourceNode().getNode().getId().equals(node.getId()) && edge.getEdgeType().getName().equals("Based On"))
+   if (edge.getSourceNode().getNode().getId().equals(node.getId()) && (traceableEdges.contains(edge.getEdgeType().getName())))
   {
    System.out.println("Next node is: "+edge.getDestinationNode().getName());
    traceRequirementDestination(edge.getDestinationNode().getNode());
    
   }
-  else if (edge.getDestinationNode().getNode().getId().equals(node.getId()) && edge.getEdgeType().getName().equals("Based On"))
+  else if (edge.getDestinationNode().getNode().getId().equals(node.getId()) && (traceableEdges.contains(edge.getEdgeType().getName())))
   {
    traceRequirementSource(edge.getSourceNode().getNode());
    System.out.println("Previous node is: "+edge.getSourceNode().getName());
@@ -38,7 +47,7 @@ public class RequirementTracer {
  
  
  
- private static MyNode getMyNode(Node node) {
+ public static MyNode getMyNode(Node node) {
   for (MyNode n : ModelBuilder.getAllNodes()) {
    if (n.getNode().getId().equals(node.getId())) {
     return n;
@@ -50,7 +59,7 @@ public class RequirementTracer {
  public static void traceRequirementDestination(Node node) {
   mTracedNodes.add(getMyNode(node));
   for (MyEdge edge : ModelBuilder.getAllEdges()){
-   if (edge.getSourceNode().getNode().getId().equals(node.getId()) && edge.getEdgeType().getName().equals("Based On"))
+   if (edge.getSourceNode().getNode().getId().equals(node.getId()) && (traceableEdges.contains(edge.getEdgeType().getName())))
   {
     System.out.println("Next node is: "+edge.getDestinationNode().getName());
     mTracedNodes.add((MyNode)edge.getDestinationNode());
@@ -63,7 +72,7 @@ public class RequirementTracer {
  public static void traceRequirementSource(Node node) {
   mTracedNodes.add(getMyNode(node));
   for (MyEdge edge : ModelBuilder.getAllEdges()){
-   if (edge.getDestinationNode().getNode().getId().equals(node.getId()) && edge.getEdgeType().getName().equals("Based On"))
+   if (edge.getDestinationNode().getNode().getId().equals(node.getId()) && (traceableEdges.contains(edge.getEdgeType().getName())))
    {
     System.out.println("Previous node is: "+edge.getSourceNode().getName());
     mTracedNodes.add((MyNode)edge.getSourceNode());

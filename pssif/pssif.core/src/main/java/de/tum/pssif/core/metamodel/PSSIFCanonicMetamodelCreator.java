@@ -195,6 +195,7 @@ public final class PSSIFCanonicMetamodelCreator {
 
   private static void createRelationships(MetamodelImpl metamodel) {
     MutableEdgeType relationship = metamodel.createEdgeType(E_RELATIONSHIP);
+    relationship.createMapping(node(N_REQUIREMENT, metamodel), node(N_REQUIREMENT, metamodel));
     relationship.createMapping(node(N_FUNCTION, metamodel), node(PSSIFConstants.ROOT_NODE_TYPE_NAME, metamodel));
     relationship.createMapping(node(PSSIFConstants.ROOT_NODE_TYPE_NAME, metamodel), node(N_FUNCTION, metamodel));
 

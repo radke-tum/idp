@@ -17,7 +17,10 @@ import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.JTextField;
 
+import de.tum.pssif.core.metamodel.PSSIFCanonicMetamodelCreator;
 import reqtool.RequirementTracer;
+import reqtool.RequirementVersionManager;
+import reqtool.TestCaseCreator;
 import model.ModelBuilder;
 import edu.uci.ics.jung.algorithms.layout.GraphElementAccessor;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
@@ -63,9 +66,13 @@ public class MyPopupGraphMousePlugin extends AbstractPopupGraphMousePlugin {
             	popup.add(submenu);
             	
 				// TODO
-				if (node.getNodeType().toString().equals("Requirement")) {
-					JMenuItem submenu2 = traceRequirement(e, node);
-					popup.add(submenu2);
+				if (node.getNodeType().toString().equals(PSSIFCanonicMetamodelCreator.N_REQUIREMENT)) {
+					JMenuItem subItem1 = traceRequirement(e, node);
+					JMenuItem subItem2 = createTestCase(e, node);
+					JMenuItem subItem3 = createNewVersion(e, node);
+					popup.add(subItem1);
+					popup.add(subItem2);
+					popup.add(subItem3);
 				}
 				// /
             	
@@ -78,7 +85,7 @@ public class MyPopupGraphMousePlugin extends AbstractPopupGraphMousePlugin {
         }
     }
     
-   /**
+/**
     * Create the popup which provides the user the possibility to add a Node
     * @param e The MouseEvent which triggered the action
     */
@@ -190,6 +197,42 @@ public class MyPopupGraphMousePlugin extends AbstractPopupGraphMousePlugin {
          
            return submenu;
     }
+    
+    private JMenuItem createTestCase(MouseEvent e, final MyNode selectedNode) {
+ 		// TODO Auto-generated method stub
+    	
+    	JMenuItem submenu;
+    	
+    	submenu = new JMenuItem("Create Test Case");
+    	submenu.addActionListener(new ActionListener() {
+			
+    		@Override
+        	public void actionPerformed(ActionEvent e){
+        		TestCaseCreator.createTestCase(selectedNode.getNode());
+        	}
+		}
+    	);
+    	
+    	    	
+ 		return submenu;
+ 	}
+    
+    private JMenuItem createNewVersion(MouseEvent e, final MyNode node) {
+    	JMenuItem submenu;
+    	
+    	submenu = new JMenuItem("Create new version");
+    	submenu.addActionListener(new ActionListener() {
+			
+    		@Override
+        	public void actionPerformed(ActionEvent e){
+        		RequirementVersionManager.createNewVersion(node.getNode());
+        	}
+		}
+    	);
+    	
+    	    	
+ 		return submenu;
+ 	}
     
     /**
      * Action listener for the Edge creation
