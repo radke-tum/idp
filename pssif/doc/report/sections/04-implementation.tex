@@ -1,7 +1,7 @@
 \chapter{Implementation}
 \label{chap:impl}
 
-In the last chapter the conceptual approach to the realisation of the PSS-IF Proof-of-Concept was described. In particular, the latter sections of \chapref{chap:approach} describe the principles behind the chosen transformation method. In this context, this chapter focuses on the implementation of the framework. The chapter is structured as follows: \secref{sec:impl:technology} describes the technology stack used for the implementation. In the consequent \secref{sec:impl:principles} the adopted software development guiding principles are presented. Thereafter, \secref{sec:impl:structure} provides an overview of the project structure. \secref{sec:impl:components} follows with a description of each component of the PSS-IF PoC and, finally, \secref{sec:impl:process} describes the import and export processes and the collaboration of all components of the framework.
+In the previous chapter the conceptual approach to the realisation of the PSS-IF Proof-of-Concept was described. In particular, the latter sections of \chapref{chap:approach} describe the principles behind the chosen transformation method. In this context, this chapter focuses on the implementation of the framework. The chapter is structured as follows: \secref{sec:impl:technology} describes the technology stack used for the implementation. In the consequent \secref{sec:impl:principles} the adopted software development guiding principles are presented. Thereafter, \secref{sec:impl:structure} provides an overview of the project structure. \secref{sec:impl:components} follows with a description of each component of the PSS-IF PoC and, finally, \secref{sec:impl:process} describes the import and export processes and the collaboration of all components of the framework.
 
 \section{Technology Stack}
 \label{sec:impl:technology}
@@ -12,9 +12,9 @@ This section defines the technologies used for the implementation of the PSS-IF 
 
 To enable an easier and more rapid development of the prototype, a high-level programming language can better be utilized. Due to previous experience and know-how, the authors have chosen the Java Programming Language. Furthermore, the code is compliant with Java version 7, as distributed by Oracle. 
 
-\subsection{Revision Control}
+\subsection{Source Code Management}
 
-For improved parallelisation, better code maintenance and easier documentation, a distributed revision control can be used. While there are numerous alternatives, the authors have chosen GIT as a modern and powerful solution.
+For improved parallelisation, better code maintenance and easier documentation, a distributed version control system can be used. While there are numerous alternatives, the authors have chosen GIT as a modern and powerful solution.
 
 \subsection{Build Process and Dependency Management}
 
@@ -22,7 +22,7 @@ For the automated build process, as well as for the management of dependencies t
 
 \subsection{Test Framework}
 
-For the execution of automated tests, JUnit, an industry standard framework, has been used.
+For the execution of automated tests, JUnit, an industry standard framework within the Java universe, has been used.
 
 \subsection{Used Libraries}
 
@@ -64,14 +64,14 @@ This section covers the coarse-grained separation realized through Maven modular
 
 \paragraph{VSDX} The ''\textbf{vsdx}'' module is a dedicated module which provides an API and an implementation for the processing of Microsoft Visio 2013 VSDX documents. The module defines an abstraction layer describing the structure of a Visio document in an object-oriented fashion, and is used for the serialization and de-serialization of VSDX files.
 
-\paragraph{SysML4Mechatronics} The ''\textbf{sysml4mechatronics}'' module contains a number of APIs and implementations for them, used for the serialization and de-serialization of SFB769 SysML4Mechatronics files.
+\paragraph{SysML4Mechatronics} The ''\textbf{sysml4mechatronics}'' module contains a number of APIs and implementations for them, used for the serialization and de-serialization of SFB768 SysML4Mechatronics files.
 
 \section{Components}
 \label{sec:impl:components}
 
 \color{red} TODO verbatimize class names \color{black}
 
-After, in the last section, the coarse-level division of the PSS-IF PoC parts through Maven modules was presented, this section focuses on a more detailed overview of the fine-level architectural components of the tool. Each of the following subsections describes the function and structure of a specific component of the transformation framework PoC.
+After, in the previous section, the coarse-level division of the PSS-IF PoC parts through Maven modules was presented, this section focuses on a more detailed overview of the fine-level architectural components of the tool. Each of the following subsections describes the function and structure of a specific component of the transformation framework PoC.
 
 \subsection{Core}
 
@@ -81,17 +81,17 @@ The core is the central component of the framework and is responsible for the re
 
 The Metamodel is a concept which enables the users of the framework to define the structure of their data. In this sense, a Metamodel also defines, on the abstract syntax level, the language in which the elements of a PSS-IF Model are described. A parallel in the domain of the Extensible Markup Language (XML) are the XML Schema Definitions (XSD). In essence, a PSS-IF Metamodel is the schema definition in accordance with which a particular Model is created and processed.
 
-A PSS-IF Metamodel captures a number of concepts. In particular, it consists of Node and Edge Types, i.e. elements which enable the user to define what kinds of nodes and edges their model can have, what kinds of features they may have, and how they may relate to each other. Furthermore, in the PSS-IF PoC, inheritance relations can be defined between both Node and Edge types.
+A PSS-IF Metamodel captures a number of concepts. In particular, it consists of Node and Edge Types, i.e. elements which enable the user to define what kinds of nodes and edges their model may contain, what kinds of features they may have, and how they may relate to each other. Furthermore, in the PSS-IF PoC, inheritance relations can be defined between both Node and Edge types.
 
 \paragraph{Node Types}
 
 Node Types are used for the description of the different kinds of nodes in a model and have a number of features. All Node Types are named and the name must be unique in the scope of all Node and Edge Types within a Metamodel. Furthermore, Node Types can have a number of attributes, and are connected to other Node Types over Edge Types, which can be both incoming and outgoing.
 
-There are two categories of Node Types -- conventional ones and Junction Node Types. The latter are actually Node Types with edge semantics, i.e. they are used for the representation of hyper-edges.
+There are two categories of Node Types -- conventional ones and Junction Node Types. The latter actually describe Nodes with edge semantics, i.e. they are used for the representation of hyper-edges.
 
 \paragraph{Edge Types}
 
-Edge Types are used for the description of possible edges in a user's model. Edge Types also have a name, which is unique in the scope of a Metamodel. For it to be possible to associate the same Edge Type with different pairs of Node Types, the concept of Connection Mappings is used. A Connection Mapping is an association assigned to a particular Edge Type, which includes an incoming and an outgoing Note Type.
+Edge Types are used for the description of possible edges in a user's model. Edge Types also have a name, which is unique in the scope of a Metamodel. For it to be possible to associate the same Edge Type with different pairs of Node Types, the concept of Connection Mappings is introduced. A Connection Mapping is an association assigned to a particular Edge Type, which includes an incoming and an outgoing Node Type.
 
 To illustrate the usage of the Connection Mappings, consider the following example: Assuming two Node Types, denoted ''State'' and ''Function'' and an Edge Type ''Control Flow'', which has to connect both Node Types in both directions. In the PSS-IF PoC this is achieved by defining a single Edge Type ''Control Flow'' and assigning two Connection Mappings to it: one from ''State'' to ''Function'' and one from ''Function'' to ''State''.
 
@@ -108,8 +108,8 @@ As already noted above, for both Node and Edge Types, inheritance relations can 
 Every PSS-IF Metamodel has a number of predefined elements. These are the root Node and Edge Types. The root node type has the name ''Node'' and provides the following predefined Attributes:
 
 \begin{itemize}
-\item \textbf{id}: An identifier with data type String for the node instance of the node type, categorized as Metadata.
-\item \textbf{name}: A name with data type String, categorized as Metadata.
+\item \textbf{id}: An identifier of data type String for the node instance of the node type, categorized as Metadata.
+\item \textbf{name}: A name of data type String, categorized as Metadata.
 \item \textbf{validity start}: A Date, designating the begin of the validity period of the given node, categorized as Time.
 \item \textbf{validity end}: A Date, designating the end of the validity period of the given node, categorized as Time.
 \item \textbf{version}: The version of the node, of data type String, categorized as Metadata.
@@ -128,7 +128,7 @@ In the PSS-IF PoC this strategy is used extensively, and Models do not provide a
 
 \subsection{Transformations}
 
-After the core, the next most important component of the PSS-IF PoC is the transformation API. As already noted in \chapref{chap:approach}, the authors have adopted the ISO 42010 approach, which defines different stakeholders as having different views on their data. Since the utility defines structures on the meta-level, the PoC describes the views of different stakeholders (source and destination languages) through corresponding Metamodels, called Viewpoints. These are mutable Metamodels, which can be \textit{transformed}. For this purpose, Viewpoints accept a \texttt{Transformation}, which is a function mapping a Metamodel to a Metamodel.
+Besides the core, the next most important component of the PSS-IF PoC is the transformation API. As already noted in \chapref{chap:approach}, the authors have adopted the ISO 42010 approach, which defines different stakeholders as having different views on their data. Since the utility defines structures on the meta-level, the PoC describes the views of different stakeholders (source and destination languages) through corresponding Metamodels, called Viewpoints. These are mutable Metamodels, which can be \textit{transformed}. For this purpose, Viewpoints accept a \texttt{Transformation}, which is a function mapping a Metamodel to a Metamodel.
 
 Thus, the application of a \texttt{Transformation} results in a \texttt{Viewpoint}, i.e. a Metamodel, which modifies the behaviour of the input Metamodel in accordance with the particular kind of transformation used. As a result, transformations can be applied consequently, each one operating on the result of the previous. This process is illustrated in \color{red} TODO seq. diag. of 2+ transformations, with calls to viewpoints?\color{black}.
 
@@ -138,7 +138,7 @@ Since the behaviour of the \texttt{Viewpoint} is independent of the particular k
 
 A simple component used for intermediate steps in the transformation process is the generic graph component of the PSS-IF PoC. This component is a simple undirected graph consisting of nodes and edges, which can have string-named attributes with string values, as well as the name of their assumed type (see \color{red}TODO fig UML Class of simple graph\color{black}). In this sense, the graph is an untyped and unstructured equivalent of a PSS-IF Model.
 
-In the transformation process, the generic graph is used as an intermediate format, separating the concrete syntax and the abstract syntax of each supported language. The concrete syntax is defined by the file provided by the user and is handled by an \texttt{IoMapper} (see \secref{sec:impl:comp:io}), which the abstract syntax is defined by the \texttt{Viewpoint} and is processed by a \texttt{ModelMapper} (see \secref{sec:impl:comp:model}). The details of the process are provided in \secref{sec:impl:process}.
+In the transformation process, the generic graph is used as an intermediate format, separating the concrete syntax and the abstract syntax of each supported language. The concrete syntax is defined by the file provided by the user and is handled by an \texttt{IoMapper} (see \secref{sec:impl:comp:io}), while the abstract syntax is defined by the \texttt{Viewpoint} and is processed by a \texttt{ModelMapper} (see \secref{sec:impl:comp:model}). The details of the process are provided in \secref{sec:impl:process}.
 
 \subsection{I/O Mappers}
 \label{sec:impl:comp:io}
@@ -162,7 +162,7 @@ The Model Mapper component is responsible for the translation between generic gr
 \item \texttt{Graph write(Metamodel metamodel, Model model);}
 \end{itemize}
 
-In the simplest case, a particular model mapper would simply use the provided viewpoint to directly transfer information between a Model and a graph, processing all nodes, edges and attributes. In more complex cases, pre- or post-processing of the graph may be necessary, so that is ''normalized'' to a structure compatible with the viewpoint defined for the particular language (and, hence, with the provided Model). This may, for example, be the case, if the external representation requires the nodes of a graph to be ordered in accordance with a certain rule, or if there are implicit existential dependencies between nodes, implied by the nature of the \texttt{Viewpoint} or a specific \texttt{Transformation}.
+In the simplest case, a particular model mapper would simply use the provided viewpoint to directly transfer information between a Model and a graph, processing all nodes, edges and attributes. In more complex cases, pre- or post-processing of the graph may be necessary, to ''normalize'' it into a structure compatible with the viewpoint defined for the particular language (and, hence, with the provided Model). This may, for example, be the case, if the external representation requires the nodes of a graph to be ordered in accordance with a certain rule, or if there are implicit existential dependencies between nodes, implied by the nature of the \texttt{Viewpoint} or a specific \texttt{Transformation}.
 
 In general, it is assumed that one \texttt{ModelMapper} implementation is necessary for each format to support. Theoretically, if the same language is to be imported from or exported to more than one format, and the generic graph is sufficient to express the abstract syntax of both external formats, the same \texttt{ModelMapper} and \texttt{Viewpoint} can be used with different \texttt{IoMapper} implementations, to obtain different serializations of the same data.
 
@@ -180,12 +180,12 @@ For the serialization and de-serialization of Microsoft Visio 2013 VSDX files ne
 
 The interrelation of the different concepts of the VSDX API are depicted in \color{red} TODO UML Class Diagram of Visio interfaces\color{black}.
 
-It should be noted that the current VSDX component does not provide any mechanisms for layouting, colouring, or other finer operations on a Visio file. This is because the component is aimed explicitly at the extraction and generation of data. The layout of Visio files exported from PSS-IF can be fixed through the usage of algorithms which are built-in in Microsoft Visio. If special decoration of shapes is required, the user's can provide their own template files with correspondingly modified master shapes. These template files can then be used in combination with the VSDX component to produce appropriately formatted Visio files. Finally, the API can be extended in future works, to support fines layouting and formatting operations.
+It should be noted that the current VSDX component does not provide any mechanisms for layouting, colouring, or other finer operations on a Visio file. This is because the component is aimed explicitly at the extraction and generation of data. The layout of Visio files exported from PSS-IF can be fixed through the usage of algorithms which are built-in in Microsoft Visio. If special decoration of shapes is required, the user's can provide their own template files with correspondingly modified master shapes. These template files can then be used in combination with the VSDX component to produce appropriately formatted Visio files. Finally, the API can be extended in future works, to support finer layouting and formatting operations.
 
 \section{Mapping Process}
 \label{sec:impl:process}
 
-After, in the last section, the different components of the PSS-IF PoC were presented, this section focuses on how the components hang together and describes the mapping (import and export) process in detail. Here, the term mapping is used, as it covers the processes in both directions and the PSS-IF PoC implementation handles both cases in the same fashion.
+After, in the previous section, the different components of the PSS-IF PoC were presented, this section focuses on how the components hang together and describes the mapping (import and export) process in detail. Here, the term mapping is used, as it covers the processes in both directions and the PSS-IF PoC implementation handles both cases in the same fashion.
 
 \paragraph{API} The mapping processes are triggered over the corresponding API, represented by the \texttt{Mapper} interface, which has the following signature:
 
