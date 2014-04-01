@@ -237,6 +237,7 @@ public final class PSSIFCanonicMetamodelCreator {
 
     MutableEdgeType basedOnRelationship = metamodel.createEdgeType(E_RELATIONSHIP_CHRONOLOGICAL_BASED_ON);
     basedOnRelationship.createMapping(node(N_REQUIREMENT, metamodel), node(N_REQUIREMENT, metamodel));
+    basedOnRelationship.createMapping(node(N_TEST_CASE, metamodel), node(N_REQUIREMENT, metamodel));
     basedOnRelationship.inherit(chronologicalRelationship);
 
     EdgeType refinesRelationship = metamodel.createEdgeType(E_RELATIONSHIP_CHRONOLOGICAL_REFINES);
@@ -285,7 +286,8 @@ public final class PSSIFCanonicMetamodelCreator {
     createsRelationship.createMapping(node(N_ACTOR, metamodel), node(N_REQUIREMENT, metamodel));
     createsRelationship.inherit(causalRelationship);
 
-    EdgeType requestsRelationship = metamodel.createEdgeType(E_RELATIONSHIP_CAUSAL_REQUESTS);
+    MutableEdgeType requestsRelationship = metamodel.createEdgeType(E_RELATIONSHIP_CAUSAL_REQUESTS);
+    requestsRelationship.createMapping(node(N_ACTOR, metamodel), node(N_REQUIREMENT, metamodel));
     requestsRelationship.inherit(causalRelationship);
 
     EdgeType requiresRelationship = metamodel.createEdgeType(E_RELATIONSHIP_CAUSAL_REQUIRES);
