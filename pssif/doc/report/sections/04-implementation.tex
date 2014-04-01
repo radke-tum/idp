@@ -148,7 +148,14 @@ Since the behaviour of the \texttt{Viewpoint} is independent of the particular k
 
 \subsection{Generic Graph}
 
-A simple component used for intermediate steps in the transformation process is the generic graph component of the PSS-IF PoC. This component is a simple undirected graph consisting of nodes and edges, which can have string-named attributes with string values, as well as the name of their assumed type (see \color{red}TODO fig UML Class of simple graph\color{black}). In this sense, the graph is an untyped and unstructured equivalent of a PSS-IF Model.
+A simple component used for intermediate steps in the transformation process is the generic graph component of the PSS-IF PoC. This component is a simple undirected graph consisting of nodes and edges, which can have string-named attributes with string values, as well as the name of their assumed type. A UML Class Diagram describing the generic graph is depicted in \figref{fig:genericgraph}. In this sense, the graph is an untyped and unstructured equivalent of a PSS-IF Model.
+
+\begin{figure}[h]
+\centering
+\includegraphics[scale=0.2]{figures/generic-graph-sketch.jpg}
+\caption{UML Class Diagram of the Generic Graph}
+\label{fig:genericgraph}
+\end{figure}
 
 In the transformation process, the generic graph is used as an intermediate format, separating the concrete syntax and the abstract syntax of each supported language. The concrete syntax is defined by the file provided by the user and is handled by an \texttt{IoMapper} (see \secref{sec:impl:comp:io}), while the abstract syntax is defined by the \texttt{Viewpoint} and is processed by a \texttt{ModelMapper} (see \secref{sec:impl:comp:model}). The details of the process are provided in \secref{sec:impl:process}.
 
@@ -190,7 +197,14 @@ For the serialization and de-serialization of Microsoft Visio 2013 VSDX files ne
 \item \texttt{VsdxConnector} A connector shape, i.e. a shape which connects two other shapes.
 \end{itemize}
 
-The interrelation of the different concepts of the VSDX API are depicted in \color{red} TODO UML Class Diagram of Visio interfaces\color{black}.
+The inter-relation of the different concepts of the VSDX API is depicted in \figref{fig:vsdxapi}.
+
+\begin{figure}[h]
+\centering
+\includegraphics[scale=0.2]{figures/vsdx-sketch.jpg}
+\caption{API of the VSDX Component}
+\label{fig:vsdxapi}
+\end{figure}
 
 It should be noted that the current VSDX component does not provide any mechanisms for layouting, colouring, or other finer operations on a Visio file. This is because the component is aimed explicitly at the extraction and generation of data. The layout of Visio files exported from PSS-IF can be fixed through the usage of algorithms which are built-in in Microsoft Visio. If special decoration of shapes is required, the user's can provide their own template files with correspondingly modified master shapes. These template files can then be used in combination with the VSDX component to produce appropriately formatted Visio files. Finally, the API can be extended in future works, to support finer layouting and formatting operations.
 
@@ -253,31 +267,11 @@ public void transform(Mapper aMapper, Mapper bMapper,
 }
 \end{verbatim}
 
-\color{red}TODO picutre of the process?\color{black}
+In \figref{fig:transformationprocess}, the transformation process is depicted in two levels of abstraction. The first level addresses the separation into two distinct read and write steps, while the second level demonstrates how both the read and write processes are accomplished by the respective language mappers.
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+\begin{figure}[h]
+\centering
+\includegraphics[scale=0.2]{figures/2-level-process-sketch.jpg}
+\caption{The Transformation Process of the PSS-IF PoC}
+\label{fig:transformationprocess}
+\end{figure}
