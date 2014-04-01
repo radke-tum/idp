@@ -1,9 +1,78 @@
 \chapter{Results}
 \label{chap:results}
 
-TODO
+After, in the last chapter, the implementation of the PSS-IF Proof-of-Concept was described, this chapter continues presents the results of the interdisciplinary project. In \secref{sec:results:framework} the key features of the PSS-IF PoC, considered as a framework, are addressed. \secref{sec:results:languages} proceeds with achieved results for each of the four domain-specific languages referenced in \chapref{chap:intro}. Finally, in \secref{sec:results:summary} a brief overview of the results is given.
 
-\begin{itemize}
-\item general evaluation of the resulting framework
-\item for each supported language, what worked, what did not
-\end{itemize}
+\section{PSS-IF Proof-of-Concept}
+\label{sec:results:framework}
+
+Throughout the implementation, the authors have followed the principles described in \chapref{chap:approach}. Furthermore, the usage of industry-standard libraries and established software-development practices provide for a good long-term manageability of the resulting software. Finally, through the definition of small, simple, yet powerful APIs, the resulting tool can conveniently be used as a framework to build upon in other projects. The authors are convinced that the PSS-IF PoC fulfils the following quality features:
+
+\paragraph{Generic} Through the adopted meta-modelling approach, the expressiveness of the resulting tool is comparable with that of the Meta-Object Facility (MOF). Furthermore, the architecture of the implementation defines the transformation process on multiple levels of hierarchy, so that in most cases addition of new features can have a limited impact.
+
+\paragraph{Extensible} The clear separation of tasks between components and their collaboration only through well-defined APIs allows new features to be added to each component without intermediate effect on other parts of the software. Furthermore, behind each API, implementations can be changed, or new ones can be added, to better suit the needs of the tool's users.
+
+\paragraph{Flexible} 
+
+what: changes to MM or lang. easy to implement. 
+
+why: Metamodel, built at runtime
+
+\paragraph{Expressive}
+
+what: can express the abstract syntax of numerous languages
+
+why: meta-modelling, the right kind of
+
+\paragraph{Efficient}
+
+what: efficient implicit transformation between languages
+
+how: operators, viewpoints
+
+\paragraph{Accessible}
+
+what: public api is usable, e.g. for other stuff
+
+why: nice API
+
+\section{Supported Languages}
+\label{sec:results:languages}
+
+for each supported language, what worked, what did not
+
+\subsection{Conversion-oriented Functional Modelling (UFM)}
+
+trouble: artifical blocks
+
+outcome: success
+
+\subsection{Event-Driven Process Chain (EPC)}
+
+trouble: nodes with hyper-edge semantics
+
+trouble: vsdx format
+
+outcome: success
+
+\subsection{Business Process Modelling Notation (BPMN)}
+
+trouble: nodes with hyper-edge semantics
+
+trouble: vsdx not sufficient, data in formulas
+
+outcome: terminated due to time limitations
+
+\subsection{Systems Modelling Language for Mechatronics (SysML4Mechatronics)}
+
+trouble: original xml format not clearly interpretable
+
+trouble: bad planning on the side of the authors, complexity recognized at a late time
+
+outcome: ecore + xmi solution, \color{red}work in progress\color{black}
+
+\section{Summary}
+\label{sec:results:summary}
+
+3 out of 4 and a coll piece of framework ==
+it will have to do
