@@ -106,22 +106,34 @@ A PSS-IF Metamodel consists of a multitude Element Types and Data Types. Each El
 
 A PSS-IF Model consists of nodes and edges, both of which have attributes. A model does not have any knowledge of its own structure with respect to any PSS-IF Metamodel, i.e. all structural information in the model is on the level of incoming and outgoing edges and (untyped) attribute values. Since all structural information is held in the metamodel, accessing the same model with different metamodels will yield different results, as it is intended for the purpose of the transformations.
 
-\subsubsection{Viewpoints and Operators}
+\subsubsection{Viewpoints and Transformations}
 
-An operator is a generic bijective transformation function, which conforms to a certain signature and can be applied, in accordance with its signature, to elements of a given metamodel. The result of the operator is once again a metamodel, which internally contains the operator and thus operates on a model in accordance with the semantics of the operator. The modified metamodel is called a viewpoint. Note that in this sense the PSS-IF Canonic Metamodel is the unit viewpoint of the resulting algebraic structure. Through the chaining of operators different viewpoints can be constructed, whereby in general the ordering of the operators matters. 
+A transformation is a function that when applied onto a metamodel, results in a transformed metamodel which is called a viewpoint. The metamodel onto which a transformation is applied is called base-metamodel of the resulting viewpoint. The viewpoint contains ElementTypes applying the actual transformation of data on demand whenever they are applied onto a model. Note that in this sense the PSS-IF Canonic Metamodel is the unit viewpoint of the resulting algebraic structure. Through the chaining of transformations, different viewpoints can be constructed, whereby in general the ordering of the transformations matters. 
 
-So far, the following operators have been identified as sufficient for the definition of the viewpoints of all DSLs relevant for this interdisciplinary project:
+So far, the following transformations have been identified as sufficient for the definition of the viewpoints of all DSLs relevant for this interdisciplinary project:
 
-\begin{itemize}
-\item AliasedNodeType: This operator is an alias for an existing NodeType. Instances are created as instances of the existing NodeType and annotated with the name of the operator. When gathering instances from a model, only the annotated instances are taken into account.
-\item ArtificializingNodeType: When creating a node, this operator additionally creates an artificial node and relates it to the created node through a specified ConnectionMapping.
-\item ArtificializingConnectionMapping: When creating an edge between two nodes, this operator additionally creates an artificial edge between the same two nodes.
-\item DeinstantifiedNodeType: This operator removes all instances of a specific NodeType from the view. Subtypes may still have instances.
-\item DeinstantifiedConnectionMapping: This operator hides all instances of a specific ConnectionMapping from the view.
-\item DelegatingEdgeType: This operator combines ConnectionMappings of multiple EdgeTypes and delegates instantiation to those ConnectionMappings.
-\item JoinedConnectionMapping: This operator represents a ConnectionMapping actually consisting of a path of ConnectionMappings. While acting as ConnectionMapping between two types within the specified path, it creates edges for each pair of nodes being connected through the whole path.
-\item MovedAttribute: This operator adds the value of an attribute of a node to nodes connected over a specified ConnectionMapping.
-\end{itemize}
+\paragraph{Alias} The alias transformation allows the definition of multiple ElementTypes (NodeType or EdgeType) within a viewpoint which are mapped to a single ElementType within the base-metamodel of the viewpoint.
+
+\paragraph{Artificialize} The artificialize transformation is required to enable a certain NodeType or ConnectionMapping to create multiple model elements when instantiating an edge respectively node.
+
+\paragraph{Deinstantify} This transformation results in a viewpoint hiding all instances of a certain ElementType within a model. It is required to, in contrast to the hide transformation (see below), allow subtypes of the deinstantified type to be instantiated, while still hiding the instances of the deinstantified type.
+
+\paragraph{Hide} Applying this transformation onto a metamodel removes a specific ElementType and its subtypes or a certain ConnectionMapping of an EdgeType from the resulting viewpoint.
+
+\paragraph{Join} This transformation is used to create a ConnectionMapping which creates an edge between nodes connected to the nodes requested to connect instead of directly connecting those nodes. The nodes actually connected are determined by specific paths of ConnectionMappings.
+
+% In order to allow a metamodel element being mapped to different viewpoint elements, the alias transformation 
+
+% \begin{itemize}
+% \item AliasedNodeType: This operator is an alias for an existing NodeType. Instances are created as instances of the existing NodeType and annotated with the name of the operator. When gathering instances from a model, only the annotated instances are taken into account.
+% \item ArtificializingNodeType: When creating a node, this operator additionally creates an artificial node and relates it to the created node through a specified ConnectionMapping.
+% \item ArtificializingConnectionMapping: When creating an edge between two nodes, this operator additionally creates an artificial edge between the same two nodes.
+% \item DeinstantifiedNodeType: This operator removes all instances of a specific NodeType from the view. Subtypes may still have instances.
+% \item DeinstantifiedConnectionMapping: This operator hides all instances of a specific ConnectionMapping from the view.
+% \item DelegatingEdgeType: This operator combines ConnectionMappings of multiple EdgeTypes and delegates instantiation to those ConnectionMappings.
+% \item JoinedConnectionMapping: This operator represents a ConnectionMapping actually consisting of a path of ConnectionMappings. While acting as ConnectionMapping between two types within the specified path, it creates edges for each pair of nodes being connected through the whole path.
+% \item MovedAttribute: This operator adds the value of an attribute of a node to nodes connected over a specified ConnectionMapping.
+% \end{itemize}
 
 \subsubsection{Generic Graph}
 
