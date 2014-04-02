@@ -80,7 +80,9 @@ After, in the previous section, the coarse-level division of the PSS-IF PoC part
 
 \subsection{Core}
 
-The core is the central component of the framework and is responsible for the realization of key concepts, used for the definition and processing of transformations. The core encloses two major concepts -- those of a Metamodel and a Model, which were already presented in \chapref{chap:approach}. \color{red}TODO figref\color{black} presents a UML Class Diagram of the core.
+The core is the central component of the framework and is responsible for the realization of key concepts, used for the definition and processing of transformations. The core encloses two major concepts -- those of a Metamodel and a Model, which were already presented in \chapref{chap:approach}.
+
+\subsubsection{Metamodel}
 
 \begin{figure}
 \centering
@@ -89,9 +91,7 @@ The core is the central component of the framework and is responsible for the re
 \label{fig:metamodel}
 \end{figure}
 
-\subsubsection{Metamodel}
-
-The Metamodel is a concept which enables the users of the framework to define the structure of their data. In this sense, a Metamodel also defines, on the abstract syntax level, the language in which the elements of a PSS-IF Model are described. A parallel in the domain of the Extensible Markup Language (XML) are the XML Schema Definitions (XSD). In essence, a PSS-IF Metamodel is the schema definition in accordance with which a particular Model is created and processed.
+The Metamodel (see \figref{fig:metamodel}) is a concept which enables the users of the framework to define the structure of their data. In this sense, a Metamodel also defines, on the abstract syntax level, the language in which the elements of a PSS-IF Model are described. A parallel in the domain of the Extensible Markup Language (XML) are the XML Schema Definitions (XSD). In essence, a PSS-IF Metamodel is the schema definition in accordance with which a particular Model is created and processed.
 
 A PSS-IF Metamodel captures a number of concepts. In particular, it consists of Node and Edge Types, i.e. elements which enable the user to define what kinds of nodes and edges their model may contain, what kinds of features they may have, and how they may relate to each other. Furthermore, in the PSS-IF PoC, inheritance relations can be defined between both Node and Edge types.
 
@@ -134,7 +134,14 @@ The root Node and Edge Types are also the roots of the inheritance hierarchies f
 
 \subsubsection{Model}
 
-The second key component of the PSS-IF PoC core is the Model, which can be seen as a simple graph, consisting of Nodes and Edges. Nodes are ontological instances of the Node Types and Edges are ontological instances of the Edge Types of a PSS-IF Metamodel. Note that the elements of the Model are not type-aware themselves and can thus be accessed with different Metamodels.
+\begin{figure}
+\centering
+\includegraphics[scale=0.75]{figures/model.pdf}
+\caption{Model API}
+\label{fig:model}
+\end{figure}
+
+The second key component of the PSS-IF PoC core is the Model (see \figref{fig:model}), which can be seen as a simple graph, consisting of Nodes and Edges. Nodes are ontological instances of the Node Types and Edges are ontological instances of the Edge Types of a PSS-IF Metamodel. Note that the elements of the Model are not type-aware themselves and can thus be accessed with different Metamodels.
 
 In the PSS-IF PoC this strategy is used extensively, and Models do not provide any information or allow any operations themselves. All access points to a Model have to be navigated through a Metamodel, i.e. a Metamodel \textit{operates} on a Model. This makes it possible to switch between Metamodels as the user sees fit, but also to ensure data integrity at all times, by enforcing all modifications to be applied through the Metamodel, which plays the role of the schema for the data contained in the model.
 
@@ -152,7 +159,7 @@ A simple component used for intermediate steps in the transformation process is 
 
 \begin{figure}[h]
 \centering
-\includegraphics[scale=0.2]{figures/generic-graph-sketch.jpg}
+\includegraphics[scale=0.75]{figures/graph.pdf}
 \caption{UML Class Diagram of the Generic Graph}
 \label{fig:genericgraph}
 \end{figure}
@@ -201,7 +208,7 @@ The inter-relation of the different concepts of the VSDX API is depicted in \fig
 
 \begin{figure}[h]
 \centering
-\includegraphics[scale=0.2]{figures/vsdx-sketch.jpg}
+\includegraphics[scale=0.75]{figures/visio.pdf}
 \caption{API of the VSDX Component}
 \label{fig:vsdxapi}
 \end{figure}
@@ -267,11 +274,11 @@ public void transform(Mapper aMapper, Mapper bMapper,
 }
 \end{verbatim}
 
-In \figref{fig:transformationprocess}, the transformation process is depicted in two levels of abstraction. The first level addresses the separation into two distinct read and write steps, while the second level demonstrates how both the read and write processes are accomplished by the respective language mappers.
-
 \begin{figure}[h]
 \centering
-\includegraphics[scale=0.2]{figures/2-level-process-sketch.jpg}
+\includegraphics[width=0.8\textwidth]{figures/process.pdf}
 \caption{The Transformation Process of the PSS-IF PoC}
 \label{fig:transformationprocess}
 \end{figure}
+
+In \figref{fig:transformationprocess}, the transformation process is depicted in two levels of abstraction. The first level addresses the separation into two distinct read and write steps, while the second level demonstrates how both the read and write processes are accomplished by the respective language mappers.

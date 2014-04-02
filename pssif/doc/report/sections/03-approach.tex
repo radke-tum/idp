@@ -110,15 +110,18 @@ A PSS-IF Model consists of nodes and edges, both of which have attributes. A mod
 
 An operator is a generic bijective transformation function, which conforms to a certain signature and can be applied, in accordance with its signature, to elements of a given metamodel. The result of the operator is once again a metamodel, which internally contains the operator and thus operates on a model in accordance with the semantics of the operator. The modified metamodel is called a viewpoint. Note that in this sense the PSS-IF Canonic Metamodel is the unit viewpoint of the resulting algebraic structure. Through the chaining of operators different viewpoints can be constructed, whereby in general the ordering of the operators matters. 
 
-\color{red}
-On the lighter side: How about Viewpoint-Fixpoint-Arithmetics? How far are we then from graph grammars?
-\color{black}
-
 So far, the following operators have been identified as sufficient for the definition of the viewpoints of all DSLs relevant for this interdisciplinary project:
 
-\color{red}
-TODO list operators, with definitions
-\color{black}
+\begin{itemize}
+\item AliasedNodeType: This operator is an alias for an existing NodeType. Instances are created as instances of the existing NodeType and annotated with the name of the operator. When gathering instances from a model, only the annotated instances are taken into account.
+\item ArtificializingNodeType: When creating a node, this operator additionally creates an artificial node and relates it to the created node through a specified ConnectionMapping.
+\item ArtificializingConnectionMapping: When creating an edge between two nodes, this operator additionally creates an artificial edge between the same two nodes.
+\item DeinstantifiedNodeType: This operator removes all instances of a specific NodeType from the view. Subtypes may still have instances.
+\item DeinstantifiedConnectionMapping: This operator hides all instances of a specific ConnectionMapping from the view.
+\item DelegatingEdgeType: This operator combines ConnectionMappings of multiple EdgeTypes and delegates instantiation to those ConnectionMappings.
+\item JoinedConnectionMapping: This operator represents a ConnectionMapping actually consisting of a path of ConnectionMappings. While acting as ConnectionMapping between two types within the specified path, it creates edges for each pair of nodes being connected through the whole path.
+\item MovedAttribute: This operator adds the value of an attribute of a node to nodes connected over a specified ConnectionMapping.
+\end{itemize}
 
 \subsubsection{Generic Graph}
 
