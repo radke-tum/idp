@@ -23,9 +23,9 @@ Throughout the implementation, the authors follow the principles described in \c
 
 Through the chosen implementation approach, the objective of transforming models between languages is reduced to the transformation from and to the language defined by the PSS-IF Canonic Metamodel with minimal information loss. The following sections provide the results for the four languages relevant for this work.
 
-\subsection{Conversion-oriented Functional Modelling (UFM)}
+\subsection{Flow-oriented Functional Modelling (UFM)}
 
-Models in the Conversion-oriented Functional Modelling (UFM) language can be translated to PSS-IF canonic. The transferred information is restricted to States and Functions and the Flows between them, as well as the functionary attribute, which is used to forge artificial blocks, or dummy blocks, if no value for this attribute is provided. The original Flow between the States and Functions is then transferred to the artificial blocks, and a ControlFlow is created between the States and Functions. The creation of artificial blocks required the development of the artificialize transformation to create the artificial respectively dummy blocks out of the functionary attribute and the join transformation to transfer the original flow the additionally created blocks. Furthermore another artificialize transformation is required to create the additional ControlFlow between the States and Functions.
+Models in the Flow-oriented Functional Modelling (UFM) language can be translated to PSS-IF canonic. The transferred information is restricted to States and Functions and the Flows between them, as well as the functionary attribute, which is used to forge artificial blocks, or dummy blocks, if no value for this attribute is provided. The original Flow between the States and Functions is then transferred to the artificial blocks, and a ControlFlow is created between the States and Functions. The creation of artificial blocks required the development of the artificialize transformation to create the artificial respectively dummy blocks out of the functionary attribute and the join transformation to transfer the original flow the additionally created blocks. Furthermore another artificialize transformation is required to create the additional ControlFlow between the States and Functions.
 
 \subsection{Event-Driven Process Chain (EPC)}
 

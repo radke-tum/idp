@@ -100,7 +100,7 @@ To realize the PSS-IF transformation approach, a number of concepts need to be d
 
 \subsubsection{PSS-IF Metamodel}
 
-A PSS-IF Metamodel consists of a multitude Element Types and Data Types. Each Element Type can be either a Node Type or an Edge Type. Both Node and Edge Types can have Attributes, and each Attribute is bound to a particular Data Type. Associations between Node Types are defined through Connection Mappings, which are always bound to a certain Edge Type, i.e. an Edge Type can have many Connection Mappings, allowing it to associate different pairs of Node Types. Furthermore, inheritance can be defined among the Node and Edge Types. It holds that Attributes are inherited, while Connection Mappings are only inherited if no local mappings substitute the ones inherited from an ancestor type. Also, Edge Types define a Multiplicity. Additionally, Node Types can be defined to have Edge Type semantics under certain circumstances, so that chaining of associations is possible. Note that Element and Data Type names are unique in the scope of a PSS-IF Metamodel and Attribute names are unique in the scope of an Element Type. Finally, a PSS-IF Metamodel always contains a top-level Node Type called 'Node' and a top-level Edge Type called 'Edge', both of which define a set of predefined Attributes. Note that more-concrete Connection Mappings on lower levels in the Edge Type hierarchy hide this generic association in accordance with the substitution rule stated above.
+A PSS-IF Metamodel consists of a multitude element types and data types. Each element type can be either a node type or an edge type. Both node and edge types can have attributes, and each attribute is bound to a particular data type. Associations between node types are defined through connection mappings, which are always bound to a certain edge type, i.e. an edge type can have many connection mappings, allowing it to associate different pairs of node types. Furthermore, inheritance can be defined among the node and edge types. It holds that attributes are inherited, while connection mappings are not. Additionally, node types can be defined to have edge type semantics under certain circumstances, so that chaining of associations is possible. Note that element and data type names are unique in the scope of a PSS-IF Metamodel and attribute names are unique in the scope of an element type. Finally, a PSS-IF Metamodel always contains a top-level node type called 'Node' and a top-level edge type called 'Edge', both of which define a set of predefined attributes.
 
 \subsubsection{PSS-IF Model}
 
@@ -108,32 +108,21 @@ A PSS-IF Model consists of nodes and edges, both of which have attributes. A mod
 
 \subsubsection{Viewpoints and Transformations}
 
-A transformation is a function that when applied onto a metamodel, results in a transformed metamodel which is called a viewpoint. The metamodel onto which a transformation is applied is called base-metamodel of the resulting viewpoint. The viewpoint contains ElementTypes applying the actual transformation of data on demand whenever they are applied onto a model. Note that in this sense the PSS-IF Canonic Metamodel is the unit viewpoint of the resulting algebraic structure. Through the chaining of transformations, different viewpoints can be constructed, whereby in general the ordering of the transformations matters. 
+A \textit{transformation} is a function which, when applied to a metamodel, results in a transformed, slightly changed metamodel. This changed metamodel is denoted as a \textit{viewpoint} and represents a step in the direction of defining the way in which the PSS-IF Metamodel is seen from the perspective of a certain domain-specific language. The metamodel on which a transformation is applied is called \textit{base metamodel} of the resulting viewpoint. The viewpoint contains element types, i.e. node or edge Types, which, on demand, whenever they are used to operate on a model, apply the actual transformation of data. A new viewpoint can then be constructed by applying another transformation to an already existing viewpoint, which serves as it's base metamodel. Thus, through the chaining of transformations, different viewpoints can be constructed. This makes it possible to describe viewpoints for the different domain-specific languages the PSS-IF needs to support. It should be noted that, in general, the ordering of the application of transformations is of relevance. 
 
 So far, the following transformations have been identified as sufficient for the definition of the viewpoints of all DSLs relevant for this interdisciplinary project:
 
-\paragraph{Alias} The alias transformation allows the definition of multiple ElementTypes (NodeType or EdgeType) within a viewpoint which are mapped to a single ElementType within the base-metamodel of the viewpoint.
+\paragraph{Rename} The rename transformation is responsible for replacing the name of an existing element type with a new one in the scope of a viewpoint.
 
-\paragraph{Artificialize} The artificialize transformation is required to enable a certain NodeType or ConnectionMapping to create multiple model elements when instantiating an edge respectively node.
+\paragraph{Alias} The alias transformation allows the definition of multiple element types within a viewpoint, all of which are mapped to a single element type within the base metamodel of the viewpoint.
 
-\paragraph{Deinstantify} This transformation results in a viewpoint hiding all instances of a certain ElementType within a model. It is required to, in contrast to the hide transformation (see below), allow subtypes of the deinstantified type to be instantiated, while still hiding the instances of the deinstantified type.
+\paragraph{Artificialize} The artificialize transformation is used for the creation of additional artificial entities in a model, when instantiating a node or an edge, respectively.
 
-\paragraph{Hide} Applying this transformation onto a metamodel removes a specific ElementType and its subtypes or a certain ConnectionMapping of an EdgeType from the resulting viewpoint.
+\paragraph{Hide} Applying this transformation to a metamodel removes a specific element type together with its subtypes, or a certain connection mapping of an edge type, from the resulting viewpoint.
 
-\paragraph{Join} This transformation is used to create a ConnectionMapping which creates an edge between nodes connected to the nodes requested to connect instead of directly connecting those nodes. The nodes actually connected are determined by specific paths of ConnectionMappings.
+\paragraph{Deinstantify} This transformation results in a viewpoint hiding all instances of a certain element type within a model. It is required to, in contrast to the hide transformation (see above), allow subtypes of the deinstantified type to be instantiated, while still hiding the instances of the deinstantified type itself.
 
-% In order to allow a metamodel element being mapped to different viewpoint elements, the alias transformation 
-
-% \begin{itemize}
-% \item AliasedNodeType: This operator is an alias for an existing NodeType. Instances are created as instances of the existing NodeType and annotated with the name of the operator. When gathering instances from a model, only the annotated instances are taken into account.
-% \item ArtificializingNodeType: When creating a node, this operator additionally creates an artificial node and relates it to the created node through a specified ConnectionMapping.
-% \item ArtificializingConnectionMapping: When creating an edge between two nodes, this operator additionally creates an artificial edge between the same two nodes.
-% \item DeinstantifiedNodeType: This operator removes all instances of a specific NodeType from the view. Subtypes may still have instances.
-% \item DeinstantifiedConnectionMapping: This operator hides all instances of a specific ConnectionMapping from the view.
-% \item DelegatingEdgeType: This operator combines ConnectionMappings of multiple EdgeTypes and delegates instantiation to those ConnectionMappings.
-% \item JoinedConnectionMapping: This operator represents a ConnectionMapping actually consisting of a path of ConnectionMappings. While acting as ConnectionMapping between two types within the specified path, it creates edges for each pair of nodes being connected through the whole path.
-% \item MovedAttribute: This operator adds the value of an attribute of a node to nodes connected over a specified ConnectionMapping.
-% \end{itemize}
+\paragraph{Join} This transformation is used to internally create an edge between nodes, which are neighbours of the nods externally designated as the two ends of the respective edge. The actual neighbours used for the connection are determined in accordance with specific paths defined in the transformation.
 
 \subsubsection{Generic Graph}
 
@@ -144,7 +133,7 @@ In essence, the generic graph is used as follows: The data from an external repr
 This approach has the following advantages:
 
 \begin{itemize}
-\item Sepraration of concerns: By using the graph it is possible to separate the handling of concrete and abstract syntax of each language from each other. The concrete syntax is handled by a specific utility, which rather relates to the syntax than to the language. For example, more than one language might be serialized to XML using the same utility. The abstract syntax of the DSL is meanwhile handled independently in accordance with the DSL's viewpoint.
+\item Separation of concerns: By using the graph it is possible to separate the handling of concrete and abstract syntax of each language from each other. The concrete syntax is handled by a specific utility, which rather relates to the syntax than to the language. For example, more than one language might be serialized to XML using the same utility. The abstract syntax of the DSL is meanwhile handled independently in accordance with the DSL's viewpoint.
 \item Extension point for pre- and post-processing of data: It might be necessary, for certain DSLs, to perform certain pre- or post-processing modifications to the data, i.e. to normalize it. If such normalizations are out of the expressiveness of the operators of PSS-IF (i.e. are generic graph transformations), they can be applied directly onto the generic graph.
 \end{itemize}
 

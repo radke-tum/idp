@@ -80,7 +80,7 @@ After, in the previous section, the coarse-level division of the PSS-IF PoC part
 
 \subsection{Core}
 
-The core is the central component of the framework and is responsible for the realization of key concepts, used for the definition and processing of transformations. The core encloses two major concepts -- those of a Metamodel and a Model, which were already presented in \chapref{chap:approach}.
+The core is the central component of the framework and is responsible for the realization of key concepts, used for the definition and processing of transformations. The core encloses two major concepts -- those of a \texttt{Metamodel} and a \texttt{Model}, which were already presented in \chapref{chap:approach}.
 
 \subsubsection{Metamodel}
 
@@ -91,46 +91,46 @@ The core is the central component of the framework and is responsible for the re
 \label{fig:metamodel}
 \end{figure}
 
-The Metamodel (see \figref{fig:metamodel}) is a concept which enables the users of the framework to define the structure of their data. In this sense, a Metamodel also defines, on the abstract syntax level, the language in which the elements of a PSS-IF Model are described. A parallel in the domain of the Extensible Markup Language (XML) are the XML Schema Definitions (XSD). In essence, a PSS-IF Metamodel is the schema definition in accordance with which a particular Model is created and processed.
+The \texttt{Metamodel} (see \figref{fig:metamodel}) is a concept which enables the users of the framework to define the structure of their data. In this sense, a \texttt{Metamodel} also defines, on the abstract syntax level, the language in which the elements of a PSS-IF \texttt{Model} are described. A parallel in the domain of the Extensible Markup Language (XML) are the XML Schema Definitions (XSD). In essence, a PSS-IF \texttt{Metamodel} is the schema definition in accordance with which a particular \texttt{Model} is created and processed.
 
-A PSS-IF Metamodel captures a number of concepts. In particular, it consists of Node and Edge Types, i.e. elements which enable the user to define what kinds of nodes and edges their model may contain, what kinds of features they may have, and how they may relate to each other. Furthermore, in the PSS-IF PoC, inheritance relations can be defined between both Node and Edge types.
+A PSS-IF \texttt{Metamodel} captures a number of concepts. In particular, it consists of \texttt{NodeType}s and \texttt{EdgeTypes}, i.e. elements which enable the user to define what kinds of nodes and edges their model may contain, what kinds of features they may have, and how they may relate to each other. Furthermore, in the PSS-IF PoC, inheritance relations can be defined between both \texttt{NodeType} and \texttt{EdgeType}.
 
 \paragraph{Node Types}
 
-Node Types are used for the description of the different kinds of nodes in a model and have a number of features. All Node Types are named and the name must be unique in the scope of all Node and Edge Types within a Metamodel. Furthermore, Node Types can have a number of attributes, and are connected to other Node Types over Edge Types, which can be both incoming and outgoing.
+\texttt{NodeType}s are used for the description of the different kinds of nodes in a model and have a number of features. All \texttt{NodeType}s are named and the name must be unique in the scope of all \texttt{NodeType}s and \texttt{EdgeTypes}s within a \texttt{Metamodel}. Furthermore, \texttt{NodeType}s can have a number of attributes, and are connected to other \texttt{NodeType}s over \texttt{EdgeType}s, which can be both incoming and outgoing.
 
-There are two categories of Node Types -- conventional ones and Junction Node Types. The latter actually describe Nodes with edge semantics, i.e. they are used for the representation of hyper-edges.
+There are two categories of \texttt{NodeType} -- conventional ones and \texttt{JunctionNodeType}s. The latter actually describe nodes with edge semantics, i.e. they are used for the representation of hyper-edges.
 
 \paragraph{Edge Types}
 
-Edge Types are used for the description of possible edges in a user's model. Edge Types also have a name, which is unique in the scope of a Metamodel. For it to be possible to associate the same Edge Type with different pairs of Node Types, the concept of Connection Mappings is introduced. A Connection Mapping is an association assigned to a particular Edge Type, which includes an incoming and an outgoing Node Type.
+\texttt{EdgeType}s are used for the description of possible edges in a user's model. \texttt{EdgeType}s also have a name, which is unique in the scope of a \texttt{Metamodel}. For it to be possible to associate the same \texttt{EdgeType} with different pairs of \texttt{NodeType} instances, the concept of a \texttt{ConnectionMapping} is introduced. A \texttt{ConnectionMapping} is an association assigned to a particular \texttt{EdgeType}, which includes an incoming and an outgoing \texttt{NodeType}.
 
-To illustrate the usage of the Connection Mappings, consider the following example: Assuming two Node Types, denoted ''State'' and ''Function'' and an Edge Type ''Control Flow'', which has to connect both Node Types in both directions. In the PSS-IF PoC this is achieved by defining a single Edge Type ''Control Flow'' and assigning two Connection Mappings to it: one from ''State'' to ''Function'' and one from ''Function'' to ''State''.
+To illustrate the usage of the \texttt{ConnectionMapping}, consider the following example: Assuming two \texttt{NodeType} instances, denoted ''State'' and ''Function'' and an \texttt{EdgeType} ''Control Flow'', which has to connect both node types in both directions. In the PSS-IF PoC this is achieved by instantiating a single \texttt{EdgeType} ''Control Flow'' and assigning two \texttt{ConnectionMapping} instances to it: one from ''State'' to ''Function'' and one from ''Function'' to ''State''.
 
 \paragraph{Attributes}
 
-For both Node and Edge Types, Attributes can be defined. Attributes are divided into Attribugte Groups, which can be used to separate different kinds of attributes conveniently, for example in a user interface. Furthermore, Attributes are identified by their names, which have to be unique in the scope of the owning Node or Edge Type. Also, each attribute has a Data Type. The PSS-IF PoC defines a number of primitive data types, like String, Integer, Date and Boolean, and also provides the user with the ability to define custom enumeration data types. Finally, Attributes can optionally have a Unit associated with them, which can be particularly useful for numeric Attributes. Finally, Attributes are divided into categories. Currently, the following categories are defined: Monetary, Weight, Density, Time, Geometry, MetaData and Material.
+For both \texttt{NodeType} and \texttt{EdgeType}, \texttt{Attribute}s can be defined. \texttt{Attribute}s are divided into \texttt{AttribugteGroup}s, which can be used to separate different kinds of attributes conveniently, for example in a user interface. Furthermore, \texttt{Attribute}s are identified by their names, which have to be unique in the scope of the owning node or edge type. Also, each attribute has a \texttt{DataType}. The PSS-IF PoC defines a number of primitive data types, like \texttt{String}, \texttt{Integer}, \texttt{Date} and \texttt{Boolean}, and also provides the user with the ability to define custom enumeration data types. Finally, \texttt{Attribute} instances can optionally have a \texttt{Unit} associated with them, which can be particularly useful for numeric attributes. Finally, attributes are divided into categories. Currently, the following categories are defined: \texttt{Monetary}, \texttt{Weight}, \texttt{Density}, \texttt{Time}, \texttt{Geometry}, \texttt{MetaData} and \texttt{Material}.
 
 \paragraph{Inheritance}
 
-As already noted above, for both Node and Edge Types, inheritance relations can be defined. When a Node Type inherits from another Node Type, it holds that Attribute Groups and Attributes are inherited from the parent. With Edge Types, inheritance is slightly more complex. For Attributes, the same rule holds as for Node Types. Connection Mappings are generally not inherited. Nonetheless, when extracting the instances of a Node or Edge Type from a Model, the user can specify whether instances of the specializations of this Node or Edge Type should be included in the result set. \color{red}TODO more detail, better formulation \color{black}.
+As already noted above, for both \texttt{NodeType} and \texttt{EdgeType}, inheritance relations can be defined. When a \texttt{NodeType} inherits from another \texttt{NodeType}, it holds that attribute groups and attributes are inherited from the parent.
 
 \paragraph{Built-In Metamodel Elements}
 
-Every PSS-IF Metamodel has a number of predefined elements. These are the root Node and Edge Types. The root node type has the name ''Node'' and provides the following predefined Attributes:
+Every PSS-IF Metamodel has a number of predefined elements. These are the root node and edge types. The root \texttt{NodeType} has the name ''\textbf{Node}'' and provides the following predefined Attributes:
 
 \begin{itemize}
 \item \textbf{id}: An identifier of data type String for the node instance of the node type, categorized as Metadata.
-\item \textbf{name}: A name of data type String, categorized as Metadata.
-\item \textbf{validity start}: A Date, designating the begin of the validity period of the given node, categorized as Time.
-\item \textbf{validity end}: A Date, designating the end of the validity period of the given node, categorized as Time.
-\item \textbf{version}: The version of the node, of data type String, categorized as Metadata.
-\item \textbf{comment}: A comment of the node, of data type String, categorized as Metadata.
+\item \textbf{name}: A name of data type \texttt{String}, categorized as \texttt{Metadata}.
+\item \textbf{validity start}: A \texttt{Date}, designating the begin of the validity period of the given node, categorized as \texttt{Time}.
+\item \textbf{validity end}: A \texttt{Date}, designating the end of the validity period of the given node, categorized as \texttt{Time}.
+\item \textbf{version}: The version of the node, of data type \texttt{String}, categorized as \texttt{Metadata}.
+\item \textbf{comment}: A comment of the node, of data type \texttt{String}, categorized as \texttt{Metadata}.
 \end{itemize}
 
-The root Edge Type ''Edge'' has all built-in Attributes defined for the root Node Type ''Node'', and also an additional Attribute \textbf{directed} of data type Boolean and categorized as Metadata. 
+The root \texttt{EdgeType} '''\textbf{Edge}'' has all built-in Attributes defined for the root \texttt{NodeType} ''Node'', and also an additional attribute \textbf{directed} of data type \texttt{Boolean} and categorized as \texttt{Metadata}. 
 
-The root Node and Edge Types are also the roots of the inheritance hierarchies for Node and Edge Types within a Metamodel. In this sense, any Node or Edge Type automatically inherits from the root Node or Edge Type, accordingly. Thus, it is guaranteed that the set of Attributes provided above is automatically defined for all Node and Edge Types. If a Node or Edge Type inherits from a non-root Node or Edge Type, the Attributes are inherited transitively, together with all Attributes of all ancestors throughout the generalization closure.
+The root node and edge types are also the roots of the inheritance hierarchies for \texttt{NodeType} and \texttt{EdgeType} within a \texttt{Metamodel}. In this sense, any \texttt{NodeType} or \texttt{EdgeType} instance automatically inherits from the root the respective root type. Thus, it is guaranteed that the set of attributes provided above is automatically defined for all instances of both \texttt{NodeType} and \texttt{EdgeType}. If a node or edge type inherits from a non-root node or edge type, the attributes are inherited transitively, together with all attributes of all ancestors throughout the generalization closure.
 
 \subsubsection{Model}
 
@@ -141,9 +141,9 @@ The root Node and Edge Types are also the roots of the inheritance hierarchies f
 \label{fig:model}
 \end{figure}
 
-The second key component of the PSS-IF PoC core is the Model (see \figref{fig:model}), which can be seen as a simple graph, consisting of Nodes and Edges. Nodes are ontological instances of the Node Types and Edges are ontological instances of the Edge Types of a PSS-IF Metamodel. Note that the elements of the Model are not type-aware themselves and can thus be accessed with different Metamodels.
+The second key component of the PSS-IF PoC core is the \texttt{Model} (see \figref{fig:model}), which can be seen as a simple graph, consisting of \texttt{Node} and \texttt{Edge} instances. A \texttt{Node} is an ontological instance of a \texttt{NodeType} and an \texttt{Edge} is an ontological instance of the \texttt{EdgeType} of a PSS-IF \texttt{Metamodel}. Note that the elements of the \texttt{Model} are not type-aware themselves and can thus be accessed with different \texttt{Metamodel} instances.
 
-In the PSS-IF PoC this strategy is used extensively, and Models do not provide any information or allow any operations themselves. All access points to a Model have to be navigated through a Metamodel, i.e. a Metamodel \textit{operates} on a Model. This makes it possible to switch between Metamodels as the user sees fit, but also to ensure data integrity at all times, by enforcing all modifications to be applied through the Metamodel, which plays the role of the schema for the data contained in the model.
+In the PSS-IF PoC this strategy is used extensively, and a \texttt{Model} does not provide any information or allow any operations itself. All access points to a \texttt{Model} have to be navigated through a \texttt{Metamodel}, i.e. a \texttt{Metamodel} \textit{operates} on a \texttt{Model}. This makes it possible to switch between metamodels as the user sees fit, but also to ensure data integrity at all times, by enforcing all modifications to be applied through the \texttt{Metamodel}, which plays the role of the schema for the data contained in the \texttt{Model}.
 
 \subsection{Transformations}
 
