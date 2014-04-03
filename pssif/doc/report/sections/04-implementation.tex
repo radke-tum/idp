@@ -74,8 +74,6 @@ This section covers the coarse-grained separation realized through Maven modular
 \section{Components}
 \label{sec:impl:components}
 
-\color{red} TODO verbatimize class names \color{black}
-
 After, in the previous section, the coarse-level division of the PSS-IF PoC parts through Maven modules was presented, this section focuses on a more detailed overview of the fine-level architectural components of the tool. Each of the following subsections describes the function and structure of a specific component of the transformation framework PoC.
 
 \subsection{Core}
@@ -149,15 +147,7 @@ In the PSS-IF PoC this strategy is used extensively, and a \texttt{Model} does n
 
 Besides the core, the next most important component of the PSS-IF PoC is the transformation API. As already noted in \chapref{chap:approach}, the authors have adopted the ISO 42010 approach, which defines different stakeholders as having different views on their data. Since the utility defines structures on the meta-level, the PoC describes the views of different stakeholders (source and destination languages) through corresponding Metamodels, called Viewpoints. These are mutable Metamodels, which can be \textit{transformed}. For this purpose, Viewpoints accept a \texttt{Transformation}, which is a function mapping a Metamodel to a Metamodel.
 
-\begin{figure}
-\centering
-\includegraphics[width=\textwidth]{figures/transformation.pdf}
-\caption{Example Transformation}
-\label{fig:transformation}
-\end{figure}
-
-Thus, the application of a \texttt{Transformation} results in a \texttt{Viewpoint}, i.e. a Metamodel, which modifies the behaviour of the input Metamodel in accordance with the particular kind of transformation used. As a result, transformations can be applied consequently, each one operating on the result of the previous. This process is illustrated in \figref{fig:transformation}. The same transformation is defined in Java as follows:
-
+Thus, the application of a \texttt{Transformation} results in a \texttt{Viewpoint}, i.e. a Metamodel, which modifies the behaviour of the input Metamodel in accordance with the particular kind of transformation used. As a result, transformations can be applied consequently, each one operating on the result of the previous. A viewpoint is defined in Java as follows:
 
 \begin{verbatim}
 Metamodel viewpoint = PSSIFCanonicMetamodelCreator.create();
@@ -181,6 +171,15 @@ viewpoint = new CreateArtificialEdgeTransformation
   (informationflow.getMapping(state, function), 
   controlflow.getMapping(state, function)).apply(viewpoint);
 \end{verbatim}
+
+This viewpoint results in the transformation as depicted in \figref{fig:transformation}
+
+\begin{figure}
+\centering
+\includegraphics[width=\textwidth]{figures/transformation.pdf}
+\caption{Example Transformation}
+\label{fig:transformation}
+\end{figure}
 
 Since the behaviour of the \texttt{Viewpoint} is independent of the particular kind of transformation used, the definition of a \texttt{Viewpoint} is reduced to the definition of all necessary transformations and their combination in the appropriate order. The current set of available transformation covers all the ones described in \chapref{chap:approach}.
 
