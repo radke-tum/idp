@@ -1,0 +1,48 @@
+\chapter{Outlook}
+\label{chap:outlook}
+
+Having presented the results of the interdisciplinary project in the previous chapter, our final contribution is the suggestion of a number of possible inprovements to the PSS-IF PoC in \secref{sec:outlook:improvements}, as well as further developments which could lead to the \color{red}singularity    \color{black} in \secref{sec:outlook:repo}.
+
+\section{PSS-IF PoC Improvements}
+\label{sec:outlook:improvements}
+
+There are a number of possible improvements to the PSS-IF PoC, which would enable the user's to describe even more expressive languages, with better integrity assurance. Some of these are addressed in the following.
+
+\paragraph{ID Handling}
+
+Currently, the handling of identifiers is not part of the tasks of the PSS-IF PoC. A rudimentary artificial ID handling is available in the core, yet it provides not guarantees with regard to the compatibility of the generated IDs in each supported domain-specific language.
+
+\paragraph{Model Edit API}
+
+So far, there is no possibility to remove nodes or edges from the model. If the PSS-IF PoC is to be used as the back-end to a user interface, where dynamic behaviour is of importance, these operations might be useful.
+
+\paragraph{Consolidate Edge Types and Connection Mappings}
+
+In the current implementation the \texttt{ConnectionMapping} interface contains \texttt{apply} methods which are only for internal usage. Since these methods are heavily relied upon by the transformational and can not be removed with reasonable effort, they are for now part of the API. However, through the usage of object-oriented patterns it should be possible for a future developer to purge them from the interface without loss of functionality. Right!
+
+\paragraph{Multiplicities}
+
+For certain kinds of edge types, like, for example, the Containment relation, is would be convenient to able to express such integrity constraints, as the possibility that there is at most one container element. Also, certain attributes, for example a hypothetical Responsibility, might have more than one value per element.
+
+\paragraph{Acyclicity}
+
+For an edge type, a connection mapping can be defined, which maps from one node type to the same node type. In certain cases, such a self-relationship might, on the semantic level, have to be acyclic. To date, the PSS-IF PoC does not provide a mechanism to specify and ensure this.
+
+\paragraph{Inheritance for Junction Node Types}
+
+Currently, no inheritance rules can be defined for junction node types. While the currently available use-cases do not require such a phenomenon, it might be a future requirement that this is possible.
+
+\section{PSS-IF Repository}
+\label{sec:outlook:repo}
+
+The authors consider this work to be the possible foundation for a PSS modelling tool with centralized repository for the management of data and numerous integration interfaces. Many aspects of future research can be addressed along this line of thought, for example a strategy for the merging of models coming from different languages, the evolution and central management of models, as well as the persistence of the central PSS-IF canonic model.
+
+An interesting aspect for future consideration is also the evolution of PSS-IF into a tool used for the interoperability and integration between different modelling tools. In such a case, a number of firther languages and syntaxes might have to be supported. Among these are:
+
+\begin{itemize}
+\item SysML modelled in Papyrus.
+\item EPC modelled in bflow or LibreOffice.
+\item BPMN modelled with different Visio stencils or the Eclipse BPMN modeller, ARIS or others.
+\item Gliffy used for the drawing of numerous types of diagrams in different languages.
+\item Further languages, such as UML State Charts, Sequence or Class Diagrams, or others.
+\end{itemize}
