@@ -205,14 +205,37 @@ public class VertexStrokeHighlight<V,E> implements Transformer<V,Stroke>
  							" source "+e.getSourceNode().getRealName());*/
 	        		if (depthsearch)
 	        		{
-		        		 if ((this.followEdges.isEmpty() && e.getDestinationNode().equals(((IMyNode) dest)) )|| 
-		        				 (!this.followEdges.isEmpty() && this.followEdges.contains(e.getEdgeType()) && e.getDestinationNode().equals(((IMyNode) dest))))
+		        		if (e.isDirected())
+		        		{
+		        			if (this.followEdges.isEmpty() && e.getDestinationNode().equals(((IMyNode) dest)))
+		        					return true;
+		        			if (!this.followEdges.isEmpty() && this.followEdges.contains(e.getEdgeType()) &&  e.getDestinationNode().equals(((IMyNode) dest)))
 		        				 return true;
+		        		}
+		        		else
+		        		{
+		        			if (this.followEdges.isEmpty() && 
+		        					(e.getDestinationNode().equals(((IMyNode) dest)) || e.getSourceNode().equals(((IMyNode) dest)) ) )
+		        					return true;
+		        			
+			        		if (!this.followEdges.isEmpty() && this.followEdges.contains(e.getEdgeType()) &&
+			        				(e.getDestinationNode().equals(((IMyNode) dest)) || e.getSourceNode().equals(((IMyNode) dest)) ) )
+			        				 return true;
+		        		}
 	        		}
 	        		else
 	        		{
-	        			if (this.followEdges.contains(e.getEdgeType()) && e.getDestinationNode().equals(((IMyNode) dest)))
+	        			if (e.isDirected())
+	        			{
+		        			if (this.followEdges.contains(e.getEdgeType()) && e.getDestinationNode().equals(((IMyNode) dest)))
+			        				 return true;
+	        			}
+	        			else
+	        			{
+		        			if (this.followEdges.contains(e.getEdgeType()) && 
+		        					(e.getDestinationNode().equals(((IMyNode) dest)) || e.getSourceNode().equals(((IMyNode) dest)) ))
 		        				 return true;
+	        			}
 	        		}
 	        	 }
 	        	 return false;
@@ -297,8 +320,16 @@ public class VertexStrokeHighlight<V,E> implements Transformer<V,Stroke>
 				
 				for (MyEdge e :ModelBuilder.getAllEdges())
 				{
-					if (e.isVisible() && e.getSourceNode().equals((IMyNode)node))
-						res.add(e);
+					if (e.isDirected())
+					{
+						if (e.isVisible() && e.getSourceNode().equals((IMyNode)node))
+							res.add(e);
+					}
+					else
+					{
+						if (e.isVisible() && ( e.getSourceNode().equals((IMyNode)node) || e.getDestinationNode().equals((IMyNode)node)))
+							res.add(e);
+					}
 				}
 				
 				return res;

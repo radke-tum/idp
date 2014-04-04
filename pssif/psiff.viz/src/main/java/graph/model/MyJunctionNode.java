@@ -23,7 +23,7 @@ public class MyJunctionNode implements IMyNode{
 	private boolean visible;
 	
 	//private static int limit = 5;
-	private static int lineLimit = 18;
+	//private static int lineLimit = 18;
 	
 	public MyJunctionNode(Node node, MyJunctionNodeType type) {
 		this.node = node;
@@ -122,7 +122,7 @@ public class MyJunctionNode implements IMyNode{
 		public String getNodeInformations(boolean details)
 		{
 			String output="";
-			if (details)
+			/*if (details)
 			{
 				output ="<table border=\"0\">";
 				output+=" <tr> ";
@@ -144,12 +144,13 @@ public class MyJunctionNode implements IMyNode{
 			else
 			{
 				output+="<h3>&lt;&lt; "+type.getName()+" &gt;&gt; <br>"+ evalName(findName())+"</h3>";
-			}
+			}*/
+			output = "<h3>&lt;&lt; "+type.getName()+" &gt;&gt; <br>"+ findName()+"</h3>";
 			
 			return output;
 		}
 		
-		private String evalName(String name)
+		/*private String evalName(String name)
 		{
 			//String name = findName();
 			
@@ -198,7 +199,7 @@ public class MyJunctionNode implements IMyNode{
 			}
 
 			return name+" ";
-		}
+		}*/
 		
 	/*	private int nameLines(String name)
 		{
@@ -240,7 +241,7 @@ public class MyJunctionNode implements IMyNode{
 			return 1;
 		}
 		*/
-		public List<Integer> getSpaceIndexes(String value)
+	/*	public List<Integer> getSpaceIndexes(String value)
 		{
 			int position = 0;
 			
@@ -261,13 +262,13 @@ public class MyJunctionNode implements IMyNode{
 			}
 			
 			return res;
-		}
+		}*/
 		
 		/**
 		 * Get all the Attributes from this node
 		 * @return List with the attributes. Format : Name = Value in (Unit) Datatype 
 		 */
-		private List<String> calcAttr()
+		/*private List<String> calcAttr()
 		{
 			List<String> attributes = new LinkedList<String>();
 			
@@ -318,7 +319,7 @@ public class MyJunctionNode implements IMyNode{
 			}
 			
 			return attributes;
-		}
+		}*/
 		
 		
 
