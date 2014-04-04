@@ -367,7 +367,7 @@ public class GraphVisualization
    * Try to expand the currently selected Node
    * @param nodeDetails define how many Node details should be visible
    */
-  public void ExpandNode(boolean nodeDetails)
+  public void expandNode(boolean nodeDetails)
   {
 	  Collection<IMyNode> picked =new HashSet<IMyNode>(vv.getPickedVertexState().getPicked());
       if(picked.size() == 1) {
@@ -523,5 +523,11 @@ public class GraphVisualization
 		animator.start();
 		vv.getRenderContext().getMultiLayerTransformer().setToIdentity();
 		vv.repaint();
+	}
+	
+	public void clearPickSupport()
+	{
+		vv.getPickedVertexState().clear();
+		vv.getPickedEdgeState().clear();
 	}
 }

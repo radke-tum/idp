@@ -484,7 +484,7 @@ public class GraphView {
       @Override
       public void actionPerformed(ActionEvent e) {
         if (graph.isExpandable()) {
-          graph.ExpandNode(nodeDetails.isSelected());
+          graph.expandNode(nodeDetails.isSelected());
           collapseExpand.setText("Collapse Node");
         }
 

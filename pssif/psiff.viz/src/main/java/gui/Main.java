@@ -257,6 +257,14 @@ public class Main {
 		modeMenu.setIcon(null); 
 		modeMenu.setPreferredSize(new Dimension(80,20));
 		modeMenu.getItem(1).setSelected(true);
+		// as soon as Transforming is activated no Edge or Node should be selected anymore
+		modeMenu.getItem(0).addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				graphView.getGraph().clearPickSupport();
+			}
+		});
 		
 		return modeMenu;
 	}
