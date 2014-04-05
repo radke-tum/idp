@@ -42,6 +42,9 @@ public class AttributeAggregation {
 	private double global_Cost;
 	private double global_Weight;
 	
+	private Date global_earliestStartDate;
+	private Date global_latestEndDate;
+	
 	private void reset()
 	{
 		node_earliestStartDate= null;
@@ -205,6 +208,47 @@ public class AttributeAggregation {
 		}	
 	}
 	
+	private void testEarliestAndLatestDate()
+	{
+		// earliest Startdate
+		if (node_earliestStartDate == null && edge_earliestStartDate == null)
+			global_earliestStartDate =null;
+		else
+		{
+			if (node_earliestStartDate == null)
+				global_earliestStartDate =edge_earliestStartDate;
+			if (edge_earliestStartDate == null)
+				global_earliestStartDate =node_earliestStartDate;
+			
+			if (node_earliestStartDate != null && edge_earliestStartDate != null)
+			{ 
+				if (node_earliestStartDate.before(edge_earliestStartDate))
+					global_earliestStartDate = node_earliestStartDate;
+				else
+					global_earliestStartDate = edge_earliestStartDate;
+			}
+		}
+		
+		// latest EndDate
+		if (node_latestEndDate == null && edge_latestEndDate == null)
+			global_latestEndDate =null;
+		else
+		{
+			if (node_latestEndDate == null)
+				global_latestEndDate =edge_latestEndDate;
+			if (edge_latestEndDate == null)
+				global_latestEndDate =node_latestEndDate;
+			
+			if (node_latestEndDate != null && edge_latestEndDate != null)
+			{ 
+				if (node_latestEndDate.after(edge_latestEndDate))
+					global_latestEndDate = node_latestEndDate;
+				else
+					global_latestEndDate = edge_latestEndDate;
+			}
+		}
+	}
+	
 	private void calcGlobalCost (MyNode n, HashMap<String,Attribute> attributes)
 	{
 	//	HashMap<String,Attribute> attributes = n.getAttributesHashMap();
@@ -254,13 +298,14 @@ public class AttributeAggregation {
 				global_Weight = global_Weight + weight.doubleValue();
 			}
 		}
-	}
+	} 
 	
 	public void showInfoPanel()
 	{
 		reset();
 		searchEdges();
 		searchNodes();
+		testEarliestAndLatestDate();
 		
 		
 		JPanel allPanel = new JPanel();
@@ -310,13 +355,23 @@ public class AttributeAggregation {
 		
 		allPanel.add(Box.createRigidArea(new Dimension(0,10)));
 		allPanel.add(new JLabel("Model :"));
+		if (global_earliestStartDate!=null)
+			allPanel.add(new JLabel("Earliest Validity Start : "+global_earliestStartDate));
+		else
+			allPanel.add(new JLabel("Earliest Validity Start : "));
+		if (global_latestEndDate!=null)
+			allPanel.add(new JLabel("Latest Validity End : "+global_latestEndDate));
+		else
+			allPanel.add(new JLabel("Latest Validity End : "));
+		
+		allPanel.add(new JLabel("Global Cost : "+global_Cost));
 		allPanel.add(new JLabel("Global Cost : "+global_Cost));
 		allPanel.add(new JLabel("Global Weight : "+global_Weight));
 		allPanel.add(new JLabel("Global Duration : "+secondsToTime(global_Duration)));
 		
-		allPanel.setPreferredSize(new Dimension(250,300));
-		allPanel.setMaximumSize(new Dimension(250,300));
-		allPanel.setMinimumSize(new Dimension(250,300));
+		allPanel.setPreferredSize(new Dimension(250,350));
+		allPanel.setMaximumSize(new Dimension(250,350));
+		allPanel.setMinimumSize(new Dimension(250,350));
 
 		JOptionPane.showConfirmDialog(null, allPanel, "Model Statistics", JOptionPane.DEFAULT_OPTION);
 	}
