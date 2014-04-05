@@ -9,10 +9,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
-
-
-
-
 import de.tum.pssif.core.common.PSSIFConstants;
 import de.tum.pssif.core.common.PSSIFOption;
 import de.tum.pssif.core.common.PSSIFValue;
@@ -187,9 +183,13 @@ public class MyNode implements IMyNode{
 				try 
 				{
 					Date data = parseDate((String) value);
+					System.out.println("Date after parsing "+data);
 					
 					PSSIFValue res = PrimitiveDataType.DATE.fromObject(data);
+					System.out.println("PSSif Value "+res.asDate());
+	
 					attribute.set(node, PSSIFOption.one(res));
+					//System.out.println("after "+attribute.get(node).getOne().asDate());
 				}
 				catch (IllegalArgumentException e)
 				{
@@ -260,43 +260,93 @@ public class MyNode implements IMyNode{
 	private Date parseDate(String dateInString)
 	{
 		SimpleDateFormat formatter;
-	
-		try {
-			formatter = new SimpleDateFormat("dd/MM/yyyy");
-			return formatter.parse(dateInString);
-		} catch (ParseException e) { }
 		
 		try {
 			formatter = new SimpleDateFormat("dd/MM/yyyy");
 			return formatter.parse(dateInString);
-		} catch (ParseException e) { }
-		
-		try {
-			formatter = new SimpleDateFormat("dd/M/yyyy");
-			return formatter.parse(dateInString);
-		} catch (ParseException e) { }
+		} catch (ParseException e) {
+			//e.printStackTrace();
+		}
 		
 		try {
 			formatter = new SimpleDateFormat("dd-MM-yyyy");
 			return formatter.parse(dateInString);
-		} catch (ParseException e) { }
-		
-		try {
-			formatter = new SimpleDateFormat("dd-M-yyyy");
-			return formatter.parse(dateInString);
-		} catch (ParseException e) { }
+		} catch (ParseException e) {
+			//e.printStackTrace();
+		}
 		
 		try {
 			formatter = new SimpleDateFormat("dd.MM.yyyy");
 			return formatter.parse(dateInString);
-		} catch (ParseException e) { }
+		} catch (ParseException e) {
+			//e.printStackTrace();
+		}
+		//----------------
+		
+		try {
+			formatter = new SimpleDateFormat("d/M/yyyy");
+			return formatter.parse(dateInString);
+		} catch (ParseException e) {
+		//	e.printStackTrace();
+		}
+		
+		try {
+			formatter = new SimpleDateFormat("d-M-yyyy");
+			return formatter.parse(dateInString);
+		} catch (ParseException e) {
+			//e.printStackTrace();
+		}
+		
+		try {
+			formatter = new SimpleDateFormat("d.M.yyyy");
+			return formatter.parse(dateInString);
+		} catch (ParseException e) {
+			//e.printStackTrace();
+		}
+		//----------------------------------------------
+		try {
+			formatter = new SimpleDateFormat("d/MM/yyyy");
+			return formatter.parse(dateInString);
+		} catch (ParseException e) {
+			//e.printStackTrace();
+		}
+		
+		try {
+			formatter = new SimpleDateFormat("d-MM-yyyy");
+			return formatter.parse(dateInString);
+		} catch (ParseException e) {
+			//e.printStackTrace();
+		}
+		
+		try {
+			formatter = new SimpleDateFormat("d.MM.yyyy");
+			return formatter.parse(dateInString);
+		} catch (ParseException e) {
+			//e.printStackTrace();
+		}
+		//----------------------------------------------
+		try {
+			formatter = new SimpleDateFormat("dd/M/yyyy");
+			return formatter.parse(dateInString);
+		} catch (ParseException e) {
+			//e.printStackTrace();
+		}
+		
+		try {
+			formatter = new SimpleDateFormat("dd-M-yyyy");
+			return formatter.parse(dateInString);
+		} catch (ParseException e) {
+			//e.printStackTrace();
+		}
 		
 		try {
 			formatter = new SimpleDateFormat("dd.M.yyyy");
 			return formatter.parse(dateInString);
-		} catch (ParseException e) { }
-		return null;
+		} catch (ParseException e) {
+			//e.printStackTrace();
+		}
 		
+		return null;
 	}
 	
 	/**

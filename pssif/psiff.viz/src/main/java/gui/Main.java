@@ -1,6 +1,7 @@
 package gui;
 
 
+import graph.operations.AttributeAggregation;
 import graph.operations.AttributeFilter;
 import graph.operations.GraphViewContainer;
 import graph.operations.MasterFilter;
@@ -48,6 +49,7 @@ public class Main {
 	private JMenuItem resetGraph;
 	private JMenuItem resetMatrix;
 	private JMenuItem colorNodes;
+	private JMenuItem modelStatistics;
 	private JMenuItem createView;
 	private JMenuItem attributFilter;
 	private JMenuItem graphVizualistation;
@@ -243,6 +245,19 @@ public class Main {
 		
 		menuBar.getMenu(0).add(colorNodes);
 		
+		modelStatistics = new JMenuItem("Statistics");
+		modelStatistics.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				AttributeAggregation agg = new AttributeAggregation();
+				
+				agg.showInfoPanel();
+				
+			}
+		});
+		menuBar.getMenu(0).add(modelStatistics);
+		
 		return menuBar;
 	}
 	
@@ -358,7 +373,7 @@ public class Main {
 		});
 		graphLayout.add(CircleLayout);
 		
-		TestLayout = new JCheckBoxMenuItem(GraphVisualization.TestLayout);
+/*		TestLayout = new JCheckBoxMenuItem(GraphVisualization.TestLayout);
 		TestLayout.addActionListener(new ActionListener() {
 			
 			@Override
@@ -371,7 +386,7 @@ public class Main {
 				TestLayout.setSelected(true);
 			}
 		});
-		graphLayout.add(TestLayout);
+		graphLayout.add(TestLayout);*/
 		
 		return graphLayout;
 	}
@@ -601,7 +616,8 @@ public class Main {
 			graphVizualistation.setEnabled(false);
 			matrixVizualistation.setEnabled(true);
 			graphLayout.setEnabled(true);
-			graphOperations.setEnabled(true);	
+			graphOperations.setEnabled(true);
+			modelStatistics.setEnabled(true);
 		}
 		
 		if (matrixView.isActive())
@@ -612,6 +628,7 @@ public class Main {
 			matrixVizualistation.setEnabled(false);
 			graphLayout.setEnabled(false);
 			graphOperations.setEnabled(false);
+			modelStatistics.setEnabled(true);
 		}
 			
 	}

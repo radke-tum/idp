@@ -56,7 +56,6 @@ public class GraphVisualization
   public static final String SpringLayout  ="SpringLayout";
   public static final String ISOMLayout  ="ISOMLayout";
   public static final String CircleLayout  ="CircleLayout";
-  public static final String TestLayout  ="TestLayout";
 	
   private Graph<IMyNode, MyEdge> g;
   private AbstractModalGraphMouse gm;
@@ -510,10 +509,6 @@ public class GraphVisualization
 			this.layout = new CircleLayout<IMyNode, MyEdge>(g);
 		}
 		
-		if (newLayout.equals(TestLayout))
-		{
-			this.layout = new gui.TestLayout<IMyNode, MyEdge>(g);
-		}
 		
 		layout.setInitializer(vv.getGraphLayout());
 		layout.setSize(vv.getSize());

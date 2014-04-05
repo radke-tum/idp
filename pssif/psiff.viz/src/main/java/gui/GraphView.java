@@ -1,5 +1,6 @@
 package gui;
 
+import de.tum.pssif.core.common.PSSIFConstants;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.picking.PickedState;
 import graph.model.IMyNode;
@@ -618,7 +619,11 @@ public class GraphView {
               MyEdge selectedEdge = selectedEdges.iterator().next();
 
               boolean res = selectedEdge.updateAttribute(attributeName, data);
-
+              //directed  attr changed
+              if (attributeName.equals(PSSIFConstants.BUILTIN_ATTRIBUTE_DIRECTED))
+              {
+            	  graph.updateGraph();
+              }
               if (!res) {
                 model.setValueAt(null, row, column);
                 JPanel errorPanel = new JPanel();
