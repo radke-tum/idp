@@ -569,7 +569,7 @@ public class AttributeFilter {
 	 * @param activeConditions conditions which are currently active
 	 * @throws Exception if the given condition contains a problem. Datatypes cannot be compared, Wrong data format,..
 	 */
-	private static void applyAllOtherNodeConditions (String condition, LinkedList<String> activeConditions) throws Exception
+/*	private static void applyAllOtherNodeConditions (String condition, LinkedList<String> activeConditions) throws Exception
 	{
 		for (Entry<String, ConditionContainer> e : nodeConditions.entrySet())
 		{
@@ -579,7 +579,7 @@ public class AttributeFilter {
 				filterNode(c.attributeName, c.operation, c.refValue);
 			}
 		}
-	}
+	}*/
 	
 	/**
 	 * Apply all the existing Edge conditions to the graph
@@ -587,7 +587,7 @@ public class AttributeFilter {
 	 * @param activeConditions conditions which are currently active
 	 * @throws Exception if the given condition contains a problem. Datatypes cannot be compared, Wrong data format,..
 	 */
-	private static void applyAllOtherEdgeConditions (String condition, LinkedList<String> activeConditions) throws Exception
+	/*private static void applyAllOtherEdgeConditions (String condition, LinkedList<String> activeConditions) throws Exception
 	{
 		for (Entry<String, ConditionContainer> e : edgeConditions.entrySet())
 		{
@@ -597,7 +597,7 @@ public class AttributeFilter {
 				filterEdge(c.attributeName, c.operation, c.refValue);
 			}
 		}
-	}
+	}*/
 	
 	/**
 	 * Add a new Node Condition

@@ -6,7 +6,6 @@ import graph.model.MyEdgeType;
 import graph.model.MyJunctionNode;
 import graph.model.MyNode;
 import graph.model.MyNodeType;
-import graph.operations.MyCollapser;
 
 import java.util.HashMap;
 import java.util.HashSet;

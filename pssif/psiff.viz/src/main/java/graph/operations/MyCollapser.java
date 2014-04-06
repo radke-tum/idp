@@ -2,7 +2,6 @@ package graph.operations;
 
 import graph.model.IMyNode;
 import graph.model.MyEdge;
-import graph.model.MyEdgeTypes;
 import graph.model.MyNode;
 
 import java.util.HashMap;

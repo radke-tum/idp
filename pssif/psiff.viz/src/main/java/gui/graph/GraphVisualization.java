@@ -37,7 +37,6 @@ import graph.model.GraphBuilder;
 import graph.model.IMyNode;
 import graph.model.MyEdge;
 import graph.model.MyEdgeType;
-import graph.model.MyJunctionNode;
 import graph.model.MyNode;
 import graph.model.MyNodeType;
 import graph.operations.GraphViewContainer;

@@ -185,13 +185,10 @@ public class MyNode implements IMyNode{
 				try 
 				{
 					Date data = parseDate((String) value);
-					System.out.println("Date after parsing "+data);
-					
+				
 					PSSIFValue res = PrimitiveDataType.DATE.fromObject(data);
-					System.out.println("PSSif Value "+res.asDate());
-	
+
 					attribute.set(node, PSSIFOption.one(res));
-					//System.out.println("after "+attribute.get(node).getOne().asDate());
 				}
 				catch (IllegalArgumentException e)
 				{
@@ -393,57 +390,16 @@ public class MyNode implements IMyNode{
 		List<String> attr = calcAttr();
 		if (isDetailedOutput())
 		{
-			//lineheight =30;
 			//Attributes label
 			sizeheight += lineheight;
 			
 			//Attributes
-			
-			
 			int nbAttr = attr.size();
 			
 			sizeheight += nbAttr*lineheight;
 		}
 		
 		sizewidth = 180;
-		
-		
-		
-		//width
-		
-		/*int temp = (type.getName().length()+6)/ limit;
-		
-		if (temp >sizewidth)
-			sizewidth = temp;
-			
-		for (String s : attr)
-		{
-			temp = s.length() / limit;
-			
-			if (temp > sizewidth)
-				sizewidth = temp;
-		}
-		
-		/*int temp = findName().length() / limit;
-		
-		if (temp >0)
-			sizewidth = temp;
-		
-		temp = (type.getName().length()+6)/ limit;
-		
-		if (temp >sizewidth)
-			sizewidth = temp;
-			
-		for (String s : attr)
-		{
-			temp = s.length() / limit;
-			
-			if (temp > sizewidth)
-				sizewidth = temp;
-		}*/
-		
-		//System.out.println(getRealName()+"|| width "+sizewidth+" height "+sizeheight);	
-	
 	}
 	
 	/**

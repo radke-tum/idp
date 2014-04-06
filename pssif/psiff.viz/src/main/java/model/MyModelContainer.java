@@ -165,7 +165,7 @@ public class MyModelContainer {
     		        for (Edge e : edges.getMany()) {
     		        	Node source = mapping.applyFrom(e);
     		        	Node target = mapping.applyTo(e);
-    		        	System.out.println();
+
     		        	addEdge(new MyEdge(e, t, findNode(source), findNode(target)));
     		        }
     	        }

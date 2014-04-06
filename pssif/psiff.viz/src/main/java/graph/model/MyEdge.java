@@ -1,7 +1,5 @@
 package graph.model;
 
-import graph.model.MyNode.MyAttributeListComparator;
-
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -11,13 +9,6 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.List;
-
-
-
-
-
-
 
 import de.tum.pssif.core.common.PSSIFConstants;
 import de.tum.pssif.core.common.PSSIFOption;
@@ -159,15 +150,6 @@ public class MyEdge {
 	public IMyNode getDestinationNode() {
 		return destination;
 	}
-	
-	/**
-	 * Get all the attributes from the PSS-IF Model Edge
-	 * @return LinkedList<String> with the formated information from the edge. Might be empty
-	 */
-	/*public List<String> getAttributes()
-	{
-		return calcAttr();
-	}*/
 	
 	/**
 	 * Get a Mapping from an Attribute name to an Attribute object which contains all the infomations

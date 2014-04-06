@@ -26,11 +26,11 @@ public class MyListColorRenderer extends DefaultListCellRenderer
 	                isSelected, cellHasFocus );  
 	         
 	        MyNodeType t = (MyNodeType) value;
-	       // System.out.println(t);
+
 	        if( colorMapper.containsKey( t ) )  
 	        {  
 	            Color c = colorMapper.get(t);
-	           // System.out.println("Color "+c);
+
 	            
 	            setBackground(c);
 	        }  
@@ -41,7 +41,6 @@ public class MyListColorRenderer extends DefaultListCellRenderer
 	    
 	    public void setColor (MyNodeType type , Color c)
 	    {
-	    	//System.out.println("Put Color "+c);
 	    	this.colorMapper.put(type, c);
 	    }
 	    

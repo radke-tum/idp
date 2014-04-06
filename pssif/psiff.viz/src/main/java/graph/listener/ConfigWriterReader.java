@@ -236,7 +236,7 @@ public class ConfigWriterReader {
 				//System.out.println("From XML " +nodeTypeValue);
 				
 				// get the color value from the xml file
-				String colorValue = eElement.getAttribute(ATTR_COLOR);
+				//String colorValue = eElement.getAttribute(ATTR_COLOR);
 				
 				// Build a  MyNodeType from the String value from the xml
 				MyNodeType t = ModelBuilder.getNodeTypes().getValue(nodeTypeValue);
@@ -245,7 +245,7 @@ public class ConfigWriterReader {
 				Color newColor = newColorMapping.get(t);
 			//	System.out.println("new Color "+newColor);
 				
-				Color oldColor = new Color(Integer.valueOf(colorValue));
+				//Color oldColor = new Color(Integer.valueOf(colorValue));
 				//System.out.println("From XML Color "+oldColor);
 				
 				// even if we do not need to update the MyNodeType, we do not need to check it later again

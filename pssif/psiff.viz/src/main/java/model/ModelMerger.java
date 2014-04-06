@@ -6,12 +6,6 @@ import java.util.HashSet;
 import java.util.Map.Entry;
 import java.util.Set;
 
-
-
-
-
-
-
 import de.tum.pssif.core.common.PSSIFOption;
 import de.tum.pssif.core.common.PSSIFValue;
 import de.tum.pssif.core.metamodel.Attribute;
