@@ -6,6 +6,7 @@ import graph.model.MyNode;
 import java.awt.Dimension;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -98,7 +99,6 @@ public class AttributeAggregation {
 	
 	private void testNodeStartDate(MyNode n, HashMap<String,Attribute> attributes)
 	{
-		//HashMap<String,Attribute> attributes = n.getAttributesHashMap();
 		
 		PSSIFOption<PSSIFValue> tmp = attributes.get(PSSIFConstants.BUILTIN_ATTRIBUTE_VALIDITY_START).get(n.getNode());
 		
@@ -106,27 +106,25 @@ public class AttributeAggregation {
 		{
 			Date startDate = tmp.getOne().asDate();
 			
-			if (node_earliestStartDate == null)
+			
+			if (node_earliestStartDate == null && node_latestStartDate ==null)
+			{
 				node_earliestStartDate = startDate;
+				node_latestStartDate = startDate;
+			}
 			else
 			{
-				if (node_latestStartDate == null)
-					node_latestStartDate = startDate;
-				else
-				{
 					if (node_earliestStartDate.after(startDate))
 						node_earliestStartDate = startDate;
 					
 					if (node_latestStartDate.before(startDate))
 						node_latestStartDate = startDate;
-				}
 			}
 		}	
 	}
 	
 	private void testNodeEndDate(MyNode n, HashMap<String,Attribute> attributes)
 	{
-	//	HashMap<String,Attribute> attributes = n.getAttributesHashMap();
 		
 		PSSIFOption<PSSIFValue> tmp = attributes.get(PSSIFConstants.BUILTIN_ATTRIBUTE_VALIDITY_END).get(n.getNode());
 		
@@ -134,27 +132,24 @@ public class AttributeAggregation {
 		{
 			Date endDate = tmp.getOne().asDate();
 			
-			if (node_earliestEndDate == null)
+			if (node_earliestEndDate == null && node_latestEndDate == null)
+			{
 				node_earliestEndDate = endDate;
+				node_latestEndDate = endDate;
+			}
 			else
 			{
-				if (node_latestEndDate == null)
-					node_latestEndDate = endDate;
-				else
-				{
 					if (node_earliestEndDate.after(endDate))
 						node_earliestEndDate = endDate;
 					
 					if (node_latestEndDate.before(endDate))
 						node_latestEndDate = endDate;
-				}
 			}
 		}	
 	}
 	
 	private void testEdgeStartDate(MyEdge e, HashMap<String,Attribute> attributes)
 	{
-	//	HashMap<String,Attribute> attributes = e.getAttributesHashMap();
 		
 		PSSIFOption<PSSIFValue> tmp = attributes.get(PSSIFConstants.BUILTIN_ATTRIBUTE_VALIDITY_START).get(e.getEdge());
 		
@@ -162,48 +157,42 @@ public class AttributeAggregation {
 		{
 			Date startDate = tmp.getOne().asDate();
 			
-			if (edge_earliestStartDate == null)
+			if (edge_earliestStartDate == null && edge_latestStartDate==null)
+			{
 				edge_earliestStartDate = startDate;
+				edge_latestStartDate = startDate;
+			}
 			else
 			{
-				if (edge_latestStartDate == null)
+				if (edge_earliestStartDate.after(startDate))
+					edge_earliestStartDate = startDate;
+				
+				if (edge_latestStartDate.before(startDate))
 					edge_latestStartDate = startDate;
-				else
-				{
-					if (edge_earliestStartDate.after(startDate))
-						edge_earliestStartDate = startDate;
-					
-					if (edge_latestStartDate.before(startDate))
-						edge_latestStartDate = startDate;
-				}
 			}
 		}	
 	}
 	
 	private void testEdgeEndDate(MyEdge e, HashMap<String,Attribute> attributes)
 	{
-	//	HashMap<String,Attribute> attributes = e.getAttributesHashMap();
-		
 		PSSIFOption<PSSIFValue> tmp = attributes.get(PSSIFConstants.BUILTIN_ATTRIBUTE_VALIDITY_END).get(e.getEdge());
 		
 		if (tmp.isOne())
 		{
 			Date endDate = tmp.getOne().asDate();
 			
-			if (edge_earliestEndDate == null)
+			if (edge_earliestEndDate == null && edge_latestEndDate == null)
+			{
 				edge_earliestEndDate = endDate;
+				edge_latestEndDate = endDate;
+			}
 			else
 			{
-				if (edge_latestEndDate == null)
+				if (edge_earliestEndDate.after(endDate))
+					edge_earliestEndDate = endDate;
+				
+				if (edge_latestEndDate.before(endDate))
 					edge_latestEndDate = endDate;
-				else
-				{
-					if (edge_earliestEndDate.after(endDate))
-						edge_earliestEndDate = endDate;
-					
-					if (edge_latestEndDate.before(endDate))
-						edge_latestEndDate = endDate;
-				}
 			}
 		}	
 	}
@@ -215,9 +204,9 @@ public class AttributeAggregation {
 			global_earliestStartDate =null;
 		else
 		{
-			if (node_earliestStartDate == null)
+			if (node_earliestStartDate == null && edge_earliestStartDate!=null)
 				global_earliestStartDate =edge_earliestStartDate;
-			if (edge_earliestStartDate == null)
+			if (edge_earliestStartDate == null && node_earliestStartDate!=null)
 				global_earliestStartDate =node_earliestStartDate;
 			
 			if (node_earliestStartDate != null && edge_earliestStartDate != null)
@@ -234,9 +223,9 @@ public class AttributeAggregation {
 			global_latestEndDate =null;
 		else
 		{
-			if (node_latestEndDate == null)
+			if (node_latestEndDate == null && edge_latestEndDate!=null)
 				global_latestEndDate =edge_latestEndDate;
-			if (edge_latestEndDate == null)
+			if (edge_latestEndDate == null && node_latestEndDate!=null)
 				global_latestEndDate =node_latestEndDate;
 			
 			if (node_latestEndDate != null && edge_latestEndDate != null)
@@ -318,53 +307,52 @@ public class AttributeAggregation {
 		allPanel.add(Box.createRigidArea(new Dimension(0,10)));
 		allPanel.add(new JLabel("Nodes :"));
 		if (node_earliestStartDate !=null)
-			allPanel.add(new JLabel("Earliest Validity Start : "+node_earliestStartDate));
+			allPanel.add(new JLabel("Earliest Validity Start : "+datePrettyPrinter(node_earliestStartDate)));
 		else
 			allPanel.add(new JLabel("Earliest Validity Start : "));
 		if (node_latestStartDate !=null)
-			allPanel.add(new JLabel("Latest Validity Start : "+node_latestStartDate));
+			allPanel.add(new JLabel("Latest Validity Start : "+datePrettyPrinter(node_latestStartDate)));
 		else
 			allPanel.add(new JLabel("Latest Validity Start : "));
 		if (node_earliestEndDate!=null)
-			allPanel.add(new JLabel("Earliest Validity End : "+node_earliestEndDate));
+			allPanel.add(new JLabel("Earliest Validity End : "+datePrettyPrinter(node_earliestEndDate)));
 		else
 			allPanel.add(new JLabel("Earliest Validity End : "));
 		if (node_latestEndDate!=null)
-			allPanel.add(new JLabel("Latest Validity End : "+node_latestEndDate));
+			allPanel.add(new JLabel("Latest Validity End : "+datePrettyPrinter(node_latestEndDate)));
 		else
 			allPanel.add(new JLabel("Latest Validity End : "));
 		
 		allPanel.add(Box.createRigidArea(new Dimension(0,10)));
 		allPanel.add(new JLabel("Edges :"));
 		if (edge_earliestStartDate!=null)
-			allPanel.add(new JLabel("Earliest Validity Start : "+edge_earliestStartDate));
+			allPanel.add(new JLabel("Earliest Validity Start : "+datePrettyPrinter(edge_earliestStartDate)));
 		else
 			allPanel.add(new JLabel("Earliest Validity Start : "));
 		if (edge_latestStartDate!=null)
-			allPanel.add(new JLabel("Latest Validity Start : "+edge_latestStartDate));
+			allPanel.add(new JLabel("Latest Validity Start : "+datePrettyPrinter(edge_latestStartDate)));
 		else
 			allPanel.add(new JLabel("Latest Validity Start : "));
 		if (edge_earliestEndDate!=null)
-			allPanel.add(new JLabel("Earliest Validity End : "+edge_earliestEndDate));
+			allPanel.add(new JLabel("Earliest Validity End : "+datePrettyPrinter(edge_earliestEndDate)));
 		else
 			allPanel.add(new JLabel("Earliest Validity End : "));
 		if (edge_latestEndDate!=null)
-			allPanel.add(new JLabel("Latest Validity End : "+edge_latestEndDate));
+			allPanel.add(new JLabel("Latest Validity End : "+datePrettyPrinter(edge_latestEndDate)));
 		else
 			allPanel.add(new JLabel("Latest Validity End : "));
 		
 		allPanel.add(Box.createRigidArea(new Dimension(0,10)));
 		allPanel.add(new JLabel("Model :"));
 		if (global_earliestStartDate!=null)
-			allPanel.add(new JLabel("Earliest Validity Start : "+global_earliestStartDate));
+			allPanel.add(new JLabel("Earliest Validity Start : "+datePrettyPrinter(global_earliestStartDate)));
 		else
 			allPanel.add(new JLabel("Earliest Validity Start : "));
 		if (global_latestEndDate!=null)
-			allPanel.add(new JLabel("Latest Validity End : "+global_latestEndDate));
+			allPanel.add(new JLabel("Latest Validity End : "+datePrettyPrinter(global_latestEndDate)));
 		else
 			allPanel.add(new JLabel("Latest Validity End : "));
 		
-		allPanel.add(new JLabel("Global Cost : "+global_Cost));
 		allPanel.add(new JLabel("Global Cost : "+global_Cost));
 		allPanel.add(new JLabel("Global Weight : "+global_Weight));
 		allPanel.add(new JLabel("Global Duration : "+secondsToTime(global_Duration)));
@@ -384,5 +372,12 @@ public class AttributeAggregation {
 		  int sec = rem%60;
 		  
 		  return hr+":"+mn+":"+sec;
+	}
+	
+	private String datePrettyPrinter (Date date)
+	{
+		SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+		return  formatter.format(date);
+		
 	}
 }

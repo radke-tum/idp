@@ -4,6 +4,8 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -146,7 +148,7 @@ public class MyNode implements IMyNode{
 			attributes.add(currentAttr);
 		}
 		
-		return attributes;
+		return sortAttributes(attributes);
 	}
 	
 	/**
@@ -698,5 +700,20 @@ public class MyNode implements IMyNode{
 
 	public void setCollapseNode(boolean collapseNode) {
 		this.collapseNode = collapseNode;
+	}
+	
+	private LinkedList<LinkedList<String>> sortAttributes(LinkedList<LinkedList<String>> data)
+	{
+		Collections.sort(data, new MyAttributeListComparator());
+		
+		return data;
+	}
+	
+	protected class MyAttributeListComparator implements Comparator<LinkedList<String>>
+	{
+	  @Override public int compare( LinkedList<String> attr1, LinkedList<String> attr2 )
+	  {
+	    return attr1.getFirst().compareTo(attr2.getFirst());
+	  }
 	}
 }

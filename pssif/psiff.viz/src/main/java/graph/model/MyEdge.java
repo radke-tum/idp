@@ -1,12 +1,19 @@
 package graph.model;
 
+import graph.model.MyNode.MyAttributeListComparator;
+
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+
+
 
 
 
@@ -157,10 +164,10 @@ public class MyEdge {
 	 * Get all the attributes from the PSS-IF Model Edge
 	 * @return LinkedList<String> with the formated information from the edge. Might be empty
 	 */
-	public List<String> getAttributes()
+	/*public List<String> getAttributes()
 	{
 		return calcAttr();
-	}
+	}*/
 	
 	/**
 	 * Get a Mapping from an Attribute name to an Attribute object which contains all the infomations
@@ -410,7 +417,7 @@ public class MyEdge {
 	 * Get a list with all the attributes from this Node
 	 * @return A list which contains a list with all the attribute information. Information Order in the list : Name, Value, Unit, Datatype
 	 */
-	public LinkedList<LinkedList<String>> getAttributesForTable()
+	public LinkedList<LinkedList<String>> getAttributes()
 	{
 		LinkedList<LinkedList<String>> attributes = new LinkedList<LinkedList<String>>();
 		
@@ -432,7 +439,15 @@ public class MyEdge {
 			
 			String attrValue="";
 			if (value !=null)
-				attrValue = String.valueOf(value.getValue());
+			{
+				if (((PrimitiveDataType)current.getType()).getName().equals("Date"))
+				{
+					DateFormat df = new SimpleDateFormat("dd-MM-yyyy");
+					attrValue= df.format(value.getValue());
+				}
+				else
+					attrValue = String.valueOf(value.getValue());
+			}
 			
 			currentAttr.add(attrValue);
 			String attrUnit = current.getUnit().getName();
@@ -443,7 +458,7 @@ public class MyEdge {
 			attributes.add(currentAttr);
 		}
 		
-		return attributes;
+		return sortAttributes(attributes);
 	}
 
 	public boolean isPartnersVisible() {
@@ -452,6 +467,21 @@ public class MyEdge {
 
 	public void setPartnersVisible(boolean partnersVisible) {
 		this.partnersVisible = partnersVisible;
+	}
+	
+	private LinkedList<LinkedList<String>> sortAttributes(LinkedList<LinkedList<String>> data)
+	{
+		Collections.sort(data, new MyAttributeListComparator());
+		
+		return data;
+	}
+	
+	protected class MyAttributeListComparator implements Comparator<LinkedList<String>>
+	{
+	  @Override public int compare( LinkedList<String> attr1, LinkedList<String> attr2 )
+	  {
+	    return attr1.getFirst().compareTo(attr2.getFirst());
+	  }
 	}
 	
 }

@@ -839,7 +839,7 @@ public class GraphView {
         if (subject instanceof MyEdge) {
           MyEdge edge = (MyEdge) subject;
           if (pi.isPicked(edge)) {
-            updateEdgeSidebar(edge, edge.getEdgeType(), edge.getAttributesForTable());
+            updateEdgeSidebar(edge, edge.getEdgeType(), edge.getAttributes());
           }
           else {
             updateEdgeSidebar(null, null, null);
