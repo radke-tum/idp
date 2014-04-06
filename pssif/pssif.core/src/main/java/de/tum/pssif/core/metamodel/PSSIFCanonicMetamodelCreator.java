@@ -24,7 +24,23 @@ public final class PSSIFCanonicMetamodelCreator {
   public static final String N_EVENT                                   = "Event";
   public static final String N_ISSUE                                   = "Issue";
   public static final String N_DECISION                                = "Decision";
+  public static final String N_CHANGE_PROPOSAL                         = "Change Proposal";
   public static final String N_CHANGE_EVENT                            = "Change Event";
+  public static final String N_ABSTRACTION_LEVEL                       = "Abstraction Level";
+  
+  public static final String N_SPEC_ARTIFACT						   = "Specification Artifact";
+  
+  public static final String N_SCENARIO                            	   = "Scenario";
+  public static final String N_EPK_D                                   = "EPK-Diagramm";
+  public static final String N_ER_D                         	       = "ER-Diagramm";
+  public static final String N_ACTIVITY_D                              = "Activity Diagramm";
+  public static final String N_SEQ_D                                   = "Sequence Diagramm";
+  public static final String N_STATE_D                                 = "State Diagramm";
+  public static final String N_CLASS_D                                 = "Class Diagramm";
+  public static final String N_TEXT                         	       = "Text";
+  public static final String N_USE_CASE_D                       	   = "Use Case Diagramm";
+  
+  
 
   public static final String N_SOL_ARTIFACT                            = "Solution Artifact";
 
@@ -45,6 +61,7 @@ public final class PSSIFCanonicMetamodelCreator {
   public static final String A_REQUIREMENT_TYPE                        = "type";
   public static final String A_BLOCK_COST                              = "cost";
   public static final String A_HARDWARE_WEIGHT                         = "weight";
+  public static final String A_TEST_CASE_STATUS 					   = "status";
   public static final String A_CONJUNCTION                             = ENUM_CONJUNCTION;
 
   public static final String E_FLOW                                    = "Flow";
@@ -66,7 +83,8 @@ public final class PSSIFCanonicMetamodelCreator {
   public static final String E_RELATIONSHIP_CHRONOLOGICAL_REPLACES     = "Replaces";
   public static final String E_RELATIONSHIP_CHRONOLOGICAL_BASED_ON     = "Based On";
   public static final String E_RELATIONSHIP_CHRONOLOGICAL_REFINES      = "Refines";
-  public static final String E_RELATIONSHIP_CHRONOLOGICAL_PRECONDITION = "Precondigion";
+  public static final String E_RELATIONSHIP_CHRONOLOGICAL_PRECONDITION = "Precondition";
+  public static final String E_RELATIONSHIP_CHRONOLOGICAL_LEADS_TO 	   = "Leads To";
 
   public static final String E_RELATIONSHIP_REFERENTIAL                = "Referential Relation";
   public static final String E_RELATIONSHIP_REFERENTIAL_DESCRIBES      = "Describes";
@@ -93,6 +111,7 @@ public final class PSSIFCanonicMetamodelCreator {
   public static final String E_RELATIONSHIP_LOGICAL_VERIFIES           = "Verifies";
   public static final String E_RELATIONSHIP_LOGICAL_OVERLAPS           = "Overlaps";
   public static final String E_RELATIONSHIP_LOGICAL_IS_ALTERNATIVE     = "Is Alternative";
+
 
   private PSSIFCanonicMetamodelCreator() {
     //Nop
@@ -137,8 +156,10 @@ public final class PSSIFCanonicMetamodelCreator {
     NodeType useCase = metamodel.createNodeType(N_USE_CASE);
     useCase.inherit(devArtifact);
 
-    NodeType testCase = metamodel.createNodeType(N_TEST_CASE);
+    MutableNodeType testCase = metamodel.createNodeType(N_TEST_CASE);
     testCase.inherit(devArtifact);
+    testCase.createAttribute(testCase.getDefaultAttributeGroup(), A_TEST_CASE_STATUS, PrimitiveDataType.STRING, true, AttributeCategory.METADATA);
+    
 
     NodeType view = metamodel.createNodeType(N_VIEW);
     view.inherit(devArtifact);
@@ -151,11 +172,50 @@ public final class PSSIFCanonicMetamodelCreator {
 
     NodeType decision = metamodel.createNodeType(N_DECISION);
     decision.inherit(event);
+    
+    NodeType changeProposal = metamodel.createNodeType(N_CHANGE_PROPOSAL);
+    changeProposal.inherit(event);
 
     NodeType changeEvent = metamodel.createNodeType(N_CHANGE_EVENT);
     changeEvent.inherit(event);
+    
+    NodeType abstractionLevel = metamodel.createNodeType(N_ABSTRACTION_LEVEL);
+    abstractionLevel.inherit(event);
+    
+    NodeType specArtifact = metamodel.createNodeType(N_SPEC_ARTIFACT);
+    specArtifact.inherit(devArtifact);
+    
+    NodeType useCaseDiag = metamodel.createNodeType(N_USE_CASE_D);
+    useCaseDiag.inherit(specArtifact);
+    
+    NodeType scenario = metamodel.createNodeType(N_SCENARIO);
+    scenario.inherit(specArtifact);
+    
+    NodeType epkDiag = metamodel.createNodeType(N_EPK_D);
+    epkDiag.inherit(specArtifact);
+    
+    NodeType erDiag = metamodel.createNodeType(N_ER_D);
+    erDiag.inherit(specArtifact);
+    
+    NodeType activityDiag = metamodel.createNodeType(N_ACTIVITY_D);
+    activityDiag.inherit(specArtifact);
+    
+    NodeType sequenceDiag = metamodel.createNodeType(N_SEQ_D);
+    sequenceDiag.inherit(specArtifact);
+    
+    NodeType stateDiag = metamodel.createNodeType(N_STATE_D);
+    stateDiag.inherit(specArtifact);
+    
+    NodeType classDiag = metamodel.createNodeType(N_CLASS_D);
+    classDiag.inherit(specArtifact);
+    
+    NodeType text = metamodel.createNodeType(N_TEXT);
+    text.inherit(specArtifact);
+    
+    
   }
-
+  
+  
   private static void createSolArtifacts(MetamodelImpl metamodel) {
     NodeType solutionArtifact = metamodel.createNodeType(N_SOL_ARTIFACT);
 
@@ -239,6 +299,10 @@ public final class PSSIFCanonicMetamodelCreator {
     basedOnRelationship.createMapping(node(N_REQUIREMENT, metamodel), node(N_REQUIREMENT, metamodel));
     basedOnRelationship.createMapping(node(N_TEST_CASE, metamodel), node(N_REQUIREMENT, metamodel));
     basedOnRelationship.inherit(chronologicalRelationship);
+    
+    MutableEdgeType leadsToRelationship = metamodel.createEdgeType(E_RELATIONSHIP_CHRONOLOGICAL_LEADS_TO);
+    leadsToRelationship.createMapping(node(N_TEST_CASE, metamodel), node(N_ISSUE, metamodel));
+    leadsToRelationship.inherit(chronologicalRelationship);
 
     EdgeType refinesRelationship = metamodel.createEdgeType(E_RELATIONSHIP_CHRONOLOGICAL_REFINES);
     refinesRelationship.inherit(chronologicalRelationship);
@@ -254,7 +318,8 @@ public final class PSSIFCanonicMetamodelCreator {
     EdgeType describesRelationship = metamodel.createEdgeType(E_RELATIONSHIP_REFERENTIAL_DESCRIBES);
     describesRelationship.inherit(referentialRelationship);
 
-    EdgeType definesRelationship = metamodel.createEdgeType(E_RELATIONSHIP_REFERENTIAL_DEFINES);
+    MutableEdgeType definesRelationship = metamodel.createEdgeType(E_RELATIONSHIP_REFERENTIAL_DEFINES);
+    definesRelationship.createMapping(node(N_SPEC_ARTIFACT, metamodel), node(N_REQUIREMENT, metamodel));
     definesRelationship.inherit(referentialRelationship);
 
     EdgeType traceRelationship = metamodel.createEdgeType(E_RELATIONSHIP_REFERENTIAL_TRACE);
@@ -268,7 +333,8 @@ public final class PSSIFCanonicMetamodelCreator {
     EdgeType inclusionRelationship = metamodel.createEdgeType(E_RELATIONSHIP_INCLUSION);
     inclusionRelationship.inherit(relationship);
 
-    EdgeType containsRelationship = metamodel.createEdgeType(E_RELATIONSHIP_INCLUSION_CONTAINS);
+    MutableEdgeType containsRelationship = metamodel.createEdgeType(E_RELATIONSHIP_INCLUSION_CONTAINS);
+    containsRelationship.createMapping(node(N_SPEC_ARTIFACT, metamodel), node("Node", metamodel));
     containsRelationship.inherit(inclusionRelationship);
 
     EdgeType includesRelationship = metamodel.createEdgeType(E_RELATIONSHIP_INCLUSION_INCLUDES);
@@ -311,7 +377,7 @@ public final class PSSIFCanonicMetamodelCreator {
     extendsRelationship.inherit(logicalRelationship);
 
     MutableEdgeType satisfiesRelationship = metamodel.createEdgeType(E_RELATIONSHIP_LOGICAL_SATISFIES);
-    satisfiesRelationship.createMapping(node(N_REQUIREMENT, metamodel), node(N_SOL_ARTIFACT, metamodel));
+    satisfiesRelationship.createMapping(node(N_SOL_ARTIFACT, metamodel), node(N_REQUIREMENT, metamodel));
     satisfiesRelationship.inherit(logicalRelationship);
 
     MutableEdgeType verifiesRelationship = metamodel.createEdgeType(E_RELATIONSHIP_LOGICAL_VERIFIES);
