@@ -3,7 +3,7 @@ package de.tum.pssif.transform.mapper.sysml;
 import org.junit.Test;
 
 import de.tum.pssif.transform.graph.Graph;
-import de.tum.pssif.transform.io.SysML4MechatronicsEmfMapper;
+import de.tum.pssif.transform.io.SysML4MechatronicsEmfIoMapper;
 
 
 public class SysML4MechatronicsEmfIoMapperTest {
@@ -12,7 +12,7 @@ public class SysML4MechatronicsEmfIoMapperTest {
 
   @Test
   public void testWriteXMI2StdOut() {
-    SysML4MechatronicsEmfMapper mapper = new SysML4MechatronicsEmfMapper();
+    SysML4MechatronicsEmfIoMapper mapper = new SysML4MechatronicsEmfIoMapper();
     System.out.println("--Begin write XMI to Sysout--");
     mapper.write(new Graph(), System.out);
     System.out.println("--End write XMI to Sysout--");

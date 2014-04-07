@@ -31,7 +31,7 @@ import de.tum.pssif.transform.graph.Node;
  * SysML4Mechatronics eCore/XMI mapper. Dumb. Re-naming and stuff should be done by the model mapper
  * and/or the viewpoint.
  */
-public class SysML4MechatronicsEmfMapper implements IoMapper {
+public class SysML4MechatronicsEmfIoMapper implements IoMapper {
 
   private static final String ECORE_RESOURCE = "/sysml/sysml4mechatronics.ecore";
 
@@ -43,7 +43,6 @@ public class SysML4MechatronicsEmfMapper implements IoMapper {
 
   @Override
   public void write(Graph graph, OutputStream out) {
-
     try {
       Resource resource = new XMIResourceFactoryImpl().createResource(URI.createFileURI(""));
       translateToEObjects(graph, resource);
