@@ -109,9 +109,7 @@ public class MatrixView {
 			scrollPane.setRowHeaderView(rowTable);
 			
 			mainTable.setEnabled(false);
-			mainTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-			TableColumnAdjuster tca = new TableColumnAdjuster(mainTable);
-			tca.adjustColumns();
+
 			
 			TableCellRenderer headerRenderer = new VerticalTableHeaderCellRenderer();
 		    Enumeration<TableColumn> columns = mainTable.getColumnModel().getColumns();
@@ -121,6 +119,10 @@ public class MatrixView {
 		        tc.setHeaderRenderer(headerRenderer);
 		      }
 			
+			mainTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+			TableColumnAdjuster tca = new TableColumnAdjuster(mainTable);
+			tca.adjustColumns();
+				
 			p.add(scrollPane, BorderLayout.CENTER);
 			
 		}
