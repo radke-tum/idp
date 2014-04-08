@@ -4,7 +4,7 @@ import de.tum.pssif.core.metamodel.Metamodel;
 import de.tum.pssif.transform.IoMapper;
 import de.tum.pssif.transform.Mapper;
 import de.tum.pssif.transform.ModelMapper;
-import de.tum.pssif.transform.io.SysMlIoMapper;
+import de.tum.pssif.transform.io.SysML4MechatronicsEmfIoMapper;
 import de.tum.pssif.transform.model.SysMl4MechatronicsModelMapper;
 
 
@@ -24,8 +24,7 @@ public class SysMlMapper extends AbstractMapper implements Mapper {
 
   @Override
   protected IoMapper getIoMapper() {
-    // TODO Auto-generated method stub
-    return new SysMlIoMapper();
+    return new SysML4MechatronicsEmfIoMapper();
   }
 
 }
