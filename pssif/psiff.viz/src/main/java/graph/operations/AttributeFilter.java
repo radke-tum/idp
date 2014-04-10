@@ -641,29 +641,32 @@ public class AttributeFilter {
 
 		for (MyEdge e : ModelBuilder.getAllEdges())
 		{
-			// handle JunctionNodes
-			if (e.getDestinationNode() instanceof MyJunctionNode)
+			if (e.isVisible())
 			{
-				MyJunctionNode tmp = (MyJunctionNode) e.getDestinationNode();
-				LinkedList<Boolean> bools = mappingIncomingJunctionVisibility.get(tmp);
+				// handle JunctionNodes
+				if (e.getDestinationNode() instanceof MyJunctionNode)
+				{
+					MyJunctionNode tmp = (MyJunctionNode) e.getDestinationNode();
+					LinkedList<Boolean> bools = mappingIncomingJunctionVisibility.get(tmp);
+					
+					if (bools == null)
+						bools = new LinkedList<Boolean>();
+					
+					bools.add(e.isPartnersVisible());
+					mappingIncomingJunctionVisibility.put(tmp, bools);
+				}
 				
-				if (bools == null)
-					bools = new LinkedList<Boolean>();
-				
-				bools.add(e.isPartnersVisible());
-				mappingIncomingJunctionVisibility.put(tmp, bools);
-			}
-			
-			if (e.getSourceNode() instanceof MyJunctionNode)
-			{
-				MyJunctionNode tmp = (MyJunctionNode) e.getSourceNode();
-				LinkedList<Boolean> bools = mappingOutgoingJunctionVisibility.get(tmp);
-				
-				if (bools == null)
-					bools = new LinkedList<Boolean>();
-				
-				bools.add(e.isPartnersVisible());
-				mappingOutgoingJunctionVisibility.put(tmp, bools);
+				if (e.getSourceNode() instanceof MyJunctionNode)
+				{
+					MyJunctionNode tmp = (MyJunctionNode) e.getSourceNode();
+					LinkedList<Boolean> bools = mappingOutgoingJunctionVisibility.get(tmp);
+					
+					if (bools == null)
+						bools = new LinkedList<Boolean>();
+					
+					bools.add(e.isPartnersVisible());
+					mappingOutgoingJunctionVisibility.put(tmp, bools);
+				}
 			}
 		}
 		
