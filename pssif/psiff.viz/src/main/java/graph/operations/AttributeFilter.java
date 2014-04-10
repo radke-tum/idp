@@ -201,6 +201,7 @@ public class AttributeFilter {
 					
 					if (result == false)
 					{
+						//System.out.println("Not visible");
 						currentEdge.setVisible(visiblity);
 					}
 				}
@@ -721,26 +722,29 @@ public class AttributeFilter {
 	{
 		for (MyEdge e : ModelBuilder.getAllEdges())
 		{
-			IMyNode source = e.getSourceNode();
-			IMyNode destination = e.getDestinationNode();
-			
-			if (source instanceof MyNode && destination instanceof MyNode)
+			if (e.isVisible())
 			{
-				e.setPartnersVisible(source.isVisible() && destination.isVisible());
-				e.setVisible(source.isVisible() && destination.isVisible());
-			}
-			else
-			{
-				if (source instanceof MyNode)
-				{
-					e.setPartnersVisible(source.isVisible());
-					//e.setVisible(source.isVisible());
-				}
+				IMyNode source = e.getSourceNode();
+				IMyNode destination = e.getDestinationNode();
 				
-				if (destination instanceof MyNode)
+				if (source instanceof MyNode && destination instanceof MyNode)
 				{
-					e.setPartnersVisible(destination.isVisible());
-					//e.setVisible(destination.isVisible());
+					e.setPartnersVisible(source.isVisible() && destination.isVisible());
+					e.setVisible(source.isVisible() && destination.isVisible());
+				}
+				else
+				{
+					if (source instanceof MyNode)
+					{
+						e.setPartnersVisible(source.isVisible());
+						//e.setVisible(source.isVisible());
+					}
+					
+					if (destination instanceof MyNode)
+					{
+						e.setPartnersVisible(destination.isVisible());
+						//e.setVisible(destination.isVisible());
+					}
 				}
 			}
 		}

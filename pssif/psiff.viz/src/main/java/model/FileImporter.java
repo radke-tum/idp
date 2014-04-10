@@ -70,7 +70,7 @@ public class FileImporter extends FileHandler{
    */
   public boolean showPopup(Component caller) {
 	super.getFileChooser().setCurrentDirectory(new File("C:\\Users\\Luc\\Desktop\\Uni Dropbox\\Dropbox\\IDP-PSS-IF-Shared\\Modelle PE"));
-	 // super.getFileChooser().setCurrentDirectory(new File("C:\\Users\\Luc\\Desktop\\Dropbox\\IDP-PSS-IF-Shared\\Modelle PE"));
+	// super.getFileChooser().setCurrentDirectory(new File("C:\\Users\\Luc\\Desktop\\Dropbox\\IDP-PSS-IF-Shared\\Modelle PE"));
     int returnVal = super.getFileChooser().showOpenDialog(caller);
 
     if (returnVal == JFileChooser.APPROVE_OPTION) {
