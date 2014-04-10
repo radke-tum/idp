@@ -201,6 +201,7 @@ public class AttributeFilter {
 					
 					if (result == false)
 					{
+						//System.out.println("Not visible");
 						currentEdge.setVisible(visiblity);
 					}
 				}
@@ -640,30 +641,35 @@ public class AttributeFilter {
 
 		for (MyEdge e : ModelBuilder.getAllEdges())
 		{
-			// handle JunctionNodes
-			if (e.getDestinationNode() instanceof MyJunctionNode)
-			{
-				MyJunctionNode tmp = (MyJunctionNode) e.getDestinationNode();
-				LinkedList<Boolean> bools = mappingIncomingJunctionVisibility.get(tmp);
+			//if (e.isVisible())
+			//{
+				// handle JunctionNodes
+				if (e.getDestinationNode() instanceof MyJunctionNode)
+				{
+					MyJunctionNode tmp = (MyJunctionNode) e.getDestinationNode();
+					LinkedList<Boolean> bools = mappingIncomingJunctionVisibility.get(tmp);
+					
+					if (bools == null)
+						bools = new LinkedList<Boolean>();
+					
+					bools.add(e.isPartnersVisible() && e.isVisible());
+					//bools.add(e.isVisible());
+					mappingIncomingJunctionVisibility.put(tmp, bools);
+				}
 				
-				if (bools == null)
-					bools = new LinkedList<Boolean>();
-				
-				bools.add(e.isPartnersVisible());
-				mappingIncomingJunctionVisibility.put(tmp, bools);
-			}
-			
-			if (e.getSourceNode() instanceof MyJunctionNode)
-			{
-				MyJunctionNode tmp = (MyJunctionNode) e.getSourceNode();
-				LinkedList<Boolean> bools = mappingOutgoingJunctionVisibility.get(tmp);
-				
-				if (bools == null)
-					bools = new LinkedList<Boolean>();
-				
-				bools.add(e.isPartnersVisible());
-				mappingOutgoingJunctionVisibility.put(tmp, bools);
-			}
+				if (e.getSourceNode() instanceof MyJunctionNode)
+				{
+					MyJunctionNode tmp = (MyJunctionNode) e.getSourceNode();
+					LinkedList<Boolean> bools = mappingOutgoingJunctionVisibility.get(tmp);
+					
+					if (bools == null)
+						bools = new LinkedList<Boolean>();
+					
+					bools.add(e.isPartnersVisible()&& e.isVisible());
+					//bools.add(e.isVisible());
+					mappingOutgoingJunctionVisibility.put(tmp, bools);
+				}
+			//}
 		}
 		
 		HashMap<MyJunctionNode, Boolean> result = new HashMap<MyJunctionNode, Boolean>();
@@ -714,35 +720,39 @@ public class AttributeFilter {
 		{
 			entry.getKey().setVisible(entry.getValue());
 		}
-		checkInvisibleEdges();
+		//checkInvisibleEdges();
 	}
 	
 	private static void checkInvisibleEdges()
 	{
 		for (MyEdge e : ModelBuilder.getAllEdges())
 		{
-			IMyNode source = e.getSourceNode();
-			IMyNode destination = e.getDestinationNode();
-			
-			if (source instanceof MyNode && destination instanceof MyNode)
-			{
-				e.setPartnersVisible(source.isVisible() && destination.isVisible());
-				e.setVisible(source.isVisible() && destination.isVisible());
-			}
-			else
-			{
-				if (source instanceof MyNode)
-				{
-					e.setPartnersVisible(source.isVisible());
-					//e.setVisible(source.isVisible());
-				}
+			//if (e.isVisible())
+			//{
+				IMyNode source = e.getSourceNode();
+				IMyNode destination = e.getDestinationNode();
 				
-				if (destination instanceof MyNode)
+				if (source instanceof MyNode && destination instanceof MyNode)
 				{
-					e.setPartnersVisible(destination.isVisible());
-					//e.setVisible(destination.isVisible());
+					e.setPartnersVisible(source.isVisible() && destination.isVisible());
+					/*if (e.isVisible())
+						e.setVisible(source.isVisible() && destination.isVisible());*/
 				}
-			}
+				else
+				{
+					if (source instanceof MyNode)
+					{
+						e.setPartnersVisible(source.isVisible());
+						//e.setVisible(source.isVisible());
+					}
+					
+					if (destination instanceof MyNode)
+					{
+						e.setPartnersVisible(destination.isVisible());
+						//e.setVisible(destination.isVisible());
+					}
+				}
+			//}
 		}
 	}
 	

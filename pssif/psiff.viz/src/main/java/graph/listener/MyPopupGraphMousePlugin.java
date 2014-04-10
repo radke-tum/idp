@@ -117,7 +117,7 @@ public class MyPopupGraphMousePlugin extends AbstractPopupGraphMousePlugin {
      */
     private JMenu createEdge ( MouseEvent e, MyNode selectedNode)
     {
-    	JMenu submenu = new JMenu("Add Edge");
+    	JMenu submenu = new JMenu("Create Edge");
 
        	LinkedList<MyNode> col = new LinkedList<MyNode>();
        	
@@ -145,7 +145,9 @@ public class MyPopupGraphMousePlugin extends AbstractPopupGraphMousePlugin {
        		menuItem.addActionListener(el);
        		submenu.add(menuItem);
        	}
-           
+        
+       	MenuScroller.setScrollerFor(submenu, 15, 125, 0, 0);
+       	
        	return submenu;
     }
     

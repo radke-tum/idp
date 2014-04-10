@@ -62,7 +62,7 @@ public class Main {
 	private JCheckBoxMenuItem SpringLayout;
 	private JCheckBoxMenuItem ISOMLayout;
 	private JCheckBoxMenuItem CircleLayout;
-	private JCheckBoxMenuItem TestLayout;
+//	private JCheckBoxMenuItem TestLayout;
 	private JMenu applyView;
 	private JMenu deleteView;
 	private JMenu graphLayout;
@@ -303,7 +303,7 @@ public class Main {
 				ISOMLayout.setSelected(false);
 				CircleLayout.setSelected(false);
 				KKLayout.setSelected(true);
-				TestLayout.setSelected(false);
+				//TestLayout.setSelected(false);
 			}
 		});
 		graphLayout.add(KKLayout);
@@ -320,7 +320,7 @@ public class Main {
 				ISOMLayout.setSelected(false);
 				CircleLayout.setSelected(false);
 				FRLayout.setSelected(true);
-				TestLayout.setSelected(false);
+				//TestLayout.setSelected(false);
 			}
 		});
 		graphLayout.add(FRLayout);
@@ -336,7 +336,7 @@ public class Main {
 				ISOMLayout.setSelected(false);
 				CircleLayout.setSelected(false);
 				SpringLayout.setSelected(true);
-				TestLayout.setSelected(false);
+				//TestLayout.setSelected(false);
 			}
 		});
 		graphLayout.add(SpringLayout);
@@ -352,7 +352,7 @@ public class Main {
 				SpringLayout.setSelected(false);
 				CircleLayout.setSelected(false);
 				ISOMLayout.setSelected(true);
-				TestLayout.setSelected(false);
+				//TestLayout.setSelected(false);
 			}
 		});
 		graphLayout.add(ISOMLayout);
@@ -368,7 +368,7 @@ public class Main {
 				SpringLayout.setSelected(false);
 				ISOMLayout.setSelected(false);
 				CircleLayout.setSelected(true);
-				TestLayout.setSelected(false);
+				//TestLayout.setSelected(false);
 			}
 		});
 		graphLayout.add(CircleLayout);
