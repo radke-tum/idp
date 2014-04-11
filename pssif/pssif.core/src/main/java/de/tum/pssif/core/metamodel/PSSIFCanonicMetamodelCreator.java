@@ -72,7 +72,7 @@ public final class PSSIFCanonicMetamodelCreator {
   public static final String E_RELATIONSHIP_CHRONOLOGICAL_REPLACES     = "Replaces";
   public static final String E_RELATIONSHIP_CHRONOLOGICAL_BASED_ON     = "Based On";
   public static final String E_RELATIONSHIP_CHRONOLOGICAL_REFINES      = "Refines";
-  public static final String E_RELATIONSHIP_CHRONOLOGICAL_PRECONDITION = "Precondigion";
+  public static final String E_RELATIONSHIP_CHRONOLOGICAL_PRECONDITION = "Precondition";
 
   public static final String E_RELATIONSHIP_REFERENTIAL                = "Referential Relation";
   public static final String E_RELATIONSHIP_REFERENTIAL_DESCRIBES      = "Describes";
