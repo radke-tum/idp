@@ -21,7 +21,9 @@ import model.ModelBuilder;
 import edu.uci.ics.jung.algorithms.layout.GraphElementAccessor;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.control.AbstractPopupGraphMousePlugin;
+import graph.model.IMyNode;
 import graph.model.MyEdge;
+import graph.model.MyJunctionNode;
 import graph.model.MyNode;
 import graph.model.MyNodeType;
 import gui.graph.GraphVisualization;
@@ -47,22 +49,32 @@ public class MyPopupGraphMousePlugin extends AbstractPopupGraphMousePlugin {
      * if the user clicked somewhere on the graph canvas. What should be done
      */
     protected void handlePopup(MouseEvent e) {
-        VisualizationViewer<MyNode,MyEdge> vv = (VisualizationViewer<MyNode,MyEdge>)e.getSource();
+        VisualizationViewer<IMyNode,MyEdge> vv = (VisualizationViewer<IMyNode,MyEdge>)e.getSource();
     	
         Point2D p = e.getPoint();
 
-        GraphElementAccessor<MyNode,MyEdge> pickSupport = vv.getPickSupport();
+        GraphElementAccessor<IMyNode,MyEdge> pickSupport = vv.getPickSupport();
         if(pickSupport != null) {
-            MyNode node = pickSupport.getVertex(vv.getGraphLayout(), p.getX(), p.getY());
+            IMyNode node = pickSupport.getVertex(vv.getGraphLayout(), p.getX(), p.getY());
             // check where did the user click
             if(node != null) {
-            	// if the user made a right click on a Node
-            	JPopupMenu popup = new JPopupMenu();
-            	JMenu submenu =createEdge(e,node);
             	
-            	popup.add(submenu);
-            	
-            	popup.show(vv, e.getX(), e.getY());
+            	if (node instanceof MyNode)
+            	{
+	            	// if the user made a right click on a Node
+            		
+            		
+	            	JPopupMenu popup = new JPopupMenu();
+	            	JMenu submenu =createEdge(e,(MyNode)node);
+	            	
+	            	popup.add(submenu);
+	            	
+	            	popup.show(vv, e.getX(), e.getY());
+            	}
+            	if (node instanceof MyJunctionNode)
+            	{
+            		// Not implemented
+            	}
             } 
             else {
             	// not on a node, so show the new Node popup
