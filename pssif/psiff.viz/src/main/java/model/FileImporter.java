@@ -46,7 +46,7 @@ public class FileImporter extends FileHandler{
         }
         else
         {
-        	createErrorPopup("There was a problem transforming the selected file. Was the file type chosen correctly?");
+        	createErrorPopup("This Transformation is not implemented in the PSS-IF Transfrom project");
 	        return false;
         }    
       }

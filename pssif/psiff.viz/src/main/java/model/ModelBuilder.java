@@ -232,6 +232,7 @@ public class ModelBuilder {
 	
 	private static void calcPossibleEdges()
 	{
+		//System.out.println("Call");
 		if (possibleMappings== null)
 		{
 			possibleMappings = new HashMap<ModelBuilder.MyPair, LinkedList<MyEdgeType>>();
@@ -256,6 +257,16 @@ public class ModelBuilder {
 						}
 						MyEdgeType value = getEdgeTypes().getValue(et.getName());
 						data.add(value);
+						/*if (value.getName().equals(PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_INCLUSION) )
+						{
+							System.out.println(start.getName() +"--"+ end.getName());
+						}
+						
+						if (value.getParentType()!=null)
+						{
+							if (value.getParentType().getName().equals(PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_INCLUSION))
+								System.out.println(start.getName() +"--"+ end.getName());
+						}*/
 						possibleMappings.put(p, data);
 					}
 					
