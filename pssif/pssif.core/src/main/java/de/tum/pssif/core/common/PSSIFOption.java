@@ -1,6 +1,7 @@
 package de.tum.pssif.core.common;
 
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.Set;
 
 import com.google.common.collect.Sets;
@@ -14,7 +15,7 @@ import de.tum.pssif.core.exception.PSSIFIllegalAccessException;
  * @param <P>
  *  The contained type.
  */
-public final class PSSIFOption<P> {
+public final class PSSIFOption<P> implements Iterable<P> {
 
   private final Set<P> elements;
 
@@ -162,5 +163,10 @@ public final class PSSIFOption<P> {
   @Override
   public int hashCode() {
     return elements.hashCode();
+  }
+
+  @Override
+  public Iterator<P> iterator() {
+    return this.elements.iterator();
   }
 }
