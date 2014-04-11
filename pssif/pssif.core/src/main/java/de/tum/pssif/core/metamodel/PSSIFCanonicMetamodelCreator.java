@@ -38,7 +38,13 @@ public final class PSSIFCanonicMetamodelCreator {
   public static final String N_HARDWARE                                = "Hardware";
   public static final String N_MECHANIC                                = "Mechanic";
   public static final String N_ELECTRONIC                              = "Electronic";
+  public static final String N_MODULE                                  = "Module";
   public static final String N_CONJUNCTION                             = ENUM_CONJUNCTION;
+
+  public static final String N_PORT                                    = "Port";
+  public static final String N_PORT_SOFTWARE                           = "SoftwarePort";
+  public static final String N_PORT_MECHANIC                           = "MechanicPort";
+  public static final String N_PORT_ELECTRONIC                         = "ElectronicPort";
 
   public static final String A_DURATION                                = "duration";
   public static final String A_REQUIREMENT_PRIORITY                    = "priority";
@@ -191,6 +197,18 @@ public final class PSSIFCanonicMetamodelCreator {
 
     NodeType electronic = metamodel.createNodeType(N_ELECTRONIC);
     electronic.inherit(hardware);
+
+    NodeType module = metamodel.createNodeType(N_MODULE);
+    module.inherit(block);
+
+    NodeType port = metamodel.createNodeType(N_PORT);
+
+    MutableNodeType electronicPort = metamodel.createNodeType(N_PORT_ELECTRONIC);
+    electronicPort.inherit(port);
+    MutableNodeType mechanicPort = metamodel.createNodeType(N_PORT_MECHANIC);
+    mechanicPort.inherit(port);
+    MutableNodeType softwarePort = metamodel.createNodeType(N_PORT_SOFTWARE);
+    softwarePort.inherit(port);
   }
 
   private static void createRelationships(MetamodelImpl metamodel) {
@@ -263,8 +281,12 @@ public final class PSSIFCanonicMetamodelCreator {
     EdgeType inclusionRelationship = metamodel.createEdgeType(E_RELATIONSHIP_INCLUSION);
     inclusionRelationship.inherit(relationship);
 
-    EdgeType containsRelationship = metamodel.createEdgeType(E_RELATIONSHIP_INCLUSION_CONTAINS);
+    MutableEdgeType containsRelationship = metamodel.createEdgeType(E_RELATIONSHIP_INCLUSION_CONTAINS);
     containsRelationship.inherit(inclusionRelationship);
+    containsRelationship.createMapping(node(N_ELECTRONIC, metamodel), node(N_PORT_ELECTRONIC, metamodel));
+    containsRelationship.createMapping(node(N_MECHANIC, metamodel), node(N_PORT_MECHANIC, metamodel));
+    containsRelationship.createMapping(node(N_SOFTWARE, metamodel), node(N_PORT_SOFTWARE, metamodel));
+    containsRelationship.createMapping(node(N_BLOCK, metamodel), node(N_BLOCK, metamodel));
 
     EdgeType includesRelationship = metamodel.createEdgeType(E_RELATIONSHIP_INCLUSION_INCLUDES);
     includesRelationship.inherit(inclusionRelationship);
