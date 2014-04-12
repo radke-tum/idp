@@ -1,5 +1,7 @@
 package reqtool;
 
+import java.util.LinkedList;
+
 import graph.model.MyEdge;
 import graph.model.MyEdgeType;
 import graph.model.MyNode;
@@ -138,10 +140,12 @@ public class RequirementVersionManager {
 				return true;
 			}
 
-			else
+			else {
 				System.out.println("Cannot create new requirement with same version!");
+				return false;
+			}
 
-			return false;
+			
 
 			/*
 			 * TODO
@@ -154,7 +158,6 @@ public class RequirementVersionManager {
 			createNewVersion(gViz, getMaxVersion(mNode), newVersion);
 			return true;
 		}
-
 	}
 
 	public static boolean hasPreviousVersions(MyNode myNode) {
@@ -203,19 +206,38 @@ public class RequirementVersionManager {
 
 	}
 
-	public static void hideVersions(GraphVisualization gViz, MyNode myNode) {
+		public static void hideVersions(GraphVisualization gViz, MyNode myNode) {
 		MyNode parentNode = getMaxVersion(myNode);
+		LinkedList<MyNode> toBeHidden = new LinkedList<MyNode>();
 		String[] idNV = myNode.getNode().getId().toString().split("_");
 		for (MyNode mN : ModelBuilder.getAllNodes()) {
 			String[] idNVNew = mN.getNode().getId().toString().split("_");
 			if (idNVNew.length > 0 && idNVNew[0].equals(idNV[0])
 					&& !mN.equals(parentNode)) {
-				mN.setVisible(false);
+				toBeHidden.add(mN);
+				//mN.setVisible(false);
+				
 			}
 
 		}
+		
+		for (MyEdge e: ModelBuilder.getAllEdges()){
+			
+			if ( toBeHidden.contains((MyNode)e.getDestinationNode()) && ((MyNode)e.getSourceNode()).getNodeType().toString().equals(PSSIFCanonicMetamodelCreator.N_TEST_CASE) ){
+				toBeHidden.add((MyNode)e.getSourceNode());
+			}
+		}
+		
+		
+				
+		
+		for (MyNode n : toBeHidden){
+			n.setVisible(false);
+		}
 
 	}
+		
+		
 
 	public static void showVersions(GraphVisualization gViz, MyNode myNode) {
 		MyNode parentNode = getMaxVersion(myNode);

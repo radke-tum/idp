@@ -55,7 +55,7 @@ public class TestCaseValidatorPopup {
 	public int showPopup() {
 		JPanel panel = createPanel();
 
-		int dialogResult = JOptionPane.showConfirmDialog(null, panel, "Filter by Attribute", JOptionPane.DEFAULT_OPTION);
+		int dialogResult = JOptionPane.showConfirmDialog(null, panel, "Numerical verification", JOptionPane.DEFAULT_OPTION);
 
 		return evalDialog(dialogResult);
 	}

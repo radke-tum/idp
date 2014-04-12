@@ -3,10 +3,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
-import java.math.BigDecimal;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Map.Entry;
 
 import javax.swing.AbstractAction;
 import javax.swing.JComboBox;
@@ -18,16 +21,18 @@ import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.JTextField;
 
+import model.ModelBuilder;
+import reqtool.IssueResolver;
+import reqtool.RequirementTracer;
+import reqtool.RequirementVersionManager;
+import reqtool.TestCaseVerifier;
+import reqtool.VersionManager;
+import reqtool.graph.TestCaseCreatorPopup;
 import de.tum.pssif.core.common.PSSIFConstants;
 import de.tum.pssif.core.common.PSSIFOption;
 import de.tum.pssif.core.common.PSSIFValue;
+import de.tum.pssif.core.metamodel.Attribute;
 import de.tum.pssif.core.metamodel.PSSIFCanonicMetamodelCreator;
-import reqtool.RequirementTracer;
-import reqtool.RequirementVersionManager;
-import reqtool.TestCaseCreator;
-import reqtool.TestCaseVerifier;
-import reqtool.graph.TestCaseCreatorPopup;
-import model.ModelBuilder;
 import edu.uci.ics.jung.algorithms.layout.GraphElementAccessor;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.control.AbstractPopupGraphMousePlugin;
@@ -71,7 +76,9 @@ public class MyPopupGraphMousePlugin extends AbstractPopupGraphMousePlugin {
 				JMenu submenu = createEdge(e, node);
 				popup.add(submenu);
 
-				if (node.getNodeType().toString().equals(PSSIFCanonicMetamodelCreator.N_REQUIREMENT)) {
+				
+				if (node.getNodeType().equals((ModelBuilder.getNodeTypes().getValue(PSSIFCanonicMetamodelCreator.N_REQUIREMENT)))) {
+					
 					JMenu reqMenu = new JMenu("Requirement Tool");
 					JMenu versMenu = new JMenu("Version Management");
 
@@ -85,15 +92,27 @@ public class MyPopupGraphMousePlugin extends AbstractPopupGraphMousePlugin {
 					versMenu.add(subItem3);
 					versMenu.add(subItem4);
 					popup.add(reqMenu);
-				} else if (node.getNodeType().toString().equals(PSSIFCanonicMetamodelCreator.N_TEST_CASE)) {
+				} else if (node.getNodeType().equals((ModelBuilder.getNodeTypes().getValue(PSSIFCanonicMetamodelCreator.N_TEST_CASE)))) {
 					JMenuItem subItem = verifyTestCase(e, node);
 					popup.add(subItem);
 
-				} else if (node.getNodeType().toString().equals(PSSIFCanonicMetamodelCreator.N_ISSUE)) {
+				} else if (node.getNodeType().equals((ModelBuilder.getNodeTypes().getValue(PSSIFCanonicMetamodelCreator.N_ISSUE)))) {
 					JMenuItem subItem = resolveIssue(e, node);
 					popup.add(subItem);
 
+					
 				}
+				if (ModelBuilder.getNodeTypes().getValue(PSSIFCanonicMetamodelCreator.N_SOL_ARTIFACT).getType().isAssignableFrom(node.getNodeType().getType())) {
+					
+					JMenu versMenu = new JMenu("Version Management");
+					JMenuItem subItem3 = createNewVersion(e, node);
+					JMenuItem subItem4 = showHideVersions(e, node);
+					versMenu.add(subItem3);
+					versMenu.add(subItem4);
+					popup.add(versMenu);
+
+			}
+
 
 				popup.show(vv, e.getX(), e.getY());
 			}
@@ -302,22 +321,47 @@ public class MyPopupGraphMousePlugin extends AbstractPopupGraphMousePlugin {
 			
     		@Override
         	public void actionPerformed(ActionEvent e) {
+    			Collection<Attribute> nodeAttributes = node.getNodeType().getType().getAttributes();
+    			
+            	JComponent[] inputs = new JComponent[nodeAttributes.size()*2];
+    			HashMap<Attribute, JTextField> attrTextFields = new HashMap<Attribute, JTextField>();
+    			int i=0;
+    			Iterator<Attribute> iterator = nodeAttributes.iterator();
+    			while (iterator.hasNext()) {
+    				Attribute attr = iterator.next();
+    				if (!attr.getName().equals(PSSIFConstants.BUILTIN_ATTRIBUTE_ID)){
+    				JTextField attrText = new JTextField();
+    				inputs[i] = new JLabel(attr.getName().toString());
+    				i++;
+    				inputs[i] = attrText;
+    				attrTextFields.put(attr, attrText);
+    				i++;
+    	}
+    			}
+    			
             	JTextField VersionText = new JTextField();
-            	JComponent[] inputs = new JComponent[] {
+            	JComponent[] inputsFrr = new JComponent[] {
             			new JLabel("Version"),
             			VersionText,
-            	};						
-            	JOptionPane.showMessageDialog(null, inputs, "Create new Node Dialog", JOptionPane.PLAIN_MESSAGE);
+            	};
+            	
+            	JOptionPane.showMessageDialog(null, inputs, "Create new version node", JOptionPane.PLAIN_MESSAGE);
             	// check if the user filled all the input field
             	PSSIFOption<PSSIFValue> version2 = node.getNodeType().getType().getAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_VERSION).getOne().get(node.getNode());
 				 
-            	if (VersionText.getText()!=null && VersionText.getText().length()>0 && !version2.isNone() 
-            			&& Double.parseDouble(version2.getOne().asString()) < (Double.parseDouble(VersionText.getText())) )
-            	{
-            		if (RequirementVersionManager.createNewVersion(gViz, node, VersionText.getText())) {
-            			gViz.updateGraph();
-            		}
-            	}                                       	
+            	for (Entry<Attribute, JTextField> input:attrTextFields.entrySet()) {
+	            	if (  input.getKey().getName().equals(PSSIFConstants.BUILTIN_ATTRIBUTE_VERSION)  &&
+	            			input.getValue().getText()!=null && input.getValue().getText().length()>0 && !version2.isNone() 
+	            			&& Double.parseDouble(version2.getOne().asString()) < (Double.parseDouble(input.getValue().getText())) )
+	            	{
+	            		VersionManager vm = new VersionManager(node);
+	            		if (vm.createNewVersion(input.getValue().getText())) {
+	            			gViz.updateGraph();
+	            		}
+	            		
+	            		
+	            	}          
+            	}
             }
 
         });
@@ -334,9 +378,10 @@ public class MyPopupGraphMousePlugin extends AbstractPopupGraphMousePlugin {
 			
     		@Override
         	public void actionPerformed(ActionEvent e) {
-    			new TestCaseVerifier(selectedNode).verifyTestCase();
-    			gViz.updateGraph();
-        	}
+    		IssueResolver issueResolver = new IssueResolver(selectedNode);
+    		issueResolver.resolveIssue();
+    		gViz.updateGraph();
+    		}
 		}
     	);
     	
