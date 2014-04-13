@@ -111,12 +111,13 @@ public class TestCaseValidatorPopup {
 									result = false;
 								}
 							}
-
+							selectedNode.updateAttribute(PSSIFConstants.A_TEST_CASE_CONDITION_ATTRIBUTE, selectedAttribute);
+							selectedNode.updateAttribute(PSSIFConstants.A_TEST_CASE_CONDITION_OP, selectedOperation);
+							selectedNode.updateAttribute(PSSIFConstants.A_TEST_CASE_CONDITION_VALUE, RefValue);
 							if (result == false) {
-								selectedNode.updateAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_COMMENT, selectedAttribute+" "+selectedOperation+" "+RefValue);
+								
 								return 0;
 							} else {
-								selectedNode.updateAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_COMMENT, selectedAttribute+" "+selectedOperation+" "+RefValue);
 								return 1;
 							}
 						}

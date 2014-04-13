@@ -63,7 +63,7 @@ public final class PSSIFCanonicMetamodelCreator {
   public static final String A_HARDWARE_WEIGHT                         = "weight";
   public static final String A_TEST_CASE_STATUS 					   = "status";
   public static final String A_CONJUNCTION                             = ENUM_CONJUNCTION;
-
+  
   public static final String E_FLOW                                    = "Flow";
   public static final String E_FLOW_ENERGY                             = "Energy Flow";
   public static final String E_FLOW_MATERIAL                           = "Material Flow";
@@ -111,6 +111,7 @@ public final class PSSIFCanonicMetamodelCreator {
   public static final String E_RELATIONSHIP_LOGICAL_VERIFIES           = "Verifies";
   public static final String E_RELATIONSHIP_LOGICAL_OVERLAPS           = "Overlaps";
   public static final String E_RELATIONSHIP_LOGICAL_IS_ALTERNATIVE     = "Is Alternative";
+  
 
 
   private PSSIFCanonicMetamodelCreator() {
@@ -159,6 +160,9 @@ public final class PSSIFCanonicMetamodelCreator {
     MutableNodeType testCase = metamodel.createNodeType(N_TEST_CASE);
     testCase.inherit(devArtifact);
     testCase.createAttribute(testCase.getDefaultAttributeGroup(), A_TEST_CASE_STATUS, PrimitiveDataType.STRING, true, AttributeCategory.METADATA);
+    testCase.createAttribute(testCase.getDefaultAttributeGroup(), PSSIFConstants.A_TEST_CASE_CONDITION_ATTRIBUTE, PrimitiveDataType.STRING, true, AttributeCategory.METADATA);
+    testCase.createAttribute(testCase.getDefaultAttributeGroup(), PSSIFConstants.A_TEST_CASE_CONDITION_OP, PrimitiveDataType.STRING, true, AttributeCategory.METADATA);
+    testCase.createAttribute(testCase.getDefaultAttributeGroup(), PSSIFConstants.A_TEST_CASE_CONDITION_VALUE, PrimitiveDataType.STRING, true, AttributeCategory.METADATA);
     
 
     NodeType view = metamodel.createNodeType(N_VIEW);
