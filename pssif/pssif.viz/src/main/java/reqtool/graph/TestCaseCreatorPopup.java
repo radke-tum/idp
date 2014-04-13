@@ -50,26 +50,29 @@ public class TestCaseCreatorPopup {
 	}
 
 	private boolean evalDialog(int dialogResult) {
-		LinkedList<MyNode> selectedNodes = new LinkedList<MyNode>();
-		
-		List<Integer> indexes = new ArrayList<Integer>();
-		Component[] nodes = NodePanel.getComponents();
-		for (int i=0;i<nodes.length;i++) {
-			Component tmp = nodes[i];
-			if ((tmp instanceof JCheckBox)) {
-				JCheckBox a = (JCheckBox) tmp;
-				if (a.isSelected()) {
-					indexes.add(i);
+		if (dialogResult == 0) {
+			LinkedList<MyNode> selectedNodes = new LinkedList<MyNode>();
+			
+			List<Integer> indexes = new ArrayList<Integer>();
+			Component[] nodes = NodePanel.getComponents();
+			for (int i=0;i<nodes.length;i++) {
+				Component tmp = nodes[i];
+				if ((tmp instanceof JCheckBox)) {
+					JCheckBox a = (JCheckBox) tmp;
+					if (a.isSelected()) {
+						indexes.add(i);
+					}
 				}
 			}
+			
+			for(int index:indexes) {
+				selectedNodes.add(solutionArtifacts.get(index));
+			}
+	
+			TestCaseCreator.createTestCase(gViz, requirementNode, selectedNodes);
+			return true;
 		}
-		
-		for(int index:indexes) {
-			selectedNodes.add(solutionArtifacts.get(index));
-		}
-
-		TestCaseCreator.createTestCase(gViz, requirementNode, selectedNodes);
-		return true;
+		return false;
 	}
 
 	private JPanel createPanel() {
@@ -127,7 +130,8 @@ public class TestCaseCreatorPopup {
 		allPanel.add(new JLabel("Choose Node Types"), c);
 		c.gridy = ypos++;
 		allPanel.add(scrollNodes, c);
-		c.gridy = ypos++;
+		ypos++;
+		c.gridy = ypos;
 		allPanel.add(selectAllNodes, c);
 		c.gridy = ypos++;
 

@@ -298,6 +298,8 @@ public final class PSSIFCanonicMetamodelCreator {
     MutableEdgeType basedOnRelationship = metamodel.createEdgeType(E_RELATIONSHIP_CHRONOLOGICAL_BASED_ON);
     basedOnRelationship.createMapping(node(N_REQUIREMENT, metamodel), node(N_REQUIREMENT, metamodel));
     basedOnRelationship.createMapping(node(N_TEST_CASE, metamodel), node(N_REQUIREMENT, metamodel));
+    basedOnRelationship.createMapping(node(N_REQUIREMENT, metamodel), node(N_CHANGE_EVENT, metamodel));
+    basedOnRelationship.createMapping(node(N_SOL_ARTIFACT, metamodel), node(N_CHANGE_EVENT, metamodel));
     basedOnRelationship.inherit(chronologicalRelationship);
     
     MutableEdgeType leadsToRelationship = metamodel.createEdgeType(E_RELATIONSHIP_CHRONOLOGICAL_LEADS_TO);

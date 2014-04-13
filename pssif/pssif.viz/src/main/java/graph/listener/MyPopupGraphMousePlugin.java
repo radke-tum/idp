@@ -27,7 +27,9 @@ import reqtool.RequirementTracer;
 import reqtool.RequirementVersionManager;
 import reqtool.TestCaseVerifier;
 import reqtool.VersionManager;
+import reqtool.graph.IssueResolverPopup;
 import reqtool.graph.TestCaseCreatorPopup;
+import reqtool.graph.VersionManagerPopup;
 import de.tum.pssif.core.common.PSSIFConstants;
 import de.tum.pssif.core.common.PSSIFOption;
 import de.tum.pssif.core.common.PSSIFValue;
@@ -321,47 +323,9 @@ public class MyPopupGraphMousePlugin extends AbstractPopupGraphMousePlugin {
 			
     		@Override
         	public void actionPerformed(ActionEvent e) {
-    			Collection<Attribute> nodeAttributes = node.getNodeType().getType().getAttributes();
-    			
-            	JComponent[] inputs = new JComponent[nodeAttributes.size()*2];
-    			HashMap<Attribute, JTextField> attrTextFields = new HashMap<Attribute, JTextField>();
-    			int i=0;
-    			Iterator<Attribute> iterator = nodeAttributes.iterator();
-    			while (iterator.hasNext()) {
-    				Attribute attr = iterator.next();
-    				if (!attr.getName().equals(PSSIFConstants.BUILTIN_ATTRIBUTE_ID)){
-    				JTextField attrText = new JTextField();
-    				inputs[i] = new JLabel(attr.getName().toString());
-    				i++;
-    				inputs[i] = attrText;
-    				attrTextFields.put(attr, attrText);
-    				i++;
-    	}
+    			if (VersionManagerPopup.showPopup(node)) {
+    				gViz.updateGraph();
     			}
-    			
-            	JTextField VersionText = new JTextField();
-            	JComponent[] inputsFrr = new JComponent[] {
-            			new JLabel("Version"),
-            			VersionText,
-            	};
-            	
-            	JOptionPane.showMessageDialog(null, inputs, "Create new version node", JOptionPane.PLAIN_MESSAGE);
-            	// check if the user filled all the input field
-            	PSSIFOption<PSSIFValue> version2 = node.getNodeType().getType().getAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_VERSION).getOne().get(node.getNode());
-				 
-            	for (Entry<Attribute, JTextField> input:attrTextFields.entrySet()) {
-	            	if (  input.getKey().getName().equals(PSSIFConstants.BUILTIN_ATTRIBUTE_VERSION)  &&
-	            			input.getValue().getText()!=null && input.getValue().getText().length()>0 && !version2.isNone() 
-	            			&& Double.parseDouble(version2.getOne().asString()) < (Double.parseDouble(input.getValue().getText())) )
-	            	{
-	            		VersionManager vm = new VersionManager(node);
-	            		if (vm.createNewVersion(input.getValue().getText())) {
-	            			gViz.updateGraph();
-	            		}
-	            		
-	            		
-	            	}          
-            	}
             }
 
         });
@@ -378,8 +342,8 @@ public class MyPopupGraphMousePlugin extends AbstractPopupGraphMousePlugin {
 			
     		@Override
         	public void actionPerformed(ActionEvent e) {
-    		IssueResolver issueResolver = new IssueResolver(selectedNode);
-    		issueResolver.resolveIssue();
+    		IssueResolverPopup popup = new IssueResolverPopup(selectedNode);
+    		popup.showPopup(gViz);
     		gViz.updateGraph();
     		}
 		}

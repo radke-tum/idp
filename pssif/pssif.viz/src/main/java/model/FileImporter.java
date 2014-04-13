@@ -99,7 +99,7 @@ public class FileImporter extends FileHandler{
 
     panel2.add(importeType);
 ======= */
-	super.getFileChooser().setCurrentDirectory(new File("D:\\Dropbox\\IDP-PSS-IF-Shared\\Modelle PE"));
+	super.getFileChooser().setCurrentDirectory(new File("/users/ami/dropbox/IDP-PSS-IF-Shared/Modelle PE"));
 // >>>>>>> origin/attempt4
 
     int returnVal = super.getFileChooser().showOpenDialog(caller);

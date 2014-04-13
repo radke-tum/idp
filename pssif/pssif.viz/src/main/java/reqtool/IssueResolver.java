@@ -2,9 +2,11 @@ package reqtool;
 
 import graph.model.MyEdge;
 import graph.model.MyNode;
+import gui.graph.GraphVisualization;
 
 import java.util.LinkedList;
 
+import reqtool.graph.IssueResolverPopup;
 import model.ModelBuilder;
 import de.tum.pssif.core.common.PSSIFConstants;
 import de.tum.pssif.core.metamodel.PSSIFCanonicMetamodelCreator;
@@ -12,19 +14,16 @@ import de.tum.pssif.core.metamodel.PSSIFCanonicMetamodelCreator;
 public class IssueResolver {
 	private MyNode selectedNode;
 	
-	public IssueResolver (MyNode myNode){
+	public IssueResolver (MyNode myNode) {
 		this.selectedNode = myNode;
 	}
 	
-	public void resolveIssue (){
+	public void resolveIssue () {
 		
 		System.out.println("Resolving Issue for Issue: "+selectedNode.getName());
 		
-		TestCaseVerifier test = new TestCaseVerifier(this.getTestCase());
-		LinkedList<MyNode> solArts = test.getVerifiedSolArtifacts();
+		LinkedList<MyNode> solArts = getSolArtifacts();
 		System.out.println("Resolving Issue for  TestCase: "+getTestCase().getName());
-		
-		
 		
 		String condition = getTestCase().getNodeType().getType().getAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_COMMENT).getOne().get(getTestCase().getNode()).getOne().asString();
 				//getNodeType().getType().getAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_COMMENT).getOne().get(getTestCase().getNode()).;
@@ -32,7 +31,7 @@ public class IssueResolver {
 		System.out.println("TestCase Condition Leading to Issue: "+condition);
 		
 		
-		System.out.println("Resolving Issue for  Requirement: "+getRequirement().getName());
+		System.out.println("Resolving Issue for  Requirement: "+getRequirement().get(0).getName());
 		
 		
 		if (solArts.size()==0){
@@ -41,7 +40,7 @@ public class IssueResolver {
 		else if (solArts.size()==1){
 			MyNode solArt = solArts.get(0);
 			System.out.println("Resolving Issue for  Solution Artifact: "+solArt.getName());
-			MyNode changeProposal = ModelBuilder.addNewNodeFromGUI("ChangeEvent for Issue"+selectedNode.getName() , ModelBuilder.getNodeTypes().getValue(PSSIFCanonicMetamodelCreator.N_CHANGE_EVENT));
+			MyNode changeProposal = ModelBuilder.addNewNodeFromGUI("ChangeProposal for Issue"+selectedNode.getName() , ModelBuilder.getNodeTypes().getValue(PSSIFCanonicMetamodelCreator.N_CHANGE_PROPOSAL));
 			
 			ModelBuilder.addNewEdgeGUI(selectedNode, changeProposal, ModelBuilder.getEdgeTypes().getValue(PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_CHRONOLOGICAL_LEADS_TO), true);
 			
@@ -63,14 +62,19 @@ public class IssueResolver {
 		
 	}
 	
-	private MyNode getRequirement() {
-		MyNode node = null;
+	public LinkedList<MyNode> getSolArtifacts() {
+		TestCaseVerifier test = new TestCaseVerifier(this.getTestCase());
+		return test.getVerifiedSolArtifacts();
+	}
+	
+	public LinkedList<MyNode> getRequirement() {
+		LinkedList<MyNode> nodes = new LinkedList<MyNode>();
 		for (MyEdge e: ModelBuilder.getAllEdges()){
 			if (e.getSourceNode().equals(this.getTestCase()) && ((MyNode) e.getDestinationNode()).getNodeType().equals(ModelBuilder.getNodeTypes().getValue(PSSIFCanonicMetamodelCreator.N_REQUIREMENT))){
-				node =  (MyNode) e.getDestinationNode();
+				nodes.add((MyNode) e.getDestinationNode());
 			}
 		}
-		return node;
+		return nodes;
 	}
 
 	public MyNode getTestCase(){
