@@ -343,7 +343,7 @@ public class MyCollapser {
 	
 	private boolean testInclusionEdge(MyEdge e)
 	{
-		EdgeType parent = e.getEdgeType().getParentType();
+		/*EdgeType parent = e.getEdgeType().getParentType();
 		
 		if (parent !=null)
 		{
@@ -367,6 +367,11 @@ public class MyCollapser {
 			res = res || e.getEdgeType().getName().equals(PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_INCLUSION_INCLUDES);
 			
 			return res;
-		}
+		}*/
+		
+		boolean res = false;
+		res = res || e.getEdgeType().getName().equals(PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_INCLUSION_CONTAINS);
+		
+		return res;
 	}
 }

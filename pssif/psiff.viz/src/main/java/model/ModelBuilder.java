@@ -245,10 +245,23 @@ public class ModelBuilder {
 				for (EdgeType et: getMetamodel().getEdgeTypes())
 				{
 					PSSIFOption<ConnectionMapping> tmp = et.getMapping(start, end);
+					
+					
+					/*if (et.getName().equals(PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_INCLUSION_CONTAINS) && tmp!=null)
+					{
+						if ((tmp.isOne() || tmp.isMany()) && (end.getName().equals("Activity") || start.getName().equals("Activity")))
+						{
+							System.out.println(start.getName()+" to "+end.getName());
+							//System.out.println("None "+tmp.isNone());
+							System.out.println("One "+tmp.isOne());
+							System.out.println("Many "+tmp.isMany());
+							System.out.println("-----------------------------");
+						}
+					}*/
 					if (tmp!=null && tmp.isOne())
 					{
 						//ConnectionMapping mapping = tmp.getOne();
-						MyPair p = new MyPair(start, end);
+						MyPair p = MyPair.getInsance(start,end);
 						LinkedList<MyEdgeType> data = possibleMappings.get(p);
 						
 						if (data ==null)
@@ -257,6 +270,7 @@ public class ModelBuilder {
 						}
 						MyEdgeType value = getEdgeTypes().getValue(et.getName());
 						data.add(value);
+						
 						/*if (value.getName().equals(PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_INCLUSION) )
 						{
 							System.out.println(start.getName() +"--"+ end.getName());
@@ -280,7 +294,7 @@ public class ModelBuilder {
 		if (possibleMappings== null)
 			calcPossibleEdges();
 		
-		LinkedList<MyEdgeType> res = possibleMappings.get(new MyPair(start, end));
+		LinkedList<MyEdgeType> res = possibleMappings.get(MyPair.getInsance(start, end));
 		
 		if (res ==null)
 		{
@@ -295,10 +309,39 @@ public class ModelBuilder {
 		private NodeType start;
 		private NodeType end;
 		
-		public MyPair (NodeType start, NodeType end)
+		private static LinkedList<MyPair> values;
+		
+		private MyPair (NodeType start, NodeType end)
 		{
 			this.start = start;
 			this.end = end;
+		}
+		
+		public static MyPair getInsance(NodeType start, NodeType end)
+		{
+			if (values ==null)
+				values = new LinkedList<ModelBuilder.MyPair>();
+			
+			MyPair mp = existsAlready(start, end);
+			if (mp!=null)
+				return mp;
+			else
+			{
+				mp = new MyPair(start, end);
+				values.add(mp);
+				return mp;
+			}
+		}
+		
+		private static MyPair existsAlready (NodeType start, NodeType end)
+		{
+			for (MyPair v: values)
+			{
+				if (v.start.getName().equals(start.getName()) && v.end.getName().equals(end.getName()))
+					return v;
+			}
+			
+			return null;
 		}
 
 		@Override
@@ -322,7 +365,8 @@ public class ModelBuilder {
 			if (end == null) {
 				if (other.end != null)
 					return false;
-			} else if (!end.equals(other.end))
+			} 
+			else if (!end.equals(other.end))
 				return false;
 			if (start == null) {
 				if (other.start != null)
