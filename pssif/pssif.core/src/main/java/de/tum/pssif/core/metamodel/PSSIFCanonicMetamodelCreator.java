@@ -15,6 +15,16 @@ public final class PSSIFCanonicMetamodelCreator {
   public static final String ENUM_CONJUNCTION_OR                       = "OR";
   public static final String ENUM_CONJUNCTION_XOR                      = "XOR";
 
+  //  public static final String ENUM_FLOW_DIRECTION                       = "FlowDirection";
+  //  public static final String ENUM_FLOW_DIRECTION_IN                    = "In";
+  //  public static final String ENUM_FLOW_DIRECTION_OUT                   = "Out";
+  //  public static final String ENUM_FLOW_DIRECTION_IN_OUT                = "InOut";
+  //
+  //  public static final String ENUM_FEATURE_DIRECTION                    = "FlowDirection";
+  //  public static final String ENUM_FEATUREDIRECTION_PROVIDED            = "Provided";
+  //  public static final String ENUM_FEATURE_DIRECTION_REQUIRED           = "Required";
+  //  public static final String ENUM_FEATURE_DIRECTION_PROVIDED_REQUIRED  = "RequiredProvided";
+
   public static final String N_DEV_ARTIFACT                            = "Development Artifact";
 
   public static final String N_FUNCTIONALITY                           = "Functionality";
@@ -53,7 +63,9 @@ public final class PSSIFCanonicMetamodelCreator {
   public static final String A_BLOCK_COST                              = "cost";
   public static final String A_HARDWARE_WEIGHT                         = "weight";
   public static final String A_CONJUNCTION                             = ENUM_CONJUNCTION;
-  public static final String A_CONJUGATED                              = "Conjugated";
+  public static final String A_CONJUGATED                              = "conjugated";
+  public static final String A_DIRECTION                               = "direction";
+  public static final String A_DATA_TYPE                               = "dataType";
 
   public static final String E_FLOW                                    = "Flow";
   public static final String E_FLOW_ENERGY                             = "Energy Flow";
@@ -102,7 +114,7 @@ public final class PSSIFCanonicMetamodelCreator {
   public static final String E_RELATIONSHIP_LOGICAL_OVERLAPS           = "Overlaps";
   public static final String E_RELATIONSHIP_LOGICAL_IS_ALTERNATIVE     = "Is Alternative";
 
-  public static final String E_FULFILS                                 = "Fulfils";
+  public static final String E_FULFILLS                                = "fulfills";
   public static final String E_IS_MANDATORY_FOR                        = "isMandatoryFor";
   public static final String E_IS_CONNECTED_TO                         = "isConnectedTo";
 
@@ -212,6 +224,8 @@ public final class PSSIFCanonicMetamodelCreator {
 
     MutableNodeType port = metamodel.createNodeType(N_PORT);
     port.createAttribute(port.getDefaultAttributeGroup(), A_CONJUGATED, PrimitiveDataType.BOOLEAN, true, AttributeCategory.METADATA);
+    port.createAttribute(port.getDefaultAttributeGroup(), A_DIRECTION, PrimitiveDataType.STRING, true, AttributeCategory.METADATA);
+    port.createAttribute(port.getDefaultAttributeGroup(), A_DATA_TYPE, PrimitiveDataType.STRING, true, AttributeCategory.METADATA);
 
     MutableNodeType electronicPort = metamodel.createNodeType(N_PORT_ELECTRONIC);
     electronicPort.inherit(port);
@@ -226,7 +240,7 @@ public final class PSSIFCanonicMetamodelCreator {
     relationship.createMapping(node(N_FUNCTION, metamodel), node(PSSIFConstants.ROOT_NODE_TYPE_NAME, metamodel));
     relationship.createMapping(node(PSSIFConstants.ROOT_NODE_TYPE_NAME, metamodel), node(N_FUNCTION, metamodel));
 
-    MutableEdgeType fulfils = metamodel.createEdgeType(E_FULFILS);
+    MutableEdgeType fulfils = metamodel.createEdgeType(E_FULFILLS);
     fulfils.createMapping(node(N_BLOCK, metamodel), node(N_FUNCTIONALITY, metamodel));
 
     MutableEdgeType isMandatoryFor = metamodel.createEdgeType(E_IS_MANDATORY_FOR);

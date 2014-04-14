@@ -12,8 +12,10 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EEnum;
+import org.eclipse.emf.ecore.EEnumLiteral;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
+import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.util.EcoreUtil;
@@ -27,12 +29,12 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
+import de.tum.pssif.core.common.PSSIFConstants;
 import de.tum.pssif.core.common.PSSIFOption;
 import de.tum.pssif.core.common.PSSIFValue;
 import de.tum.pssif.core.metamodel.Attribute;
 import de.tum.pssif.core.metamodel.ConnectionMapping;
 import de.tum.pssif.core.metamodel.EdgeType;
-import de.tum.pssif.core.metamodel.Enumeration;
 import de.tum.pssif.core.metamodel.Metamodel;
 import de.tum.pssif.core.metamodel.NodeTypeBase;
 import de.tum.pssif.core.metamodel.PSSIFCanonicMetamodelCreator;
@@ -57,11 +59,22 @@ public class SysMlMapper implements Mapper {
   private static final String PORT_ELECTRONIC          = "EEPort";
   private static final String PORT_SOFTWARE            = "SoftwarePort";
 
+  private static final String INTERFACE_ELECTRONIC     = "EEInterfaceBlock";
+  private static final String INTERFACE_MECHANIC       = "MechanicalInterfaceBlock";
+  private static final String INTERFACE_SOFTWARE       = "SoftwareInterfaceBlock";
+
   private static final String FUNCTIONALITY            = "Functionality";
+
+  private static final String EE_DATA_TYPE             = "EEDataType";
 
   private static final String OWNED_BLOCK              = "ownedBlock";
   private static final String OWNED_PORT               = "ownedPort";
   private static final String IS_CONNECTED_TO          = "isConnectedTo";
+  private static final String OWNED_FUNCTIONALITY      = "ownedFunctionality";
+  private static final String IS_MANDATORY_FOR         = "isMandatoryFor";
+  private static final String OWNED_INTERFACE_BLOCK    = "ownedInterfaceBlock";
+  private static final String OWMED_DATA_TYPE          = "ownedDataType";
+  private static final String OPERATION_NAME           = "OperationName";
 
   @Override
   public Model read(Metamodel metamodel, InputStream inputStream) {
@@ -123,18 +136,77 @@ public class SysMlMapper implements Mapper {
     eObjects.addAll(exportNodes(getNodeType(metamodel, PSSIFCanonicMetamodelCreator.N_FUNCTIONALITY), getEClass(ePackage, FUNCTIONALITY), model,
         nodesMap, true));
 
-    //what rels are to be writt?
-    //write block2blockRelationships
+    //relationships
     writeBlock2BlockRelationships(metamodel, ePackage, model, nodesMap);
     writeBlock2PortRelationships(metamodel, ePackage, model, nodesMap);
     writePort2PortRelationships(metamodel, ePackage, model, nodesMap);
-    //write block2portRelationships
-    //write block2functionality
-    //write port2functionality
+    writeBlock2FunctionalityRelationships(metamodel, ePackage, model, nodesMap);
+    writePort2FunctionalityRelationships(metamodel, ePackage, model, nodesMap);
 
-    //TODO interface blocks
+    eObjects.addAll(createInterfaceBlocks(metamodel, ePackage, model, nodesMap));
 
     return eObjects;
+  }
+
+  private Set<EObject> createInterfaceBlocks(Metamodel metamodel, EPackage ePackage, Model model, Map<Node, EObject> eObjects) {
+    Set<EObject> createdEObjects = Sets.newHashSet();
+    NodeTypeBase portType = getNodeType(metamodel, PSSIFCanonicMetamodelCreator.N_PORT);
+    Attribute directionAttribute = portType.getAttribute(PSSIFCanonicMetamodelCreator.A_DIRECTION).getOne();
+    Attribute dataTypeAttribute = portType.getAttribute(PSSIFCanonicMetamodelCreator.A_DATA_TYPE).getOne();
+
+    for (Node portNode : portType.apply(model, true)) {
+      EObject ePort = eObjects.get(portNode);
+      if (ePort == null) {
+        continue;
+      }
+      EClass interfaceBlockClass = getInterfaceBlockClass(ePackage, ePort);
+      if (interfaceBlockClass == null) {
+        continue;
+      }
+      EObject eInterfaceBlock = EcoreUtil.create(interfaceBlockClass);
+      createdEObjects.add(eInterfaceBlock);
+      ePort.eSet(ePort.eClass().getEStructuralFeature(OWNED_INTERFACE_BLOCK), eInterfaceBlock);
+      EAttribute eDirection = findEAttribute(interfaceBlockClass, directionAttribute);
+      PSSIFOption<PSSIFValue> directionValue = directionAttribute.get(portNode);
+      if (eDirection != null && directionValue.isOne()) {
+        //Note: FIXME XMI serialization contains only the one side in asymmetric cases. Could it be soo clever?..
+        Object eValue = externalizeAttributeValue(directionValue.getOne(), directionAttribute, eDirection);
+        eInterfaceBlock.eSet(eDirection, eValue);
+      }
+
+      PSSIFOption<PSSIFValue> dataTypeValue = dataTypeAttribute.get(portNode);
+      if (dataTypeValue.isOne()) {
+        if (INTERFACE_SOFTWARE.equals(interfaceBlockClass.getName())) {
+          EAttribute eOperationName = findEAttribute(interfaceBlockClass, OPERATION_NAME);
+          eInterfaceBlock.eSet(eOperationName, dataTypeValue.getOne().asString());
+        }
+        else {
+          EClass eEeDataTypeClass = getEClass(ePackage, EE_DATA_TYPE);
+          EAttribute eNameAttribute = findEAttribute(eEeDataTypeClass, PSSIFConstants.BUILTIN_ATTRIBUTE_NAME);
+          EObject eEeDataTypeObject = EcoreUtil.create(eEeDataTypeClass);
+          createdEObjects.add(eEeDataTypeObject);
+          eEeDataTypeObject.eSet(eNameAttribute, dataTypeValue.getOne().asString());
+          EReference eOwmedDataType = (EReference) interfaceBlockClass.getEStructuralFeature(OWMED_DATA_TYPE);
+          eInterfaceBlock.eSet(eOwmedDataType, eEeDataTypeObject);
+        }
+      }
+    }
+    return createdEObjects;
+  }
+
+  private EClass getInterfaceBlockClass(EPackage ePackage, EObject eObject) {
+    if (eObject.eClass().getName().equals(PORT_MECHANIC)) {
+      return getEClass(ePackage, INTERFACE_MECHANIC);
+    }
+    else if (eObject.eClass().getName().equals(PORT_ELECTRONIC)) {
+      return getEClass(ePackage, INTERFACE_ELECTRONIC);
+    }
+    else if (eObject.eClass().getName().equals(PORT_SOFTWARE)) {
+      return getEClass(ePackage, INTERFACE_SOFTWARE);
+    }
+    else {
+      return null;
+    }
   }
 
   private void writeBlock2BlockRelationships(Metamodel metamodel, EPackage ePackage, Model model, Map<Node, EObject> eObjects) {
@@ -169,13 +241,21 @@ public class SysMlMapper implements Mapper {
         PSSIFCanonicMetamodelCreator.N_PORT_SOFTWARE, PSSIFCanonicMetamodelCreator.N_PORT_SOFTWARE, model, eObjects);
   }
 
-  //  private void writeBlock2FunctionalityRelationships(Metamodel metamodel, EPackage ePackage, Model model, Map<Node, EObject> eObjects) {
-  //    writeRelationship(metamodel, ePackage, edgeTypeName, eReferenceName, fromTypeName, toTypeName, model, eObjects);
-  //  }
-  //
-  //  private void writePort2FunctionalityRelationships(Metamodel metamodel, EPackage ePackage, Model model, Map<Node, EObject> eObjects) {
-  //    writeRelationship(metamodel, ePackage, edgeTypeName, eReferenceName, fromTypeName, toTypeName, model, eObjects);
-  //  }
+  private void writeBlock2FunctionalityRelationships(Metamodel metamodel, EPackage ePackage, Model model, Map<Node, EObject> eObjects) {
+    writeRelationship(metamodel, ePackage, PSSIFCanonicMetamodelCreator.E_FULFILLS, OWNED_FUNCTIONALITY, PSSIFCanonicMetamodelCreator.N_ELECTRONIC,
+        PSSIFCanonicMetamodelCreator.N_FUNCTIONALITY, model, eObjects);
+    writeRelationship(metamodel, ePackage, PSSIFCanonicMetamodelCreator.E_FULFILLS, OWNED_FUNCTIONALITY, PSSIFCanonicMetamodelCreator.N_MECHANIC,
+        PSSIFCanonicMetamodelCreator.N_FUNCTIONALITY, model, eObjects);
+    writeRelationship(metamodel, ePackage, PSSIFCanonicMetamodelCreator.E_FULFILLS, OWNED_FUNCTIONALITY, PSSIFCanonicMetamodelCreator.N_SOFTWARE,
+        PSSIFCanonicMetamodelCreator.N_FUNCTIONALITY, model, eObjects);
+    writeRelationship(metamodel, ePackage, PSSIFCanonicMetamodelCreator.E_FULFILLS, OWNED_FUNCTIONALITY, PSSIFCanonicMetamodelCreator.N_MODULE,
+        PSSIFCanonicMetamodelCreator.N_FUNCTIONALITY, model, eObjects);
+  }
+
+  private void writePort2FunctionalityRelationships(Metamodel metamodel, EPackage ePackage, Model model, Map<Node, EObject> eObjects) {
+    writeRelationship(metamodel, ePackage, PSSIFCanonicMetamodelCreator.E_IS_MANDATORY_FOR, IS_MANDATORY_FOR, PSSIFCanonicMetamodelCreator.N_PORT,
+        PSSIFCanonicMetamodelCreator.N_FUNCTIONALITY, model, eObjects);
+  }
 
   private void writeRelationship(Metamodel metamodel, EPackage ePackage, String edgeTypeName, String eReferenceName, String fromTypeName,
                                  String toTypeName, Model model, Map<Node, EObject> eObjects) {
@@ -236,8 +316,9 @@ public class SysMlMapper implements Mapper {
 
   private Object externalizeAttributeValue(PSSIFValue value, Attribute attribute, EAttribute eAttribute) {
     //TODO this one will be trobule... internalization also needed
-    if (attribute.getType() instanceof Enumeration) {
-      return ((EEnum) eAttribute.getEType()).getEEnumLiteral(value.asEnumeration().getName());
+    if (EEnum.class.isInstance(eAttribute.getEType())) {
+      //    if (attribute.getType() instanceof Enumeration) {
+      return findLiteral((EEnum) eAttribute.getEType(), value.getValue().toString());
     }
     else if (eAttribute.getEType().getName().equals("EInt")) {
       try {
@@ -252,9 +333,22 @@ public class SysMlMapper implements Mapper {
     return value.getValue();
   }
 
+  private EEnumLiteral findLiteral(EEnum enumeration, String literalName) {
+    for (EEnumLiteral literal : enumeration.getELiterals()) {
+      if (literalName.trim().equalsIgnoreCase(literal.getName().trim())) {
+        return literal;
+      }
+    }
+    return null;
+  }
+
   private EAttribute findEAttribute(EClass eClass, Attribute attribute) {
+    return findEAttribute(eClass, attribute.getName());
+  }
+
+  private EAttribute findEAttribute(EClass eClass, String attributeName) {
     for (EStructuralFeature eFeature : eClass.getEAllStructuralFeatures()) {
-      if (EAttribute.class.isInstance(eFeature) && attribute.getName().trim().equalsIgnoreCase(eFeature.getName().trim())) {
+      if (EAttribute.class.isInstance(eFeature) && attributeName.trim().equalsIgnoreCase(eFeature.getName().trim())) {
         return (EAttribute) eFeature;
       }
     }

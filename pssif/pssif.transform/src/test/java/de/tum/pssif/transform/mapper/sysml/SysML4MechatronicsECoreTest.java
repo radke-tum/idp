@@ -26,7 +26,7 @@ import de.tum.pssif.core.model.impl.ModelImpl;
 import de.tum.pssif.transform.mapper.SysMlMapper;
 
 
-public class SomeKindOfTest {
+public class SysML4MechatronicsECoreTest {
 
   @Test
   public void pretendToTest() {
@@ -45,6 +45,7 @@ public class SomeKindOfTest {
     Metamodel metamodel = PSSIFCanonicMetamodelCreator.create();
     Model model = new ModelImpl();
 
+    //Blocks
     NodeTypeBase mechBlock = metamodel.getBaseNodeType(PSSIFCanonicMetamodelCreator.N_MECHANIC).getOne();
     Attribute mechName = mechBlock.getAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_NAME).getOne();
     Attribute mechVersion = mechBlock.getAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_VERSION).getOne();
@@ -109,6 +110,7 @@ public class SomeKindOfTest {
     moduleVersion.set(moduleBlock2, poPv(BigInteger.valueOf(1)));
     moduleName.set(moduleBlock2, poPv("Module 2"));
 
+    //block 2 block containment
     EdgeType containment = metamodel.getEdgeType(PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_INCLUSION_CONTAINS).getOne();
     ConnectionMapping mod2SoftCM = containment.getMapping(moduleBlock, softBlock).getOne();
     ConnectionMapping mod2MechCM = containment.getMapping(moduleBlock, mechBlock).getOne();
@@ -125,6 +127,7 @@ public class SomeKindOfTest {
     mod2ElCM.create(model, moduleBlock2, elBlock2);
     mod2ElCM.create(model, moduleBlock2, elBlock3);
 
+    //ports
     NodeTypeBase mechPort = metamodel.getBaseNodeType(PSSIFCanonicMetamodelCreator.N_PORT_MECHANIC).getOne();
     NodeTypeBase elPort = metamodel.getBaseNodeType(PSSIFCanonicMetamodelCreator.N_PORT_ELECTRONIC).getOne();
     NodeTypeBase softPort = metamodel.getBaseNodeType(PSSIFCanonicMetamodelCreator.N_PORT_SOFTWARE).getOne();
@@ -133,6 +136,7 @@ public class SomeKindOfTest {
     Attribute portConjugated = metamodel.getBaseNodeType(PSSIFCanonicMetamodelCreator.N_PORT).getOne()
         .getAttribute(PSSIFCanonicMetamodelCreator.A_CONJUGATED).getOne();
 
+    //block 2 port containment
     ConnectionMapping mechBlock2MechPort = containment.getMapping(mechBlock, mechPort).getOne();
     ConnectionMapping elBlock2elPort = containment.getMapping(elBlock, elPort).getOne();
     ConnectionMapping elBlock2softPort = containment.getMapping(elBlock, softPort).getOne();
@@ -172,6 +176,7 @@ public class SomeKindOfTest {
     elBlock2softPort.create(model, elBlock2, softPort2);
     softBlock2SoftPort.create(model, softBlock1, softPort1);
 
+    //port 2 port connections
     EdgeType isConnectedTo = metamodel.getEdgeType(PSSIFCanonicMetamodelCreator.E_IS_CONNECTED_TO).getOne();
     ConnectionMapping elIsConnectedTo = isConnectedTo.getMapping(elPort, elPort).getOne();
     ConnectionMapping mechIsConnectedTo = isConnectedTo.getMapping(mechPort, mechPort).getOne();
@@ -180,6 +185,68 @@ public class SomeKindOfTest {
     elIsConnectedTo.create(model, elPort1, elPort2);
     mechIsConnectedTo.create(model, mechPort1, mechPort2);
     softIsConnectedTo.create(model, softPort1, softPort2);
+
+    //functionalities
+    NodeTypeBase functionality = metamodel.getNodeType(PSSIFCanonicMetamodelCreator.N_FUNCTIONALITY).getOne();
+    Attribute functNameAttribute = functionality.getAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_NAME).getOne();
+
+    Node functionality1 = functionality.create(model);
+    setId(functionality1);
+    functNameAttribute.set(functionality1, poPv("Functionality 1"));
+
+    Node functionality2 = functionality.create(model);
+    setId(functionality1);
+    functNameAttribute.set(functionality2, poPv("Functionality 2"));
+
+    Node functionality3 = functionality.create(model);
+    setId(functionality1);
+    functNameAttribute.set(functionality3, poPv("Functionality 3"));
+
+    //block 2 functionality
+    EdgeType fulfils = metamodel.getEdgeType(PSSIFCanonicMetamodelCreator.E_FULFILLS).getOne();
+    ConnectionMapping block2FunctionalityFulfillment = fulfils.getMapping(metamodel.getNodeType(PSSIFCanonicMetamodelCreator.N_BLOCK).getOne(),
+        functionality).getOne();
+    block2FunctionalityFulfillment.create(model, elBlock1, functionality1);
+    block2FunctionalityFulfillment.create(model, elBlock2, functionality2);
+    block2FunctionalityFulfillment.create(model, elBlock2, functionality3);
+
+    //port 2 functionality
+    EdgeType isMandatoryFor = metamodel.getEdgeType(PSSIFCanonicMetamodelCreator.E_IS_MANDATORY_FOR).getOne();
+    ConnectionMapping port2functionalityMandatory = isMandatoryFor.getMapping(metamodel.getNodeType(PSSIFCanonicMetamodelCreator.N_PORT).getOne(),
+        functionality).getOne();
+    port2functionalityMandatory.create(model, elPort2, functionality1);
+    port2functionalityMandatory.create(model, elPort1, functionality3);
+    port2functionalityMandatory.create(model, softPort2, functionality3);
+    port2functionalityMandatory.create(model, mechPort2, functionality2);
+
+    //attribute values for interface blocks
+    //    Enumeration direction = metamodel.getEnumeration(PSSIFCanonicMetamodelCreator.ENUM_DIRECTION).getOne();
+    //    EnumerationLiteral inLiteral = direction.getLiteral(PSSIFCanonicMetamodelCreator.ENUM_DIRECTION_IN).getOne();
+    //    EnumerationLiteral outLiteral = direction.getLiteral(PSSIFCanonicMetamodelCreator.ENUM_DIRECTION_OUT).getOne();
+    //    EnumerationLiteral inOutLiteral = direction.getLiteral(PSSIFCanonicMetamodelCreator.ENUM_DIRECTION_IN_OUT).getOne();
+
+    Attribute portDirectionAttribute = metamodel.getBaseNodeType(PSSIFCanonicMetamodelCreator.N_PORT).getOne()
+        .getAttribute(PSSIFCanonicMetamodelCreator.A_DIRECTION).getOne();
+    Attribute portDataTypeAttribute = metamodel.getBaseNodeType(PSSIFCanonicMetamodelCreator.N_PORT).getOne()
+        .getAttribute(PSSIFCanonicMetamodelCreator.A_DATA_TYPE).getOne();
+
+    portDataTypeAttribute.set(mechPort1, poPv("SysML4Mechatronics Data Type 1"));
+    portDirectionAttribute.set(mechPort1, poPv("In"));
+
+    portDataTypeAttribute.set(mechPort2, poPv("SysML4Mechatronics Data Type 2"));
+    portDirectionAttribute.set(mechPort2, poPv("Out"));
+
+    portDataTypeAttribute.set(softPort1, poPv("SysML4Mechatronics Data Type 3"));
+    portDirectionAttribute.set(softPort1, poPv("Provided"));
+
+    portDataTypeAttribute.set(softPort2, poPv("SysML4Mechatronics Data Type 4"));
+    portDirectionAttribute.set(softPort2, poPv("Required"));
+
+    portDataTypeAttribute.set(elPort1, poPv("SysML4Mechatronics Data Type 5"));
+    portDirectionAttribute.set(elPort1, poPv("InOut"));
+
+    portDataTypeAttribute.set(elPort2, poPv("SysML4Mechatronics Data Type 6"));
+    portDirectionAttribute.set(elPort2, poPv("InOut"));
 
     return model;
   }
