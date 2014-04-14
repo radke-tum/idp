@@ -17,6 +17,7 @@ public final class PSSIFCanonicMetamodelCreator {
 
   public static final String N_DEV_ARTIFACT                            = "Development Artifact";
 
+  public static final String N_FUNCTIONALITY                           = "Functionality";
   public static final String N_REQUIREMENT                             = "Requirement";
   public static final String N_USE_CASE                                = "Use Case";
   public static final String N_TEST_CASE                               = "Test Case";
@@ -100,6 +101,8 @@ public final class PSSIFCanonicMetamodelCreator {
   public static final String E_RELATIONSHIP_LOGICAL_OVERLAPS           = "Overlaps";
   public static final String E_RELATIONSHIP_LOGICAL_IS_ALTERNATIVE     = "Is Alternative";
 
+  public static final String E_FULFILS                                 = "Fulfils";
+
   private PSSIFCanonicMetamodelCreator() {
     //Nop
   }
@@ -132,6 +135,9 @@ public final class PSSIFCanonicMetamodelCreator {
 
   private static void createDevArtifacts(MetamodelImpl metamodel) {
     NodeType devArtifact = metamodel.createNodeType(N_DEV_ARTIFACT);
+
+    NodeType functionality = metamodel.createNodeType(N_FUNCTIONALITY);
+    functionality.inherit(devArtifact);
 
     MutableNodeType requirement = metamodel.createNodeType(N_REQUIREMENT);
     requirement.inherit(devArtifact);
@@ -202,6 +208,7 @@ public final class PSSIFCanonicMetamodelCreator {
     module.inherit(block);
 
     NodeType port = metamodel.createNodeType(N_PORT);
+    //TODO port attributes
 
     MutableNodeType electronicPort = metamodel.createNodeType(N_PORT_ELECTRONIC);
     electronicPort.inherit(port);
@@ -215,6 +222,10 @@ public final class PSSIFCanonicMetamodelCreator {
     MutableEdgeType relationship = metamodel.createEdgeType(E_RELATIONSHIP);
     relationship.createMapping(node(N_FUNCTION, metamodel), node(PSSIFConstants.ROOT_NODE_TYPE_NAME, metamodel));
     relationship.createMapping(node(PSSIFConstants.ROOT_NODE_TYPE_NAME, metamodel), node(N_FUNCTION, metamodel));
+
+    MutableEdgeType fulfils = metamodel.createEdgeType(E_FULFILS);
+    fulfils.createMapping(node(N_BLOCK, metamodel), node(N_FUNCTIONALITY, metamodel));
+    fulfils.createMapping(node(N_PORT, metamodel), node(N_FUNCTIONALITY, metamodel));
 
     createAttributionalRelationships(metamodel, relationship);
     createChronologicalRelationships(metamodel, relationship);
@@ -286,6 +297,7 @@ public final class PSSIFCanonicMetamodelCreator {
     containsRelationship.createMapping(node(N_ELECTRONIC, metamodel), node(N_PORT_ELECTRONIC, metamodel));
     containsRelationship.createMapping(node(N_MECHANIC, metamodel), node(N_PORT_MECHANIC, metamodel));
     containsRelationship.createMapping(node(N_SOFTWARE, metamodel), node(N_PORT_SOFTWARE, metamodel));
+    containsRelationship.createMapping(node(N_MODULE, metamodel), node(N_PORT, metamodel));
     containsRelationship.createMapping(node(N_BLOCK, metamodel), node(N_BLOCK, metamodel));
 
     EdgeType includesRelationship = metamodel.createEdgeType(E_RELATIONSHIP_INCLUSION_INCLUDES);

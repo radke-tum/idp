@@ -46,9 +46,12 @@ public class SysMlMapper implements Mapper {
   private static final String BLOCK_ELECTRONIC         = "EEBlock";
   private static final String BLOCK_SOFTWARE           = "SoftwareBlock";
   private static final String BLOCK_MODULE             = "Module";
+
   private static final String PORT_MECHANIC            = "MechanicalPort";
   private static final String PORT_ELECTRONIC          = "EEPort";
   private static final String PORT_SOFTWARE            = "SoftwarePort";
+
+  private static final String FUNCTIONALITY            = "Functionality";
 
   @Override
   public Model read(Metamodel metamodel, InputStream inputStream) {
@@ -84,31 +87,40 @@ public class SysMlMapper implements Mapper {
   private Set<EObject> writeSysMlModel(Metamodel metamodel, EPackage ePackage, Model model) {
     Set<EObject> eObjects = Sets.newHashSet();
     Map<Node, EObject> nodesMap = Maps.newHashMap();
-    //blocks
-    eObjects
-        .addAll(exportNodes(getNodeType(metamodel, PSSIFCanonicMetamodelCreator.N_MECHANIC), getEClass(ePackage, BLOCK_MECHANIC), model, nodesMap));
+
+    //mechanic blocks
+    eObjects.addAll(exportNodes(getNodeType(metamodel, PSSIFCanonicMetamodelCreator.N_MECHANIC), getEClass(ePackage, BLOCK_MECHANIC), model,
+        nodesMap, true));
+    //electronics blocks
     eObjects.addAll(exportNodes(getNodeType(metamodel, PSSIFCanonicMetamodelCreator.N_ELECTRONIC), getEClass(ePackage, BLOCK_ELECTRONIC), model,
-        nodesMap));
-    eObjects
-        .addAll(exportNodes(getNodeType(metamodel, PSSIFCanonicMetamodelCreator.N_SOFTWARE), getEClass(ePackage, BLOCK_SOFTWARE), model, nodesMap));
-    //modules?
+        nodesMap, true));
+    //software blocks
+    eObjects.addAll(exportNodes(getNodeType(metamodel, PSSIFCanonicMetamodelCreator.N_SOFTWARE), getEClass(ePackage, BLOCK_SOFTWARE), model,
+        nodesMap, true));
+    //modules
+    eObjects.addAll(exportNodes(getNodeType(metamodel, PSSIFCanonicMetamodelCreator.N_MODULE), getEClass(ePackage, BLOCK_MODULE), model, nodesMap,
+        true));
 
     //ports
     eObjects.addAll(exportNodes(getNodeType(metamodel, PSSIFCanonicMetamodelCreator.N_PORT_MECHANIC), getEClass(ePackage, PORT_MECHANIC), model,
-        nodesMap));
+        nodesMap, true));
     eObjects.addAll(exportNodes(getNodeType(metamodel, PSSIFCanonicMetamodelCreator.N_PORT_ELECTRONIC), getEClass(ePackage, PORT_ELECTRONIC), model,
-        nodesMap));
+        nodesMap, true));
     eObjects.addAll(exportNodes(getNodeType(metamodel, PSSIFCanonicMetamodelCreator.N_PORT_SOFTWARE), getEClass(ePackage, PORT_SOFTWARE), model,
-        nodesMap));
+        nodesMap, true));
 
-    //TODO interface blocks + all relations 
+    //functionalities
+    eObjects.addAll(exportNodes(getNodeType(metamodel, PSSIFCanonicMetamodelCreator.N_FUNCTIONALITY), getEClass(ePackage, FUNCTIONALITY), model,
+        nodesMap, true));
+
+    //TODO interface blocks + all relations + functionalities
 
     return eObjects;
   }
 
-  private Set<EObject> exportNodes(NodeTypeBase nodeType, EClass eClass, Model model, Map<Node, EObject> nodesMap) {
+  private Set<EObject> exportNodes(NodeTypeBase nodeType, EClass eClass, Model model, Map<Node, EObject> nodesMap, boolean subtypes) {
     Set<EObject> eObjects = Sets.newHashSet();
-    for (Node node : nodeType.apply(model, true)) {
+    for (Node node : nodeType.apply(model, subtypes)) {
       EObject eObject = exportNode(nodeType, eClass, node);
       eObjects.add(eObject);
       nodesMap.put(node, eObject);
@@ -123,7 +135,10 @@ public class SysMlMapper implements Mapper {
       if (eAttribute != null) {
         PSSIFOption<PSSIFValue> attributeValue = attribute.get(node);
         if (!attributeValue.isNone()) {
-          eObject.eSet(eAttribute, externalizeAttributeValue(attributeValue.getOne(), attribute, eAttribute));
+          Object externalAV = externalizeAttributeValue(attributeValue.getOne(), attribute, eAttribute);
+          if (externalAV != null) {
+            eObject.eSet(eAttribute, externalAV);
+          }
         }
       }
     }
@@ -131,7 +146,7 @@ public class SysMlMapper implements Mapper {
   }
 
   private Object externalizeAttributeValue(PSSIFValue value, Attribute attribute, EAttribute eAttribute) {
-    //TODO this one might be trouble... EDate and stuff
+    //TODO this one will be trobule... internalization also needed
     if (attribute.getType() instanceof Enumeration) {
       return ((EEnum) eAttribute.getEType()).getEEnumLiteral(value.asEnumeration().getName());
     }
@@ -139,8 +154,7 @@ public class SysMlMapper implements Mapper {
       try {
         return Integer.valueOf(value.getValue().toString());
       } catch (NumberFormatException e) {
-        //TODO this is bullshit. incompatible values should be ignored
-        return Integer.valueOf(-1);
+        return null;
       }
     }
     else if (PrimitiveDataType.DECIMAL.equals(attribute.getType())) {
