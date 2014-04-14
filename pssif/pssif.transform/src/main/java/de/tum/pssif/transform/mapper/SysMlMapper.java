@@ -3,7 +3,9 @@ package de.tum.pssif.transform.mapper;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.eclipse.emf.common.util.URI;
@@ -21,17 +23,21 @@ import org.eclipse.emf.ecore.xmi.XMLResource;
 import org.eclipse.emf.ecore.xmi.impl.EcoreResourceFactoryImpl;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 import de.tum.pssif.core.common.PSSIFOption;
 import de.tum.pssif.core.common.PSSIFValue;
 import de.tum.pssif.core.metamodel.Attribute;
+import de.tum.pssif.core.metamodel.ConnectionMapping;
+import de.tum.pssif.core.metamodel.EdgeType;
 import de.tum.pssif.core.metamodel.Enumeration;
 import de.tum.pssif.core.metamodel.Metamodel;
 import de.tum.pssif.core.metamodel.NodeTypeBase;
 import de.tum.pssif.core.metamodel.PSSIFCanonicMetamodelCreator;
 import de.tum.pssif.core.metamodel.PrimitiveDataType;
+import de.tum.pssif.core.model.Edge;
 import de.tum.pssif.core.model.Model;
 import de.tum.pssif.core.model.Node;
 import de.tum.pssif.transform.Mapper;
@@ -52,6 +58,10 @@ public class SysMlMapper implements Mapper {
   private static final String PORT_SOFTWARE            = "SoftwarePort";
 
   private static final String FUNCTIONALITY            = "Functionality";
+
+  private static final String OWNED_BLOCK              = "ownedBlock";
+  private static final String OWNED_PORT               = "ownedPort";
+  private static final String IS_CONNECTED_TO          = "isConnectedTo";
 
   @Override
   public Model read(Metamodel metamodel, InputStream inputStream) {
@@ -113,9 +123,87 @@ public class SysMlMapper implements Mapper {
     eObjects.addAll(exportNodes(getNodeType(metamodel, PSSIFCanonicMetamodelCreator.N_FUNCTIONALITY), getEClass(ePackage, FUNCTIONALITY), model,
         nodesMap, true));
 
-    //TODO interface blocks + all relations + functionalities
+    //what rels are to be writt?
+    //write block2blockRelationships
+    writeBlock2BlockRelationships(metamodel, ePackage, model, nodesMap);
+    writeBlock2PortRelationships(metamodel, ePackage, model, nodesMap);
+    writePort2PortRelationships(metamodel, ePackage, model, nodesMap);
+    //write block2portRelationships
+    //write block2functionality
+    //write port2functionality
+
+    //TODO interface blocks
 
     return eObjects;
+  }
+
+  private void writeBlock2BlockRelationships(Metamodel metamodel, EPackage ePackage, Model model, Map<Node, EObject> eObjects) {
+    writeRelationship(metamodel, ePackage, PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_INCLUSION_CONTAINS, OWNED_BLOCK,
+        PSSIFCanonicMetamodelCreator.N_BLOCK, PSSIFCanonicMetamodelCreator.N_BLOCK, model, eObjects);
+  }
+
+  private void writeBlock2PortRelationships(Metamodel metamodel, EPackage ePackage, Model model, Map<Node, EObject> eObjects) {
+    writeRelationship(metamodel, ePackage, PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_INCLUSION_CONTAINS, OWNED_PORT,
+        PSSIFCanonicMetamodelCreator.N_SOFTWARE, PSSIFCanonicMetamodelCreator.N_PORT_SOFTWARE, model, eObjects);
+
+    writeRelationship(metamodel, ePackage, PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_INCLUSION_CONTAINS, OWNED_PORT,
+        PSSIFCanonicMetamodelCreator.N_MECHANIC, PSSIFCanonicMetamodelCreator.N_PORT_MECHANIC, model, eObjects);
+
+    writeRelationship(metamodel, ePackage, PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_INCLUSION_CONTAINS, OWNED_PORT,
+        PSSIFCanonicMetamodelCreator.N_ELECTRONIC, PSSIFCanonicMetamodelCreator.N_PORT_SOFTWARE, model, eObjects);
+    writeRelationship(metamodel, ePackage, PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_INCLUSION_CONTAINS, OWNED_PORT,
+        PSSIFCanonicMetamodelCreator.N_ELECTRONIC, PSSIFCanonicMetamodelCreator.N_PORT_MECHANIC, model, eObjects);
+    writeRelationship(metamodel, ePackage, PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_INCLUSION_CONTAINS, OWNED_PORT,
+        PSSIFCanonicMetamodelCreator.N_ELECTRONIC, PSSIFCanonicMetamodelCreator.N_PORT_ELECTRONIC, model, eObjects);
+
+    writeRelationship(metamodel, ePackage, PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_INCLUSION_CONTAINS, OWNED_PORT,
+        PSSIFCanonicMetamodelCreator.N_MODULE, PSSIFCanonicMetamodelCreator.N_PORT, model, eObjects);
+  }
+
+  private void writePort2PortRelationships(Metamodel metamodel, EPackage ePackage, Model model, Map<Node, EObject> eObjects) {
+    writeRelationship(metamodel, ePackage, PSSIFCanonicMetamodelCreator.E_IS_CONNECTED_TO, IS_CONNECTED_TO,
+        PSSIFCanonicMetamodelCreator.N_PORT_ELECTRONIC, PSSIFCanonicMetamodelCreator.N_PORT_ELECTRONIC, model, eObjects);
+    writeRelationship(metamodel, ePackage, PSSIFCanonicMetamodelCreator.E_IS_CONNECTED_TO, IS_CONNECTED_TO,
+        PSSIFCanonicMetamodelCreator.N_PORT_MECHANIC, PSSIFCanonicMetamodelCreator.N_PORT_MECHANIC, model, eObjects);
+    writeRelationship(metamodel, ePackage, PSSIFCanonicMetamodelCreator.E_IS_CONNECTED_TO, IS_CONNECTED_TO,
+        PSSIFCanonicMetamodelCreator.N_PORT_SOFTWARE, PSSIFCanonicMetamodelCreator.N_PORT_SOFTWARE, model, eObjects);
+  }
+
+  //  private void writeBlock2FunctionalityRelationships(Metamodel metamodel, EPackage ePackage, Model model, Map<Node, EObject> eObjects) {
+  //    writeRelationship(metamodel, ePackage, edgeTypeName, eReferenceName, fromTypeName, toTypeName, model, eObjects);
+  //  }
+  //
+  //  private void writePort2FunctionalityRelationships(Metamodel metamodel, EPackage ePackage, Model model, Map<Node, EObject> eObjects) {
+  //    writeRelationship(metamodel, ePackage, edgeTypeName, eReferenceName, fromTypeName, toTypeName, model, eObjects);
+  //  }
+
+  private void writeRelationship(Metamodel metamodel, EPackage ePackage, String edgeTypeName, String eReferenceName, String fromTypeName,
+                                 String toTypeName, Model model, Map<Node, EObject> eObjects) {
+    EdgeType edgeType = metamodel.getEdgeType(edgeTypeName).getOne();
+    if (edgeType == null) {
+      return;
+    }
+    NodeTypeBase fromType = metamodel.getNodeType(fromTypeName).getOne();
+    NodeTypeBase toType = metamodel.getNodeType(toTypeName).getOne();
+    ConnectionMapping mapping = edgeType.getMapping(fromType, toType).getOne();
+
+    Map<EObject, List<EObject>> toConnect = Maps.newHashMap();
+
+    for (Edge edge : mapping.apply(model)) {
+      EObject fromObject = eObjects.get(edgeType.applyFrom(edge));
+      EObject toObject = eObjects.get(edgeType.applyTo(edge));
+      if (fromObject != null && toObject != null) {
+        if (!toConnect.containsKey(fromObject)) {
+          toConnect.put(fromObject, Lists.<EObject> newArrayList());
+        }
+        toConnect.get(fromObject).add(toObject);
+      }
+    }
+    for (Entry<EObject, List<EObject>> entry : toConnect.entrySet()) {
+      if (entry.getKey().eClass().getEStructuralFeature(eReferenceName) != null) {
+        entry.getKey().eSet(entry.getKey().eClass().getEStructuralFeature(eReferenceName), entry.getValue());
+      }
+    }
   }
 
   private Set<EObject> exportNodes(NodeTypeBase nodeType, EClass eClass, Model model, Map<Node, EObject> nodesMap, boolean subtypes) {
@@ -130,6 +218,7 @@ public class SysMlMapper implements Mapper {
 
   private EObject exportNode(NodeTypeBase nodeType, EClass eClass, Node node) {
     EObject eObject = EcoreUtil.create(eClass);
+    //    EcoreUtil.setID(eObject, node.getId());
     for (Attribute attribute : nodeType.getAttributes()) {
       EAttribute eAttribute = findEAttribute(eClass, attribute);
       if (eAttribute != null) {
