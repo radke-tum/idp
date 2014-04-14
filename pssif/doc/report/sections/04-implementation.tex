@@ -1,12 +1,12 @@
 \chapter{Implementation}
 \label{chap:impl}
 
-In the previous chapter the conceptual approach to the realisation of the PSS-IF Proof-of-Concept was described. In particular, the latter sections of \chapref{chap:approach} describe the principles behind the chosen transformation method. In this context, this chapter focuses on the implementation of the framework. The chapter is structured as follows: \secref{sec:impl:technology} describes the technology stack used for the implementation. In the consequent \secref{sec:impl:principles} the adopted software development guiding principles are presented. Thereafter, \secref{sec:impl:structure} provides an overview of the project structure. \secref{sec:impl:components} follows with a description of each component of the PSS-IF PoC and, finally, \secref{sec:impl:process} describes the import and export processes and the collaboration of all components of the framework.
+In the previous chapter the conceptual approach to the realisation of the PSS-IF \gls{poc} was described. In particular, the latter sections of \chapref{chap:approach} describe the principles behind the chosen transformation method. In this context, this chapter focuses on the implementation of the framework. The chapter is structured as follows: \secref{sec:impl:technology} describes the technology stack used for the implementation. In the consequent \secref{sec:impl:principles} the adopted software development guiding principles are presented. Thereafter, \secref{sec:impl:structure} provides an overview of the project structure. \secref{sec:impl:components} follows with a description of each component of the PSS-IF \gls{poc} and, finally, \secref{sec:impl:process} describes the import and export processes and the collaboration of all components of the framework.
 
 \section{Technology Stack}
 \label{sec:impl:technology}
 
-This section defines the technologies used for the implementation of the PSS-IF Proof-of-Concept. Each of the following subsections addresses a particular aspect of the technological stack. Note that all the software and tools used for the realization of the PoC are widely accepted industry standards.
+This section defines the technologies used for the implementation of the PSS-IF Proof-of-Concept. Each of the following subsections addresses a particular aspect of the technological stack. Note that all the software and tools used for the realization of the \gls{poc} are widely accepted industry standards.
 
 \subsection{Programming Language}
 
@@ -14,7 +14,7 @@ To enable an easier and more rapid development of the prototype, a high-level pr
 
 \subsection{Source Code Management}
 
-For improved parallelisation, better code maintenance and easier documentation, a distributed version control system can be used. While there are numerous alternatives, the authors have chosen GIT as a modern and powerful solution.
+For improved parallelisation, better code maintenance and easier documentation, a distributed version control system can be used. While there are numerous alternatives, the authors have chosen git as a modern and powerful solution.
 
 \subsection{Build Process and Dependency Management}
 
@@ -28,18 +28,18 @@ For the execution of automated tests, JUnit, an industry standard framework with
 
 Next to the libraries provided by Oracle's Standard Java Runtime Environment, the following additional libraries have been used:
 
-\paragraph{apache-compress} An API for the manipulation of different kinds of compressed files. In the scope of the Proof-of-Concept, the API is used in the Visio VSDX processing component, for the zipping and unzipping of VSDX files.
+\paragraph{apache-compress} An \gls{api} for the manipulation of different kinds of compressed files. In the scope of the \gls{poc}, the \gls{api} is used in the Visio processing component, for the zipping and unzipping of Visio files.
 
-\paragraph{guava} Google Guava is a set of common libraries, mainly developed by Google. The package includes useful APIs for the manipulation of collections, the usage of function and predicates, and others.
+\paragraph{guava} Google Guava is a set of common libraries, mainly developed by Google. The package includes useful \glspl{api} for the manipulation of collections, the usage of function and predicates, and others.
 
-\paragraph{emf} The Eclipse Modelling Framework (EMF) library is used for the serialization and de-serialization of eCore and XML Metadata Interchange (XMI) files, enabling the processing of SysML4Mechatronics data.
+\paragraph{emf} The \gls{emf} library is used for the serialization and de-serialization of eCore and \gls{xmi} files, enabling the processing of SysML4Mechatronics data.
 
 \paragraph{junit} JUnit is an industry standard unit-testing framework.
 
 \section{Guiding Principles}
 \label{sec:impl:principles}
 
-During the design and implementation of the PSS-IF PoC the authors have followed the principles and best-practices for software development. Some of the guiding principles were the following:
+During the design and implementation of the PSS-IF \gls{poc} the authors have followed the principles and best-practices for software development. Some of the guiding principles were the following:
 
 \paragraph{Standardization:} Usage of widely used and accepted industry-standard tools, technologies and formats, to render the produced solution more accessible to new developers and compliant to other pieces of software.
 
@@ -52,9 +52,9 @@ During the design and implementation of the PSS-IF PoC the authors have followed
 \section{Project Structure}
 \label{sec:impl:structure}
 
-The PSS-IF PoC is developed as an Apache Maven project, further divided into a root project, called ''\textbf{pssif}'' and a number of sub-modules. The root project is used for the provision of common development and  build configuration, as for example the specification of common dependencies with a fixed version over all modules. This avoids redundancy and improves the manageability of the developed code. Each of the modules represents a component of the PSS-IF PoC architecture on a coarse level of abstraction. Note that while it is possible to establish a project with fine-grained Maven modularity, division in fine-grained modules would make it more difficult to capture the project structure. This is why the authors have tried to find a balance between capturing coarse-level architectural concepts through Maven modularization, while fine-grained modularization of components is achieved through the packaging mechanism of the Java programming language.
+The PSS-IF \gls{poc} is developed as an Apache Maven project, further divided into a root project, called ''\textbf{pssif}'' and a number of sub-modules. The root project is used for the provision of common development and  build configuration, as for example the specification of common dependencies with a fixed version over all modules. This avoids redundancy and improves the manageability of the developed code. Each of the modules represents a component of the PSS-IF \gls{poc} architecture on a coarse level of abstraction. Note that while it is possible to establish a project with fine-grained Maven modularity, division in fine-grained modules would make it more difficult to capture the project structure. This is why the authors have tried to find a balance between capturing coarse-level architectural concepts through Maven modularization, while fine-grained modularization of components is achieved through the packaging mechanism of the Java programming language.
 
-This section covers the coarse-grained separation realized through Maven modularization, while \secref{sec:impl:components} is concerned with the fine-grained architectural modularization of the project. Currently, the PSS-IF PoC consists of four modules, as depicted in  \figref{fig:structure}.
+This section covers the coarse-grained separation realized through Maven modularization, while \secref{sec:impl:components} is concerned with the fine-grained architectural modularization of the project. Currently, the PSS-IF \gls{poc} consists of four modules, as depicted in  \figref{fig:structure}.
 
 \begin{figure}
 \centering
@@ -63,9 +63,9 @@ This section covers the coarse-grained separation realized through Maven modular
 \label{fig:structure}
 \end{figure}
 
-\paragraph{Core} The ''\textbf{core}'' Maven module contains the fundamental Application Programming Interface (API) of the framework. This API defines the concepts through which the PSS-IF Domain-Specific Language (DSL) is described, such as Metamodel, Model, NodeTypes, Nodes etc. Furthermore, the core module provides an implementation layer for the concepts of the PSS-IF DSL, as well as a number of common utilities, like for example a generator for the canonic PSS-IF Metamodel, as depicted in \chapref{chap:intro}.
+\paragraph{Core} The ''\textbf{core}'' Maven module contains the fundamental \gls{api} of the framework. This \gls{api} defines the concepts through which the PSS-IF \gls{dsl} is described, such as Metamodel, Model, NodeTypes, Nodes etc. Furthermore, the core module provides an implementation layer for the concepts of the PSS-IF \gls{dsl}, as well as a number of common utilities, like for example a generator for the canonic PSS-IF Metamodel, as depicted in \chapref{chap:intro}.
 
-\paragraph{Transform} The ''\textbf{transformation}'' Maven module provides the Application Programming Interface (API) used for the definition and execution of transformations, as well as for input and output (I/O) operations. Next to the APIs, this module also contains their implementation, as well as a number of commonly used helping utilities, concerned with transformation or the serialization to or de-serialization from external formats. Finally, this module contains implementations for the supported source and target languages.
+\paragraph{Transform} The ''\textbf{transformation}'' Maven module provides the \gls{api} used for the definition and execution of transformations, as well as for input and output (I/O) operations. Next to the \glspl{api}, this module also contains their implementation, as well as a number of commonly used helping utilities, concerned with transformation or the serialization to or de-serialization from external formats. Finally, this module contains implementations for the supported source and target languages.
 
 \paragraph{VSDX} The ''\textbf{vsdx}'' module is a dedicated module which provides an API and an implementation for the processing of Microsoft Visio 2013 VSDX documents. The module defines an abstraction layer describing the structure of a Visio document in an object-oriented fashion, and is used for the serialization and de-serialization of VSDX files.
 
@@ -74,7 +74,7 @@ This section covers the coarse-grained separation realized through Maven modular
 \section{Components}
 \label{sec:impl:components}
 
-After, in the previous section, the coarse-level division of the PSS-IF PoC parts through Maven modules was presented, this section focuses on a more detailed overview of the fine-level architectural components of the tool. Each of the following subsections describes the function and structure of a specific component of the transformation framework PoC.
+After, in the previous section, the coarse-level division of the PSS-IF \gls{poc} parts through Maven modules was presented, this section focuses on a more detailed overview of the fine-level architectural components of the tool. Each of the following subsections describes the function and structure of a specific component of the transformation framework \gls{poc}.
 
 \subsection{Core}
 
@@ -89,9 +89,9 @@ The core is the central component of the framework and is responsible for the re
 \label{fig:metamodel}
 \end{figure}
 
-The \texttt{Metamodel} (see \figref{fig:metamodel}) is a concept which enables the users of the framework to define the structure of their data. In this sense, a \texttt{Metamodel} also defines, on the abstract syntax level, the language in which the elements of a PSS-IF \texttt{Model} are described. A parallel in the domain of the Extensible Markup Language (XML) are the XML Schema Definitions (XSD). In essence, a PSS-IF \texttt{Metamodel} is the schema definition in accordance with which a particular \texttt{Model} is created and processed.
+The \texttt{Metamodel} (see \figref{fig:metamodel}) is a concept which enables the users of the framework to define the structure of their data. In this sense, a \texttt{Metamodel} also defines, on the abstract syntax level, the language in which the elements of a PSS-IF \texttt{Model} are described. A parallel in the domain of the \gls{xml} are the \gls{xsd}. In essence, a PSS-IF \texttt{Metamodel} is the schema definition in accordance with which a particular \texttt{Model} is created and processed.
 
-A PSS-IF \texttt{Metamodel} captures a number of concepts. In particular, it consists of \texttt{NodeType}s and \texttt{EdgeTypes}, i.e. elements which enable the user to define what kinds of nodes and edges their model may contain, what kinds of features they may have, and how they may relate to each other. Furthermore, in the PSS-IF PoC, inheritance relations can be defined between both \texttt{NodeType} and \texttt{EdgeType}.
+A PSS-IF \texttt{Metamodel} captures a number of concepts. In particular, it consists of \texttt{NodeType}s and \texttt{EdgeTypes}, i.e. elements which enable the user to define what kinds of nodes and edges their model may contain, what kinds of features they may have, and how they may relate to each other. Furthermore, in the PSS-IF \gls{poc}, inheritance relations can be defined between both \texttt{NodeType} and \texttt{EdgeType}.
 
 \paragraph{Node Types}
 
@@ -103,11 +103,11 @@ There are two categories of \texttt{NodeType} -- conventional ones and \texttt{J
 
 \texttt{EdgeType}s are used for the description of possible edges in a user's model. \texttt{EdgeType}s also have a name, which is unique in the scope of a \texttt{Metamodel}. For it to be possible to associate the same \texttt{EdgeType} with different pairs of \texttt{NodeType} instances, the concept of a \texttt{ConnectionMapping} is introduced. A \texttt{ConnectionMapping} is an association assigned to a particular \texttt{EdgeType}, which includes an incoming and an outgoing \texttt{NodeType}.
 
-To illustrate the usage of the \texttt{ConnectionMapping}, consider the following example: Assuming two \texttt{NodeType} instances, denoted ''State'' and ''Function'' and an \texttt{EdgeType} ''Control Flow'', which has to connect both node types in both directions. In the PSS-IF PoC this is achieved by instantiating a single \texttt{EdgeType} ''Control Flow'' and assigning two \texttt{ConnectionMapping} instances to it: one from ''State'' to ''Function'' and one from ''Function'' to ''State''.
+To illustrate the usage of the \texttt{ConnectionMapping}, consider the following example: Assuming two \texttt{NodeType} instances, denoted ''State'' and ''Function'' and an \texttt{EdgeType} ''Control Flow'', which has to connect both node types in both directions. In the PSS-IF \gls{poc} this is achieved by instantiating a single \texttt{EdgeType} ''Control Flow'' and assigning two \texttt{ConnectionMapping} instances to it: one from ''State'' to ''Function'' and one from ''Function'' to ''State''.
 
 \paragraph{Attributes}
 
-For both \texttt{NodeType} and \texttt{EdgeType}, \texttt{Attribute}s can be defined. \texttt{Attribute}s are divided into \texttt{AttribugteGroup}s, which can be used to separate different kinds of attributes conveniently, for example in a user interface. Furthermore, \texttt{Attribute}s are identified by their names, which have to be unique in the scope of the owning node or edge type. Also, each attribute has a \texttt{DataType}. The PSS-IF PoC defines a number of primitive data types, like \texttt{String}, \texttt{Integer}, \texttt{Date} and \texttt{Boolean}, and also provides the user with the ability to define custom enumeration data types. Finally, \texttt{Attribute} instances can optionally have a \texttt{Unit} associated with them, which can be particularly useful for numeric attributes. Finally, attributes are divided into categories. Currently, the following categories are defined: \texttt{Monetary}, \texttt{Weight}, \texttt{Density}, \texttt{Time}, \texttt{Geometry}, \texttt{MetaData} and \texttt{Material}.
+For both \texttt{NodeType} and \texttt{EdgeType}, \texttt{Attribute}s can be defined. \texttt{At\-tribute}s are divided into \texttt{AttribugteGroup}s, which can be used to separate different kinds of attributes conveniently, for example in a user interface. Furthermore, \texttt{Attribute}s are identified by their names, which have to be unique in the scope of the owning node or edge type. Also, each attribute has a \texttt{DataType}. The PSS-IF \gls{poc} defines a number of primitive data types, like \texttt{String}, \texttt{Integer}, \texttt{Date} and \texttt{Boolean}, and also provides the user with the ability to define custom enumeration data types. Finally, \texttt{Attribute} instances can optionally have a \texttt{Unit} associated with them, which can be particularly useful for numeric attributes. Finally, attributes are divided into categories. Currently, the following categories are defined: \texttt{Monetary}, \texttt{Weight}, \texttt{Density}, \texttt{Time}, \texttt{Geometry}, \texttt{MetaData} and \texttt{Material}.
 
 \paragraph{Inheritance}
 
@@ -126,7 +126,7 @@ Every PSS-IF Metamodel has a number of predefined elements. These are the root n
 \item \textbf{comment}: A comment of the node, of data type \texttt{String}, categorized as \texttt{Metadata}.
 \end{itemize}
 
-The root \texttt{EdgeType} '''\textbf{Edge}'' has all built-in Attributes defined for the root \texttt{NodeType} ''Node'', and also an additional attribute \textbf{directed} of data type \texttt{Boolean} and categorized as \texttt{Metadata}. 
+The root \texttt{EdgeType} '''\textbf{Edge}'' has all built-in attributes defined for the root \texttt{NodeType} ''Node'', and also an additional attribute \texttt{directed} of data type \texttt{Boolean} and categorized as \texttt{Metadata}. 
 
 The root node and edge types are also the roots of the inheritance hierarchies for \texttt{NodeType} and \texttt{EdgeType} within a \texttt{Metamodel}. In this sense, any \texttt{NodeType} or \texttt{EdgeType} instance automatically inherits from the root the respective root type. Thus, it is guaranteed that the set of attributes provided above is automatically defined for all instances of both \texttt{NodeType} and \texttt{EdgeType}. If a node or edge type inherits from a non-root node or edge type, the attributes are inherited transitively, together with all attributes of all ancestors throughout the generalization closure.
 
@@ -139,13 +139,13 @@ The root node and edge types are also the roots of the inheritance hierarchies f
 \label{fig:model}
 \end{figure}
 
-The second key component of the PSS-IF PoC core is the \texttt{Model} (see \figref{fig:model}), which can be seen as a simple graph, consisting of \texttt{Node} and \texttt{Edge} instances. A \texttt{Node} is an ontological instance of a \texttt{NodeType} and an \texttt{Edge} is an ontological instance of the \texttt{EdgeType} of a PSS-IF \texttt{Metamodel}. Note that the elements of the \texttt{Model} are not type-aware themselves and can thus be accessed with different \texttt{Metamodel} instances.
+The second key component of the PSS-IF \gls{poc} core is the \texttt{Model} (see \figref{fig:model}), which can be seen as a simple graph, consisting of \texttt{Node} and \texttt{Edge} instances. A \texttt{Node} is an ontological instance of a \texttt{NodeType} and an \texttt{Edge} is an ontological instance of the \texttt{EdgeType} of a PSS-IF \texttt{Metamodel}. Note that the elements of the \texttt{Model} are not type-aware themselves and can thus be accessed with different \texttt{Metamodel} instances.
 
-In the PSS-IF PoC this strategy is used extensively, and a \texttt{Model} does not provide any information or allow any operations itself. All access points to a \texttt{Model} have to be navigated through a \texttt{Metamodel}, i.e. a \texttt{Metamodel} \textit{operates} on a \texttt{Model}. This makes it possible to switch between metamodels as the user sees fit, but also to ensure data integrity at all times, by enforcing all modifications to be applied through the \texttt{Metamodel}, which plays the role of the schema for the data contained in the \texttt{Model}.
+In the PSS-IF \gls{poc} this strategy is used extensively, and a \texttt{Model} does not provide any information or allow any operations itself. All access points to a \texttt{Model} have to be navigated through a \texttt{Metamodel}, i.e. a \texttt{Metamodel} \textit{operates} on a \texttt{Model}. This makes it possible to switch between metamodels as the user sees fit, but also to ensure data integrity at all times, by enforcing all modifications to be applied through the \texttt{Metamodel}, which plays the role of the schema for the data contained in the \texttt{Model}.
 
 \subsection{Transformations}
 
-Next to the core, the other important component of the PSS-IF PoC is the transformation API. As already noted in \chapref{chap:approach}, the authors have adopted the ISO 42010 approach, which defines different stakeholders as having different views on their data. Since the utility defines structures on the meta-level, the PoC describes the views of different stakeholders (source and destination languages) through corresponding Metamodels, called Viewpoints -- mutable Metamodels, which perform implicit transformations. For this purpose, Viewpoints are defined by the application of a set of transformations to a metamodel.
+Next to the core, another important component of the PSS-IF \gls{poc} is the transformation \gls{api}. As described in \chapref{chap:approach}, the authors have adopted the ISO 42010 approach, which defines different stakeholders as having different views on their data. Since the utility defines structures on the meta-level, the \gls{poc} describes the views of different stakeholders (source and destination languages) through corresponding Metamodels, called Viewpoints -- mutable Metamodels, which perform implicit transformations. For this purpose, viewpoints are defined by the application of a set of transformations to a metamodel.
 
 Thus, the application of a \texttt{Transformation} results in a \texttt{Viewpoint}, i.e. a Metamodel, which modifies the behaviour of the input Metamodel in accordance with the particular kind of transformation used. As a result, transformations can be applied consequently, each one operating on the result of the previous. A viewpoint is defined in Java as follows:
 
@@ -183,7 +183,7 @@ This viewpoint results in the transformation depicted in \figref{fig:transformat
 
 \subsection{Generic Graph}
 
-A simple component used for intermediate steps in the transformation process is the generic graph component of the PSS-IF PoC. This component is a simple undirected graph consisting of nodes and edges, which can have string-named attributes with string values, as well as the name of their assumed type. A UML Class Diagram describing the generic graph is depicted in \figref{fig:genericgraph}. In this sense, the graph is an untyped and unstructured equivalent of a PSS-IF Model.
+A simple component used for intermediate steps in the transformation process is the generic graph component of the PSS-IF \gls{poc}. This component is a simple undirected graph consisting of nodes and edges, which can have string-named attributes with string values, as well as the name of their assumed type. A UML Class Diagram describing the generic graph is depicted in \figref{fig:genericgraph}. In this sense, the graph is an untyped and unstructured equivalent of a PSS-IF Model.
 
 \begin{figure}[h]
 \centering
@@ -204,7 +204,7 @@ The I/O Mapper component is responsible for the serialization and de-serializati
 \item \texttt{void write(Graph graph, OutputStream out);}
 \end{itemize}
 
-Note that the same \texttt{IoMapper} may be used for more than one language. For example, the \texttt{VsdxIoMapper} could be used for both EPC and BPMN.
+The same \texttt{IoMapper} may be used for more than one language. For example, the \texttt{VsdxIoMapper} could be used for both EPC and BPMN.
 
 \subsection{Model Mappers}
 \label{sec:impl:comp:model}
@@ -246,7 +246,7 @@ It should be noted that the current VSDX component does not provide any mechanis
 \section{Mapping Process}
 \label{sec:impl:process}
 
-After, in the previous section, the different components of the PSS-IF PoC were presented, this section focuses on how the components hang together and describes the mapping (import and export) process in detail. Here, the term mapping is used, as it covers the processes in both directions and the PSS-IF PoC implementation handles both cases in the same fashion.
+After, in the previous section, the different components of the PSS-IF \gls{poc} were presented, this section focuses on how the components hang together and describes the mapping (import and export) process in detail. Here, the term mapping is used, as it covers the processes in both directions and the PSS-IF \gls{poc} implementation handles both cases in the same fashion.
 
 \paragraph{API} The mapping processes are triggered over the corresponding API, represented by the \texttt{Mapper} interface, which has the following signature:
 
@@ -284,13 +284,13 @@ public abstract class AbstractMapper implements Mapper {
  }
 \end{verbatim}
 
-As the code snippet demonstrates, a PSS-IF \texttt{Model} instance is obtained from an external representation by transcoding the external representation into a generic graph, obtaining the \texttt{Viewpoint} of the current language and finally mapping the generic graph to a model in accordance with the viewpoint.
+As the code above demonstrates, a PSS-IF \texttt{Model} instance is obtained from an external representation by transcoding the external representation into a generic graph, obtaining the \texttt{Viewpoint} of the current language and finally mapping the generic graph to a model in accordance with the viewpoint.
 
 Symmetrically, a file is generated from a PSS-IF \texttt{Model} by first obtaining the \texttt{Viewpoint} for the current language and using it to translate the model into a generic graph, and then serializing the graph to a stream through the corresponding \texttt{IoMapper}.
 
 \paragraph{Process}
 
-Recall the 6-step process described in \secref{sec:approach:pssif:nutshell}, which describes the transformation process on the conceptual level. In the PSS-IF PoC, the transformation process is implemented through the consequent invocation of two mappers. The first one is the mapper which de-serializes the source data and transforms it into a Model conforming to the PSS-IF Canonic Metamodel. The second mapper is the one for the target format and is used to write the obtained model into an external representation. For an exemplary source language A and target language B, the Java code describing the transformation process is the following:
+Recall the 6-step process described in \secref{sec:approach:pssif:nutshell}, which describes the transformation process on the conceptual level. In the PSS-IF \gls{poc}, the transformation process is implemented through the consequent invocation of two mappers. The first one is the mapper which de-serializes the source data and transforms it into a Model conforming to the PSS-IF Canonic Metamodel. The second mapper is the one for the target format and is used to write the obtained model into an external representation. For an exemplary source language A and target language B, the Java code describing the transformation process is the following:
 
 \begin{verbatim}
 public void transform(Mapper aMapper, Mapper bMapper,
@@ -305,7 +305,7 @@ public void transform(Mapper aMapper, Mapper bMapper,
 \begin{figure}[h]
 \centering
 \includegraphics[width=0.8\textwidth]{figures/process.pdf}
-\caption{The Transformation Process of the PSS-IF PoC}
+\caption{The Transformation Process of the PSS-IF \gls{poc}}
 \label{fig:transformationprocess}
 \end{figure}
 

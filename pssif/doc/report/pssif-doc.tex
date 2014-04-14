@@ -27,6 +27,9 @@
 \usepackage{listings}
 \usepackage{footnote}
 
+\usepackage[nonumberlist,nopostdot,nomain,toc,acronym]{glossaries}
+\makeglossaries
+
 %Settings applicable to the complete document
 
 %Breaks URLs properly and draws them in a nice font
@@ -111,9 +114,8 @@
 %List of Listings
 %\lstlistoflistings
 
-%TODO ENABLE
-%\input{acronyms.tex}
-
+\include{acronyms}
+\printglossary[title=List of Abbreviations,type=acronym]
 
 \mainmatter
 \pagestyle{headings}
@@ -139,6 +141,6 @@
 %\input{sections/appendix-owl.tex}
 
 % the bibliography
-%\bibliography{papers}
+\bibliography{papers}
 
 \end{document}
