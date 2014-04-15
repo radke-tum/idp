@@ -10,29 +10,29 @@ This section defines the technologies used for the implementation of the PSS-IF 
 
 \subsection{Programming Language}
 
-To enable an easier and more rapid development of the prototype, a high-level programming language can better be utilized. Due to previous experience and know-how, the authors have chosen the Java Programming Language. Furthermore, the code is compliant with Java version 7, as distributed by Oracle. 
+To enable an easier and more rapid development of the prototype, a high-level programming language can better be utilized. Due to previous experience and know-how, the authors have chosen the Java Programming Language\cite{ref:java}. Furthermore, the code is compliant with Java version 7, as distributed by Oracle. 
 
 \subsection{Source Code Management}
 
-For improved parallelisation, better code maintenance and easier documentation, a distributed version control system can be used. While there are numerous alternatives, the authors have chosen git as a modern and powerful solution.
+For improved parallelisation, better code maintenance and easier documentation, a distributed version control system can be used. While there are numerous alternatives, the authors have chosen git\cite{ref:git} as a modern and powerful solution.
 
 \subsection{Build Process and Dependency Management}
 
-For the automated build process, as well as for the management of dependencies to external libraries, Apache Maven has been used.
+For the automated build process, as well as for the management of dependencies to external libraries, Apache Maven\cite{ref:maven} has been used.
 
 \subsection{Test Framework}
 
-For the execution of automated tests, JUnit, an industry standard framework within the Java universe, has been used.
+For the execution of automated tests, JUnit\cite{ref:junit}, an industry standard framework within the Java universe, has been used.
 
 \subsection{Used Libraries}
 
 Next to the libraries provided by Oracle's Standard Java Runtime Environment, the following additional libraries have been used:
 
-\paragraph{apache-compress} An \gls{api} for the manipulation of different kinds of compressed files. In the scope of the \gls{poc}, the \gls{api} is used in the Visio processing component, for the zipping and unzipping of Visio files.
+\paragraph{apache-compress\cite{ref:compress}} An \gls{api} for the manipulation of different kinds of compressed files. In the scope of the \gls{poc}, the \gls{api} is used in the Visio \cite{ref:visio} processing component, for the zipping and unzipping of Visio files.
 
-\paragraph{guava} Google Guava is a set of common libraries, mainly developed by Google. The package includes useful \glspl{api} for the manipulation of collections, the usage of function and predicates, and others.
+\paragraph{guava\cite{ref:guava}} Google Guava is a set of common libraries, mainly developed by Google. The package includes useful \glspl{api} for the manipulation of collections, the usage of function and predicates, and others.
 
-\paragraph{emf} The \gls{emf} library is used for the serialization and de-serialization of eCore and \gls{xmi} files, enabling the processing of SysML4Mechatronics data.
+\paragraph{emf\cite{ref:emf}} The \gls{emf} library is used for the serialization and de-serialization of eCore\cite{ref:emf} and \gls{xmi}\cite{ref:xmi} files, enabling the processing of SysML4Mechatronics data.
 
 \paragraph{junit} JUnit is an industry standard unit-testing framework.
 
@@ -89,7 +89,7 @@ The core is the central component of the framework and is responsible for the re
 \label{fig:metamodel}
 \end{figure}
 
-The \texttt{Metamodel} (see \figref{fig:metamodel}) is a concept which enables the users of the framework to define the structure of their data. In this sense, a \texttt{Metamodel} also defines, on the abstract syntax level, the language in which the elements of a PSS-IF \texttt{Model} are described. A parallel in the domain of the \gls{xml} are the \gls{xsd}. In essence, a PSS-IF \texttt{Metamodel} is the schema definition in accordance with which a particular \texttt{Model} is created and processed.
+The \texttt{Metamodel} (see \figref{fig:metamodel}) is a concept which enables the users of the framework to define the structure of their data. In this sense, a \texttt{Metamodel} also defines, on the abstract syntax level, the language in which the elements of a PSS-IF \texttt{Model} are described. A parallel in the domain of the \gls{xml} are the \gls{xsd} \cite{ref:xsd}. In essence, a PSS-IF \texttt{Metamodel} is the schema definition in accordance with which a particular \texttt{Model} is created and processed.
 
 A PSS-IF \texttt{Metamodel} captures a number of concepts. In particular, it consists of \texttt{NodeType}s and \texttt{EdgeTypes}, i.e. elements which enable the user to define what kinds of nodes and edges their model may contain, what kinds of features they may have, and how they may relate to each other. Furthermore, in the PSS-IF \gls{poc}, inheritance relations can be defined between both \texttt{NodeType} and \texttt{EdgeType}.
 
