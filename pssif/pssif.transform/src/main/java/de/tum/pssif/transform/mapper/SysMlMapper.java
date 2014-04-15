@@ -122,6 +122,7 @@ public class SysMlMapper implements Mapper {
     Model model = new ModelImpl();
     Map<EObject, Node> nodes = readNodes(metamodel, ePackage, model, eObjects);
     readEdges(metamodel, ePackage, model, nodes);
+    //TODO fix ports, i.e. flow directions?
     return model;
   }
 
@@ -154,6 +155,8 @@ public class SysMlMapper implements Mapper {
     //read block2portRelationships
     //read block2functionalityRelationships
     //read port2functionalityRelatuionships
+
+    //read relationship -> all eObjects, fromType, toType, EdgeType, eReferenceName, eClassName
   }
 
   private void readNodesOfType(Metamodel metamodel, EPackage ePackage, Model model, Collection<EObject> eObjects, Map<EObject, Node> nodes,
@@ -191,6 +194,7 @@ public class SysMlMapper implements Mapper {
 
   private void readInterfaceBlocksAndEeDataTypes(Metamodel metamodel, EPackage ePackage, Map<EObject, Node> nodes) {
     //TODO this one is special -> these are attributes of already read nodes, i.e. use both model and eObjects to read
+    //alright, this one comes with a theory about how to handle it...
   }
 
   private Set<EObject> getEInstances(EClass eClass, Collection<EObject> eObjects) {
