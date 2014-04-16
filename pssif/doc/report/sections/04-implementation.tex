@@ -14,7 +14,7 @@ To enable an easier and more rapid development of the prototype, a high-level pr
 
 \subsection{Source Code Management}
 
-For improved parallelisation, better code maintenance and easier documentation, a distributed version control system can be used. While there are numerous alternatives, the authors have chosen git\cite{ref:git} as a modern and powerful solution.
+For improved parallelisation, better code maintenance and easier documentation, a distributed version control system can be used. While there are numerous alternatives, the authors have chosen git \cite{ref:git} as a modern and powerful solution.
 
 \subsection{Build Process and Dependency Management}
 
@@ -68,8 +68,6 @@ This section covers the coarse-grained separation realized through Maven modular
 \paragraph{Transform} The ''\textbf{transformation}'' Maven module provides the \gls{api} used for the definition and execution of transformations, as well as for input and output (I/O) operations. Next to the \glspl{api}, this module also contains their implementation, as well as a number of commonly used helping utilities, concerned with transformation or the serialization to or de-serialization from external formats. Finally, this module contains implementations for the supported source and target languages.
 
 \paragraph{VSDX} The ''\textbf{vsdx}'' module is a dedicated module which provides an API and an implementation for the processing of Microsoft Visio 2013 VSDX documents. The module defines an abstraction layer describing the structure of a Visio document in an object-oriented fashion, and is used for the serialization and de-serialization of VSDX files.
-
-\paragraph{SysML4Mechatronics} The ''\textbf{sysml4mechatronics}'' module contains a number of APIs and implementations for them, used for the serialization and de-serialization of SFB768 SysML4Mechatronics files.
 
 \section{Components}
 \label{sec:impl:components}
