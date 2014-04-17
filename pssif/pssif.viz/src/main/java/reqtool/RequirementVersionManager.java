@@ -242,13 +242,25 @@ public class RequirementVersionManager {
 	public static void showVersions(GraphVisualization gViz, MyNode myNode) {
 		MyNode parentNode = getMaxVersion(myNode);
 		String[] idNV = myNode.getNode().getId().toString().split("_");
+		LinkedList<MyNode> toBeShown = new LinkedList<MyNode>();
 		for (MyNode mN : ModelBuilder.getAllNodes()) {
 			String[] idNVNew = mN.getNode().getId().toString().split("_");
 			if (idNVNew.length > 0 && idNVNew[0].equals(idNV[0])
 					&& !mN.equals(parentNode)) {
-				mN.setVisible(true);
+				toBeShown.add(mN);
 			}
 
+		}
+		
+
+		for (MyEdge e: ModelBuilder.getAllEdges()){
+			
+			if ( toBeShown.contains((MyNode)e.getDestinationNode()) && ((MyNode)e.getSourceNode()).getNodeType().toString().equals(PSSIFCanonicMetamodelCreator.N_TEST_CASE) ){
+				toBeShown.add((MyNode)e.getSourceNode());
+			}
+		}
+		for (MyNode n : toBeShown){
+			n.setVisible(true);
 		}
 
 	}

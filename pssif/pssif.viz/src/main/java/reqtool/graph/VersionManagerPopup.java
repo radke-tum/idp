@@ -54,8 +54,7 @@ public class VersionManagerPopup {
 		 
     	for (Entry<Attribute, JTextField> input:attrTextFields.entrySet()) {
         	if (  input.getKey().getName().equals(PSSIFConstants.BUILTIN_ATTRIBUTE_VERSION)  &&
-        			input.getValue().getText()!=null && input.getValue().getText().length()>0 && !version2.isNone() 
-        			&& Double.parseDouble(version2.getOne().asString()) < (Double.parseDouble(input.getValue().getText())) )
+        			input.getValue().getText()!=null && input.getValue().getText().length()>0  )
         	{
         		VersionManager vm = new VersionManager(node);
         		return vm.createNewVersion(input.getValue().getText());

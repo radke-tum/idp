@@ -41,15 +41,10 @@ public class IssueResolver {
 			MyNode solArt = solArts.get(0);
 			System.out.println("Resolving Issue for  Solution Artifact: "+solArt.getName());
 			MyNode changeProposal = ModelBuilder.addNewNodeFromGUI("ChangeProposal for Issue"+selectedNode.getName() , ModelBuilder.getNodeTypes().getValue(PSSIFCanonicMetamodelCreator.N_CHANGE_PROPOSAL));
-			
 			ModelBuilder.addNewEdgeGUI(selectedNode, changeProposal, ModelBuilder.getEdgeTypes().getValue(PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_CHRONOLOGICAL_LEADS_TO), true);
-			
 			MyNode decision = ModelBuilder.addNewNodeFromGUI("Decision for ChangeProposal"+selectedNode.getName() , ModelBuilder.getNodeTypes().getValue(PSSIFCanonicMetamodelCreator.N_DECISION));
-			
 			ModelBuilder.addNewEdgeGUI(changeProposal, decision, ModelBuilder.getEdgeTypes().getValue(PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_CHRONOLOGICAL_LEADS_TO), true);
-			
 			MyNode changeEvent = ModelBuilder.addNewNodeFromGUI("ChangeEvent"+selectedNode.getName(),  ModelBuilder.getNodeTypes().getValue(PSSIFCanonicMetamodelCreator.N_CHANGE_EVENT));
-			
 			ModelBuilder.addNewEdgeGUI(selectedNode, changeEvent, ModelBuilder.getEdgeTypes().getValue(PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_REFERENTIAL), true);
 			ModelBuilder.addNewEdgeGUI(changeProposal, changeEvent, ModelBuilder.getEdgeTypes().getValue(PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_REFERENTIAL), true);
 			ModelBuilder.addNewEdgeGUI(decision, changeEvent, ModelBuilder.getEdgeTypes().getValue(PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_REFERENTIAL), true);
@@ -58,6 +53,11 @@ public class IssueResolver {
 			System.out.println("More than 1 Solution Artifact - TODO");
 		}
 			
+		
+		
+	}
+	
+	public void createEventNodes(){
 		
 		
 	}

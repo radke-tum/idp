@@ -1,5 +1,6 @@
 package reqtool.graph;
 
+import graph.model.MyEdgeType;
 import graph.model.MyNode;
 import gui.graph.GraphVisualization;
 
@@ -12,6 +13,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.naming.spi.Resolver;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -19,21 +21,28 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
+import model.ModelBuilder;
+import de.tum.pssif.core.metamodel.PSSIFCanonicMetamodelCreator;
+import de.tum.pssif.core.model.Model;
 import reqtool.IssueResolver;
 import reqtool.TestCaseCreator;
 import reqtool.VersionManager;
 
 public class IssueResolverPopup {
+	private static final MyEdgeType LEADS_TO =  ModelBuilder.getEdgeTypes().getValue(PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_CHRONOLOGICAL_LEADS_TO);
+	private static final MyEdgeType REFERENCIAL = ModelBuilder.getEdgeTypes().getValue(PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_REFERENTIAL);
+	
 	private JPanel allPanel;
 	private JPanel reqPanel;
 	private JPanel solPanel;
 	
+	private MyNode selectedNode;
 	private LinkedList<MyNode> reqs;
 	private LinkedList<MyNode> sols;
-	
 	private GraphVisualization gViz;
 	
 	public IssueResolverPopup (MyNode issue){
+		selectedNode = issue;
 		IssueResolver resolver = new IssueResolver(issue);
 		reqs = resolver.getRequirement();
 		sols = resolver.getSolArtifacts();
@@ -78,8 +87,25 @@ public class IssueResolverPopup {
 				}
 			}
 			
-			for(int index:selectedSolNodes) {
+			MyNode changeProposal = ModelBuilder.addNewNodeFromGUI("ChangeProposal for Issue"+selectedNode.getName() , ModelBuilder.getNodeTypes().getValue(PSSIFCanonicMetamodelCreator.N_CHANGE_PROPOSAL));
+			ModelBuilder.addNewEdgeGUI(selectedNode, changeProposal, LEADS_TO, true);
+			
+			MyNode decision = ModelBuilder.addNewNodeFromGUI("Decision for ChangeProposal"+selectedNode.getName() , ModelBuilder.getNodeTypes().getValue(PSSIFCanonicMetamodelCreator.N_DECISION));
+			ModelBuilder.addNewEdgeGUI(changeProposal, decision, LEADS_TO, true);
+			
+			MyNode changeEvent = ModelBuilder.addNewNodeFromGUI("ChangeEvent"+selectedNode.getName(),  ModelBuilder.getNodeTypes().getValue(PSSIFCanonicMetamodelCreator.N_CHANGE_EVENT));
+			ModelBuilder.addNewEdgeGUI(selectedNode, changeEvent,REFERENCIAL, true);
+			ModelBuilder.addNewEdgeGUI(changeProposal, changeEvent, REFERENCIAL, true);
+			ModelBuilder.addNewEdgeGUI(decision, changeEvent,REFERENCIAL, true);
+			
+			for (int index:selectedSolNodes) {
 				if (VersionManagerPopup.showPopup(sols.get(index))) {
+					
+					VersionManager vm = new VersionManager(sols.get(index));
+					MyNode newVersionNode = vm.getMaxVersion();
+					
+					ModelBuilder.addNewEdgeGUI(newVersionNode, changeEvent, ModelBuilder.getEdgeTypes().getValue(PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_CHRONOLOGICAL_BASED_ON), true);
+					
 					gViz.updateGraph();
 				}
 			}
