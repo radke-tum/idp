@@ -57,6 +57,7 @@ public class SysMlMapper implements Mapper {
   private static final String BLOCK_SOFTWARE           = "SoftwareBlock";
   private static final String BLOCK_MODULE             = "Module";
 
+  private static final String PORT_SYSML4MECHATRONICS  = "SysML4MechatronicsPort";
   private static final String PORT_MECHANIC            = "MechanicalPort";
   private static final String PORT_ELECTRONIC          = "EEPort";
   private static final String PORT_SOFTWARE            = "SoftwarePort";
@@ -121,8 +122,8 @@ public class SysMlMapper implements Mapper {
   private Model readSysMLModel(Metamodel metamodel, EPackage ePackage, Collection<EObject> eObjects) {
     Model model = new ModelImpl();
     Map<EObject, Node> nodes = readNodes(metamodel, ePackage, model, eObjects);
-    readEdges(metamodel, ePackage, model, nodes);
-    //TODO fix ports, i.e. flow directions?
+    readEdges(metamodel, ePackage, model, nodes, eObjects);
+    //TODO fix ports, i.e. flow directions and stuff...?
     return model;
   }
 
@@ -145,18 +146,111 @@ public class SysMlMapper implements Mapper {
     //read interface blocks and data types
     readInterfaceBlocksAndEeDataTypes(metamodel, ePackage, nodes);
 
-    //e TODO
     return nodes;
   }
 
-  private void readEdges(Metamodel metamodel, EPackage ePackage, Model model, Map<EObject, Node> nodes) {
-    //TODO
-    //read block2blockRelationships
-    //read block2portRelationships
-    //read block2functionalityRelationships
-    //read port2functionalityRelatuionships
+  private void readEdges(Metamodel metamodel, EPackage ePackage, Model model, Map<EObject, Node> nodes, Collection<EObject> eObjects) {
 
-    //read relationship -> all eObjects, fromType, toType, EdgeType, eReferenceName, eClassName
+    //block2block containment
+    readEdgesOfType(metamodel, ePackage, model, PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_INCLUSION_CONTAINS, OWNED_BLOCK,
+        PSSIFCanonicMetamodelCreator.N_BLOCK, PSSIFCanonicMetamodelCreator.N_BLOCK, BLOCK_MODULE, nodes, eObjects);
+
+    //block2port containment
+    readEdgesOfType(metamodel, ePackage, model, PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_INCLUSION_CONTAINS, OWNED_PORT,
+        PSSIFCanonicMetamodelCreator.N_MODULE, PSSIFCanonicMetamodelCreator.N_PORT_ELECTRONIC, BLOCK_MODULE, nodes, eObjects);
+    readEdgesOfType(metamodel, ePackage, model, PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_INCLUSION_CONTAINS, OWNED_PORT,
+        PSSIFCanonicMetamodelCreator.N_MODULE, PSSIFCanonicMetamodelCreator.N_PORT_MECHANIC, BLOCK_MODULE, nodes, eObjects);
+    readEdgesOfType(metamodel, ePackage, model, PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_INCLUSION_CONTAINS, OWNED_PORT,
+        PSSIFCanonicMetamodelCreator.N_MODULE, PSSIFCanonicMetamodelCreator.N_PORT_SOFTWARE, BLOCK_MODULE, nodes, eObjects);
+
+    readEdgesOfType(metamodel, ePackage, model, PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_INCLUSION_CONTAINS, OWNED_PORT,
+        PSSIFCanonicMetamodelCreator.N_SOFTWARE, PSSIFCanonicMetamodelCreator.N_PORT_SOFTWARE, BLOCK_SOFTWARE, nodes, eObjects);
+
+    readEdgesOfType(metamodel, ePackage, model, PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_INCLUSION_CONTAINS, OWNED_PORT,
+        PSSIFCanonicMetamodelCreator.N_ELECTRONIC, PSSIFCanonicMetamodelCreator.N_PORT_ELECTRONIC, BLOCK_ELECTRONIC, nodes, eObjects);
+
+    readEdgesOfType(metamodel, ePackage, model, PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_INCLUSION_CONTAINS, OWNED_PORT,
+        PSSIFCanonicMetamodelCreator.N_MECHANIC, PSSIFCanonicMetamodelCreator.N_PORT_MECHANIC, BLOCK_MECHANIC, nodes, eObjects);
+
+    //port2port
+    readEdgesOfType(metamodel, ePackage, model, PSSIFCanonicMetamodelCreator.E_IS_CONNECTED_TO, IS_CONNECTED_TO,
+        PSSIFCanonicMetamodelCreator.N_PORT_ELECTRONIC, PSSIFCanonicMetamodelCreator.N_PORT_ELECTRONIC, PORT_ELECTRONIC, nodes, eObjects);
+    readEdgesOfType(metamodel, ePackage, model, PSSIFCanonicMetamodelCreator.E_IS_CONNECTED_TO, IS_CONNECTED_TO,
+        PSSIFCanonicMetamodelCreator.N_PORT_MECHANIC, PSSIFCanonicMetamodelCreator.N_PORT_MECHANIC, PORT_MECHANIC, nodes, eObjects);
+    readEdgesOfType(metamodel, ePackage, model, PSSIFCanonicMetamodelCreator.E_IS_CONNECTED_TO, IS_CONNECTED_TO,
+        PSSIFCanonicMetamodelCreator.N_PORT_SOFTWARE, PSSIFCanonicMetamodelCreator.N_PORT_SOFTWARE, PORT_SOFTWARE, nodes, eObjects);
+
+    //block2functionality
+    readEdgesOfType(metamodel, ePackage, model, PSSIFCanonicMetamodelCreator.E_FULFILLS, OWNED_FUNCTIONALITY,
+        PSSIFCanonicMetamodelCreator.N_ELECTRONIC, PSSIFCanonicMetamodelCreator.N_FUNCTIONALITY, BLOCK_ELECTRONIC, nodes, eObjects);
+    readEdgesOfType(metamodel, ePackage, model, PSSIFCanonicMetamodelCreator.E_FULFILLS, OWNED_FUNCTIONALITY,
+        PSSIFCanonicMetamodelCreator.N_MECHANIC, PSSIFCanonicMetamodelCreator.N_FUNCTIONALITY, BLOCK_MECHANIC, nodes, eObjects);
+    readEdgesOfType(metamodel, ePackage, model, PSSIFCanonicMetamodelCreator.E_FULFILLS, OWNED_FUNCTIONALITY,
+        PSSIFCanonicMetamodelCreator.N_SOFTWARE, PSSIFCanonicMetamodelCreator.N_FUNCTIONALITY, BLOCK_SOFTWARE, nodes, eObjects);
+    readEdgesOfType(metamodel, ePackage, model, PSSIFCanonicMetamodelCreator.E_FULFILLS, OWNED_FUNCTIONALITY, PSSIFCanonicMetamodelCreator.N_MODULE,
+        PSSIFCanonicMetamodelCreator.N_FUNCTIONALITY, BLOCK_MODULE, nodes, eObjects);
+
+    //port2functionality
+    readEdgesOfType(metamodel, ePackage, model, PSSIFCanonicMetamodelCreator.E_IS_MANDATORY_FOR, IS_MANDATORY_FOR,
+        PSSIFCanonicMetamodelCreator.N_PORT, PSSIFCanonicMetamodelCreator.N_FUNCTIONALITY, PORT_SYSML4MECHATRONICS, nodes, eObjects);
+  }
+
+  @SuppressWarnings("unchecked")
+  private void readEdgesOfType(Metamodel metamodel, EPackage ePackage, Model model, String edgeTypeName, String eReferenceName,
+                               String fromNodeTypeName, String toNodeTypeName, String eOwnerClassName, Map<EObject, Node> nodes,
+                               Collection<EObject> eObjects) {
+    //locate all the stuff for the edges
+    EClass eClass = getEClass(ePackage, eOwnerClassName);
+    if (eClass == null) {
+      warnOnStdOut(EClass.class, eOwnerClassName);
+      return;
+    }
+    EReference eReference = findEFeature(eClass, eReferenceName);
+    if (eReference == null) {
+      warnOnStdOut(EReference.class, eReferenceName);
+      return;
+    }
+    NodeTypeBase fromType = getNodeType(metamodel, fromNodeTypeName);
+    NodeTypeBase toType = getNodeType(metamodel, toNodeTypeName);
+    if (fromType == null || toType == null) {
+      warnOnStdOut(NodeTypeBase.class, fromNodeTypeName + " or " + toNodeTypeName);
+      return;
+    }
+    EdgeType edgeType = metamodel.getEdgeType(edgeTypeName).getOne();
+    if (edgeType == null) {
+      warnOnStdOut(EdgeType.class, edgeTypeName);
+      return;
+    }
+    ConnectionMapping mapping = edgeType.getMapping(fromType, toType).getOne();
+    if (mapping == null) {
+      warnOnStdOut(ConnectionMapping.class, fromNodeTypeName + ":" + toNodeTypeName + ":" + edgeTypeName);
+      return;
+    }
+
+    //begin reading edges
+    for (EObject eFrom : getEInstances(eClass, eObjects)) {
+      Node nodeFrom = nodes.get(eFrom);
+      if (nodeFrom == null) {
+        continue;
+      }
+      if (eFrom.eGet(eReference) instanceof Collection) {
+        Collection<EObject> toEObjects = (Collection<EObject>) eFrom.eGet(eReference);
+        for (EObject eTo : toEObjects) {
+          Node nodeTo = nodes.get(eTo);
+          if (nodeTo == null) {
+            continue;
+          }
+          mapping.create(model, nodeFrom, nodeTo);
+        }
+      }
+      else if (eFrom.eGet(eReference) != null) {
+        EObject eTo = (EObject) eFrom.eGet(eReference);
+        Node nodeTo = nodes.get(eTo);
+        if (nodeTo != null) {
+          mapping.create(model, nodeFrom, nodeTo);
+        }
+      }
+    }
   }
 
   private void readNodesOfType(Metamodel metamodel, EPackage ePackage, Model model, Collection<EObject> eObjects, Map<EObject, Node> nodes,
@@ -278,12 +372,12 @@ public class SysMlMapper implements Mapper {
       PSSIFOption<PSSIFValue> dataTypeValue = dataTypeAttribute.get(portNode);
       if (dataTypeValue.isOne()) {
         if (INTERFACE_SOFTWARE.equals(interfaceBlockClass.getName())) {
-          EAttribute eOperationName = findEAttribute(interfaceBlockClass, OPERATION_NAME);
+          EAttribute eOperationName = findEFeature(interfaceBlockClass, OPERATION_NAME);
           eInterfaceBlock.eSet(eOperationName, dataTypeValue.getOne().asString());
         }
         else {
           EClass eEeDataTypeClass = getEClass(ePackage, EE_DATA_TYPE);
-          EAttribute eNameAttribute = findEAttribute(eEeDataTypeClass, PSSIFConstants.BUILTIN_ATTRIBUTE_NAME);
+          EAttribute eNameAttribute = findEFeature(eEeDataTypeClass, PSSIFConstants.BUILTIN_ATTRIBUTE_NAME);
           EObject eEeDataTypeObject = EcoreUtil.create(eEeDataTypeClass);
           createdEObjects.add(eEeDataTypeObject);
           eEeDataTypeObject.eSet(eNameAttribute, dataTypeValue.getOne().asString());
@@ -459,13 +553,14 @@ public class SysMlMapper implements Mapper {
   }
 
   private EAttribute findEAttribute(EClass eClass, Attribute attribute) {
-    return findEAttribute(eClass, attribute.getName());
+    return findEFeature(eClass, attribute.getName());
   }
 
-  private EAttribute findEAttribute(EClass eClass, String attributeName) {
+  @SuppressWarnings("unchecked")
+  private <T extends EStructuralFeature> T findEFeature(EClass eClass, String eFeatureName) {
     for (EStructuralFeature eFeature : eClass.getEAllStructuralFeatures()) {
-      if (EAttribute.class.isInstance(eFeature) && attributeName.trim().equalsIgnoreCase(eFeature.getName().trim())) {
-        return (EAttribute) eFeature;
+      if (eFeatureName.trim().equalsIgnoreCase(eFeature.getName().trim())) {
+        return (T) eFeature;
       }
     }
     return null;
@@ -477,6 +572,10 @@ public class SysMlMapper implements Mapper {
 
   private EClass getEClass(EPackage ePackage, String name) {
     return (EClass) ePackage.getEClassifier(name);
+  }
+
+  private static void warnOnStdOut(Class<?> objectType, String objectIdentifier) {
+    System.out.println("Missing object of type " + objectType.getSimpleName() + " for object identifier " + objectIdentifier);
   }
 
   public static Map<String, Object> getOptions() {
