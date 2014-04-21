@@ -87,6 +87,7 @@ public class SysMlMapper implements Mapper {
     Model loadedModel = null;
     try {
       resource.load(inputStream, getOptions());
+      EcoreUtil.resolveAll(resource);
       loadedModel = readSysMLModel(metamodel, ePackage, resource.getContents());
     } catch (IOException e) {
       throw new PSSIFIoException("Failed to read XMI from stream.", e);
@@ -102,6 +103,7 @@ public class SysMlMapper implements Mapper {
     Set<EObject> sysMlModelContents = writeSysMlModel(metamodel, ePackage, model);
     Resource resource = new XMIResourceFactoryImpl().createResource(URI.createURI(""));
     resource.getContents().addAll(sysMlModelContents);
+    EcoreUtil.resolveAll(resource);
     try {
       resource.save(outputStream, getOptions());
     } catch (IOException e) {
@@ -110,7 +112,7 @@ public class SysMlMapper implements Mapper {
   }
 
   private EPackage getEPackage() {
-    Resource ecoreResource = new EcoreResourceFactoryImpl().createResource(URI.createURI("ecore"));
+    Resource ecoreResource = new EcoreResourceFactoryImpl().createResource(URI.createURI(""));
     InputStream ecoreInputStream = getClass().getResourceAsStream(SYSML4MECHATRONICS_ECORE);
     try {
       ecoreResource.load(ecoreInputStream, getOptions());
