@@ -2,6 +2,8 @@ package de.tum.pssif.transform.mapper.sysml;
 
 import static org.junit.Assert.fail;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -35,6 +37,24 @@ public class SysML4MechatronicsECoreTest {
     SysMlMapper mapper = new SysMlMapper();
     try {
       mapper.write(metamodel, model, new FileOutputStream(new File("C:" + File.separator + "Dev" + File.separator + "sysml.xmi")));
+    } catch (FileNotFoundException e) {
+      e.printStackTrace();
+      fail("NOPE!");
+    }
+  }
+
+  @Test
+  public void testWriteReadWriteRoundtrip() {
+    Metamodel metamodel = PSSIFCanonicMetamodelCreator.create();
+    Model model = getModel();
+    SysMlMapper mapper = new SysMlMapper();
+    ByteArrayOutputStream out = new ByteArrayOutputStream();
+    mapper.write(metamodel, model, out);
+    mapper = new SysMlMapper();
+    model = mapper.read(metamodel, new ByteArrayInputStream(out.toByteArray()));
+    mapper = new SysMlMapper();
+    try {
+      mapper.write(metamodel, model, new FileOutputStream(new File("C:" + File.separator + "Dev" + File.separator + "sysml-roundtrip.xmi")));
     } catch (FileNotFoundException e) {
       e.printStackTrace();
       fail("NOPE!");

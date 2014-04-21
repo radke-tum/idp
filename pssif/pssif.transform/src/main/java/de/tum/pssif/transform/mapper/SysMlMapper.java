@@ -84,21 +84,23 @@ public class SysMlMapper implements Mapper {
     EPackage ePackage = getEPackage();
     EPackage.Registry.INSTANCE.put(ePackage.getNsURI(), ePackage);
     Resource resource = new XMIResourceFactoryImpl().createResource(URI.createURI(""));
+    Model loadedModel = null;
     try {
       resource.load(inputStream, getOptions());
+      loadedModel = readSysMLModel(metamodel, ePackage, resource.getContents());
     } catch (IOException e) {
       throw new PSSIFIoException("Failed to read XMI from stream.", e);
     } finally {
       EPackage.Registry.INSTANCE.remove(ePackage.getNsURI());
     }
-    return readSysMLModel(metamodel, ePackage, resource.getContents());
+    return loadedModel;
   }
 
   @Override
   public void write(Metamodel metamodel, Model model, OutputStream outputStream) {
     EPackage ePackage = getEPackage();
     Set<EObject> sysMlModelContents = writeSysMlModel(metamodel, ePackage, model);
-    Resource resource = new XMIResourceFactoryImpl().createResource(URI.createFileURI(""));
+    Resource resource = new XMIResourceFactoryImpl().createResource(URI.createURI(""));
     resource.getContents().addAll(sysMlModelContents);
     try {
       resource.save(outputStream, getOptions());
@@ -108,7 +110,7 @@ public class SysMlMapper implements Mapper {
   }
 
   private EPackage getEPackage() {
-    Resource ecoreResource = new EcoreResourceFactoryImpl().createResource(URI.createURI(""));
+    Resource ecoreResource = new EcoreResourceFactoryImpl().createResource(URI.createURI("ecore"));
     InputStream ecoreInputStream = getClass().getResourceAsStream(SYSML4MECHATRONICS_ECORE);
     try {
       ecoreResource.load(ecoreInputStream, getOptions());
@@ -234,7 +236,7 @@ public class SysMlMapper implements Mapper {
         continue;
       }
       if (eFrom.eGet(eReference) instanceof Collection) {
-        Collection<EObject> toEObjects = (Collection<EObject>) eFrom.eGet(eReference);
+        Collection<EObject> toEObjects = (Collection<EObject>) eFrom.eGet(eReference, true);
         for (EObject eTo : toEObjects) {
           Node nodeTo = nodes.get(eTo);
           if (nodeTo == null) {
@@ -244,7 +246,7 @@ public class SysMlMapper implements Mapper {
         }
       }
       else if (eFrom.eGet(eReference) != null) {
-        EObject eTo = (EObject) eFrom.eGet(eReference);
+        EObject eTo = (EObject) eFrom.eGet(eReference, true);
         Node nodeTo = nodes.get(eTo);
         if (nodeTo != null) {
           mapping.create(model, nodeFrom, nodeTo);
