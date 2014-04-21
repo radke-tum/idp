@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -52,6 +53,12 @@ public class SysMlMapper implements Mapper {
 
   private static final String SYSML4MECHATRONICS_ECORE = "/sysml/sysml4mechatronics.ecore";
 
+  private static final String SML4M_MODEL              = "SysML4MechatronicsModel";
+  private static final String SML4M_BLOCKS             = "blocks";
+  private static final String SML4M_INTERFACE_BLOCKS   = "interfaceBlocks";
+  private static final String SML4M_DATA_TYPES         = "dataTypes";
+  private static final String SML4M_FUNCTIONALITIES    = "functionalities";
+
   private static final String BLOCK_MECHANIC           = "MechanicalBlock";
   private static final String BLOCK_ELECTRONIC         = "EEBlock";
   private static final String BLOCK_SOFTWARE           = "SoftwareBlock";
@@ -87,8 +94,7 @@ public class SysMlMapper implements Mapper {
     Model loadedModel = null;
     try {
       resource.load(inputStream, getOptions());
-      EcoreUtil.resolveAll(resource);
-      loadedModel = readSysMLModel(metamodel, ePackage, resource.getContents());
+      loadedModel = readSysMLModel(metamodel, ePackage, resource.getContents().get(0));
     } catch (IOException e) {
       throw new PSSIFIoException("Failed to read XMI from stream.", e);
     } finally {
@@ -100,10 +106,9 @@ public class SysMlMapper implements Mapper {
   @Override
   public void write(Metamodel metamodel, Model model, OutputStream outputStream) {
     EPackage ePackage = getEPackage();
-    Set<EObject> sysMlModelContents = writeSysMlModel(metamodel, ePackage, model);
+    EObject sysMlModel = writeSysMlModel(metamodel, ePackage, model);
     Resource resource = new XMIResourceFactoryImpl().createResource(URI.createURI(""));
-    resource.getContents().addAll(sysMlModelContents);
-    EcoreUtil.resolveAll(resource);
+    resource.getContents().add(sysMlModel);
     try {
       resource.save(outputStream, getOptions());
     } catch (IOException e) {
@@ -123,29 +128,29 @@ public class SysMlMapper implements Mapper {
     return ePackage;
   }
 
-  private Model readSysMLModel(Metamodel metamodel, EPackage ePackage, Collection<EObject> eObjects) {
+  private Model readSysMLModel(Metamodel metamodel, EPackage ePackage, EObject eModel) {
     Model model = new ModelImpl();
-    Map<EObject, Node> nodes = readNodes(metamodel, ePackage, model, eObjects);
-    readEdges(metamodel, ePackage, model, nodes, eObjects);
+    Map<EObject, Node> nodes = readNodes(metamodel, ePackage, model, eModel);
+    readEdges(metamodel, ePackage, model, nodes, nodes.keySet());
     //TODO fix ports, i.e. flow directions and stuff...?
     return model;
   }
 
-  private Map<EObject, Node> readNodes(Metamodel metamodel, EPackage ePackage, Model model, Collection<EObject> eObjects) {
+  private Map<EObject, Node> readNodes(Metamodel metamodel, EPackage ePackage, Model model, EObject eModel) {
     Map<EObject, Node> nodes = Maps.newHashMap();
     //read blocks
-    readNodesOfType(metamodel, ePackage, model, eObjects, nodes, BLOCK_MODULE, PSSIFCanonicMetamodelCreator.N_MODULE);
-    readNodesOfType(metamodel, ePackage, model, eObjects, nodes, BLOCK_SOFTWARE, PSSIFCanonicMetamodelCreator.N_SOFTWARE);
-    readNodesOfType(metamodel, ePackage, model, eObjects, nodes, BLOCK_ELECTRONIC, PSSIFCanonicMetamodelCreator.N_ELECTRONIC);
-    readNodesOfType(metamodel, ePackage, model, eObjects, nodes, BLOCK_MECHANIC, PSSIFCanonicMetamodelCreator.N_HARDWARE);
+    readNodesOfType(metamodel, ePackage, model, eModel.eAllContents(), nodes, BLOCK_MODULE, PSSIFCanonicMetamodelCreator.N_MODULE);
+    readNodesOfType(metamodel, ePackage, model, eModel.eAllContents(), nodes, BLOCK_SOFTWARE, PSSIFCanonicMetamodelCreator.N_SOFTWARE);
+    readNodesOfType(metamodel, ePackage, model, eModel.eAllContents(), nodes, BLOCK_ELECTRONIC, PSSIFCanonicMetamodelCreator.N_ELECTRONIC);
+    readNodesOfType(metamodel, ePackage, model, eModel.eAllContents(), nodes, BLOCK_MECHANIC, PSSIFCanonicMetamodelCreator.N_MECHANIC);
 
     //read ports
-    readNodesOfType(metamodel, ePackage, model, eObjects, nodes, PORT_ELECTRONIC, PSSIFCanonicMetamodelCreator.N_PORT_ELECTRONIC);
-    readNodesOfType(metamodel, ePackage, model, eObjects, nodes, PORT_MECHANIC, PSSIFCanonicMetamodelCreator.N_PORT_MECHANIC);
-    readNodesOfType(metamodel, ePackage, model, eObjects, nodes, PORT_SOFTWARE, PSSIFCanonicMetamodelCreator.N_PORT_SOFTWARE);
+    readNodesOfType(metamodel, ePackage, model, eModel.eAllContents(), nodes, PORT_ELECTRONIC, PSSIFCanonicMetamodelCreator.N_PORT_ELECTRONIC);
+    readNodesOfType(metamodel, ePackage, model, eModel.eAllContents(), nodes, PORT_MECHANIC, PSSIFCanonicMetamodelCreator.N_PORT_MECHANIC);
+    readNodesOfType(metamodel, ePackage, model, eModel.eAllContents(), nodes, PORT_SOFTWARE, PSSIFCanonicMetamodelCreator.N_PORT_SOFTWARE);
 
     //read functionalities
-    readNodesOfType(metamodel, ePackage, model, eObjects, nodes, FUNCTIONALITY, PSSIFCanonicMetamodelCreator.N_FUNCTIONALITY);
+    readNodesOfType(metamodel, ePackage, model, eModel.eAllContents(), nodes, FUNCTIONALITY, PSSIFCanonicMetamodelCreator.N_FUNCTIONALITY);
 
     //read interface blocks and data types
     readInterfaceBlocksAndEeDataTypes(metamodel, ePackage, nodes);
@@ -153,7 +158,14 @@ public class SysMlMapper implements Mapper {
     return nodes;
   }
 
-  private void readEdges(Metamodel metamodel, EPackage ePackage, Model model, Map<EObject, Node> nodes, Collection<EObject> eObjects) {
+  //  @SuppressWarnings("unchecked")
+  //  private Collection<EObject> extractFromEModel(EObject eModel, String eReferenceName) {
+  //    EClass eModelClass = eModel.eClass();
+  //    EReference eReference = findEFeature(eModelClass, eReferenceName);
+  //    return (Collection<EObject>) eModel.eGet(eReference);
+  //  }
+
+  private void readEdges(Metamodel metamodel, EPackage ePackage, Model model, Map<EObject, Node> nodes, Set<EObject> eObjects) {
 
     //block2block containment
     readEdgesOfType(metamodel, ePackage, model, PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_INCLUSION_CONTAINS, OWNED_BLOCK,
@@ -201,8 +213,7 @@ public class SysMlMapper implements Mapper {
 
   @SuppressWarnings("unchecked")
   private void readEdgesOfType(Metamodel metamodel, EPackage ePackage, Model model, String edgeTypeName, String eReferenceName,
-                               String fromNodeTypeName, String toNodeTypeName, String eOwnerClassName, Map<EObject, Node> nodes,
-                               Collection<EObject> eObjects) {
+                               String fromNodeTypeName, String toNodeTypeName, String eOwnerClassName, Map<EObject, Node> nodes, Set<EObject> eObjects) {
     //locate all the stuff for the edges
     EClass eClass = getEClass(ePackage, eOwnerClassName);
     if (eClass == null) {
@@ -232,7 +243,7 @@ public class SysMlMapper implements Mapper {
     }
 
     //begin reading edges
-    for (EObject eFrom : getEInstances(eClass, eObjects)) {
+    for (EObject eFrom : getEInstances(eClass, eObjects.iterator())) {
       Node nodeFrom = nodes.get(eFrom);
       if (nodeFrom == null) {
         continue;
@@ -257,7 +268,7 @@ public class SysMlMapper implements Mapper {
     }
   }
 
-  private void readNodesOfType(Metamodel metamodel, EPackage ePackage, Model model, Collection<EObject> eObjects, Map<EObject, Node> nodes,
+  private void readNodesOfType(Metamodel metamodel, EPackage ePackage, Model model, Iterator<EObject> eObjects, Map<EObject, Node> nodes,
                                String eClassName, String nodeTypeName) {
     EClass eClass = getEClass(ePackage, eClassName);
     NodeTypeBase nodeType = getNodeType(metamodel, nodeTypeName);
@@ -295,9 +306,10 @@ public class SysMlMapper implements Mapper {
     //alright, this one comes with a theory about how to handle it...
   }
 
-  private Set<EObject> getEInstances(EClass eClass, Collection<EObject> eObjects) {
+  private Set<EObject> getEInstances(EClass eClass, Iterator<EObject> eObjects) {
     Set<EObject> eInstances = Sets.newHashSet();
-    for (EObject eObject : eObjects) {
+    while (eObjects.hasNext()) {
+      EObject eObject = eObjects.next();
       if (eClass.isInstance(eObject)) {
         eInstances.add(eObject);
       }
@@ -305,34 +317,33 @@ public class SysMlMapper implements Mapper {
     return eInstances;
   }
 
-  private Set<EObject> writeSysMlModel(Metamodel metamodel, EPackage ePackage, Model model) {
-    Set<EObject> eObjects = Sets.newHashSet();
+  private EObject writeSysMlModel(Metamodel metamodel, EPackage ePackage, Model model) {
+    EClass eSysMlModelClass = getEClass(ePackage, SML4M_MODEL);
+    EObject sysMlModel = EcoreUtil.create(eSysMlModelClass);
+
     Map<Node, EObject> nodesMap = Maps.newHashMap();
 
     //mechanic blocks
-    eObjects.addAll(writeNodes(getNodeType(metamodel, PSSIFCanonicMetamodelCreator.N_MECHANIC), getEClass(ePackage, BLOCK_MECHANIC), model, nodesMap,
-        true));
+    linkTo(sysMlModel, SML4M_BLOCKS,
+        writeNodes(getNodeType(metamodel, PSSIFCanonicMetamodelCreator.N_MECHANIC), getEClass(ePackage, BLOCK_MECHANIC), model, nodesMap, true));
     //electronics blocks
-    eObjects.addAll(writeNodes(getNodeType(metamodel, PSSIFCanonicMetamodelCreator.N_ELECTRONIC), getEClass(ePackage, BLOCK_ELECTRONIC), model,
-        nodesMap, true));
+    linkTo(sysMlModel, SML4M_BLOCKS,
+        writeNodes(getNodeType(metamodel, PSSIFCanonicMetamodelCreator.N_ELECTRONIC), getEClass(ePackage, BLOCK_ELECTRONIC), model, nodesMap, true));
     //software blocks
-    eObjects.addAll(writeNodes(getNodeType(metamodel, PSSIFCanonicMetamodelCreator.N_SOFTWARE), getEClass(ePackage, BLOCK_SOFTWARE), model, nodesMap,
-        true));
+    linkTo(sysMlModel, SML4M_BLOCKS,
+        writeNodes(getNodeType(metamodel, PSSIFCanonicMetamodelCreator.N_SOFTWARE), getEClass(ePackage, BLOCK_SOFTWARE), model, nodesMap, true));
     //modules
-    eObjects.addAll(writeNodes(getNodeType(metamodel, PSSIFCanonicMetamodelCreator.N_MODULE), getEClass(ePackage, BLOCK_MODULE), model, nodesMap,
-        true));
+    linkTo(sysMlModel, SML4M_BLOCKS,
+        writeNodes(getNodeType(metamodel, PSSIFCanonicMetamodelCreator.N_MODULE), getEClass(ePackage, BLOCK_MODULE), model, nodesMap, true));
 
     //ports
-    eObjects.addAll(writeNodes(getNodeType(metamodel, PSSIFCanonicMetamodelCreator.N_PORT_MECHANIC), getEClass(ePackage, PORT_MECHANIC), model,
-        nodesMap, true));
-    eObjects.addAll(writeNodes(getNodeType(metamodel, PSSIFCanonicMetamodelCreator.N_PORT_ELECTRONIC), getEClass(ePackage, PORT_ELECTRONIC), model,
-        nodesMap, true));
-    eObjects.addAll(writeNodes(getNodeType(metamodel, PSSIFCanonicMetamodelCreator.N_PORT_SOFTWARE), getEClass(ePackage, PORT_SOFTWARE), model,
-        nodesMap, true));
+    writeNodes(getNodeType(metamodel, PSSIFCanonicMetamodelCreator.N_PORT_MECHANIC), getEClass(ePackage, PORT_MECHANIC), model, nodesMap, true);
+    writeNodes(getNodeType(metamodel, PSSIFCanonicMetamodelCreator.N_PORT_ELECTRONIC), getEClass(ePackage, PORT_ELECTRONIC), model, nodesMap, true);
+    writeNodes(getNodeType(metamodel, PSSIFCanonicMetamodelCreator.N_PORT_SOFTWARE), getEClass(ePackage, PORT_SOFTWARE), model, nodesMap, true);
 
     //functionalities
-    eObjects.addAll(writeNodes(getNodeType(metamodel, PSSIFCanonicMetamodelCreator.N_FUNCTIONALITY), getEClass(ePackage, FUNCTIONALITY), model,
-        nodesMap, true));
+    linkTo(sysMlModel, SML4M_FUNCTIONALITIES,
+        writeNodes(getNodeType(metamodel, PSSIFCanonicMetamodelCreator.N_FUNCTIONALITY), getEClass(ePackage, FUNCTIONALITY), model, nodesMap, true));
 
     //relationships
     writeBlock2BlockRelationships(metamodel, ePackage, model, nodesMap);
@@ -341,13 +352,27 @@ public class SysMlMapper implements Mapper {
     writeBlock2FunctionalityRelationships(metamodel, ePackage, model, nodesMap);
     writePort2FunctionalityRelationships(metamodel, ePackage, model, nodesMap);
 
-    eObjects.addAll(writeInterfaceBlocks(metamodel, ePackage, model, nodesMap));
+    writeInterfaceBlocks(metamodel, ePackage, model, sysMlModel, nodesMap);
 
-    return eObjects;
+    return sysMlModel;
   }
 
-  private Set<EObject> writeInterfaceBlocks(Metamodel metamodel, EPackage ePackage, Model model, Map<Node, EObject> eObjects) {
-    Set<EObject> createdEObjects = Sets.newHashSet();
+  @SuppressWarnings("unchecked")
+  private void linkTo(EObject fromObject, String eReferenceName, Collection<EObject> toObjects) {
+    EReference eReference = findEFeature(fromObject.eClass(), eReferenceName);
+    List<EObject> toObjsList = Lists.newArrayList(toObjects);
+    if (fromObject.eGet(eReference) instanceof Collection<?>) {
+      toObjsList.addAll(((Collection<EObject>) fromObject.eGet(eReference)));
+    }
+    else if (fromObject.eGet(eReference) != null) {
+      toObjsList.add((EObject) fromObject.eGet(eReference));
+    }
+    fromObject.eSet(eReference, toObjsList);
+  }
+
+  private void writeInterfaceBlocks(Metamodel metamodel, EPackage ePackage, Model model, EObject eModel, Map<Node, EObject> eObjects) {
+    Set<EObject> interfaceBlocks = Sets.newHashSet();
+    Set<EObject> dataTypes = Sets.newHashSet();
     NodeTypeBase portType = getNodeType(metamodel, PSSIFCanonicMetamodelCreator.N_PORT);
     Attribute directionAttribute = portType.getAttribute(PSSIFCanonicMetamodelCreator.A_DIRECTION).getOne();
     Attribute dataTypeAttribute = portType.getAttribute(PSSIFCanonicMetamodelCreator.A_DATA_TYPE).getOne();
@@ -362,7 +387,7 @@ public class SysMlMapper implements Mapper {
         continue;
       }
       EObject eInterfaceBlock = EcoreUtil.create(interfaceBlockClass);
-      createdEObjects.add(eInterfaceBlock);
+      interfaceBlocks.add(eInterfaceBlock);
       ePort.eSet(ePort.eClass().getEStructuralFeature(OWNED_INTERFACE_BLOCK), eInterfaceBlock);
       EAttribute eDirection = findEAttribute(interfaceBlockClass, directionAttribute);
       PSSIFOption<PSSIFValue> directionValue = directionAttribute.get(portNode);
@@ -383,14 +408,15 @@ public class SysMlMapper implements Mapper {
           EClass eEeDataTypeClass = getEClass(ePackage, EE_DATA_TYPE);
           EAttribute eNameAttribute = findEFeature(eEeDataTypeClass, PSSIFConstants.BUILTIN_ATTRIBUTE_NAME);
           EObject eEeDataTypeObject = EcoreUtil.create(eEeDataTypeClass);
-          createdEObjects.add(eEeDataTypeObject);
+          dataTypes.add(eEeDataTypeObject);
           eEeDataTypeObject.eSet(eNameAttribute, dataTypeValue.getOne().asString());
           EReference eOwmedDataType = (EReference) interfaceBlockClass.getEStructuralFeature(OWMED_DATA_TYPE);
           eInterfaceBlock.eSet(eOwmedDataType, eEeDataTypeObject);
         }
       }
     }
-    return createdEObjects;
+    linkTo(eModel, SML4M_DATA_TYPES, dataTypes);
+    linkTo(eModel, SML4M_INTERFACE_BLOCKS, interfaceBlocks);
   }
 
   private EClass getInterfaceBlockClass(EPackage ePackage, EObject eObject) {
