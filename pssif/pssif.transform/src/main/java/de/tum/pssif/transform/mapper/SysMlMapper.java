@@ -83,7 +83,7 @@ public class SysMlMapper implements Mapper {
   private static final String OWNED_FUNCTIONALITY      = "ownedFunctionality";
   private static final String IS_MANDATORY_FOR         = "isMandatoryFor";
   private static final String OWNED_INTERFACE_BLOCK    = "ownedInterfaceBlock";
-  private static final String OWMED_DATA_TYPE          = "ownedDataType";
+  private static final String OWNED_DATA_TYPE          = "ownedDataType";
   private static final String OPERATION_NAME           = "OperationName";
 
   @Override
@@ -132,7 +132,6 @@ public class SysMlMapper implements Mapper {
     Model model = new ModelImpl();
     Map<EObject, Node> nodes = readNodes(metamodel, ePackage, model, eModel);
     readEdges(metamodel, ePackage, model, nodes, nodes.keySet());
-    //TODO fix ports, i.e. flow directions and stuff...?
     return model;
   }
 
@@ -157,13 +156,6 @@ public class SysMlMapper implements Mapper {
 
     return nodes;
   }
-
-  //  @SuppressWarnings("unchecked")
-  //  private Collection<EObject> extractFromEModel(EObject eModel, String eReferenceName) {
-  //    EClass eModelClass = eModel.eClass();
-  //    EReference eReference = findEFeature(eModelClass, eReferenceName);
-  //    return (Collection<EObject>) eModel.eGet(eReference);
-  //  }
 
   private void readEdges(Metamodel metamodel, EPackage ePackage, Model model, Map<EObject, Node> nodes, Set<EObject> eObjects) {
 
@@ -302,8 +294,41 @@ public class SysMlMapper implements Mapper {
   }
 
   private void readInterfaceBlocksAndEeDataTypes(Metamodel metamodel, EPackage ePackage, Map<EObject, Node> nodes) {
-    //TODO this one is special -> these are attributes of already read nodes, i.e. use both model and eObjects to read
-    //alright, this one comes with a theory about how to handle it...
+    Set<EObject> ePorts = Sets.newHashSet();
+    ePorts.addAll(getEInstances(getEClass(ePackage, PORT_ELECTRONIC), nodes.keySet().iterator()));
+    ePorts.addAll(getEInstances(getEClass(ePackage, PORT_MECHANIC), nodes.keySet().iterator()));
+    ePorts.addAll(getEInstances(getEClass(ePackage, PORT_SOFTWARE), nodes.keySet().iterator()));
+    NodeTypeBase portNodeType = metamodel.getNodeType(PSSIFCanonicMetamodelCreator.N_PORT).getOne();
+
+    for (EObject ePort : ePorts) {
+      EReference ownedInterfaceBlock = findEFeature(ePort.eClass(), OWNED_INTERFACE_BLOCK);
+      EObject eInterfaceBlock = (EObject) ePort.eGet(ownedInterfaceBlock);
+      if (eInterfaceBlock == null || nodes.get(ePort) == null) {
+        continue;
+      }
+      EAttribute direction = findEFeature(eInterfaceBlock.eClass(), PSSIFCanonicMetamodelCreator.A_DIRECTION);
+      if (eInterfaceBlock.eGet(direction) != null) {
+        Attribute directionAttr = portNodeType.getAttribute(PSSIFCanonicMetamodelCreator.A_DIRECTION).getOne();
+        String directionValue = ((EEnumLiteral) eInterfaceBlock.eGet(direction)).getName();
+        directionAttr.set(nodes.get(ePort), PSSIFOption.one(PSSIFValue.create(directionValue)));
+      }
+      if (INTERFACE_SOFTWARE.equals(eInterfaceBlock.eClass().getName())) {
+        EAttribute opName = findEFeature(eInterfaceBlock.eClass(), OPERATION_NAME);
+        Attribute dataType = portNodeType.getAttribute(PSSIFCanonicMetamodelCreator.A_DATA_TYPE).getOne();
+        if (eInterfaceBlock.eGet(opName) != null) {
+          dataType.set(nodes.get(ePort), PSSIFOption.one(PSSIFValue.create(eInterfaceBlock.eGet(opName))));
+        }
+      }
+      else {
+        EReference ownedDataType = findEFeature(eInterfaceBlock.eClass(), OWNED_DATA_TYPE);
+        if (eInterfaceBlock.eGet(ownedDataType) != null) {
+          Attribute dataType = portNodeType.getAttribute(PSSIFCanonicMetamodelCreator.A_DATA_TYPE).getOne();
+          EObject eOwnedDataType = (EObject) eInterfaceBlock.eGet(ownedDataType);
+          Node portNode = nodes.get(ePort);
+          dataType.set(portNode, PSSIFOption.one(PSSIFValue.create(eOwnedDataType.eGet(findEFeature(eOwnedDataType.eClass(), "name")))));
+        }
+      }
+    }
   }
 
   private Set<EObject> getEInstances(EClass eClass, Iterator<EObject> eObjects) {
@@ -392,8 +417,6 @@ public class SysMlMapper implements Mapper {
       EAttribute eDirection = findEAttribute(interfaceBlockClass, directionAttribute);
       PSSIFOption<PSSIFValue> directionValue = directionAttribute.get(portNode);
       if (eDirection != null && directionValue.isOne()) {
-        //Note: FIXME XMI serialization contains only the one side in asymmetric cases.
-        //Keep in mind when reconstructing from XMI.
         Object eValue = externalizeAttributeValue(directionValue.getOne(), directionAttribute, eDirection);
         eInterfaceBlock.eSet(eDirection, eValue);
       }
@@ -410,7 +433,7 @@ public class SysMlMapper implements Mapper {
           EObject eEeDataTypeObject = EcoreUtil.create(eEeDataTypeClass);
           dataTypes.add(eEeDataTypeObject);
           eEeDataTypeObject.eSet(eNameAttribute, dataTypeValue.getOne().asString());
-          EReference eOwmedDataType = (EReference) interfaceBlockClass.getEStructuralFeature(OWMED_DATA_TYPE);
+          EReference eOwmedDataType = (EReference) interfaceBlockClass.getEStructuralFeature(OWNED_DATA_TYPE);
           eInterfaceBlock.eSet(eOwmedDataType, eEeDataTypeObject);
         }
       }
