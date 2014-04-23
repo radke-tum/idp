@@ -99,7 +99,7 @@ There are two categories of \texttt{NodeType} -- conventional ones and \texttt{J
 
 \paragraph{Edge Types}
 
-\texttt{EdgeType}s are used for the description of possible edges in a user's model. \texttt{EdgeType}s also have a name, which is unique in the scope of a \texttt{Metamodel}. For it to be possible to associate the same \texttt{EdgeType} with different pairs of \texttt{NodeType} instances, the concept of a \texttt{ConnectionMapping} is introduced. A \texttt{ConnectionMapping} is an association assigned to a particular \texttt{EdgeType}, which includes an incoming and an outgoing \texttt{NodeType}.
+\texttt{EdgeType}s are used for the description of possible edges in a user's model. \texttt{EdgeType}s also have a name, which is unique in the scope of a \texttt{Metamodel}. For it to be possible to associate the same \texttt{EdgeType} with different pairs of \texttt{NodeType} instances, the concept of a \texttt{ConnectionMapping} is introduced. A \texttt{ConnectionMap\-ping} is an association assigned to a particular \texttt{EdgeType}, which includes an incoming and an outgoing \texttt{NodeType}.
 
 To illustrate the usage of the \texttt{ConnectionMapping}, consider the following example: Assuming two \texttt{NodeType} instances, denoted ''State'' and ''Function'' and an \texttt{EdgeType} ''Control Flow'', which has to connect both node types in both directions. In the PSS-IF \gls{poc} this is achieved by instantiating a single \texttt{EdgeType} ''Control Flow'' and assigning two \texttt{ConnectionMapping} instances to it: one from ''State'' to ''Function'' and one from ''Function'' to ''State''.
 
@@ -121,7 +121,7 @@ Every PSS-IF Metamodel has a number of predefined elements. These are the root n
 \item \textbf{validity start}: A \texttt{Date}, designating the begin of the validity period of the given node, categorized as \texttt{Time}.
 \item \textbf{validity end}: A \texttt{Date}, designating the end of the validity period of the given node, categorized as \texttt{Time}.
 \item \textbf{version}: The version of the node, of data type \texttt{String}, categorized as \texttt{Metadata}.
-\item \textbf{comment}: A comment of the node, of data type \texttt{String}, categorized as \texttt{Metadata}.
+\item \textbf{comment}: A comment of the node, of data type \texttt{String}, categorized as \texttt{Meta\-data}.
 \end{itemize}
 
 The root \texttt{EdgeType} '''\textbf{Edge}'' has all built-in attributes defined for the root \texttt{NodeType} ''Node'', and also an additional attribute \texttt{directed} of data type \texttt{Boolean} and categorized as \texttt{Metadata}. 
@@ -159,8 +159,8 @@ viewpoint = new CreateArtificialNodeTransformation
 // join the informationflow to be created
 // between the artificial blocks
 viewpoint = new JoinConnectionMappingTransformation
-  (informationflow, informationflow.getMapping(state, function), 
-  new JoinPath(relationship.getMapping(state, block)), block, 
+  (informationflow, informationflow.getMapping(state, function),
+  new JoinPath(relationship.getMapping(state, block)), block,
   new JoinPath(relationship.getMapping(function, block), block))
     .apply(viewpoint);
 
@@ -267,7 +267,8 @@ public abstract class AbstractMapper implements Mapper {
   }
 
   @Override
-  public final void write(Metamodel mm, Model m, OutputStream out) {
+  public final void write(Metamodel mm, Model m, 
+      OutputStream out) {
     Metamodel view = getView(mm);
     ModelMapper modelMapper = getModelMapper();
     Graph graph = modelMapper.write(view, m);
@@ -284,7 +285,7 @@ public abstract class AbstractMapper implements Mapper {
 
 As the code above demonstrates, a PSS-IF \texttt{Model} instance is obtained from an external representation by transcoding the external representation into a generic graph, obtaining the \texttt{Viewpoint} of the current language and finally mapping the generic graph to a model in accordance with the viewpoint.
 
-Symmetrically, a file is generated from a PSS-IF \texttt{Model} by first obtaining the \texttt{Viewpoint} for the current language and using it to translate the model into a generic graph, and then serializing the graph to a stream through the corresponding \texttt{IoMapper}.
+Symmetrically, a file is generated from a PSS-IF \texttt{Model} by first obtaining the \texttt{View\-point} for the current language and using it to translate the model into a generic graph, and then serializing the graph to a stream through the corresponding \texttt{IoMapper}.
 
 \paragraph{Process}
 
