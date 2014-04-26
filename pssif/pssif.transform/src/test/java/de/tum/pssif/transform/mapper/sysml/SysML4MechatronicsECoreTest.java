@@ -31,7 +31,7 @@ import de.tum.pssif.transform.mapper.SysMlMapper;
 public class SysML4MechatronicsECoreTest {
 
   @Test
-  public void pretendToTest() {
+  public void writeTest() {
     Metamodel metamodel = PSSIFCanonicMetamodelCreator.create();
     Model model = getModel();
     SysMlMapper mapper = new SysMlMapper();
