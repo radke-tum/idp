@@ -7,7 +7,7 @@ While the incorporation of Product-Service Systems in an industry requires an in
 
 \section*{Importance of Integration}
 
-After their implementation and market introduction, Product-Service Systems can bring numerous benefits to a company. Nevertheless, their implementation brings a number of challenges of communication, integration and complexity. To explain this, let us consider the parties involved in the development and production cycles of a \gls{PSS}. Both development and production involve a number of disciplines, each acquainted with its own modelling languages and tools. Each of these domain-specific languages furthermore is concerned only with those aspects of the overall systems, which are relevant for the discipline at hand. As a result, each involved party has only a limited excerpt of the entire \gls{PSS} at its disposal. In the worst case, this leads to contradictions in the design and implementation of the system. In the moderate case, it only incurs significant synchronization and management costs to the company. It is thus of crucial importance for the success of a PSS venture to establish a mechanism though which the models developed by different disciplines can be transformed to each other, or even to incorporate them all in a single model, representing the \gls{PSS} in its entirety.
+After their implementation and market introduction, Product-Service Systems can bring numerous benefits to a company. Nevertheless, their implementation brings a number of challenges with regards to communication, integration and complexity. To explain this, let us consider the parties involved in the development and production cycles of a \gls{PSS}. Both development and production involve a number of disciplines, each acquainted with its own modeling languages and tools. Each of these \glspl{dsl} furthermore is concerned only with those aspects of the overall systems, which are relevant for the discipline at hand. As a result, each involved party has only a limited excerpt of the entire \gls{PSS} at its disposal. In the worst case, this leads to contradictions in the design and implementation of the system. In the moderate case, it only incurs significant synchronization and management costs to the company. It is thus of crucial importance for the success of a PSS venture to establish a mechanism though which the models developed by different disciplines can be transformed to each other, or even to incorporate them all in a single model, representing the \gls{PSS} in its entirety.
 
 \section*{PSS Integration Framework}
 
@@ -28,13 +28,13 @@ In the context of the \gls{PSSIF}, the goal is to design and implement a \gls{po
 
 \begin{itemize}
 \item follows the PSS-IF methodology and semantics,
-\item can transform a model described in one relevant domain-specific language into another relevant domain-specific language,
+\item can transform a model described in one relevant domain-specific language into another relevant \gls{dsl},
 \item considers the following domain-specific languages relevant:
 	\begin{itemize}
 	\item Event-driven Process Chain (EPC) Diagrams \cite{ref:epk}
-	\item Business Process Modelling Notation (BPMN) Diagrams \cite{ref:bpmn}
-	\item Flow-oriented Functional Modelling (FFM) Diagrams \cite{ref:ufm} modelled using the Soley-Tool (formerly known as BOOGGIE) \cite{ref:soley}
-	\item Systems Modelling Language for Mechatronics (SysML4Mechatronics) Diagrams \cite{ref:sysml} and,
+	\item Business Process Modeling Notation (BPMN) Diagrams \cite{ref:bpmn}
+	\item Flow-oriented Functional Modeling (FFM) Diagrams \cite{ref:ufm} modelled using the Soley-Tool (formerly known as BOOGGIE) \cite{ref:soley}
+	\item Systems Modeling Language for Mechatronics (SysML4Mechatronics) Diagrams \cite{ref:sysml} and,
 	\end{itemize}
 \item should, at the time of its delivery, support at least two of the relevant domain-specific languages.
 \end{itemize} 

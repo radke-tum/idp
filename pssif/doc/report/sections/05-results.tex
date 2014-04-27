@@ -1,7 +1,7 @@
 \chapter{Results}
 \label{chap:results}
 
-In the previous chapter, the implementation of the PSS-IF \gls{poc} was described, this chapter continues to present the results of the interdisciplinary project. In \secref{sec:results:framework} the key features of the PSS-IF \gls{poc}, considered as a framework, are addressed. \secref{sec:results:languages} proceeds with achieved results for each of the four domain-specific languages referenced in \chapref{chap:intro}. Finally, in \secref{sec:results:summary} a brief overview of the results is given.
+In the previous chapter, the implementation of the PSS-IF \gls{poc} was described. This chapter continues by presenting the results of the interdisciplinary project. In \secref{sec:results:framework} the key features of the PSS-IF \gls{poc}, considered as a framework, are addressed. \secref{sec:results:languages} proceeds with achieved results for each of the four domain-specific languages referenced in \chapref{chap:intro}. Finally, in \secref{sec:results:summary} a brief overview of the results is given.
 
 \section{PSS-IF Proof-of-Concept}
 \label{sec:results:framework}
@@ -10,11 +10,11 @@ Throughout the implementation, the authors follow the principles described in \c
 
 \paragraph{Generic} The architecture of the implementation defines the transformation process on multiple levels of hierarchy, so that in most cases addition of new features can have a limited impact. Furthermore, divergence from the generic process on each level is possible through the usage of different implementations of the \gls{api} on that level.
 
-\paragraph{Extensible} The clear separation of tasks between components and their collaboration only through well-defined APIs allows new features to be added to each component without intermediate effect on other parts of the software. Also, behind each \gls{api}, implementations can be changed, or new ones can be added, to better suit the needs of the tool's users.
+\paragraph{Extensible} The clear separation of tasks between components and their collaboration only through well-defined APIs allows new features to be added to each component without intermediate effect on other parts of the software. Also, behind each \gls{api}, implementations can be changed, or new ones can be added, to better fit the needs of the tool's users.
 
 \paragraph{Flexible} Changes in the PSS-IF Canonic Metamodel, or in one of the supported languages can easily be incorporated through adjustment of the metamodel definition and the corresponding viewpoints.
 
-\paragraph{Expressive} Through the adopted meta-modelling approach, the expressiveness of the resulting tool is comparable with that of the Meta-Object Facility (MOF), while at the same time being tailored to the set of modelling structures sufficient for the specific field of application.
+\paragraph{Expressive} Through the adopted meta-modeling approach, the expressiveness of the resulting tool is comparable with that of the Meta-Object Facility (MOF) \cite{ref:mof}, while at the same time being tailored to the set of modeling structures sufficient for the specific field of application.
 
 \paragraph{Accessible} Through the comparatively simple and well-defined APIs, the PSS-IF \gls{poc} can easily be used, once the concepts behind it have been clarified.
 
@@ -23,15 +23,15 @@ Throughout the implementation, the authors follow the principles described in \c
 
 Through the chosen implementation approach, the objective of transforming models between languages is reduced to the transformation from and to the language defined by the PSS-IF Canonic Metamodel with minimal information loss. The following sections provide the results for the four languages relevant for this work.
 
-\subsection{Flow-oriented Functional Modelling (FFM)}
+\subsection{Flow-oriented Functional Modeling (FFM)}
 
-Models in the Flow-oriented Functional Modelling (FFM) language can be translated to PSS-IF canonic. The transferred information is restricted to States and Functions and the Flows between them, as well as the functionary attribute, which is used to forge artificial blocks, or dummy blocks, if no value for this attribute is provided. The original Flow between the States and Functions is then transferred to the artificial blocks, and a ControlFlow is created between the States and Functions. The creation of artificial blocks required the development of the artificialize transformation to create the artificial respectively dummy blocks out of the functionary attribute and the join transformation to transfer the original flow the additionally created blocks. Furthermore another artificialize transformation is required to create the additional ControlFlow between the States and Functions.
+Models in the Flow-oriented Functional Modeling (FFM) language can be translated to PSS-IF canonic. The transferred information is restricted to States and Functions and the Flows between them, as well as the functionary attribute, which is used to forge artificial blocks, or dummy blocks, if no value for this attribute is provided. The original Flow between the States and Functions is then transferred to the artificial blocks, and a ControlFlow is created between the States and Functions. The creation of artificial blocks required the development of the artificialize transformation to create the artificial respectively dummy blocks out of the functionary attribute and the join transformation to transfer the original flow the additionally created blocks. Furthermore another artificialize transformation is required to create the additional ControlFlow between the States and Functions.
 
 \subsection{Event-Driven Process Chain (EPC)}
 
 Due to their structural similarity, EPC models can be translated into PSS-IF without much difficulty. In the case of this language, the key challenge was the development of an own object-oriented \gls{api} for Microsoft Visio 2013, so that the models can be extracted from and written to VSDX files.
 
-\subsection{Business Process Modelling Notation (BPMN)}
+\subsection{Business Process Modeling Notation (BPMN)}
 
 The objective to translate from and to BPMN models described in Microsoft Visio 2013 could not be completed. This is because the BPMN extension of Visio does not use the Visio graph strucuture for the encoding of data, but rather stores the BPMN-specific information into formulae of concrete and abstract nodes. Since the interdisciplinary project has a limited time horizon, the reverse-engineering of this kind of encoding was not possible. 
 
