@@ -14,7 +14,7 @@ Direct transformation methods are such which define rules for the transcription 
 
 \subsubsection{Syntax-Dependent Transformations}
 
-Syntax-dependent transformations build upon a technology which is well-suited for processing the syntax of the source and destination \glspl{dsl}. For example, considering \glspl{dsl} which are both use the \gls{xml}\cite{ref:xml} as their concrete syntax, an appropriate transformation technology is \gls{xslt}\cite{ref:xslt}.
+Syntax-dependent transformations build upon a technology which is well-suited for processing the syntax of the source and destination \glspl{dsl}. For example, considering \glspl{dsl} which both use the \gls{xml}\cite{ref:xml} as their concrete syntax, an appropriate transformation technology is \gls{xslt}\cite{ref:xslt}.
 
 \subsubsection{Syntax-Independent Transformations}
 
@@ -61,9 +61,9 @@ A model, while depicting certain aspects of reality, does not necessarily confor
 
 No constraint is given to the number of meta-levels involved -- one can easily define meta-metamodels etc.
 
-\subsection{Viewpoints and Views}
+\subsection{Views and Viewpoints}
 
-In the previous section the terms metamodel and model were defined. In this section we add the terms Viewpoint and View.
+In the previous section the terms metamodel and model were defined. In this section we add the terms View and Viewpoint.
 
 \paragraph{View} A view is a subset of a model.
 
@@ -76,7 +76,7 @@ A viewpoint can thus be seen as a restricted or, more generally, transformed met
 
 Assuming a metamodel which describes all aspects of reality, which are of importance for the development of a \gls{PSS}. Such a metamodel is denoted as the PSS-IF Canonic Metamodel. For each \gls{dsl}, a viewpoint is defined on the basis of the PSS-IF Canonic Metamodel and captures only those parts of the canonic metamodel, which can be represented in the corresponding \gls{dsl}. Furthermore, viewpoints are defined in such a way that they can be used for both reading from and writing to a model.
 
-This makes it possible to achieve a transformation between two exemplary \glspl{dsl} \textit{A} and \textit{B} through the following process:
+This enables the achievement of a transformation between two exemplary \glspl{dsl} \textit{A} and \textit{B} through the following process:
 
 \begin{enumerate}
 \item Obtain the viewpoint for \gls{dsl} \textit{A}.
@@ -103,7 +103,7 @@ A PSS-IF Model consists of nodes and edges, both of which have attributes. A mod
 
 \subsubsection{Transformations and Viewpoints}
 
-A \textit{transformation} is a function which, when applied to a metamodel, results in a transformed, slightly changed metamodel. This changed metamodel is denoted as a \textit{viewpoint} and represents a step in the direction of defining the way in which the PSS-IF Metamodel is seen from the perspective of a certain domain-specific language. The metamodel on which a transformation is applied is called \textit{base metamodel} of the resulting viewpoint. The viewpoint contains element types, i.e. node or edge types, which, on demand, whenever they are used to operate on a model, apply the actual transformation of data. A new viewpoint can then be constructed by applying another transformation to an already existing viewpoint, which serves as it's base metamodel. Thus, through the chaining of transformations, different viewpoints can be constructed. This makes it possible to describe viewpoints for the different domain-specific languages the PSS-IF needs to support. It should be noted that, in general, the ordering of the application of transformations is of relevance. 
+A \textit{transformation} is a function which, when applied to a metamodel, results in a transformed, slightly changed metamodel. This changed metamodel is denoted as a \textit{viewpoint} and represents a step in the direction of defining the way in which the PSS-IF Metamodel is seen from the perspective of a certain domain-specific language. The metamodel on which a transformation is applied is called \textit{base metamodel} of the resulting viewpoint. The viewpoint contains element types, i.e. node or edge types, which, on demand, whenever they are used to operate on a model, apply the actual transformation of data. A new viewpoint can then be constructed by applying another transformation to an already existing viewpoint, which serves as it's base metamodel. Thus, through the chaining of transformations, different viewpoints can be constructed. This enables the description of viewpoints for the different domain-specific languages the PSS-IF needs to support. It should be noted that, in general, the ordering of the application of transformations is of relevance. 
 
 An analysis of the \glspl{dsl} the \gls{poc} should suppport, lead to the following list of transformations being sufficient for the definition of the viewpoints of all \glspl{dsl} relevant.
 

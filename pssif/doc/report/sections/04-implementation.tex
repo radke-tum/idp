@@ -52,7 +52,7 @@ During the design and implementation of the PSS-IF \gls{poc} the authors have fo
 \section{Project Structure}
 \label{sec:impl:structure}
 
-The PSS-IF \gls{poc} is developed as an Apache maven project, further divided into a root project, called ''\textbf{pssif}'' and a number of sub-modules. The root project is used for the provision of common development and  build configuration, as for example the specification of common dependencies with a fixed version over all modules. This avoids redundancy and improves the manageability of the developed code. Each of the modules represents a component of the PSS-IF \gls{poc} architecture on a coarse level of abstraction. Note that while it is possible to establish a project with fine-grained maven modularity, division in fine-grained modules would make it more difficult to capture the project structure. This is why the authors have tried to find a balance between capturing coarse-level architectural concepts through maven modularization, while fine-grained modularization of components is achieved through the packaging mechanism of the Java programming language.
+The PSS-IF \gls{poc} is developed as an Apache maven project, further divided into a root project, called ''\textbf{pssif}'' and a number of sub-modules. The root project is used for the provision of common development and  build configuration, as for example the specification of common dependencies with a fixed version over all modules. This avoids redundancy and improves the manageability of the developed code. Each of the modules represents a component of the PSS-IF \gls{poc} architecture on a coarse level of abstraction. While it is possible to establish a project with fine-grained maven modularity, division in fine-grained modules would make it more difficult to capture the project structure. This is why the authors have tried to find a balance between capturing coarse-level architectural concepts through maven modularization and fine-grained modularization of components, which is achieved through the packaging mechanism of the Java programming language.
 
 This section covers the coarse-grained separation realized through maven modularization, while \secref{sec:impl:components} is concerned with the fine-grained architectural modularization of the project. Currently, the PSS-IF \gls{poc} consists of three modules, as depicted in  \figref{fig:structure}.
 
@@ -139,7 +139,7 @@ The root node and edge types are also the roots of the inheritance hierarchies f
 
 The second key component of the PSS-IF \gls{poc} core is the \texttt{Model} (see \figref{fig:model}), which can be seen as a simple graph, consisting of \texttt{Node} and \texttt{Edge} instances. A \texttt{Node} is an ontological instance of a \texttt{NodeType} and an \texttt{Edge} is an ontological instance of the \texttt{EdgeType} of a PSS-IF \texttt{Metamodel}. Note that the elements of the \texttt{Model} are not type-aware themselves and can thus be accessed with different \texttt{Metamodel} instances.
 
-In the PSS-IF \gls{poc} this strategy is used extensively, and a \texttt{Model} does not provide any information or allow any operations itself. All access points to a \texttt{Model} have to be navigated through a \texttt{Metamodel}, i.e. a \texttt{Metamodel} \textit{operates} on a \texttt{Model}. This makes it possible to switch between metamodels as the user sees fit, but also to ensure data integrity at all times, by enforcing all modifications to be applied through the \texttt{Metamodel}, which plays the role of the schema for the data contained in the \texttt{Model}.
+In the PSS-IF \gls{poc} this strategy is used extensively, and a \texttt{Model} does not provide any information or allow any operations itself. All access points to a \texttt{Model} have to be navigated through a \texttt{Metamodel}, i.e. a \texttt{Metamodel} \textit{operates} on a \texttt{Model}. This enables switching between metamodels as the user sees fit, but also to ensure data integrity at all times, by enforcing all modifications to be applied through the \texttt{Metamodel}, which plays the role of the schema for the data contained in the \texttt{Model}.
 
 \subsection{Transformations}
 
@@ -202,7 +202,7 @@ The I/O Mapper component is responsible for the serialization and de-serializati
 \item \texttt{void write(Graph graph, OutputStream out);}
 \end{itemize}
 
-The same \texttt{IoMapper} may be used for more than one language. For example, the \texttt{VsdxIoMapper} could be used for both EPC and BPMN.
+The same \texttt{IoMapper} may be used for more than one language. For example, the \texttt{VsdxIoMapper} could be used for both, EPC and BPMN.
 
 \subsection{Model Mappers}
 \label{sec:impl:comp:model}
@@ -239,7 +239,7 @@ The inter-relation of the different concepts of the VSDX API is depicted in \fig
 \label{fig:vsdxapi}
 \end{figure}
 
-It should be noted that the current VSDX component does not provide any mechanisms for layouting, colouring, or other finer operations on a Visio file. This is because the component is aimed explicitly at the extraction and generation of data. The layout of Visio files exported from PSS-IF can be fixed through the usage of algorithms which are built-in in Microsoft Visio. If special decoration of shapes is required, the user's can provide their own template files with correspondingly modified master shapes. These template files can then be used in combination with the VSDX component to produce appropriately formatted Visio files. Finally, the API can be extended in future works, to support finer layouting and formatting operations.
+It should be noted that the current VSDX component does not provide any mechanisms for layouting, colouring, or other finer operations on a Visio file. This is because the component is aimed explicitly at the extraction and generation of data. The layout of Visio files exported from PSS-IF can be fixed through the usage of algorithms which are built-in in Microsoft Visio. If special decoration of shapes is required, the users can provide their own template files with correspondingly modified master shapes. These template files can then be used in combination with the VSDX component to produce appropriately formatted Visio files. Finally, the API can be extended in future works, to support finer layouting and formatting operations.
 
 \section{Mapping Process}
 \label{sec:impl:process}
