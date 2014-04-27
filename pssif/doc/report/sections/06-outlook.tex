@@ -10,13 +10,13 @@ There are a number of possible improvements to the PSS-IF PoC, which would enabl
 
 \paragraph{ID Handling}
 
-Currently, the handling of identifiers is not part of the tasks of the PSS-IF PoC. A rudimentary artificial ID handling is available in the core, yet it provides not guarantees with regard to the compatibility of the generated IDs in each supported domain-specific language.
+Currently, the handling of identifiers is not part of the tasks of the PSS-IF PoC. A rudimentary artificial ID handling is available in the core, yet it provides no guarantees with regard to the compatibility of the generated IDs in each supported domain-specific language.
 
 \paragraph{Model Edit \gls{api}}
 
 So far, there is no possibility to remove nodes or edges from the model. If the PSS-IF PoC is to be used as the back-end to a user interface, where dynamic behaviour is of importance, these operations might be useful.
 
-\paragraph{Consolidate Edge Types and Connection Mappings}
+\paragraph{Consolidation of Edge Types and Connection Mappings}
 
 In the current implementation the \texttt{ConnectionMapping} interface contains \texttt{apply} methods which are only for internal usage. Since these methods are heavily relied upon by the transformational and can not be removed with reasonable effort, they are for now part of the \gls{api}. However, through the usage of object-oriented patterns it should be possible for a future developer to purge them from the interface without loss of functionality.
 

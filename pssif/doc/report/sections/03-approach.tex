@@ -10,7 +10,7 @@ Provided with the task to transform between different Models, there is an number
 
 \subsection{Direct Transformation Methods}
 
-Direct transformation methods are such which define rules for the transcription from source to destination \gls{dsl} directly, i.e. such methods do not produce a (defined) intermediate result, but rather are always language-specific. Furthermore, it can be differentiated between syntax-dependent and syntax-independent technical solutions for this kind of transformations.
+Direct transformation methods are such which define rules for the transcription from source to destination \gls{dsl} directly, i.e. such methods do not produce a (defined) intermediate result, but rather are always language-specific. Furthermore, it is possible to differentiate between syntax-dependent and syntax-independent technical solutions for this kind of transformations.
 
 \subsubsection{Syntax-Dependent Transformations}
 
@@ -26,11 +26,11 @@ Indirect transformation methods are methods which rely on a stable and well defi
 
 \subsubsection{Fixed Intermediate Language Transformations}
 
-Transformation methods with a fixed intermediate language can be realized in a high-level programming language. In this case the abstract syntax of the intermediate language is directly implemented as a data structure in the programming language. Thus, the intermediate language is described directly with the vocabulary of the programming language in use. Also, in this case, the transformations from and to \glspl{dsl} can be implemented directly in the syntax of the particular programming language and are, therefore, most likely Turing-complete.
+Transformation methods with a fixed intermediate language can be realized in a high-level programming language. In this case the abstract syntax of the intermediate language is directly implemented as a data structure in the programming language. Thus, the intermediate language is described directly with the vocabulary of the programming language in use. Also, in this case, the transformations from and to \glspl{dsl} can be implemented directly in the syntax of the particular programming language, which makes it possible to utilize the language at its full expressiveness.
 
 \subsubsection{Flexible Intermediate Language Transformation}
 
-Transformation methods with a flexible intermediate language can also be technologically solved with a high-level programming language. As opposed to the previous case, here the intermediate transformation language is not fixed, in the sense that it is not hard-coded. The intermediate language is still likely to be fixed for the scope of a single transformation.
+Transformation methods with a flexible intermediate language can also be technologically solved with a high-level programming language. As opposed to the previous case, here the intermediate transformation language is not fixed, in the sense that it is not hard-coded, but rather is a matter of configuration. Nevertheless, the intermediate language is still likely to be fixed for the scope of a single transformation.
 
 \subsection{Discussion}
 
@@ -74,7 +74,7 @@ A viewpoint can thus be seen as a restricted or, more generally, transformed met
 \subsection{PSS-IF in a Nutshell}
 \label{sec:approach:pssif:nutshell}
 
-Assuming a metamodel which describes all aspects of reality, which are of importance for the development of a \gls{PSS}. Such a metamodel is denoted as the PSS-IF Canonic Metamodel. For each \gls{dsl}, a viewpoint is defined on the basis of the PSS-IF Canonic Metamodel and captures only those parts of the canonic metamodel, which can be represented in the corresponding \gls{dsl}. Furthermore, viewpoints are defined in such a way that they can be used for both reading from and writing to a model.
+Assume a metamodel describing all aspects of reality, which are of importance for the development of a \gls{PSS}. Such a metamodel is denoted as the PSS-IF Canonic Metamodel. For each \gls{dsl}, a viewpoint is defined on the basis of the PSS-IF Canonic Metamodel and captures only those parts of the canonic metamodel, which can be represented in the corresponding \gls{dsl}. Furthermore, viewpoints are defined in such a way that they can be used for both reading from and writing to a model.
 
 This enables the achievement of a transformation between two exemplary \glspl{dsl} \textit{A} and \textit{B} through the following process:
 

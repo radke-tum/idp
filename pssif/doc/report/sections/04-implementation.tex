@@ -87,7 +87,7 @@ The core is the central component of the framework and is responsible for the re
 \label{fig:metamodel}
 \end{figure}
 
-The \texttt{Metamodel} (see \figref{fig:metamodel}) is a concept which enables the users of the framework to define the structure of their data. In this sense, a \texttt{Metamodel} also defines, on the abstract syntax level, the language in which the elements of a PSS-IF \texttt{Model} are described. A parallel in the domain of the \gls{xml} are the \gls{xsd} \cite{ref:xsd}. In essence, a PSS-IF \texttt{Metamodel} is the schema definition in accordance to which a particular \texttt{Model} is created and processed.
+The \texttt{Metamodel} (see \figref{fig:metamodel}) is a concept which enables the users of the framework to define the structure of their data. In this sense, a \texttt{Metamodel} also defines, on the abstract syntax level, the language in which the elements of a PSS-IF \texttt{Model} are described. A parallel in the domain of the \gls{xml} is the \gls{xsd} \cite{ref:xsd}. In essence, a PSS-IF \texttt{Metamodel} is the schema definition in accordance to which a particular \texttt{Model} is created and processed.
 
 A PSS-IF \texttt{Metamodel} captures a number of concepts. In particular, it consists of \texttt{NodeType}s and \texttt{EdgeTypes}, i.e. elements which enable the user to define what kinds of nodes and edges their model may contain, what kinds of features they may have, and how they may relate to each other. Furthermore, in the PSS-IF \gls{poc}, inheritance relations can be defined between both \texttt{NodeType} and \texttt{EdgeType}.
 
@@ -216,7 +216,7 @@ The Model Mapper component is responsible for the translation between generic gr
 
 In the simplest case, a particular model mapper would simply use the provided viewpoint to directly transfer information between a Model and a graph, processing all nodes, edges and attributes. In more complex cases, pre- or post-processing of the graph may be necessary, to ''normalize'' it into a structure compatible with the viewpoint defined for the particular language (and, hence, with the provided Model). This may, for example, be the case, if the external representation requires the nodes of a graph to be ordered in accordance with a certain rule, or if there are implicit existential dependencies between nodes, implied by the nature of the \texttt{Viewpoint} or a specific \texttt{Transformation}.
 
-In general, it is assumed that one \texttt{ModelMapper} implementation is necessary for each \gls{dsl} to support. Theoretically, if the same language is to be imported from or exported to more than one format, and the generic graph is sufficient to express the abstract syntax of both external formats, the same \texttt{ModelMapper} and \texttt{Viewpoint} can be used with different \texttt{IoMapper} implementations, to obtain different serializations of the same data.
+In general, it is assumed that one \texttt{ModelMapper} implementation is necessary for each \gls{dsl} to be supported. Theoretically, if the same language is to be imported from or exported to more than one format, and the generic graph is sufficient to express the abstract syntax of both external formats, the same \texttt{ModelMapper} and \texttt{Viewpoint} can be used with different \texttt{IoMapper} implementations, to obtain different serializations of the same data.
 
 \subsection{Microsoft Visio VSDX I/O}
 
