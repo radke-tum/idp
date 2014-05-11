@@ -105,7 +105,9 @@ public class IssueResolverPopup {
 					MyNode newVersionNode = vm.getMaxVersion();
 					
 					ModelBuilder.addNewEdgeGUI(newVersionNode, changeEvent, ModelBuilder.getEdgeTypes().getValue(PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_CHRONOLOGICAL_BASED_ON), true);
-					
+					/*
+					 * TODO Also a "Based On" edge from ChangeEvent if Requirement node is selected
+					 */
 					gViz.updateGraph();
 				}
 			}

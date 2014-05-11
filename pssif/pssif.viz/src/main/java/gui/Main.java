@@ -31,8 +31,10 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+import de.tum.pssif.core.model.Model;
 import model.FileExporter;
 import model.FileImporter;
+import model.ModelBuilder;
 
 /**
  * The main class of the project. Execute this class to start the Visualization Software
@@ -48,6 +50,7 @@ public class Main {
 	private JMenuItem resetGraph;
 	private JMenuItem resetMatrix;
 	private JMenuItem colorNodes;
+	private JMenuItem newProject;
 	private JMenuItem createView;
 	private JMenuItem attributFilter;
 	private JMenuItem graphVizualistation;
@@ -125,6 +128,46 @@ public class Main {
 		JMenuBar menuBar = new JMenuBar();
 		
 		JMenu fileMenu = new JMenu("File");
+		
+		newProject = new JMenuItem("New Project from Req");
+		newProject.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				//if (importer.showPopup(frame))
+				if (true)
+				{	
+					//Model model = new Model();
+					//ModelBuilder.addModel(ModelBuilder.getMetamodel(), model);
+			        // Create the Views
+			        matrixView = new MatrixView();
+					graphView = new GraphView();
+					// instance which manages all the filters
+					masterFilter = new MasterFilter(graphView);
+					
+					Dimension d = frame.getSize();
+					
+					// Setup the frame
+					frame.getContentPane().removeAll();
+					// Standard start with Graph
+					frame.getContentPane().add(graphView.getGraphPanel());
+					graphView.setActive(true);
+					matrixView.setActive(false);
+					
+					//create the full menuBar after first import
+					frame.setJMenuBar(createMenu());
+					adjustButtons();
+					
+					frame.setPreferredSize(d);
+					frame.pack();
+					frame.repaint();
+				}
+			}
+		});
+		
+		fileMenu.add(newProject);
+		
+		
 		importFile = new JMenuItem("Import File");
 		importFile.addActionListener(new ActionListener() {
 			
