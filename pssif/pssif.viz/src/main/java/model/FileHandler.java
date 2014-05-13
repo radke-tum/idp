@@ -29,7 +29,7 @@ public class FileHandler {
 		comboBoxValues = new TreeMap<String, String>();
 
 	    comboBoxValues.put("Umsatzorientierte Funktionsplanung", MapperFactory.UOFP);
-	    comboBoxValues.put("BPMN", MapperFactory.BPMN);
+	   // comboBoxValues.put("BPMN", MapperFactory.BPMN);
 	    comboBoxValues.put("EPK", MapperFactory.EPK);
 	    comboBoxValues.put("SysML", MapperFactory.SYSML);
 	    comboBoxValues.put("PSS-IF", MapperFactory.PSSIF);
