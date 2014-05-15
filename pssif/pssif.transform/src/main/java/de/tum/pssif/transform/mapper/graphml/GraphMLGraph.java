@@ -165,7 +165,7 @@ public class GraphMLGraph {
     XMLOutputFactory factory = XMLOutputFactory.newInstance();
 
     try {
-      XMLStreamWriter writer = factory.createXMLStreamWriter(out);
+      XMLStreamWriter writer = factory.createXMLStreamWriter(out, "UTF-8");
       writeDocumentHeader(writer);
       writeNodes(writer);
       writeEdges(writer);
