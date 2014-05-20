@@ -64,14 +64,15 @@ public class MyModelContainer {
       createNodes();
       createJunctionNodes();
       createEdges();
-      
+
     }
     else {
       throw new NullPointerException("Metamodel or model null!");
     }
   }
 
-  /**
+
+/**
    * parse the metamodel and create all the NodeTypes
    */
   private void createNodeTypes() {

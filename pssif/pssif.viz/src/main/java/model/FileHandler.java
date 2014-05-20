@@ -38,7 +38,7 @@ public class FileHandler {
 	    fileChooser = new JFileChooser();
 
 	    JPanel panel1 = (JPanel) fileChooser.getComponent(3);
-	    JPanel panel2 = (JPanel) panel1.getComponent(2);
+	    JPanel panel2 = (JPanel) panel1.getComponent(0);
 
 	    JPanel importeType = new JPanel(new FlowLayout());
 	    JLabel label1 = new JLabel(labelText);
