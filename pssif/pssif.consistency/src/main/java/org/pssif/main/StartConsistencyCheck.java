@@ -90,7 +90,7 @@ public class StartConsistencyCheck {
 				System.out.println("many nodes in the original model");
 			} else {
 				throw new RuntimeException(
-						"This should never have happened. Maybe the structure of the root node type was changed");
+						"This can never happen. Maybe the structure of the root node type was changed");
 			}
 			typeIteration();
 		}
@@ -104,108 +104,178 @@ public class StartConsistencyCheck {
 		for (int i = 0; i < PSIFFSolArtifactSubClasses.length; i++) {
 			iterateNodesOfType(PSIFFSolArtifactSubClasses[i], false);
 		}
-		
-		iterateNodesOfType(PSSIFCanonicMetamodelCreator.N_DEV_ARTIFACT, true);
-		iterateNodesOfType(PSSIFCanonicMetamodelCreator.N_SOL_ARTIFACT, true);
-		iterateNodesOfType(PSSIFConstants.ROOT_NODE_TYPE_NAME,true) ;
+
+		iterateNodesOfType(PSSIFCanonicMetamodelCreator.N_DEV_ARTIFACT, false);
+		iterateNodesOfType(PSSIFCanonicMetamodelCreator.N_SOL_ARTIFACT, false);
+		iterateNodesOfType(PSSIFConstants.ROOT_NODE_TYPE_NAME, false);
 	}
 
 	public void iterateNodesOfType(String type, boolean includeSubtypes) {
-		
-		int nodeCount = 0;
-		
-		NodeType actType;
-		PSSIFOption<Node> actNodesOriginalModel;
-		PSSIFOption<Node> actNodesNewModel;
-		
-		actType = metaModel.getNodeType(type)
-				.getOne();
 
-		actNodesOriginalModel = actType.apply(originalModel, includeSubtypes);
+		int nodeCount = 0;
+
+		NodeType actTypeOriginModel;
+		PSSIFOption<Node> actNodesOriginalModel;
+
+		actTypeOriginModel = metaModel.getNodeType(type).getOne();
+
+		actNodesOriginalModel = actTypeOriginModel.apply(originalModel,
+				includeSubtypes);
 
 		if (actNodesOriginalModel.isNone()) {
-			System.out
-					.println("There are no nodes of the type "
-							+ actType.getName()
-							+ " in the original model. Continuing with the next type.");
+			// System.out.println("There are no nodes of the type "
+			// + actType.getName()
+			// + " in the original model. Continuing with the next type.");
 		} else {
 			if (actNodesOriginalModel.isOne()) {
-				System.out
-						.println("There is one node of the type "
-								+ actType.getName()
-								+ " in the original model. Starting the matching for this node.");
-				
+				// System.out
+				// .println("There is one node of the type "
+				// + actType.getName()
+				// +
+				// " in the original model. Starting the matching for this node.");
+
 				Node tempNodeOrigin = actNodesOriginalModel.getOne();
-				
-				matchNodeWithNewModel(tempNodeOrigin, actType);
-				
-				/*System.out.println(findName(actType,tempNodeOrigin));
-				nodeCount++;*/
+
+				iterateOverTypesOfNewModel(tempNodeOrigin, actTypeOriginModel);
+
+				/*
+				 * System.out.println(findName(actType,tempNodeOrigin));
+				 * nodeCount++;
+				 */
 
 			} else {
-				System.out
-						.println("There are many nodes of the type "
-								+ actType.getName()
-								+ " in the original model. Starting the matching for these nodes.");
-				
+				// System.out
+				// .println("There are many nodes of the type "
+				// + actType.getName()
+				// +
+				// " in the original model. Starting the matching for these nodes.");
+
 				Set<Node> tempNodesOrigin = actNodesOriginalModel.getMany();
-				
+
 				Iterator<Node> tempNodeOrigin = tempNodesOrigin.iterator();
-				
-				while(true){
-					
-					matchNodeWithNewModel(tempNodeOrigin.next(), actType);
-					
-					/*System.out.println(findName(actType,tempNodeOrigin.next()));
-					nodeCount++;*/
-					
-					if(!tempNodeOrigin.hasNext()){
+
+				while (true) {
+
+					iterateOverTypesOfNewModel(tempNodeOrigin.next(),
+							actTypeOriginModel);
+
+					/*
+					 * System.out.println(findName(actType,tempNodeOrigin.next())
+					 * ); nodeCount++;
+					 */
+
+					if (!tempNodeOrigin.hasNext()) {
 						break;
 					}
 				}
-				
+
 			}
 		}
-		System.out.println("Found " + nodeCount + " unique nodes in the model");
+		// System.out.println("Found " + nodeCount +
+		// " unique nodes in the model");
 	}
-	
-	public void matchNodeWithNewModel(Node tempNodeOrigin, NodeType actType){
-		//TODO: Check that the nodes haven't been already compared with help of the ConsistencyData object
-		
-		
+
+	public void iterateOverTypesOfNewModel(Node tempNodeOrigin, NodeType type) {
+		// TODO: Check that the nodes haven't been already compared with help of
+		// the ConsistencyData object
+		NodeType actTypeNewModel = type;
+
+		boolean firstIteration = true;
+
+		// QuickFIX!!! (problem is: If the program shall compare a node of type
+		// node with the other model
+		// it's currently not matched with any other node because the subtypes
+		// are not included in the first iteration of the matching
+		if (type.getName() == PSSIFConstants.ROOT_NODE_TYPE_NAME) {
+			firstIteration = false;
+		}
+
+		while (true) {
+
+			PSSIFOption<Node> actNodesNewModel = actTypeNewModel.apply(
+					newModel, !(firstIteration));
+
+			matchNodeWithNodesOfActTypeOfNewModel(tempNodeOrigin,
+					actNodesNewModel, actTypeNewModel);
+
+			if (actTypeNewModel.getGeneral().isNone()) {
+				break;
+			} else {
+				actTypeNewModel = actTypeNewModel.getGeneral().getOne();
+			}
+
+			firstIteration = false;
+		}
 	}
-	
+
+	public void matchNodeWithNodesOfActTypeOfNewModel(Node tempNodeOrigin,
+			PSSIFOption<Node> actNodesNewModel, NodeType actTypeNewModel) {
+		if (actNodesNewModel.isNone()) {
+			// System.out
+			// .println("There is no node in the new model of this type to match. Continuing with next node type from new model.");
+		} else {
+			if (actNodesNewModel.isOne()) {
+
+				matchNodeWithNode(tempNodeOrigin, actNodesNewModel.getOne(),
+						actTypeNewModel);
+
+			} else {
+				Set<Node> tempNodesNew = actNodesNewModel.getMany();
+
+				Iterator<Node> tempNodeNew = tempNodesNew.iterator();
+
+				while (true) {
+
+					matchNodeWithNode(tempNodeOrigin, tempNodeNew.next(),
+							actTypeNewModel);
+
+					if (!tempNodeNew.hasNext()) {
+						break;
+					}
+				}
+
+			}
+		}
+	}
+
+	private void matchNodeWithNode(Node tempNodeOrigin, Node tempNodeNew,
+			NodeType actTypeNewModel) {
+		System.out.println("Comparing original: "
+				+ findName(actTypeNewModel, tempNodeOrigin)
+				+ " with new node: " + findName(actTypeNewModel, tempNodeNew)
+				+ " of type " + actTypeNewModel.getName());
+		// TODO: Apply Matching for the two given nodes!
+
+	}
+
 	/**
 	 * Get the name from the Node object
-	 * @return the actual name or "Name not available" if the name was not defined
+	 * 
+	 * @return the actual name or "Name not available" if the name was not
+	 *         defined
 	 * @author Luc
 	 */
-	private String findName(NodeType actType, Node actNode)
-	{
-		String name="Name not available";
+	private String findName(NodeType actType, Node actNode) {
+		String name = "Name not available";
 		// find the name of the Node
-		PSSIFOption<Attribute> tmp =actType.getAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_NAME);
-		if (tmp.isOne())
-		{
+		PSSIFOption<Attribute> tmp = actType
+				.getAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_NAME);
+		if (tmp.isOne()) {
 			Attribute nodeName = tmp.getOne();
-			
-			if (nodeName.get(actNode)!=null)
-			{
-				PSSIFValue value =null;
-				if (nodeName.get(actNode).isOne())
-				{
+
+			if (nodeName.get(actNode) != null) {
+				PSSIFValue value = null;
+				if (nodeName.get(actNode).isOne()) {
 					value = nodeName.get(actNode).getOne();
 					name = value.asString();
 				}
-				if (nodeName.get(actNode).isNone())
-				{
-					name ="Name not available";
+				if (nodeName.get(actNode).isNone()) {
+					name = "Name not available";
 				}
-			}
-			else
-				name ="Name not available";
+			} else
+				name = "Name not available";
 		}
-			
+
 		return name;
 	}
 }
