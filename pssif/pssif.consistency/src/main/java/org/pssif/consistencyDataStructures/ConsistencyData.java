@@ -6,8 +6,7 @@ import org.pssif.comparedDataStructures.ComparedLabelPair;
 import org.pssif.comparedDataStructures.ComparedNodePair;
 import org.pssif.comparedDataStructures.ComparedNormalizedTokensPair;
 
-import de.tum.pssif.core.metamodel.Metamodel;
-import de.tum.pssif.core.model.Model;
+import de.tum.pssif.core.model.Node;
 
 /**
  * @author Andreas
@@ -18,12 +17,14 @@ import de.tum.pssif.core.model.Model;
  * 
  *         With this class we know:
  * 
- *         - which IDs already matched (so we don't match them again) the
- *         - similarity results for token & label pairs to be able to look them up
- *         - for future results the similarity results for node pairs
+ *         - which IDs already matched (so we don't match them again as we go up
+ *         in the class hierachy in the compairson process)
+ *         - the similarity
+ *         results for token & label pairs to be able to look them up in future compairsons
+ *         - 
  */
 public class ConsistencyData {
-	
+
 	public ConsistencyData() {
 
 	}
@@ -51,13 +52,13 @@ public class ConsistencyData {
 	 */
 	private ComparedNodePair[] comparedNodePairs;
 
-	
 	/**
-	 * @return true if the new compared element was added to all relevant variables
+	 * @return true if the new compared elements were added to all relevant
+	 *         variables
 	 * @return false if something went wrong
 	 */
-	public boolean putComparedEntry(){
+	public boolean putComparedEntry(Node a, Node b, ComparedNormalizedTokensPair c, ComparedLabelPair d) {
 		return false;
 	}
-	
+
 }
