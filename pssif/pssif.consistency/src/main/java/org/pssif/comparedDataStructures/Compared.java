@@ -1,4 +1,4 @@
-package comparedDataStructures;
+package org.pssif.comparedDataStructures;
 
 /**
  * @author Andreas
@@ -12,20 +12,20 @@ public abstract class Compared {
 	/**
 	 * bool saying if the proposed merge was accepted by the user
 	 */
-	private boolean wasMerged;
+	private boolean merged;
 
 	/**
-	 * @return the wasMerged
+	 * @return the merged
 	 */
-	public boolean isWasMerged() {
-		return wasMerged;
+	public boolean isMerged() {
+		return merged;
 	}
 
 	/**
-	 * @param wasMerged
-	 *            the wasMerged to set
+	 * @param merged
+	 *            the merged to set
 	 */
-	public void setWasMerged(boolean wasMerged) {
-		this.wasMerged = wasMerged;
+	public void setMerged(boolean merged) {
+		this.merged = merged;
 	}
 }

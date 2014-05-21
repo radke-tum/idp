@@ -14,6 +14,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 
+import org.pssif.main.StartConsistencyCheck;
+
 import de.tum.pssif.core.common.PSSIFOption;
 import de.tum.pssif.core.metamodel.ConnectionMapping;
 import de.tum.pssif.core.metamodel.EdgeType;
@@ -35,28 +37,57 @@ public class ModelBuilder {
 	private static Metamodel metaModel = PSSIFCanonicMetamodelCreator.create();
 	private static HashMap<MyPair, LinkedList<MyEdgeType>> possibleMappings;
 
+	//a bool that says whether the newly imported model shall be merged with the existing one
+	private static boolean mergeModels;
+	
 	/**
-	 * Add a new Model and MetaModel. The new Model might be merged with another existing Model
+	 * Add a new Model and MetaModel. The new Model might be merged with another
+	 * existing Model
+	 * 
 	 * @param meta
 	 * @param model
 	 */
-	public static void addModel(Metamodel Pmeta, Model Pmodel)
-	{
+	public static void addModel(Metamodel Pmeta, Model Pmodel) {
 		// check if we have to merge the model with an existing
-		if (activeModel==null)
-		{
+		if (activeModel == null) {
 			MyModelContainer newModel = new MyModelContainer(Pmodel, Pmeta);
-			activeModel =newModel;
+			activeModel = newModel;
 		}
-		else
-		{
-			ModelMerger merger = new ModelMerger();
-			Model mergedModel = merger.mergeModels(activeModel.getModel(), Pmodel, Pmeta);
-			
-			MyModelContainer newModel = new MyModelContainer(mergedModel, Pmeta);
-			activeModel =newModel;
+		/**
+		 * @author: Andreas
+		 */
+		else {
+			mergeModels = openConsistencyPopUp();
+
+			if (mergeModels) {
+				StartConsistencyCheck.main(activeModel.getModel(), Pmodel, Pmeta);
+			} else {
+				ModelMerger merger = new ModelMerger();
+				Model mergedModel = merger.mergeModels(activeModel.getModel(),
+						Pmodel, Pmeta);
+
+				MyModelContainer newModel = new MyModelContainer(mergedModel,
+						Pmeta);
+				activeModel = newModel;
+			}
+
 		}
 	}
+
+	/**
+	 * @author: Andreas
+	 * @return a boolean that says whether the user wants to merge the newly
+	 *         imported model with the old one
+	 */
+	private static boolean openConsistencyPopUp() {
+
+		// TODO: Ask user if he wants to just import the model into the
+		// workspace or if he wants to merge the original model and the newly
+		// imported one
+
+		return true;
+	}
+	
 	
 	public static void resetModel()
 	{

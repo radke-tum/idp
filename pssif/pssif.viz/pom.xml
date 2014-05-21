@@ -47,5 +47,9 @@
 			<groupId>de.tum</groupId>
 			<artifactId>pssif.transform</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>de.tum</groupId>
+			<artifactId>pssif.consistency</artifactId>
+		</dependency>
 	</dependencies>
 </project>

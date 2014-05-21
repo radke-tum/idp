@@ -2,9 +2,10 @@ package org.pssif.consistencyDataStructures;
 
 import java.util.Map;
 
-import comparedDataStructures.ComparedLabelPair;
-import comparedDataStructures.ComparedNodePair;
-import comparedDataStructures.ComparedNormalizedTokensPair;
+import org.pssif.comparedDataStructures.ComparedLabelPair;
+import org.pssif.comparedDataStructures.ComparedNodePair;
+import org.pssif.comparedDataStructures.ComparedNormalizedTokensPair;
+
 import de.tum.pssif.core.metamodel.Metamodel;
 import de.tum.pssif.core.model.Model;
 
@@ -22,9 +23,10 @@ import de.tum.pssif.core.model.Model;
  *         - for future results the similarity results for node pairs
  */
 public class ConsistencyData {
+	
+	public ConsistencyData() {
 
-	private Model originModel, newModel;
-	private Metamodel metaModel;
+	}
 
 	/**
 	 * stores the already compared IDs as the pair (originModelElementID,
@@ -49,4 +51,13 @@ public class ConsistencyData {
 	 */
 	private ComparedNodePair[] comparedNodePairs;
 
+	
+	/**
+	 * @return true if the new compared element was added to all relevant variables
+	 * @return false if something went wrong
+	 */
+	public boolean putComparedEntry(){
+		return false;
+	}
+	
 }

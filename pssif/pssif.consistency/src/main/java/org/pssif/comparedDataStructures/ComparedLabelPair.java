@@ -1,5 +1,9 @@
-package comparedDataStructures;
+package org.pssif.comparedDataStructures;
 
+/**
+ * @author Andreas
+ *
+ */
 public class ComparedLabelPair extends Compared {
 
 	/**

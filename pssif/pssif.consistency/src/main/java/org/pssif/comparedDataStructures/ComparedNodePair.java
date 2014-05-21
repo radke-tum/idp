@@ -1,11 +1,15 @@
-package comparedDataStructures;
+package org.pssif.comparedDataStructures;
 
-import graph.model.MyNode;
+import de.tum.pssif.core.model.Node;
 
 
+/**
+ * @author Andreas
+ *
+ */
 public class ComparedNodePair extends Compared {
 
-	private MyNode nodeOriginalModel, nodeNewModel;
+	private Node nodeOriginalModel, nodeNewModel;
 	
 	private ComparedLabelPair labelComparison;
 	private ComparedNormalizedTokensPair tokensComparison;

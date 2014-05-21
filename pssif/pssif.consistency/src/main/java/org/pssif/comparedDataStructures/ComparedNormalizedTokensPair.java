@@ -1,7 +1,11 @@
-package comparedDataStructures;
+package org.pssif.comparedDataStructures;
 
 import org.pssif.consistencyDataStructures.Token;
 
+/**
+ * @author Andreas
+ *
+ */
 public class ComparedNormalizedTokensPair extends Compared {
 
 	private Token[] tokensOriginalModel, tokensNewModel;
