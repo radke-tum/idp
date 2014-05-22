@@ -8,7 +8,7 @@ import org.pssif.comparedDataStructures.ComparedNodePair;
 import org.pssif.comparedDataStructures.ComparedNormalizedTokensPair;
 import org.pssif.consistencyDataStructures.ConsistencyData;
 import org.pssif.consistencyDataStructures.Token;
-import org.pssif.consistencyLogic.MatchMethod;
+import org.pssif.matchingLogic.MatchMethod;
 import org.pssif.textMining.Tokenizer;
 
 import de.tum.pssif.core.common.PSSIFConstants;
@@ -21,7 +21,10 @@ import de.tum.pssif.core.model.Model;
 import de.tum.pssif.core.model.Node;
 
 /**
- * @author Andreas TODO
+ * @author Andreas This class is responsible for conducting the whole matching
+ *         process. It takes two nodes and applies all active matching methods
+ *         to them. Afterwards it saves the idpair of the two nodes so they
+ *         won't be compared again.
  */
 public class MatchingProcess {
 
@@ -75,6 +78,11 @@ public class MatchingProcess {
 	private ComparedNormalizedTokensPair comparedNormalizedTokensPair = null;
 	private ComparedNodePair comparedNodePair = null;
 
+	/**
+	 * This method checks which matching Methods are active and then saves if we
+	 * have to remove the whitespace from the labels and/or if we have to
+	 * tokenize the labels
+	 */
 	private void checkMatchMethods() {
 		Iterator<MatchMethod> currentMatchMethod = matchMethods.iterator();
 
@@ -98,8 +106,7 @@ public class MatchingProcess {
 				case LATENT_SEMANTIC_INDEXING_MATCHING:
 					tokenizationRequired = true;
 				default:
-					throw new RuntimeException(
-							"The last metric couln't be found.");
+					;
 				}
 			}
 		}
@@ -107,16 +114,31 @@ public class MatchingProcess {
 
 	/**
 	 * @param tempNodeOrigin
+	 *            the node from the original model
 	 * @param tempNodeNew
+	 *            the node from the new model
 	 * @param actTypeOriginModel
-	 *            TODO
+	 *            the type of the tempNodeOrigin
 	 * @param actTypeNewModel
+	 *            the type of the tempNodeNew
+	 * @throws RuntimeException
+	 *             If something at the saving goes wrong an exception is thrown.
+	 *             Else nothing besides the saving happens.
+	 * 
+	 *             This method guides the whole matching process. It initializes
+	 *             the variables where the consistencyData will be stored later.
+	 *             Then it normalizes and/or tokenizes the labels if necessary.
+	 *             Then it applies the active matching methods to the nodes and
+	 *             saves the results
 	 */
 	public void startMatchingProcess(Node tempNodeOrigin, Node tempNodeNew,
 			NodeType actTypeOriginModel, NodeType actTypeNewModel) {
 
 		double currentMetricResult;
 
+		/**
+		 * initializing the consistency Data variables here
+		 */
 		comparedLabelPair = null;
 		comparedNormalizedTokensPair = null;
 		comparedNodePair = new ComparedNodePair();
@@ -129,6 +151,8 @@ public class MatchingProcess {
 
 		Token[] tokensOrigin = null;
 		Token[] tokensNew = null;
+
+		createComparedNormalizedTokensPair(tokensOrigin, tokensNew);
 
 		if (tokenizationRequired) {
 			tokensOrigin = Tokenizer.tokenize(labelOrigin);
@@ -149,11 +173,13 @@ public class MatchingProcess {
 
 		Iterator<MatchMethod> currentMatchMethod = matchMethods.iterator();
 
+		/**
+		 * Applying every match Method to the two nodes here
+		 */
 		while (currentMatchMethod.hasNext()) {
 			MatchMethod currentMethod = currentMatchMethod.next();
 
 			if (currentMethod.isActive()) {
-				// TODO: get unweigthed result here
 				currentMetricResult = currentMethod.executeMatching(
 						tempNodeOrigin, tempNodeNew, originalModel, newModel,
 						metaModel, actTypeOriginModel, actTypeNewModel,
@@ -167,6 +193,11 @@ public class MatchingProcess {
 		comparedNodePair.setLabelComparison(comparedLabelPair);
 		comparedNodePair.setTokensComparison(comparedNormalizedTokensPair);
 
+		/**
+		 * Saves the two compared nodes, the ids and the matching results in the
+		 * consistencyData object. If something goes wrong an exception is
+		 * thrown. Else nothing besides the saving happens.
+		 */
 		if (!(consistencyData.putComparedEntry(tempNodeOrigin, tempNodeNew,
 				comparedNodePair))) {
 			throw new RuntimeException(
@@ -187,17 +218,18 @@ public class MatchingProcess {
 
 	/**
 	 * @param currentMethod
+	 *            the matchMethod which was currently applied
 	 * @param currentMetricResult
-	 *            TODO
+	 *            the result of the currently applied matchMethod
 	 * @param labelOrigin
-	 *            TODO
 	 * @param labelNew
-	 *            TODO
-	 * @throws RuntimeException
+	 * 
+	 *            This method is supposed to save the results of the last match
+	 *            operation. Depending on the matchMethod type it's saved in a
+	 *            different matchData container.
 	 */
 	public void saveMatchMethodResult(MatchMethod currentMethod,
-			double currentMetricResult, String labelOrigin, String labelNew)
-			throws RuntimeException {
+			double currentMetricResult, String labelOrigin, String labelNew) {
 
 		switch (currentMethod.getMatchMethod()) {
 		case EXACT_STRING_MATCHING:
@@ -223,14 +255,18 @@ public class MatchingProcess {
 		case CONTEXT_MATCHING:
 			comparedNodePair.setContextMatchResult(currentMetricResult);
 		default:
-			throw new RuntimeException(
-					"The last applied metric couln't be found.");
+			;
 		}
 	}
 
 	/**
 	 * @param tokensOrigin
 	 * @param tokensNew
+	 * 
+	 *            This method creates an object for the field
+	 *            "comparedNormalizedTokensPair" if it's not yet created. This
+	 *            ensures that every different token dependent metric is saved
+	 *            into the same matchData container.
 	 */
 	private void createComparedNormalizedTokensPair(Token[] tokensOrigin,
 			Token[] tokensNew) {
@@ -240,6 +276,10 @@ public class MatchingProcess {
 		}
 	}
 
+	/**
+	 * @return The weighted combination of all results of the syntactic match
+	 *         methods.
+	 */
 	public double getWeightedSyntacticSimilarity() {
 		double result = 0;
 
@@ -271,6 +311,10 @@ public class MatchingProcess {
 		return result;
 	}
 
+	/**
+	 * @return The weighted combination of all results of the semantic match
+	 *         methods.
+	 */
 	public double getWeightedSemanticSimilarity() {
 		double result = 0;
 
@@ -299,6 +343,10 @@ public class MatchingProcess {
 		return result;
 	}
 
+	/**
+	 * @return The weighted combination of all results of the context match
+	 *         methods.
+	 */
 	public double getWeightedContextSimilarity() {
 		double result = 0;
 

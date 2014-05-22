@@ -16,8 +16,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import org.pssif.consistencyLogic.MatchMethod;
 import org.pssif.mainProcesses.CompairsonProcess;
+import org.pssif.matchingLogic.ExactMatcher;
+import org.pssif.matchingLogic.MatchMethod;
+import org.pssif.matchingLogic.MatchingMethods;
 
 import de.tum.pssif.core.common.PSSIFOption;
 import de.tum.pssif.core.metamodel.ConnectionMapping;
@@ -105,6 +107,9 @@ public class ModelBuilder {
 		List<MatchMethod> result = new LinkedList<MatchMethod>();
 		
 		//TODO: Open Dialog here and ask the user which metrics he wants
+		
+		//TODO Remove after testing
+		result.add(new ExactMatcher(MatchingMethods.EXACT_STRING_MATCHING, true, 1.0));
 		
 		return result;
 	}

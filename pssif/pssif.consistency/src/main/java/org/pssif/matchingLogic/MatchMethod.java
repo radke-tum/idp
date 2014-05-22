@@ -1,4 +1,4 @@
-package org.pssif.consistencyLogic;
+package org.pssif.matchingLogic;
 
 import org.pssif.consistencyDataStructures.Token;
 
@@ -7,12 +7,28 @@ import de.tum.pssif.core.metamodel.NodeType;
 import de.tum.pssif.core.model.Model;
 import de.tum.pssif.core.model.Node;
 
+/**
+ * @author Andreas
+ * 
+ *         This class represents a general structure of a matching Method. It
+ *         supplies the standard attributes for a matching method to say how the
+ *         method is called, if it's active and how much is its weight to the
+ *         whole similarity score.
+ * 
+ *         New Matching methods can be easily implemented by extending this
+ *         class and implementing an own version of the executeMatching()
+ *         method.
+ * 
+ */
 public abstract class MatchMethod {
 
 	/**
 	 * @param matchMethod
+	 *            the name of the method
 	 * @param isActive
+	 *            bool saying whether the method was activated by the user
 	 * @param weigth
+	 *            the method weight to the whole similarity score of two nodes
 	 */
 	public MatchMethod(MatchingMethods matchMethod, boolean isActive,
 			double weigth) {
@@ -27,28 +43,11 @@ public abstract class MatchMethod {
 	private double weigth;
 
 	/**
-	 * @param tempNodeOrigin
-	 *            the node from the original model
-	 * @param tempNodeNew
-	 *            the node form the new model
-	 * @param originalModel
-	 *            the first imported model
-	 * @param newModel
-	 *            the recent imported model
-	 * @param metaModel
-	 *            the accroding metamodel for the two models
-	 * @param actTypeOriginModel
-	 *            the actual type of the originalNode
-	 * @param actTypeNewModel
-	 *            the actual type of the newNode
-	 * @param labelOrigin
-	 *            TODO
-	 * @param labelNew
-	 *            TODO
-	 * @param tokensOrigin
-	 *            TODO
-	 * @param tokensNew
-	 *            TODO
+	 * 
+	 * This methods get's very much information about the currently matched two
+	 * nodes. Though not all matching methods require that much data, some
+	 * methods need quite a lot.
+	 * 
 	 * @return the result of the applied metric
 	 */
 	public abstract double executeMatching(Node tempNodeOrigin,

@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.pssif.consistencyDataStructures.ConsistencyData;
-import org.pssif.consistencyLogic.MatchMethod;
+import org.pssif.matchingLogic.MatchMethod;
 
 import de.tum.pssif.core.common.PSSIFConstants;
 import de.tum.pssif.core.common.PSSIFOption;
@@ -369,6 +369,7 @@ public class CompairsonProcess {
 				+ " with new node: " + findName(actTypeNewModel, tempNodeNew)
 				+ " of type " + actTypeNewModel.getName());
 
+		
 		if(consistencyData.matchNecessary(tempNodeOrigin.getId(), tempNodeNew.getId())){
 			matchingProcess.startMatchingProcess(tempNodeOrigin, tempNodeNew,
 					actTypeOriginModel, actTypeNewModel);
