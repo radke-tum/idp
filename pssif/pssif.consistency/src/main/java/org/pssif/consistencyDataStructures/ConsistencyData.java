@@ -1,6 +1,7 @@
 package org.pssif.consistencyDataStructures;
 
-import java.util.Map;
+import java.util.HashMap;
+import java.util.HashSet;
 
 import org.pssif.comparedDataStructures.ComparedLabelPair;
 import org.pssif.comparedDataStructures.ComparedNodePair;
@@ -25,39 +26,37 @@ import de.tum.pssif.core.model.Node;
  */
 public class ConsistencyData {
 
-	public ConsistencyData() {
 
-	}
 
 	/**
 	 * stores the already compared IDs as the pair (originModelElementID,
 	 * newModelElementID)
 	 */
-	private Map<String, String> IDMapping;
+	private HashMap<String, String> IDMapping;
 
 	/**
 	 * stores the label pairs which were already matched together with the
 	 * similarity metric results
 	 */
-	private ComparedLabelPair[] comparedLabelPairs;
+	private HashSet<ComparedLabelPair> comparedLabelPairs;
 
 	/**
 	 * stores the tokens pairs which were already matched together with the
 	 * similarity metric results
 	 */
-	private ComparedNormalizedTokensPair[] comparedTokensPair;
+	private HashSet<ComparedNormalizedTokensPair> comparedTokensPair;
 
 	/**
 	 * stores compared Nodes with similarity information
 	 */
-	private ComparedNodePair[] comparedNodePairs;
+	private HashSet<ComparedNodePair> comparedNodePairs;
 
 	/**
 	 * @return true if the new compared elements were added to all relevant
 	 *         variables
 	 * @return false if something went wrong
 	 */
-	public boolean putComparedEntry(Node a, Node b, ComparedNormalizedTokensPair c, ComparedLabelPair d) {
+	public boolean putComparedEntry(Node a, Node b, ComparedNormalizedTokensPair c, ComparedLabelPair d, ComparedNodePair e) {
 		return false;
 	}
 

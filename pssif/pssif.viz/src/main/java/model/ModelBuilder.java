@@ -13,8 +13,10 @@ import graph.model.MyNodeTypes;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.Set;
 
-import org.pssif.main.StartConsistencyCheck;
+import org.pssif.consistencyLogic.MatchMethod;
+import org.pssif.mainProcesses.CompairsonProcess;
 
 import de.tum.pssif.core.common.PSSIFOption;
 import de.tum.pssif.core.metamodel.ConnectionMapping;
@@ -36,9 +38,6 @@ public class ModelBuilder {
 	//private static boolean mergerOn=true;
 	private static Metamodel metaModel = PSSIFCanonicMetamodelCreator.create();
 	private static HashMap<MyPair, LinkedList<MyEdgeType>> possibleMappings;
-
-	//a bool that says whether the newly imported model shall be merged with the existing one
-	private static boolean mergeModels;
 	
 	/**
 	 * Add a new Model and MetaModel. The new Model might be merged with another
@@ -57,10 +56,12 @@ public class ModelBuilder {
 		 * @author: Andreas
 		 */
 		else {
-			mergeModels = openConsistencyPopUp();
-
-			if (mergeModels) {
-				StartConsistencyCheck.main(activeModel.getModel(), Pmodel, Pmeta);
+			//TODO extract to main class in consistency package (together with the two other methods for popup creation
+			if (openConsistencyPopUp()) {
+				
+				Set<MatchMethod> matchMethods = openChooseMatchingMethodsPopup();
+				
+				CompairsonProcess.main(activeModel.getModel(), Pmodel, Pmeta, matchMethods);
 			} else {
 				ModelMerger merger = new ModelMerger();
 				Model mergedModel = merger.mergeModels(activeModel.getModel(),
@@ -84,8 +85,27 @@ public class ModelBuilder {
 		// TODO: Ask user if he wants to just import the model into the
 		// workspace or if he wants to merge the original model and the newly
 		// imported one
+		boolean result = false;
+		
+		//TODO: Ask user if he wants to merge
 
-		return true;
+		result = true;
+
+
+		return result;
+	}
+	
+	/**
+	 * @author: Andreas
+	 * @return the set of matchMethods which shall be applied to the data
+	 */
+	private static HashSet<MatchMethod> openChooseMatchingMethodsPopup(){
+		
+		HashSet<MatchMethod> result = new HashSet<MatchMethod>();
+		
+		//TODO: Open Dialog here and ask the user which metrics he wants
+		
+		return result;
 	}
 	
 	

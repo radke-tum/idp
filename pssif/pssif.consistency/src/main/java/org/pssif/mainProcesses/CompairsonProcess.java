@@ -1,9 +1,10 @@
-package org.pssif.main;
+package org.pssif.mainProcesses;
 
 import java.util.Iterator;
 import java.util.Set;
 
 import org.pssif.consistencyDataStructures.ConsistencyData;
+import org.pssif.consistencyLogic.MatchMethod;
 
 import de.tum.pssif.core.common.PSSIFConstants;
 import de.tum.pssif.core.common.PSSIFOption;
@@ -16,6 +17,7 @@ import de.tum.pssif.core.model.Model;
 import de.tum.pssif.core.model.Node;
 
 //TODO: Remove development Sys.outprintln calls!!!
+//TODO: Add Try Catch blocks where necessary
 
 /**
  * @author Andreas
@@ -28,7 +30,7 @@ import de.tum.pssif.core.model.Node;
  *         newModel in an bottom-up-order.
  * 
  */
-public class StartConsistencyCheck {
+public class CompairsonProcess {
 
 	/**
 	 * These are the subclasses of PSIFFDevArtifacts that are checked for
@@ -62,28 +64,38 @@ public class StartConsistencyCheck {
 			PSSIFCanonicMetamodelCreator.N_ELECTRONIC,
 			PSSIFCanonicMetamodelCreator.N_MODULE };
 
-	Model originalModel, newModel;
-	Metamodel metaModel;
+	private Model originalModel, newModel;
+	private Metamodel metaModel;
 
 	/**
 	 * the results of the compairson and matching process are all stored here
+	 * and both processes can access it
 	 */
-	ConsistencyData consistencyData;
+	private ConsistencyData consistencyData;
+
+	/**
+	 * this is the object responsible for conducting the matching of two nodes
+	 */
+	private MatchingProcess matchingProcess;
 
 	private PSSIFOption<Node> nodesOriginalModel;
 
-	/**
-	 * @param originalModel the model firstly imported into the pssif modelling fw
-	 * @param newModel the recent model imported into the pssif modelling fw
-	 * @param metaModel the according metamodel for the models
-	 */
 	public static void main(Model originalModel, Model newModel,
-			Metamodel metaModel) {
-		new StartConsistencyCheck(originalModel, newModel, metaModel);
+			Metamodel metaModel, Set<MatchMethod> matchMethods) {
+		new CompairsonProcess(originalModel, newModel, metaModel, matchMethods);
 	}
 
-	public StartConsistencyCheck(Model originalModel, Model newModel,
-			Metamodel metaModel) {
+	/**
+	 * @param originalModel
+	 *            the model firstly imported into the pssif modelling fw
+	 * @param newModel
+	 *            the recent model imported into the pssif modelling fw
+	 * @param metaModel
+	 *            the according metamodel for the models
+	 * @param matchMethods these are the matching methods for the coming matching phase
+	 */
+	public CompairsonProcess(Model originalModel, Model newModel,
+			Metamodel metaModel, Set<MatchMethod> matchMethods) {
 
 		this.originalModel = originalModel;
 		this.newModel = newModel;
@@ -91,15 +103,19 @@ public class StartConsistencyCheck {
 
 		this.consistencyData = new ConsistencyData();
 
+		this.matchingProcess = new MatchingProcess(originalModel, newModel,
+				metaModel, consistencyData, matchMethods);
+
 		/**
-		 * compairson process is started here
+		 * compairson process starts here
 		 */
 		this.startTypeAndNodeIteration();
 	}
 
 	/**
-	 * this method checks if the original Model contains at least one node and then calls the typeIteration Method
-	 * If the original model is empty no merge can be conducted so no further methods are called for compairson
+	 * this method checks if the original Model contains at least one node and
+	 * then calls the typeIteration Method If the original model is empty no
+	 * merge can be conducted so no further methods are called for compairson
 	 */
 	public void startTypeAndNodeIteration() {
 		NodeType rootNodeType = metaModel.getNodeType(
@@ -127,11 +143,13 @@ public class StartConsistencyCheck {
 	/**
 	 * this method iterates over every node type of the pssif metamodel and
 	 * calls the method iterateNodesOfType() with the current type. This ensures
-	 * that all nodes from the original model are compared with allfrom the other model.
+	 * that all nodes from the original model are compared with allfrom the
+	 * other model.
 	 * 
 	 * It starts with the children of the Type DevelopmentArtifact and then
-	 * continues with the children of the Type Solution Artifact.
-	 * After that the Development and Solution Artifact Type and finally the Node Type are iterated.
+	 * continues with the children of the Type Solution Artifact. After that the
+	 * Development and Solution Artifact Type and finally the Node Type are
+	 * iterated.
 	 */
 	public void typeIteration() {
 		for (int i = 0; i < PSIFFDevArtifactSubClasses.length; i++) {
@@ -177,32 +195,27 @@ public class StartConsistencyCheck {
 				includeSubtypes);
 
 		if (actNodesOriginalModel.isNone()) {
-			 System.out.println("There are no nodes of the type "
-			 + actTypeOriginModel.getName()
-			 + " in the original model. Continuing with the next type.");
+			System.out.println("There are no nodes of the type "
+					+ actTypeOriginModel.getName()
+					+ " in the original model. Continuing with the next type.");
 		} else {
 			if (actNodesOriginalModel.isOne()) {
-				 System.out
-				 .println("There is one node of the type "
-				 + actTypeOriginModel.getName()
-				 +
-				 " in the original model. Starting the matching for this node.");
+				System.out
+						.println("There is one node of the type "
+								+ actTypeOriginModel.getName()
+								+ " in the original model. Starting the matching for this node.");
 
 				Node tempNodeOrigin = actNodesOriginalModel.getOne();
 
 				iterateOverTypesOfNewModel(tempNodeOrigin, actTypeOriginModel);
 
-				/*
-				 * System.out.println(findName(actType,tempNodeOrigin));
-				 * nodeCount++;
-				 */
+				nodeCount++;
 
 			} else {
-				 System.out
-				 .println("There are many nodes of the type "
-				 + actTypeOriginModel.getName()
-				 +
-				 " in the original model. Starting the matching for these nodes.");
+				System.out
+						.println("There are many nodes of the type "
+								+ actTypeOriginModel.getName()
+								+ " in the original model. Starting the matching for these nodes.");
 
 				Set<Node> tempNodesOrigin = actNodesOriginalModel.getMany();
 
@@ -213,10 +226,7 @@ public class StartConsistencyCheck {
 					iterateOverTypesOfNewModel(tempNodeOrigin.next(),
 							actTypeOriginModel);
 
-					/*
-					 * System.out.println(findName(actType,tempNodeOrigin.next())
-					 * ); nodeCount++;
-					 */
+					nodeCount++;
 
 					if (!tempNodeOrigin.hasNext()) {
 						break;
@@ -225,15 +235,14 @@ public class StartConsistencyCheck {
 
 			}
 		}
-		 System.out.println("Found " + nodeCount +
-		 " unique nodes in the model");
+		System.out.println("Found " + nodeCount + " unique nodes in the model");
 	}
 
 	/**
 	 * @param tempNodeOrigin
 	 *            the node that shall be compared to all nodes with the same
 	 *            type in the new model
-	 * @param type
+	 * @param actTypeOriginModel
 	 *            the type of the given node
 	 * 
 	 *            This method is supposed to call the compairson process
@@ -246,22 +255,25 @@ public class StartConsistencyCheck {
 	 *            is no more general type left.
 	 * 
 	 */
-	public void iterateOverTypesOfNewModel(Node tempNodeOrigin, NodeType type) {
+	public void iterateOverTypesOfNewModel(Node tempNodeOrigin,
+			NodeType actTypeOriginModel) {
 		// TODO: Check that the nodes haven't been already compared with help of
 		// the ConsistencyData object
 		/**
-		 * the actual type with which nodes to compare are searched in the new model
+		 * the actual type with which nodes to compare are searched in the new
+		 * model
 		 */
-		NodeType actTypeNewModel = type;
+		NodeType actTypeNewModel = actTypeOriginModel;
 
 		boolean firstIteration = true;
 
-		//TODO: do a proper fix for this problem
-		// QuickFIX!!! (problem is: If the program shall compare a node of type
-		// node with the other model
-		// it's currently not matched with any other node because the subtypes
+		// TODO: do a proper fix for this problem
+		// QuickFIX only!!! (problem is: If the program shall compare a node of
+		// type
+		// 'node' with the other model
+		// it's currently not matched with any other 'node' because the subtypes
 		// are not included in the first iteration of the matching
-		if (type.getName() == PSSIFConstants.ROOT_NODE_TYPE_NAME) {
+		if (actTypeNewModel.getName() == PSSIFConstants.ROOT_NODE_TYPE_NAME) {
 			firstIteration = false;
 		}
 
@@ -271,7 +283,7 @@ public class StartConsistencyCheck {
 					newModel, !(firstIteration));
 
 			matchNodeWithNodesOfActTypeOfNewModel(tempNodeOrigin,
-					actNodesNewModel, actTypeNewModel);
+					actNodesNewModel, actTypeOriginModel, actTypeNewModel);
 
 			if (actTypeNewModel.getGeneral().isNone()) {
 				break;
@@ -289,27 +301,31 @@ public class StartConsistencyCheck {
 	 *            type in the new model
 	 * @param actNodesNewModel
 	 *            the nodes with the acutal type found in the new model
+	 * @param actTypeOriginModel
+	 *            the actual type of the originalNode
+	 * 
+	 *            this method checks if there are any nodes of the given type in
+	 *            the new model. If there are none there has to be no compairson
+	 *            done between the given node and nodes in the other model of
+	 *            the actual type. If there is one or many nodes with the actual
+	 *            type in the new model each node from the new model is compared
+	 *            separately with the node from the original model.
+	 * 
 	 * @param actTypeNewModel
 	 *            the actual type with which nodes to compare are searched in
 	 *            the new model
-	 * 
-	 *            this method checks if there are any nodes of the given type in
-	 *            the new model. If there are none there has to be no compairson done
-	 *            between the given node and nodes in the other model of the
-	 *            actual type. If there is one or many nodes with the actual
-	 *            type in the new model each node from the new model is compared
-	 *            separately with the node from the original model.
 	 */
 	public void matchNodeWithNodesOfActTypeOfNewModel(Node tempNodeOrigin,
-			PSSIFOption<Node> actNodesNewModel, NodeType actTypeNewModel) {
+			PSSIFOption<Node> actNodesNewModel, NodeType actTypeOriginModel,
+			NodeType actTypeNewModel) {
 		if (actNodesNewModel.isNone()) {
-			 System.out
-			 .println("There is no node in the new model of this type to match. Continuing with next node type from new model.");
+			System.out
+					.println("There is no node in the new model of this type to match. Continuing with next node type from new model.");
 		} else {
 			if (actNodesNewModel.isOne()) {
 
 				matchNodeWithNode(tempNodeOrigin, actNodesNewModel.getOne(),
-						actTypeNewModel);
+						actTypeOriginModel, actTypeNewModel);
 
 			} else {
 				Set<Node> tempNodesNew = actNodesNewModel.getMany();
@@ -319,7 +335,7 @@ public class StartConsistencyCheck {
 				while (true) {
 
 					matchNodeWithNode(tempNodeOrigin, tempNodeNew.next(),
-							actTypeNewModel);
+							actTypeOriginModel, actTypeNewModel);
 
 					if (!tempNodeNew.hasNext()) {
 						break;
@@ -336,19 +352,24 @@ public class StartConsistencyCheck {
 	 * @param tempNodeNew
 	 *            the node which shall be compared to the node from the old
 	 *            model
-	 * @param actTypeNewModel
-	 *            the actual type of the node from the new model
+	 * @param actTypeOriginModel
+	 *            the actual type of the originalNode
 	 * 
 	 *            this method finally calls the appropriate matching functions
 	 *            between two nodes. Then a similarity score will be computed.
+	 *            
+	 * @param actTypeNewModel
+	 *            the actual type of the node from the new model
 	 */
-	private void matchNodeWithNode(Node tempNodeOrigin, Node tempNodeNew,
-			NodeType actTypeNewModel) {
+	public void matchNodeWithNode(Node tempNodeOrigin, Node tempNodeNew,
+			NodeType actTypeOriginModel, NodeType actTypeNewModel) {
 		System.out.println("Comparing original: "
 				+ findName(actTypeNewModel, tempNodeOrigin)
 				+ " with new node: " + findName(actTypeNewModel, tempNodeNew)
 				+ " of type " + actTypeNewModel.getName());
-		// TODO: Apply Matching for the two given nodes!
+
+		matchingProcess.startMatchingProcess(tempNodeOrigin, tempNodeNew,
+				actTypeOriginModel, actTypeNewModel);
 
 	}
 
