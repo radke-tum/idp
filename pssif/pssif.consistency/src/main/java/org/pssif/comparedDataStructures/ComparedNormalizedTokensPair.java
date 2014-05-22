@@ -16,13 +16,24 @@ import org.pssif.consistencyDataStructures.Token;
  */
 public class ComparedNormalizedTokensPair extends Compared {
 
-	private Token[] tokensOriginalModel, tokensNewModel;
+	/**
+	 * @param tokensOrigin
+	 * @param tokensNew
+	 */
+	public ComparedNormalizedTokensPair(Token[] tokensOrigin,
+			Token[] tokensNew) {
+		super();
+		this.tokensOrigin = tokensOrigin;
+		this.tokensNew = tokensNew;
+	}
+
+	private Token[] tokensOrigin, tokensNew;
 
 	/**
 	 * the result of the matching between two tokens based on their synonym
 	 * similarity
 	 */
-	private double synonymSimilarityMatchResult;
+	private double linguisticMatchResult;
 
 	/**
 	 * the result of the calculation of the string edit distance metric between
@@ -46,5 +57,75 @@ public class ComparedNormalizedTokensPair extends Compared {
 	 * latent semantic indexing to the two token sets
 	 */
 	private double lsiMatchResult;
+
+	/**
+	 * @return the linguisticMatchResult
+	 */
+	public double getLinguisticMatchResult() {
+		return linguisticMatchResult;
+	}
+
+	/**
+	 * @return the stringEditDistanceResult
+	 */
+	public double getStringEditDistanceResult() {
+		return stringEditDistanceResult;
+	}
+
+	/**
+	 * @return the hyphenMatchResult
+	 */
+	public double getHyphenMatchResult() {
+		return hyphenMatchResult;
+	}
+
+	/**
+	 * @return the vsmMatchResult
+	 */
+	public double getVsmMatchResult() {
+		return vsmMatchResult;
+	}
+
+	/**
+	 * @return the lsiMatchResult
+	 */
+	public double getLsiMatchResult() {
+		return lsiMatchResult;
+	}
+	
+	/**
+	 * @param linguisticMatchResult the linguisticMatchResult to set
+	 */
+	public void setLinguisticMatchResult(double linguisticMatchResult) {
+		this.linguisticMatchResult = linguisticMatchResult;
+	}
+
+	/**
+	 * @param stringEditDistanceResult the stringEditDistanceResult to set
+	 */
+	public void setStringEditDistanceResult(double stringEditDistanceResult) {
+		this.stringEditDistanceResult = stringEditDistanceResult;
+	}
+
+	/**
+	 * @param hyphenMatchResult the hyphenMatchResult to set
+	 */
+	public void setHyphenMatchResult(double hyphenMatchResult) {
+		this.hyphenMatchResult = hyphenMatchResult;
+	}
+
+	/**
+	 * @param vsmMatchResult the vsmMatchResult to set
+	 */
+	public void setVsmMatchResult(double vsmMatchResult) {
+		this.vsmMatchResult = vsmMatchResult;
+	}
+
+	/**
+	 * @param lsiMatchResult the lsiMatchResult to set
+	 */
+	public void setLsiMatchResult(double lsiMatchResult) {
+		this.lsiMatchResult = lsiMatchResult;
+	}
 
 }

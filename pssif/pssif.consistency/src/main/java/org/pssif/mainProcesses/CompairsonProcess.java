@@ -1,6 +1,7 @@
 package org.pssif.mainProcesses;
 
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import org.pssif.consistencyDataStructures.ConsistencyData;
@@ -81,7 +82,7 @@ public class CompairsonProcess {
 	private PSSIFOption<Node> nodesOriginalModel;
 
 	public static void main(Model originalModel, Model newModel,
-			Metamodel metaModel, Set<MatchMethod> matchMethods) {
+			Metamodel metaModel, List<MatchMethod> matchMethods) {
 		new CompairsonProcess(originalModel, newModel, metaModel, matchMethods);
 	}
 
@@ -95,7 +96,7 @@ public class CompairsonProcess {
 	 * @param matchMethods these are the matching methods for the coming matching phase
 	 */
 	public CompairsonProcess(Model originalModel, Model newModel,
-			Metamodel metaModel, Set<MatchMethod> matchMethods) {
+			Metamodel metaModel, List<MatchMethod> matchMethods) {
 
 		this.originalModel = originalModel;
 		this.newModel = newModel;
@@ -368,8 +369,12 @@ public class CompairsonProcess {
 				+ " with new node: " + findName(actTypeNewModel, tempNodeNew)
 				+ " of type " + actTypeNewModel.getName());
 
-		matchingProcess.startMatchingProcess(tempNodeOrigin, tempNodeNew,
-				actTypeOriginModel, actTypeNewModel);
+		if(consistencyData.matchNecessary(tempNodeOrigin.getId(), tempNodeNew.getId())){
+			matchingProcess.startMatchingProcess(tempNodeOrigin, tempNodeNew,
+					actTypeOriginModel, actTypeNewModel);
+		} else {
+			System.out.println("These two nodes have already been compared.");
+		}
 
 	}
 

@@ -12,16 +12,35 @@ package org.pssif.comparedDataStructures;
  */
 public class ComparedLabelPair extends Compared {
 
-	// TODO: remove whitespace of the labels before Matching and saving here
+	/**
+	 * @param labelOrigin
+	 * @param labelNew
+	 * @param exactMatchResult
+	 */
+	public ComparedLabelPair(String labelOrigin, String labelNew,
+			double exactMatchResult) {
+		super();
+		this.labelOrigin = labelOrigin;
+		this.labelNew = labelNew;
+		this.exactMatchResult = exactMatchResult;
+	}
+
 	/**
 	 * two Strings representing Labels of Nodes (whitespace removed) to be able
 	 * to lookup if two labels have been already matched once
 	 */
-	private String labelOriginModel, labelNewModel;
+	private String labelOrigin, labelNew;
 
 	/**
 	 * the result of a direct string/token comparison
 	 */
 	private double exactMatchResult;
+
+	/**
+	 * @return the exactMatchResult
+	 */
+	public double getExactMatchResult() {
+		return exactMatchResult;
+	}
 
 }

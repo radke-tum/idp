@@ -1,5 +1,7 @@
 package org.pssif.consistencyLogic;
 
+import org.pssif.consistencyDataStructures.Token;
+
 import de.tum.pssif.core.metamodel.Metamodel;
 import de.tum.pssif.core.metamodel.NodeType;
 import de.tum.pssif.core.model.Model;
@@ -25,18 +27,35 @@ public abstract class MatchMethod {
 	private double weigth;
 
 	/**
-	 * @param tempNodeOrigin the node from the original model
-	 * @param tempNodeNew the node form the new model
-	 * @param originalModel the first imported model
-	 * @param newModel the recent imported model
-	 * @param metaModel the accroding metamodel for the two models
-	 * @param actTypeOriginModel the actual type of the originalNode
-	 * @param actTypeNewModel the actual type of the newNode
+	 * @param tempNodeOrigin
+	 *            the node from the original model
+	 * @param tempNodeNew
+	 *            the node form the new model
+	 * @param originalModel
+	 *            the first imported model
+	 * @param newModel
+	 *            the recent imported model
+	 * @param metaModel
+	 *            the accroding metamodel for the two models
+	 * @param actTypeOriginModel
+	 *            the actual type of the originalNode
+	 * @param actTypeNewModel
+	 *            the actual type of the newNode
+	 * @param labelOrigin
+	 *            TODO
+	 * @param labelNew
+	 *            TODO
+	 * @param tokensOrigin
+	 *            TODO
+	 * @param tokensNew
+	 *            TODO
 	 * @return the result of the applied metric
 	 */
-	public abstract  double executeMatching(Node tempNodeOrigin, Node tempNodeNew,
-			Model originalModel, Model newModel, Metamodel metaModel,
-			NodeType actTypeOriginModel, NodeType actTypeNewModel);
+	public abstract double executeMatching(Node tempNodeOrigin,
+			Node tempNodeNew, Model originalModel, Model newModel,
+			Metamodel metaModel, NodeType actTypeOriginModel,
+			NodeType actTypeNewModel, String labelOrigin, String labelNew,
+			Token[] tokensOrigin, Token[] tokensNew);
 
 	/**
 	 * @return the matchMethod

@@ -13,6 +13,7 @@ import graph.model.MyNodeTypes;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
 import org.pssif.consistencyLogic.MatchMethod;
@@ -59,7 +60,7 @@ public class ModelBuilder {
 			//TODO extract to main class in consistency package (together with the two other methods for popup creation
 			if (openConsistencyPopUp()) {
 				
-				Set<MatchMethod> matchMethods = openChooseMatchingMethodsPopup();
+				List<MatchMethod> matchMethods = openChooseMatchingMethodsPopup();
 				
 				CompairsonProcess.main(activeModel.getModel(), Pmodel, Pmeta, matchMethods);
 			} else {
@@ -99,9 +100,9 @@ public class ModelBuilder {
 	 * @author: Andreas
 	 * @return the set of matchMethods which shall be applied to the data
 	 */
-	private static HashSet<MatchMethod> openChooseMatchingMethodsPopup(){
+	private static List<MatchMethod> openChooseMatchingMethodsPopup(){
 		
-		HashSet<MatchMethod> result = new HashSet<MatchMethod>();
+		List<MatchMethod> result = new LinkedList<MatchMethod>();
 		
 		//TODO: Open Dialog here and ask the user which metrics he wants
 		

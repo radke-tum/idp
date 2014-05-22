@@ -31,4 +31,74 @@ public class ComparedNodePair extends Compared {
 	 * the modelgraph
 	 */
 	private double depthMatchResult;
+
+	/**
+	 * @return the contextMatchResult
+	 */
+	public double getContextMatchResult() {
+		return contextMatchResult;
+	}
+
+	/**
+	 * @return the depthMatchResult
+	 */
+	public double getDepthMatchResult() {
+		return depthMatchResult;
+	}
+
+	/**
+	 * @return the labelComparison
+	 */
+	public ComparedLabelPair getLabelComparison() {
+		return labelComparison;
+	}
+
+	/**
+	 * @return the tokensComparison
+	 */
+	public ComparedNormalizedTokensPair getTokensComparison() {
+		return tokensComparison;
+	}
+
+	/**
+	 * @param nodeOriginalModel the nodeOriginalModel to set
+	 */
+	public void setNodeOriginalModel(Node nodeOriginalModel) {
+		this.nodeOriginalModel = nodeOriginalModel;
+	}
+
+	/**
+	 * @param nodeNewModel the nodeNewModel to set
+	 */
+	public void setNodeNewModel(Node nodeNewModel) {
+		this.nodeNewModel = nodeNewModel;
+	}
+
+	/**
+	 * @param labelComparison the labelComparison to set
+	 */
+	public void setLabelComparison(ComparedLabelPair labelComparison) {
+		this.labelComparison = labelComparison;
+	}
+
+	/**
+	 * @param tokensComparison the tokensComparison to set
+	 */
+	public void setTokensComparison(ComparedNormalizedTokensPair tokensComparison) {
+		this.tokensComparison = tokensComparison;
+	}
+
+	/**
+	 * @param contextMatchResult the contextMatchResult to set
+	 */
+	public void setContextMatchResult(double contextMatchResult) {
+		this.contextMatchResult = contextMatchResult;
+	}
+
+	/**
+	 * @param depthMatchResult the depthMatchResult to set
+	 */
+	public void setDepthMatchResult(double depthMatchResult) {
+		this.depthMatchResult = depthMatchResult;
+	}
 }
