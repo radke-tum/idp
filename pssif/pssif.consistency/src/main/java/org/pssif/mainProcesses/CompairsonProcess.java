@@ -70,7 +70,7 @@ public class CompairsonProcess {
 
 	/**
 	 * the results of the compairson and matching process are all stored here
-	 * and both processes can access it
+	 * and all processes access the same object
 	 */
 	private ConsistencyData consistencyData;
 
@@ -115,7 +115,7 @@ public class CompairsonProcess {
 
 	/**
 	 * this method checks if the original Model contains at least one node and
-	 * then calls the typeIteration Method If the original model is empty no
+	 * then calls the typeIteration Method. If the original model is empty no
 	 * merge can be conducted so no further methods are called for compairson
 	 */
 	public void startTypeAndNodeIteration() {
@@ -222,16 +222,12 @@ public class CompairsonProcess {
 
 				Iterator<Node> tempNodeOrigin = tempNodesOrigin.iterator();
 
-				while (true) {
+				while (tempNodeOrigin.hasNext()) {
 
 					iterateOverTypesOfNewModel(tempNodeOrigin.next(),
 							actTypeOriginModel);
 
 					nodeCount++;
-
-					if (!tempNodeOrigin.hasNext()) {
-						break;
-					}
 				}
 
 			}
@@ -321,7 +317,7 @@ public class CompairsonProcess {
 			NodeType actTypeNewModel) {
 		if (actNodesNewModel.isNone()) {
 			System.out
-					.println("There is no node in the new model of this type to match. Continuing with next node type from new model.");
+					.println("There is no node in the new model of the type " + actTypeNewModel.getName() +  " to match. Continuing with next node type from new model.");
 		} else {
 			if (actNodesNewModel.isOne()) {
 
@@ -333,14 +329,10 @@ public class CompairsonProcess {
 
 				Iterator<Node> tempNodeNew = tempNodesNew.iterator();
 
-				while (true) {
+				while (tempNodeNew.hasNext()) {
 
 					matchNodeWithNode(tempNodeOrigin, tempNodeNew.next(),
 							actTypeOriginModel, actTypeNewModel);
-
-					if (!tempNodeNew.hasNext()) {
-						break;
-					}
 				}
 
 			}
@@ -365,7 +357,8 @@ public class CompairsonProcess {
 	public void matchNodeWithNode(Node tempNodeOrigin, Node tempNodeNew,
 			NodeType actTypeOriginModel, NodeType actTypeNewModel) {
 		System.out.println("Comparing original: "
-				+ findName(actTypeNewModel, tempNodeOrigin)
+				+ findName(actTypeOriginModel, tempNodeOrigin)
+				+ " of type " + actTypeOriginModel.getName()
 				+ " with new node: " + findName(actTypeNewModel, tempNodeNew)
 				+ " of type " + actTypeNewModel.getName());
 

@@ -90,8 +90,6 @@ public class ModelBuilder {
 		// imported one
 		boolean result = false;
 		
-		//TODO: Ask user if he wants to merge
-
 		result = true;
 
 

@@ -9,6 +9,7 @@ import org.pssif.comparedDataStructures.ComparedNormalizedTokensPair;
 import org.pssif.consistencyDataStructures.ConsistencyData;
 import org.pssif.consistencyDataStructures.Token;
 import org.pssif.matchingLogic.MatchMethod;
+import org.pssif.matchingLogic.MatchingMethods;
 import org.pssif.textMining.Tokenizer;
 
 import de.tum.pssif.core.common.PSSIFConstants;
@@ -21,10 +22,12 @@ import de.tum.pssif.core.model.Model;
 import de.tum.pssif.core.model.Node;
 
 /**
- * @author Andreas This class is responsible for conducting the whole matching
- *         process. It takes two nodes and applies all active matching methods
- *         to them. Afterwards it saves the idpair of the two nodes so they
- *         won't be compared again.
+ * @author Andreas
+ * 
+ *         This class is responsible for conducting the whole matching process.
+ *         It takes two nodes and applies all active matching methods to them.
+ *         Afterwards it saves the idpair of the two nodes so they won't be
+ *         compared again.
  */
 public class MatchingProcess {
 
@@ -93,18 +96,25 @@ public class MatchingProcess {
 				switch (currentMethod.getMatchMethod()) {
 				case EXACT_STRING_MATCHING:
 					whiteSpaceRemovalRequired = true;
+					break;
 				case DEPTH_MATCHING:
 					tokenizationRequired = true;
+					break;
 				case STRING_EDIT_DISTANCE_MATCHING:
 					tokenizationRequired = true;
+					break;
 				case HYPHEN_MATCHING:
 					tokenizationRequired = true;
+					break;
 				case LINGUISTIC_MATCHING:
 					tokenizationRequired = true;
+					break;
 				case VECTOR_SPACE_MODEL_MATCHING:
 					tokenizationRequired = true;
+					break;
 				case LATENT_SEMANTIC_INDEXING_MATCHING:
 					tokenizationRequired = true;
+					break;
 				default:
 					;
 				}
@@ -134,7 +144,7 @@ public class MatchingProcess {
 	public void startMatchingProcess(Node tempNodeOrigin, Node tempNodeNew,
 			NodeType actTypeOriginModel, NodeType actTypeNewModel) {
 
-		double currentMetricResult;
+		double currentMetricResult = 0;
 
 		/**
 		 * initializing the consistency Data variables here
@@ -149,18 +159,6 @@ public class MatchingProcess {
 		String labelOrigin = findName(actTypeOriginModel, tempNodeOrigin);
 		String labelNew = findName(actTypeNewModel, tempNodeNew);
 
-		Token[] tokensOrigin = null;
-		Token[] tokensNew = null;
-
-		createComparedNormalizedTokensPair(tokensOrigin, tokensNew);
-
-		if (tokenizationRequired) {
-			tokensOrigin = Tokenizer.tokenize(labelOrigin);
-			tokensNew = Tokenizer.tokenize(labelNew);
-
-			createComparedNormalizedTokensPair(tokensOrigin, tokensNew);
-		}
-
 		/**
 		 * Here the whitespace of the two labels is removed if necessary and
 		 * they are converted to lowercase
@@ -171,6 +169,17 @@ public class MatchingProcess {
 			labelNew = labelNew.replaceAll("\\s+", "").toLowerCase();
 		}
 
+		Token[] tokensOrigin = null;
+		Token[] tokensNew = null;
+
+		if (tokenizationRequired) {
+			tokensOrigin = Tokenizer.tokenize(labelOrigin);
+			tokensNew = Tokenizer.tokenize(labelNew);
+
+		}
+
+		createComparedNormalizedTokensPair(tokensOrigin, tokensNew);
+
 		Iterator<MatchMethod> currentMatchMethod = matchMethods.iterator();
 
 		/**
@@ -178,16 +187,17 @@ public class MatchingProcess {
 		 */
 		while (currentMatchMethod.hasNext()) {
 			MatchMethod currentMethod = currentMatchMethod.next();
+			currentMetricResult = 0;
 
 			if (currentMethod.isActive()) {
 				currentMetricResult = currentMethod.executeMatching(
 						tempNodeOrigin, tempNodeNew, originalModel, newModel,
 						metaModel, actTypeOriginModel, actTypeNewModel,
 						labelOrigin, labelNew, tokensOrigin, tokensNew);
-
-				saveMatchMethodResult(currentMethod, currentMetricResult,
-						labelOrigin, labelNew);
 			}
+
+			saveMatchMethodResult(currentMethod, currentMetricResult,
+					labelOrigin, labelNew);
 		}
 
 		comparedNodePair.setLabelComparison(comparedLabelPair);
@@ -213,7 +223,6 @@ public class MatchingProcess {
 				+ getWeightedSemanticSimilarity());
 		System.out.println("Contextual Similarity: "
 				+ getWeightedContextSimilarity());
-
 	}
 
 	/**
@@ -230,32 +239,38 @@ public class MatchingProcess {
 	 */
 	public void saveMatchMethodResult(MatchMethod currentMethod,
 			double currentMetricResult, String labelOrigin, String labelNew) {
-
+		
 		switch (currentMethod.getMatchMethod()) {
 		case EXACT_STRING_MATCHING:
 			if (comparedLabelPair == null) {
 				comparedLabelPair = new ComparedLabelPair(labelOrigin,
 						labelNew, currentMetricResult);
 			}
+			break;
 		case DEPTH_MATCHING:
 			comparedNodePair.setDepthMatchResult(currentMetricResult);
+			break;
 		case STRING_EDIT_DISTANCE_MATCHING:
 			comparedNormalizedTokensPair
 					.setStringEditDistanceResult(currentMetricResult);
+			break;
 		case HYPHEN_MATCHING:
 			comparedNormalizedTokensPair
 					.setHyphenMatchResult(currentMetricResult);
+			break;
 		case LINGUISTIC_MATCHING:
 			comparedNormalizedTokensPair
 					.setLinguisticMatchResult(currentMetricResult);
+			break;
 		case VECTOR_SPACE_MODEL_MATCHING:
 			comparedNormalizedTokensPair.setVsmMatchResult(currentMetricResult);
+			break;
 		case LATENT_SEMANTIC_INDEXING_MATCHING:
 			comparedNormalizedTokensPair.setLsiMatchResult(currentMetricResult);
+			break;
 		case CONTEXT_MATCHING:
 			comparedNodePair.setContextMatchResult(currentMetricResult);
-		default:
-			;
+			break;
 		}
 	}
 
@@ -298,12 +313,16 @@ public class MatchingProcess {
 			switch (currentMethod.getMatchMethod()) {
 			case EXACT_STRING_MATCHING:
 				result += currentMethod.getWeigth() * exactMatch;
+				break;
 			case DEPTH_MATCHING:
 				result += currentMethod.getWeigth() * depthMatch;
+				break;
 			case STRING_EDIT_DISTANCE_MATCHING:
 				result += currentMethod.getWeigth() * stringEditDistanceMatch;
+				break;
 			case HYPHEN_MATCHING:
 				result += currentMethod.getWeigth() * hyphenMatch;
+				break;
 			default:
 				;
 			}
@@ -331,10 +350,13 @@ public class MatchingProcess {
 			switch (currentMethod.getMatchMethod()) {
 			case LINGUISTIC_MATCHING:
 				result += currentMethod.getWeigth() * linguisticMatch;
+				break;
 			case VECTOR_SPACE_MODEL_MATCHING:
 				result += currentMethod.getWeigth() * vsmMatch;
+				break;
 			case LATENT_SEMANTIC_INDEXING_MATCHING:
 				result += currentMethod.getWeigth() * lsiMatch;
+				break;
 			default:
 				;
 			}
@@ -359,6 +381,7 @@ public class MatchingProcess {
 			case CONTEXT_MATCHING:
 				result += currentMethod.getWeigth()
 						* comparedNodePair.getContextMatchResult();
+				break;
 			default:
 				;
 			}
