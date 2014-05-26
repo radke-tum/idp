@@ -1,11 +1,15 @@
 package de.tum.pssif.core.model.impl;
 
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 
+import de.tum.pssif.core.common.PSSIFConstants;
 import de.tum.pssif.core.common.PSSIFOption;
+import de.tum.pssif.core.common.PSSIFValue;
+import de.tum.pssif.core.metamodel.Attribute;
 import de.tum.pssif.core.metamodel.impl.CreateEdgeOperation;
 import de.tum.pssif.core.metamodel.impl.CreateJunctionNodeOperation;
 import de.tum.pssif.core.metamodel.impl.CreateNodeOperation;
@@ -26,13 +30,27 @@ public class ModelImpl implements Model {
   @Override
   public Node apply(CreateNodeOperation op) {
     Node result = new NodeImpl(this);
+    
+    /**
+     * @author Andreas
+     */
+
+    PSSIFOption<Attribute> globalIdAttribute = op.getType().getAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_GLOBAL_ID);
+    
+    globalIdAttribute.getOne().set(result, PSSIFOption.one(PSSIFValue.create(UUID.randomUUID().toString())));
+    /**
+     * until here
+     */
+    
     nodes.put(op.getType().getName(), result);
+    
     return result;
   }
 
   @Override
   public Node apply(CreateJunctionNodeOperation op) {
     JunctionNode result = new JunctionNodeImpl(this);
+    
     nodes.put(op.getType().getName(), result);
     return result;
   }

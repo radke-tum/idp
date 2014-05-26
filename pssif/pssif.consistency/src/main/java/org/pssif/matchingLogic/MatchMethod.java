@@ -44,6 +44,9 @@ public abstract class MatchMethod {
 
 	/**
 	 * 
+	 * An abstract implementation of a matching method. Concrete implementations
+	 * are to find in the classes extending this class
+	 * 
 	 * This methods get's very much information about the currently matched two
 	 * nodes. Though not all matching methods require that much data, some
 	 * methods need quite a lot.

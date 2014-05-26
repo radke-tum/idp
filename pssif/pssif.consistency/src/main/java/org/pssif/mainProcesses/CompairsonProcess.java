@@ -254,8 +254,6 @@ public class CompairsonProcess {
 	 */
 	public void iterateOverTypesOfNewModel(Node tempNodeOrigin,
 			NodeType actTypeOriginModel) {
-		// TODO: Check that the nodes haven't been already compared with help of
-		// the ConsistencyData object
 		/**
 		 * the actual type with which nodes to compare are searched in the new
 		 * model
@@ -356,14 +354,18 @@ public class CompairsonProcess {
 	 */
 	public void matchNodeWithNode(Node tempNodeOrigin, Node tempNodeNew,
 			NodeType actTypeOriginModel, NodeType actTypeNewModel) {
+		
+		String globalIDNodeOrigin = Methods.findGlobalID(tempNodeOrigin, actTypeOriginModel);
+		String globalIDNodeNew = Methods.findGlobalID(tempNodeNew, actTypeNewModel);
+		
 		System.out.println("Comparing original: "
-				+ findName(actTypeOriginModel, tempNodeOrigin)
+				+ Methods.findName(actTypeOriginModel, tempNodeOrigin) + " with ID: " + globalIDNodeOrigin
 				+ " of type " + actTypeOriginModel.getName()
-				+ " with new node: " + findName(actTypeNewModel, tempNodeNew)
+				+ " with new node: " + Methods.findName(actTypeNewModel, tempNodeNew)  + " with ID: " + Methods.findGlobalID(tempNodeNew, actTypeNewModel)
 				+ " of type " + actTypeNewModel.getName());
 
 		
-		if(consistencyData.matchNecessary(tempNodeOrigin.getId(), tempNodeNew.getId())){
+		if(consistencyData.matchNecessary(globalIDNodeOrigin, globalIDNodeNew)){
 			matchingProcess.startMatchingProcess(tempNodeOrigin, tempNodeNew,
 					actTypeOriginModel, actTypeNewModel);
 		} else {
@@ -372,34 +374,5 @@ public class CompairsonProcess {
 
 	}
 
-	/**
-	 * Get the name from the Node object
-	 * 
-	 * @return the actual name or "Name not available" if the name was not
-	 *         defined
-	 * @author Luc
-	 */
-	private String findName(NodeType actType, Node actNode) {
-		String name = "Name not available";
-		// find the name of the Node
-		PSSIFOption<Attribute> tmp = actType
-				.getAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_NAME);
-		if (tmp.isOne()) {
-			Attribute nodeName = tmp.getOne();
 
-			if (nodeName.get(actNode) != null) {
-				PSSIFValue value = null;
-				if (nodeName.get(actNode).isOne()) {
-					value = nodeName.get(actNode).getOne();
-					name = value.asString();
-				}
-				if (nodeName.get(actNode).isNone()) {
-					name = "Name not available";
-				}
-			} else
-				name = "Name not available";
-		}
-
-		return name;
-	}
 }

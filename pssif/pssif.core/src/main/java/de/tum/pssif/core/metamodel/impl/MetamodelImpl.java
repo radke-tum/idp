@@ -54,6 +54,16 @@ public class MetamodelImpl implements MutableMetamodel {
   private final void addDefaultAttributes(MutableElementType type) {
     type.createAttribute(type.getDefaultAttributeGroup(), PSSIFConstants.BUILTIN_ATTRIBUTE_ID, PrimitiveDataType.STRING, true,
         AttributeCategory.METADATA);
+    
+    /**
+     * @author Andreas
+     */
+    type.createAttribute(type.getDefaultAttributeGroup(), PSSIFConstants.BUILTIN_ATTRIBUTE_GLOBAL_ID, PrimitiveDataType.STRING, true,
+            AttributeCategory.METADATA);
+    /**
+     * until here
+     */
+    
     type.createAttribute(type.getDefaultAttributeGroup(), PSSIFConstants.BUILTIN_ATTRIBUTE_NAME, PrimitiveDataType.STRING, true,
         AttributeCategory.METADATA);
     type.createAttribute(type.getDefaultAttributeGroup(), PSSIFConstants.BUILTIN_ATTRIBUTE_VALIDITY_START, PrimitiveDataType.DATE, true,

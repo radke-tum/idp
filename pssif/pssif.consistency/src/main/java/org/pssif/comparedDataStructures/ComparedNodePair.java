@@ -1,5 +1,6 @@
 package org.pssif.comparedDataStructures;
 
+import de.tum.pssif.core.metamodel.NodeType;
 import de.tum.pssif.core.model.Node;
 
 /**
@@ -31,6 +32,16 @@ public class ComparedNodePair extends Compared {
 	 * the modelgraph
 	 */
 	private double depthMatchResult;
+
+	/**
+	 * the type of the node from the node nodeOriginalModel
+	 */
+	private NodeType typeOriginModel;
+
+	/**
+	 * the type of the node from the node nodeNewModel
+	 */
+	private NodeType typeNewModel;
 
 	/**
 	 * @return the contextMatchResult
@@ -100,5 +111,40 @@ public class ComparedNodePair extends Compared {
 	 */
 	public void setDepthMatchResult(double depthMatchResult) {
 		this.depthMatchResult = depthMatchResult;
+	}
+
+	public void setNodeTypes(NodeType actTypeOriginModel,
+			NodeType actTypeNewModel) {
+		this.typeOriginModel = actTypeOriginModel;
+		this.typeNewModel = actTypeNewModel;
+		
+	}
+
+	/**
+	 * @return the nodeOriginalModel
+	 */
+	public Node getNodeOriginalModel() {
+		return nodeOriginalModel;
+	}
+
+	/**
+	 * @return the nodeNewModel
+	 */
+	public Node getNodeNewModel() {
+		return nodeNewModel;
+	}
+
+	/**
+	 * @return the typeOriginModel
+	 */
+	public NodeType getTypeOriginModel() {
+		return typeOriginModel;
+	}
+
+	/**
+	 * @return the typeNewModel
+	 */
+	public NodeType getTypeNewModel() {
+		return typeNewModel;
 	}
 }

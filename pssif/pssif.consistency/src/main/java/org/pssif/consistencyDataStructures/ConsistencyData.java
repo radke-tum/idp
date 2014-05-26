@@ -7,8 +7,7 @@ import java.util.List;
 import org.pssif.comparedDataStructures.ComparedLabelPair;
 import org.pssif.comparedDataStructures.ComparedNodePair;
 import org.pssif.comparedDataStructures.ComparedNormalizedTokensPair;
-
-import de.tum.pssif.core.model.Node;
+import org.pssif.mainProcesses.Methods;
 
 /**
  * @author Andreas
@@ -64,17 +63,28 @@ public class ConsistencyData {
 	private volatile List<ComparedNodePair> comparedNodePairs;
 
 	/**
+	 * THis method takes the result of the application of all active metrics
+	 * onto two nodes and saves the result into the ID Mapping (so Nodes are
+	 * only matched once), the already compared labels & tokens and the compared
+	 * Node pairs
+	 * 
+	 * @param comparedNodePair
+	 *            the result of the matching process
 	 * @return true if the new compared elements were added to all relevant
 	 *         variables
 	 * @return false if something went wrong
 	 */
-	public boolean putComparedEntry(Node tempNodeOrigin, Node tempNodeNew,
-			ComparedNodePair comparedNodePair) {
+	public boolean putComparedEntry(ComparedNodePair comparedNodePair) {
 
 		boolean success = true;
 
 		success = success
-				&& IDMapping.add(tempNodeOrigin.getId() + tempNodeNew.getId());
+				&& IDMapping.add(Methods.findGlobalID(
+						comparedNodePair.getNodeOriginalModel(),
+						comparedNodePair.getTypeOriginModel())
+						+ Methods.findGlobalID(
+								comparedNodePair.getNodeNewModel(),
+								comparedNodePair.getTypeNewModel()));
 		success = success
 				&& comparedLabelPairs
 						.add(comparedNodePair.getLabelComparison());
@@ -87,13 +97,15 @@ public class ConsistencyData {
 	}
 
 	/**
-	 * @param idNodeOrigin the id of the original node
-	 * @param idNodeNew the id of the new node
+	 * @param idNodeOrigin
+	 *            the id of the original node
+	 * @param idNodeNew
+	 *            the id of the new node
 	 * @return a bool saying whether the two nodes have been matched already
 	 * @true if a match is necessary
 	 * @false if they have already been matched
 	 */
 	public boolean matchNecessary(String idNodeOrigin, String idNodeNew) {
-		return(!IDMapping.contains(idNodeOrigin + idNodeNew));
+		return (!IDMapping.contains(idNodeOrigin + idNodeNew));
 	}
 }
