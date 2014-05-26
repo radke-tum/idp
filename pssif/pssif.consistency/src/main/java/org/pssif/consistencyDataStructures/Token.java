@@ -9,6 +9,15 @@ package org.pssif.consistencyDataStructures;
  */
 public class Token {
 
+	/**
+	 * @return the word
+	 */
+	public String getWord() {
+		return word;
+	}
+	public Token(String string) {
+		this.word = string;
+	}
 	private String word;
 	private double wordWeigth;
 

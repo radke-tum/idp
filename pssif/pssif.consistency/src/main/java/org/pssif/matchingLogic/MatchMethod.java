@@ -1,5 +1,7 @@
 package org.pssif.matchingLogic;
 
+import java.util.List;
+
 import org.pssif.consistencyDataStructures.Token;
 
 import de.tum.pssif.core.metamodel.Metamodel;
@@ -57,7 +59,7 @@ public abstract class MatchMethod {
 			Node tempNodeNew, Model originalModel, Model newModel,
 			Metamodel metaModel, NodeType actTypeOriginModel,
 			NodeType actTypeNewModel, String labelOrigin, String labelNew,
-			Token[] tokensOrigin, Token[] tokensNew);
+			List<Token> tokensOrigin, List<Token> tokensNew);
 
 	/**
 	 * @return the matchMethod

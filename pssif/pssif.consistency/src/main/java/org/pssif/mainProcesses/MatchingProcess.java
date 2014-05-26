@@ -154,6 +154,7 @@ public class MatchingProcess {
 		String labelOrigin = Methods.findName(actTypeOriginModel, tempNodeOrigin);
 		String labelNew = Methods.findName(actTypeNewModel, tempNodeNew);
 
+		
 		/**
 		 * Here the whitespace of the two labels is removed if necessary and
 		 * they are converted to lowercase
@@ -164,14 +165,14 @@ public class MatchingProcess {
 			labelNew = labelNew.replaceAll("\\s+", "").toLowerCase();
 		}
 
-		Token[] tokensOrigin = null;
-		Token[] tokensNew = null;
+		List<Token> tokensOrigin = null;
+		List<Token> tokensNew = null;
 
 		if (tokenizationRequired) {
-			tokensOrigin = Tokenizer.tokenize(labelOrigin);
-			tokensNew = Tokenizer.tokenize(labelNew);
-
-		}
+			tokensOrigin = Tokenizer.findTokens(labelOrigin);
+			tokensNew = Tokenizer.findTokens(labelNew);
+		}	
+		
 
 		createComparedNormalizedTokensPair(tokensOrigin, tokensNew);
 
@@ -210,6 +211,7 @@ public class MatchingProcess {
 			throw new RuntimeException(
 					"Something went wrong with the saving of the recently matched elements.");
 		}
+		
 		System.out.println("The node(origin): " + labelOrigin
 				+ " and the node(new) " + labelNew
 				+ " have the following similarieties:");
@@ -219,6 +221,7 @@ public class MatchingProcess {
 				+ getWeightedSemanticSimilarity());
 		System.out.println("Contextual Similarity: "
 				+ getWeightedContextSimilarity());
+
 	}
 
 	/**
@@ -279,8 +282,8 @@ public class MatchingProcess {
 	 *            ensures that every different token dependent metric is saved
 	 *            into the same matchData container.
 	 */
-	private void createComparedNormalizedTokensPair(Token[] tokensOrigin,
-			Token[] tokensNew) {
+	private void createComparedNormalizedTokensPair(List<Token> tokensOrigin,
+			List<Token> tokensNew) {
 		if (comparedNormalizedTokensPair == null) {
 			comparedNormalizedTokensPair = new ComparedNormalizedTokensPair(
 					tokensOrigin, tokensNew);

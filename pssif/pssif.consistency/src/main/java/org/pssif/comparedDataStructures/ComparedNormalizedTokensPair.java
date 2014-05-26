@@ -1,5 +1,7 @@
 package org.pssif.comparedDataStructures;
 
+import java.util.List;
+
 import org.pssif.consistencyDataStructures.Token;
 
 /**
@@ -20,14 +22,16 @@ public class ComparedNormalizedTokensPair extends Compared {
 	 * @param tokensOrigin
 	 * @param tokensNew
 	 */
-	public ComparedNormalizedTokensPair(Token[] tokensOrigin,
-			Token[] tokensNew) {
+	public ComparedNormalizedTokensPair(List<Token> tokensOrigin,
+			List<Token> tokensNew) {
 		super();
 		this.tokensOrigin = tokensOrigin;
 		this.tokensNew = tokensNew;
 	}
 
-	private Token[] tokensOrigin, tokensNew;
+	private List<Token> tokensOrigin;
+
+	private List<Token> tokensNew;
 
 	/**
 	 * the result of the matching between two tokens based on their synonym

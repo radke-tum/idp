@@ -1,5 +1,7 @@
 package org.pssif.matchingLogic;
 
+import java.util.List;
+
 import org.pssif.consistencyDataStructures.Token;
 
 import de.tum.pssif.core.metamodel.Metamodel;
@@ -26,8 +28,8 @@ public class ExactMatcher extends MatchMethod {
 	public double executeMatching(Node tempNodeOrigin, Node tempNodeNew,
 			Model originalModel, Model newModel, Metamodel metaModel,
 			NodeType actTypeOriginModel, NodeType actTypeNewModel,
-			String labelOrigin, String labelNew, Token[] tokensOrigin,
-			Token[] tokensNew) {
+			String labelOrigin, String labelNew, List<Token> tokensOrigin,
+			List<Token> tokensNew) {
 		double result = 0;
 
 		if (labelOrigin.equals(labelNew)) {
