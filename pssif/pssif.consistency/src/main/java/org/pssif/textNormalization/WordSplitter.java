@@ -11,7 +11,9 @@ import de.danielnaber.jwordsplitter.GermanWordSplitter;
 
 /**
  * @author Andreas
- *TODO
+ * 
+ *         This class splits a given token (if it's a word compund), if
+ *         possible, into smaller tokens. Therefore the jwordsplitter is used.
  */
 public class WordSplitter {
 
@@ -29,7 +31,14 @@ public class WordSplitter {
 
 	/**
 	 * @param tokens
-	 * @return TODO
+	 *            the token list where splittable tokens are splitted
+	 * @return the list of splitted and not splittable tokens
+	 * 
+	 *         This method takes a list of tokens and iterates over it. For
+	 *         every token it looks up whether the token is a compound and if
+	 *         yes it is split into 2 or more tokens. These are then added to
+	 *         the result. If a token can't be split it's added unchanged to the
+	 *         result.
 	 */
 	public List<Token> splitTokens(List<Token> tokens) {
 		List<Token> newSequence = new LinkedList<Token>();
@@ -40,7 +49,7 @@ public class WordSplitter {
 			splitResult = splitter.splitWord(token.getWord());
 
 			if (!splitResult.isEmpty()) {
-				for(String str : splitResult){
+				for (String str : splitResult) {
 					newSequence.add(new Token(str));
 				}
 			} else {

@@ -38,7 +38,7 @@ class GermanInterfixDisambiguator {
         this.dictionary = dictionary;
     }
 
-    // TODO:
+    // 
     // ecke, recke ... amt, samt
     // stube vs. tube
     // tau vs. stau

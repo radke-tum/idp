@@ -20,6 +20,7 @@ import org.pssif.mainProcesses.CompairsonProcess;
 import org.pssif.matchingLogic.ExactMatcher;
 import org.pssif.matchingLogic.MatchMethod;
 import org.pssif.matchingLogic.MatchingMethods;
+import org.pssif.matchingLogic.StringEditDistanceMatcher;
 
 import de.tum.pssif.core.common.PSSIFOption;
 import de.tum.pssif.core.metamodel.ConnectionMapping;
@@ -107,8 +108,8 @@ public class ModelBuilder {
 		//TODO: Open Dialog here and ask the user which metrics he wants
 		
 		//TODO Remove after testing
-		result.add(new ExactMatcher(MatchingMethods.EXACT_STRING_MATCHING, true, 0.5));
-		result.add(new ExactMatcher(MatchingMethods.STRING_EDIT_DISTANCE_MATCHING, true, 0.5));
+		result.add(new ExactMatcher(true, 0));
+		result.add(new StringEditDistanceMatcher(true, 1));
 		
 		return result;
 	}

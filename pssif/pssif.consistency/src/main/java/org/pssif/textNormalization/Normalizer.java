@@ -11,7 +11,11 @@ import org.pssif.matchingLogic.MatchMethod;
 // at the moment it's done for every nodepair again
 
 /**
- * @author Andreas TODO
+ * @author Andreas
+ * 
+ *         This class is responsible for looking which normalization steps are
+ *         necessary based on the active matching Methods. Then the according
+ *         objects for the normalization steps are triggered.
  */
 public class Normalizer {
 
@@ -28,10 +32,16 @@ public class Normalizer {
 	private boolean whiteSpaceRemovalRequired;
 
 	/**
-	 * this bool says whether we have to tokenize the labels from the nodes for
-	 * some metrics
+	 * this bool says whether we have to tokenize and normalize the labels from
+	 * the nodes for some metrics
 	 */
 	private boolean tokenizationRequired;
+
+	/**
+	 * this bool says whether we have to tokenize and normalize (without
+	 * stemming) the labels from the nodes for some metrics
+	 */
+	private boolean tokenizationWithoutStemmingRequired;
 
 	public Normalizer() {
 		this.tokenizer = new Tokenizer();
@@ -41,6 +51,12 @@ public class Normalizer {
 		this.stemmer = new Stemmer();
 	}
 
+	/**
+	 * @param matchMethods
+	 *            the list of the matchMethods given by the user
+	 * @return an object of this class with the information which normalization
+	 *         steps shall be conducted
+	 */
 	public static Normalizer initialize(List<MatchMethod> matchMethods) {
 		Normalizer normalizer = new Normalizer();
 
@@ -74,10 +90,10 @@ public class Normalizer {
 					tokenizationRequired = true;
 					break;
 				case STRING_EDIT_DISTANCE_MATCHING:
-					tokenizationRequired = true;
+					tokenizationWithoutStemmingRequired = true;
 					break;
 				case HYPHEN_MATCHING:
-					tokenizationRequired = true;
+					tokenizationWithoutStemmingRequired = true;
 					break;
 				case LINGUISTIC_MATCHING:
 					tokenizationRequired = true;
@@ -95,6 +111,14 @@ public class Normalizer {
 		}
 	}
 
+	/**
+	 * @param label
+	 *            the label to be normalized
+	 * @return the given label in its normalized form
+	 * 
+	 *         This method takes a label, removes all spaces and converts all
+	 *         letters to lower cases
+	 */
 	public String normalizeLabel(String label) {
 		String tmp = label;
 
@@ -111,12 +135,25 @@ public class Normalizer {
 		return tmp;
 	}
 
+	// TODO Remove boolean arguments?! (unnecessary?)
+	/**
+	 * @param label
+	 *            the label to be tokenized & normalized
+	 * @param normalizeCases
+	 * @param filterStopwords
+	 * @param splitWords
+	 * @param stemWords
+	 * @return the given label in its tokenized & normalized form
+	 * 
+	 *         This method takes a label and applies several normalization
+	 *         techniques to it based on the active matching methods.
+	 */
 	public List<Token> createNormalizedTokensFromLabel(String label,
 			boolean normalizeCases, boolean filterStopwords,
 			boolean splitWords, boolean stemWords) {
 		List<Token> newSequence = new LinkedList<Token>();
 
-		if (tokenizationRequired) {
+		if (tokenizationRequired || tokenizationWithoutStemmingRequired) {
 			if (!label.isEmpty()) {
 
 				newSequence = tokenizer.findTokens(label);
@@ -140,6 +177,8 @@ public class Normalizer {
 					printTokens("WordSplitter", newSequence);
 
 				}
+				// TODO don't stem words if tokenizationWithoutStemmingRequired
+				// is true
 				if (stemWords) {
 					newSequence = stemmer.stemTokens(newSequence);
 					printTokens("Stemming", newSequence);
@@ -155,6 +194,15 @@ public class Normalizer {
 		return newSequence;
 	}
 
+	/**
+	 * @param step
+	 *            the recent normalization step
+	 * @param tokens
+	 *            the result of the recent normalization step
+	 * 
+	 *            This method prints the result from the last normalization step
+	 *            to the console.
+	 */
 	public void printTokens(String step, List<Token> tokens) {
 		System.out.println("Result from normalization step: " + step);
 		for (Token token : tokens) {

@@ -38,7 +38,7 @@ public class GermanWordSplitter extends AbstractWordSplitter {
             "-");
 
     // Add some exceptions so we can easily add terms without re-building the binary dictionary:
-    // TODO: remove once we keep the
+    // : remove once we keep the
     private static final Set<String> IGNORED_PARTS = new HashSet<String>();
     static {
         IGNORED_PARTS.add("richten");

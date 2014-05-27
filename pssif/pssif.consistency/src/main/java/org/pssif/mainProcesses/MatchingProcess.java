@@ -60,7 +60,7 @@ public class MatchingProcess {
 	private ConsistencyData consistencyData;
 
 	private List<MatchMethod> matchMethods;
-	
+
 	private Normalizer normalizer;
 
 	private ComparedLabelPair comparedLabelPair = null;
@@ -101,29 +101,34 @@ public class MatchingProcess {
 		/**
 		 * here the strings of the old and the new node are read from the model.
 		 */
-		String labelOrigin = Methods.findName(actTypeOriginModel, tempNodeOrigin);
-		String labelNew = Methods.findName(actTypeNewModel, tempNodeNew);
+		String labelOriginNode = Methods.findName(actTypeOriginModel,
+				tempNodeOrigin);
+		String labelNewNode = Methods.findName(actTypeNewModel, tempNodeNew);
 
-		//TODO Remove after testing
-		
+		// TODO Remove after fixing problem with syntactic tokenizing in Normalizer
+
 		boolean normalizeCases = true;
 		boolean filterStopwords = true;
 		boolean splitWords = true;
-		boolean stemWords = true;
+		boolean stemWords = false;
 
-		
-		//TODO until here
-		
-		List<Token> tokensOrigin = normalizer.createNormalizedTokensFromLabel(labelOrigin, normalizeCases, filterStopwords, splitWords, stemWords);
-		List<Token> tokensNew = normalizer.createNormalizedTokensFromLabel(labelNew, normalizeCases, filterStopwords, splitWords, stemWords);
-		
-		labelOrigin = normalizer.normalizeLabel(labelOrigin);
-		labelNew = normalizer.normalizeLabel(labelNew);
-		
-		System.out.println("The normalized label of the original Node: " + labelOrigin);
-		System.out.println("The normalized label of the new Node: " + labelNew);
+		// TODO until here
 
-		
+		List<Token> tokensOrigin = normalizer.createNormalizedTokensFromLabel(
+				labelOriginNode, normalizeCases, filterStopwords, splitWords,
+				stemWords);
+		List<Token> tokensNew = normalizer.createNormalizedTokensFromLabel(
+				labelNewNode, normalizeCases, filterStopwords, splitWords,
+				stemWords);
+
+		labelOriginNode = normalizer.normalizeLabel(labelOriginNode);
+		labelNewNode = normalizer.normalizeLabel(labelNewNode);
+
+		System.out.println("The normalized label of the original Node: "
+				+ labelOriginNode);
+		System.out.println("The normalized label of the new Node: "
+				+ labelNewNode);
+
 		createComparedNormalizedTokensPair(tokensOrigin, tokensNew);
 
 		Iterator<MatchMethod> currentMatchMethod = matchMethods.iterator();
@@ -139,11 +144,11 @@ public class MatchingProcess {
 				currentMetricResult = currentMethod.executeMatching(
 						tempNodeOrigin, tempNodeNew, originalModel, newModel,
 						metaModel, actTypeOriginModel, actTypeNewModel,
-						labelOrigin, labelNew, tokensOrigin, tokensNew);
+						labelOriginNode, labelNewNode, tokensOrigin, tokensNew);
 			}
 
 			saveMatchMethodResult(currentMethod, currentMetricResult,
-					labelOrigin, labelNew);
+					labelOriginNode, labelNewNode);
 		}
 
 		saveComparedNodePaier(tempNodeOrigin, tempNodeNew, actTypeOriginModel,
@@ -158,13 +163,18 @@ public class MatchingProcess {
 			throw new RuntimeException(
 					"Something went wrong with the saving of the recently matched elements.");
 		}
-		
-		printResults(labelOrigin, labelNew);
+
+		printResults(labelOriginNode, labelNewNode);
 	}
 
 	/**
 	 * @param labelOrigin
+	 *            The label from the node from original model
 	 * @param labelNew
+	 *            The label from the node from new model
+	 * 
+	 *            This methods prints the result of the matching of two nodes to
+	 *            the console
 	 */
 	private void printResults(String labelOrigin, String labelNew) {
 		System.out.println("The node(origin): " + labelOrigin
@@ -178,17 +188,24 @@ public class MatchingProcess {
 				+ getWeightedContextSimilarity());
 	}
 
-	/**TODO
+	/**
 	 * @param tempNodeOrigin
+	 *            the node from the original model
 	 * @param tempNodeNew
+	 *            the node from the new model
 	 * @param actTypeOriginModel
+	 *            the type of the orign node
 	 * @param actTypeNewModel
+	 *            the type of the new node
+	 * 
+	 *            This method saves the result from the recent match into the
+	 *            comparedNodePair object
 	 */
 	private void saveComparedNodePaier(Node tempNodeOrigin, Node tempNodeNew,
 			NodeType actTypeOriginModel, NodeType actTypeNewModel) {
 		comparedNodePair.setLabelComparison(comparedLabelPair);
 		comparedNodePair.setTokensComparison(comparedNormalizedTokensPair);
-		comparedNodePair.setNodeTypes(actTypeOriginModel,actTypeNewModel);
+		comparedNodePair.setNodeTypes(actTypeOriginModel, actTypeNewModel);
 		comparedNodePair.setNodeOriginalModel(tempNodeOrigin);
 		comparedNodePair.setNodeNewModel(tempNodeNew);
 	}
@@ -207,7 +224,7 @@ public class MatchingProcess {
 	 */
 	public void saveMatchMethodResult(MatchMethod currentMethod,
 			double currentMetricResult, String labelOrigin, String labelNew) {
-		
+
 		switch (currentMethod.getMatchMethod()) {
 		case EXACT_STRING_MATCHING:
 			if (comparedLabelPair == null) {
@@ -244,7 +261,11 @@ public class MatchingProcess {
 
 	/**
 	 * @param tokensOrigin
+	 *            the label in normalized tokens form of the node from the
+	 *            original model
 	 * @param tokensNew
+	 *            the label in normalized tokens form of the node from the new
+	 *            model
 	 * 
 	 *            This method creates an object for the field
 	 *            "comparedNormalizedTokensPair" if it's not yet created. This

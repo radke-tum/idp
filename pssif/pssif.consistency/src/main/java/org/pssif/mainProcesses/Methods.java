@@ -1,6 +1,8 @@
 package org.pssif.mainProcesses;
 
-import java.util.UUID;
+import java.util.List;
+
+import org.pssif.consistencyDataStructures.Token;
 
 import de.tum.pssif.core.common.PSSIFConstants;
 import de.tum.pssif.core.common.PSSIFOption;
@@ -9,6 +11,12 @@ import de.tum.pssif.core.metamodel.Attribute;
 import de.tum.pssif.core.metamodel.NodeType;
 import de.tum.pssif.core.model.Node;
 
+/**
+ * @author Andreas
+ * 
+ *         A class that provides several methods used in the PSSIF consistency
+ *         checker
+ */
 public class Methods {
 
 	/**
@@ -32,6 +40,24 @@ public class Methods {
 		globalID = globalIDAttribute.get(tempNodeOrigin).getOne().asString();
 
 		return globalID;
+	}
+
+	/**
+	 * @param tokens
+	 * @return a concatenated String based on the given token list
+	 * 
+	 *         This method concatenates the words of the given token list to a
+	 *         single String whereby each word is separated by a space. The
+	 *         result is used for the calculation of the levenshtein distance.
+	 */
+	public static String getStringFromTokens(List<Token> tokens) {
+		String result = "";
+
+		for (Token token : tokens) {
+			result += token.getWord() + " ";
+		}
+
+		return result;
 	}
 
 	/**
