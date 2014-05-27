@@ -9,7 +9,7 @@ import org.pssif.comparedDataStructures.ComparedNormalizedTokensPair;
 import org.pssif.consistencyDataStructures.ConsistencyData;
 import org.pssif.consistencyDataStructures.Token;
 import org.pssif.matchingLogic.MatchMethod;
-import org.pssif.textMining.Tokenizer;
+import org.pssif.textNormalization.Tokenizer;
 
 import de.tum.pssif.core.metamodel.Metamodel;
 import de.tum.pssif.core.metamodel.NodeType;

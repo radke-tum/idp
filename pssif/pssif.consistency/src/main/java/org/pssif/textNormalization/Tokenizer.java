@@ -1,4 +1,4 @@
-package org.pssif.textMining;
+package org.pssif.textNormalization;
 
 import java.util.ArrayList;
 import java.util.Arrays;

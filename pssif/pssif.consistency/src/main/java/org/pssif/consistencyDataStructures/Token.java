@@ -15,6 +15,12 @@ public class Token {
 	public String getWord() {
 		return word;
 	}
+	/**
+	 * @param word the word to set
+	 */
+	public void setWord(String word) {
+		this.word = word;
+	}
 	public Token(String string) {
 		this.word = string;
 	}

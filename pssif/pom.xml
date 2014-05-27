@@ -64,6 +64,11 @@
 				<artifactId>pssif.viz</artifactId>
 				<version>0.0.1-SNAPSHOT</version>
 			</dependency>
+			<dependency>
+				<groupId>de.abelssoft</groupId>
+				<artifactId>jwordsplitter</artifactId>
+				<version>3.4</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
