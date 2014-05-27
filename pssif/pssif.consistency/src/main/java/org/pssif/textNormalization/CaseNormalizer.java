@@ -6,25 +6,26 @@ import org.pssif.consistencyDataStructures.Token;
 
 public class CaseNormalizer {
 
-	public List<Token> toLowerCase(List<Token> tokens) {
+	public List<Token> convertTokensToLowerCase(List<Token> tokens) {
+
+		String temp;
 
 		for (Token token : tokens) {
 
-			String temp = token.getWord();
+			temp = token.getWord();
 
 			/**
 			 * check if the tokens word doesnt consist of upper case letters
-			 * only (if it only has uppercase letters it is often an
+			 * only (if it only has uppercase letters it is assumed to be an
 			 * abberevation)
 			 */
 			if (!(temp.toUpperCase() == temp)) {
-				temp.toLowerCase();
+				temp = temp.toLowerCase();
 				token.setWord(temp);
 			}
 		}
 
 		return tokens;
-
 	}
 
 }

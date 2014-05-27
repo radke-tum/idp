@@ -153,6 +153,7 @@ public class CompairsonProcess {
 	 * iterated.
 	 */
 	public void typeIteration() {
+
 		for (int i = 0; i < PSIFFDevArtifactSubClasses.length; i++) {
 			iterateNodesOfType(PSIFFDevArtifactSubClasses[i], false);
 		}

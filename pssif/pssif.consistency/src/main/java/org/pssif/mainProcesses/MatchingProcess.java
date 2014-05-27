@@ -9,6 +9,7 @@ import org.pssif.comparedDataStructures.ComparedNormalizedTokensPair;
 import org.pssif.consistencyDataStructures.ConsistencyData;
 import org.pssif.consistencyDataStructures.Token;
 import org.pssif.matchingLogic.MatchMethod;
+import org.pssif.textNormalization.Normalizer;
 import org.pssif.textNormalization.Tokenizer;
 
 import de.tum.pssif.core.metamodel.Metamodel;
@@ -50,7 +51,7 @@ public class MatchingProcess {
 		this.consistencyData = consistencyData;
 		this.matchMethods = matchMethods;
 
-		checkMatchMethods();
+		this.normalizer = Normalizer.initialize(matchMethods);
 	}
 
 	private Model originalModel, newModel;
@@ -59,63 +60,12 @@ public class MatchingProcess {
 	private ConsistencyData consistencyData;
 
 	private List<MatchMethod> matchMethods;
-
-	/**
-	 * this bool says whether we need to remove the whitespace from the labels
-	 * of the nodes for exact matching
-	 */
-	private boolean whiteSpaceRemovalRequired;
-
-	/**
-	 * this bool says whether we have to tokenize the labels from the nodes for
-	 * some metrics
-	 */
-	private boolean tokenizationRequired;
+	
+	private Normalizer normalizer;
 
 	private ComparedLabelPair comparedLabelPair = null;
 	private ComparedNormalizedTokensPair comparedNormalizedTokensPair = null;
 	private ComparedNodePair comparedNodePair = null;
-
-	/**
-	 * This method checks which matching Methods are active and then saves if we
-	 * have to remove the whitespace from the labels and/or if we have to
-	 * tokenize the labels
-	 */
-	private void checkMatchMethods() {
-		Iterator<MatchMethod> currentMatchMethod = matchMethods.iterator();
-
-		while (currentMatchMethod.hasNext()) {
-			MatchMethod currentMethod = currentMatchMethod.next();
-			if (currentMethod.isActive()) {
-
-				switch (currentMethod.getMatchMethod()) {
-				case EXACT_STRING_MATCHING:
-					whiteSpaceRemovalRequired = true;
-					break;
-				case DEPTH_MATCHING:
-					tokenizationRequired = true;
-					break;
-				case STRING_EDIT_DISTANCE_MATCHING:
-					tokenizationRequired = true;
-					break;
-				case HYPHEN_MATCHING:
-					tokenizationRequired = true;
-					break;
-				case LINGUISTIC_MATCHING:
-					tokenizationRequired = true;
-					break;
-				case VECTOR_SPACE_MODEL_MATCHING:
-					tokenizationRequired = true;
-					break;
-				case LATENT_SEMANTIC_INDEXING_MATCHING:
-					tokenizationRequired = true;
-					break;
-				default:
-					;
-				}
-			}
-		}
-	}
 
 	/**
 	 * @param tempNodeOrigin
@@ -154,26 +104,26 @@ public class MatchingProcess {
 		String labelOrigin = Methods.findName(actTypeOriginModel, tempNodeOrigin);
 		String labelNew = Methods.findName(actTypeNewModel, tempNodeNew);
 
+		//TODO Remove after testing
 		
-		/**
-		 * Here the whitespace of the two labels is removed if necessary and
-		 * they are converted to lowercase
-		 * 
-		 */
-		if (whiteSpaceRemovalRequired) {
-			labelOrigin = labelOrigin.replaceAll("\\s+", "").toLowerCase();
-			labelNew = labelNew.replaceAll("\\s+", "").toLowerCase();
-		}
+		boolean normalizeCases = true;
+		boolean filterStopwords = true;
+		boolean splitWords = true;
+		boolean stemWords = true;
 
-		List<Token> tokensOrigin = null;
-		List<Token> tokensNew = null;
-
-		if (tokenizationRequired) {
-			tokensOrigin = Tokenizer.findTokens(labelOrigin);
-			tokensNew = Tokenizer.findTokens(labelNew);
-		}	
 		
+		//TODO until here
+		
+		List<Token> tokensOrigin = normalizer.createNormalizedTokensFromLabel(labelOrigin, normalizeCases, filterStopwords, splitWords, stemWords);
+		List<Token> tokensNew = normalizer.createNormalizedTokensFromLabel(labelNew, normalizeCases, filterStopwords, splitWords, stemWords);
+		
+		labelOrigin = normalizer.normalizeLabel(labelOrigin);
+		labelNew = normalizer.normalizeLabel(labelNew);
+		
+		System.out.println("The normalized label of the original Node: " + labelOrigin);
+		System.out.println("The normalized label of the new Node: " + labelNew);
 
+		
 		createComparedNormalizedTokensPair(tokensOrigin, tokensNew);
 
 		Iterator<MatchMethod> currentMatchMethod = matchMethods.iterator();
@@ -196,11 +146,8 @@ public class MatchingProcess {
 					labelOrigin, labelNew);
 		}
 
-		comparedNodePair.setLabelComparison(comparedLabelPair);
-		comparedNodePair.setTokensComparison(comparedNormalizedTokensPair);
-		comparedNodePair.setNodeTypes(actTypeOriginModel,actTypeNewModel);
-		comparedNodePair.setNodeOriginalModel(tempNodeOrigin);
-		comparedNodePair.setNodeNewModel(tempNodeNew);
+		saveComparedNodePaier(tempNodeOrigin, tempNodeNew, actTypeOriginModel,
+				actTypeNewModel);
 
 		/**
 		 * Saves the two compared nodes, the ids and the matching results in the
@@ -212,6 +159,14 @@ public class MatchingProcess {
 					"Something went wrong with the saving of the recently matched elements.");
 		}
 		
+		printResults(labelOrigin, labelNew);
+	}
+
+	/**
+	 * @param labelOrigin
+	 * @param labelNew
+	 */
+	private void printResults(String labelOrigin, String labelNew) {
 		System.out.println("The node(origin): " + labelOrigin
 				+ " and the node(new) " + labelNew
 				+ " have the following similarieties:");
@@ -221,7 +176,21 @@ public class MatchingProcess {
 				+ getWeightedSemanticSimilarity());
 		System.out.println("Contextual Similarity: "
 				+ getWeightedContextSimilarity());
+	}
 
+	/**TODO
+	 * @param tempNodeOrigin
+	 * @param tempNodeNew
+	 * @param actTypeOriginModel
+	 * @param actTypeNewModel
+	 */
+	private void saveComparedNodePaier(Node tempNodeOrigin, Node tempNodeNew,
+			NodeType actTypeOriginModel, NodeType actTypeNewModel) {
+		comparedNodePair.setLabelComparison(comparedLabelPair);
+		comparedNodePair.setTokensComparison(comparedNormalizedTokensPair);
+		comparedNodePair.setNodeTypes(actTypeOriginModel,actTypeNewModel);
+		comparedNodePair.setNodeOriginalModel(tempNodeOrigin);
+		comparedNodePair.setNodeNewModel(tempNodeNew);
 	}
 
 	/**

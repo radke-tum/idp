@@ -13,11 +13,8 @@ public class Stemmer {
 		stemmer = new GermanStemmingOperator();
 	}
 	
-	/**
-	 * @return the stemmer
-	 */
-	public GermanStemmingOperator getStemmer() {
-		return stemmer;
+	public List<Token> stemTokens(List<Token> tokens){
+		return (stemmer.doWork(tokens));
 	}
 	
 	
@@ -59,7 +56,7 @@ public class Stemmer {
 	 */
 	private class GermanStemmingOperator {
 
-		private List<Token> doWork(List<Token> tokens) {
+		public List<Token> doWork(List<Token> tokens) {
 			GermanStemming stemmer = new GermanStemming();
 			List<Token> newSequence = new ArrayList<Token>(tokens.size());
 			

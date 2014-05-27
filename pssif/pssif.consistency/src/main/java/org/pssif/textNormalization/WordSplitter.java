@@ -9,6 +9,10 @@ import org.pssif.consistencyDataStructures.Token;
 import de.danielnaber.jwordsplitter.AbstractWordSplitter;
 import de.danielnaber.jwordsplitter.GermanWordSplitter;
 
+/**
+ * @author Andreas
+ *TODO
+ */
 public class WordSplitter {
 
 	private AbstractWordSplitter splitter;
@@ -23,6 +27,10 @@ public class WordSplitter {
 		splitter.setStrictMode(true);
 	}
 
+	/**
+	 * @param tokens
+	 * @return TODO
+	 */
 	public List<Token> splitTokens(List<Token> tokens) {
 		List<Token> newSequence = new LinkedList<Token>();
 		List<String> splitResult;

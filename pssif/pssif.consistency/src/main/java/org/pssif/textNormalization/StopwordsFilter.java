@@ -2,6 +2,7 @@ package org.pssif.textNormalization;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.pssif.consistencyDataStructures.Token;
@@ -357,11 +358,11 @@ public class StopwordsFilter {
 	 */
 		private List<Token> doWork(List<Token> tokens, StopWordList stopwords) {
 			
-			List<Token> newSequence = tokens;
+			List<Token> newSequence = new LinkedList<Token>();
 			
-			for (Token token: newSequence) {
-				if (stopwords.isStopword(token.getWord()))
-					newSequence.remove(token);
+			for (Token token: tokens) {
+				if (!stopwords.isStopword(token.getWord()))
+					newSequence.add(token);
 			}
 			
 			return newSequence;

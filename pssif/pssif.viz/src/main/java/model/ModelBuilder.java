@@ -107,7 +107,8 @@ public class ModelBuilder {
 		//TODO: Open Dialog here and ask the user which metrics he wants
 		
 		//TODO Remove after testing
-		result.add(new ExactMatcher(MatchingMethods.EXACT_STRING_MATCHING, true, 1.0));
+		result.add(new ExactMatcher(MatchingMethods.EXACT_STRING_MATCHING, true, 0.5));
+		result.add(new ExactMatcher(MatchingMethods.STRING_EDIT_DISTANCE_MATCHING, true, 0.5));
 		
 		return result;
 	}
