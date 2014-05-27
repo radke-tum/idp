@@ -1,7 +1,7 @@
 package org.pssif.textNormalization;
 
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.pssif.consistencyDataStructures.Token;
@@ -35,12 +35,12 @@ public class Tokenizer {
 	 * You should have received a copy of the GNU Affero General Public License
 	 * along with this program. If not, see http://www.gnu.org/licenses/.
 	 */
-	public static List<Token> findTokens(String label) {
+	public List<Token> findTokens(String label) {
 		// TODO initialize and sort only once for performance reasons
 		char[] splitCharacters = { '.', ';', ',', ' ' };
 		Arrays.sort(splitCharacters);
 
-		List<Token> newSequence = new ArrayList<Token>();
+		List<Token> newSequence = new LinkedList<Token>();
 
 		char[] tokenChars = label.toCharArray();
 		int start = 0;

@@ -4,16 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.pssif.consistencyDataStructures.Token;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.pssif.consistencyDataStructures.Token;
-import java.util.ArrayList;
-import java.util.List;
 
 public class Stemmer {
 
-	private static GermanStemmingOperator stemmer;
+	private final GermanStemmingOperator stemmer;
 	
 	public Stemmer(){
 		stemmer = new GermanStemmingOperator();
@@ -22,7 +16,7 @@ public class Stemmer {
 	/**
 	 * @return the stemmer
 	 */
-	public static GermanStemmingOperator getStemmer() {
+	public GermanStemmingOperator getStemmer() {
 		return stemmer;
 	}
 	

@@ -8,7 +8,7 @@ import org.pssif.consistencyDataStructures.Token;
 
 public class StopwordsFilter {
 
-	public static StopWordList stopwordListGerman,stopwordListEnglish;
+	private final StopWordList stopwordListGerman,stopwordListEnglish;
 	
 	public StopwordsFilter(){
 		stopwordListGerman = new StopWordListGerman();
