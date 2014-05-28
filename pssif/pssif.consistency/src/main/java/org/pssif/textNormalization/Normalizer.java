@@ -135,7 +135,6 @@ public class Normalizer {
 		return tmp;
 	}
 
-	// TODO Remove boolean arguments?! (unnecessary?)
 	/**
 	 * @param label
 	 *            the label to be tokenized & normalized
@@ -157,31 +156,29 @@ public class Normalizer {
 			if (!label.isEmpty()) {
 
 				newSequence = tokenizer.findTokens(label);
-				//printTokens("Tokenizer", newSequence);
+				printTokens("Tokenizer", newSequence);
 
 				if (normalizeCases) {
 					newSequence = caseNormalizer
 							.convertTokensToLowerCase(newSequence);
-					//printTokens("CaseNormalizer", newSequence);
+					printTokens("CaseNormalizer", newSequence);
 
 				}
 				if (filterStopwords) {
 					// TODO ask user which stopword language he wants to filter
 					newSequence = stopwordsFilter.filterStopWords(newSequence,
 							true, false);
-					//printTokens("StopWordFilter", newSequence);
+					printTokens("StopWordFilter", newSequence);
 
 				}
 				if (splitWords) {
 					newSequence = wordSplitter.splitTokens(newSequence);
-					//printTokens("WordSplitter", newSequence);
+					printTokens("WordSplitter", newSequence);
 
 				}
-				// TODO don't stem words if tokenizationWithoutStemmingRequired
-				// is true
 				if (stemWords) {
 					newSequence = stemmer.stemTokens(newSequence);
-					//printTokens("Stemming", newSequence);
+					printTokens("Stemming", newSequence);
 
 				}
 

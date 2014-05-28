@@ -25,13 +25,16 @@ import de.tum.pssif.core.model.Node;
 public abstract class MatchMethod {
 
 	/**
-	 * @param matchMethod TODO
+	 * @param matchMethod
+	 *            the description of the initialized matchMethod in form of an
+	 *            enum MatchingMethods
 	 * @param isActive
 	 *            bool saying whether the method was activated by the user
 	 * @param weigth
 	 *            the method weight to the whole similarity score of two nodes
 	 */
-	public MatchMethod(MatchingMethods matchMethod, boolean isActive, double weigth) {
+	public MatchMethod(MatchingMethods matchMethod, boolean isActive,
+			double weigth) {
 		super();
 		this.matchMethod = matchMethod;
 		this.isActive = isActive;

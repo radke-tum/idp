@@ -109,7 +109,7 @@ public class ModelBuilder {
 		//TODO: Open Dialog here and ask the user which metrics he wants
 		
 		//TODO Remove after testing
-		result.add(new LinguisticMatcher(MatchingMethods.LINGUISTIC_MATCHING, true, 1.0));
+		result.add(new StringEditDistanceMatcher(MatchingMethods.STRING_EDIT_DISTANCE_MATCHING, true, 1.0));
 		
 		return result;
 	}

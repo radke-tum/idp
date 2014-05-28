@@ -83,9 +83,9 @@ public class MatchingProcess {
 	 * 
 	 *             This method guides the whole matching process. It initializes
 	 *             the variables where the consistencyData will be stored later.
-	 *             Then it normalizes and/or tokenizes the labels if necessary.
-	 *             Then it applies the active matching methods to the nodes and
-	 *             saves the results
+	 *             Then it triggers the normalization and/or tokenization of the
+	 *             labels if necessary. Then it applies the active matching
+	 *             methods to the nodes and saves the results
 	 */
 	public void startMatchingProcess(Node tempNodeOrigin, Node tempNodeNew,
 			NodeType actTypeOriginModel, NodeType actTypeNewModel) {
@@ -116,12 +116,19 @@ public class MatchingProcess {
 		System.out.println("The normalized label of the new Node: "
 				+ labelNewNodeNormalized);
 
+		/**
+		 * variables to store the different normalized tokens
+		 */
 		List<Token> tokensOriginNodeNormalized = null;
 		List<Token> tokensNewNodeNormalized = null;
 		List<Token> tokensOriginNodeNormalizedCompundedUnstemmed = null;
 		List<Token> tokensNewNodeNormalizedCompundedUnstemmed = null;
 
-		comparedLabelPair = new ComparedLabelPair(labelOriginNodeNormalized,labelNewNodeNormalized);
+		/**
+		 * creating objects for the saving of the matching results here
+		 */
+		comparedLabelPair = new ComparedLabelPair(labelOriginNodeNormalized,
+				labelNewNodeNormalized);
 		comparedNormalizedTokensPair = new ComparedNormalizedTokensPair();
 
 		Iterator<MatchMethod> currentMatchMethod = matchMethods.iterator();
@@ -140,7 +147,10 @@ public class MatchingProcess {
 
 			/**
 			 * Depending on the current match method different token sets of the
-			 * labels have to be given to the match method.
+			 * labels have to be given to the match method. If the method is
+			 * StringEditDistance or Hyphen we don't use token normalization
+			 * with compoundsplitting or stemming. Thatfore we have to separate
+			 * these two cases.
 			 */
 			if (currentMethod.isActive()) {
 				if ((currentMethod.getMatchMethod() == MatchingMethods.STRING_EDIT_DISTANCE_MATCHING)
@@ -191,10 +201,16 @@ public class MatchingProcess {
 				}
 			}
 
+			/**
+			 * save the result of the recent matchMethod properly
+			 */
 			saveMatchMethodResult(currentMethod, currentMetricResult,
 					labelOriginNodeNormalized, labelNewNodeNormalized);
 		}
 
+		/**
+		 * save the result of the recent node compairson properly
+		 */
 		saveComparedNodePaier(tempNodeOrigin, tempNodeNew, actTypeOriginModel,
 				actTypeNewModel);
 
