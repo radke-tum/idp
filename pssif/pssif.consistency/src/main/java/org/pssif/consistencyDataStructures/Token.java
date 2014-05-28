@@ -13,7 +13,7 @@ public class Token {
 	 * @return the word
 	 */
 	public String getWord() {
-		return word;
+		return this.word;
 	}
 	/**
 	 * @param word the word to set

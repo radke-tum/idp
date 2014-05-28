@@ -14,6 +14,8 @@ import de.tum.pssif.core.model.Node;
 /**
  * @author Andreas
  * 
+ * !!!Source for metric application: "Similarity of Business Process Models Metrics and Evaluation" and "Simmetrics"
+ * 
  *         This class represents a matcher based on the levenshtein distance. It
  *         calculates the weighted string edit distance and returns a similarity
  *         value in the interval [0,1]. The result is 1 if two Strings are equal
@@ -23,7 +25,7 @@ public class StringEditDistanceMatcher extends MatchMethod {
 
 	private final Levenshtein levenshtein = new Levenshtein();
 
-	public StringEditDistanceMatcher(boolean isActive, double weigth) {
+	public StringEditDistanceMatcher(MatchingMethods matchMethod, boolean isActive, double weigth) {
 		super(MatchingMethods.STRING_EDIT_DISTANCE_MATCHING, isActive, weigth);
 	}
 

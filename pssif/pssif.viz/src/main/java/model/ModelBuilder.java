@@ -18,6 +18,7 @@ import java.util.Set;
 
 import org.pssif.mainProcesses.CompairsonProcess;
 import org.pssif.matchingLogic.ExactMatcher;
+import org.pssif.matchingLogic.LinguisticMatcher;
 import org.pssif.matchingLogic.MatchMethod;
 import org.pssif.matchingLogic.MatchingMethods;
 import org.pssif.matchingLogic.StringEditDistanceMatcher;
@@ -108,8 +109,7 @@ public class ModelBuilder {
 		//TODO: Open Dialog here and ask the user which metrics he wants
 		
 		//TODO Remove after testing
-		result.add(new ExactMatcher(true, 0));
-		result.add(new StringEditDistanceMatcher(true, 1));
+		result.add(new LinguisticMatcher(MatchingMethods.LINGUISTIC_MATCHING, true, 1.0));
 		
 		return result;
 	}

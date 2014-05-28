@@ -18,7 +18,7 @@ import de.tum.pssif.core.model.Node;
  */
 public class ExactMatcher extends MatchMethod {
 
-	public ExactMatcher(boolean isActive, double weigth) {
+	public ExactMatcher(MatchingMethods matchMethod, boolean isActive, double weigth) {
 		super(MatchingMethods.EXACT_STRING_MATCHING, isActive, weigth);
 	}
 

@@ -15,14 +15,11 @@ public class ComparedLabelPair extends Compared {
 	/**
 	 * @param labelOrigin
 	 * @param labelNew
-	 * @param exactMatchResult
 	 */
-	public ComparedLabelPair(String labelOrigin, String labelNew,
-			double exactMatchResult) {
+	public ComparedLabelPair(String labelOrigin, String labelNew) {
 		super();
 		this.labelOrigin = labelOrigin;
 		this.labelNew = labelNew;
-		this.exactMatchResult = exactMatchResult;
 	}
 
 	/**
@@ -41,6 +38,13 @@ public class ComparedLabelPair extends Compared {
 	 */
 	public double getExactMatchResult() {
 		return exactMatchResult;
+	}
+
+	/**
+	 * @param exactMatchResult the exactMatchResult to set
+	 */
+	public void setExactMatchResult(double exactMatchResult) {
+		this.exactMatchResult = exactMatchResult;
 	}
 
 }

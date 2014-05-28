@@ -153,8 +153,8 @@ public class CompairsonProcess {
 	 * iterated.
 	 */
 	public void typeIteration() {
-
-		for (int i = 0; i < PSIFFDevArtifactSubClasses.length; i++) {
+//TODO uncomment!!!
+		/*for (int i = 0; i < PSIFFDevArtifactSubClasses.length; i++) {
 			iterateNodesOfType(PSIFFDevArtifactSubClasses[i], false);
 		}
 
@@ -162,9 +162,9 @@ public class CompairsonProcess {
 			iterateNodesOfType(PSIFFSolArtifactSubClasses[i], false);
 		}
 
-		iterateNodesOfType(PSSIFCanonicMetamodelCreator.N_DEV_ARTIFACT, false);
+		iterateNodesOfType(PSSIFCanonicMetamodelCreator.N_DEV_ARTIFACT, false);*/
 		iterateNodesOfType(PSSIFCanonicMetamodelCreator.N_SOL_ARTIFACT, false);
-		iterateNodesOfType(PSSIFConstants.ROOT_NODE_TYPE_NAME, false);
+		//iterateNodesOfType(PSSIFConstants.ROOT_NODE_TYPE_NAME, false);
 	}
 
 	/**

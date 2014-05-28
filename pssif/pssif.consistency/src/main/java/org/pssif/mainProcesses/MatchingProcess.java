@@ -9,6 +9,7 @@ import org.pssif.comparedDataStructures.ComparedNormalizedTokensPair;
 import org.pssif.consistencyDataStructures.ConsistencyData;
 import org.pssif.consistencyDataStructures.Token;
 import org.pssif.matchingLogic.MatchMethod;
+import org.pssif.matchingLogic.MatchingMethods;
 import org.pssif.textNormalization.Normalizer;
 import org.pssif.textNormalization.Tokenizer;
 
@@ -99,56 +100,99 @@ public class MatchingProcess {
 		comparedNodePair = new ComparedNodePair();
 
 		/**
-		 * here the strings of the old and the new node are read from the model.
+		 * here the strings of the old and the new node are read from the model
+		 * and normalized.
 		 */
 		String labelOriginNode = Methods.findName(actTypeOriginModel,
 				tempNodeOrigin);
 		String labelNewNode = Methods.findName(actTypeNewModel, tempNodeNew);
 
-		// TODO Remove after fixing problem with syntactic tokenizing in Normalizer
-
-		boolean normalizeCases = true;
-		boolean filterStopwords = true;
-		boolean splitWords = true;
-		boolean stemWords = false;
-
-		// TODO until here
-
-		List<Token> tokensOrigin = normalizer.createNormalizedTokensFromLabel(
-				labelOriginNode, normalizeCases, filterStopwords, splitWords,
-				stemWords);
-		List<Token> tokensNew = normalizer.createNormalizedTokensFromLabel(
-				labelNewNode, normalizeCases, filterStopwords, splitWords,
-				stemWords);
-
-		labelOriginNode = normalizer.normalizeLabel(labelOriginNode);
-		labelNewNode = normalizer.normalizeLabel(labelNewNode);
+		String labelOriginNodeNormalized = normalizer
+				.normalizeLabel(labelOriginNode);
+		String labelNewNodeNormalized = normalizer.normalizeLabel(labelNewNode);
 
 		System.out.println("The normalized label of the original Node: "
-				+ labelOriginNode);
+				+ labelOriginNodeNormalized);
 		System.out.println("The normalized label of the new Node: "
-				+ labelNewNode);
+				+ labelNewNodeNormalized);
 
-		createComparedNormalizedTokensPair(tokensOrigin, tokensNew);
+		List<Token> tokensOriginNodeNormalized = null;
+		List<Token> tokensNewNodeNormalized = null;
+		List<Token> tokensOriginNodeNormalizedCompundedUnstemmed = null;
+		List<Token> tokensNewNodeNormalizedCompundedUnstemmed = null;
+
+		comparedLabelPair = new ComparedLabelPair(labelOriginNodeNormalized,labelNewNodeNormalized);
+		comparedNormalizedTokensPair = new ComparedNormalizedTokensPair();
 
 		Iterator<MatchMethod> currentMatchMethod = matchMethods.iterator();
 
 		/**
-		 * Applying every match Method to the two nodes here
+		 * Here the tokenized forms are created if necessary. Thereby it's
+		 * important to note that the syntactic metrics require a normalization
+		 * without compund splitting and without stemming. Whereas the semantic
+		 * metrics require full normalization.
+		 * 
+		 * Then every active match Method is applied to the two nodes here.
 		 */
 		while (currentMatchMethod.hasNext()) {
 			MatchMethod currentMethod = currentMatchMethod.next();
 			currentMetricResult = 0;
 
+			/**
+			 * Depending on the current match method different token sets of the
+			 * labels have to be given to the match method.
+			 */
 			if (currentMethod.isActive()) {
-				currentMetricResult = currentMethod.executeMatching(
-						tempNodeOrigin, tempNodeNew, originalModel, newModel,
-						metaModel, actTypeOriginModel, actTypeNewModel,
-						labelOriginNode, labelNewNode, tokensOrigin, tokensNew);
+				if ((currentMethod.getMatchMethod() == MatchingMethods.STRING_EDIT_DISTANCE_MATCHING)
+						|| (currentMethod.getMatchMethod() == MatchingMethods.HYPHEN_MATCHING)) {
+					if ((tokensOriginNodeNormalizedCompundedUnstemmed == null)
+							|| (tokensNewNodeNormalizedCompundedUnstemmed == null)) {
+						tokensOriginNodeNormalizedCompundedUnstemmed = normalizer
+								.createNormalizedTokensFromLabel(
+										labelOriginNode, true, true, false,
+										false);
+						tokensNewNodeNormalizedCompundedUnstemmed = normalizer
+								.createNormalizedTokensFromLabel(labelNewNode,
+										true, true, false, false);
+
+						comparedNormalizedTokensPair
+								.setTokensOriginNodeNormalizedCompundedUnstemmed(tokensOriginNodeNormalizedCompundedUnstemmed);
+						comparedNormalizedTokensPair
+								.setTokensNewNodeNormalizedCompundedUnstemmed(tokensNewNodeNormalizedCompundedUnstemmed);
+					}
+					currentMetricResult = currentMethod.executeMatching(
+							tempNodeOrigin, tempNodeNew, originalModel,
+							newModel, metaModel, actTypeOriginModel,
+							actTypeNewModel, labelOriginNodeNormalized,
+							labelNewNodeNormalized,
+							tokensOriginNodeNormalizedCompundedUnstemmed,
+							tokensNewNodeNormalizedCompundedUnstemmed);
+				} else {
+					if ((tokensOriginNodeNormalized == null)
+							|| (tokensNewNodeNormalized == null)) {
+						tokensOriginNodeNormalized = normalizer
+								.createNormalizedTokensFromLabel(
+										labelOriginNode, true, true, true, true);
+						tokensNewNodeNormalized = normalizer
+								.createNormalizedTokensFromLabel(labelNewNode,
+										true, true, true, true);
+
+						comparedNormalizedTokensPair
+								.setTokensOriginNodeNormalized(tokensOriginNodeNormalized);
+						comparedNormalizedTokensPair
+								.setTokensNewNodeNormalized(tokensNewNodeNormalized);
+					}
+					currentMetricResult = currentMethod.executeMatching(
+							tempNodeOrigin, tempNodeNew, originalModel,
+							newModel, metaModel, actTypeOriginModel,
+							actTypeNewModel, labelOriginNodeNormalized,
+							labelNewNodeNormalized, tokensOriginNodeNormalized,
+							tokensNewNodeNormalized);
+				}
 			}
 
 			saveMatchMethodResult(currentMethod, currentMetricResult,
-					labelOriginNode, labelNewNode);
+					labelOriginNodeNormalized, labelNewNodeNormalized);
 		}
 
 		saveComparedNodePaier(tempNodeOrigin, tempNodeNew, actTypeOriginModel,
@@ -164,7 +208,7 @@ public class MatchingProcess {
 					"Something went wrong with the saving of the recently matched elements.");
 		}
 
-		printResults(labelOriginNode, labelNewNode);
+		printResults(labelOriginNodeNormalized, labelNewNodeNormalized);
 	}
 
 	/**
@@ -227,10 +271,7 @@ public class MatchingProcess {
 
 		switch (currentMethod.getMatchMethod()) {
 		case EXACT_STRING_MATCHING:
-			if (comparedLabelPair == null) {
-				comparedLabelPair = new ComparedLabelPair(labelOrigin,
-						labelNew, currentMetricResult);
-			}
+			comparedLabelPair.setExactMatchResult(currentMetricResult);
 			break;
 		case DEPTH_MATCHING:
 			comparedNodePair.setDepthMatchResult(currentMetricResult);
@@ -256,27 +297,6 @@ public class MatchingProcess {
 		case CONTEXT_MATCHING:
 			comparedNodePair.setContextMatchResult(currentMetricResult);
 			break;
-		}
-	}
-
-	/**
-	 * @param tokensOrigin
-	 *            the label in normalized tokens form of the node from the
-	 *            original model
-	 * @param tokensNew
-	 *            the label in normalized tokens form of the node from the new
-	 *            model
-	 * 
-	 *            This method creates an object for the field
-	 *            "comparedNormalizedTokensPair" if it's not yet created. This
-	 *            ensures that every different token dependent metric is saved
-	 *            into the same matchData container.
-	 */
-	private void createComparedNormalizedTokensPair(List<Token> tokensOrigin,
-			List<Token> tokensNew) {
-		if (comparedNormalizedTokensPair == null) {
-			comparedNormalizedTokensPair = new ComparedNormalizedTokensPair(
-					tokensOrigin, tokensNew);
 		}
 	}
 

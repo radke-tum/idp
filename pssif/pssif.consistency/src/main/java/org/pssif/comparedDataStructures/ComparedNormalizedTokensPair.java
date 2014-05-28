@@ -22,16 +22,57 @@ public class ComparedNormalizedTokensPair extends Compared {
 	 * @param tokensOrigin
 	 * @param tokensNew
 	 */
-	public ComparedNormalizedTokensPair(List<Token> tokensOrigin,
-			List<Token> tokensNew) {
+	public ComparedNormalizedTokensPair() {
 		super();
-		this.tokensOrigin = tokensOrigin;
-		this.tokensNew = tokensNew;
 	}
 
-	private List<Token> tokensOrigin;
+	private List<Token> tokensOriginNodeNormalized;
+	private List<Token> tokensNewNodeNormalized;
+	private List<Token> tokensOriginNodeNormalizedCompundedUnstemmed;
+	private List<Token> tokensNewNodeNormalizedCompundedUnstemmed;
 
-	private List<Token> tokensNew;
+	/**
+	 * @param tokensOriginNodeNormalized
+	 *            the tokensOriginNodeNormalized to set
+	 */
+	public void setTokensOriginNodeNormalized(
+			List<Token> tokensOriginNodeNormalized) {
+		if (this.tokensOriginNodeNormalized == null) {
+			this.tokensOriginNodeNormalized = tokensOriginNodeNormalized;
+		}
+	}
+
+	/**
+	 * @param tokensNewNodeNormalized
+	 *            the tokensNewNodeNormalized to set
+	 */
+	public void setTokensNewNodeNormalized(List<Token> tokensNewNodeNormalized) {
+		if (this.tokensNewNodeNormalized == null) {
+			this.tokensNewNodeNormalized = tokensNewNodeNormalized;
+		}
+	}
+
+	/**
+	 * @param tokensOriginNodeNormalizedCompundedUnstemmed
+	 *            the tokensOriginNodeNormalizedCompundedUnstemmed to set
+	 */
+	public void setTokensOriginNodeNormalizedCompundedUnstemmed(
+			List<Token> tokensOriginNodeNormalizedCompundedUnstemmed) {
+		if (this.tokensOriginNodeNormalizedCompundedUnstemmed == null) {
+			this.tokensOriginNodeNormalizedCompundedUnstemmed = tokensOriginNodeNormalizedCompundedUnstemmed;
+		}
+	}
+
+	/**
+	 * @param tokensNewNodeNormalizedCompundedUnstemmed
+	 *            the tokensNewNodeNormalizedCompundedUnstemmed to set
+	 */
+	public void setTokensNewNodeNormalizedCompundedUnstemmed(
+			List<Token> tokensNewNodeNormalizedCompundedUnstemmed) {
+		if (this.tokensNewNodeNormalizedCompundedUnstemmed == null) {
+			this.tokensNewNodeNormalizedCompundedUnstemmed = tokensNewNodeNormalizedCompundedUnstemmed;
+		}
+	}
 
 	/**
 	 * the result of the matching between two tokens based on their synonym
@@ -96,37 +137,42 @@ public class ComparedNormalizedTokensPair extends Compared {
 	public double getLsiMatchResult() {
 		return lsiMatchResult;
 	}
-	
+
 	/**
-	 * @param linguisticMatchResult the linguisticMatchResult to set
+	 * @param linguisticMatchResult
+	 *            the linguisticMatchResult to set
 	 */
 	public void setLinguisticMatchResult(double linguisticMatchResult) {
 		this.linguisticMatchResult = linguisticMatchResult;
 	}
 
 	/**
-	 * @param stringEditDistanceResult the stringEditDistanceResult to set
+	 * @param stringEditDistanceResult
+	 *            the stringEditDistanceResult to set
 	 */
 	public void setStringEditDistanceResult(double stringEditDistanceResult) {
 		this.stringEditDistanceResult = stringEditDistanceResult;
 	}
 
 	/**
-	 * @param hyphenMatchResult the hyphenMatchResult to set
+	 * @param hyphenMatchResult
+	 *            the hyphenMatchResult to set
 	 */
 	public void setHyphenMatchResult(double hyphenMatchResult) {
 		this.hyphenMatchResult = hyphenMatchResult;
 	}
 
 	/**
-	 * @param vsmMatchResult the vsmMatchResult to set
+	 * @param vsmMatchResult
+	 *            the vsmMatchResult to set
 	 */
 	public void setVsmMatchResult(double vsmMatchResult) {
 		this.vsmMatchResult = vsmMatchResult;
 	}
 
 	/**
-	 * @param lsiMatchResult the lsiMatchResult to set
+	 * @param lsiMatchResult
+	 *            the lsiMatchResult to set
 	 */
 	public void setLsiMatchResult(double lsiMatchResult) {
 		this.lsiMatchResult = lsiMatchResult;
