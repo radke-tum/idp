@@ -20,12 +20,15 @@ public class ReqifGraph {
 
 	private Map<String, ReqifNodeImpl> nodes = Maps.newHashMap();
 	private Map<String, ReqifEdgeImpl> edges = Maps.newHashMap(); // TODO a set
+	
 	private Set<ReqifAttribute> nodeAttributes = Sets.newHashSet();
 	private Set<ReqifAttribute> edgeAttributes = Sets.newHashSet();
 
 	private ReqElement current;
+	
 	private String tagContent = "";
 	private String prevStartTag = "";
+	
 	private boolean source = false;
 	private boolean target = false;
 

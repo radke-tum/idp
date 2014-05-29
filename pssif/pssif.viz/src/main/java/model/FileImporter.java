@@ -108,7 +108,7 @@ public class FileImporter extends FileHandler{
 
       File file = super.getFileChooser().getSelectedFile();
 
-      return importFile(file);
+      return importFile(new File("/users/ami/dropbox/IDP-PSS-IF-Shared/Modelle PE/req2"));
 
     }
     else {
