@@ -124,4 +124,18 @@ public abstract class MatchMethod {
 		return weigth;
 	}
 
+	/**
+	 * @param isActive the isActive to set
+	 */
+	public void setActive(boolean isActive) {
+		this.isActive = isActive;
+	}
+
+	/**
+	 * @param weigth the weigth to set
+	 */
+	public void setWeigth(double weigth) {
+		this.weigth = weigth;
+	}
+
 }

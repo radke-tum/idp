@@ -1,11 +1,16 @@
 package org.pssif.consistencyExtern.consistencyGui;
 
 import java.awt.BorderLayout;
+import java.awt.Dialog.ModalityType;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.swing.JFrame;
+import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.TableModel;
@@ -65,35 +70,63 @@ public class UserGuidingConsistency {
 	 */
 	private static List<MatchMethod> openChooseMatchingMethodsPopup() {
 
+		List<MatchMethod> methods = new LinkedList<MatchMethod>();
+		MatchingMethods[] allMethods = MatchingMethods.values();
+
+		for (MatchingMethods matchMethod : allMethods) {
+			methods.add(MatchMethod.createMatchMethodObject(matchMethod, false,
+					0.0));
+		}
+
 		// TODO: Open Dialog here and ask the user which metrics he wants
-		List<MatchMethod> result = chooseMatchingMethodsPopup();
+		List<MatchMethod> result = chooseMatchingMethodsPopup(methods);
 
 		return result;
 	}
 
-	private static List<MatchMethod> chooseMatchingMethodsPopup() {
+	private static List<MatchMethod> chooseMatchingMethodsPopup(
+			List<MatchMethod> methods) {
 
-		final JFrame frame = new JFrame("Match method selection");
-		
-		List<MatchMethod> methods = new LinkedList<MatchMethod>();
-		MatchingMethods[] allMethods = MatchingMethods.values();
-		
-		for(MatchingMethods matchMethod : allMethods){
-			methods.add(MatchMethod.createMatchMethodObject(matchMethod, false, 0.0));
-		}
-		
+		final JDialog dialog = new JDialog();
+		dialog.setLayout(new BorderLayout());
+		dialog.setSize(600, 200);
+		dialog.setModalityType(ModalityType.APPLICATION_MODAL);
+
 		final TableModel tableModel = new MethodChooseTableModel(methods);
-		
+
 		JTable methodTable = new JTable(tableModel);
 		methodTable.setAutoCreateColumnsFromModel(true);
-		methodTable.setAutoCreateRowSorter(true);
-		
-		frame.add(new JScrollPane(methodTable), BorderLayout.CENTER);
-		frame.setSize(500,150);
-		frame.setVisible(true);
-		
-		
+
+		JScrollPane scrollPane = new JScrollPane(methodTable);
+
+		JButton buttonApply = new JButton("Apply the selected merge Methods");
+		buttonApply.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(final ActionEvent e) {
+				dialog.setVisible(false);
+			}
+		});
+
+		JButton buttonCancel = new JButton("Cancel the merge");
+		buttonCancel.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				dialog.setVisible(false);
+				throw new RuntimeException(
+						"Unhandled Case!! Cancel merge not yet implemented");
+			}
+		});
+
+		JPanel buttonPanel = new JPanel();
+		buttonPanel.add(buttonApply);
+		buttonPanel.add(buttonCancel);
+
+		dialog.add(scrollPane, BorderLayout.CENTER);
+		dialog.add(buttonPanel, BorderLayout.SOUTH);
+
+		dialog.setVisible(true);
+
 		return methods;
 	}
-
 }
