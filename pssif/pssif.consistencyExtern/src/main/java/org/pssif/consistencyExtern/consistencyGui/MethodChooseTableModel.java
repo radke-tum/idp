@@ -6,6 +6,13 @@ import javax.swing.table.AbstractTableModel;
 
 import org.pssif.matchingLogic.MatchMethod;
 
+/**
+ * @author Andreas
+ * 
+ *         This class is an own implementation of the class AbstractTable Model.
+ *         It is used to display the possible match methods in a JTable in the
+ *         dialogue after the user hit the button "merge the models".
+ */
 public class MethodChooseTableModel extends AbstractTableModel {
 
 	/**
@@ -47,6 +54,11 @@ public class MethodChooseTableModel extends AbstractTableModel {
 	}
 
 	@Override
+	public String getColumnName(final int columnIndex) {
+		return (COLUMN_NAMES[columnIndex]);
+	}
+
+	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
 		final MatchMethod method = methods.get(rowIndex);
 
@@ -61,12 +73,12 @@ public class MethodChooseTableModel extends AbstractTableModel {
 		throw new IllegalArgumentException("Invalid column index "
 				+ columnIndex);
 	}
-	
+
 	@Override
-	public Class<?> getColumnClass(final int columnIndex){
+	public Class<?> getColumnClass(final int columnIndex) {
 		return COLUMN_CLASSES[columnIndex];
 	}
-	
+
 	@Override
 	public boolean isCellEditable(final int rowIndex, final int columnIndex) {
 		return (columnIndex > COLUMN_IDX_METHODNAME);
@@ -79,6 +91,9 @@ public class MethodChooseTableModel extends AbstractTableModel {
 
 		if (columnIndex == COLUMN_IDX_WEIGTH) {
 			method.setWeigth((Double) value);
+			// TODO users have to enter "1.0" for the weigth being correctly
+			// applied. If the user enters "1" the weight isn't correctly
+			// applied.
 		} else if (columnIndex == COLUMN_IDX_ACTIVE) {
 			method.setActive((Boolean) value);
 		}

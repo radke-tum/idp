@@ -204,8 +204,7 @@ public class MatchingProcess {
 			/**
 			 * save the result of the recent matchMethod properly
 			 */
-			saveMatchMethodResult(currentMethod, currentMetricResult,
-					labelOriginNodeNormalized, labelNewNodeNormalized);
+			saveMatchMethodResult(currentMethod, currentMetricResult);
 		}
 
 		/**
@@ -275,15 +274,9 @@ public class MatchingProcess {
 	 *            the matchMethod which was currently applied
 	 * @param currentMetricResult
 	 *            the result of the currently applied matchMethod
-	 * @param labelOrigin
-	 * @param labelNew
-	 * 
-	 *            This method is supposed to save the results of the last match
-	 *            operation. Depending on the matchMethod type it's saved in a
-	 *            different matchData container.
 	 */
 	public void saveMatchMethodResult(MatchMethod currentMethod,
-			double currentMetricResult, String labelOrigin, String labelNew) {
+			double currentMetricResult) {
 
 		switch (currentMethod.getMatchMethod()) {
 		case EXACT_STRING_MATCHING:

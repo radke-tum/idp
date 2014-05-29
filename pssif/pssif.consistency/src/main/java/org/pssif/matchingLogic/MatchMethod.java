@@ -25,13 +25,15 @@ import de.tum.pssif.core.model.Node;
 public abstract class MatchMethod {
 
 	/**
-	 * @param matchMethod TODO
+	 * @param matchMethod
+	 *            TODO
 	 * @param isActive
 	 *            bool saying whether the method was activated by the user
 	 * @param weigth
 	 *            the method weight to the whole similarity score of two nodes
 	 */
-	public MatchMethod(MatchingMethods matchMethod, boolean isActive, double weigth) {
+	public MatchMethod(MatchingMethods matchMethod, boolean isActive,
+			double weigth) {
 		super();
 		this.matchMethod = matchMethod;
 		this.isActive = isActive;
@@ -58,50 +60,58 @@ public abstract class MatchMethod {
 			Metamodel metaModel, NodeType actTypeOriginModel,
 			NodeType actTypeNewModel, String labelOrigin, String labelNew,
 			List<Token> tokensOrigin, List<Token> tokensNew);
-	
+
 	/**
-	 * TODO Comment
 	 * @param matchMethod
+	 *            The type of match method which shall be created
 	 * @param isActive
+	 *            detemrining whether the created method shall be active
 	 * @param weigth
-	 * @return
+	 *            thr weight of the created method
+	 * @return the createtd method
+	 * 
+	 *         This method creates a MatchMethod of the given type and with the
+	 *         given attributes
 	 */
-	public static MatchMethod createMatchMethodObject(MatchingMethods matchMethod, boolean isActive, double weigth){
-		//TODO Initialize with null
-		MatchMethod newMatchMethod = new ExactMatcher(MatchingMethods.EXACT_STRING_MATCHING, isActive, weigth);
-		
-		switch(matchMethod){
+	public static MatchMethod createMatchMethodObject(
+			MatchingMethods matchMethod, boolean isActive, double weigth) {
+		// TODO Initialize with null
+		MatchMethod newMatchMethod = null;
+
+		switch (matchMethod) {
 		case EXACT_STRING_MATCHING:
-			newMatchMethod = new ExactMatcher(MatchingMethods.EXACT_STRING_MATCHING, isActive, weigth);
+			newMatchMethod = new ExactMatcher(matchMethod, isActive, weigth);
 			break;
 		case DEPTH_MATCHING:
-			//TODO create matchMethod
+			newMatchMethod = new DepthMatcher(matchMethod, isActive, weigth);
 			break;
 		case STRING_EDIT_DISTANCE_MATCHING:
-			newMatchMethod = new StringEditDistanceMatcher(MatchingMethods.STRING_EDIT_DISTANCE_MATCHING,isActive, weigth);
+			newMatchMethod = new StringEditDistanceMatcher(matchMethod,
+					isActive, weigth);
 			break;
 		case HYPHEN_MATCHING:
-			//TODO create matchMethod
+			newMatchMethod = new HyphenMatcher(matchMethod, isActive, weigth);
 			break;
 		case LINGUISTIC_MATCHING:
-			newMatchMethod = new LinguisticMatcher(MatchingMethods.LINGUISTIC_MATCHING, isActive, weigth);
+			newMatchMethod = new LinguisticMatcher(matchMethod, isActive,
+					weigth);
 			break;
 		case VECTOR_SPACE_MODEL_MATCHING:
-			//TODO create matchMethod
+			newMatchMethod = new VsmMatcher(matchMethod, isActive, weigth);
 			break;
 		case LATENT_SEMANTIC_INDEXING_MATCHING:
-			//TODO create matchMethod
+			newMatchMethod = new LsiMatcher(matchMethod, isActive, weigth);
 			break;
 		case CONTEXT_MATCHING:
-			//TODO create matchMethod
+			newMatchMethod = new ContextMatcher(matchMethod, isActive, weigth);
 			break;
-			default:
-				throw new RuntimeException("Couldn't create a correct match method with the given match type!");
+		default:
+			throw new RuntimeException(
+					"Couldn't create a correct match method with the given match type!");
 		}
-		
+
 		return newMatchMethod;
 	}
-	
 
 	/**
 	 * @return the matchMethod
@@ -125,14 +135,16 @@ public abstract class MatchMethod {
 	}
 
 	/**
-	 * @param isActive the isActive to set
+	 * @param isActive
+	 *            the isActive to set
 	 */
 	public void setActive(boolean isActive) {
 		this.isActive = isActive;
 	}
 
 	/**
-	 * @param weigth the weigth to set
+	 * @param weigth
+	 *            the weigth to set
 	 */
 	public void setWeigth(double weigth) {
 		this.weigth = weigth;

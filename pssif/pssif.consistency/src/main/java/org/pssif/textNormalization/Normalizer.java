@@ -26,6 +26,12 @@ public class Normalizer {
 	private Stemmer stemmer;
 
 	/**
+	 * if true the results of each token- and normalization step is printed to
+	 * the console
+	 */
+	private boolean showResultPrintsInConsole = false;
+
+	/**
 	 * this bool says whether we need to remove the whitespace from the labels
 	 * of the nodes for exact matching
 	 */
@@ -201,11 +207,13 @@ public class Normalizer {
 	 *            to the console.
 	 */
 	public void printTokens(String step, List<Token> tokens) {
-		System.out.println("Result from normalization step: " + step);
-		for (Token token : tokens) {
-			System.out.print(token.getWord() + ", ");
+		if (showResultPrintsInConsole) {
+			System.out.println("Result from normalization step: " + step);
+			for (Token token : tokens) {
+				System.out.print(token.getWord() + ", ");
+			}
+			System.out.println("");
 		}
-		System.out.println("");
 	}
 
 }

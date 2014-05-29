@@ -8,7 +8,8 @@ package org.pssif.matchingLogic;
  * checkMatchMethods(),saveMatchMethodResult
  * (),getWeightedSyntacticSimilarity(),getWeightedSemanticSimilarity() and
  * getWeightedContextSimilarity in the class "MatchingProcess" have to be
- * adapted properly.
+ * adapted properly. Furthermore the method createMatchMethodObject() in the
+ * class MatchMethod has to be adapted.
  * 
  * Additionaly the new matching method has to be implemented through extending
  * the abstract Class "MatchMethod".
@@ -18,23 +19,23 @@ package org.pssif.matchingLogic;
  */
 public enum MatchingMethods {
 
-	EXACT_STRING_MATCHING(0, "Exact String Compairson"),
-	DEPTH_MATCHING(1,"Depth Compairson"),
-	STRING_EDIT_DISTANCE_MATCHING(2, "Levenshtein Distance"),
-	HYPHEN_MATCHING(3, "Hyphen Compairson"),
-	LINGUISTIC_MATCHING(4, "Linguistic Compairson"),
-	VECTOR_SPACE_MODEL_MATCHING(5, "VSM Compairson"),
-	LATENT_SEMANTIC_INDEXING_MATCHING(6, "LSI Compairson"),
-	CONTEXT_MATCHING(7, "Contextual Compairson");
+	EXACT_STRING_MATCHING(0, "Exact String Compairson"), DEPTH_MATCHING(1,
+			"Depth Compairson (no Impl)"), STRING_EDIT_DISTANCE_MATCHING(2,
+			"Levenshtein Distance"), HYPHEN_MATCHING(3,
+			"Hyphen Compairson (no Impl)"), LINGUISTIC_MATCHING(4,
+			"Linguistic Compairson"), VECTOR_SPACE_MODEL_MATCHING(5,
+			"VSM Compairson (no Impl)"), LATENT_SEMANTIC_INDEXING_MATCHING(6,
+			"LSI Compairson (no Impl)"), CONTEXT_MATCHING(7,
+			"Contextual Compairson (no Impl)");
 
 	private final int value;
 	private final String description;
-	
-	private MatchingMethods(final int value, final String description){
+
+	private MatchingMethods(final int value, final String description) {
 		this.value = value;
 		this.description = description;
 	}
-	
+
 	/**
 	 * @return the value
 	 */
@@ -49,6 +50,9 @@ public enum MatchingMethods {
 		return description;
 	}
 
+	/**
+	 * @return all names of each enum value as a String array
+	 */
 	public static String[] methods() {
 		MatchingMethods[] methods = values();
 		String[] names = new String[methods.length];
@@ -59,7 +63,5 @@ public enum MatchingMethods {
 
 		return names;
 	}
-	
-	
 
 }
