@@ -19,7 +19,7 @@ import de.tum.pssif.core.model.Node;
 public class ExactMatcher extends MatchMethod {
 
 	public ExactMatcher(MatchingMethods matchMethod, boolean isActive, double weigth) {
-		super(MatchingMethods.EXACT_STRING_MATCHING, isActive, weigth);
+		super(matchMethod, isActive, weigth);
 	}
 
 	@Override

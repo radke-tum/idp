@@ -26,7 +26,7 @@ public class StringEditDistanceMatcher extends MatchMethod {
 	private final Levenshtein levenshtein = new Levenshtein();
 
 	public StringEditDistanceMatcher(MatchingMethods matchMethod, boolean isActive, double weigth) {
-		super(MatchingMethods.STRING_EDIT_DISTANCE_MATCHING, isActive, weigth);
+		super(matchMethod, isActive, weigth);
 	}
 
 	@Override

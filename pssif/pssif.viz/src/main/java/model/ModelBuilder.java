@@ -13,15 +13,8 @@ import graph.model.MyNodeTypes;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
 
-import org.pssif.mainProcesses.CompairsonProcess;
-import org.pssif.matchingLogic.ExactMatcher;
-import org.pssif.matchingLogic.LinguisticMatcher;
-import org.pssif.matchingLogic.MatchMethod;
-import org.pssif.matchingLogic.MatchingMethods;
-import org.pssif.matchingLogic.StringEditDistanceMatcher;
+import org.pssif.consistencyExtern.consistencyGui.UserGuidingConsistency;
 
 import de.tum.pssif.core.common.PSSIFOption;
 import de.tum.pssif.core.metamodel.ConnectionMapping;
@@ -61,12 +54,10 @@ public class ModelBuilder {
 		 * @author: Andreas
 		 */
 		else {
-			//TODO extract to main class in consistency package (together with the two other methods for popup creation
-			if (openConsistencyPopUp()) {
+			if (UserGuidingConsistency.openConsistencyPopUp()) {
 				
-				List<MatchMethod> matchMethods = openChooseMatchingMethodsPopup();
+				UserGuidingConsistency.main(activeModel.getModel(), Pmodel, Pmeta);
 				
-				CompairsonProcess.main(activeModel.getModel(), Pmodel, Pmeta, matchMethods);
 			} else {
 				ModelMerger merger = new ModelMerger();
 				Model mergedModel = merger.mergeModels(activeModel.getModel(),
@@ -78,42 +69,7 @@ public class ModelBuilder {
 			}
 
 		}
-	}
-
-	/**
-	 * @author: Andreas
-	 * @return a boolean that says whether the user wants to merge the newly
-	 *         imported model with the old one
-	 */
-	private static boolean openConsistencyPopUp() {
-
-		// TODO: Ask user if he wants to just import the model into the
-		// workspace or if he wants to merge the original model and the newly
-		// imported one
-		boolean result = false;
-		
-		result = true;
-
-
-		return result;
-	}
-	
-	/**
-	 * @author: Andreas
-	 * @return the set of matchMethods which shall be applied to the data
-	 */
-	private static List<MatchMethod> openChooseMatchingMethodsPopup(){
-		
-		List<MatchMethod> result = new LinkedList<MatchMethod>();
-		
-		//TODO: Open Dialog here and ask the user which metrics he wants
-		
-		//TODO Remove after testing
-		result.add(new StringEditDistanceMatcher(MatchingMethods.STRING_EDIT_DISTANCE_MATCHING, true, 1.0));
-		
-		return result;
-	}
-	
+	}	
 	
 	public static void resetModel()
 	{

@@ -18,6 +18,48 @@ package org.pssif.matchingLogic;
  */
 public enum MatchingMethods {
 
-	EXACT_STRING_MATCHING, DEPTH_MATCHING, STRING_EDIT_DISTANCE_MATCHING, HYPHEN_MATCHING, LINGUISTIC_MATCHING, VECTOR_SPACE_MODEL_MATCHING, LATENT_SEMANTIC_INDEXING_MATCHING, CONTEXT_MATCHING;
+	EXACT_STRING_MATCHING(0, "Exact String Compairson"),
+	DEPTH_MATCHING(1,"Depth Compairson"),
+	STRING_EDIT_DISTANCE_MATCHING(2, "Levenshtein Distance"),
+	HYPHEN_MATCHING(3, "Hyphen Compairson"),
+	LINGUISTIC_MATCHING(4, "Linguistic Compairson"),
+	VECTOR_SPACE_MODEL_MATCHING(5, "VSM Compairson"),
+	LATENT_SEMANTIC_INDEXING_MATCHING(6, "LSI Compairson"),
+	CONTEXT_MATCHING(7, "Contextual Compairson");
+
+	private final int value;
+	private final String description;
+	
+	private MatchingMethods(final int value, final String description){
+		this.value = value;
+		this.description = description;
+	}
+	
+	/**
+	 * @return the value
+	 */
+	public int getValue() {
+		return value;
+	}
+
+	/**
+	 * @return the description
+	 */
+	public String getDescription() {
+		return description;
+	}
+
+	public static String[] methods() {
+		MatchingMethods[] methods = values();
+		String[] names = new String[methods.length];
+
+		for (int i = 0; i < methods.length; i++) {
+			names[i] = methods[i].name();
+		}
+
+		return names;
+	}
+	
+	
 
 }

@@ -25,16 +25,13 @@ import de.tum.pssif.core.model.Node;
 public abstract class MatchMethod {
 
 	/**
-	 * @param matchMethod
-	 *            the description of the initialized matchMethod in form of an
-	 *            enum MatchingMethods
+	 * @param matchMethod TODO
 	 * @param isActive
 	 *            bool saying whether the method was activated by the user
 	 * @param weigth
 	 *            the method weight to the whole similarity score of two nodes
 	 */
-	public MatchMethod(MatchingMethods matchMethod, boolean isActive,
-			double weigth) {
+	public MatchMethod(MatchingMethods matchMethod, boolean isActive, double weigth) {
 		super();
 		this.matchMethod = matchMethod;
 		this.isActive = isActive;
@@ -61,6 +58,50 @@ public abstract class MatchMethod {
 			Metamodel metaModel, NodeType actTypeOriginModel,
 			NodeType actTypeNewModel, String labelOrigin, String labelNew,
 			List<Token> tokensOrigin, List<Token> tokensNew);
+	
+	/**
+	 * TODO Comment
+	 * @param matchMethod
+	 * @param isActive
+	 * @param weigth
+	 * @return
+	 */
+	public static MatchMethod createMatchMethodObject(MatchingMethods matchMethod, boolean isActive, double weigth){
+		//TODO Initialize with null
+		MatchMethod newMatchMethod = new ExactMatcher(MatchingMethods.EXACT_STRING_MATCHING, isActive, weigth);
+		
+		switch(matchMethod){
+		case EXACT_STRING_MATCHING:
+			newMatchMethod = new ExactMatcher(MatchingMethods.EXACT_STRING_MATCHING, isActive, weigth);
+			break;
+		case DEPTH_MATCHING:
+			//TODO create matchMethod
+			break;
+		case STRING_EDIT_DISTANCE_MATCHING:
+			newMatchMethod = new StringEditDistanceMatcher(MatchingMethods.STRING_EDIT_DISTANCE_MATCHING,isActive, weigth);
+			break;
+		case HYPHEN_MATCHING:
+			//TODO create matchMethod
+			break;
+		case LINGUISTIC_MATCHING:
+			newMatchMethod = new LinguisticMatcher(MatchingMethods.LINGUISTIC_MATCHING, isActive, weigth);
+			break;
+		case VECTOR_SPACE_MODEL_MATCHING:
+			//TODO create matchMethod
+			break;
+		case LATENT_SEMANTIC_INDEXING_MATCHING:
+			//TODO create matchMethod
+			break;
+		case CONTEXT_MATCHING:
+			//TODO create matchMethod
+			break;
+			default:
+				throw new RuntimeException("Couldn't create a correct match method with the given match type!");
+		}
+		
+		return newMatchMethod;
+	}
+	
 
 	/**
 	 * @return the matchMethod

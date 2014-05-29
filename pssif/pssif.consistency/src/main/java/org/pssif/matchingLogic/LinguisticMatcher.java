@@ -25,9 +25,8 @@ import de.tum.pssif.core.model.Node;
  */
 public class LinguisticMatcher extends MatchMethod {
 
-	public LinguisticMatcher(MatchingMethods matchMethod, boolean isActive,
-			double weigth) {
-		super(MatchingMethods.LINGUISTIC_MATCHING, isActive, weigth);
+	public LinguisticMatcher(MatchingMethods matchMethod, boolean isActive, double weigth) {
+		super(matchMethod, isActive, weigth);
 	}
 
 	/**
