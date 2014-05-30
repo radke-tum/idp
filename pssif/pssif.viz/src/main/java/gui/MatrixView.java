@@ -20,6 +20,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -192,7 +193,21 @@ public class MatrixView {
 	        if (returnVal == JFileChooser.APPROVE_OPTION)
 	        {
 	          File file = saveFile.getSelectedFile();
-	          MatrixView.this.xml_exporter.createXMLExport(content, nodes, file);
+	          
+	          JPanel answerPanel = new JPanel();
+	          
+	          if (MatrixView.this.xml_exporter.createXMLExport(content, nodes, file))
+	          {
+				  answerPanel.add(new JLabel("Export successful."));
+
+			      JOptionPane.showMessageDialog(null, answerPanel, "Success!", JOptionPane.INFORMATION_MESSAGE);
+	          }
+	          else
+	          {
+				  answerPanel.add(new JLabel("Ups something went wrong during the Export process."));
+
+			      JOptionPane.showMessageDialog(null, answerPanel, "Error!", JOptionPane.INFORMATION_MESSAGE);
+	          }
 	        }
 	      }
 	    });

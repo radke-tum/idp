@@ -220,11 +220,11 @@ public class Main {
 				
 				if (exporter.showPopup(frame))
 				{
-					  JPanel errorPanel = new JPanel();
+					  JPanel answerPanel = new JPanel();
 						
-				      errorPanel.add(new JLabel("Export successful."));
+					  answerPanel.add(new JLabel("Export successful."));
 
-				      JOptionPane.showMessageDialog(null, errorPanel, "Success!", JOptionPane.INFORMATION_MESSAGE);
+				      JOptionPane.showMessageDialog(null, answerPanel, "Success!", JOptionPane.INFORMATION_MESSAGE);
 				}
 				
 			}

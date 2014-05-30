@@ -28,7 +28,7 @@ public class ExcelExport
   * @param nodes the legend of the matrix ( order matters)
   * @param saveLocation the location where the file should be saved
   */
-  public void createXMLExport(String[][] values, LinkedList<MyNode> nodes, File saveLocation)
+  public boolean createXMLExport(String[][] values, LinkedList<MyNode> nodes, File saveLocation)
   {
     LinkedList<LinkedList<String>> res = createLegend(nodes);
     
@@ -41,7 +41,7 @@ public class ExcelExport
       }
       counter++;
     }
-    writeToFile(res, saveLocation);
+    return writeToFile(res, saveLocation);
   }
   
   /**
@@ -75,7 +75,7 @@ public class ExcelExport
    * @param values the content from the matrix
    * @param location the location where the excel file should be stored
    */
-  private void writeToFile(LinkedList<LinkedList<String>> values, File location)
+  private boolean writeToFile(LinkedList<LinkedList<String>> values, File location)
   {
     HSSFWorkbook workbook = new HSSFWorkbook();
     HSSFSheet sheet = workbook.createSheet("Matrix Viz");
@@ -128,6 +128,7 @@ public class ExcelExport
       workbook.write(out);
       out.close();
       System.out.println("Excel written successfully..");
+      return true;
     }
     catch (FileNotFoundException e)
     {
@@ -137,5 +138,7 @@ public class ExcelExport
     {
       e.printStackTrace();
     }
+    
+    return false;
   }
 }
