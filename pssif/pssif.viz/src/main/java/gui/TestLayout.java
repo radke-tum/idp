@@ -9,19 +9,6 @@
 */
 package gui;
 
-<<<<<<< HEAD:pssif/pssif.viz/src/main/java/gui/TestLayout.java
-import edu.uci.ics.jung.algorithms.layout.AbstractLayout;
-import edu.uci.ics.jung.algorithms.layout.GraphElementAccessor;
-import edu.uci.ics.jung.algorithms.layout.RadiusGraphElementAccessor;
-import edu.uci.ics.jung.algorithms.layout.util.RandomLocationTransformer;
-import edu.uci.ics.jung.algorithms.util.IterativeContext;
-import edu.uci.ics.jung.graph.Graph;
-
-import org.apache.commons.collections15.Factory;
-import org.apache.commons.collections15.map.LazyMap;
-
-=======
->>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/gui/TestLayout.java
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -30,8 +17,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-<<<<<<< HEAD:pssif/pssif.viz/src/main/java/gui/TestLayout.java
-=======
 import org.apache.commons.collections15.Factory;
 import org.apache.commons.collections15.map.LazyMap;
 
@@ -42,7 +27,6 @@ import edu.uci.ics.jung.algorithms.layout.util.RandomLocationTransformer;
 import edu.uci.ics.jung.algorithms.util.IterativeContext;
 import edu.uci.ics.jung.graph.Graph;
 
->>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/gui/TestLayout.java
 /**
  * Implements a self-organizing map layout algorithm, based on Meyer's
  * self-organizing graph methods.

@@ -18,10 +18,6 @@ public class MyEdgeTypes {
 	
 	private LinkedList<MyEdgeType> types;
 	private static int idcounter;
-<<<<<<< HEAD:pssif/pssif.viz/src/main/java/graph/model/MyEdgeTypes.java
-	public static String CONTAINMENT = "containment";
-=======
->>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/graph/model/MyEdgeTypes.java
 	
 	/**
 	 * Create a new MyEdgeTypes Object

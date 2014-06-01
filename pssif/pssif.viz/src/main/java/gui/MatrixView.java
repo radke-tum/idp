@@ -109,14 +109,8 @@ public class MatrixView {
 			scrollPane.setRowHeaderView(rowTable);
 			
 			mainTable.setEnabled(false);
-<<<<<<< HEAD:pssif/pssif.viz/src/main/java/gui/MatrixView.java
-			mainTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-			TableColumnAdjuster tca = new TableColumnAdjuster(mainTable);
-			tca.adjustColumns();
-=======
 
->>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/gui/MatrixView.java
-			
+
 			TableCellRenderer headerRenderer = new VerticalTableHeaderCellRenderer();
 		    Enumeration<TableColumn> columns = mainTable.getColumnModel().getColumns();
 		      while (columns.hasMoreElements())
@@ -125,13 +119,10 @@ public class MatrixView {
 		        tc.setHeaderRenderer(headerRenderer);
 		      }
 			
-<<<<<<< HEAD:pssif/pssif.viz/src/main/java/gui/MatrixView.java
-=======
 			mainTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 			TableColumnAdjuster tca = new TableColumnAdjuster(mainTable);
 			tca.adjustColumns();
 				
->>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/gui/MatrixView.java
 			p.add(scrollPane, BorderLayout.CENTER);
 			
 		}

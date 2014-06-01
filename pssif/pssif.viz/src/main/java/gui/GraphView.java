@@ -1,9 +1,6 @@
 package gui;
 
-<<<<<<< HEAD:pssif/pssif.viz/src/main/java/gui/GraphView.java
-=======
 import de.tum.pssif.core.common.PSSIFConstants;
->>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/gui/GraphView.java
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.picking.PickedState;
 import graph.model.IMyNode;
@@ -488,11 +485,7 @@ public class GraphView {
       @Override
       public void actionPerformed(ActionEvent e) {
         if (graph.isExpandable()) {
-<<<<<<< HEAD:pssif/pssif.viz/src/main/java/gui/GraphView.java
-          graph.ExpandNode(nodeDetails.isSelected());
-=======
           graph.expandNode(nodeDetails.isSelected());
->>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/gui/GraphView.java
           collapseExpand.setText("Collapse Node");
         }
 
@@ -626,15 +619,11 @@ public class GraphView {
               MyEdge selectedEdge = selectedEdges.iterator().next();
 
               boolean res = selectedEdge.updateAttribute(attributeName, data);
-<<<<<<< HEAD:pssif/pssif.viz/src/main/java/gui/GraphView.java
-
-=======
               //directed  attr changed
               if (attributeName.equals(PSSIFConstants.BUILTIN_ATTRIBUTE_DIRECTED))
               {
             	  graph.updateGraph();
               }
->>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/gui/GraphView.java
               if (!res) {
                 model.setValueAt(null, row, column);
                 JPanel errorPanel = new JPanel();
@@ -850,11 +839,7 @@ public class GraphView {
         if (subject instanceof MyEdge) {
           MyEdge edge = (MyEdge) subject;
           if (pi.isPicked(edge)) {
-<<<<<<< HEAD:pssif/pssif.viz/src/main/java/gui/GraphView.java
-            updateEdgeSidebar(edge, edge.getEdgeType(), edge.getAttributesForTable());
-=======
             updateEdgeSidebar(edge, edge.getEdgeType(), edge.getAttributes());
->>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/gui/GraphView.java
           }
           else {
             updateEdgeSidebar(null, null, null);

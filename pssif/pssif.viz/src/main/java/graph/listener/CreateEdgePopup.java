@@ -1,9 +1,6 @@
 package graph.listener;
 
-<<<<<<< HEAD:pssif/pssif.viz/src/main/java/graph/listener/CreateEdgePopup.java
-=======
 import graph.model.IMyNode;
->>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/graph/listener/CreateEdgePopup.java
 import graph.model.MyEdgeType;
 import graph.model.MyNode;
 import gui.graph.GraphVisualization;
@@ -84,11 +81,6 @@ public class CreateEdgePopup extends MyPopup{
 	{		
 		MyEdgeType[] possibilities = ModelBuilder.getPossibleEdges(source.getNodeType().getType(), dest.getNodeType().getType()).toArray(new MyEdgeType[0]);
 		
-<<<<<<< HEAD:pssif/pssif.viz/src/main/java/graph/listener/CreateEdgePopup.java
-=======
-		//System.out.println(possibilities.length);
-		
->>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/graph/listener/CreateEdgePopup.java
 		Arrays.sort(possibilities, new MyEdgeTypeComparator());
 		
 		JPanel allPanel = new JPanel(new GridBagLayout());

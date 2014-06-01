@@ -1,12 +1,8 @@
 package graph.operations;
 
-<<<<<<< HEAD:pssif/pssif.viz/src/main/java/graph/operations/AttributeFilter.java
-import graph.model.MyEdge;
-=======
 import graph.model.IMyNode;
 import graph.model.MyEdge;
 import graph.model.MyJunctionNode;
->>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/graph/operations/AttributeFilter.java
 import graph.model.MyNode;
 
 import java.math.BigDecimal;
@@ -121,11 +117,9 @@ public class AttributeFilter {
 				}
 			}
 		}
-<<<<<<< HEAD:pssif/pssif.viz/src/main/java/graph/operations/AttributeFilter.java
-=======
+
 		checkInvisibleEdges();
 		checkConjunctionNodes();
->>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/graph/operations/AttributeFilter.java
 	}
 	
 	/**
@@ -147,11 +141,7 @@ public class AttributeFilter {
 	 * @param attributeName  the attribute name on which the Edges should be filtered
 	 * @param op the operation ( less, greater, equal,...) which should be executed on the attribute
 	 * @param RefValue the given value to which the node attribute values should be compared to
-<<<<<<< HEAD:pssif/pssif.viz/src/main/java/graph/operations/AttributeFilter.java
-	 * * @param visiblity defines if the Edges which fulfill the condition should be visible or invisible
-=======
 	 * @param visiblity defines if the Edges which fulfill the condition should be visible or invisible
->>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/graph/operations/AttributeFilter.java
 	 * @throws Exception if the given condition contains a problem. Datatypes cannot be compared, Wrong data format,..
 	 */
 	private static void filterEdgeWithResult(String attributeName, AttributeOperations op, Object RefValue, boolean visiblity) throws Exception
@@ -212,20 +202,13 @@ public class AttributeFilter {
 					
 					if (result == false)
 					{
-<<<<<<< HEAD:pssif/pssif.viz/src/main/java/graph/operations/AttributeFilter.java
-=======
-						//System.out.println("Not visible");
->>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/graph/operations/AttributeFilter.java
 						currentEdge.setVisible(visiblity);
 					}
 				}
 			}
 		}
-<<<<<<< HEAD:pssif/pssif.viz/src/main/java/graph/operations/AttributeFilter.java
-=======
 		checkInvisibleEdges();
 		checkConjunctionNodes();
->>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/graph/operations/AttributeFilter.java
 	}
 	
 	/**
@@ -279,11 +262,7 @@ public class AttributeFilter {
 	 * @param RefValue the value to which the attribute value should be compared to
 	 * @return true if the condition is fulfilled, false otherwise 
 	 */
-<<<<<<< HEAD:pssif/pssif.viz/src/main/java/graph/operations/AttributeFilter.java
 	public static boolean BooleanEval (PSSIFValue attrValue, AttributeOperations op , Object RefValue)
-=======
-	private static boolean BooleanEval (PSSIFValue attrValue, AttributeOperations op , Object RefValue)
->>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/graph/operations/AttributeFilter.java
 	{
 		boolean result = false;
 		
@@ -314,11 +293,7 @@ public class AttributeFilter {
 	 * @param RefValue the value to which the attribute value should be compared to
 	 * @return true if the condition is fulfilled, false otherwise 
 	 */
-<<<<<<< HEAD:pssif/pssif.viz/src/main/java/graph/operations/AttributeFilter.java
 	public static boolean StringEval (PSSIFValue attrValue, AttributeOperations op , Object RefValue)
-=======
-	private static boolean StringEval (PSSIFValue attrValue, AttributeOperations op , Object RefValue)
->>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/graph/operations/AttributeFilter.java
 	{
 		boolean result = false;
 		
@@ -352,11 +327,7 @@ public class AttributeFilter {
 	 * @param RefValue the value to which the attribute value should be compared to
 	 * @return true if the condition is fulfilled, false otherwise 
 	 */
-<<<<<<< HEAD:pssif/pssif.viz/src/main/java/graph/operations/AttributeFilter.java
 	public static boolean DateEval (PSSIFValue attrValue, AttributeOperations op , Object RefValue) throws ParseException
-=======
-	private static boolean DateEval (PSSIFValue attrValue, AttributeOperations op , Object RefValue) throws ParseException
->>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/graph/operations/AttributeFilter.java
 	{
 		boolean result = false;
 		
@@ -390,11 +361,7 @@ public class AttributeFilter {
 	 * @param RefValue the value to which the attribute value should be compared to
 	 * @return true if the condition is fulfilled, false otherwise 
 	 */
-<<<<<<< HEAD:pssif/pssif.viz/src/main/java/graph/operations/AttributeFilter.java
 	public static boolean DecimalEval (PSSIFValue attrValue, AttributeOperations op , Object RefValue)
-=======
-	private static boolean DecimalEval (PSSIFValue attrValue, AttributeOperations op , Object RefValue)
->>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/graph/operations/AttributeFilter.java
 	{
 		boolean result = false;
 		
@@ -430,11 +397,7 @@ public class AttributeFilter {
 	 * @param RefValue the value to which the attribute value should be compared to
 	 * @return true if the condition is fulfilled, false otherwise 
 	 */
-<<<<<<< HEAD:pssif/pssif.viz/src/main/java/graph/operations/AttributeFilter.java
 	public static boolean IntegerEval (PSSIFValue attrValue, AttributeOperations op , Object RefValue)
-=======
-	private static boolean IntegerEval (PSSIFValue attrValue, AttributeOperations op , Object RefValue)
->>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/graph/operations/AttributeFilter.java
 	{
 		boolean result = false;
 		
@@ -607,9 +570,6 @@ public class AttributeFilter {
 	 * @param activeConditions conditions which are currently active
 	 * @throws Exception if the given condition contains a problem. Datatypes cannot be compared, Wrong data format,..
 	 */
-<<<<<<< HEAD:pssif/pssif.viz/src/main/java/graph/operations/AttributeFilter.java
-	private static void applyAllOtherNodeConditions (String condition, LinkedList<String> activeConditions) throws Exception
-=======
 /*	private static void applyAllOtherNodeConditions (String condition, LinkedList<String> activeConditions) throws Exception
 >>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/graph/operations/AttributeFilter.java
 	{
@@ -625,7 +585,6 @@ public class AttributeFilter {
 	}
 =======
 	}*/
->>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/graph/operations/AttributeFilter.java
 	
 	/**
 	 * Apply all the existing Edge conditions to the graph
@@ -633,11 +592,7 @@ public class AttributeFilter {
 	 * @param activeConditions conditions which are currently active
 	 * @throws Exception if the given condition contains a problem. Datatypes cannot be compared, Wrong data format,..
 	 */
-<<<<<<< HEAD:pssif/pssif.viz/src/main/java/graph/operations/AttributeFilter.java
-	private static void applyAllOtherEdgeConditions (String condition, LinkedList<String> activeConditions) throws Exception
-=======
 	/*private static void applyAllOtherEdgeConditions (String condition, LinkedList<String> activeConditions) throws Exception
->>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/graph/operations/AttributeFilter.java
 	{
 		for (Entry<String, ConditionContainer> e : edgeConditions.entrySet())
 		{
@@ -647,11 +602,7 @@ public class AttributeFilter {
 				filterEdge(c.attributeName, c.operation, c.refValue);
 			}
 		}
-<<<<<<< HEAD:pssif/pssif.viz/src/main/java/graph/operations/AttributeFilter.java
-	}
-=======
 	}*/
->>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/graph/operations/AttributeFilter.java
 	
 	/**
 	 * Add a new Node Condition
@@ -687,8 +638,6 @@ public class AttributeFilter {
 		return condition;
 	}
 	
-<<<<<<< HEAD:pssif/pssif.viz/src/main/java/graph/operations/AttributeFilter.java
-=======
 	private static void checkConjunctionNodes()
 	{
 		HashMap<MyJunctionNode, LinkedList<Boolean>> mappingIncomingJunctionVisibility = new HashMap<MyJunctionNode, LinkedList<Boolean>>();
@@ -811,7 +760,6 @@ public class AttributeFilter {
 		}
 	}
 	
->>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/graph/operations/AttributeFilter.java
 	/**
 	 * A Helper class. Should only be used in the AttributeFilter class
 	 * Holds basically all condition informations in a raw form

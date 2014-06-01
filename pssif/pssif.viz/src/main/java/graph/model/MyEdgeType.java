@@ -2,10 +2,7 @@ package graph.model;
 
 import de.tum.pssif.core.common.PSSIFOption;
 import de.tum.pssif.core.metamodel.EdgeType;
-<<<<<<< HEAD:pssif/pssif.viz/src/main/java/graph/model/MyEdgeType.java
 import de.tum.pssif.core.metamodel.NodeType;
-=======
->>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/graph/model/MyEdgeType.java
 
 /**
  * A container for the EdgeType from the PSSIF Model
