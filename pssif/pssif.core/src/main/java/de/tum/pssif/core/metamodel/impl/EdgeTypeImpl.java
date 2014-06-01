@@ -20,6 +20,9 @@ import de.tum.pssif.core.metamodel.NodeTypeBase;
 import de.tum.pssif.core.metamodel.mutable.MutableAttributeGroup;
 import de.tum.pssif.core.metamodel.mutable.MutableConnectionMapping;
 import de.tum.pssif.core.metamodel.mutable.MutableEdgeType;
+import de.tum.pssif.core.model.Edge;
+import de.tum.pssif.core.model.Model;
+import de.tum.pssif.core.model.Node;
 
 
 public class EdgeTypeImpl extends ElementTypeImpl implements MutableEdgeType {
@@ -191,5 +194,86 @@ public class EdgeTypeImpl extends ElementTypeImpl implements MutableEdgeType {
         return input.getTo().isAssignableFrom(to);
       }
     }));
+  }
+
+  @Override
+  public PSSIFOption<Edge> apply(Model model, boolean includeSubtypes) {
+    PSSIFOption<Edge> result = PSSIFOption.none();
+
+    for (ConnectionMapping mapping : getMappings().getMany()) {
+      result = PSSIFOption.merge(result, mapping.apply(model));
+    }
+
+    if (includeSubtypes) {
+      for (EdgeType special : getSpecials()) {
+        result = PSSIFOption.merge(result, special.apply(model, includeSubtypes));
+      }
+    }
+
+    return result;
+  }
+
+  @Override
+  public PSSIFOption<Edge> applyOutgoing(Node node, boolean includeSubtypes) {
+    PSSIFOption<Edge> result = PSSIFOption.none();
+
+    for (ConnectionMapping mapping : getMappings().getMany()) {
+      result = PSSIFOption.merge(result, mapping.applyOutgoing(node));
+    }
+
+    if (includeSubtypes) {
+      for (EdgeType special : getSpecials()) {
+        result = PSSIFOption.merge(result, special.applyOutgoing(node, includeSubtypes));
+      }
+    }
+
+    return result;
+  }
+
+  @Override
+  public PSSIFOption<Edge> applyIncoming(Node node, boolean includeSubtypes) {
+    PSSIFOption<Edge> result = PSSIFOption.none();
+
+    for (ConnectionMapping mapping : getMappings().getMany()) {
+      result = PSSIFOption.merge(result, mapping.applyIncoming(node));
+    }
+
+    if (includeSubtypes) {
+      for (EdgeType special : getSpecials()) {
+        result = PSSIFOption.merge(result, special.applyIncoming(node, includeSubtypes));
+      }
+    }
+
+    return result;
+  }
+
+  @Override
+  public Node applyFrom(Edge edge) {
+    for (ConnectionMapping mapping : getMappings().getMany()) {
+      if (mapping.apply(edge.getModel()).getMany().contains(edge)) {
+        return mapping.applyFrom(edge);
+      }
+    }
+    for (EdgeType et : getSpecials()) {
+      if (et.applyFrom(edge) != null) {
+        return et.applyFrom(edge);
+      }
+    }
+    return null;
+  }
+
+  @Override
+  public Node applyTo(Edge edge) {
+    for (ConnectionMapping mapping : getMappings().getMany()) {
+      if (mapping.apply(edge.getModel()).getMany().contains(edge)) {
+        return mapping.applyTo(edge);
+      }
+    }
+    for (EdgeType et : getSpecials()) {
+      if (et.applyTo(edge) != null) {
+        return et.applyTo(edge);
+      }
+    }
+    return null;
   }
 }

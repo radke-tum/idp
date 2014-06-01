@@ -1,7 +1,14 @@
 package graph.operations;
 
+<<<<<<< HEAD:pssif/pssif.viz/src/main/java/graph/operations/NodeAndEdgeTypeFilter.java
 import graph.model.MyEdge;
 import graph.model.MyEdgeType;
+=======
+import graph.model.IMyNode;
+import graph.model.MyEdge;
+import graph.model.MyEdgeType;
+import graph.model.MyJunctionNode;
+>>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/graph/operations/NodeAndEdgeTypeFilter.java
 import graph.model.MyNode;
 import graph.model.MyNodeType;
 
@@ -10,6 +17,10 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
+<<<<<<< HEAD:pssif/pssif.viz/src/main/java/graph/operations/NodeAndEdgeTypeFilter.java
+=======
+import java.util.Map.Entry;
+>>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/graph/operations/NodeAndEdgeTypeFilter.java
 
 import model.ModelBuilder;
 
@@ -41,7 +52,11 @@ public class NodeAndEdgeTypeFilter {
 		mapViewToEdgeType.put(viewName, edgeTypes);
 		mapViewToNodeType.put(viewName, nodeTypes);
 		
+<<<<<<< HEAD:pssif/pssif.viz/src/main/java/graph/operations/NodeAndEdgeTypeFilter.java
 		calcVisibleNodesAndEdges();
+=======
+		calcVisibleNodesAndEdges(false);
+>>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/graph/operations/NodeAndEdgeTypeFilter.java
 	}
 	
 	/**
@@ -51,18 +66,29 @@ public class NodeAndEdgeTypeFilter {
 	{		
 		init();
 		
+<<<<<<< HEAD:pssif/pssif.viz/src/main/java/graph/operations/NodeAndEdgeTypeFilter.java
 		calcVisibleNodesAndEdges();
+=======
+		calcVisibleNodesAndEdges(false);
+>>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/graph/operations/NodeAndEdgeTypeFilter.java
 	}
 	
 	/**
 	 * Check in the model which Nodes and Edges should be visible after applying/removing the Type filter
+<<<<<<< HEAD:pssif/pssif.viz/src/main/java/graph/operations/NodeAndEdgeTypeFilter.java
 	 */
 	private static void calcVisibleNodesAndEdges()
+=======
+	 * @param undo declares if it is an undo operation
+	 */
+	private static void calcVisibleNodesAndEdges(boolean undo)
+>>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/graph/operations/NodeAndEdgeTypeFilter.java
 	{
 		LinkedList<MyEdge> edges = new LinkedList<MyEdge>(ModelBuilder.getAllEdges());
 		
 		LinkedList<MyEdgeType> edgeTypes = getVisibleEdgeTypes();
 		
+<<<<<<< HEAD:pssif/pssif.viz/src/main/java/graph/operations/NodeAndEdgeTypeFilter.java
 		for (MyEdge e : edges)
 		{
 			if (!edgeTypes.contains(e.getEdgeType()))
@@ -71,6 +97,12 @@ public class NodeAndEdgeTypeFilter {
 				e.setVisible(true);
 		}
 		
+=======
+		HashMap<MyJunctionNode, LinkedList<Boolean>> mappingIncomingJunctionVisibility = new HashMap<MyJunctionNode, LinkedList<Boolean>>();
+		HashMap<MyJunctionNode, LinkedList<Boolean>> mappingOutgoingJunctionVisibility = new HashMap<MyJunctionNode, LinkedList<Boolean>>();
+		
+		// handle nodes
+>>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/graph/operations/NodeAndEdgeTypeFilter.java
 		LinkedList<MyNode> nodes = new LinkedList<MyNode>(ModelBuilder.getAllNodes());
 		
 		LinkedList<MyNodeType> nodeTypes = getVisibleNodeTypes();
@@ -82,6 +114,106 @@ public class NodeAndEdgeTypeFilter {
 			else
 				n.setVisible(true);
 		}
+<<<<<<< HEAD:pssif/pssif.viz/src/main/java/graph/operations/NodeAndEdgeTypeFilter.java
+=======
+		
+		// handle edges
+		for (MyEdge e : edges)
+		{
+			// not correct edgetype
+			if (!edgeTypes.contains(e.getEdgeType()))
+				e.setVisible(false);
+			else
+				{
+					if (!undo)
+					{
+						// destination or source Node is invisible
+						IMyNode source = e.getSourceNode();
+						IMyNode destination = e.getDestinationNode();
+						
+						if (source.isVisible()==false || destination.isVisible()==false)
+							e.setVisible(false);
+						else
+							e.setVisible(true);
+					}
+					else
+					{
+						e.setVisible(true);
+					}
+				}
+		}
+		
+		// handle JunctionNodes
+		
+		for (MyEdge e : edges)
+		{
+			// handle JunctionNodes
+			if (e.getDestinationNode() instanceof MyJunctionNode)
+			{
+				MyJunctionNode tmp = (MyJunctionNode) e.getDestinationNode();
+				LinkedList<Boolean> bools = mappingIncomingJunctionVisibility.get(tmp);
+				
+				if (bools == null)
+					bools = new LinkedList<Boolean>();
+				
+				bools.add(e.isVisible());
+				mappingIncomingJunctionVisibility.put(tmp, bools);
+			}
+			
+			if (e.getSourceNode() instanceof MyJunctionNode)
+			{
+				MyJunctionNode tmp = (MyJunctionNode) e.getSourceNode();
+				LinkedList<Boolean> bools = mappingOutgoingJunctionVisibility.get(tmp);
+				
+				if (bools == null)
+					bools = new LinkedList<Boolean>();
+				
+				bools.add(e.isVisible());
+				mappingOutgoingJunctionVisibility.put(tmp, bools);
+			}
+		}
+		
+		for (Entry<MyJunctionNode, LinkedList<Boolean>> entry : mappingIncomingJunctionVisibility.entrySet())
+		{
+			Boolean res= false;
+			
+			for (Boolean b : entry.getValue())
+			{
+				res = res || b;
+			}
+			
+			entry.getKey().setVisible(res);
+		}
+		
+		for (Entry<MyJunctionNode, LinkedList<Boolean>> entry : mappingOutgoingJunctionVisibility.entrySet())
+		{
+			Boolean res= false;
+			
+			for (Boolean b : entry.getValue())
+			{
+				res = res || b;
+			}
+			
+			entry.getKey().setVisible(res);
+		}
+		
+		//handle Junction Edges
+		if (undo)
+		{
+			// handle edges
+			for (MyEdge e : edges)
+			{
+				// destination or source Node is invisible
+				IMyNode source = e.getSourceNode();
+				IMyNode destination = e.getDestinationNode();
+				
+				if (source.isVisible()==false || destination.isVisible()==false)
+					e.setVisible(false);
+				else
+					e.setVisible(true);
+			}
+		}
+>>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/graph/operations/NodeAndEdgeTypeFilter.java
 	}
 	
 	/**
@@ -95,7 +227,11 @@ public class NodeAndEdgeTypeFilter {
 		if (mapViewToNodeType!=null)
 			mapViewToNodeType.remove(viewName);
 		
+<<<<<<< HEAD:pssif/pssif.viz/src/main/java/graph/operations/NodeAndEdgeTypeFilter.java
 		calcVisibleNodesAndEdges();
+=======
+		calcVisibleNodesAndEdges(true);
+>>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/graph/operations/NodeAndEdgeTypeFilter.java
 	}
 	
 	/**

@@ -88,7 +88,7 @@ public abstract class GraphMLMapper implements Mapper {
     if (!targetNode.isOne()) {
       System.out.println("target node " + inTargetNode.getId() + " not found!");
     }
-    if (sourceNode.isOne() && targetNode.isOne() && mapping != null) {
+    if (sourceNode.isOne() && targetNode.isOne() && mapping.isOne()) {
       Edge edge = mapping.getOne().create(result, sourceNode.getOne(), targetNode.getOne());
       type.getAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_ID).getOne().set(edge, PSSIFOption.one(PSSIFValue.create(inEdge.getId())));
       type.getAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_DIRECTED).getOne().set(edge, PSSIFOption.one(PSSIFValue.create(inEdge.isDirected())));

@@ -1,6 +1,10 @@
 package gui;
 
 
+<<<<<<< HEAD:pssif/pssif.viz/src/main/java/gui/Main.java
+=======
+import graph.operations.AttributeAggregation;
+>>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/gui/Main.java
 import graph.operations.AttributeFilter;
 import graph.operations.GraphViewContainer;
 import graph.operations.MasterFilter;
@@ -31,10 +35,15 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+<<<<<<< HEAD:pssif/pssif.viz/src/main/java/gui/Main.java
 import de.tum.pssif.core.model.Model;
 import model.FileExporter;
 import model.FileImporter;
 import model.ModelBuilder;
+=======
+import model.FileExporter;
+import model.FileImporter;
+>>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/gui/Main.java
 
 /**
  * The main class of the project. Execute this class to start the Visualization Software
@@ -50,7 +59,11 @@ public class Main {
 	private JMenuItem resetGraph;
 	private JMenuItem resetMatrix;
 	private JMenuItem colorNodes;
+<<<<<<< HEAD:pssif/pssif.viz/src/main/java/gui/Main.java
 	private JMenuItem newProject;
+=======
+	private JMenuItem modelStatistics;
+>>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/gui/Main.java
 	private JMenuItem createView;
 	private JMenuItem attributFilter;
 	private JMenuItem graphVizualistation;
@@ -63,7 +76,11 @@ public class Main {
 	private JCheckBoxMenuItem SpringLayout;
 	private JCheckBoxMenuItem ISOMLayout;
 	private JCheckBoxMenuItem CircleLayout;
+<<<<<<< HEAD:pssif/pssif.viz/src/main/java/gui/Main.java
 	private JCheckBoxMenuItem TestLayout;
+=======
+//	private JCheckBoxMenuItem TestLayout;
+>>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/gui/Main.java
 	private JMenu applyView;
 	private JMenu deleteView;
 	private JMenu graphLayout;
@@ -101,12 +118,26 @@ public class Main {
 		frame.setPreferredSize(new Dimension(width, height));
 		frame.setState(Frame.MAXIMIZED_BOTH);
 		
+<<<<<<< HEAD:pssif/pssif.viz/src/main/java/gui/Main.java
+=======
+		initFrame();
+	}
+	
+	private void initFrame()
+	{	
+		frame.getContentPane().removeAll();
+>>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/gui/Main.java
 		// create the Basic Menu Bar
 		frame.setJMenuBar(createFileMenu());
 		// create an information Panel
 		JPanel allPanel = new JPanel(new GridBagLayout());
+<<<<<<< HEAD:pssif/pssif.viz/src/main/java/gui/Main.java
 		allPanel.setSize(frame.getPreferredSize());
 		allPanel.setPreferredSize(frame.getPreferredSize());
+=======
+		allPanel.setSize(frame.getSize());
+		//allPanel.setPreferredSize(frame.getPreferredSize());
+>>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/gui/Main.java
 		allPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 		JLabel label = new JLabel("Please import a file");
 		label.setFont(new Font("Arial", Font.ITALIC, 25));
@@ -115,7 +146,10 @@ public class Main {
 		frame.add(allPanel);
 		
 		frame.pack();
+<<<<<<< HEAD:pssif/pssif.viz/src/main/java/gui/Main.java
 		frame.setLocationRelativeTo(null);
+=======
+>>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/gui/Main.java
 		frame.setVisible(true);
 	}
 	
@@ -125,6 +159,7 @@ public class Main {
 	 */
 	private JMenuBar createFileMenu()
 	{
+<<<<<<< HEAD:pssif/pssif.viz/src/main/java/gui/Main.java
 		JMenuBar menuBar = new JMenuBar();
 		
 		JMenu fileMenu = new JMenu("File");
@@ -168,6 +203,12 @@ public class Main {
 		fileMenu.add(newProject);
 		
 		
+=======
+		
+		JMenuBar menuBar = new JMenuBar();
+		
+		JMenu fileMenu = new JMenu("File");
+>>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/gui/Main.java
 		importFile = new JMenuItem("Import File");
 		importFile.addActionListener(new ActionListener() {
 			
@@ -176,7 +217,11 @@ public class Main {
 				if (importer.showPopup(frame))
 				{
 			        // Create the Views
+<<<<<<< HEAD:pssif/pssif.viz/src/main/java/gui/Main.java
 			        matrixView = new MatrixView();
+=======
+					matrixView = new MatrixView();	
+>>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/gui/Main.java
 					graphView = new GraphView();
 					// instance which manages all the filters
 					masterFilter = new MasterFilter(graphView);
@@ -280,6 +325,22 @@ public class Main {
 		
 		menuBar.getMenu(0).add(colorNodes);
 		
+<<<<<<< HEAD:pssif/pssif.viz/src/main/java/gui/Main.java
+=======
+		modelStatistics = new JMenuItem("Statistics");
+		modelStatistics.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				AttributeAggregation agg = new AttributeAggregation();
+				
+				agg.showInfoPanel();
+				
+			}
+		});
+		menuBar.getMenu(0).add(modelStatistics);
+		
+>>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/gui/Main.java
 		return menuBar;
 	}
 	
@@ -294,6 +355,17 @@ public class Main {
 		modeMenu.setIcon(null); 
 		modeMenu.setPreferredSize(new Dimension(80,20));
 		modeMenu.getItem(1).setSelected(true);
+<<<<<<< HEAD:pssif/pssif.viz/src/main/java/gui/Main.java
+=======
+		// as soon as Transforming is activated no Edge or Node should be selected anymore
+		modeMenu.getItem(0).addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				graphView.getGraph().clearPickSupport();
+			}
+		});
+>>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/gui/Main.java
 		
 		return modeMenu;
 	}
@@ -317,7 +389,11 @@ public class Main {
 				ISOMLayout.setSelected(false);
 				CircleLayout.setSelected(false);
 				KKLayout.setSelected(true);
+<<<<<<< HEAD:pssif/pssif.viz/src/main/java/gui/Main.java
 				TestLayout.setSelected(false);
+=======
+				//TestLayout.setSelected(false);
+>>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/gui/Main.java
 			}
 		});
 		graphLayout.add(KKLayout);
@@ -334,7 +410,11 @@ public class Main {
 				ISOMLayout.setSelected(false);
 				CircleLayout.setSelected(false);
 				FRLayout.setSelected(true);
+<<<<<<< HEAD:pssif/pssif.viz/src/main/java/gui/Main.java
 				TestLayout.setSelected(false);
+=======
+				//TestLayout.setSelected(false);
+>>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/gui/Main.java
 			}
 		});
 		graphLayout.add(FRLayout);
@@ -350,7 +430,11 @@ public class Main {
 				ISOMLayout.setSelected(false);
 				CircleLayout.setSelected(false);
 				SpringLayout.setSelected(true);
+<<<<<<< HEAD:pssif/pssif.viz/src/main/java/gui/Main.java
 				TestLayout.setSelected(false);
+=======
+				//TestLayout.setSelected(false);
+>>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/gui/Main.java
 			}
 		});
 		graphLayout.add(SpringLayout);
@@ -366,7 +450,11 @@ public class Main {
 				SpringLayout.setSelected(false);
 				CircleLayout.setSelected(false);
 				ISOMLayout.setSelected(true);
+<<<<<<< HEAD:pssif/pssif.viz/src/main/java/gui/Main.java
 				TestLayout.setSelected(false);
+=======
+				//TestLayout.setSelected(false);
+>>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/gui/Main.java
 			}
 		});
 		graphLayout.add(ISOMLayout);
@@ -382,12 +470,20 @@ public class Main {
 				SpringLayout.setSelected(false);
 				ISOMLayout.setSelected(false);
 				CircleLayout.setSelected(true);
+<<<<<<< HEAD:pssif/pssif.viz/src/main/java/gui/Main.java
 				TestLayout.setSelected(false);
+=======
+				//TestLayout.setSelected(false);
+>>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/gui/Main.java
 			}
 		});
 		graphLayout.add(CircleLayout);
 		
+<<<<<<< HEAD:pssif/pssif.viz/src/main/java/gui/Main.java
 		TestLayout = new JCheckBoxMenuItem(GraphVisualization.TestLayout);
+=======
+/*		TestLayout = new JCheckBoxMenuItem(GraphVisualization.TestLayout);
+>>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/gui/Main.java
 		TestLayout.addActionListener(new ActionListener() {
 			
 			@Override
@@ -400,7 +496,11 @@ public class Main {
 				TestLayout.setSelected(true);
 			}
 		});
+<<<<<<< HEAD:pssif/pssif.viz/src/main/java/gui/Main.java
 		graphLayout.add(TestLayout);
+=======
+		graphLayout.add(TestLayout);*/
+>>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/gui/Main.java
 		
 		return graphLayout;
 	}
@@ -471,6 +571,10 @@ public class Main {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				graphView.resetGraph();
+<<<<<<< HEAD:pssif/pssif.viz/src/main/java/gui/Main.java
+=======
+				initFrame();
+>>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/gui/Main.java
 			}
 		});
 
@@ -629,7 +733,12 @@ public class Main {
 			graphVizualistation.setEnabled(false);
 			matrixVizualistation.setEnabled(true);
 			graphLayout.setEnabled(true);
+<<<<<<< HEAD:pssif/pssif.viz/src/main/java/gui/Main.java
 			graphOperations.setEnabled(true);	
+=======
+			graphOperations.setEnabled(true);
+			modelStatistics.setEnabled(true);
+>>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/gui/Main.java
 		}
 		
 		if (matrixView.isActive())
@@ -640,6 +749,10 @@ public class Main {
 			matrixVizualistation.setEnabled(false);
 			graphLayout.setEnabled(false);
 			graphOperations.setEnabled(false);
+<<<<<<< HEAD:pssif/pssif.viz/src/main/java/gui/Main.java
+=======
+			modelStatistics.setEnabled(true);
+>>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/gui/Main.java
 		}
 			
 	}
@@ -649,7 +762,11 @@ public class Main {
 	 */
 	private void createNewGraphView ()
 	{
+<<<<<<< HEAD:pssif/pssif.viz/src/main/java/gui/Main.java
 		CreateNewGraphViewPopup popup = new CreateNewGraphViewPopup(graphView);
+=======
+		CreateNewGraphViewPopup popup = new CreateNewGraphViewPopup(graphView, masterFilter);
+>>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/gui/Main.java
 		boolean res = popup.showPopup();
 		
 		if (res)

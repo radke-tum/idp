@@ -1,29 +1,44 @@
 package graph.model;
 
+<<<<<<< HEAD:pssif/pssif.viz/src/main/java/graph/model/MyJunctionNode.java
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
+=======
+>>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/graph/model/MyJunctionNode.java
 import de.tum.pssif.core.common.PSSIFConstants;
 import de.tum.pssif.core.common.PSSIFOption;
 import de.tum.pssif.core.common.PSSIFValue;
 import de.tum.pssif.core.metamodel.Attribute;
+<<<<<<< HEAD:pssif/pssif.viz/src/main/java/graph/model/MyJunctionNode.java
 import de.tum.pssif.core.metamodel.PrimitiveDataType;
+=======
+>>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/graph/model/MyJunctionNode.java
 import de.tum.pssif.core.model.Node;
 
 public class MyJunctionNode implements IMyNode{
 	
 	private Node node;
+<<<<<<< HEAD:pssif/pssif.viz/src/main/java/graph/model/MyJunctionNode.java
 	private double sizeheight;
 	private double sizewidth;
+=======
+	//private double sizeheight;
+	//private double sizewidth;
+>>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/graph/model/MyJunctionNode.java
 	private MyJunctionNodeType type;
 	private boolean detailedOutput;
 	private boolean visible;
 	
 	//private static int limit = 5;
+<<<<<<< HEAD:pssif/pssif.viz/src/main/java/graph/model/MyJunctionNode.java
 	private static int lineLimit = 18;
+=======
+	//private static int lineLimit = 18;
+>>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/graph/model/MyJunctionNode.java
 	
 	public MyJunctionNode(Node node, MyJunctionNodeType type) {
 		this.node = node;
@@ -37,10 +52,18 @@ public class MyJunctionNode implements IMyNode{
 	 */
 		public String getName()
 		{
+<<<<<<< HEAD:pssif/pssif.viz/src/main/java/graph/model/MyJunctionNode.java
 			String res = findName().replaceAll("&lt;", "<");
 			res = res.replaceAll("<br>", "");
 			
 			return res;
+=======
+			//String res = findName().replaceAll("&lt;", "<");
+			//res = res.replaceAll("<br>", "");
+			
+			//return findName();
+			return type.getName();
+>>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/graph/model/MyJunctionNode.java
 		}
 		
 		/**
@@ -49,7 +72,12 @@ public class MyJunctionNode implements IMyNode{
 		 */
 		public String getRealName()
 		{
+<<<<<<< HEAD:pssif/pssif.viz/src/main/java/graph/model/MyJunctionNode.java
 			return findName();
+=======
+			//return findName();
+			return type.getName();
+>>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/graph/model/MyJunctionNode.java
 		}
 		
 		/**
@@ -120,7 +148,11 @@ public class MyJunctionNode implements IMyNode{
 		public String getNodeInformations(boolean details)
 		{
 			String output="";
+<<<<<<< HEAD:pssif/pssif.viz/src/main/java/graph/model/MyJunctionNode.java
 			if (details)
+=======
+			/*if (details)
+>>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/graph/model/MyJunctionNode.java
 			{
 				output ="<table border=\"0\">";
 				output+=" <tr> ";
@@ -142,12 +174,21 @@ public class MyJunctionNode implements IMyNode{
 			else
 			{
 				output+="<h3>&lt;&lt; "+type.getName()+" &gt;&gt; <br>"+ evalName(findName())+"</h3>";
+<<<<<<< HEAD:pssif/pssif.viz/src/main/java/graph/model/MyJunctionNode.java
 			}
+=======
+			}*/
+			output = "<h3>&lt;&lt; "+type.getName()+" &gt;&gt; <br>"+ findName()+"</h3>";
+>>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/graph/model/MyJunctionNode.java
 			
 			return output;
 		}
 		
+<<<<<<< HEAD:pssif/pssif.viz/src/main/java/graph/model/MyJunctionNode.java
 		private String evalName(String name)
+=======
+		/*private String evalName(String name)
+>>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/graph/model/MyJunctionNode.java
 		{
 			//String name = findName();
 			
@@ -196,9 +237,15 @@ public class MyJunctionNode implements IMyNode{
 			}
 
 			return name+" ";
+<<<<<<< HEAD:pssif/pssif.viz/src/main/java/graph/model/MyJunctionNode.java
 		}
 		
 		private int nameLines(String name)
+=======
+		}*/
+		
+	/*	private int nameLines(String name)
+>>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/graph/model/MyJunctionNode.java
 		{
 			if (name.length()>lineLimit)
 			{
@@ -237,8 +284,13 @@ public class MyJunctionNode implements IMyNode{
 
 			return 1;
 		}
+<<<<<<< HEAD:pssif/pssif.viz/src/main/java/graph/model/MyJunctionNode.java
 		
 		public List<Integer> getSpaceIndexes(String value)
+=======
+		*/
+	/*	public List<Integer> getSpaceIndexes(String value)
+>>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/graph/model/MyJunctionNode.java
 		{
 			int position = 0;
 			
@@ -259,13 +311,21 @@ public class MyJunctionNode implements IMyNode{
 			}
 			
 			return res;
+<<<<<<< HEAD:pssif/pssif.viz/src/main/java/graph/model/MyJunctionNode.java
 		}
+=======
+		}*/
+>>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/graph/model/MyJunctionNode.java
 		
 		/**
 		 * Get all the Attributes from this node
 		 * @return List with the attributes. Format : Name = Value in (Unit) Datatype 
 		 */
+<<<<<<< HEAD:pssif/pssif.viz/src/main/java/graph/model/MyJunctionNode.java
 		private List<String> calcAttr()
+=======
+		/*private List<String> calcAttr()
+>>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/graph/model/MyJunctionNode.java
 		{
 			List<String> attributes = new LinkedList<String>();
 			
@@ -316,7 +376,11 @@ public class MyJunctionNode implements IMyNode{
 			}
 			
 			return attributes;
+<<<<<<< HEAD:pssif/pssif.viz/src/main/java/graph/model/MyJunctionNode.java
 		}
+=======
+		}*/
+>>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/graph/model/MyJunctionNode.java
 		
 		
 

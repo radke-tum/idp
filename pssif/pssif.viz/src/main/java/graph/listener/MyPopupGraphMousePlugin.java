@@ -3,13 +3,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.List;
-import java.util.Map.Entry;
 
 import javax.swing.AbstractAction;
 import javax.swing.JComboBox;
@@ -22,23 +18,12 @@ import javax.swing.JPopupMenu;
 import javax.swing.JTextField;
 
 import model.ModelBuilder;
-import reqtool.IssueResolver;
-import reqtool.RequirementTracer;
-import reqtool.RequirementVersionManager;
-import reqtool.TestCaseVerifier;
-import reqtool.VersionManager;
-import reqtool.graph.IssueResolverPopup;
-import reqtool.graph.TestCaseCreatorPopup;
-import reqtool.graph.VersionManagerPopup;
-import de.tum.pssif.core.common.PSSIFConstants;
-import de.tum.pssif.core.common.PSSIFOption;
-import de.tum.pssif.core.common.PSSIFValue;
-import de.tum.pssif.core.metamodel.Attribute;
-import de.tum.pssif.core.metamodel.PSSIFCanonicMetamodelCreator;
 import edu.uci.ics.jung.algorithms.layout.GraphElementAccessor;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.control.AbstractPopupGraphMousePlugin;
+import graph.model.IMyNode;
 import graph.model.MyEdge;
+import graph.model.MyJunctionNode;
 import graph.model.MyNode;
 import graph.model.MyNodeType;
 import gui.graph.GraphVisualization;
@@ -64,60 +49,33 @@ public class MyPopupGraphMousePlugin extends AbstractPopupGraphMousePlugin {
      * if the user clicked somewhere on the graph canvas. What should be done
      */
     protected void handlePopup(MouseEvent e) {
-        VisualizationViewer<MyNode,MyEdge> vv = (VisualizationViewer<MyNode,MyEdge>)e.getSource();
+        VisualizationViewer<IMyNode,MyEdge> vv = (VisualizationViewer<IMyNode,MyEdge>)e.getSource();
     	
         Point2D p = e.getPoint();
 
-        GraphElementAccessor<MyNode,MyEdge> pickSupport = vv.getPickSupport();
+        GraphElementAccessor<IMyNode,MyEdge> pickSupport = vv.getPickSupport();
         if(pickSupport != null) {
-            MyNode node = pickSupport.getVertex(vv.getGraphLayout(), p.getX(), p.getY());
+            IMyNode node = pickSupport.getVertex(vv.getGraphLayout(), p.getX(), p.getY());
             // check where did the user click
-			if (node != null) {
-				// if the user made a right click on a Node
-				JPopupMenu popup = new JPopupMenu();
-				JMenu submenu = createEdge(e, node);
-				popup.add(submenu);
-
-				
-				if (node.getNodeType().equals((ModelBuilder.getNodeTypes().getValue(PSSIFCanonicMetamodelCreator.N_REQUIREMENT)))) {
-					
-					JMenu reqMenu = new JMenu("Requirement Tool");
-					JMenu versMenu = new JMenu("Version Management");
-
-					JMenuItem subItem1 = traceRequirement(e, node);
-					JMenuItem subItem2 = createTestCase(e, node);
-					JMenuItem subItem3 = createNewVersion(e, node);
-					JMenuItem subItem4 = showHideVersions(e, node);
-					reqMenu.add(subItem1);
-					reqMenu.add(subItem2);
-					reqMenu.add(versMenu);
-					versMenu.add(subItem3);
-					versMenu.add(subItem4);
-					popup.add(reqMenu);
-				} else if (node.getNodeType().equals((ModelBuilder.getNodeTypes().getValue(PSSIFCanonicMetamodelCreator.N_TEST_CASE)))) {
-					JMenuItem subItem = verifyTestCase(e, node);
-					popup.add(subItem);
-
-				} else if (node.getNodeType().equals((ModelBuilder.getNodeTypes().getValue(PSSIFCanonicMetamodelCreator.N_ISSUE)))) {
-					JMenuItem subItem = resolveIssue(e, node);
-					popup.add(subItem);
-
-					
-				}
-				if (ModelBuilder.getNodeTypes().getValue(PSSIFCanonicMetamodelCreator.N_SOL_ARTIFACT).getType().isAssignableFrom(node.getNodeType().getType())) {
-					
-					JMenu versMenu = new JMenu("Version Management");
-					JMenuItem subItem3 = createNewVersion(e, node);
-					JMenuItem subItem4 = showHideVersions(e, node);
-					versMenu.add(subItem3);
-					versMenu.add(subItem4);
-					popup.add(versMenu);
-
-			}
-
-
-				popup.show(vv, e.getX(), e.getY());
-			}
+            if(node != null) {
+            	
+            	if (node instanceof MyNode)
+            	{
+	            	// if the user made a right click on a Node
+            		
+            		
+	            	JPopupMenu popup = new JPopupMenu();
+	            	JMenu submenu =createEdge(e,(MyNode)node);
+	            	
+	            	popup.add(submenu);
+	            	
+	            	popup.show(vv, e.getX(), e.getY());
+            	}
+            	if (node instanceof MyJunctionNode)
+            	{
+            		// Not implemented
+            	}
+            } 
             else {
             	// not on a node, so show the new Node popup
             	createNode(e);
@@ -125,8 +83,7 @@ public class MyPopupGraphMousePlugin extends AbstractPopupGraphMousePlugin {
         }
     }
     
-
-/**
+   /**
     * Create the popup which provides the user the possibility to add a Node
     * @param e The MouseEvent which triggered the action
     */
@@ -156,7 +113,6 @@ public class MyPopupGraphMousePlugin extends AbstractPopupGraphMousePlugin {
             	if (NodeName.getText()!=null && NodeName.getText().length()>0)
             	{
             		ModelBuilder.addNewNodeFromGUI(NodeName.getText(), (MyNodeType) Nodetype.getSelectedItem());
-            		ModelBuilder.printVisibleStuff();
             		gViz.updateGraph();
             	}                                       	
             	
@@ -173,7 +129,7 @@ public class MyPopupGraphMousePlugin extends AbstractPopupGraphMousePlugin {
      */
     private JMenu createEdge ( MouseEvent e, MyNode selectedNode)
     {
-    	JMenu submenu = new JMenu("Add Edge");
+    	JMenu submenu = new JMenu("Create Edge");
 
        	LinkedList<MyNode> col = new LinkedList<MyNode>();
        	
@@ -201,157 +157,11 @@ public class MyPopupGraphMousePlugin extends AbstractPopupGraphMousePlugin {
        		menuItem.addActionListener(el);
        		submenu.add(menuItem);
        	}
-           
+        
+       	MenuScroller.setScrollerFor(submenu, 15, 125, 0, 0);
+       	
        	return submenu;
     }
-    
-    /**
-     * provide the SubMenu options to trace a requirement
-     * @param e The MouseEvent which triggered the action
-     * @param selectedNode The Node which was selected when the user pushed the right mouse button
-     * @return a menu with all the option to trace a requirement
-     */
-    private JMenuItem traceRequirement ( MouseEvent e, final MyNode selectedNode)
-    {
-    	JMenuItem submenu;
-        if (RequirementTracer.isTracedNode(selectedNode)) {
-         submenu = new JMenuItem("Untrace requirement");
-         submenu.addActionListener(new ActionListener() {
-          
-       @Override
-       public void actionPerformed(ActionEvent e) {
-        RequirementTracer.stopTracing();
-        gViz.stopTracingNodes(); 
-       }
-       
-      });
-        } else {
-         submenu = new JMenuItem("Trace requirement");
-         submenu.addActionListener(new ActionListener() {
-       
-       @Override
-       public void actionPerformed(ActionEvent e) {
-        RequirementTracer.traceRequirement(selectedNode);;
-        gViz.traceNodes(); 
-       }
-      });
-        }
-         
-           return submenu;
-    }
-    
-    private JMenuItem createTestCase(MouseEvent e, final MyNode selectedNode) {
- 		// TODO Auto-generated method stub
-    	
-    	JMenuItem submenu;
-    	
-    	submenu = new JMenuItem("Create Test Case");
-    	submenu.addActionListener(new ActionListener() {
-			
-    		@Override
-        	public void actionPerformed(ActionEvent e) {
-    			TestCaseCreatorPopup crPopup = new TestCaseCreatorPopup(selectedNode, gViz);
-    			crPopup.showPopup();
-        	}
-		}
-    	);
-    	
-    	    	
- 		return submenu;
- 	}
-    
-    private JMenuItem verifyTestCase(MouseEvent e, final MyNode selectedNode) {
-    	
-    	JMenuItem submenu;
-    	
-    	submenu = new JMenuItem("Verify Test Case");
-    	submenu.addActionListener(new ActionListener() {
-			
-    		@Override
-        	public void actionPerformed(ActionEvent e) {
-    			new TestCaseVerifier(selectedNode).verifyTestCase();
-    			gViz.updateGraph();
-        	}
-		}
-    	);
-    	
-    	    	
- 		return submenu;
-	}
-    
-    private JMenuItem showHideVersions(MouseEvent e, final MyNode selectedNode) {
- 		// TODO Auto-generated method stub
-    	
-    	JMenuItem submenu;
-    	
-    	if (RequirementVersionManager.getMinVersion(selectedNode).isVisible()){
-    	
-    		submenu = new JMenuItem("Hide Versions");
-        	submenu.addActionListener(new ActionListener() {
-    			
-        		@Override
-            	public void actionPerformed(ActionEvent e){
-        			RequirementVersionManager.hideVersions(gViz, selectedNode);
-        			gViz.updateGraph();
-            	}
-    		}
-        	);
-    	} else {
-    		submenu = new JMenuItem("Show Versions");
-        	submenu.addActionListener(new ActionListener() {
-    			
-        		@Override
-            	public void actionPerformed(ActionEvent e){
-        			RequirementVersionManager.showVersions(gViz, selectedNode);
-        			gViz.updateGraph();
-            	}
-    		}
-        	);
-    		
-    	}
-    	
-    	    	
- 		return submenu;
- 	}
-   
-    
-    private JMenuItem createNewVersion(final MouseEvent mouseEvent, final MyNode node) {
-    	JMenuItem submenu;
-    	
-    	submenu = new JMenuItem("Create new version");
-    	submenu.addActionListener(new ActionListener() {
-			
-    		@Override
-        	public void actionPerformed(ActionEvent e) {
-    			if (VersionManagerPopup.showPopup(node)) {
-    				gViz.updateGraph();
-    			}
-            }
-
-        });
-    	    	
- 		return submenu;
- 	}
-    
-    private JMenuItem resolveIssue(MouseEvent e, final MyNode selectedNode)  {
-    	
-    	JMenuItem submenu;
-    	
-    	submenu = new JMenuItem("Resolve Issue");
-    	submenu.addActionListener(new ActionListener() {
-			
-    		@Override
-        	public void actionPerformed(ActionEvent e) {
-    		IssueResolverPopup popup = new IssueResolverPopup(selectedNode);
-    		popup.showPopup(gViz);
-    		gViz.updateGraph();
-    		}
-		}
-    	);
-    	
-    	    	
- 		return submenu;
-	}
     
     /**
      * Action listener for the Edge creation

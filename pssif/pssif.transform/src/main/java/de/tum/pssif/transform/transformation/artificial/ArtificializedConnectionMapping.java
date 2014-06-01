@@ -35,7 +35,7 @@ public class ArtificializedConnectionMapping extends ViewedConnectionMapping {
       }
       result.add(candidate);
     }
-    return PSSIFOption.many(result);
+    return filter(PSSIFOption.many(result));
   }
 
   @Override
@@ -50,7 +50,7 @@ public class ArtificializedConnectionMapping extends ViewedConnectionMapping {
       }
       result.add(candidate);
     }
-    return PSSIFOption.many(result);
+    return filter(PSSIFOption.many(result));
   }
 
   @Override
@@ -65,6 +65,6 @@ public class ArtificializedConnectionMapping extends ViewedConnectionMapping {
       }
       result.add(candidate);
     }
-    return PSSIFOption.many(result);
+    return filter(PSSIFOption.many(result));
   }
 }

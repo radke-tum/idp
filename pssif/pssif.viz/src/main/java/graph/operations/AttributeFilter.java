@@ -1,6 +1,12 @@
 package graph.operations;
 
+<<<<<<< HEAD:pssif/pssif.viz/src/main/java/graph/operations/AttributeFilter.java
 import graph.model.MyEdge;
+=======
+import graph.model.IMyNode;
+import graph.model.MyEdge;
+import graph.model.MyJunctionNode;
+>>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/graph/operations/AttributeFilter.java
 import graph.model.MyNode;
 
 import java.math.BigDecimal;
@@ -115,6 +121,11 @@ public class AttributeFilter {
 				}
 			}
 		}
+<<<<<<< HEAD:pssif/pssif.viz/src/main/java/graph/operations/AttributeFilter.java
+=======
+		checkInvisibleEdges();
+		checkConjunctionNodes();
+>>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/graph/operations/AttributeFilter.java
 	}
 	
 	/**
@@ -136,7 +147,11 @@ public class AttributeFilter {
 	 * @param attributeName  the attribute name on which the Edges should be filtered
 	 * @param op the operation ( less, greater, equal,...) which should be executed on the attribute
 	 * @param RefValue the given value to which the node attribute values should be compared to
+<<<<<<< HEAD:pssif/pssif.viz/src/main/java/graph/operations/AttributeFilter.java
 	 * * @param visiblity defines if the Edges which fulfill the condition should be visible or invisible
+=======
+	 * @param visiblity defines if the Edges which fulfill the condition should be visible or invisible
+>>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/graph/operations/AttributeFilter.java
 	 * @throws Exception if the given condition contains a problem. Datatypes cannot be compared, Wrong data format,..
 	 */
 	private static void filterEdgeWithResult(String attributeName, AttributeOperations op, Object RefValue, boolean visiblity) throws Exception
@@ -197,11 +212,20 @@ public class AttributeFilter {
 					
 					if (result == false)
 					{
+<<<<<<< HEAD:pssif/pssif.viz/src/main/java/graph/operations/AttributeFilter.java
+=======
+						//System.out.println("Not visible");
+>>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/graph/operations/AttributeFilter.java
 						currentEdge.setVisible(visiblity);
 					}
 				}
 			}
 		}
+<<<<<<< HEAD:pssif/pssif.viz/src/main/java/graph/operations/AttributeFilter.java
+=======
+		checkInvisibleEdges();
+		checkConjunctionNodes();
+>>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/graph/operations/AttributeFilter.java
 	}
 	
 	/**
@@ -255,7 +279,11 @@ public class AttributeFilter {
 	 * @param RefValue the value to which the attribute value should be compared to
 	 * @return true if the condition is fulfilled, false otherwise 
 	 */
+<<<<<<< HEAD:pssif/pssif.viz/src/main/java/graph/operations/AttributeFilter.java
 	public static boolean BooleanEval (PSSIFValue attrValue, AttributeOperations op , Object RefValue)
+=======
+	private static boolean BooleanEval (PSSIFValue attrValue, AttributeOperations op , Object RefValue)
+>>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/graph/operations/AttributeFilter.java
 	{
 		boolean result = false;
 		
@@ -286,7 +314,11 @@ public class AttributeFilter {
 	 * @param RefValue the value to which the attribute value should be compared to
 	 * @return true if the condition is fulfilled, false otherwise 
 	 */
+<<<<<<< HEAD:pssif/pssif.viz/src/main/java/graph/operations/AttributeFilter.java
 	public static boolean StringEval (PSSIFValue attrValue, AttributeOperations op , Object RefValue)
+=======
+	private static boolean StringEval (PSSIFValue attrValue, AttributeOperations op , Object RefValue)
+>>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/graph/operations/AttributeFilter.java
 	{
 		boolean result = false;
 		
@@ -320,7 +352,11 @@ public class AttributeFilter {
 	 * @param RefValue the value to which the attribute value should be compared to
 	 * @return true if the condition is fulfilled, false otherwise 
 	 */
+<<<<<<< HEAD:pssif/pssif.viz/src/main/java/graph/operations/AttributeFilter.java
 	public static boolean DateEval (PSSIFValue attrValue, AttributeOperations op , Object RefValue) throws ParseException
+=======
+	private static boolean DateEval (PSSIFValue attrValue, AttributeOperations op , Object RefValue) throws ParseException
+>>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/graph/operations/AttributeFilter.java
 	{
 		boolean result = false;
 		
@@ -354,7 +390,11 @@ public class AttributeFilter {
 	 * @param RefValue the value to which the attribute value should be compared to
 	 * @return true if the condition is fulfilled, false otherwise 
 	 */
+<<<<<<< HEAD:pssif/pssif.viz/src/main/java/graph/operations/AttributeFilter.java
 	public static boolean DecimalEval (PSSIFValue attrValue, AttributeOperations op , Object RefValue)
+=======
+	private static boolean DecimalEval (PSSIFValue attrValue, AttributeOperations op , Object RefValue)
+>>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/graph/operations/AttributeFilter.java
 	{
 		boolean result = false;
 		
@@ -390,7 +430,11 @@ public class AttributeFilter {
 	 * @param RefValue the value to which the attribute value should be compared to
 	 * @return true if the condition is fulfilled, false otherwise 
 	 */
+<<<<<<< HEAD:pssif/pssif.viz/src/main/java/graph/operations/AttributeFilter.java
 	public static boolean IntegerEval (PSSIFValue attrValue, AttributeOperations op , Object RefValue)
+=======
+	private static boolean IntegerEval (PSSIFValue attrValue, AttributeOperations op , Object RefValue)
+>>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/graph/operations/AttributeFilter.java
 	{
 		boolean result = false;
 		
@@ -563,7 +607,11 @@ public class AttributeFilter {
 	 * @param activeConditions conditions which are currently active
 	 * @throws Exception if the given condition contains a problem. Datatypes cannot be compared, Wrong data format,..
 	 */
+<<<<<<< HEAD:pssif/pssif.viz/src/main/java/graph/operations/AttributeFilter.java
 	private static void applyAllOtherNodeConditions (String condition, LinkedList<String> activeConditions) throws Exception
+=======
+/*	private static void applyAllOtherNodeConditions (String condition, LinkedList<String> activeConditions) throws Exception
+>>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/graph/operations/AttributeFilter.java
 	{
 		for (Entry<String, ConditionContainer> e : nodeConditions.entrySet())
 		{
@@ -573,7 +621,11 @@ public class AttributeFilter {
 				filterNode(c.attributeName, c.operation, c.refValue);
 			}
 		}
+<<<<<<< HEAD:pssif/pssif.viz/src/main/java/graph/operations/AttributeFilter.java
 	}
+=======
+	}*/
+>>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/graph/operations/AttributeFilter.java
 	
 	/**
 	 * Apply all the existing Edge conditions to the graph
@@ -581,7 +633,11 @@ public class AttributeFilter {
 	 * @param activeConditions conditions which are currently active
 	 * @throws Exception if the given condition contains a problem. Datatypes cannot be compared, Wrong data format,..
 	 */
+<<<<<<< HEAD:pssif/pssif.viz/src/main/java/graph/operations/AttributeFilter.java
 	private static void applyAllOtherEdgeConditions (String condition, LinkedList<String> activeConditions) throws Exception
+=======
+	/*private static void applyAllOtherEdgeConditions (String condition, LinkedList<String> activeConditions) throws Exception
+>>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/graph/operations/AttributeFilter.java
 	{
 		for (Entry<String, ConditionContainer> e : edgeConditions.entrySet())
 		{
@@ -591,7 +647,11 @@ public class AttributeFilter {
 				filterEdge(c.attributeName, c.operation, c.refValue);
 			}
 		}
+<<<<<<< HEAD:pssif/pssif.viz/src/main/java/graph/operations/AttributeFilter.java
 	}
+=======
+	}*/
+>>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/graph/operations/AttributeFilter.java
 	
 	/**
 	 * Add a new Node Condition
@@ -627,6 +687,131 @@ public class AttributeFilter {
 		return condition;
 	}
 	
+<<<<<<< HEAD:pssif/pssif.viz/src/main/java/graph/operations/AttributeFilter.java
+=======
+	private static void checkConjunctionNodes()
+	{
+		HashMap<MyJunctionNode, LinkedList<Boolean>> mappingIncomingJunctionVisibility = new HashMap<MyJunctionNode, LinkedList<Boolean>>();
+		HashMap<MyJunctionNode, LinkedList<Boolean>> mappingOutgoingJunctionVisibility = new HashMap<MyJunctionNode, LinkedList<Boolean>>();
+
+		for (MyEdge e : ModelBuilder.getAllEdges())
+		{
+			//if (e.isVisible())
+			//{
+				// handle JunctionNodes
+				if (e.getDestinationNode() instanceof MyJunctionNode)
+				{
+					MyJunctionNode tmp = (MyJunctionNode) e.getDestinationNode();
+					LinkedList<Boolean> bools = mappingIncomingJunctionVisibility.get(tmp);
+					
+					if (bools == null)
+						bools = new LinkedList<Boolean>();
+					
+					bools.add(e.isPartnersVisible() && e.isVisible());
+					//bools.add(e.isVisible());
+					mappingIncomingJunctionVisibility.put(tmp, bools);
+				}
+				
+				if (e.getSourceNode() instanceof MyJunctionNode)
+				{
+					MyJunctionNode tmp = (MyJunctionNode) e.getSourceNode();
+					LinkedList<Boolean> bools = mappingOutgoingJunctionVisibility.get(tmp);
+					
+					if (bools == null)
+						bools = new LinkedList<Boolean>();
+					
+					bools.add(e.isPartnersVisible()&& e.isVisible());
+					//bools.add(e.isVisible());
+					mappingOutgoingJunctionVisibility.put(tmp, bools);
+				}
+			//}
+		}
+		
+		HashMap<MyJunctionNode, Boolean> result = new HashMap<MyJunctionNode, Boolean>();
+		
+		for (Entry<MyJunctionNode, LinkedList<Boolean>> entry : mappingIncomingJunctionVisibility.entrySet())
+		{
+			Boolean res= false;
+			
+			for (Boolean b : entry.getValue())
+			{
+				res = res || b;
+			}
+			
+			Object tmpValue = result.get(entry.getKey());
+			if (tmpValue ==null)
+			{
+				result.put(entry.getKey(), res);
+			}
+			else
+			{
+				Boolean b = (Boolean) tmpValue;
+				result.put(entry.getKey(), b&&res);
+			}
+		}
+		
+		for (Entry<MyJunctionNode, LinkedList<Boolean>> entry : mappingOutgoingJunctionVisibility.entrySet())
+		{
+			Boolean res= false;
+			
+			for (Boolean b : entry.getValue())
+			{
+				res = res || b;
+			}
+			
+			Object tmpValue = result.get(entry.getKey());
+			if (tmpValue ==null)
+			{
+				result.put(entry.getKey(), res);
+			}
+			else
+			{
+				Boolean b = (Boolean) tmpValue;
+				result.put(entry.getKey(), b&&res);
+			}
+		}
+		
+		for (Entry<MyJunctionNode, Boolean> entry : result.entrySet())
+		{
+			entry.getKey().setVisible(entry.getValue());
+		}
+		//checkInvisibleEdges();
+	}
+	
+	private static void checkInvisibleEdges()
+	{
+		for (MyEdge e : ModelBuilder.getAllEdges())
+		{
+			//if (e.isVisible())
+			//{
+				IMyNode source = e.getSourceNode();
+				IMyNode destination = e.getDestinationNode();
+				
+				if (source instanceof MyNode && destination instanceof MyNode)
+				{
+					e.setPartnersVisible(source.isVisible() && destination.isVisible());
+					/*if (e.isVisible())
+						e.setVisible(source.isVisible() && destination.isVisible());*/
+				}
+				else
+				{
+					if (source instanceof MyNode)
+					{
+						e.setPartnersVisible(source.isVisible());
+						//e.setVisible(source.isVisible());
+					}
+					
+					if (destination instanceof MyNode)
+					{
+						e.setPartnersVisible(destination.isVisible());
+						//e.setVisible(destination.isVisible());
+					}
+				}
+			//}
+		}
+	}
+	
+>>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/graph/operations/AttributeFilter.java
 	/**
 	 * A Helper class. Should only be used in the AttributeFilter class
 	 * Holds basically all condition informations in a raw form

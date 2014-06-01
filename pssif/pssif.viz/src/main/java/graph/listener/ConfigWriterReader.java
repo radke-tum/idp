@@ -236,7 +236,11 @@ public class ConfigWriterReader {
 				//System.out.println("From XML " +nodeTypeValue);
 				
 				// get the color value from the xml file
+<<<<<<< HEAD:pssif/pssif.viz/src/main/java/graph/listener/ConfigWriterReader.java
 				String colorValue = eElement.getAttribute(ATTR_COLOR);
+=======
+				//String colorValue = eElement.getAttribute(ATTR_COLOR);
+>>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/graph/listener/ConfigWriterReader.java
 				
 				// Build a  MyNodeType from the String value from the xml
 				MyNodeType t = ModelBuilder.getNodeTypes().getValue(nodeTypeValue);
@@ -245,7 +249,11 @@ public class ConfigWriterReader {
 				Color newColor = newColorMapping.get(t);
 			//	System.out.println("new Color "+newColor);
 				
+<<<<<<< HEAD:pssif/pssif.viz/src/main/java/graph/listener/ConfigWriterReader.java
 				Color oldColor = new Color(Integer.valueOf(colorValue));
+=======
+				//Color oldColor = new Color(Integer.valueOf(colorValue));
+>>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/graph/listener/ConfigWriterReader.java
 				//System.out.println("From XML Color "+oldColor);
 				
 				// even if we do not need to update the MyNodeType, we do not need to check it later again

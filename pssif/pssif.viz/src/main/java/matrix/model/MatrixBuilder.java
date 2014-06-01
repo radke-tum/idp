@@ -3,10 +3,12 @@ package matrix.model;
 import graph.model.IMyNode;
 import graph.model.MyEdge;
 import graph.model.MyEdgeType;
+import graph.model.MyJunctionNode;
 import graph.model.MyNode;
 import graph.model.MyNodeType;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -110,7 +112,7 @@ public class MatrixBuilder {
 			if (node instanceof MyNode)
 			{
 				MyNode source = (MyNode) node;
-				//MyNode dest = e.getDestinationNode();
+				IMyNode dest = e.getDestinationNode();
 				
 				LinkedList<MyEdge> tmp = mapping.get(source);
 				
@@ -119,14 +121,28 @@ public class MatrixBuilder {
 				{ 
 					// no entry yet
 					tmp = new LinkedList<MyEdge>();
-					tmp.add(e);
+				}
+				
+				if (dest instanceof MyJunctionNode)
+				{	
+					HashSet<MyEdge> secondEdge = findJunctionSourceNode(ModelBuilder.getAllEdges(), (MyJunctionNode) dest);
+					
+					LinkedList<MyEdge> tmpEdges = new LinkedList<MyEdge>();
+					for (MyEdge se :secondEdge)
+					{
+						tmpEdges.add( new MyEdge(null, se.getEdgeType(), source, se.getDestinationNode())) ;
+					}
+					
+					// add the temporary edges 
+					tmp.addAll(tmpEdges);
 					mapping.put(source, tmp);
+					
 				}
 				else
 				{
-					// there is an entry
 					tmp.add(e);
 					mapping.put(source, tmp);
+					
 				}
 			}
 		}
@@ -225,4 +241,32 @@ public class MatrixBuilder {
 		}
 		return res;
 	}
+	
+	/**
+	 * find the Edges where a specific MyJunctionNode is the source 
+	 * @param connections a set of Edges which will be tested
+	 * @param node the source MyJunctionNode
+	 * @return a Set with all the Edges which have as source the parameter MyJunctionNode
+	 */
+	private HashSet<MyEdge> findJunctionSourceNode(LinkedList<MyEdge> connections, MyJunctionNode node)
+	{
+		HashSet<MyEdge> res = new HashSet<MyEdge>();
+		for (MyEdge e : connections) 
+		{
+			if (e.getSourceNode().equals(node)) 
+			{
+				if (e.getDestinationNode() instanceof MyJunctionNode)
+				{
+					res.addAll(findJunctionSourceNode(ModelBuilder.getAllEdges(),(MyJunctionNode) e.getDestinationNode()));
+				}
+				else
+				{
+					res.add(e);
+				}
+			}
+		}
+		return res;
+	}
+	
+	
 }

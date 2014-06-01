@@ -1,5 +1,6 @@
 package graph.model;
 
+<<<<<<< HEAD:pssif/pssif.viz/src/main/java/graph/model/MyEdge.java
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
@@ -11,6 +12,17 @@ import java.util.List;
 
 
 
+=======
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedList;
+>>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/graph/model/MyEdge.java
 
 import de.tum.pssif.core.common.PSSIFConstants;
 import de.tum.pssif.core.common.PSSIFOption;
@@ -33,10 +45,18 @@ public class MyEdge {
 	private IMyNode destination;
 	private Edge edge;
 	private boolean visible;
+<<<<<<< HEAD:pssif/pssif.viz/src/main/java/graph/model/MyEdge.java
 	private boolean collapseEdge;
 	
 	/**
 	 * Creates a new MyEdge2 Object
+=======
+	private boolean partnersVisible;
+	private boolean collapseEdge;
+	
+	/**
+	 * Creates a new MyEdge Object
+>>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/graph/model/MyEdge.java
 	 * @param edge :  an edge from the PSS-IF Model
 	 * @param type :  the type of the edge
 	 * @param source : the startpoint of the Edge
@@ -49,6 +69,10 @@ public class MyEdge {
 		this.edge = edge;
 		this.visible = true;
 		this.collapseEdge = false;
+<<<<<<< HEAD:pssif/pssif.viz/src/main/java/graph/model/MyEdge.java
+=======
+		this.partnersVisible = true;
+>>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/graph/model/MyEdge.java
 	}
 	
 	/**
@@ -152,6 +176,7 @@ public class MyEdge {
 	}
 	
 	/**
+<<<<<<< HEAD:pssif/pssif.viz/src/main/java/graph/model/MyEdge.java
 	 * Get all the attributes from the PSS-IF Model Edge
 	 * @return LinkedList<String> with the formated information from the edge. Might be empty
 	 */
@@ -161,6 +186,8 @@ public class MyEdge {
 	}
 	
 	/**
+=======
+>>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/graph/model/MyEdge.java
 	 * Get a Mapping from an Attribute name to an Attribute object which contains all the infomations
 	 * @return a Mapping from an Attribute name to an Attribute.  Might be empty
 	 */
@@ -246,7 +273,11 @@ public class MyEdge {
 				try 
 				{
 					Date data = parseDate((String) value);
+<<<<<<< HEAD:pssif/pssif.viz/src/main/java/graph/model/MyEdge.java
 					
+=======
+					System.out.println("Date after parsing "+data);
+>>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/graph/model/MyEdge.java
 					PSSIFValue res = PrimitiveDataType.DATE.fromObject(data);
 					attribute.set(edge, PSSIFOption.one(res));
 				}
@@ -318,6 +349,7 @@ public class MyEdge {
 		try {
 			formatter = new SimpleDateFormat("dd/MM/yyyy");
 			return formatter.parse(dateInString);
+<<<<<<< HEAD:pssif/pssif.viz/src/main/java/graph/model/MyEdge.java
 		} catch (ParseException e) { }
 		
 		try {
@@ -344,11 +376,94 @@ public class MyEdge {
 			formatter = new SimpleDateFormat("dd.MM.yyyy");
 			return formatter.parse(dateInString);
 		} catch (ParseException e) { }
+=======
+		} catch (ParseException e) {
+			//e.printStackTrace();
+		}
+		
+		try {
+			formatter = new SimpleDateFormat("dd-MM-yyyy");
+			return formatter.parse(dateInString);
+		} catch (ParseException e) {
+			//e.printStackTrace();
+		}
+		
+		try {
+			formatter = new SimpleDateFormat("dd.MM.yyyy");
+			return formatter.parse(dateInString);
+		} catch (ParseException e) {
+			//e.printStackTrace();
+		}
+		//----------------
+		
+		try {
+			formatter = new SimpleDateFormat("d/M/yyyy");
+			return formatter.parse(dateInString);
+		} catch (ParseException e) {
+			//e.printStackTrace();
+		}
+		
+		try {
+			formatter = new SimpleDateFormat("d-M-yyyy");
+			return formatter.parse(dateInString);
+		} catch (ParseException e) {
+			//e.printStackTrace();
+		}
+		
+		try {
+			formatter = new SimpleDateFormat("d.M.yyyy");
+			return formatter.parse(dateInString);
+		} catch (ParseException e) {
+			//e.printStackTrace();
+		}
+		//----------------------------------------------
+		try {
+			formatter = new SimpleDateFormat("d/MM/yyyy");
+			return formatter.parse(dateInString);
+		} catch (ParseException e) {
+			//e.printStackTrace();
+		}
+		
+		try {
+			formatter = new SimpleDateFormat("d-MM-yyyy");
+			return formatter.parse(dateInString);
+		} catch (ParseException e) {
+			//e.printStackTrace();
+		}
+		
+		try {
+			formatter = new SimpleDateFormat("d.MM.yyyy");
+			return formatter.parse(dateInString);
+		} catch (ParseException e) {
+			//e.printStackTrace();
+		}
+		//----------------------------------------------
+		try {
+			formatter = new SimpleDateFormat("dd/M/yyyy");
+			return formatter.parse(dateInString);
+		} catch (ParseException e) {
+			//e.printStackTrace();
+		}
+		
+		try {
+			formatter = new SimpleDateFormat("dd-M-yyyy");
+			return formatter.parse(dateInString);
+		} catch (ParseException e) {
+			//e.printStackTrace();
+		}
+>>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/graph/model/MyEdge.java
 		
 		try {
 			formatter = new SimpleDateFormat("dd.M.yyyy");
 			return formatter.parse(dateInString);
+<<<<<<< HEAD:pssif/pssif.viz/src/main/java/graph/model/MyEdge.java
 		} catch (ParseException e) { }
+=======
+		} catch (ParseException e) {
+			//e.printStackTrace();
+		}
+		
+>>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/graph/model/MyEdge.java
 		return null;
 		
 	}
@@ -357,7 +472,11 @@ public class MyEdge {
 	 * Get a list with all the attributes from this Node
 	 * @return A list which contains a list with all the attribute information. Information Order in the list : Name, Value, Unit, Datatype
 	 */
+<<<<<<< HEAD:pssif/pssif.viz/src/main/java/graph/model/MyEdge.java
 	public LinkedList<LinkedList<String>> getAttributesForTable()
+=======
+	public LinkedList<LinkedList<String>> getAttributes()
+>>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/graph/model/MyEdge.java
 	{
 		LinkedList<LinkedList<String>> attributes = new LinkedList<LinkedList<String>>();
 		
@@ -379,7 +498,19 @@ public class MyEdge {
 			
 			String attrValue="";
 			if (value !=null)
+<<<<<<< HEAD:pssif/pssif.viz/src/main/java/graph/model/MyEdge.java
 				attrValue = String.valueOf(value.getValue());
+=======
+			{
+				if (((PrimitiveDataType)current.getType()).getName().equals("Date"))
+				{
+					DateFormat df = new SimpleDateFormat("dd-MM-yyyy");
+					attrValue= df.format(value.getValue());
+				}
+				else
+					attrValue = String.valueOf(value.getValue());
+			}
+>>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/graph/model/MyEdge.java
 			
 			currentAttr.add(attrValue);
 			String attrUnit = current.getUnit().getName();
@@ -390,7 +521,34 @@ public class MyEdge {
 			attributes.add(currentAttr);
 		}
 		
+<<<<<<< HEAD:pssif/pssif.viz/src/main/java/graph/model/MyEdge.java
 		return attributes;
+=======
+		return sortAttributes(attributes);
+	}
+
+	public boolean isPartnersVisible() {
+		return partnersVisible;
+	}
+
+	public void setPartnersVisible(boolean partnersVisible) {
+		this.partnersVisible = partnersVisible;
+	}
+	
+	private LinkedList<LinkedList<String>> sortAttributes(LinkedList<LinkedList<String>> data)
+	{
+		Collections.sort(data, new MyAttributeListComparator());
+		
+		return data;
+	}
+	
+	protected class MyAttributeListComparator implements Comparator<LinkedList<String>>
+	{
+	  @Override public int compare( LinkedList<String> attr1, LinkedList<String> attr2 )
+	  {
+	    return attr1.getFirst().compareTo(attr2.getFirst());
+	  }
+>>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/graph/model/MyEdge.java
 	}
 	
 }

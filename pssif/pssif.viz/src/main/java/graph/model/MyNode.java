@@ -4,15 +4,23 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
+<<<<<<< HEAD:pssif/pssif.viz/src/main/java/graph/model/MyNode.java
+=======
+import java.util.Collections;
+import java.util.Comparator;
+>>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/graph/model/MyNode.java
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
+<<<<<<< HEAD:pssif/pssif.viz/src/main/java/graph/model/MyNode.java
 
 
 
 
+=======
+>>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/graph/model/MyNode.java
 import de.tum.pssif.core.common.PSSIFConstants;
 import de.tum.pssif.core.common.PSSIFOption;
 import de.tum.pssif.core.common.PSSIFValue;
@@ -150,7 +158,11 @@ public class MyNode implements IMyNode{
 			attributes.add(currentAttr);
 		}
 		
+<<<<<<< HEAD:pssif/pssif.viz/src/main/java/graph/model/MyNode.java
 		return attributes;
+=======
+		return sortAttributes(attributes);
+>>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/graph/model/MyNode.java
 	}
 	
 	/**
@@ -187,8 +199,14 @@ public class MyNode implements IMyNode{
 				try 
 				{
 					Date data = parseDate((String) value);
+<<<<<<< HEAD:pssif/pssif.viz/src/main/java/graph/model/MyNode.java
 					
 					PSSIFValue res = PrimitiveDataType.DATE.fromObject(data);
+=======
+				
+					PSSIFValue res = PrimitiveDataType.DATE.fromObject(data);
+
+>>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/graph/model/MyNode.java
 					attribute.set(node, PSSIFOption.one(res));
 				}
 				catch (IllegalArgumentException e)
@@ -260,6 +278,7 @@ public class MyNode implements IMyNode{
 	private Date parseDate(String dateInString)
 	{
 		SimpleDateFormat formatter;
+<<<<<<< HEAD:pssif/pssif.viz/src/main/java/graph/model/MyNode.java
 	
 		try {
 			formatter = new SimpleDateFormat("dd/MM/yyyy");
@@ -290,13 +309,101 @@ public class MyNode implements IMyNode{
 			formatter = new SimpleDateFormat("dd.MM.yyyy");
 			return formatter.parse(dateInString);
 		} catch (ParseException e) { }
+=======
+		
+		try {
+			formatter = new SimpleDateFormat("dd/MM/yyyy");
+			return formatter.parse(dateInString);
+		} catch (ParseException e) {
+			//e.printStackTrace();
+		}
+		
+		try {
+			formatter = new SimpleDateFormat("dd-MM-yyyy");
+			return formatter.parse(dateInString);
+		} catch (ParseException e) {
+			//e.printStackTrace();
+		}
+		
+		try {
+			formatter = new SimpleDateFormat("dd.MM.yyyy");
+			return formatter.parse(dateInString);
+		} catch (ParseException e) {
+			//e.printStackTrace();
+		}
+		//----------------
+		
+		try {
+			formatter = new SimpleDateFormat("d/M/yyyy");
+			return formatter.parse(dateInString);
+		} catch (ParseException e) {
+		//	e.printStackTrace();
+		}
+		
+		try {
+			formatter = new SimpleDateFormat("d-M-yyyy");
+			return formatter.parse(dateInString);
+		} catch (ParseException e) {
+			//e.printStackTrace();
+		}
+		
+		try {
+			formatter = new SimpleDateFormat("d.M.yyyy");
+			return formatter.parse(dateInString);
+		} catch (ParseException e) {
+			//e.printStackTrace();
+		}
+		//----------------------------------------------
+		try {
+			formatter = new SimpleDateFormat("d/MM/yyyy");
+			return formatter.parse(dateInString);
+		} catch (ParseException e) {
+			//e.printStackTrace();
+		}
+		
+		try {
+			formatter = new SimpleDateFormat("d-MM-yyyy");
+			return formatter.parse(dateInString);
+		} catch (ParseException e) {
+			//e.printStackTrace();
+		}
+		
+		try {
+			formatter = new SimpleDateFormat("d.MM.yyyy");
+			return formatter.parse(dateInString);
+		} catch (ParseException e) {
+			//e.printStackTrace();
+		}
+		//----------------------------------------------
+		try {
+			formatter = new SimpleDateFormat("dd/M/yyyy");
+			return formatter.parse(dateInString);
+		} catch (ParseException e) {
+			//e.printStackTrace();
+		}
+		
+		try {
+			formatter = new SimpleDateFormat("dd-M-yyyy");
+			return formatter.parse(dateInString);
+		} catch (ParseException e) {
+			//e.printStackTrace();
+		}
+>>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/graph/model/MyNode.java
 		
 		try {
 			formatter = new SimpleDateFormat("dd.M.yyyy");
 			return formatter.parse(dateInString);
+<<<<<<< HEAD:pssif/pssif.viz/src/main/java/graph/model/MyNode.java
 		} catch (ParseException e) { }
 		return null;
 		
+=======
+		} catch (ParseException e) {
+			//e.printStackTrace();
+		}
+		
+		return null;
+>>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/graph/model/MyNode.java
 	}
 	
 	/**
@@ -341,19 +448,26 @@ public class MyNode implements IMyNode{
 		List<String> attr = calcAttr();
 		if (isDetailedOutput())
 		{
+<<<<<<< HEAD:pssif/pssif.viz/src/main/java/graph/model/MyNode.java
 			//lineheight =30;
+=======
+>>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/graph/model/MyNode.java
 			//Attributes label
 			sizeheight += lineheight;
 			
 			//Attributes
+<<<<<<< HEAD:pssif/pssif.viz/src/main/java/graph/model/MyNode.java
 			
 			
+=======
+>>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/graph/model/MyNode.java
 			int nbAttr = attr.size();
 			
 			sizeheight += nbAttr*lineheight;
 		}
 		
 		sizewidth = 180;
+<<<<<<< HEAD:pssif/pssif.viz/src/main/java/graph/model/MyNode.java
 		
 		
 		
@@ -392,6 +506,8 @@ public class MyNode implements IMyNode{
 		
 		//System.out.println(getRealName()+"|| width "+sizewidth+" height "+sizeheight);	
 	
+=======
+>>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/graph/model/MyNode.java
 	}
 	
 	/**
@@ -649,4 +765,22 @@ public class MyNode implements IMyNode{
 	public void setCollapseNode(boolean collapseNode) {
 		this.collapseNode = collapseNode;
 	}
+<<<<<<< HEAD:pssif/pssif.viz/src/main/java/graph/model/MyNode.java
+=======
+	
+	private LinkedList<LinkedList<String>> sortAttributes(LinkedList<LinkedList<String>> data)
+	{
+		Collections.sort(data, new MyAttributeListComparator());
+		
+		return data;
+	}
+	
+	protected class MyAttributeListComparator implements Comparator<LinkedList<String>>
+	{
+	  @Override public int compare( LinkedList<String> attr1, LinkedList<String> attr2 )
+	  {
+	    return attr1.getFirst().compareTo(attr2.getFirst());
+	  }
+	}
+>>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/graph/model/MyNode.java
 }

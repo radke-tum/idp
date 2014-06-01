@@ -192,7 +192,13 @@ public class MasterFilter {
 	 */
 	public void addNodeAndEdgeTypeFilter(LinkedList<MyNodeType> nodes, LinkedList<MyEdgeType> edges, String viewName, boolean activate)
 	{
+<<<<<<< HEAD:pssif/pssif.viz/src/main/java/graph/operations/MasterFilter.java
 		this.activeNodeAndEdgeTypeFilters.add(viewName);
+=======
+		GraphViewContainer gvc = new GraphViewContainer(nodes, edges, viewName);
+		this.nodeAndEdgeTypeFilters.put(viewName, gvc);
+		
+>>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/graph/operations/MasterFilter.java
 		
 		if (activate)
 		{

@@ -3,6 +3,10 @@ package gui.graph;
 import graph.model.MyEdgeType;
 import graph.model.MyNodeType;
 import graph.operations.GraphViewContainer;
+<<<<<<< HEAD:pssif/pssif.viz/src/main/java/gui/graph/CreateNewGraphViewPopup.java
+=======
+import graph.operations.MasterFilter;
+>>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/gui/graph/CreateNewGraphViewPopup.java
 import gui.GraphView;
 import gui.checkboxtree.CheckBoxTree;
 
@@ -38,11 +42,21 @@ public class CreateNewGraphViewPopup extends MyPopup{
 	private JTextField viewNameTextField;
 	private GraphView graphView;
 	private CheckBoxTree tree;
+<<<<<<< HEAD:pssif/pssif.viz/src/main/java/gui/graph/CreateNewGraphViewPopup.java
 	
 	public CreateNewGraphViewPopup(GraphView graphView)
 	{
 		this.graphView = graphView;
 		tree = new CheckBoxTree();
+=======
+	private MasterFilter masterFilter;
+	
+	public CreateNewGraphViewPopup(GraphView graphView, MasterFilter masterFilter)
+	{
+		this.graphView = graphView;
+		tree = new CheckBoxTree();
+		this.masterFilter = masterFilter;
+>>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/gui/graph/CreateNewGraphViewPopup.java
 	}
 	
 	/**
@@ -94,6 +108,10 @@ public class CreateNewGraphViewPopup extends MyPopup{
         		GraphViewContainer container = new GraphViewContainer(selectedNodes,selectedEdges,viewName);
 	        	graphView.getGraph().createNewGraphView(container);
 	        	
+<<<<<<< HEAD:pssif/pssif.viz/src/main/java/gui/graph/CreateNewGraphViewPopup.java
+=======
+	        	masterFilter.addNodeAndEdgeTypeFilter(selectedNodes, selectedEdges, viewName, false);
+>>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/gui/graph/CreateNewGraphViewPopup.java
 	        	// apply the view
 	        	//graphView.getGraph().applyNodeAndEdgeFilter(container.getSelectedNodeTypes(), container.getSelectedEdgeTypes(), viewName);
 	        	

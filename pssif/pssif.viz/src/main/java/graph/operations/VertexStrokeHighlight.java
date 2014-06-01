@@ -50,7 +50,10 @@ public class VertexStrokeHighlight<V,E> implements Transformer<V,Stroke>
 	            this.depth = 1;
 	            this.followEdges = new LinkedList<MyEdgeType>();
 	            this.specialSearch=false;
+<<<<<<< HEAD:pssif/pssif.viz/src/main/java/graph/operations/VertexStrokeHighlight.java
 	            
+=======
+>>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/graph/operations/VertexStrokeHighlight.java
 	        }
 	        
 	        /**
@@ -75,8 +78,12 @@ public class VertexStrokeHighlight<V,E> implements Transformer<V,Stroke>
 	         * Do the visualization on the graph
 	         */
 	        public Stroke transform(V currentNode)
+<<<<<<< HEAD:pssif/pssif.viz/src/main/java/graph/operations/VertexStrokeHighlight.java
 	        {
 	            
+=======
+	        {  
+>>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/graph/operations/VertexStrokeHighlight.java
 	        	if (highlight)
 	            {
 	        	//	System.out.println("-----------------------");
@@ -88,7 +95,14 @@ public class VertexStrokeHighlight<V,E> implements Transformer<V,Stroke>
 	                	{
 		                    if (debug)
 		                    	System.out.println(((IMyNode) currentNode).getName() +"  Heavy");
+<<<<<<< HEAD:pssif/pssif.viz/src/main/java/graph/operations/VertexStrokeHighlight.java
 	                		return heavy;
+=======
+		                    if (currentNode instanceof MyJunctionNode)
+		                    	return medium;
+		                    else
+		                    	return heavy;
+>>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/graph/operations/VertexStrokeHighlight.java
 	                	}
 		                else
 		                {	                
@@ -100,7 +114,10 @@ public class VertexStrokeHighlight<V,E> implements Transformer<V,Stroke>
             						 {
 	            						System.out.println(((IMyNode) currentNode).getName());
 	            						System.out.println("                              depth Predecessor  Medium ");
+<<<<<<< HEAD:pssif/pssif.viz/src/main/java/graph/operations/VertexStrokeHighlight.java
 	            						//System.out.println("medium");
+=======
+>>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/graph/operations/VertexStrokeHighlight.java
 	            						System.out.println("----------------------------");
             						 }
                 					return medium;
@@ -111,7 +128,10 @@ public class VertexStrokeHighlight<V,E> implements Transformer<V,Stroke>
                 					 {
 		                					System.out.println(((IMyNode) currentNode).getName());
 		                					System.out.println("                             not depth Predecessor  Light ");
+<<<<<<< HEAD:pssif/pssif.viz/src/main/java/graph/operations/VertexStrokeHighlight.java
 		                					//System.out.println("light");
+=======
+>>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/graph/operations/VertexStrokeHighlight.java
 		                					System.out.println("----------------------------");
                 					 }
                 					return light;
@@ -126,7 +146,11 @@ public class VertexStrokeHighlight<V,E> implements Transformer<V,Stroke>
     		                		{
     		                			if (pi.isPicked(v))
     		                			{
+<<<<<<< HEAD:pssif/pssif.viz/src/main/java/graph/operations/VertexStrokeHighlight.java
     		                				if(searchOutEdges(v, currentNode,false))
+=======
+    		                				if(v instanceof MyNode && searchOutEdges(v, currentNode,false))
+>>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/graph/operations/VertexStrokeHighlight.java
     		                				{
     		                					//System.out.println("medium");
     		                					 if (debug)
@@ -150,6 +174,7 @@ public class VertexStrokeHighlight<V,E> implements Transformer<V,Stroke>
 	                else
 	                {
 		            	if (pi.isPicked(currentNode))
+<<<<<<< HEAD:pssif/pssif.viz/src/main/java/graph/operations/VertexStrokeHighlight.java
 		                    return heavy;
 		                else
 		                {	                
@@ -163,6 +188,16 @@ public class VertexStrokeHighlight<V,E> implements Transformer<V,Stroke>
 			                    }
 		                	}
 		                    return light;*/
+=======
+		                    {
+			                    if (currentNode instanceof MyJunctionNode)
+			                    	return medium;
+			                    else
+			                    	return heavy;
+		                    }
+		                else
+		                {	                
+>>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/graph/operations/VertexStrokeHighlight.java
 		                	if (searchDept(currentNode, depth))
         					{
         						 if (debug)
@@ -201,7 +236,11 @@ public class VertexStrokeHighlight<V,E> implements Transformer<V,Stroke>
 	         */
 	        private boolean searchOutEdges(V source, V dest, boolean depthsearch)
 	        {
+<<<<<<< HEAD:pssif/pssif.viz/src/main/java/graph/operations/VertexStrokeHighlight.java
 
+=======
+	        	
+>>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/graph/operations/VertexStrokeHighlight.java
 	        	LinkedList<MyEdge> eout = findOutgoingEdges(source);
 				//Collection<MyEdge> eout = ( Collection<MyEdge>) graph.getOutEdges(source);
 	        	 
@@ -211,6 +250,7 @@ public class VertexStrokeHighlight<V,E> implements Transformer<V,Stroke>
  							" source "+e.getSourceNode().getRealName());*/
 	        		if (depthsearch)
 	        		{
+<<<<<<< HEAD:pssif/pssif.viz/src/main/java/graph/operations/VertexStrokeHighlight.java
 		        		 if ((this.followEdges.isEmpty() && e.getDestinationNode().equals(((IMyNode) dest)) )|| 
 		        				 (!this.followEdges.isEmpty() && this.followEdges.contains(e.getEdgeType()) && e.getDestinationNode().equals(((IMyNode) dest))))
 		        				 return true;
@@ -219,6 +259,39 @@ public class VertexStrokeHighlight<V,E> implements Transformer<V,Stroke>
 	        		{
 	        			if (this.followEdges.contains(e.getEdgeType()) && e.getDestinationNode().equals(((IMyNode) dest)))
 		        				 return true;
+=======
+		        		if (e.isDirected())
+		        		{
+		        			if (this.followEdges.isEmpty() && e.getDestinationNode().equals(((IMyNode) dest)))
+		        					return true;
+		        			if (!this.followEdges.isEmpty() && this.followEdges.contains(e.getEdgeType()) &&  e.getDestinationNode().equals(((IMyNode) dest)))
+		        				 return true;
+		        		}
+		        		else
+		        		{
+		        			if (this.followEdges.isEmpty() && 
+		        					(e.getDestinationNode().equals(((IMyNode) dest)) || e.getSourceNode().equals(((IMyNode) dest)) ) )
+		        					return true;
+		        			
+			        		if (!this.followEdges.isEmpty() && this.followEdges.contains(e.getEdgeType()) &&
+			        				(e.getDestinationNode().equals(((IMyNode) dest)) || e.getSourceNode().equals(((IMyNode) dest)) ) )
+			        				 return true;
+		        		}
+	        		}
+	        		else
+	        		{
+	        			if (e.isDirected())
+	        			{
+		        			if (this.followEdges.contains(e.getEdgeType()) && e.getDestinationNode().equals(((IMyNode) dest)))
+			        				 return true;
+	        			}
+	        			else
+	        			{
+		        			if (this.followEdges.contains(e.getEdgeType()) && 
+		        					(e.getDestinationNode().equals(((IMyNode) dest)) || e.getSourceNode().equals(((IMyNode) dest)) ))
+		        				 return true;
+	        			}
+>>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/graph/operations/VertexStrokeHighlight.java
 	        		}
 	        	 }
 	        	 return false;
@@ -244,7 +317,16 @@ public class VertexStrokeHighlight<V,E> implements Transformer<V,Stroke>
 	        			if (searchOutEdges(v, current, true))
 	        			{
 		        			if (pi.isPicked(v))
+<<<<<<< HEAD:pssif/pssif.viz/src/main/java/graph/operations/VertexStrokeHighlight.java
 		        				return true;
+=======
+		        			{
+		        				if (v instanceof MyNode)
+		        					return true;
+		        				else
+		        					return false;
+		        			}
+>>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/graph/operations/VertexStrokeHighlight.java
 		        			else
 		        				next.add(v);
 
@@ -298,8 +380,21 @@ public class VertexStrokeHighlight<V,E> implements Transformer<V,Stroke>
 				
 				for (MyEdge e :ModelBuilder.getAllEdges())
 				{
+<<<<<<< HEAD:pssif/pssif.viz/src/main/java/graph/operations/VertexStrokeHighlight.java
 					if (e.isVisible() && e.getSourceNode().equals((IMyNode)node))
 						res.add(e);
+=======
+					if (e.isDirected())
+					{
+						if (e.isVisible() && e.getSourceNode().equals((IMyNode)node))
+							res.add(e);
+					}
+					else
+					{
+						if (e.isVisible() && ( e.getSourceNode().equals((IMyNode)node) || e.getDestinationNode().equals((IMyNode)node)))
+							res.add(e);
+					}
+>>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/graph/operations/VertexStrokeHighlight.java
 				}
 				
 				return res;
