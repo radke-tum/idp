@@ -5,7 +5,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.pssif.consistencyDataStructures.Token;
+import org.pssif.mainProcesses.MatchingProcess;
 import org.pssif.matchingLogic.MatchMethod;
+import org.pssif.matchingLogic.VsmMatcher;
 
 //TODO only do normalzation once for each node
 // at the moment it's done for every nodepair again
@@ -24,6 +26,8 @@ public class Normalizer {
 	private StopwordsFilter stopwordsFilter;
 	private WordSplitter wordSplitter;
 	private Stemmer stemmer;
+	
+	private MatchingProcess matchingProcess;
 
 	/**
 	 * if true the results of each token- and normalization step is printed to
@@ -63,8 +67,9 @@ public class Normalizer {
 	 * @return an object of this class with the information which normalization
 	 *         steps shall be conducted
 	 */
-	public static Normalizer initialize(List<MatchMethod> matchMethods) {
+	public static Normalizer initialize(List<MatchMethod> matchMethods, MatchingProcess matchingProcess) {
 		Normalizer normalizer = new Normalizer();
+		normalizer.matchingProcess = matchingProcess;
 
 		normalizer.checkMatchMethods(matchMethods);
 
@@ -106,6 +111,8 @@ public class Normalizer {
 					break;
 				case VECTOR_SPACE_MODEL_MATCHING:
 					tokenizationRequired = true;
+					((VsmMatcher) currentMethod).initializeDocumentCorpus(matchingProcess);
+					((VsmMatcher) currentMethod).computeIDFWeigths();
 					break;
 				case LATENT_SEMANTIC_INDEXING_MATCHING:
 					tokenizationRequired = true;

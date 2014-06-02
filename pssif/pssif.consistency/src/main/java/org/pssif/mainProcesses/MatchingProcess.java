@@ -52,7 +52,7 @@ public class MatchingProcess {
 		this.consistencyData = consistencyData;
 		this.matchMethods = matchMethods;
 
-		this.normalizer = Normalizer.initialize(matchMethods);
+		this.normalizer = Normalizer.initialize(matchMethods, this);
 	}
 
 	private Model originalModel, newModel;
@@ -68,6 +68,34 @@ public class MatchingProcess {
 	private ComparedNormalizedTokensPair comparedNormalizedTokensPair = null;
 	private ComparedNodePair comparedNodePair = null;
 
+	/**
+	 * @return the originalModel
+	 */
+	public Model getOriginalModel() {
+		return originalModel;
+	}
+
+	/**
+	 * @return the newModel
+	 */
+	public Model getNewModel() {
+		return newModel;
+	}
+
+	/**
+	 * @return the metaModel
+	 */
+	public Metamodel getMetaModel() {
+		return metaModel;
+	}
+
+	/**
+	 * @return the normalizer
+	 */
+	public Normalizer getNormalizer() {
+		return normalizer;
+	}
+	
 	/**
 	 * @param tempNodeOrigin
 	 *            the node from the original model

@@ -59,6 +59,12 @@ public class Methods {
 
 		return result;
 	}
+	
+	public static double logarithmBaseTwo( double x )
+	{
+	  return Math.log( x ) / Math.log( 2.0 );
+	}
+	
 
 	/**
 	 * Get the name from the Node object
