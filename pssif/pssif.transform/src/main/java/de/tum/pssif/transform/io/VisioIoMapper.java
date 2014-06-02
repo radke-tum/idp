@@ -105,7 +105,7 @@ public class VisioIoMapper implements IoMapper {
   private void writeAttributes(VsdxShape inShape, AElement fromElement) {
     inShape.setText(fromElement.getAttributeValue(PSSIFConstants.BUILTIN_ATTRIBUTE_NAME));
     for (String attrName : fromElement.getAttributeNames()) {
-      if (fromElement.getAttributeValue(attrName) != null) {
+      if (fromElement.getAttributeValue(attrName) != null && !PSSIFConstants.BUILTIN_ATTRIBUTE_ID.equals(attrName)) {
         inShape.setCustomProperty(attrName, fromElement.getAttributeValue(attrName));
       }
     }
@@ -151,7 +151,7 @@ public class VisioIoMapper implements IoMapper {
   private void readAttributes(AElement intoElement, VsdxShape source) {
     intoElement.setAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_NAME, source.getText());
     for (String pName : source.getCustomPropertyNames()) {
-      if (source.getCustomPropertyValue(pName) != null) {
+      if (source.getCustomPropertyValue(pName) != null && !PSSIFConstants.BUILTIN_ATTRIBUTE_ID.equals(pName)) {
         intoElement.setAttribute(pName, source.getCustomPropertyValue(pName));
       }
     }

@@ -69,6 +69,7 @@ public class EpkModelMapper implements ModelMapper {
     if (swap) {
       mapping = type.getMapping(targetType, sourceType);
     }
+
     PSSIFOption<de.tum.pssif.core.model.Node> source = sourceType.apply(model, e.getSource().getId(), true);
     PSSIFOption<de.tum.pssif.core.model.Node> target = targetType.apply(model, e.getTarget().getId(), true);
     if (source.isOne() && target.isOne() && mapping.isOne()) {

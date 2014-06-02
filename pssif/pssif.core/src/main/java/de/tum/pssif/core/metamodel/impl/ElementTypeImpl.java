@@ -154,4 +154,8 @@ public abstract class ElementTypeImpl extends NamedImpl implements MutableElemen
   public Collection<MutableAttributeGroup> getMutableAttributeGroups() {
     return ImmutableSet.copyOf(attributeGroups.values());
   }
+
+  public String toString() {
+    return getClass().getSimpleName() + "(" + getName() + ")";
+  }
 }

@@ -77,4 +77,8 @@ public abstract class ElementImpl implements Element {
   public PSSIFOption<String> getAnnotation(String key) {
     return PSSIFOption.one(annotations.get(key));
   }
+
+  public String toString() {
+    return getClass().getSimpleName() + "(" + getId() + ")";
+  }
 }

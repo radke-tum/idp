@@ -276,4 +276,5 @@ public class EdgeTypeImpl extends ElementTypeImpl implements MutableEdgeType {
     }
     return null;
   }
+
 }

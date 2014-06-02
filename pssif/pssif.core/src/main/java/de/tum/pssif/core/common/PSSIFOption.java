@@ -169,4 +169,14 @@ public final class PSSIFOption<P> implements Iterable<P> {
   public Iterator<P> iterator() {
     return this.elements.iterator();
   }
+
+  public String toString() {
+    if (isNone()) {
+      return "Option:NONE";
+    }
+    else if (isOne()) {
+      return "Option:ONE(" + getOne() + ")";
+    }
+    return "Option:MANY(" + getMany() + ")";
+  }
 }

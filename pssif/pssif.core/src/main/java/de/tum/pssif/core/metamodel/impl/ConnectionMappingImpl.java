@@ -172,4 +172,8 @@ public class ConnectionMappingImpl implements MutableConnectionMapping {
   public void setTo(MutableNodeTypeBase to) {
     this.to = to;
   }
+
+  public String toString() {
+    return getClass().getSimpleName() + "(" + getFrom().getName() + "," + getType().getName() + "," + getTo().getName() + ")";
+  }
 }
