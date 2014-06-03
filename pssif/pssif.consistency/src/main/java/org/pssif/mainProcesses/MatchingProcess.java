@@ -264,6 +264,7 @@ public class MatchingProcess {
 	 *            the console
 	 */
 	private void printResults(String labelOrigin, String labelNew) {
+		if(getWeightedSyntacticSimilarity()>0 || getWeightedSemanticSimilarity()>0 || getWeightedContextSimilarity()>0){
 		System.out.println("The node(origin): " + labelOrigin
 				+ " and the node(new) " + labelNew
 				+ " have the following similarieties:");
@@ -273,6 +274,7 @@ public class MatchingProcess {
 				+ getWeightedSemanticSimilarity());
 		System.out.println("Contextual Similarity: "
 				+ getWeightedContextSimilarity());
+		}
 	}
 
 	/**

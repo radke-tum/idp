@@ -59,7 +59,7 @@ public class VsmMatcher extends MatchMethod {
 		double cosine = 1;
 
 		double numerator = 0;
-		double denominator = 1;
+		double denominator = 0;
 		double tempDenominatorOrigin = 0, tempDenominatorNew = 0;
 
 		Token tempOrigin, tempNew;
@@ -84,7 +84,11 @@ public class VsmMatcher extends MatchMethod {
 		}
 
 		denominator = Math.sqrt(tempDenominatorOrigin * tempDenominatorNew);
-
+		
+		if ((numerator == 0) || (denominator == 0)) {
+			return 0;
+		}
+		
 		cosine = (numerator / denominator);
 
 		return cosine;
@@ -110,6 +114,7 @@ public class VsmMatcher extends MatchMethod {
 		double tokenCounter = 0;
 
 		for (Token actToken : tokensOrigin) {
+			tokenCounter = 0;
 			if (actToken.getTf() == 0) {
 				for (Token actToken2 : tokensOrigin) {
 					if (actToken.getWord().equals(actToken2.getWord())) {
