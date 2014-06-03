@@ -80,7 +80,11 @@ public class LinguisticMatcher extends MatchMethod {
 
 		result = (numerator / denominator);
 
-		return result;
+		if(result > 1){
+			return 1.0;
+		} else {
+			return result;
+		}
 	}
 
 	/**

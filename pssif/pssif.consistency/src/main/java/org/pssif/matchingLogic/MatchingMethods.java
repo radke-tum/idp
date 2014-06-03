@@ -24,7 +24,7 @@ public enum MatchingMethods {
 			"Levenshtein Distance"), HYPHEN_MATCHING(3,
 			"Hyphen Compairson (no Impl)"), LINGUISTIC_MATCHING(4,
 			"Linguistic Compairson"), VECTOR_SPACE_MODEL_MATCHING(5,
-			"VSM Compairson (no Impl)"), LATENT_SEMANTIC_INDEXING_MATCHING(6,
+			"VSM Compairson"), LATENT_SEMANTIC_INDEXING_MATCHING(6,
 			"LSI Compairson (no Impl)"), CONTEXT_MATCHING(7,
 			"Contextual Compairson (no Impl)");
 

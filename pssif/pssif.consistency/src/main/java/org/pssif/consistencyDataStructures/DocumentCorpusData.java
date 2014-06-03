@@ -5,13 +5,14 @@ package org.pssif.consistencyDataStructures;
  *        "Improving Requirements Tracing via Information Retrieval"
  */
 
-import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
 import org.pssif.mainProcesses.MatchingProcess;
 import org.pssif.mainProcesses.Methods;
+import org.pssif.textNormalization.Normalizer;
 
 import de.tum.pssif.core.common.PSSIFConstants;
 import de.tum.pssif.core.common.PSSIFOption;
@@ -27,7 +28,10 @@ import de.tum.pssif.core.model.Node;
  */
 public class DocumentCorpusData {
 
-	private HashSet<Token> tokens;
+	private LinkedList<Token> tokens;
+	private Model originalModel;
+	private Model newModel;
+	private Metamodel metaModel;
 
 	/**
 	 * this variable counts the total number of documents(here represented by
@@ -36,14 +40,20 @@ public class DocumentCorpusData {
 	private double numberOfDocuments;
 
 	private MatchingProcess matchingProcess;
+	private Normalizer normalizer;
 
-	public DocumentCorpusData(MatchingProcess matchingProcess) {
+	public DocumentCorpusData(Normalizer normalizer,
+			MatchingProcess matchingProcess) {
 
+		this.normalizer = normalizer;
 		this.matchingProcess = matchingProcess;
+		this.tokens = new LinkedList<Token>();
 
 	}
 
 	public void iterateOverAllNodes() {
+		// TODO Don't get these fields again here. It's already given to the
+		// match method
 		Model originalModel = matchingProcess.getOriginalModel();
 		Model newModel = matchingProcess.getNewModel();
 		Metamodel metaModel = matchingProcess.getMetaModel();
@@ -74,7 +84,7 @@ public class DocumentCorpusData {
 
 		if (actNodesModel.isNone()) {
 			throw new RuntimeException(
-					"Document corpus couldn't be built because there are no nodes in one of the models");
+					"Document corpus for IR Methods couldn't be built because there are no nodes in one of the models");
 		} else {
 			if (actNodesModel.isOne()) {
 
@@ -103,47 +113,74 @@ public class DocumentCorpusData {
 
 	private void addTokens(Node tempNode, NodeType actTypeModel) {
 		String labelNode = Methods.findName(actTypeModel, tempNode);
-		
-		List<Token> tempTokens = matchingProcess.getNormalizer().createNormalizedTokensFromLabel(labelNode, true, true, false, true);
-		
-		for(Token token : tempTokens){
+
+		List<Token> tempTokens = normalizer.createNormalizedTokensFromLabel(
+				labelNode, true, true, false, true);
+
+		for (Token token : tempTokens) {
 			addTokenToData(token);
 		}
 	}
-	
+
 	private void addTokenToData(Token token) {
 		boolean tokenAlreadyStored = false;
 
-		for (Token actToken : tokens) {
-			if (actToken.getWord().equals(token.getWord())) {
-				tokenAlreadyStored = true;
-				actToken.incrementDocumentCounter();
-			}
-		}
-		if (!tokenAlreadyStored) {
-			token.incrementDocumentCounter();
+		if (tokens.isEmpty()) {
 			tokens.add(token);
+		} else {
+
+			for (Token savedToken : tokens) {
+				if (savedToken.getWord().equals(token.getWord())) {
+					tokenAlreadyStored = true;
+					savedToken.incrementDocumentCounter();
+					break;
+				}
+			}
+			if (!tokenAlreadyStored) {
+				token.incrementDocumentCounter();
+				tokens.add(token);
+			}
 		}
 
 	}
 
 	public void computeIDFWeigths() {
 		double idf = 0;
-		
-		for(Token actToken : tokens){
-			idf = Methods.logarithmBaseTwo(numberOfDocuments/(actToken.getDocumentCounter()));
-			actToken.setIdf(idf);
+
+		for (Token savedToken : tokens) {
+			idf = Methods.logarithmBaseTwo(numberOfDocuments
+					/ (savedToken.getDocumentCounter()));
+			savedToken.setIdf(idf);
 		}
 	}
 
-	public void setIDFWeigths(List<Token> tokensOrigin) {
-		for(Token actToken : tokensOrigin){
-			for(Token savedToken : tokens){
-				if(actToken.getWord().equals(savedToken.getWord())){
-					actToken.setTf(savedToken.getTf());
+	public List<Token> getFullTokenList(List<Token> tokensOrigin) {
+		List<Token> result = new LinkedList<Token>();
+		boolean tokenFound = false;
+		Token tempOrigin;
+		
+		for (Token savedToken : tokens) {
+			tokenFound = false;
+			
+			for (int i = 0; i < tokensOrigin.size(); i++) {
+				tempOrigin = tokensOrigin.get(i);
+
+				if (tempOrigin.getWord().equals(savedToken.getWord())) {
+					tokenFound = true;
+
+					tempOrigin.setIdf(savedToken.getIdf());
+					tempOrigin.computeWordWeight();
+
+					result.add(tempOrigin);
+					
 					break;
+				}
+				if ((!tokenFound) && (i == (tokensOrigin.size() - 1))) {
+					result.add(null);
 				}
 			}
 		}
+		return result;
 	}
+
 }

@@ -111,7 +111,7 @@ public class Normalizer {
 					break;
 				case VECTOR_SPACE_MODEL_MATCHING:
 					tokenizationRequired = true;
-					((VsmMatcher) currentMethod).initializeDocumentCorpus(matchingProcess);
+					((VsmMatcher) currentMethod).initializeDocumentCorpus(this, matchingProcess);
 					((VsmMatcher) currentMethod).computeIDFWeigths();
 					break;
 				case LATENT_SEMANTIC_INDEXING_MATCHING:

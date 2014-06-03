@@ -8,7 +8,8 @@ package org.pssif.consistencyDataStructures;
  * 
  */
 public class Token {
-
+//TODO implement interface Comparable here
+	
 	public Token(String string) {
 		this.word = string;
 		this.documentCounter = 0;
@@ -86,13 +87,20 @@ public class Token {
 		this.tf = tf;
 	}
 
+	/**
+	 * @return the wordWeigth
+	 */
+	public double getWordWeigth() {
+		return wordWeigth;
+	}
+
 	public void incrementDocumentCounter() {
 		int actCounter = getDocumentCounter();
 		actCounter++;
 		this.setDocumentCounter(actCounter);
 	}
 
-	public void computeWeight() {
+	public void computeWordWeight() {
 		double weight = 0;
 		
 		weight = tf*idf;
