@@ -26,7 +26,7 @@ public class Normalizer {
 	private StopwordsFilter stopwordsFilter;
 	private WordSplitter wordSplitter;
 	private Stemmer stemmer;
-	
+
 	private MatchingProcess matchingProcess;
 
 	/**
@@ -67,7 +67,8 @@ public class Normalizer {
 	 * @return an object of this class with the information which normalization
 	 *         steps shall be conducted
 	 */
-	public static Normalizer initialize(List<MatchMethod> matchMethods, MatchingProcess matchingProcess) {
+	public static Normalizer initialize(List<MatchMethod> matchMethods,
+			MatchingProcess matchingProcess) {
 		Normalizer normalizer = new Normalizer();
 		normalizer.matchingProcess = matchingProcess;
 
@@ -80,6 +81,9 @@ public class Normalizer {
 	 * This method checks which matching Methods are active and then saves if we
 	 * have to remove the whitespace from the labels and/or if we have to
 	 * tokenize the labels
+	 * 
+	 * Important: if the VSM metric was chosen we have to build the document
+	 * corpus before being able to apply this metric for every node pair
 	 */
 	private void checkMatchMethods(List<MatchMethod> matchMethods) {
 		Iterator<MatchMethod> currentMatchMethod = matchMethods.iterator();
@@ -111,7 +115,8 @@ public class Normalizer {
 					break;
 				case VECTOR_SPACE_MODEL_MATCHING:
 					tokenizationRequired = true;
-					((VsmMatcher) currentMethod).initializeDocumentCorpus(this, matchingProcess);
+					((VsmMatcher) currentMethod).initializeDocumentCorpus(this,
+							matchingProcess);
 					((VsmMatcher) currentMethod).computeIDFWeigths();
 					break;
 				case LATENT_SEMANTIC_INDEXING_MATCHING:
@@ -125,12 +130,13 @@ public class Normalizer {
 	}
 
 	/**
+	 * This method takes a label, removes all spaces and converts all letters to
+	 * lower cases
+	 * 
 	 * @param label
 	 *            the label to be normalized
 	 * @return the given label in its normalized form
 	 * 
-	 *         This method takes a label, removes all spaces and converts all
-	 *         letters to lower cases
 	 */
 	public String normalizeLabel(String label) {
 		String tmp = label;
@@ -149,6 +155,9 @@ public class Normalizer {
 	}
 
 	/**
+	 * This method takes a label and applies several normalization techniques to
+	 * it based on the active matching methods.
+	 * 
 	 * @param label
 	 *            the label to be tokenized & normalized
 	 * @param normalizeCases
@@ -157,8 +166,6 @@ public class Normalizer {
 	 * @param stemWords
 	 * @return the given label in its tokenized & normalized form
 	 * 
-	 *         This method takes a label and applies several normalization
-	 *         techniques to it based on the active matching methods.
 	 */
 	public List<Token> createNormalizedTokensFromLabel(String label,
 			boolean normalizeCases, boolean filterStopwords,
@@ -205,13 +212,14 @@ public class Normalizer {
 	}
 
 	/**
+	 * This method prints the result from the last normalization step to the
+	 * console.
+	 * 
 	 * @param step
 	 *            the recent normalization step
 	 * @param tokens
 	 *            the result of the recent normalization step
 	 * 
-	 *            This method prints the result from the last normalization step
-	 *            to the console.
 	 */
 	public void printTokens(String step, List<Token> tokens) {
 		if (showResultPrintsInConsole) {

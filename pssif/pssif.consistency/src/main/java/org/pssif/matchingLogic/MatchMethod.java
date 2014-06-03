@@ -62,6 +62,9 @@ public abstract class MatchMethod {
 			List<Token> tokensOrigin, List<Token> tokensNew);
 
 	/**
+	 * This method creates a MatchMethod of the given type and with the given
+	 * attributes
+	 * 
 	 * @param matchMethod
 	 *            The type of match method which shall be created
 	 * @param isActive
@@ -70,8 +73,6 @@ public abstract class MatchMethod {
 	 *            thr weight of the created method
 	 * @return the createtd method
 	 * 
-	 *         This method creates a MatchMethod of the given type and with the
-	 *         given attributes
 	 */
 	public static MatchMethod createMatchMethodObject(
 			MatchingMethods matchMethod, boolean isActive, double weigth) {

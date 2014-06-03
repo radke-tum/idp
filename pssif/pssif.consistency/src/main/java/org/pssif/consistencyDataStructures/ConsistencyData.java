@@ -71,8 +71,7 @@ public class ConsistencyData {
 	 * @param comparedNodePair
 	 *            the result of the matching process
 	 * @return true if the new compared elements were added to all relevant
-	 *         variables
-	 * @return false if something went wrong
+	 *         variables. false if something went wrong
 	 */
 	public boolean putComparedEntry(ComparedNodePair comparedNodePair) {
 

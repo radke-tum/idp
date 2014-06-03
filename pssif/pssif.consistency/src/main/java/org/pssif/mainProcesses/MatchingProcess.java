@@ -95,8 +95,14 @@ public class MatchingProcess {
 	public Normalizer getNormalizer() {
 		return normalizer;
 	}
-	
+
 	/**
+	 * This method guides the whole matching process. It initializes the
+	 * variables where the consistencyData will be stored later. Then it
+	 * triggers the normalization and/or tokenization of the labels if
+	 * necessary. Then it applies the active matching methods to the nodes and
+	 * saves the results
+	 * 
 	 * @param tempNodeOrigin
 	 *            the node from the original model
 	 * @param tempNodeNew
@@ -109,11 +115,6 @@ public class MatchingProcess {
 	 *             If something at the saving goes wrong an exception is thrown.
 	 *             Else nothing besides the saving happens.
 	 * 
-	 *             This method guides the whole matching process. It initializes
-	 *             the variables where the consistencyData will be stored later.
-	 *             Then it triggers the normalization and/or tokenization of the
-	 *             labels if necessary. Then it applies the active matching
-	 *             methods to the nodes and saves the results
 	 */
 	public void startMatchingProcess(Node tempNodeOrigin, Node tempNodeNew,
 			NodeType actTypeOriginModel, NodeType actTypeNewModel) {
@@ -255,29 +256,35 @@ public class MatchingProcess {
 	}
 
 	/**
+	 * This methods prints the result of the matching of two nodes to the
+	 * console
+	 * 
 	 * @param labelOrigin
 	 *            The label from the node from original model
 	 * @param labelNew
 	 *            The label from the node from new model
 	 * 
-	 *            This methods prints the result of the matching of two nodes to
-	 *            the console
 	 */
 	private void printResults(String labelOrigin, String labelNew) {
-		if(getWeightedSyntacticSimilarity()>0 || getWeightedSemanticSimilarity()>0 || getWeightedContextSimilarity()>0){
-		System.out.println("The node(origin): " + labelOrigin
-				+ " and the node(new) " + labelNew
-				+ " have the following similarieties:");
-		System.out.println("Syntactic similarity: "
-				+ getWeightedSyntacticSimilarity());
-		System.out.println("Semantic similarity: "
-				+ getWeightedSemanticSimilarity());
-		System.out.println("Contextual Similarity: "
-				+ getWeightedContextSimilarity());
+		if (getWeightedSyntacticSimilarity() > 0
+				|| getWeightedSemanticSimilarity() > 0
+				|| getWeightedContextSimilarity() > 0) {
+			System.out.println("The node(origin): " + labelOrigin
+					+ " and the node(new) " + labelNew
+					+ " have the following similarieties:");
+			System.out.println("Syntactic similarity: "
+					+ getWeightedSyntacticSimilarity());
+			System.out.println("Semantic similarity: "
+					+ getWeightedSemanticSimilarity());
+			System.out.println("Contextual Similarity: "
+					+ getWeightedContextSimilarity());
 		}
 	}
 
 	/**
+	 * This method saves the result from the recent match into the
+	 * comparedNodePair object
+	 * 
 	 * @param tempNodeOrigin
 	 *            the node from the original model
 	 * @param tempNodeNew
@@ -287,8 +294,6 @@ public class MatchingProcess {
 	 * @param actTypeNewModel
 	 *            the type of the new node
 	 * 
-	 *            This method saves the result from the recent match into the
-	 *            comparedNodePair object
 	 */
 	private void saveComparedNodePaier(Node tempNodeOrigin, Node tempNodeNew,
 			NodeType actTypeOriginModel, NodeType actTypeNewModel) {

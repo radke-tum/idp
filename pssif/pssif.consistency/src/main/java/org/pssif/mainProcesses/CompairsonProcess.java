@@ -93,7 +93,8 @@ public class CompairsonProcess {
 	 *            the recent model imported into the pssif modelling fw
 	 * @param metaModel
 	 *            the according metamodel for the models
-	 * @param matchMethods these are the matching methods for the coming matching phase
+	 * @param matchMethods
+	 *            these are the matching methods for the coming matching phase
 	 */
 	public CompairsonProcess(Model originalModel, Model newModel,
 			Metamodel metaModel, List<MatchMethod> matchMethods) {
@@ -153,21 +154,28 @@ public class CompairsonProcess {
 	 * iterated.
 	 */
 	public void typeIteration() {
-//TODO uncomment!!!
-		/*for (int i = 0; i < PSIFFDevArtifactSubClasses.length; i++) {
-			iterateNodesOfType(PSIFFDevArtifactSubClasses[i], false);
-		}
-
-		for (int i = 0; i < PSIFFSolArtifactSubClasses.length; i++) {
-			iterateNodesOfType(PSIFFSolArtifactSubClasses[i], false);
-		}
-
-		iterateNodesOfType(PSSIFCanonicMetamodelCreator.N_DEV_ARTIFACT, false);*/
+		// TODO uncomment!!!
+		/*
+		 * for (int i = 0; i < PSIFFDevArtifactSubClasses.length; i++) {
+		 * iterateNodesOfType(PSIFFDevArtifactSubClasses[i], false); }
+		 * 
+		 * for (int i = 0; i < PSIFFSolArtifactSubClasses.length; i++) {
+		 * iterateNodesOfType(PSIFFSolArtifactSubClasses[i], false); }
+		 * 
+		 * iterateNodesOfType(PSSIFCanonicMetamodelCreator.N_DEV_ARTIFACT,
+		 * false);
+		 */
 		iterateNodesOfType(PSSIFCanonicMetamodelCreator.N_SOL_ARTIFACT, false);
-		//iterateNodesOfType(PSSIFConstants.ROOT_NODE_TYPE_NAME, false);
+		// iterateNodesOfType(PSSIFConstants.ROOT_NODE_TYPE_NAME, false);
 	}
 
 	/**
+	 * this method gets all nodes from the original model with the given type.
+	 * If there is no node with the type in the model the method is finished. If
+	 * there is one node with the type in the model the node is given to the
+	 * method iterateOverTypesOfNewModel(). If there are many nodes each node is
+	 * given seperately to the method iterateOverTypesOfNewModel().
+	 * 
 	 * @param type
 	 *            the type of nodes which are looked up in the original model to
 	 *            do the compairson
@@ -175,13 +183,7 @@ public class CompairsonProcess {
 	 *            a bool specifying whether nodes with a subtype of type shall
 	 *            too be part of the compairson process
 	 * 
-	 *            this method gets all nodes from the original model with the
-	 *            given type. If there is no node with the type in the model the
-	 *            method is finished. If there is one node with the type in the
-	 *            model the node is given to the method
-	 *            iterateOverTypesOfNewModel(). If there are many nodes each
-	 *            node is given seperately to the method
-	 *            iterateOverTypesOfNewModel().
+	 * 
 	 * 
 	 */
 	public void iterateNodesOfType(String type, boolean includeSubtypes) {
@@ -237,20 +239,21 @@ public class CompairsonProcess {
 	}
 
 	/**
+	 * This method is supposed to call the compairson process
+	 * (matchNodeWithNodesOfActTypeOfNewModel()) between the given node and
+	 * every node in the new model Therefore this method gets all nodes from the
+	 * new model with the given type. Then the process works bottom-up. This
+	 * means that first the node is compared with nodes of the same type. Then
+	 * the node is compared with nodes of the next more general type until there
+	 * is no more general type left.
+	 * 
 	 * @param tempNodeOrigin
 	 *            the node that shall be compared to all nodes with the same
 	 *            type in the new model
 	 * @param actTypeOriginModel
 	 *            the type of the given node
 	 * 
-	 *            This method is supposed to call the compairson process
-	 *            (matchNodeWithNodesOfActTypeOfNewModel()) between the given
-	 *            node and every node in the new model Therefore this method
-	 *            gets all nodes from the new model with the given type. Then
-	 *            the process works bottom-up. This means that first the node is
-	 *            compared with nodes of the same type. Then the node is
-	 *            compared with nodes of the next more general type until there
-	 *            is no more general type left.
+	 * 
 	 * 
 	 */
 	public void iterateOverTypesOfNewModel(Node tempNodeOrigin,
@@ -292,6 +295,13 @@ public class CompairsonProcess {
 	}
 
 	/**
+	 * this method checks if there are any nodes of the given type in the new
+	 * model. If there are none there has to be no compairson done between the
+	 * given node and nodes in the other model of the actual type. If there is
+	 * one or many nodes with the actual type in the new model each node from
+	 * the new model is compared separately with the node from the original
+	 * model.
+	 * 
 	 * @param tempNodeOrigin
 	 *            the node that shall be compared to all nodes with the actual
 	 *            type in the new model
@@ -300,12 +310,7 @@ public class CompairsonProcess {
 	 * @param actTypeOriginModel
 	 *            the actual type of the originalNode
 	 * 
-	 *            this method checks if there are any nodes of the given type in
-	 *            the new model. If there are none there has to be no compairson
-	 *            done between the given node and nodes in the other model of
-	 *            the actual type. If there is one or many nodes with the actual
-	 *            type in the new model each node from the new model is compared
-	 *            separately with the node from the original model.
+	 * 
 	 * 
 	 * @param actTypeNewModel
 	 *            the actual type with which nodes to compare are searched in
@@ -316,7 +321,9 @@ public class CompairsonProcess {
 			NodeType actTypeNewModel) {
 		if (actNodesNewModel.isNone()) {
 			System.out
-					.println("There is no node in the new model of the type " + actTypeNewModel.getName() +  " to match. Continuing with next node type from new model.");
+					.println("There is no node in the new model of the type "
+							+ actTypeNewModel.getName()
+							+ " to match. Continuing with next node type from new model.");
 		} else {
 			if (actNodesNewModel.isOne()) {
 
@@ -339,6 +346,9 @@ public class CompairsonProcess {
 	}
 
 	/**
+	 * this method finally calls the appropriate matching functions between
+	 * two nodes. Then a similarity score will be computed.
+	 * 
 	 * @param tempNodeOrigin
 	 *            the node that shall be compared to the node from the new model
 	 * @param tempNodeNew
@@ -347,26 +357,28 @@ public class CompairsonProcess {
 	 * @param actTypeOriginModel
 	 *            the actual type of the originalNode
 	 * 
-	 *            this method finally calls the appropriate matching functions
-	 *            between two nodes. Then a similarity score will be computed.
-	 *            
+	 * 
+	 * 
 	 * @param actTypeNewModel
 	 *            the actual type of the node from the new model
 	 */
 	public void matchNodeWithNode(Node tempNodeOrigin, Node tempNodeNew,
 			NodeType actTypeOriginModel, NodeType actTypeNewModel) {
-		
-		String globalIDNodeOrigin = Methods.findGlobalID(tempNodeOrigin, actTypeOriginModel);
-		String globalIDNodeNew = Methods.findGlobalID(tempNodeNew, actTypeNewModel);
-		
+
+		String globalIDNodeOrigin = Methods.findGlobalID(tempNodeOrigin,
+				actTypeOriginModel);
+		String globalIDNodeNew = Methods.findGlobalID(tempNodeNew,
+				actTypeNewModel);
+
 		System.out.println("Comparing original: "
-				+ Methods.findName(actTypeOriginModel, tempNodeOrigin) + " with ID: " + globalIDNodeOrigin
-				+ " of type " + actTypeOriginModel.getName()
-				+ " with new node: " + Methods.findName(actTypeNewModel, tempNodeNew)  + " with ID: " + Methods.findGlobalID(tempNodeNew, actTypeNewModel)
+				+ Methods.findName(actTypeOriginModel, tempNodeOrigin)
+				+ " with ID: " + globalIDNodeOrigin + " of type "
+				+ actTypeOriginModel.getName() + " with new node: "
+				+ Methods.findName(actTypeNewModel, tempNodeNew) + " with ID: "
+				+ Methods.findGlobalID(tempNodeNew, actTypeNewModel)
 				+ " of type " + actTypeNewModel.getName());
 
-		
-		if(consistencyData.matchNecessary(globalIDNodeOrigin, globalIDNodeNew)){
+		if (consistencyData.matchNecessary(globalIDNodeOrigin, globalIDNodeNew)) {
 			matchingProcess.startMatchingProcess(tempNodeOrigin, tempNodeNew,
 					actTypeOriginModel, actTypeNewModel);
 		} else {
@@ -374,6 +386,5 @@ public class CompairsonProcess {
 		}
 
 	}
-
 
 }

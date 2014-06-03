@@ -20,6 +20,20 @@ import de.tum.pssif.core.model.Node;
 /**
  * @author Andreas
  * 
+ *         This class represents the implementation of the Vector space model
+ *         metric. Before executing this metric for every node pair the document
+ *         corpus is built by the method initializeDocumentCorpus(). Then the
+ *         idf weight for every token of the document vocabulary is calculated.
+ * 
+ *         Then the metric can be applied to node pairs. Therefore for every
+ *         node the tf (termfrequency of token in label) weights for its tokens
+ *         are computed and assigned to them.
+ * 
+ *         Afterwards the full token vector for every node is calculated and
+ *         both token vectors are given to the calculateCosineSimilarity()
+ *         method.
+ * 
+ *         Then the result of the metric is returned.
  * 
  */
 public class VsmMatcher extends MatchMethod {
@@ -54,6 +68,17 @@ public class VsmMatcher extends MatchMethod {
 	}
 
 	// TODO eventually add thesaurus match here as seen in paper
+	/**
+	 * This method calculates the similarity of two given token vecctors/lists
+	 * based on the cosine similarity function
+	 * 
+	 * @param tokensOrigin
+	 *            the tokens of the original model
+	 * @param tokensNew
+	 *            the tokens of the recent imported model
+	 * @return the similarity of the two token sets based on the cosine
+	 *         similarity
+	 */
 	private double calculateCosineSimilarity(List<Token> tokensOrigin,
 			List<Token> tokensNew) {
 		double cosine = 1;
@@ -84,16 +109,24 @@ public class VsmMatcher extends MatchMethod {
 		}
 
 		denominator = Math.sqrt(tempDenominatorOrigin * tempDenominatorNew);
-		
+
 		if ((numerator == 0) || (denominator == 0)) {
 			return 0;
 		}
-		
+
 		cosine = (numerator / denominator);
 
 		return cosine;
 	}
 
+	/**
+	 * this method creates a new DocumentCorpusData object and triggers the
+	 * building of the document corpus in the corpusData object.
+	 * 
+	 * @param normalizer
+	 * @param matchingProcess
+	 * 
+	 */
 	public void initializeDocumentCorpus(Normalizer normalizer,
 			MatchingProcess matchingProcess) {
 
@@ -105,10 +138,22 @@ public class VsmMatcher extends MatchMethod {
 
 	}
 
+	/**
+	 * triggers the computation of the IDF weights.
+	 */
 	public void computeIDFWeigths() {
 		corpusData.computeIDFWeigths();
 	}
 
+	/**
+	 * This method takes a list of tokens and calculates the tf value for every
+	 * single token by iterating twice over the given vector to see how often a
+	 * token appears in the list.
+	 * 
+	 * @param tokensOrigin
+	 *            the list of tokens which tf (term frequency) values shall be
+	 *            calculated.
+	 */
 	private void computeTFWeigths(List<Token> tokensOrigin) {
 
 		double tokenCounter = 0;

@@ -25,7 +25,8 @@ import de.tum.pssif.core.model.Node;
  */
 public class LinguisticMatcher extends MatchMethod {
 
-	public LinguisticMatcher(MatchingMethods matchMethod, boolean isActive, double weigth) {
+	public LinguisticMatcher(MatchingMethods matchMethod, boolean isActive,
+			double weigth) {
 		super(matchMethod, isActive, weigth);
 	}
 
@@ -80,7 +81,7 @@ public class LinguisticMatcher extends MatchMethod {
 
 		result = (numerator / denominator);
 
-		if(result > 1){
+		if (result > 1) {
 			return 1.0;
 		} else {
 			return result;
@@ -117,13 +118,14 @@ public class LinguisticMatcher extends MatchMethod {
 	}
 
 	/**
+	 * This method initializes the list of tokens which appear uniquely in the
+	 * new nodes label
+	 * 
 	 * @param tokensOrigin
 	 *            the tokenset of the original node
 	 * @param tokensNew
 	 *            the tokenset of the new node
 	 * 
-	 *            This method initializes the list of tokens which appear
-	 *            uniquely in the new nodes label
 	 */
 	private void initializeUniqueNewTokenList(List<Token> tokensOrigin,
 			List<Token> tokensNew) {
@@ -145,15 +147,14 @@ public class LinguisticMatcher extends MatchMethod {
 	}
 
 	/**
+	 * This method initializes the list of tokens which appear uniquely in the
+	 * new nodes label
+	 * 
 	 * @param tokensOrigin
 	 *            the tokenset of the original node
 	 * @param tokensNew
 	 *            the tokenset of the new node
 	 * 
-	 *            This method initializes the list with the tokens which both
-	 *            token list (origin and new node) have in common. Furthermore
-	 *            this method initializes the list of tokens which appear
-	 *            uniquely in the old nodes label.
 	 * 
 	 */
 	private void initializeIntersectionAndUniqueOriginTokenList(

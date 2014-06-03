@@ -4,19 +4,26 @@ package org.pssif.consistencyDataStructures;
  * @author Andreas
  * 
  *         this class represents a simple token implementation. Each token holds
- *         a word as a String and an according wordWeigth
+ *         a word as a String and an according wordWeigth (plus variables
+ *         necessary for computing the weight)
  * 
  */
 public class Token {
-//TODO implement interface Comparable here
-	
+
 	public Token(String string) {
 		this.word = string;
 		this.documentCounter = 0;
 		this.wordWeigth = 0;
 	}
 
+	/**
+	 * the word held by this tolen
+	 */
 	private String word;
+
+	/**
+	 * the computed tf-idf weight of this token
+	 */
 	private double wordWeigth;
 
 	/**
@@ -67,7 +74,8 @@ public class Token {
 	}
 
 	/**
-	 * @param idf the idf to set
+	 * @param idf
+	 *            the idf to set
 	 */
 	public void setIdf(double idf) {
 		this.idf = idf;
@@ -81,7 +89,8 @@ public class Token {
 	}
 
 	/**
-	 * @param tf the tf to set
+	 * @param tf
+	 *            the tf to set
 	 */
 	public void setTf(double tf) {
 		this.tf = tf;
@@ -94,17 +103,24 @@ public class Token {
 		return wordWeigth;
 	}
 
+	/**
+	 * this method increases the DocumentCounter by +1
+	 */
 	public void incrementDocumentCounter() {
 		int actCounter = getDocumentCounter();
 		actCounter++;
 		this.setDocumentCounter(actCounter);
 	}
 
+	/**
+	 * This method coputes the tf-idf word weight for this token (relative to
+	 * the document corpus)
+	 */
 	public void computeWordWeight() {
 		double weight = 0;
-		
-		weight = tf*idf;
-		
+
+		weight = tf * idf;
+
 		this.wordWeigth = weight;
 	}
 

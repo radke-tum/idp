@@ -24,7 +24,9 @@ import de.tum.pssif.core.model.Node;
 /**
  * @author Andreas
  * 
- * 
+ *         This class holds the data necessary for the VSM metric. This includes
+ *         the total number of documents in the document space and the
+ *         vocabulary of the document space.
  */
 public class DocumentCorpusData {
 
@@ -34,8 +36,8 @@ public class DocumentCorpusData {
 	private Metamodel metaModel;
 
 	/**
-	 * this variable counts the total number of documents(here represented by
-	 * nodes)
+	 * this variable counts the total number of documents(documents are here
+	 * represented by nodes)
 	 */
 	private double numberOfDocuments;
 
@@ -51,9 +53,11 @@ public class DocumentCorpusData {
 
 	}
 
+	/**
+	 * This method searches for all nodes of the two models which shall be
+	 * merged and calls a method to add them to the vocabulary list.
+	 */
 	public void iterateOverAllNodes() {
-		// TODO Don't get these fields again here. It's already given to the
-		// match method
 		Model originalModel = matchingProcess.getOriginalModel();
 		Model newModel = matchingProcess.getNewModel();
 		Metamodel metaModel = matchingProcess.getMetaModel();
@@ -64,13 +68,18 @@ public class DocumentCorpusData {
 	}
 
 	/**
+	 * This method get's all nodes of the given type from the given model and
+	 * calls a method addTokens() to add the tokens of a node to the vocabulary
+	 * list.
+	 * 
 	 * @param type
 	 *            the type of nodes which are looked up in the given model to do
 	 *            the compairson
 	 * @param model
-	 *            TODO
+	 *            the model in which the nodes of the given type shall be
+	 *            searched
 	 * @param metaModel
-	 *            TODO
+	 *            the according metamodel of the model
 	 * 
 	 */
 	private void addNodes(String type, Model model, Metamodel metaModel) {
@@ -111,8 +120,23 @@ public class DocumentCorpusData {
 		}
 	}
 
-	private void addTokens(Node tempNode, NodeType actTypeModel) {
-		String labelNode = Methods.findName(actTypeModel, tempNode);
+	// TODO Begründung in Arbeit schreiben warum bei VSM Normalisierung ohne
+	// Word splitting durchgeführt wird!!!
+	/**
+	 * 
+	 * This method get's the label of the given node and creates the tokens of
+	 * it (all normalizations except word splitting). Then every token is added
+	 * to the vocabulary list.
+	 * 
+	 * 
+	 * @param tempNode
+	 *            the node of which the tokens shall be added to the vocabulary.
+	 * @param actTypeNode
+	 *            the type of the node.
+	 * 
+	 */
+	private void addTokens(Node tempNode, NodeType actTypeNode) {
+		String labelNode = Methods.findName(actTypeNode, tempNode);
 
 		List<Token> tempTokens = normalizer.createNormalizedTokensFromLabel(
 				labelNode, true, true, false, true);
@@ -122,6 +146,16 @@ public class DocumentCorpusData {
 		}
 	}
 
+	/**
+	 * This method adds the given token to the vocabulary list. But if a token
+	 * with the same word is already present in the list the token in the list
+	 * is modified and no additional token is added. Everytime a token is added
+	 * or updated this tokens method incrementDocumentCounter() is called
+	 * because the token is present in (current DocumentCounter + 1) documents.
+	 * 
+	 * @param token
+	 *            the token to add to the vocabulary list
+	 */
 	private void addTokenToData(Token token) {
 		boolean tokenAlreadyStored = false;
 
@@ -144,6 +178,10 @@ public class DocumentCorpusData {
 
 	}
 
+	/**
+	 * This method calculates the idf (inverse document frequency) weights of
+	 * every token in the vocabulary list.
+	 */
 	public void computeIDFWeigths() {
 		double idf = 0;
 
@@ -154,14 +192,26 @@ public class DocumentCorpusData {
 		}
 	}
 
+	/**
+	 * This method computes out of the given token list and the internal
+	 * vocabulary token list a specific list of tokens with general idf and
+	 * specialized tf weights. This vector contains mainly null values because
+	 * only the tokens present in the given token list will be contained by the
+	 * full token list. This list is then used for the vsm model.
+	 * 
+	 * @param tokensOrigin
+	 *            the list of tokens for which a full token list of the
+	 *            vocabulary of the document space shall be generated.
+	 * @return the full token list
+	 */
 	public List<Token> getFullTokenList(List<Token> tokensOrigin) {
 		List<Token> result = new LinkedList<Token>();
 		boolean tokenFound = false;
 		Token tempOrigin;
-		
+
 		for (Token savedToken : tokens) {
 			tokenFound = false;
-			
+
 			for (int i = 0; i < tokensOrigin.size(); i++) {
 				tempOrigin = tokensOrigin.get(i);
 
@@ -172,7 +222,7 @@ public class DocumentCorpusData {
 					tempOrigin.computeWordWeight();
 
 					result.add(tempOrigin);
-					
+
 					break;
 				}
 				if ((!tokenFound) && (i == (tokensOrigin.size() - 1))) {

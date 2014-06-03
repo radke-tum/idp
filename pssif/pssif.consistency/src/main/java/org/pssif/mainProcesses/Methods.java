@@ -43,12 +43,13 @@ public class Methods {
 	}
 
 	/**
+	 * This method concatenates the words of the given token list to a single
+	 * String whereby each word is separated by a space. The result is used for
+	 * the calculation of the levenshtein distance.
+	 * 
 	 * @param tokens
 	 * @return a concatenated String based on the given token list
 	 * 
-	 *         This method concatenates the words of the given token list to a
-	 *         single String whereby each word is separated by a space. The
-	 *         result is used for the calculation of the levenshtein distance.
 	 */
 	public static String getStringFromTokens(List<Token> tokens) {
 		String result = "";
@@ -59,12 +60,15 @@ public class Methods {
 
 		return result;
 	}
-	
-	public static double logarithmBaseTwo( double x )
-	{
-	  return Math.log( x ) / Math.log( 2.0 );
+
+	/**
+	 * @param a
+	 *            number for which the logarithm (base 2) shall be calculated)
+	 * @return the logarithm of base two of the given number
+	 */
+	public static double logarithmBaseTwo(double x) {
+		return Math.log(x) / Math.log(2.0);
 	}
-	
 
 	/**
 	 * Get the name from the Node object
