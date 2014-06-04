@@ -4,10 +4,12 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
+import de.tum.pssif.core.common.PSSIFOption;
 import de.tum.pssif.core.metamodel.ConnectionMapping;
 import de.tum.pssif.core.metamodel.EdgeType;
 import de.tum.pssif.core.metamodel.Metamodel;
 import de.tum.pssif.core.metamodel.NodeTypeBase;
+import de.tum.pssif.core.model.Edge;
 import de.tum.pssif.core.model.Node;
 
 
@@ -41,12 +43,16 @@ public class JoinPath {
       return result;
     }
 
-    private Node unJoin(Node node) {
-      Node result = mapping.applyFrom(mapping.applyIncoming(node).getOne());
-      if (direction.equals(Direction.INCOMING)) {
-        result = mapping.applyTo(mapping.applyOutgoing(node).getOne());
+    private PSSIFOption<Node> unJoin(Node node) {
+      PSSIFOption<Edge> incoming = mapping.applyIncoming(node);
+      if (incoming.isOne()) {
+        Node result = mapping.applyFrom(mapping.applyIncoming(node).getOne());
+        if (direction.equals(Direction.INCOMING)) {
+          result = mapping.applyTo(mapping.applyOutgoing(node).getOne());
+        }
+        return PSSIFOption.one(result);
       }
-      return result;
+      return PSSIFOption.none();
     }
 
     private JoinPathSegment forMetamodel(Metamodel metamodel) {
@@ -84,7 +90,10 @@ public class JoinPath {
     Node result = node;
 
     for (JoinPathSegment segment : Lists.reverse(segments)) {
-      result = segment.unJoin(result);
+      PSSIFOption<Node> unjoined = segment.unJoin(result);
+      if (unjoined.isOne()) {
+        result = unjoined.getOne();
+      }
     }
 
     return result;
