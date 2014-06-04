@@ -1,5 +1,9 @@
 package org.pssif.mainProcesses;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.pssif.consistencyDataStructures.Token;
@@ -9,6 +13,7 @@ import de.tum.pssif.core.common.PSSIFOption;
 import de.tum.pssif.core.common.PSSIFValue;
 import de.tum.pssif.core.metamodel.Attribute;
 import de.tum.pssif.core.metamodel.NodeType;
+import de.tum.pssif.core.metamodel.PrimitiveDataType;
 import de.tum.pssif.core.model.Node;
 
 /**
@@ -32,7 +37,7 @@ public class Methods {
 	 */
 	public static String findGlobalID(Node tempNodeOrigin,
 			NodeType actTypeOriginModel) {
-		String globalID = "Name not available";
+		String globalID = "Global-ID not available";
 
 		Attribute globalIDAttribute = actTypeOriginModel.getAttribute(
 				PSSIFConstants.BUILTIN_ATTRIBUTE_GLOBAL_ID).getOne();
@@ -100,4 +105,5 @@ public class Methods {
 
 		return name;
 	}
+	
 }

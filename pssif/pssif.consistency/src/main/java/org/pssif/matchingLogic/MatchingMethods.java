@@ -4,8 +4,8 @@ package org.pssif.matchingLogic;
  * This enum represents all currently available match methods between nodes in
  * the PSSIF-FW.
  * 
- * If one match method shall be added. The methods
- * checkMatchMethods(),saveMatchMethodResult
+ * If one match method shall be added. The method checkMatchMethods() in the
+ * class Normalizer and the methods saveMatchMethodResult
  * (),getWeightedSyntacticSimilarity(),getWeightedSemanticSimilarity() and
  * getWeightedContextSimilarity in the class "MatchingProcess" have to be
  * adapted properly. Furthermore the method createMatchMethodObject() in the
@@ -25,7 +25,8 @@ public enum MatchingMethods {
 			"Hyphen Compairson (no Impl)"), LINGUISTIC_MATCHING(4,
 			"Linguistic Compairson"), VECTOR_SPACE_MODEL_MATCHING(5,
 			"VSM Compairson"), LATENT_SEMANTIC_INDEXING_MATCHING(6,
-			"LSI Compairson (no Impl)"), CONTEXT_MATCHING(7,
+			"LSI Compairson (no Impl)"), ATTRIBUTE_MATCHING(7,
+			"Attribute Matching"), CONTEXT_MATCHING(8,
 			"Contextual Compairson (no Impl)");
 
 	private final int value;

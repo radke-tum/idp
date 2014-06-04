@@ -338,6 +338,9 @@ public class MatchingProcess {
 		case LATENT_SEMANTIC_INDEXING_MATCHING:
 			comparedNormalizedTokensPair.setLsiMatchResult(currentMetricResult);
 			break;
+		case ATTRIBUTE_MATCHING:
+			comparedNodePair.setAttributeMatchResult(currentMetricResult);
+			break;
 		case CONTEXT_MATCHING:
 			comparedNodePair.setContextMatchResult(currentMetricResult);
 			break;
@@ -394,6 +397,7 @@ public class MatchingProcess {
 				.getLinguisticMatchResult();
 		double vsmMatch = comparedNormalizedTokensPair.getVsmMatchResult();
 		double lsiMatch = comparedNormalizedTokensPair.getLsiMatchResult();
+		double attributeMatch = comparedNodePair.getAttributeMatchResult();
 
 		Iterator<MatchMethod> currentMatchMethod = matchMethods.iterator();
 
@@ -409,6 +413,9 @@ public class MatchingProcess {
 				break;
 			case LATENT_SEMANTIC_INDEXING_MATCHING:
 				result += currentMethod.getWeigth() * lsiMatch;
+				break;
+			case ATTRIBUTE_MATCHING:
+				result += currentMethod.getWeigth() * attributeMatch;
 				break;
 			default:
 				;

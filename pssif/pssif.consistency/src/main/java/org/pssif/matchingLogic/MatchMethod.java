@@ -41,8 +41,8 @@ public abstract class MatchMethod {
 	}
 
 	final MatchingMethods matchMethod;
-	private boolean isActive;
-	private double weigth;
+	protected boolean isActive;
+	protected double weigth;
 
 	/**
 	 * 
@@ -69,42 +69,45 @@ public abstract class MatchMethod {
 	 *            The type of match method which shall be created
 	 * @param isActive
 	 *            detemrining whether the created method shall be active
-	 * @param weigth
+	 * @param weight
 	 *            thr weight of the created method
 	 * @return the createtd method
 	 * 
 	 */
 	public static MatchMethod createMatchMethodObject(
-			MatchingMethods matchMethod, boolean isActive, double weigth) {
+			MatchingMethods matchMethod, boolean isActive, double weight) {
 		// TODO Initialize with null
 		MatchMethod newMatchMethod = null;
 
 		switch (matchMethod) {
 		case EXACT_STRING_MATCHING:
-			newMatchMethod = new ExactMatcher(matchMethod, isActive, weigth);
+			newMatchMethod = new ExactMatcher(matchMethod, isActive, weight);
 			break;
 		case DEPTH_MATCHING:
-			newMatchMethod = new DepthMatcher(matchMethod, isActive, weigth);
+			newMatchMethod = new DepthMatcher(matchMethod, isActive, weight);
 			break;
 		case STRING_EDIT_DISTANCE_MATCHING:
 			newMatchMethod = new StringEditDistanceMatcher(matchMethod,
-					isActive, weigth);
+					isActive, weight);
 			break;
 		case HYPHEN_MATCHING:
-			newMatchMethod = new HyphenMatcher(matchMethod, isActive, weigth);
+			newMatchMethod = new HyphenMatcher(matchMethod, isActive, weight);
 			break;
 		case LINGUISTIC_MATCHING:
 			newMatchMethod = new LinguisticMatcher(matchMethod, isActive,
-					weigth);
+					weight);
 			break;
 		case VECTOR_SPACE_MODEL_MATCHING:
-			newMatchMethod = new VsmMatcher(matchMethod, isActive, weigth);
+			newMatchMethod = new VsmMatcher(matchMethod, isActive, weight);
 			break;
 		case LATENT_SEMANTIC_INDEXING_MATCHING:
-			newMatchMethod = new LsiMatcher(matchMethod, isActive, weigth);
+			newMatchMethod = new LsiMatcher(matchMethod, isActive, weight);
+			break;
+		case ATTRIBUTE_MATCHING:
+			newMatchMethod = new AttributeMatcher(matchMethod, isActive, weight);
 			break;
 		case CONTEXT_MATCHING:
-			newMatchMethod = new ContextMatcher(matchMethod, isActive, weigth);
+			newMatchMethod = new ContextMatcher(matchMethod, isActive, weight);
 			break;
 		default:
 			throw new RuntimeException(

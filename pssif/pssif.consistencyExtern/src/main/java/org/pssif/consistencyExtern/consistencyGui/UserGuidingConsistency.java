@@ -212,6 +212,7 @@ public class UserGuidingConsistency {
 				case LINGUISTIC_MATCHING:
 				case VECTOR_SPACE_MODEL_MATCHING:
 				case LATENT_SEMANTIC_INDEXING_MATCHING:
+				case ATTRIBUTE_MATCHING:
 					semanticWeight += method.getWeigth();
 					break;
 				case CONTEXT_MATCHING:

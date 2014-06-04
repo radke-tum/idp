@@ -34,6 +34,12 @@ public class ComparedNodePair extends Compared {
 	private double depthMatchResult;
 
 	/**
+	 * the result of the matching between two elements based on their attribute
+	 * values
+	 */
+	private double attributeMatchResult;
+
+	/**
 	 * the type of the node from the node nodeOriginalModel
 	 */
 	private NodeType typeOriginModel;
@@ -72,42 +78,49 @@ public class ComparedNodePair extends Compared {
 	}
 
 	/**
-	 * @param nodeOriginalModel the nodeOriginalModel to set
+	 * @param nodeOriginalModel
+	 *            the nodeOriginalModel to set
 	 */
 	public void setNodeOriginalModel(Node nodeOriginalModel) {
 		this.nodeOriginalModel = nodeOriginalModel;
 	}
 
 	/**
-	 * @param nodeNewModel the nodeNewModel to set
+	 * @param nodeNewModel
+	 *            the nodeNewModel to set
 	 */
 	public void setNodeNewModel(Node nodeNewModel) {
 		this.nodeNewModel = nodeNewModel;
 	}
 
 	/**
-	 * @param labelComparison the labelComparison to set
+	 * @param labelComparison
+	 *            the labelComparison to set
 	 */
 	public void setLabelComparison(ComparedLabelPair labelComparison) {
 		this.labelComparison = labelComparison;
 	}
 
 	/**
-	 * @param tokensComparison the tokensComparison to set
+	 * @param tokensComparison
+	 *            the tokensComparison to set
 	 */
-	public void setTokensComparison(ComparedNormalizedTokensPair tokensComparison) {
+	public void setTokensComparison(
+			ComparedNormalizedTokensPair tokensComparison) {
 		this.tokensComparison = tokensComparison;
 	}
 
 	/**
-	 * @param contextMatchResult the contextMatchResult to set
+	 * @param contextMatchResult
+	 *            the contextMatchResult to set
 	 */
 	public void setContextMatchResult(double contextMatchResult) {
 		this.contextMatchResult = contextMatchResult;
 	}
 
 	/**
-	 * @param depthMatchResult the depthMatchResult to set
+	 * @param depthMatchResult
+	 *            the depthMatchResult to set
 	 */
 	public void setDepthMatchResult(double depthMatchResult) {
 		this.depthMatchResult = depthMatchResult;
@@ -117,7 +130,7 @@ public class ComparedNodePair extends Compared {
 			NodeType actTypeNewModel) {
 		this.typeOriginModel = actTypeOriginModel;
 		this.typeNewModel = actTypeNewModel;
-		
+
 	}
 
 	/**
@@ -146,5 +159,20 @@ public class ComparedNodePair extends Compared {
 	 */
 	public NodeType getTypeNewModel() {
 		return typeNewModel;
+	}
+
+	/**
+	 * @param attributeMatchResult
+	 *            the attributeMatchResult to set
+	 */
+	public void setAttributeMatchResult(double attributeMatchResult) {
+		this.attributeMatchResult = attributeMatchResult;
+	}
+
+	/**
+	 * @return the attributeMatchResult
+	 */
+	public double getAttributeMatchResult() {
+		return attributeMatchResult;
 	}
 }
