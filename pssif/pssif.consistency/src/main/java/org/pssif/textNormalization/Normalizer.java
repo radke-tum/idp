@@ -33,7 +33,7 @@ public class Normalizer {
 	 * if true the results of each token- and normalization step is printed to
 	 * the console
 	 */
-	private boolean showResultPrintsInConsole = false;
+	private static final boolean debugMode = false;
 
 	/**
 	 * this bool says whether we need to remove the whitespace from the labels
@@ -222,7 +222,7 @@ public class Normalizer {
 	 * 
 	 */
 	public void printTokens(String step, List<Token> tokens) {
-		if (showResultPrintsInConsole) {
+		if (debugMode) {
 			System.out.println("Result from normalization step: " + step);
 			for (Token token : tokens) {
 				System.out.print(token.getWord() + ", ");

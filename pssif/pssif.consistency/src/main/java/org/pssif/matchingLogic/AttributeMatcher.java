@@ -16,6 +16,7 @@ import de.tum.pssif.core.model.Node;
 
 public class AttributeMatcher extends MatchMethod {
 
+	private static final boolean debugMode = false;
 	private final String[] pssifAttributes = {
 			PSSIFConstants.BUILTIN_ATTRIBUTE_NAME,
 			PSSIFConstants.BUILTIN_ATTRIBUTE_COMMENT,
@@ -84,9 +85,11 @@ public class AttributeMatcher extends MatchMethod {
 
 					nrOfAttributesOrigin++;
 
-					System.out.println("Node Origin has the attribute: "
-							+ attrOrigin.getName() + " with value: "
-							+ tempValueOrigin);
+					if (debugMode) {
+						System.out.println("Node Origin has the attribute: "
+								+ attrOrigin.getName() + " with value: "
+								+ tempValueOrigin);
+					}
 
 				}
 			}
@@ -101,24 +104,27 @@ public class AttributeMatcher extends MatchMethod {
 
 					nrOfAttributesNew++;
 
-					System.out.println("Node New has the attribute: "
-							+ attrNew.getName() + " with value: "
-							+ tempValueNew);
+					if (debugMode) {
+						System.out.println("Node New has the attribute: "
+								+ attrNew.getName() + " with value: "
+								+ tempValueNew);
+					}
 
-				}
-			}
+					if (tempValueOrigin != null) {
+						String tmpOrigin = tempValueOrigin.replaceAll("\\s+",
+								"").toLowerCase();
+						String tmpNew = tempValueNew.replaceAll("\\s+", "")
+								.toLowerCase();
 
-			if ((tempValueOrigin != null) && (tempValueNew != null)) {
-				if (tempValueOrigin.equals(tempValueNew)) {
-					nrOfSimilarAttributes++;
+						if (tmpOrigin.equals(tmpNew)) {
+							nrOfSimilarAttributes++;
+						}
+					}
 				}
 			}
 
 		}
-		System.out.println("Similarity: " + (nrOfSimilarAttributes / (Math.max(nrOfAttributesOrigin,
-				nrOfAttributesNew))));
 		return (nrOfSimilarAttributes / (Math.max(nrOfAttributesOrigin,
 				nrOfAttributesNew)));
-
 	}
 }
