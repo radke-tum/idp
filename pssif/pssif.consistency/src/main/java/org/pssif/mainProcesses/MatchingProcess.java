@@ -3,6 +3,8 @@ package org.pssif.mainProcesses;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.management.RuntimeErrorException;
+
 import org.pssif.comparedDataStructures.ComparedLabelPair;
 import org.pssif.comparedDataStructures.ComparedNodePair;
 import org.pssif.comparedDataStructures.ComparedNormalizedTokensPair;
@@ -11,7 +13,6 @@ import org.pssif.consistencyDataStructures.Token;
 import org.pssif.matchingLogic.MatchMethod;
 import org.pssif.matchingLogic.MatchingMethods;
 import org.pssif.textNormalization.Normalizer;
-import org.pssif.textNormalization.Tokenizer;
 
 import de.tum.pssif.core.metamodel.Metamodel;
 import de.tum.pssif.core.metamodel.NodeType;
@@ -44,13 +45,14 @@ public class MatchingProcess {
 	 */
 	public MatchingProcess(Model originalModel, Model newModel,
 			Metamodel metaModel, ConsistencyData consistencyData,
-			List<MatchMethod> matchMethods) {
+			List<MatchMethod> matchMethods, CompairsonProcess compairsonProcess) {
 
 		this.originalModel = originalModel;
 		this.newModel = newModel;
 		this.metaModel = metaModel;
 		this.consistencyData = consistencyData;
 		this.matchMethods = matchMethods;
+		this.compairsonProcess = compairsonProcess;
 
 		this.normalizer = Normalizer.initialize(matchMethods, this);
 	}
@@ -59,6 +61,7 @@ public class MatchingProcess {
 	private Metamodel metaModel;
 
 	private ConsistencyData consistencyData;
+	private CompairsonProcess compairsonProcess;
 
 	private List<MatchMethod> matchMethods;
 
@@ -67,6 +70,8 @@ public class MatchingProcess {
 	private ComparedLabelPair comparedLabelPair = null;
 	private ComparedNormalizedTokensPair comparedNormalizedTokensPair = null;
 	private ComparedNodePair comparedNodePair = null;
+
+	private boolean contextMatcherActive = false;
 
 	/**
 	 * @return the originalModel
@@ -104,6 +109,25 @@ public class MatchingProcess {
 	}
 
 	/**
+	 * @return the contextMatcherActive
+	 */
+	public boolean isContextMatcherActive() {
+		return contextMatcherActive;
+	}
+
+	/**
+	 * @param contextMatcherActive
+	 *            the contextMatcherActive to set
+	 */
+	public void setContextMatcherActive(boolean contextMatcherActive) {
+		this.contextMatcherActive = contextMatcherActive;
+	}
+
+	public void startContextMatching() {
+		throw new RuntimeErrorException(null, "not yet impplemented");
+	}
+
+	/**
 	 * This method guides the whole matching process. It initializes the
 	 * variables where the consistencyData will be stored later. Then it
 	 * triggers the normalization and/or tokenization of the labels if
@@ -132,6 +156,7 @@ public class MatchingProcess {
 			String globalIDNodeOrigin, String globalIDNodeNew) {
 
 		double currentMetricResult = 0;
+		boolean lastMetricWasContext = false;
 
 		/**
 		 * initializing the consistency Data variables here
@@ -144,10 +169,10 @@ public class MatchingProcess {
 		 * here the saved normalizations, tokenizations and results of the two
 		 * nodes are retrieved if they have been compared with another node once
 		 */
-		ComparedNodePair nodePairOrigin = consistencyData.nodeAlreadyCompared(tempNodeOrigin,
-				actTypeOriginModel);
-		ComparedNodePair nodePairNew = consistencyData.nodeAlreadyCompared(tempNodeNew,
-				actTypeNewModel);
+		ComparedNodePair nodePairOrigin = consistencyData.nodeAlreadyCompared(
+				tempNodeOrigin, actTypeOriginModel);
+		ComparedNodePair nodePairNew = consistencyData.nodeAlreadyCompared(
+				tempNodeNew, actTypeNewModel);
 
 		/**
 		 * here the strings of the old and the new node are read from the model
@@ -166,6 +191,10 @@ public class MatchingProcess {
 		List<Token> tokensOriginNodeNormalizedCompundedUnstemmed = null;
 		List<Token> tokensNewNodeNormalizedCompundedUnstemmed = null;
 
+		/**
+		 * if the node from the origin model has been compared once with any
+		 * other node the tokenization and normalization result is reused.
+		 */
 		if (nodePairOrigin != null) {
 			tokensOriginNodeNormalized = nodePairOrigin.getTokensComparison()
 					.getTokensOriginNodeNormalized();
@@ -180,6 +209,10 @@ public class MatchingProcess {
 					.normalizeLabel(labelOriginNode);
 		}
 
+		/**
+		 * if the node from the new model has been compared once with any other
+		 * node the tokenization and normalization result is reused.
+		 */
 		if (nodePairNew != null) {
 			tokensNewNodeNormalized = nodePairNew.getTokensComparison()
 					.getTokensNewNodeNormalized();
@@ -222,6 +255,16 @@ public class MatchingProcess {
 			 * these two cases.
 			 */
 			if (currentMethod.isActive()) {
+				if (currentMethod.getMatchMethod() == MatchingMethods.CONTEXT_MATCHING) {
+					lastMetricWasContext = true;
+					currentMetricResult = currentMethod.executeMatching(
+							tempNodeOrigin, tempNodeNew, originalModel,
+							newModel, metaModel, actTypeOriginModel,
+							actTypeNewModel, labelOriginNodeNormalized,
+							labelNewNodeNormalized,
+							tokensOriginNodeNormalizedCompundedUnstemmed,
+							tokensNewNodeNormalizedCompundedUnstemmed);
+				}
 				if ((currentMethod.getMatchMethod() == MatchingMethods.STRING_EDIT_DISTANCE_MATCHING)
 						|| (currentMethod.getMatchMethod() == MatchingMethods.HYPHEN_MATCHING)) {
 					if ((tokensOriginNodeNormalizedCompundedUnstemmed == null)
@@ -279,7 +322,7 @@ public class MatchingProcess {
 		/**
 		 * save the result of the recent node compairson properly
 		 */
-		saveComparedNodePaier(tempNodeOrigin, tempNodeNew, actTypeOriginModel,
+		saveComparedNodePair(tempNodeOrigin, tempNodeNew, actTypeOriginModel,
 				actTypeNewModel);
 
 		/**
@@ -335,7 +378,7 @@ public class MatchingProcess {
 	 *            the type of the new node
 	 * 
 	 */
-	private void saveComparedNodePaier(Node tempNodeOrigin, Node tempNodeNew,
+	private void saveComparedNodePair(Node tempNodeOrigin, Node tempNodeNew,
 			NodeType actTypeOriginModel, NodeType actTypeNewModel) {
 		comparedNodePair.setLabelComparison(comparedLabelPair);
 		comparedNodePair.setTokensComparison(comparedNormalizedTokensPair);
@@ -490,5 +533,4 @@ public class MatchingProcess {
 		return result;
 	}
 
-	
 }

@@ -27,7 +27,7 @@ public enum MatchingMethods {
 			"VSM Compairson"), LATENT_SEMANTIC_INDEXING_MATCHING(6,
 			"LSI Compairson (no Impl)"), ATTRIBUTE_MATCHING(7,
 			"Attribute Matching"), CONTEXT_MATCHING(8,
-			"Contextual Compairson (no Impl)");
+			"Contextual Compairson");
 
 	private final int value;
 	private final String description;

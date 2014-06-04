@@ -100,6 +100,8 @@ public class ConsistencyData {
 	}
 
 	/**
+	 * This method says whether a match between the two given IDs is necessary
+	 * 
 	 * @param globalIDNodeOrigin
 	 *            TODO
 	 * @param globalIDNodeNew
@@ -110,56 +112,26 @@ public class ConsistencyData {
 	 */
 	public boolean matchNecessary(String globalIDNodeOrigin,
 			String globalIDNodeNew) {
-		// TODO Delete comment after testing
-		// return (!IDMapping.contains(idNodeOrigin + idNodeNew));
-
-		String tempIDOrigin;
-		String tempIDNew;
-
-		for (ComparedNodePair comparedNodePair : comparedNodePairs) {
-
-			tempIDOrigin = Methods.findGlobalID(
-					comparedNodePair.getNodeOriginalModel(),
-					comparedNodePair.getTypeOriginModel());
-
-			tempIDNew = Methods.findGlobalID(
-					comparedNodePair.getNodeNewModel(),
-					comparedNodePair.getTypeNewModel());
-
-			if (globalIDNodeOrigin.equals(tempIDOrigin)
-					&& globalIDNodeNew.equals(tempIDNew)) {
-				return false;
-			}
-		}
-		return true;
+		return (!IDMapping.contains(globalIDNodeOrigin + globalIDNodeNew));
 	}
-	
+
 	/**
-	 * TODO
-	 * @param globalIDNodeOrigin
-	 * @param globalIDNodeNew
+	 * This methhod returns the result of a match between the two given nodes if
+	 * they have been matched once
+	 * 
+	 * @param tempNodeOrigin
+	 *            TODO
+	 * @param tempNodeNew
+	 *            TODO
 	 * @return
 	 */
-	public ComparedNodePair getNodeMatch(String globalIDNodeOrigin,
-			String globalIDNodeNew) {
+	public ComparedNodePair getNodeMatch(Node tempNodeOrigin, Node tempNodeNew) {
 		// TODO Delete comment after testing
 		// return (!IDMapping.contains(idNodeOrigin + idNodeNew));
 
-		String tempIDOrigin;
-		String tempIDNew;
-
 		for (ComparedNodePair comparedNodePair : comparedNodePairs) {
-
-			tempIDOrigin = Methods.findGlobalID(
-					comparedNodePair.getNodeOriginalModel(),
-					comparedNodePair.getTypeOriginModel());
-
-			tempIDNew = Methods.findGlobalID(
-					comparedNodePair.getNodeNewModel(),
-					comparedNodePair.getTypeNewModel());
-
-			if (globalIDNodeOrigin.equals(tempIDOrigin)
-					&& globalIDNodeNew.equals(tempIDNew)) {
+			if (comparedNodePair.getNodeOriginalModel().equals(tempNodeOrigin)
+					&& comparedNodePair.getNodeNewModel().equals(tempNodeNew)) {
 				return comparedNodePair;
 			}
 		}
@@ -167,7 +139,10 @@ public class ConsistencyData {
 	}
 
 	/**
-	 * TODO
+	 * This method returns the normalized and tokenized form of a node if it has
+	 * been already compared with at least one other node. So the normalization
+	 * doesn't have to be computed again.
+	 * 
 	 * @param tempNode
 	 * @param tempNodeType
 	 * @return
@@ -195,5 +170,5 @@ public class ConsistencyData {
 		}
 		return null;
 	}
-	
+
 }

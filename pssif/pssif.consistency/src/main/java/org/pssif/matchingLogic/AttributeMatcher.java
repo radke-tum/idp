@@ -14,9 +14,21 @@ import de.tum.pssif.core.metamodel.PSSIFCanonicMetamodelCreator;
 import de.tum.pssif.core.model.Model;
 import de.tum.pssif.core.model.Node;
 
+/**
+ * This class represents an implementation of an attribute matching algorithm.
+ * This match method compares the set attributes of two nodes and returns a
+ * similarity value based on the set attributes.
+ * 
+ * @author Andreas
+ * 
+ */
 public class AttributeMatcher extends MatchMethod {
 
 	private static final boolean debugMode = false;
+
+	/**
+	 * the attributes which are compared between the nodes
+	 */
 	private final String[] pssifAttributes = {
 			PSSIFConstants.BUILTIN_ATTRIBUTE_NAME,
 			PSSIFConstants.BUILTIN_ATTRIBUTE_COMMENT,
@@ -49,6 +61,17 @@ public class AttributeMatcher extends MatchMethod {
 		return result;
 	}
 
+	/**
+	 * This method iterates over every given attribute saved in the
+	 * pssifAttributes array. Then it looks up for the two nodes if the
+	 * attribute is set in both nodes and if yes the values are compared.
+	 * 
+	 * @param tempNodeOrigin
+	 * @param tempNodeOriginType
+	 * @param tempNodeNew
+	 * @param tempNodeNewType
+	 * @return
+	 */
 	private double iterateOverAttributeTypes(Node tempNodeOrigin,
 			NodeType tempNodeOriginType, Node tempNodeNew,
 			NodeType tempNodeNewType) {

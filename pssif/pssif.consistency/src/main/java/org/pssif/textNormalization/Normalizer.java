@@ -124,12 +124,14 @@ public class Normalizer {
 					tokenizationRequired = true;
 					break;
 				case CONTEXT_MATCHING:
+					matchingProcess.setContextMatcherActive(true);
 					// TODO only works if other match methods were selected
 					((ContextMatcher) currentMethod)
 							.setMatchMethods(matchMethods);
 					((ContextMatcher) currentMethod)
 							.setConsistencyData(matchingProcess
 									.getConsistencyData());
+					((ContextMatcher) currentMethod).setNormalizer(this);
 					break;
 				default:
 					;

@@ -81,6 +81,8 @@ public class CompairsonProcess {
 
 	private PSSIFOption<Node> nodesOriginalModel;
 
+	private boolean contextMatchingActive = false;
+
 	public static void main(Model originalModel, Model newModel,
 			Metamodel metaModel, List<MatchMethod> matchMethods) {
 		new CompairsonProcess(originalModel, newModel, metaModel, matchMethods);
@@ -106,12 +108,27 @@ public class CompairsonProcess {
 		this.consistencyData = new ConsistencyData();
 
 		this.matchingProcess = new MatchingProcess(originalModel, newModel,
-				metaModel, consistencyData, matchMethods);
+				metaModel, consistencyData, matchMethods, this);
 
 		/**
 		 * compairson process starts here
 		 */
 		this.startTypeAndNodeIteration();
+	}
+
+	/**
+	 * @return the contextMatchingActive
+	 */
+	public boolean isContextMatchingActive() {
+		return contextMatchingActive;
+	}
+
+	/**
+	 * @param contextMatchingActive
+	 *            the contextMatchingActive to set
+	 */
+	public void setContextMatchingActive(boolean contextMatchingActive) {
+		this.contextMatchingActive = contextMatchingActive;
 	}
 
 	/**
@@ -154,19 +171,19 @@ public class CompairsonProcess {
 	 * iterated.
 	 */
 	public void typeIteration() {
-		// TODO uncomment!!!
-		/*
-		 * for (int i = 0; i < PSIFFDevArtifactSubClasses.length; i++) {
-		 * iterateNodesOfType(PSIFFDevArtifactSubClasses[i], false); }
-		 * 
-		 * for (int i = 0; i < PSIFFSolArtifactSubClasses.length; i++) {
-		 * iterateNodesOfType(PSIFFSolArtifactSubClasses[i], false); }
-		 * 
-		 * iterateNodesOfType(PSSIFCanonicMetamodelCreator.N_DEV_ARTIFACT,
-		 * false);
-		 */
+
+		for (int i = 0; i < PSIFFDevArtifactSubClasses.length; i++) {
+			iterateNodesOfType(PSIFFDevArtifactSubClasses[i], false);
+		}
+
+		for (int i = 0; i < PSIFFSolArtifactSubClasses.length; i++) {
+			iterateNodesOfType(PSIFFSolArtifactSubClasses[i], false);
+		}
+
+		iterateNodesOfType(PSSIFCanonicMetamodelCreator.N_DEV_ARTIFACT, false);
+
 		iterateNodesOfType(PSSIFCanonicMetamodelCreator.N_SOL_ARTIFACT, false);
-		// iterateNodesOfType(PSSIFConstants.ROOT_NODE_TYPE_NAME, false);
+		iterateNodesOfType(PSSIFConstants.ROOT_NODE_TYPE_NAME, false);
 	}
 
 	/**
@@ -346,8 +363,8 @@ public class CompairsonProcess {
 	}
 
 	/**
-	 * this method finally calls the appropriate matching functions between
-	 * two nodes. Then a similarity score will be computed.
+	 * this method finally calls the appropriate matching functions between two
+	 * nodes. Then a similarity score will be computed.
 	 * 
 	 * @param tempNodeOrigin
 	 *            the node that shall be compared to the node from the new model
@@ -370,19 +387,20 @@ public class CompairsonProcess {
 		String globalIDNodeNew = Methods.findGlobalID(tempNodeNew,
 				actTypeNewModel);
 
-		System.out.println("Comparing original: "
+	/*	System.out.println("Comparing original: "
 				+ Methods.findName(actTypeOriginModel, tempNodeOrigin)
 				+ " with ID: " + globalIDNodeOrigin + " of type "
 				+ actTypeOriginModel.getName() + " with new node: "
 				+ Methods.findName(actTypeNewModel, tempNodeNew) + " with ID: "
 				+ Methods.findGlobalID(tempNodeNew, actTypeNewModel)
-				+ " of type " + actTypeNewModel.getName());
+				+ " of type " + actTypeNewModel.getName());*/
 
 		if (consistencyData.matchNecessary(globalIDNodeOrigin, globalIDNodeNew)) {
 			matchingProcess.startMatchingProcess(tempNodeOrigin, tempNodeNew,
-					actTypeOriginModel, actTypeNewModel, globalIDNodeOrigin, globalIDNodeNew);
+					actTypeOriginModel, actTypeNewModel, globalIDNodeOrigin,
+					globalIDNodeNew);
 		} else {
-			System.out.println("These two nodes have already been compared.");
+			//System.out.println("These two nodes have already been compared.");
 		}
 
 	}
