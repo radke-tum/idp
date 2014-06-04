@@ -41,6 +41,20 @@ public class ComparedLabelPair extends Compared {
 	}
 
 	/**
+	 * @return the labelOrigin
+	 */
+	public String getLabelOrigin() {
+		return labelOrigin;
+	}
+
+	/**
+	 * @return the labelNew
+	 */
+	public String getLabelNew() {
+		return labelNew;
+	}
+
+	/**
 	 * @param exactMatchResult the exactMatchResult to set
 	 */
 	public void setExactMatchResult(double exactMatchResult) {

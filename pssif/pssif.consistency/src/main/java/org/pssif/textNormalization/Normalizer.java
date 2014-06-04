@@ -8,6 +8,7 @@ import org.pssif.consistencyDataStructures.Token;
 import org.pssif.mainProcesses.MatchingProcess;
 import org.pssif.matchingLogic.MatchMethod;
 import org.pssif.matchingLogic.VsmMatcher;
+import org.pssif.matchingLogic.ContextMatcher;
 
 //TODO only do normalzation once for each node
 // at the moment it's done for every nodepair again
@@ -121,6 +122,14 @@ public class Normalizer {
 					break;
 				case LATENT_SEMANTIC_INDEXING_MATCHING:
 					tokenizationRequired = true;
+					break;
+				case CONTEXT_MATCHING:
+					// TODO only works if other match methods were selected
+					((ContextMatcher) currentMethod)
+							.setMatchMethods(matchMethods);
+					((ContextMatcher) currentMethod)
+							.setConsistencyData(matchingProcess
+									.getConsistencyData());
 					break;
 				default:
 					;

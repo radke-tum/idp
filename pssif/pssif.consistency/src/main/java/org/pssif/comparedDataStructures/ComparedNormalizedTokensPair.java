@@ -150,6 +150,34 @@ public class ComparedNormalizedTokensPair extends Compared {
 	}
 
 	/**
+	 * @return the tokensOriginNodeNormalized
+	 */
+	public List<Token> getTokensOriginNodeNormalized() {
+		return tokensOriginNodeNormalized;
+	}
+
+	/**
+	 * @return the tokensNewNodeNormalized
+	 */
+	public List<Token> getTokensNewNodeNormalized() {
+		return tokensNewNodeNormalized;
+	}
+
+	/**
+	 * @return the tokensOriginNodeNormalizedCompundedUnstemmed
+	 */
+	public List<Token> getTokensOriginNodeNormalizedCompundedUnstemmed() {
+		return tokensOriginNodeNormalizedCompundedUnstemmed;
+	}
+
+	/**
+	 * @return the tokensNewNodeNormalizedCompundedUnstemmed
+	 */
+	public List<Token> getTokensNewNodeNormalizedCompundedUnstemmed() {
+		return tokensNewNodeNormalizedCompundedUnstemmed;
+	}
+
+	/**
 	 * @param linguisticMatchResult
 	 *            the linguisticMatchResult to set
 	 */

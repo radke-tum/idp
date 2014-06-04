@@ -97,6 +97,13 @@ public class MatchingProcess {
 	}
 
 	/**
+	 * @return the consistencyData
+	 */
+	public ConsistencyData getConsistencyData() {
+		return consistencyData;
+	}
+
+	/**
 	 * This method guides the whole matching process. It initializes the
 	 * variables where the consistencyData will be stored later. Then it
 	 * triggers the normalization and/or tokenization of the labels if
@@ -111,13 +118,18 @@ public class MatchingProcess {
 	 *            the type of the tempNodeOrigin
 	 * @param actTypeNewModel
 	 *            the type of the tempNodeNew
+	 * @param globalIDNodeOrigin
+	 *            TODO
+	 * @param globalIDNodeNew
+	 *            TODO
 	 * @throws RuntimeException
 	 *             If something at the saving goes wrong an exception is thrown.
 	 *             Else nothing besides the saving happens.
 	 * 
 	 */
 	public void startMatchingProcess(Node tempNodeOrigin, Node tempNodeNew,
-			NodeType actTypeOriginModel, NodeType actTypeNewModel) {
+			NodeType actTypeOriginModel, NodeType actTypeNewModel,
+			String globalIDNodeOrigin, String globalIDNodeNew) {
 
 		double currentMetricResult = 0;
 
@@ -129,21 +141,22 @@ public class MatchingProcess {
 		comparedNodePair = new ComparedNodePair();
 
 		/**
+		 * here the saved normalizations, tokenizations and results of the two
+		 * nodes are retrieved if they have been compared with another node once
+		 */
+		ComparedNodePair nodePairOrigin = consistencyData.nodeAlreadyCompared(tempNodeOrigin,
+				actTypeOriginModel);
+		ComparedNodePair nodePairNew = consistencyData.nodeAlreadyCompared(tempNodeNew,
+				actTypeNewModel);
+
+		/**
 		 * here the strings of the old and the new node are read from the model
-		 * and normalized.
 		 */
 		String labelOriginNode = Methods.findName(actTypeOriginModel,
 				tempNodeOrigin);
 		String labelNewNode = Methods.findName(actTypeNewModel, tempNodeNew);
 
-		String labelOriginNodeNormalized = normalizer
-				.normalizeLabel(labelOriginNode);
-		String labelNewNodeNormalized = normalizer.normalizeLabel(labelNewNode);
-
-		System.out.println("The normalized label of the original Node: "
-				+ labelOriginNodeNormalized);
-		System.out.println("The normalized label of the new Node: "
-				+ labelNewNodeNormalized);
+		String labelOriginNodeNormalized, labelNewNodeNormalized;
 
 		/**
 		 * variables to store the different normalized tokens
@@ -152,6 +165,33 @@ public class MatchingProcess {
 		List<Token> tokensNewNodeNormalized = null;
 		List<Token> tokensOriginNodeNormalizedCompundedUnstemmed = null;
 		List<Token> tokensNewNodeNormalizedCompundedUnstemmed = null;
+
+		if (nodePairOrigin != null) {
+			tokensOriginNodeNormalized = nodePairOrigin.getTokensComparison()
+					.getTokensOriginNodeNormalized();
+			tokensOriginNodeNormalizedCompundedUnstemmed = nodePairOrigin
+					.getTokensComparison()
+					.getTokensOriginNodeNormalizedCompundedUnstemmed();
+
+			labelOriginNodeNormalized = nodePairOrigin.getLabelComparison()
+					.getLabelOrigin();
+		} else {
+			labelOriginNodeNormalized = normalizer
+					.normalizeLabel(labelOriginNode);
+		}
+
+		if (nodePairNew != null) {
+			tokensNewNodeNormalized = nodePairNew.getTokensComparison()
+					.getTokensNewNodeNormalized();
+			tokensNewNodeNormalizedCompundedUnstemmed = nodePairNew
+					.getTokensComparison()
+					.getTokensNewNodeNormalizedCompundedUnstemmed();
+
+			labelNewNodeNormalized = nodePairNew.getLabelComparison()
+					.getLabelNew();
+		} else {
+			labelNewNodeNormalized = normalizer.normalizeLabel(labelNewNode);
+		}
 
 		/**
 		 * creating objects for the saving of the matching results here
@@ -449,4 +489,6 @@ public class MatchingProcess {
 
 		return result;
 	}
+
+	
 }

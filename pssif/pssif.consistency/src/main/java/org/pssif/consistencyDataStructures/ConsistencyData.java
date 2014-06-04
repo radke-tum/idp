@@ -9,6 +9,9 @@ import org.pssif.comparedDataStructures.ComparedNodePair;
 import org.pssif.comparedDataStructures.ComparedNormalizedTokensPair;
 import org.pssif.mainProcesses.Methods;
 
+import de.tum.pssif.core.metamodel.NodeType;
+import de.tum.pssif.core.model.Node;
+
 /**
  * @author Andreas
  * 
@@ -25,12 +28,6 @@ import org.pssif.mainProcesses.Methods;
  */
 public class ConsistencyData {
 
-	/**
-	 * @param iDMapping
-	 * @param comparedLabelPairs
-	 * @param comparedTokensPairs
-	 * @param comparedNodePairs
-	 */
 	public ConsistencyData() {
 
 		IDMapping = new HashSet<String>();
@@ -61,6 +58,13 @@ public class ConsistencyData {
 	 * stores compared Nodes with similarity information
 	 */
 	private volatile List<ComparedNodePair> comparedNodePairs;
+
+	/**
+	 * @return the comparedNodePairs
+	 */
+	public List<ComparedNodePair> getComparedNodePairs() {
+		return comparedNodePairs;
+	}
 
 	/**
 	 * THis method takes the result of the application of all active metrics
@@ -96,15 +100,100 @@ public class ConsistencyData {
 	}
 
 	/**
-	 * @param idNodeOrigin
-	 *            the id of the original node
-	 * @param idNodeNew
-	 *            the id of the new node
+	 * @param globalIDNodeOrigin
+	 *            TODO
+	 * @param globalIDNodeNew
+	 *            TODO
 	 * @return a bool saying whether the two nodes have been matched already
 	 * @true if a match is necessary
 	 * @false if they have already been matched
 	 */
-	public boolean matchNecessary(String idNodeOrigin, String idNodeNew) {
-		return (!IDMapping.contains(idNodeOrigin + idNodeNew));
+	public boolean matchNecessary(String globalIDNodeOrigin,
+			String globalIDNodeNew) {
+		// TODO Delete comment after testing
+		// return (!IDMapping.contains(idNodeOrigin + idNodeNew));
+
+		String tempIDOrigin;
+		String tempIDNew;
+
+		for (ComparedNodePair comparedNodePair : comparedNodePairs) {
+
+			tempIDOrigin = Methods.findGlobalID(
+					comparedNodePair.getNodeOriginalModel(),
+					comparedNodePair.getTypeOriginModel());
+
+			tempIDNew = Methods.findGlobalID(
+					comparedNodePair.getNodeNewModel(),
+					comparedNodePair.getTypeNewModel());
+
+			if (globalIDNodeOrigin.equals(tempIDOrigin)
+					&& globalIDNodeNew.equals(tempIDNew)) {
+				return false;
+			}
+		}
+		return true;
 	}
+	
+	/**
+	 * TODO
+	 * @param globalIDNodeOrigin
+	 * @param globalIDNodeNew
+	 * @return
+	 */
+	public ComparedNodePair getNodeMatch(String globalIDNodeOrigin,
+			String globalIDNodeNew) {
+		// TODO Delete comment after testing
+		// return (!IDMapping.contains(idNodeOrigin + idNodeNew));
+
+		String tempIDOrigin;
+		String tempIDNew;
+
+		for (ComparedNodePair comparedNodePair : comparedNodePairs) {
+
+			tempIDOrigin = Methods.findGlobalID(
+					comparedNodePair.getNodeOriginalModel(),
+					comparedNodePair.getTypeOriginModel());
+
+			tempIDNew = Methods.findGlobalID(
+					comparedNodePair.getNodeNewModel(),
+					comparedNodePair.getTypeNewModel());
+
+			if (globalIDNodeOrigin.equals(tempIDOrigin)
+					&& globalIDNodeNew.equals(tempIDNew)) {
+				return comparedNodePair;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * TODO
+	 * @param tempNode
+	 * @param tempNodeType
+	 * @return
+	 */
+	public ComparedNodePair nodeAlreadyCompared(Node tempNode,
+			NodeType tempNodeType) {
+
+		String tempNodeID = Methods.findGlobalID(tempNode, tempNodeType);
+
+		String tempSearchedOriginNodeID, tempSearchedNewNodeID;
+
+		for (ComparedNodePair comparedNodePair : comparedNodePairs) {
+			tempSearchedOriginNodeID = Methods.findGlobalID(
+					comparedNodePair.getNodeOriginalModel(),
+					comparedNodePair.getTypeOriginModel());
+
+			tempSearchedNewNodeID = Methods.findGlobalID(
+					comparedNodePair.getNodeNewModel(),
+					comparedNodePair.getTypeNewModel());
+
+			if (tempSearchedNewNodeID.equals(tempNodeID)
+					|| tempSearchedOriginNodeID.equals(tempNodeID)) {
+				return comparedNodePair;
+			}
+		}
+		return null;
+	}
+	
 }
