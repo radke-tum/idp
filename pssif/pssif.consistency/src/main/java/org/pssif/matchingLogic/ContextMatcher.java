@@ -17,8 +17,10 @@ import org.pssif.textNormalization.Normalizer;
 import de.tum.pssif.core.common.PSSIFConstants;
 import de.tum.pssif.core.common.PSSIFOption;
 import de.tum.pssif.core.metamodel.EdgeType;
+import de.tum.pssif.core.metamodel.JunctionNodeType;
 import de.tum.pssif.core.metamodel.Metamodel;
 import de.tum.pssif.core.metamodel.NodeType;
+import de.tum.pssif.core.metamodel.NodeTypeBase;
 import de.tum.pssif.core.metamodel.PSSIFCanonicMetamodelCreator;
 import de.tum.pssif.core.metamodel.impl.ReadFromNodesOperation;
 import de.tum.pssif.core.metamodel.impl.ReadToNodesOperation;
@@ -26,6 +28,13 @@ import de.tum.pssif.core.model.Edge;
 import de.tum.pssif.core.model.Model;
 import de.tum.pssif.core.model.Node;
 
+/**
+ * This class represents the implementation of the context matching metric. It
+ * compares the nodes sorrounding the two given ones with the chosen metrics.
+ * 
+ * @author Andreas
+ * 
+ */
 public class ContextMatcher extends MatchMethod {
 
 	/**
@@ -72,15 +81,15 @@ public class ContextMatcher extends MatchMethod {
 
 	private ComparedNodePair tempNodePair;
 
-	private Set<Edge> edgesOriginIncoming = new HashSet<Edge>();
-	private Set<Edge> edgesOriginOutgoing = new HashSet<Edge>();
+	private Set<Edge> edgesOriginIncoming;
+	private Set<Edge> edgesOriginOutgoing;
 
-	private Set<Edge> edgesNewIncoming = new HashSet<Edge>();
-	private Set<Edge> edgesNewOutgoing = new HashSet<Edge>();
+	private Set<Edge> edgesNewIncoming;
+	private Set<Edge> edgesNewOutgoing;
 
-	private List<NodeAndType> sorroundingNodesOrigin = new LinkedList<NodeAndType>();
+	private List<NodeAndType> sorroundingNodesOrigin;
 
-	private List<NodeAndType> sorroundingNodesNew = new LinkedList<NodeAndType>();
+	private List<NodeAndType> sorroundingNodesNew;
 
 	public ContextMatcher(MatchingMethods matchMethod, boolean isActive,
 			double weigth) {
@@ -119,25 +128,39 @@ public class ContextMatcher extends MatchMethod {
 	 * 
 	 * It starts with the children of the Type DevelopmentArtifact and then
 	 * continues with the children of the Type Solution Artifact. After that the
-	 * Development and Solution Artifact Type and finally the Node Type are
-	 * iterated.
+	 * Development and Solution Artifact Type and finally the Root Node Type are
+	 * iterated. At the end the type of conjunctions is given to the method
+	 * findSorroundingNodes(). Then the neighbours of the conjunction are added
+	 * to the node list if the conjunction is a sorrounding node.
 	 * 
-	 * @param sorroundingNodesNew
-	 * @param sorroundingNodesOrigin
+	 * @param tempNodeOrigin
+	 *            the node from the original model which sorrounding nodes shall
+	 *            be found
+	 * @param tempNodeNew
+	 *            the node from the new model which sorrounding nodes shall be
+	 *            found
 	 */
-	public void typeIteration() {
+	public void typeIteration(Node tempNodeOrigin, Node tempNodeNew) {
 
 		for (int i = 0; i < PSIFFDevArtifactSubClasses.length; i++) {
-			findSorroundingNodes(PSIFFDevArtifactSubClasses[i]);
+			findSorroundingNodes(PSIFFDevArtifactSubClasses[i], tempNodeOrigin,
+					tempNodeNew);
 		}
 
 		for (int i = 0; i < PSIFFSolArtifactSubClasses.length; i++) {
-			findSorroundingNodes(PSIFFSolArtifactSubClasses[i]);
+			findSorroundingNodes(PSIFFSolArtifactSubClasses[i], tempNodeOrigin,
+					tempNodeNew);
 		}
 
-		findSorroundingNodes(PSSIFCanonicMetamodelCreator.N_DEV_ARTIFACT);
-		findSorroundingNodes(PSSIFCanonicMetamodelCreator.N_SOL_ARTIFACT);
-		findSorroundingNodes(PSSIFConstants.ROOT_NODE_TYPE_NAME);
+		findSorroundingNodes(PSSIFCanonicMetamodelCreator.N_DEV_ARTIFACT,
+				tempNodeOrigin, tempNodeNew);
+		findSorroundingNodes(PSSIFCanonicMetamodelCreator.N_SOL_ARTIFACT,
+				tempNodeOrigin, tempNodeNew);
+		findSorroundingNodes(PSSIFConstants.ROOT_NODE_TYPE_NAME,
+				tempNodeOrigin, tempNodeNew);
+
+		findSorroundingNodes(PSSIFCanonicMetamodelCreator.N_CONJUNCTION,
+				tempNodeOrigin, tempNodeNew);
 	}
 
 	@Override
@@ -151,6 +174,16 @@ public class ContextMatcher extends MatchMethod {
 		this.newModel = newModel;
 		this.metaModel = metaModel;
 
+		tempNodePair = null;
+
+		sorroundingNodesOrigin = new LinkedList<NodeAndType>();
+		sorroundingNodesNew = new LinkedList<NodeAndType>();
+
+		edgesOriginIncoming = new HashSet<Edge>();
+		edgesOriginOutgoing = new HashSet<Edge>();
+		edgesNewIncoming = new HashSet<Edge>();
+		edgesNewOutgoing = new HashSet<Edge>();
+
 		Collection<EdgeType> edgeTypes = metaModel.getEdgeTypes();
 
 		/**
@@ -158,7 +191,7 @@ public class ContextMatcher extends MatchMethod {
 		 */
 		for (EdgeType actEdgeTyp : edgeTypes) {
 			PSSIFOption<Edge> edgesOriginOptionIncoming = actEdgeTyp
-					.applyOutgoing(tempNodeOrigin, false);
+					.applyIncoming(tempNodeOrigin, false);
 			PSSIFOption<Edge> edgesOriginOptionOutgoing = actEdgeTyp
 					.applyOutgoing(tempNodeOrigin, false);
 
@@ -170,24 +203,28 @@ public class ContextMatcher extends MatchMethod {
 			initializeEdgeSets(edgesOriginOptionIncoming,
 					edgesOriginOptionOutgoing, edgesNewOptionIncoming,
 					edgesNewOptionOutgoing);
+
 		}
 
 		/**
 		 * retrieving all from/to nodes connected with the two nodes
 		 */
-		typeIteration();
+		typeIteration(tempNodeOrigin, tempNodeNew);
 
 		return compareSorroundingNodes(tempNodeOrigin, actTypeOriginModel,
 				tempNodeNew, actTypeNewModel, labelOrigin, labelNew);
 	}
 
 	/**
-	 * This method iterates over all found nodes and compares them based on the
-	 * set matching methods.
+	 * This method iterates over all found nodes of the two models and compares
+	 * them based on the set matching methods. After every iteration the
+	 * similarity value is added to the result.
 	 * 
 	 * @param tempNodeOrigin
+	 *            the node from the original model
 	 * @param actTypeOriginModel
 	 * @param tempNodeNew
+	 *            the node from the new model
 	 * @param actTypeNewModel
 	 * @param labelOrigin
 	 * @param labelNew
@@ -197,6 +234,7 @@ public class ContextMatcher extends MatchMethod {
 			NodeType actTypeOriginModel, Node tempNodeNew,
 			NodeType actTypeNewModel, String labelOrigin, String labelNew) {
 		double similaritySum = 0;
+		double result = 0;
 
 		for (NodeAndType tempNodeSorroundingOrigin : sorroundingNodesOrigin) {
 			for (NodeAndType tempNodeSorroundingNew : sorroundingNodesNew) {
@@ -204,7 +242,6 @@ public class ContextMatcher extends MatchMethod {
 						tempNodeSorroundingNew.getNode())) {
 					similaritySum += calculateWeightedSimilarities();
 				} else {
-					// TODO give correct Type of temp Node as a parameter!!!
 					similaritySum += computeSimilarity(
 							tempNodeSorroundingOrigin.getNode(),
 							tempNodeSorroundingOrigin.getType(),
@@ -214,31 +251,37 @@ public class ContextMatcher extends MatchMethod {
 
 			}
 		}
-		double result = (similaritySum / (Math.max(
-				sorroundingNodesOrigin.size(), sorroundingNodesNew.size())));
-
-		System.out.println("The node: " + labelOrigin + "(origin) and: "
-				+ labelNew + "(new) have the contextualSim: " + result);
+		result = (similaritySum / (Math.max(sorroundingNodesOrigin.size(),
+				sorroundingNodesNew.size())));
 
 		return result;
 	}
 
 	/**
 	 * This method calculates the similarity of two nodes based on the given
-	 * match methods.
+	 * match methods. It work's similar as to the method in
+	 * MatchingProcess.java.
 	 * 
 	 * @param tempNodeOrigin
+	 *            the node from the original model
 	 * @param actTypeOriginModel
+	 *            the node type of the original node
 	 * @param tempNodeNew
+	 *            the node from the new model
 	 * @param actTypeNewModel
-	 * @return
+	 *            the node type of the new node
+	 * @return the similarity of two given nodes based on the chosen matching
+	 *         methods
 	 */
 	private double computeSimilarity(Node tempNodeOrigin,
-			NodeType actTypeOriginModel, Node tempNodeNew,
-			NodeType actTypeNewModel) {
+			NodeTypeBase actTypeOriginModelBase, Node tempNodeNew,
+			NodeTypeBase actTypeNewModelBase) {
 
 		double result = 0;
 		double currentMetricResult = 0;
+
+		NodeType actTypeOriginModel = (NodeType) actTypeOriginModelBase;
+		NodeType actTypeNewModel = (NodeType) actTypeNewModelBase;
 
 		/**
 		 * here the strings of the old and the new node are read from the model
@@ -246,6 +289,9 @@ public class ContextMatcher extends MatchMethod {
 		String labelOriginNode = Methods.findName(actTypeOriginModel,
 				tempNodeOrigin);
 		String labelNewNode = Methods.findName(actTypeNewModel, tempNodeNew);
+
+		System.out.println("Origin: " + labelOriginNode + " New: "
+				+ labelOriginNode);
 
 		String labelOriginNodeNormalized, labelNewNodeNormalized;
 
@@ -321,7 +367,8 @@ public class ContextMatcher extends MatchMethod {
 	}
 
 	/**
-	 * @return
+	 * @return the result of similarity analysis from past matches if two nodes
+	 *         have already been compared.
 	 */
 	private double calculateWeightedSimilarities() {
 		double result = 0;
@@ -335,63 +382,79 @@ public class ContextMatcher extends MatchMethod {
 	/**
 	 * This method get's all nodes from the given type of the new and the
 	 * original model. It then calls a method to compare if the found nodes are
-	 * relevant for the found edges. (Nodes found comparing with to/from of
-	 * edges)
+	 * relevant for the found edges. (the found Nodes are compared with to/from
+	 * of the edges)
 	 * 
-	 * @param sorroundingNodesOrigin
-	 * @param sorroundingNodesNew
 	 * @param type
+	 *            the type of which nodes are searched
+	 * @param nodeOrigin
+	 *            the node of the original model which sorrounding nodes shall
+	 *            be found
+	 * @param nodeNew
+	 *            the node of the new model which sorrounding nodes shall be
+	 *            found
 	 */
-	private void findSorroundingNodes(String type) {
+	private void findSorroundingNodes(String type, Node nodeOrigin, Node nodeNew) {
 		/**
 		 * find all nodes sorrounding the original node here
 		 */
-		NodeType actType;
-		PSSIFOption<Node> actNodesOriginalModel;
+		NodeTypeBase actType;
 
-		actType = metaModel.getNodeType(type).getOne();
+		PSSIFOption<Node> actNodesOriginalModel = null;
+
+		if (metaModel.getNodeType(type).isOne()) {
+			actType = metaModel.getNodeType(type).getOne();
+		} else {
+			actType = metaModel.getJunctionNodeType(type).getOne();
+		}
 
 		actNodesOriginalModel = actType.apply(originalModel, false);
 
-		if (actNodesOriginalModel.isNone()) {
-		} else {
-			if (actNodesOriginalModel.isOne()) {
-				Node tempNodeOrigin = actNodesOriginalModel.getOne();
-
-				checkFoundEdgesAgainstNodeOrigin(tempNodeOrigin, actType);
-
+		if (nodeOrigin != null) {
+			if (actNodesOriginalModel.isNone()) {
 			} else {
+				if (actNodesOriginalModel.isOne()) {
+					Node tempNodeOrigin = actNodesOriginalModel.getOne();
 
-				Set<Node> tempNodesOrigin = actNodesOriginalModel.getMany();
+					checkFoundNodeAgainstNodeOrigin(tempNodeOrigin, actType,
+							nodeOrigin);
 
-				Iterator<Node> tempNodeOrigin = tempNodesOrigin.iterator();
+				} else {
 
-				while (tempNodeOrigin.hasNext()) {
+					Set<Node> tempNodesOrigin = actNodesOriginalModel.getMany();
 
-					checkFoundEdgesAgainstNodeOrigin(tempNodeOrigin.next(),
-							actType);
+					Iterator<Node> tempNodeOrigin = tempNodesOrigin.iterator();
+
+					while (tempNodeOrigin.hasNext()) {
+
+						checkFoundNodeAgainstNodeOrigin(tempNodeOrigin.next(),
+								actType, nodeOrigin);
+					}
 				}
 			}
 		}
 
-		PSSIFOption<Node> actNodesNewModel = actType.apply(newModel, false);
+		if (nodeNew != null) {
+			PSSIFOption<Node> actNodesNewModel = actType.apply(newModel, false);
 
-		if (actNodesNewModel.isNone()) {
-		} else {
-			if (actNodesNewModel.isOne()) {
-				Node tempNodeNew = actNodesNewModel.getOne();
-
-				checkFoundEdgesAgainstNodeNew(tempNodeNew, actType);
-
+			if (actNodesNewModel.isNone()) {
 			} else {
+				if (actNodesNewModel.isOne()) {
+					Node tempNodeNew = actNodesNewModel.getOne();
 
-				Set<Node> tempNodesNew = actNodesNewModel.getMany();
+					checkFoundNodeAgainstNodeNew(tempNodeNew, actType, nodeNew);
 
-				Iterator<Node> tempNodeNew = tempNodesNew.iterator();
+				} else {
 
-				while (tempNodeNew.hasNext()) {
+					Set<Node> tempNodesNew = actNodesNewModel.getMany();
 
-					checkFoundEdgesAgainstNodeNew(tempNodeNew.next(), actType);
+					Iterator<Node> tempNodeNew = tempNodesNew.iterator();
+
+					while (tempNodeNew.hasNext()) {
+
+						checkFoundNodeAgainstNodeNew(tempNodeNew.next(),
+								actType, nodeNew);
+					}
 				}
 			}
 		}
@@ -400,28 +463,60 @@ public class ContextMatcher extends MatchMethod {
 	/**
 	 * This method compares the given node with the from/to nodes of every
 	 * incoming/outgoing edge. If a match is found, the node and its type are
-	 * added to the relevant nodes.
+	 * added to the relevant nodes. If the given node is of type concjunction
+	 * it's sorrounding nodes are looked up until they are no conjunctions but
+	 * nodes.
 	 * 
 	 * @param tempNodeOrigin
+	 *            the given node to compare with to/from of edges
 	 * @param actNodeType
+	 *            the type of the given node
+	 * @param nodeOrigin
+	 *            the node for which sorrounding nodes shall be found
 	 */
-	private void checkFoundEdgesAgainstNodeOrigin(Node tempNodeOrigin,
-			NodeType actNodeType) {
-		Node temp;
+	private void checkFoundNodeAgainstNodeOrigin(Node tempNodeOrigin,
+			NodeTypeBase actNodeType, Node nodeOrigin) {
+		Node tempFrom, tempTo;
+		JunctionNodeType junctionNodeType = metaModel.getJunctionNodeType(
+				PSSIFCanonicMetamodelCreator.N_CONJUNCTION).getOne();
 
-		for (Edge edgeIn : edgesOriginIncoming) {
-			temp = edgeIn.apply(new ReadFromNodesOperation());
-			if (tempNodeOrigin.equals(temp)) {
-				sorroundingNodesOrigin.add(new NodeAndType(tempNodeOrigin,
-						actNodeType));
+		if (tempNodeOrigin.equals(nodeOrigin)) {
+			// TODO does this prevent circular behavior?
+		} else {
+
+			for (Edge edgeIn : edgesOriginIncoming) {
+				tempFrom = edgeIn.apply(new ReadFromNodesOperation());
+				tempTo = edgeIn.apply(new ReadToNodesOperation());
+
+				if (tempTo.equals(nodeOrigin)) {
+
+					if (junctionNodeType.equals(actNodeType)) {
+						typeIteration(tempNodeOrigin, null);
+					} else {
+
+						if (tempFrom.equals(tempNodeOrigin)) {
+							sorroundingNodesOrigin.add(new NodeAndType(
+									tempNodeOrigin, actNodeType));
+						}
+					}
+				}
 			}
-		}
 
-		for (Edge edgeOut : edgesOriginOutgoing) {
-			temp = edgeOut.apply(new ReadToNodesOperation());
-			if (tempNodeOrigin.equals(temp)) {
-				sorroundingNodesOrigin.add(new NodeAndType(tempNodeOrigin,
-						actNodeType));
+			for (Edge edgeOut : edgesOriginOutgoing) {
+				tempFrom = edgeOut.apply(new ReadFromNodesOperation());
+				tempTo = edgeOut.apply(new ReadToNodesOperation());
+
+				if (tempFrom.equals(nodeOrigin)) {
+
+					if (junctionNodeType.equals(actNodeType)) {
+						typeIteration(tempNodeOrigin, null);
+					} else {
+						if (tempTo.equals(tempNodeOrigin)) {
+							sorroundingNodesOrigin.add(new NodeAndType(
+									tempNodeOrigin, actNodeType));
+						}
+					}
+				}
 			}
 		}
 	}
@@ -429,35 +524,62 @@ public class ContextMatcher extends MatchMethod {
 	/**
 	 * This method compares the given node with the from/to nodes of every
 	 * incoming/outgoing edge. If a match is found, the node and its type are
-	 * added to the relevant nodes.
+	 * added to the relevant nodes. If the given node is of type concjunction
+	 * it's sorrounding nodes are looked up until they are no conjunctions but
+	 * nodes.
 	 * 
-	 * @param tempNodeNew
-	 * @param actNodeType
+	 * @param tempNodeNew the given node to compare with to/from of edges
+	 * @param actType the type of the given node
+	 * @param nodeNew the node for which sorrounding nodes shall be found
 	 */
-	private void checkFoundEdgesAgainstNodeNew(Node tempNodeNew,
-			NodeType actNodeType) {
+	private void checkFoundNodeAgainstNodeNew(Node tempNodeNew,
+			NodeTypeBase actType, Node nodeNew) {
 
-		Node temp;
-		for (Edge edgeIn : edgesNewIncoming) {
-			temp = edgeIn.apply(new ReadFromNodesOperation());
-			if (tempNodeNew.equals(temp)) {
-				sorroundingNodesNew.add(new NodeAndType(tempNodeNew,
-						actNodeType));
+		Node tempFrom, tempTo;
+		JunctionNodeType junctionNodeType = metaModel.getJunctionNodeType(
+				PSSIFCanonicMetamodelCreator.N_CONJUNCTION).getOne();
+
+		if (tempNodeNew.equals(nodeNew)) {
+			// TODO does this prevent circular behavior?
+		} else {
+
+			for (Edge edgeIn : edgesNewIncoming) {
+				tempFrom = edgeIn.apply(new ReadFromNodesOperation());
+				tempTo = edgeIn.apply(new ReadToNodesOperation());
+
+				if (tempTo.equals(nodeNew)) {
+
+					if (junctionNodeType.equals(actType)) {
+						typeIteration(null, tempNodeNew);
+					} else {
+						if (tempFrom.equals(tempNodeNew)) {
+							sorroundingNodesNew.add(new NodeAndType(
+									tempNodeNew, actType));
+						}
+					}
+				}
 			}
-		}
 
-		for (Edge edgeOut : edgesNewOutgoing) {
-			temp = edgeOut.apply(new ReadToNodesOperation());
-			if (tempNodeNew.equals(temp)) {
-				sorroundingNodesNew.add(new NodeAndType(tempNodeNew,
-						actNodeType));
+			for (Edge edgeOut : edgesNewOutgoing) {
+				tempFrom = edgeOut.apply(new ReadFromNodesOperation());
+				tempTo = edgeOut.apply(new ReadToNodesOperation());
+
+				if (tempFrom.equals(nodeNew)) {
+
+					if (junctionNodeType.equals(actType)) {
+						typeIteration(null, tempNodeNew);
+					} else {
+						if (tempTo.equals(tempNodeNew)) {
+							sorroundingNodesNew.add(new NodeAndType(
+									tempNodeNew, actType));
+						}
+					}
+				}
 			}
 		}
 	}
 
-	/**
-	 * TODO
-	 * 
+	/**	 
 	 * @param edgesOriginOptionIncoming
 	 * @param edgesOriginOptionOutgoing
 	 * @param edgesNewOptionIncoming
@@ -477,10 +599,10 @@ public class ContextMatcher extends MatchMethod {
 	/**
 	 * This method get's real edges from a PSSIFOption.
 	 * 
-	 * @param edgesOriginOption
-	 * @param edgesNewOption
-	 * @param edgesOrigin
-	 * @param edgesNew
+	 * @param edgesOriginOption option to convert
+	 * @param edgesNewOption option to convert
+	 * @param edgesOrigin saving place
+	 * @param edgesNew saving place
 	 */
 	private void findEdges(PSSIFOption<Edge> edgesOption, Set<Edge> edges) {
 		if (edgesOption.isNone()) {

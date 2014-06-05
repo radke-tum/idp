@@ -1,21 +1,22 @@
 package org.pssif.consistencyDataStructures;
 
 import de.tum.pssif.core.metamodel.NodeType;
+import de.tum.pssif.core.metamodel.NodeTypeBase;
 import de.tum.pssif.core.model.Node;
 
 public class NodeAndType {
 
 	/**
 	 * @param node
-	 * @param type
+	 * @param actNodeType
 	 */
-	public NodeAndType(Node node, NodeType type) {
+	public NodeAndType(Node node, NodeTypeBase actNodeType) {
 		super();
 		this.node = node;
-		this.type = type;
+		this.type = actNodeType;
 	}
 	private Node node;
-	private NodeType type;
+	private NodeTypeBase type;
 	/**
 	 * @return the node
 	 */
@@ -31,7 +32,7 @@ public class NodeAndType {
 	/**
 	 * @return the type
 	 */
-	public NodeType getType() {
+	public NodeTypeBase getType() {
 		return type;
 	}
 	/**

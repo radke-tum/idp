@@ -264,7 +264,7 @@ public class MatchingProcess {
 							labelNewNodeNormalized,
 							tokensOriginNodeNormalizedCompundedUnstemmed,
 							tokensNewNodeNormalizedCompundedUnstemmed);
-				}
+				} else {
 				if ((currentMethod.getMatchMethod() == MatchingMethods.STRING_EDIT_DISTANCE_MATCHING)
 						|| (currentMethod.getMatchMethod() == MatchingMethods.HYPHEN_MATCHING)) {
 					if ((tokensOriginNodeNormalizedCompundedUnstemmed == null)
@@ -311,6 +311,7 @@ public class MatchingProcess {
 							labelNewNodeNormalized, tokensOriginNodeNormalized,
 							tokensNewNodeNormalized);
 				}
+				}
 			}
 
 			/**
@@ -349,9 +350,10 @@ public class MatchingProcess {
 	 * 
 	 */
 	private void printResults(String labelOrigin, String labelNew) {
-		if (getWeightedSyntacticSimilarity() > 0
-				|| getWeightedSemanticSimilarity() > 0
-				|| getWeightedContextSimilarity() > 0) {
+		//TODO change to zero after testing (add threshhold variable)
+		if (getWeightedSyntacticSimilarity() >= 0.4
+				|| getWeightedSemanticSimilarity() >= 0.4
+				|| getWeightedContextSimilarity() >= 0.4) {
 			System.out.println("The node(origin): " + labelOrigin
 					+ " and the node(new) " + labelNew
 					+ " have the following similarieties:");
