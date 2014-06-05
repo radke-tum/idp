@@ -159,8 +159,8 @@ public class ContextMatcher extends MatchMethod {
 		findSorroundingNodes(PSSIFConstants.ROOT_NODE_TYPE_NAME,
 				tempNodeOrigin, tempNodeNew);
 
-		findSorroundingNodes(PSSIFCanonicMetamodelCreator.N_CONJUNCTION,
-				tempNodeOrigin, tempNodeNew);
+//		findSorroundingNodes(PSSIFCanonicMetamodelCreator.N_CONJUNCTION,
+//				tempNodeOrigin, tempNodeNew);
 	}
 
 	@Override
@@ -248,11 +248,12 @@ public class ContextMatcher extends MatchMethod {
 							tempNodeSorroundingNew.getNode(),
 							tempNodeSorroundingNew.getType());
 				}
-
 			}
 		}
 		result = (similaritySum / (Math.max(sorroundingNodesOrigin.size(),
 				sorroundingNodesNew.size())));
+		
+		System.out.println("The node: " + labelOrigin +"(origin)" + " and the new node: " + labelNew + "have the contextSim: " + result);
 
 		return result;
 	}
@@ -291,7 +292,7 @@ public class ContextMatcher extends MatchMethod {
 		String labelNewNode = Methods.findName(actTypeNewModel, tempNodeNew);
 
 		System.out.println("Origin: " + labelOriginNode + " New: "
-				+ labelOriginNode);
+				+ labelNewNode);
 
 		String labelOriginNodeNormalized, labelNewNodeNormalized;
 
@@ -460,6 +461,30 @@ public class ContextMatcher extends MatchMethod {
 		}
 	}
 
+	private void addEdgesIncomingToSet(Node tempNode, Set<Edge> setToAddTo) {
+		Collection<EdgeType> edgeTypes = metaModel.getEdgeTypes();
+
+		for (EdgeType actType : edgeTypes) {
+			Set<Edge> result = new HashSet<Edge>();
+			findEdges(actType.applyIncoming(tempNode, true), result);
+			if(result != null){
+				setToAddTo.addAll(result);
+			}
+		}
+	}
+
+	private void addEdgesOutgoingToSet(Node tempNode, Set<Edge> setToAddTo) {
+		Collection<EdgeType> edgeTypes = metaModel.getEdgeTypes();
+
+		for (EdgeType actType : edgeTypes) {
+			Set<Edge> result =  new HashSet<Edge>();
+			findEdges(actType.applyOutgoing(tempNode, true), result);
+			if(result != null){
+				setToAddTo.addAll(result);
+			}
+		}
+	}
+
 	/**
 	 * This method compares the given node with the from/to nodes of every
 	 * incoming/outgoing edge. If a match is found, the node and its type are
@@ -488,11 +513,12 @@ public class ContextMatcher extends MatchMethod {
 				tempFrom = edgeIn.apply(new ReadFromNodesOperation());
 				tempTo = edgeIn.apply(new ReadToNodesOperation());
 
-				if (tempTo.equals(nodeOrigin)) {
+				if (junctionNodeType.equals(actNodeType)) {
+					addEdgesIncomingToSet(tempNodeOrigin, edgesOriginIncoming);
+					typeIteration(tempNodeOrigin, null);
+				} else {
 
-					if (junctionNodeType.equals(actNodeType)) {
-						typeIteration(tempNodeOrigin, null);
-					} else {
+					if (tempTo.equals(nodeOrigin)) {
 
 						if (tempFrom.equals(tempNodeOrigin)) {
 							sorroundingNodesOrigin.add(new NodeAndType(
@@ -506,11 +532,13 @@ public class ContextMatcher extends MatchMethod {
 				tempFrom = edgeOut.apply(new ReadFromNodesOperation());
 				tempTo = edgeOut.apply(new ReadToNodesOperation());
 
-				if (tempFrom.equals(nodeOrigin)) {
+				if (junctionNodeType.equals(actNodeType)) {
+					addEdgesIncomingToSet(tempNodeOrigin, edgesOriginOutgoing);
+					typeIteration(tempNodeOrigin, null);
+				} else {
 
-					if (junctionNodeType.equals(actNodeType)) {
-						typeIteration(tempNodeOrigin, null);
-					} else {
+					if (tempFrom.equals(nodeOrigin)) {
+
 						if (tempTo.equals(tempNodeOrigin)) {
 							sorroundingNodesOrigin.add(new NodeAndType(
 									tempNodeOrigin, actNodeType));
@@ -528,9 +556,12 @@ public class ContextMatcher extends MatchMethod {
 	 * it's sorrounding nodes are looked up until they are no conjunctions but
 	 * nodes.
 	 * 
-	 * @param tempNodeNew the given node to compare with to/from of edges
-	 * @param actType the type of the given node
-	 * @param nodeNew the node for which sorrounding nodes shall be found
+	 * @param tempNodeNew
+	 *            the given node to compare with to/from of edges
+	 * @param actType
+	 *            the type of the given node
+	 * @param nodeNew
+	 *            the node for which sorrounding nodes shall be found
 	 */
 	private void checkFoundNodeAgainstNodeNew(Node tempNodeNew,
 			NodeTypeBase actType, Node nodeNew) {
@@ -547,11 +578,12 @@ public class ContextMatcher extends MatchMethod {
 				tempFrom = edgeIn.apply(new ReadFromNodesOperation());
 				tempTo = edgeIn.apply(new ReadToNodesOperation());
 
-				if (tempTo.equals(nodeNew)) {
+				if (junctionNodeType.equals(actType)) {
+					addEdgesIncomingToSet(tempNodeNew, edgesNewIncoming);
+					typeIteration(null, tempNodeNew);
+				} else {
+					if (tempTo.equals(nodeNew)) {
 
-					if (junctionNodeType.equals(actType)) {
-						typeIteration(null, tempNodeNew);
-					} else {
 						if (tempFrom.equals(tempNodeNew)) {
 							sorroundingNodesNew.add(new NodeAndType(
 									tempNodeNew, actType));
@@ -564,11 +596,12 @@ public class ContextMatcher extends MatchMethod {
 				tempFrom = edgeOut.apply(new ReadFromNodesOperation());
 				tempTo = edgeOut.apply(new ReadToNodesOperation());
 
-				if (tempFrom.equals(nodeNew)) {
+				if (junctionNodeType.equals(actType)) {
+					addEdgesIncomingToSet(tempNodeNew, edgesNewOutgoing);
+					typeIteration(null, tempNodeNew);
+				} else {
+					if (tempFrom.equals(nodeNew)) {
 
-					if (junctionNodeType.equals(actType)) {
-						typeIteration(null, tempNodeNew);
-					} else {
 						if (tempTo.equals(tempNodeNew)) {
 							sorroundingNodesNew.add(new NodeAndType(
 									tempNodeNew, actType));
@@ -579,7 +612,7 @@ public class ContextMatcher extends MatchMethod {
 		}
 	}
 
-	/**	 
+	/**
 	 * @param edgesOriginOptionIncoming
 	 * @param edgesOriginOptionOutgoing
 	 * @param edgesNewOptionIncoming
@@ -599,10 +632,14 @@ public class ContextMatcher extends MatchMethod {
 	/**
 	 * This method get's real edges from a PSSIFOption.
 	 * 
-	 * @param edgesOriginOption option to convert
-	 * @param edgesNewOption option to convert
-	 * @param edgesOrigin saving place
-	 * @param edgesNew saving place
+	 * @param edgesOriginOption
+	 *            option to convert
+	 * @param edgesNewOption
+	 *            option to convert
+	 * @param edgesOrigin
+	 *            saving place
+	 * @param edgesNew
+	 *            saving place
 	 */
 	private void findEdges(PSSIFOption<Edge> edgesOption, Set<Edge> edges) {
 		if (edgesOption.isNone()) {
