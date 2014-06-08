@@ -146,12 +146,12 @@ public class MyModelContainer {
     	PSSIFOption<ConnectionMapping> tmp = t.getType().getMappings();
     	if (tmp != null && (tmp.isMany() || tmp.isOne()))
     	{
-    		Set<ConnectionMapping> mappings;
+    		Set<ConnectionMapping> mappings =new HashSet<ConnectionMapping>();
     		if (tmp.isMany())
     			mappings = tmp.getMany();
     		else
+    		if (tmp.isOne())	
     		{
-    			mappings = new HashSet<ConnectionMapping>();
     			mappings.add(tmp.getOne());
     		}
     		

@@ -24,8 +24,26 @@ public class EnumerationImpl extends NamedImpl implements MutableEnumeration {
 
   @Override
   public PSSIFValue fromObject(Object object) {
-    // TODO Auto-generated method stub
-    return null;
+    if (object instanceof PSSIFValue) {
+      if (((PSSIFValue) object).isEnumeration()) {
+        return PSSIFValue.create(((PSSIFValue) object).getValue());
+      }
+    }
+    else if (object instanceof EnumerationLiteral) {
+      if (getLiteral(((EnumerationLiteral) object).getName()).isOne()) {
+        return PSSIFValue.create(object);
+      }
+      else {
+        throw new IllegalArgumentException();
+      }
+    }
+    else if (object == null) {
+      throw new IllegalArgumentException();
+    }
+    else if (getLiteral(object.toString()).isOne()) {
+      return PSSIFValue.create(getLiteral(object.toString()).getOne());
+    }
+    throw new IllegalArgumentException();
   }
 
   @Override

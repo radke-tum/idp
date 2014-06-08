@@ -1,29 +1,22 @@
 package graph.model;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
-
 import de.tum.pssif.core.common.PSSIFConstants;
 import de.tum.pssif.core.common.PSSIFOption;
 import de.tum.pssif.core.common.PSSIFValue;
 import de.tum.pssif.core.metamodel.Attribute;
-import de.tum.pssif.core.metamodel.PrimitiveDataType;
 import de.tum.pssif.core.model.Node;
 
 public class MyJunctionNode implements IMyNode{
 	
 	private Node node;
-	private double sizeheight;
-	private double sizewidth;
+	//private double sizeheight;
+	//private double sizewidth;
 	private MyJunctionNodeType type;
 	private boolean detailedOutput;
 	private boolean visible;
 	
 	//private static int limit = 5;
-	private static int lineLimit = 18;
+	//private static int lineLimit = 18;
 	
 	public MyJunctionNode(Node node, MyJunctionNodeType type) {
 		this.node = node;
@@ -37,10 +30,11 @@ public class MyJunctionNode implements IMyNode{
 	 */
 		public String getName()
 		{
-			String res = findName().replaceAll("&lt;", "<");
-			res = res.replaceAll("<br>", "");
+			//String res = findName().replaceAll("&lt;", "<");
+			//res = res.replaceAll("<br>", "");
 			
-			return res;
+			//return findName();
+			return type.getName();
 		}
 		
 		/**
@@ -49,7 +43,8 @@ public class MyJunctionNode implements IMyNode{
 		 */
 		public String getRealName()
 		{
-			return findName();
+			//return findName();
+			return type.getName();
 		}
 		
 		/**
@@ -120,7 +115,7 @@ public class MyJunctionNode implements IMyNode{
 		public String getNodeInformations(boolean details)
 		{
 			String output="";
-			if (details)
+			/*if (details)
 			{
 				output ="<table border=\"0\">";
 				output+=" <tr> ";
@@ -142,12 +137,13 @@ public class MyJunctionNode implements IMyNode{
 			else
 			{
 				output+="<h3>&lt;&lt; "+type.getName()+" &gt;&gt; <br>"+ evalName(findName())+"</h3>";
-			}
+			}*/
+			output = "<h3>&lt;&lt; "+type.getName()+" &gt;&gt; <br>"+ findName()+"</h3>";
 			
 			return output;
 		}
 		
-		private String evalName(String name)
+		/*private String evalName(String name)
 		{
 			//String name = findName();
 			
@@ -196,9 +192,9 @@ public class MyJunctionNode implements IMyNode{
 			}
 
 			return name+" ";
-		}
+		}*/
 		
-		private int nameLines(String name)
+	/*	private int nameLines(String name)
 		{
 			if (name.length()>lineLimit)
 			{
@@ -237,8 +233,8 @@ public class MyJunctionNode implements IMyNode{
 
 			return 1;
 		}
-		
-		public List<Integer> getSpaceIndexes(String value)
+		*/
+	/*	public List<Integer> getSpaceIndexes(String value)
 		{
 			int position = 0;
 			
@@ -259,13 +255,13 @@ public class MyJunctionNode implements IMyNode{
 			}
 			
 			return res;
-		}
+		}*/
 		
 		/**
 		 * Get all the Attributes from this node
 		 * @return List with the attributes. Format : Name = Value in (Unit) Datatype 
 		 */
-		private List<String> calcAttr()
+		/*private List<String> calcAttr()
 		{
 			List<String> attributes = new LinkedList<String>();
 			
@@ -316,7 +312,7 @@ public class MyJunctionNode implements IMyNode{
 			}
 			
 			return attributes;
-		}
+		}*/
 		
 		
 

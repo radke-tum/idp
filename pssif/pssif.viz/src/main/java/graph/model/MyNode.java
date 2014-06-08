@@ -4,14 +4,12 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-
-
-
-
 
 import de.tum.pssif.core.common.PSSIFConstants;
 import de.tum.pssif.core.common.PSSIFOption;
@@ -150,7 +148,7 @@ public class MyNode implements IMyNode{
 			attributes.add(currentAttr);
 		}
 		
-		return attributes;
+		return sortAttributes(attributes);
 	}
 	
 	/**
@@ -187,8 +185,9 @@ public class MyNode implements IMyNode{
 				try 
 				{
 					Date data = parseDate((String) value);
-					
+				
 					PSSIFValue res = PrimitiveDataType.DATE.fromObject(data);
+
 					attribute.set(node, PSSIFOption.one(res));
 				}
 				catch (IllegalArgumentException e)
@@ -260,43 +259,93 @@ public class MyNode implements IMyNode{
 	private Date parseDate(String dateInString)
 	{
 		SimpleDateFormat formatter;
-	
-		try {
-			formatter = new SimpleDateFormat("dd/MM/yyyy");
-			return formatter.parse(dateInString);
-		} catch (ParseException e) { }
 		
 		try {
 			formatter = new SimpleDateFormat("dd/MM/yyyy");
 			return formatter.parse(dateInString);
-		} catch (ParseException e) { }
-		
-		try {
-			formatter = new SimpleDateFormat("dd/M/yyyy");
-			return formatter.parse(dateInString);
-		} catch (ParseException e) { }
+		} catch (ParseException e) {
+			//e.printStackTrace();
+		}
 		
 		try {
 			formatter = new SimpleDateFormat("dd-MM-yyyy");
 			return formatter.parse(dateInString);
-		} catch (ParseException e) { }
-		
-		try {
-			formatter = new SimpleDateFormat("dd-M-yyyy");
-			return formatter.parse(dateInString);
-		} catch (ParseException e) { }
+		} catch (ParseException e) {
+			//e.printStackTrace();
+		}
 		
 		try {
 			formatter = new SimpleDateFormat("dd.MM.yyyy");
 			return formatter.parse(dateInString);
-		} catch (ParseException e) { }
+		} catch (ParseException e) {
+			//e.printStackTrace();
+		}
+		//----------------
+		
+		try {
+			formatter = new SimpleDateFormat("d/M/yyyy");
+			return formatter.parse(dateInString);
+		} catch (ParseException e) {
+		//	e.printStackTrace();
+		}
+		
+		try {
+			formatter = new SimpleDateFormat("d-M-yyyy");
+			return formatter.parse(dateInString);
+		} catch (ParseException e) {
+			//e.printStackTrace();
+		}
+		
+		try {
+			formatter = new SimpleDateFormat("d.M.yyyy");
+			return formatter.parse(dateInString);
+		} catch (ParseException e) {
+			//e.printStackTrace();
+		}
+		//----------------------------------------------
+		try {
+			formatter = new SimpleDateFormat("d/MM/yyyy");
+			return formatter.parse(dateInString);
+		} catch (ParseException e) {
+			//e.printStackTrace();
+		}
+		
+		try {
+			formatter = new SimpleDateFormat("d-MM-yyyy");
+			return formatter.parse(dateInString);
+		} catch (ParseException e) {
+			//e.printStackTrace();
+		}
+		
+		try {
+			formatter = new SimpleDateFormat("d.MM.yyyy");
+			return formatter.parse(dateInString);
+		} catch (ParseException e) {
+			//e.printStackTrace();
+		}
+		//----------------------------------------------
+		try {
+			formatter = new SimpleDateFormat("dd/M/yyyy");
+			return formatter.parse(dateInString);
+		} catch (ParseException e) {
+			//e.printStackTrace();
+		}
+		
+		try {
+			formatter = new SimpleDateFormat("dd-M-yyyy");
+			return formatter.parse(dateInString);
+		} catch (ParseException e) {
+			//e.printStackTrace();
+		}
 		
 		try {
 			formatter = new SimpleDateFormat("dd.M.yyyy");
 			return formatter.parse(dateInString);
-		} catch (ParseException e) { }
-		return null;
+		} catch (ParseException e) {
+			//e.printStackTrace();
+		}
 		
+		return null;
 	}
 	
 	/**
@@ -341,57 +390,16 @@ public class MyNode implements IMyNode{
 		List<String> attr = calcAttr();
 		if (isDetailedOutput())
 		{
-			//lineheight =30;
 			//Attributes label
 			sizeheight += lineheight;
 			
 			//Attributes
-			
-			
 			int nbAttr = attr.size();
 			
 			sizeheight += nbAttr*lineheight;
 		}
 		
 		sizewidth = 180;
-		
-		
-		
-		//width
-		
-		/*int temp = (type.getName().length()+6)/ limit;
-		
-		if (temp >sizewidth)
-			sizewidth = temp;
-			
-		for (String s : attr)
-		{
-			temp = s.length() / limit;
-			
-			if (temp > sizewidth)
-				sizewidth = temp;
-		}
-		
-		/*int temp = findName().length() / limit;
-		
-		if (temp >0)
-			sizewidth = temp;
-		
-		temp = (type.getName().length()+6)/ limit;
-		
-		if (temp >sizewidth)
-			sizewidth = temp;
-			
-		for (String s : attr)
-		{
-			temp = s.length() / limit;
-			
-			if (temp > sizewidth)
-				sizewidth = temp;
-		}*/
-		
-		//System.out.println(getRealName()+"|| width "+sizewidth+" height "+sizeheight);	
-	
 	}
 	
 	/**
@@ -648,5 +656,20 @@ public class MyNode implements IMyNode{
 
 	public void setCollapseNode(boolean collapseNode) {
 		this.collapseNode = collapseNode;
+	}
+	
+	private LinkedList<LinkedList<String>> sortAttributes(LinkedList<LinkedList<String>> data)
+	{
+		Collections.sort(data, new MyAttributeListComparator());
+		
+		return data;
+	}
+	
+	protected class MyAttributeListComparator implements Comparator<LinkedList<String>>
+	{
+	  @Override public int compare( LinkedList<String> attr1, LinkedList<String> attr2 )
+	  {
+	    return attr1.getFirst().compareTo(attr2.getFirst());
+	  }
 	}
 }

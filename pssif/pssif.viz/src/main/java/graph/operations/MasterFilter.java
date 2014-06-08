@@ -192,7 +192,8 @@ public class MasterFilter {
 	 */
 	public void addNodeAndEdgeTypeFilter(LinkedList<MyNodeType> nodes, LinkedList<MyEdgeType> edges, String viewName, boolean activate)
 	{
-		this.activeNodeAndEdgeTypeFilters.add(viewName);
+		GraphViewContainer gvc = new GraphViewContainer(nodes, edges, viewName);
+		this.nodeAndEdgeTypeFilters.put(viewName, gvc);
 		
 		if (activate)
 		{

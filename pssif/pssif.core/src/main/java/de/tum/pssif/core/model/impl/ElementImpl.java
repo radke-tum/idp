@@ -43,7 +43,7 @@ public abstract class ElementImpl implements Element {
   @Override
   public PSSIFOption<PSSIFValue> apply(GetValueOperation op) {
     if (values.containsKey(PSSIFUtil.normalize(op.getAttribute().getName()))) {
-      return values.get(op.getAttribute().getName());
+      return values.get(PSSIFUtil.normalize(op.getAttribute().getName()));
     }
     else {
       return PSSIFOption.none();
@@ -52,7 +52,7 @@ public abstract class ElementImpl implements Element {
 
   @Override
   public void apply(SetValueOperation op) {
-    values.put(op.getAttribute().getName(), op.getValue());
+    values.put(PSSIFUtil.normalize(op.getAttribute().getName()), op.getValue());
   }
 
   @Override

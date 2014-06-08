@@ -2,7 +2,6 @@ package graph.operations;
 
 import graph.model.IMyNode;
 import graph.model.MyEdge;
-import graph.model.MyEdgeTypes;
 import graph.model.MyNode;
 
 import java.util.HashMap;
@@ -11,6 +10,7 @@ import java.util.List;
 
 import model.ModelBuilder;
 import de.tum.pssif.core.metamodel.EdgeType;
+import de.tum.pssif.core.metamodel.PSSIFCanonicMetamodelCreator;
 
 /**
  * Allows to collapse or expand Nodes
@@ -97,7 +97,7 @@ public class MyCollapser {
 			
 			for (MyEdge e : out)
 			{
-				EdgeType parent = e.getEdgeType().getParentType();
+				/*EdgeType parent = e.getEdgeType().getParentType();
 				
 				boolean test = false;
 				// test if one of the outgoing edges is an containment
@@ -108,6 +108,12 @@ public class MyCollapser {
 				
 				// if it was a containment edge, the connected nodes have to get further treatment
 				if (test)
+					test = parent.getName().equals(PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_INCLUSION);
+				else
+					test = e.getEdgeType().getName().equals(PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_INCLUSION);
+				*/
+				// if it was a containment edge, the connected nodes have to get further treatment
+				if (testInclusionEdge(e))
 				{
 					MyNode next = (MyNode)e.getDestinationNode();
 					// add them to the list of Edges which have to be deleted
@@ -170,7 +176,7 @@ public class MyCollapser {
 					e.setVisible(false);
 			//		System.out.println("Add to work  "+dest.getName());
 					newOutEdges.add(new MyEdge(e.getEdge(),e.getEdgeType(),recStartNode, e.getDestinationNode()));
-					if (e.getEdgeType().getName().equals(MyEdgeTypes.CONTAINMENT) && !work.contains(dest) )
+					if (testInclusionEdge(e) && !work.contains(dest) )
 					{
 						work.add(dest);
 						touchedNodes.add(dest);
@@ -275,7 +281,7 @@ public class MyCollapser {
 			LinkedList<MyEdge> out = findOutgoingEdges(node);
 			for (MyEdge e : out)
 			{
-				if (e.getEdgeType().getName().equals(MyEdgeTypes.CONTAINMENT))
+				if (testInclusionEdge(e))
 				{
 					return true;
 				}
@@ -338,6 +344,40 @@ public class MyCollapser {
 			if (e.isVisible() && e.getDestinationNode().equals(node))
 				res.add(e);
 		}
+		return res;
+	}
+	
+	private boolean testInclusionEdge(MyEdge e)
+	{
+		/*EdgeType parent = e.getEdgeType().getParentType();
+		
+		if (parent !=null)
+		{
+			boolean res = false;
+			res = res || e.getEdgeType().getName().equals(PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_INCLUSION);
+			res = res || e.getEdgeType().getName().equals(PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_INCLUSION_CONTAINS);
+			res = res || e.getEdgeType().getName().equals(PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_INCLUSION_GENERALIZES);
+			res = res || e.getEdgeType().getName().equals(PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_INCLUSION_INCLUDES);
+			
+			//check parent 
+			res = res || e.getEdgeType().getParentType().getName().equals(PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_INCLUSION);
+			
+			return res;
+		}
+		else
+		{
+			boolean res = false;
+			res = res || e.getEdgeType().getName().equals(PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_INCLUSION);
+			res = res || e.getEdgeType().getName().equals(PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_INCLUSION_CONTAINS);
+			res = res || e.getEdgeType().getName().equals(PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_INCLUSION_GENERALIZES);
+			res = res || e.getEdgeType().getName().equals(PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_INCLUSION_INCLUDES);
+			
+			return res;
+		}*/
+		
+		boolean res = false;
+		res = res || e.getEdgeType().getName().equals(PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_INCLUSION_CONTAINS);
+		
 		return res;
 	}
 }

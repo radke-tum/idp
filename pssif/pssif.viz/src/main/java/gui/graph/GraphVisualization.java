@@ -39,7 +39,6 @@ import graph.model.GraphBuilder;
 import graph.model.IMyNode;
 import graph.model.MyEdge;
 import graph.model.MyEdgeType;
-import graph.model.MyJunctionNode;
 import graph.model.MyNode;
 import graph.model.MyNodeType;
 import graph.operations.GraphViewContainer;
@@ -335,10 +334,9 @@ public class GraphVisualization
    * Get the Edge Types which are followed during the highlighting
    * @return List with Edge Types
    */
-  public LinkedList<MyEdgeType> getFollowEdgeTypes()
-  {
-    return this.vsh.getFollowEdges();
-  }
+  	public LinkedList<MyEdgeType> getFollowEdgeTypes() {
+  		return this.vsh.getFollowEdges();
+  	}
   
 	/**
 	 * Which Nodes should be followed during requirements traceability
@@ -360,15 +358,9 @@ public class GraphVisualization
 				return Color.LIGHT_GRAY;
 			}
 		};
-		//this.vv.getRenderContext().setVertexFillPaintTransformer(	tracedVertexColor);
 		ReqTraceVertexStrokeHighlight<IMyNode, Paint> trans = new ReqTraceVertexStrokeHighlight(g, vertexColor);
 		trans.setHighlight(true);
 		this.vv.getRenderContext().setVertexFillPaintTransformer(trans);
-		
-		//this.vv.getRenderContext().setVertexStrokeTransformer(new VertexStrokeHighlight<IMyNode, E>(g, pi));
-		
-		
-		
 		this.vv.repaint();
 	}
 
@@ -381,6 +373,7 @@ public class GraphVisualization
 		this.vv.getRenderContext().setVertexFillPaintTransformer(vertexColor);
 		this.vv.repaint();
 	}
+	
   /**
    * Try to collapse the currently selected Node
    */
@@ -407,7 +400,7 @@ public class GraphVisualization
    * Try to expand the currently selected Node
    * @param nodeDetails define how many Node details should be visible
    */
-  public void ExpandNode(boolean nodeDetails)
+  public void expandNode(boolean nodeDetails)
   {
 	  Collection<IMyNode> picked =new HashSet<IMyNode>(vv.getPickedVertexState().getPicked());
       if(picked.size() == 1) {
@@ -563,5 +556,11 @@ public class GraphVisualization
 		animator.start();
 		vv.getRenderContext().getMultiLayerTransformer().setToIdentity();
 		vv.repaint();
+	}
+	
+	public void clearPickSupport()
+	{
+		vv.getPickedVertexState().clear();
+		vv.getPickedEdgeState().clear();
 	}
 }

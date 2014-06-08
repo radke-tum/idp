@@ -1,5 +1,9 @@
 package de.tum.pssif.transform.transformation.viewed;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.Sets;
+
 import de.tum.pssif.core.common.PSSIFOption;
 import de.tum.pssif.core.metamodel.ConnectionMapping;
 import de.tum.pssif.core.metamodel.EdgeType;
@@ -19,8 +23,8 @@ public class ViewedConnectionMapping extends ConnectionMappingImpl {
   }
 
   @Override
-  public PSSIFOption<Edge> apply(Model model) {
-    return baseMapping.apply(model);
+  public PSSIFOption<Edge> apply(final Model model) {
+    return filter(baseMapping.apply(model));
   }
 
   @Override
@@ -35,12 +39,12 @@ public class ViewedConnectionMapping extends ConnectionMappingImpl {
 
   @Override
   public PSSIFOption<Edge> applyIncoming(Node node) {
-    return baseMapping.applyIncoming(node);
+    return filter(baseMapping.applyIncoming(node));
   }
 
   @Override
   public PSSIFOption<Edge> applyOutgoing(Node node) {
-    return baseMapping.applyOutgoing(node);
+    return filter(baseMapping.applyOutgoing(node));
   }
 
   @Override
@@ -50,5 +54,16 @@ public class ViewedConnectionMapping extends ConnectionMappingImpl {
 
   protected final ConnectionMapping getBaseMapping() {
     return baseMapping;
+  }
+
+  protected PSSIFOption<Edge> filter(PSSIFOption<Edge> edges) {
+    return PSSIFOption.many(Sets.newHashSet(Collections2.filter(edges.getMany(), new Predicate<Edge>() {
+      @Override
+      public boolean apply(Edge input) {
+        boolean result = getFrom().apply(input.getModel(), true).getMany().contains(applyFrom(input))
+            && getTo().apply(input.getModel(), true).getMany().contains(applyTo(input));
+        return result;
+      }
+    })));
   }
 }

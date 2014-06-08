@@ -13,6 +13,8 @@ import de.tum.pssif.transform.ModelMapper;
 import de.tum.pssif.transform.model.EpkModelMapper;
 import de.tum.pssif.transform.transformation.AliasJunctionNodeTypeTransformation;
 import de.tum.pssif.transform.transformation.AliasNodeTypeTransformation;
+import de.tum.pssif.transform.transformation.DeinstantifyEdgeTypeTransformation;
+import de.tum.pssif.transform.transformation.DeinstantifyNodeTypeTransformation;
 import de.tum.pssif.transform.transformation.HideEdgeTypeTransformation;
 import de.tum.pssif.transform.transformation.HideJunctionNodeTypeTransformation;
 import de.tum.pssif.transform.transformation.HideNodeTypeTransformation;
@@ -107,6 +109,18 @@ public class EpkMapper extends BaseVisioMapper {
     view = new HideEdgeTypeTransformation(view.getEdgeType("Control Flow").getOne()).apply(view);
     view = new HideEdgeTypeTransformation(view.getEdgeType("Information Flow").getOne()).apply(view);
     view = new HideEdgeTypeTransformation(view.getEdgeType("Performs").getOne()).apply(view);
+
+    for (NodeType nt : view.getNodeTypes()) {
+      if (!EPK_NODE_MASTERS.contains(nt.getName())) {
+        view = new DeinstantifyNodeTypeTransformation(nt).apply(view);
+      }
+    }
+
+    for (EdgeType et : view.getEdgeTypes()) {
+      if (!EPK_EDGE_MASTERS.contains(et.getName())) {
+        view = new DeinstantifyEdgeTypeTransformation(et).apply(view);
+      }
+    }
 
     return view;
   }

@@ -1,5 +1,6 @@
 package graph.listener;
 
+import graph.model.IMyNode;
 import graph.model.MyEdgeType;
 import graph.model.MyNode;
 import gui.graph.GraphVisualization;

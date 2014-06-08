@@ -3,13 +3,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.List;
-import java.util.Map.Entry;
 
 import javax.swing.AbstractAction;
 import javax.swing.JComboBox;
@@ -21,37 +17,32 @@ import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.JTextField;
 
-import model.ModelBuilder;
-import reqtool.IssueResolver;
+import de.tum.pssif.core.metamodel.PSSIFCanonicMetamodelCreator;
 import reqtool.RequirementTracer;
 import reqtool.RequirementVersionManager;
 import reqtool.TestCaseVerifier;
-import reqtool.VersionManager;
 import reqtool.graph.IssueResolverPopup;
 import reqtool.graph.TestCaseCreatorPopup;
 import reqtool.graph.VersionManagerPopup;
-import de.tum.pssif.core.common.PSSIFConstants;
-import de.tum.pssif.core.common.PSSIFOption;
-import de.tum.pssif.core.common.PSSIFValue;
-import de.tum.pssif.core.metamodel.Attribute;
-import de.tum.pssif.core.metamodel.PSSIFCanonicMetamodelCreator;
+import model.ModelBuilder;
 import edu.uci.ics.jung.algorithms.layout.GraphElementAccessor;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.control.AbstractPopupGraphMousePlugin;
+import graph.model.IMyNode;
 import graph.model.MyEdge;
+import graph.model.MyJunctionNode;
 import graph.model.MyNode;
 import graph.model.MyNodeType;
 import gui.graph.GraphVisualization;
-
 /**
  * Creates the right click popups
  * @author Luc
  *
  */
 public class MyPopupGraphMousePlugin extends AbstractPopupGraphMousePlugin {
-		
+
 	private GraphVisualization gViz;
-	
+
     public MyPopupGraphMousePlugin(GraphVisualization gViz) {
         this(MouseEvent.BUTTON3_MASK);
         this.gViz = gViz;
@@ -78,9 +69,9 @@ public class MyPopupGraphMousePlugin extends AbstractPopupGraphMousePlugin {
 				JMenu submenu = createEdge(e, node);
 				popup.add(submenu);
 
-				
+
 				if (node.getNodeType().equals((ModelBuilder.getNodeTypes().getValue(PSSIFCanonicMetamodelCreator.N_REQUIREMENT)))) {
-					
+
 					JMenu reqMenu = new JMenu("Requirement Tool");
 					JMenu versMenu = new JMenu("Version Management");
 
@@ -102,10 +93,10 @@ public class MyPopupGraphMousePlugin extends AbstractPopupGraphMousePlugin {
 					JMenuItem subItem = resolveIssue(e, node);
 					popup.add(subItem);
 
-					
+
 				}
 				if (ModelBuilder.getNodeTypes().getValue(PSSIFCanonicMetamodelCreator.N_SOL_ARTIFACT).getType().isAssignableFrom(node.getNodeType().getType())) {
-					
+
 					JMenu versMenu = new JMenu("Version Management");
 					JMenuItem subItem3 = createNewVersion(e, node);
 					JMenuItem subItem4 = showHideVersions(e, node);
@@ -247,7 +238,7 @@ public class MyPopupGraphMousePlugin extends AbstractPopupGraphMousePlugin {
     	
     	submenu = new JMenuItem("Create Test Case");
     	submenu.addActionListener(new ActionListener() {
-			
+
     		@Override
         	public void actionPerformed(ActionEvent e) {
     			TestCaseCreatorPopup crPopup = new TestCaseCreatorPopup(selectedNode, gViz);
@@ -266,7 +257,7 @@ public class MyPopupGraphMousePlugin extends AbstractPopupGraphMousePlugin {
     	
     	submenu = new JMenuItem("Verify Test Case");
     	submenu.addActionListener(new ActionListener() {
-			
+
     		@Override
         	public void actionPerformed(ActionEvent e) {
     			new TestCaseVerifier(selectedNode).verifyTestCase();
@@ -320,7 +311,7 @@ public class MyPopupGraphMousePlugin extends AbstractPopupGraphMousePlugin {
     	
     	submenu = new JMenuItem("Create new version");
     	submenu.addActionListener(new ActionListener() {
-			
+
     		@Override
         	public void actionPerformed(ActionEvent e) {
     			if (VersionManagerPopup.showPopup(node)) {
@@ -339,7 +330,7 @@ public class MyPopupGraphMousePlugin extends AbstractPopupGraphMousePlugin {
     	
     	submenu = new JMenuItem("Resolve Issue");
     	submenu.addActionListener(new ActionListener() {
-			
+
     		@Override
         	public void actionPerformed(ActionEvent e) {
     		IssueResolverPopup popup = new IssueResolverPopup(selectedNode);
@@ -374,7 +365,7 @@ public class MyPopupGraphMousePlugin extends AbstractPopupGraphMousePlugin {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			CreateEdgePopup popup = new CreateEdgePopup(source, dest, gViz);
-			
+
 			popup.showPopup();			
 		}
     }

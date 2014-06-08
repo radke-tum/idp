@@ -1,9 +1,50 @@
 \chapter{Results}
 \label{chap:results}
 
-TODO
+In the previous chapter, the implementation of the PSS-IF \gls{poc} was described. This chapter continues by presenting the results of the interdisciplinary project. In \secref{sec:results:framework} the key features of the PSS-IF \gls{poc}, considered as a framework, are addressed. \secref{sec:results:languages} proceeds with achieved results for each of the four domain-specific languages referenced in \chapref{chap:intro}. Finally, in \secref{sec:results:summary} a brief overview of the results is given.
 
-\begin{itemize}
-\item general evaluation of the resulting framework
-\item for each supported language, what worked, what did not
-\end{itemize}
+\section{PSS-IF Proof of Concept}
+\label{sec:results:framework}
+
+Throughout the implementation, the authors follow the principles described in \chapref{chap:approach}. Furthermore, the usage of industry-standard libraries and established software-development practices provide for a good long-term manageability of the resulting software. Finally, through the definition of small, simple, yet powerful \glspl{api}, the resulting tool can conveniently be used as a framework to build upon in other projects. The developed \gls{poc} aims at complying to the following software quality attributes:
+
+\paragraph{Generic} The architecture of the implementation defines the transformation process on multiple levels of hierarchy, so that in most cases addition of new features can have a limited impact. Furthermore, divergence from the generic process on each level is possible through the usage of different implementations of the \gls{api} on that level.
+
+\paragraph{Extensible} The clear separation of tasks between components and their collaboration only through well-defined APIs allows new features to be added to each component without intermediate effect on other parts of the software. Also, behind each \gls{api}, implementations can be changed, or new ones can be added, to better fit the needs of the tool's users.
+
+\paragraph{Flexible} Changes in the PSS-IF Canonic Metamodel, or in one of the supported languages can easily be incorporated through adjustment of the metamodel definition and the corresponding viewpoints.
+
+\paragraph{Expressive} Through the adopted meta-modeling approach, the expressiveness of the resulting tool is comparable with that of the Meta-Object Facility (MOF) \cite{ref:mof}, while at the same time being tailored to the set of modeling structures sufficient for the specific field of application.
+
+\paragraph{Accessible} Through the comparatively simple and well-defined APIs, the PSS-IF \gls{poc} can easily be used, once the concepts behind it have been clarified.
+
+\section{Supported Languages}
+\label{sec:results:languages}
+
+Through the chosen implementation approach, the objective of transforming models between languages is reduced to the transformation from and to the language defined by the PSS-IF Canonic Metamodel with minimized loss of information. The following sections provide the results for the four languages relevant for this work.
+
+\subsection{Flow-oriented Functional Modeling (FFM)}
+
+Models in the Flow-oriented Functional Modeling (FFM) language can be translated to PSS-IF Canonic. The transferred information is restricted to States and Functions and the Flows between them, as well as the functionary attribute, which is used to forge artificial blocks, or dummy blocks, if no value for this attribute is provided. The original Flow between the States and Functions is then transferred to the artificial blocks, and a ControlFlow is created between the States and Functions. The creation of artificial blocks required the development of the artificialize transformation to create the artificial respectively dummy blocks out of the functionary attribute and the join transformation to transfer the original Flow the additionally created blocks. Furthermore another artificialize transformation is required to create the additional ControlFlow between the States and Functions.
+
+\subsection{Event-Driven Process Chain (EPC)}
+
+Due to their structural similarity, EPC models can be translated into PSS-IF without much difficulty. In the case of this language, the key challenge was the development of an own object-oriented \gls{api} for Microsoft Visio 2013, so that the models can be extracted from and written to VSDX files.
+
+\subsection{Business Process Modeling Notation (BPMN)}
+
+The objective to translate from and to BPMN models described in Microsoft Visio 2013 could not be completed. This is because the BPMN extension of Visio does not use the Visio graph strucuture for the encoding of data, but rather stores the BPMN-specific information into formulae of concrete and abstract nodes. Since the interdisciplinary project has a limited time horizon, the reverse-engineering of this kind of encoding was not possible. 
+
+\subsection{SysML for Mechatronics (SysML4Mechatronics)}
+
+The SysML4Mechatronics is one of the key languages of relevance for the PSS Integration Framework. In the course of the interdisciplinary project, this language presented a challenge, because its original serialization format required a complex multi-phase transformation process, the complexity of which was first realized by the authors during the late phases of the project. Roughly, the phases of the process included the interpretation a UML model encoded in \gls{xmi}, then a \gls{sysml} overlay and finally a special profiling developed by the SFB 768. To overcome this difficulty, the SysML4Mechatronics development team has provided the authors of the interdisciplinary project with an eCore (EMF Meta-Model) description of the SysML4Mecatronics metamodel. With this eCore, SysML4Mechatronics models could be directly mapped to XMI with the \gls{emf}. Thus, \gls{xmi} is the final exchange format adopted for this language in the scope of the interdisciplinary project. Furthermore, the implementation of the SysML4Mechatronics mapper overrides the default mapper strategy by omitting the intermediate step based on a generic graph. This is because both the PSS-IF \gls{poc} and \gls{emf} provide strongly-typed metamodel description facilities. This makes the direct transformation between them simpler and more efficient than a translation through a generic graph where type information has to be lost and re-obtained internally for each element of the model and each of its properties.
+
+\subsection{Canonic Import/Export}
+
+Next to the four domain-specific languages, the PSS-IF \gls{poc} can also import and export the PSS-IF Canonic Model to a GraphML file. This is achieved by using the \texttt{GraphMLIoMapper} with the PSS-IF Canonic Metamodel as a viewpoint.
+
+
+\section{Summary}
+\label{sec:results:summary}
+
+In summary, the interdisciplinary project resulted in a powerful yet flexible solution to the task of transforming between models expressed in different \glspl{dsl}. Adapting the ISO 42010 approach \cite{ref:42010} to documenting software architectures for different stakeholders, a prototype was implemented to support collaboration in the development and operation of \glspl{PSS}. However, the usage of the prototype is not necessarily limited to this domain as it builds on top of a set of generic, atomic transformations which are not domain specific and can easily be reused in different domains. Furthermore the power of the chosen solution was verified by providing viewpoints empowering the prototype to transform from and to two of the four languages in the original objective.

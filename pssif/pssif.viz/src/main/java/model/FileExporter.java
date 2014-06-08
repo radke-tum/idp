@@ -43,9 +43,12 @@ public class FileExporter extends FileHandler{
 						fileCreation = file.createNewFile();
 				else
 				{
-					createErrorPopup("Filename already exists");
+					/*createErrorPopup("Filename already exists");
 					System.out.println("filename exists");
-					return false;
+					return false;*/
+					file.delete();
+					fileCreation = file.createNewFile();
+					
 				}
 				
 				if (!fileCreation)

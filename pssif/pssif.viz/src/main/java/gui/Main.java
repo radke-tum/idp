@@ -1,6 +1,7 @@
 package gui;
 
 
+import graph.operations.AttributeAggregation;
 import graph.operations.AttributeFilter;
 import graph.operations.GraphViewContainer;
 import graph.operations.MasterFilter;
@@ -31,10 +32,10 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-import de.tum.pssif.core.model.Model;
+import de.tum.pssif.transform.mapper.reqif.ReqifMapper;
+import reqtool.ReqProjectImporter;
 import model.FileExporter;
 import model.FileImporter;
-import model.ModelBuilder;
 
 /**
  * The main class of the project. Execute this class to start the Visualization Software
@@ -51,6 +52,7 @@ public class Main {
 	private JMenuItem resetMatrix;
 	private JMenuItem colorNodes;
 	private JMenuItem newProject;
+	private JMenuItem modelStatistics;
 	private JMenuItem createView;
 	private JMenuItem attributFilter;
 	private JMenuItem graphVizualistation;
@@ -63,7 +65,7 @@ public class Main {
 	private JCheckBoxMenuItem SpringLayout;
 	private JCheckBoxMenuItem ISOMLayout;
 	private JCheckBoxMenuItem CircleLayout;
-	private JCheckBoxMenuItem TestLayout;
+//	private JCheckBoxMenuItem TestLayout;
 	private JMenu applyView;
 	private JMenu deleteView;
 	private JMenu graphLayout;
@@ -74,6 +76,7 @@ public class Main {
 	private JMenu deleteEdgeFilter;
 	
 	private FileImporter importer;
+	private ReqProjectImporter reqProjImporter;
 	private MasterFilter masterFilter;
 	
 	public static void main(String[] args) {
@@ -97,16 +100,23 @@ public class Main {
 		height = height*3;
 		
 		importer = new FileImporter();
+		reqProjImporter = new ReqProjectImporter();
 		
 		frame.setPreferredSize(new Dimension(width, height));
 		frame.setState(Frame.MAXIMIZED_BOTH);
 		
+		initFrame();
+	}
+	
+	private void initFrame()
+	{	
+		frame.getContentPane().removeAll();
 		// create the Basic Menu Bar
 		frame.setJMenuBar(createFileMenu());
 		// create an information Panel
 		JPanel allPanel = new JPanel(new GridBagLayout());
-		allPanel.setSize(frame.getPreferredSize());
-		allPanel.setPreferredSize(frame.getPreferredSize());
+		allPanel.setSize(frame.getSize());
+		//allPanel.setPreferredSize(frame.getPreferredSize());
 		allPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 		JLabel label = new JLabel("Please import a file");
 		label.setFont(new Font("Arial", Font.ITALIC, 25));
@@ -115,7 +125,6 @@ public class Main {
 		frame.add(allPanel);
 		
 		frame.pack();
-		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
 	}
 	
@@ -134,8 +143,7 @@ public class Main {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				//if (importer.showPopup(frame))
-				if (true)
+				if (reqProjImporter.showPopup(frame))
 				{	
 					//Model model = new Model();
 					//ModelBuilder.addModel(ModelBuilder.getMetamodel(), model);
@@ -176,7 +184,7 @@ public class Main {
 				if (importer.showPopup(frame))
 				{
 			        // Create the Views
-			        matrixView = new MatrixView();
+					matrixView = new MatrixView();	
 					graphView = new GraphView();
 					// instance which manages all the filters
 					masterFilter = new MasterFilter(graphView);
@@ -280,6 +288,19 @@ public class Main {
 		
 		menuBar.getMenu(0).add(colorNodes);
 		
+		modelStatistics = new JMenuItem("Statistics");
+		modelStatistics.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				AttributeAggregation agg = new AttributeAggregation();
+				
+				agg.showInfoPanel();
+				
+			}
+		});
+		menuBar.getMenu(0).add(modelStatistics);
+		
 		return menuBar;
 	}
 	
@@ -294,6 +315,14 @@ public class Main {
 		modeMenu.setIcon(null); 
 		modeMenu.setPreferredSize(new Dimension(80,20));
 		modeMenu.getItem(1).setSelected(true);
+		// as soon as Transforming is activated no Edge or Node should be selected anymore
+		modeMenu.getItem(0).addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				graphView.getGraph().clearPickSupport();
+			}
+		});
 		
 		return modeMenu;
 	}
@@ -317,7 +346,7 @@ public class Main {
 				ISOMLayout.setSelected(false);
 				CircleLayout.setSelected(false);
 				KKLayout.setSelected(true);
-				TestLayout.setSelected(false);
+				//TestLayout.setSelected(false);
 			}
 		});
 		graphLayout.add(KKLayout);
@@ -334,7 +363,7 @@ public class Main {
 				ISOMLayout.setSelected(false);
 				CircleLayout.setSelected(false);
 				FRLayout.setSelected(true);
-				TestLayout.setSelected(false);
+				//TestLayout.setSelected(false);
 			}
 		});
 		graphLayout.add(FRLayout);
@@ -350,7 +379,7 @@ public class Main {
 				ISOMLayout.setSelected(false);
 				CircleLayout.setSelected(false);
 				SpringLayout.setSelected(true);
-				TestLayout.setSelected(false);
+				//TestLayout.setSelected(false);
 			}
 		});
 		graphLayout.add(SpringLayout);
@@ -366,7 +395,7 @@ public class Main {
 				SpringLayout.setSelected(false);
 				CircleLayout.setSelected(false);
 				ISOMLayout.setSelected(true);
-				TestLayout.setSelected(false);
+				//TestLayout.setSelected(false);
 			}
 		});
 		graphLayout.add(ISOMLayout);
@@ -382,12 +411,12 @@ public class Main {
 				SpringLayout.setSelected(false);
 				ISOMLayout.setSelected(false);
 				CircleLayout.setSelected(true);
-				TestLayout.setSelected(false);
+				//TestLayout.setSelected(false);
 			}
 		});
 		graphLayout.add(CircleLayout);
 		
-		TestLayout = new JCheckBoxMenuItem(GraphVisualization.TestLayout);
+/*		TestLayout = new JCheckBoxMenuItem(GraphVisualization.TestLayout);
 		TestLayout.addActionListener(new ActionListener() {
 			
 			@Override
@@ -400,7 +429,7 @@ public class Main {
 				TestLayout.setSelected(true);
 			}
 		});
-		graphLayout.add(TestLayout);
+		graphLayout.add(TestLayout);*/
 		
 		return graphLayout;
 	}
@@ -471,6 +500,7 @@ public class Main {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				graphView.resetGraph();
+				initFrame();
 			}
 		});
 
@@ -629,7 +659,8 @@ public class Main {
 			graphVizualistation.setEnabled(false);
 			matrixVizualistation.setEnabled(true);
 			graphLayout.setEnabled(true);
-			graphOperations.setEnabled(true);	
+			graphOperations.setEnabled(true);
+			modelStatistics.setEnabled(true);
 		}
 		
 		if (matrixView.isActive())
@@ -640,6 +671,7 @@ public class Main {
 			matrixVizualistation.setEnabled(false);
 			graphLayout.setEnabled(false);
 			graphOperations.setEnabled(false);
+			modelStatistics.setEnabled(true);
 		}
 			
 	}
@@ -649,7 +681,7 @@ public class Main {
 	 */
 	private void createNewGraphView ()
 	{
-		CreateNewGraphViewPopup popup = new CreateNewGraphViewPopup(graphView);
+		CreateNewGraphViewPopup popup = new CreateNewGraphViewPopup(graphView, masterFilter);
 		boolean res = popup.showPopup();
 		
 		if (res)

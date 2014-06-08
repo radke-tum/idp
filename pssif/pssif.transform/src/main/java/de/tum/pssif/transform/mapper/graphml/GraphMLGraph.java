@@ -18,6 +18,8 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
+import de.tum.pssif.transform.io.PSSIFIoException;
+
 
 /**
  * TODO edgedefault
@@ -105,8 +107,7 @@ public class GraphMLGraph {
 
       reader.close();
     } catch (XMLStreamException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+      throw new PSSIFIoException("Failed to load graphml document.", e);
     }
   }
 
@@ -164,7 +165,7 @@ public class GraphMLGraph {
     XMLOutputFactory factory = XMLOutputFactory.newInstance();
 
     try {
-      XMLStreamWriter writer = factory.createXMLStreamWriter(out);
+      XMLStreamWriter writer = factory.createXMLStreamWriter(out, "UTF-8");
       writeDocumentHeader(writer);
       writeNodes(writer);
       writeEdges(writer);

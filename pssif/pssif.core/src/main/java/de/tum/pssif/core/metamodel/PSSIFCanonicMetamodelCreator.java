@@ -15,8 +15,19 @@ public final class PSSIFCanonicMetamodelCreator {
   public static final String ENUM_CONJUNCTION_OR                       = "OR";
   public static final String ENUM_CONJUNCTION_XOR                      = "XOR";
 
+  //  public static final String ENUM_FLOW_DIRECTION                       = "FlowDirection";
+  //  public static final String ENUM_FLOW_DIRECTION_IN                    = "In";
+  //  public static final String ENUM_FLOW_DIRECTION_OUT                   = "Out";
+  //  public static final String ENUM_FLOW_DIRECTION_IN_OUT                = "InOut";
+  //
+  //  public static final String ENUM_FEATURE_DIRECTION                    = "FlowDirection";
+  //  public static final String ENUM_FEATUREDIRECTION_PROVIDED            = "Provided";
+  //  public static final String ENUM_FEATURE_DIRECTION_REQUIRED           = "Required";
+  //  public static final String ENUM_FEATURE_DIRECTION_PROVIDED_REQUIRED  = "RequiredProvided";
+
   public static final String N_DEV_ARTIFACT                            = "Development Artifact";
 
+  public static final String N_FUNCTIONALITY                           = "Functionality";
   public static final String N_REQUIREMENT                             = "Requirement";
   public static final String N_USE_CASE                                = "Use Case";
   public static final String N_TEST_CASE                               = "Test Case";
@@ -54,7 +65,13 @@ public final class PSSIFCanonicMetamodelCreator {
   public static final String N_HARDWARE                                = "Hardware";
   public static final String N_MECHANIC                                = "Mechanic";
   public static final String N_ELECTRONIC                              = "Electronic";
+  public static final String N_MODULE                                  = "Module";
   public static final String N_CONJUNCTION                             = ENUM_CONJUNCTION;
+
+  public static final String N_PORT                                    = "Port";
+  public static final String N_PORT_SOFTWARE                           = "SoftwarePort";
+  public static final String N_PORT_MECHANIC                           = "MechanicPort";
+  public static final String N_PORT_ELECTRONIC                         = "ElectronicPort";
 
   public static final String A_DURATION                                = "duration";
   public static final String A_REQUIREMENT_PRIORITY                    = "priority";
@@ -63,7 +80,10 @@ public final class PSSIFCanonicMetamodelCreator {
   public static final String A_HARDWARE_WEIGHT                         = "weight";
   public static final String A_TEST_CASE_STATUS 					   = "status";
   public static final String A_CONJUNCTION                             = ENUM_CONJUNCTION;
-  
+  public static final String A_CONJUGATED                              = "conjugated";
+  public static final String A_DIRECTION                               = "direction";
+  public static final String A_DATA_TYPE                               = "dataType";
+
   public static final String E_FLOW                                    = "Flow";
   public static final String E_FLOW_ENERGY                             = "Energy Flow";
   public static final String E_FLOW_MATERIAL                           = "Material Flow";
@@ -114,6 +134,10 @@ public final class PSSIFCanonicMetamodelCreator {
   
 
 
+  public static final String E_FULFILLS                                = "fulfills";
+  public static final String E_IS_MANDATORY_FOR                        = "isMandatoryFor";
+  public static final String E_IS_CONNECTED_TO                         = "isConnectedTo";
+
   private PSSIFCanonicMetamodelCreator() {
     //Nop
   }
@@ -146,6 +170,9 @@ public final class PSSIFCanonicMetamodelCreator {
 
   private static void createDevArtifacts(MetamodelImpl metamodel) {
     NodeType devArtifact = metamodel.createNodeType(N_DEV_ARTIFACT);
+
+    NodeType functionality = metamodel.createNodeType(N_FUNCTIONALITY);
+    functionality.inherit(devArtifact);
 
     MutableNodeType requirement = metamodel.createNodeType(N_REQUIREMENT);
     requirement.inherit(devArtifact);
@@ -255,6 +282,21 @@ public final class PSSIFCanonicMetamodelCreator {
 
     NodeType electronic = metamodel.createNodeType(N_ELECTRONIC);
     electronic.inherit(hardware);
+
+    NodeType module = metamodel.createNodeType(N_MODULE);
+    module.inherit(block);
+
+    MutableNodeType port = metamodel.createNodeType(N_PORT);
+    port.createAttribute(port.getDefaultAttributeGroup(), A_CONJUGATED, PrimitiveDataType.BOOLEAN, true, AttributeCategory.METADATA);
+    port.createAttribute(port.getDefaultAttributeGroup(), A_DIRECTION, PrimitiveDataType.STRING, true, AttributeCategory.METADATA);
+    port.createAttribute(port.getDefaultAttributeGroup(), A_DATA_TYPE, PrimitiveDataType.STRING, true, AttributeCategory.METADATA);
+
+    MutableNodeType electronicPort = metamodel.createNodeType(N_PORT_ELECTRONIC);
+    electronicPort.inherit(port);
+    MutableNodeType mechanicPort = metamodel.createNodeType(N_PORT_MECHANIC);
+    mechanicPort.inherit(port);
+    MutableNodeType softwarePort = metamodel.createNodeType(N_PORT_SOFTWARE);
+    softwarePort.inherit(port);
   }
 
   private static void createRelationships(MetamodelImpl metamodel) {
@@ -262,6 +304,17 @@ public final class PSSIFCanonicMetamodelCreator {
     relationship.createMapping(node(N_REQUIREMENT, metamodel), node(N_REQUIREMENT, metamodel));
     relationship.createMapping(node(N_FUNCTION, metamodel), node(PSSIFConstants.ROOT_NODE_TYPE_NAME, metamodel));
     relationship.createMapping(node(PSSIFConstants.ROOT_NODE_TYPE_NAME, metamodel), node(N_FUNCTION, metamodel));
+
+    MutableEdgeType fulfils = metamodel.createEdgeType(E_FULFILLS);
+    fulfils.createMapping(node(N_BLOCK, metamodel), node(N_FUNCTIONALITY, metamodel));
+
+    MutableEdgeType isMandatoryFor = metamodel.createEdgeType(E_IS_MANDATORY_FOR);
+    isMandatoryFor.createMapping(node(N_PORT, metamodel), node(N_FUNCTIONALITY, metamodel));
+
+    MutableEdgeType isConnectedTo = metamodel.createEdgeType(E_IS_CONNECTED_TO);
+    isConnectedTo.createMapping(node(N_PORT_ELECTRONIC, metamodel), node(N_PORT_ELECTRONIC, metamodel));
+    isConnectedTo.createMapping(node(N_PORT_MECHANIC, metamodel), node(N_PORT_MECHANIC, metamodel));
+    isConnectedTo.createMapping(node(N_PORT_SOFTWARE, metamodel), node(N_PORT_SOFTWARE, metamodel));
 
     createAttributionalRelationships(metamodel, relationship);
     createChronologicalRelationships(metamodel, relationship);
@@ -344,6 +397,12 @@ public final class PSSIFCanonicMetamodelCreator {
     MutableEdgeType containsRelationship = metamodel.createEdgeType(E_RELATIONSHIP_INCLUSION_CONTAINS);
     containsRelationship.createMapping(node(N_SPEC_ARTIFACT, metamodel), node("Node", metamodel));
     containsRelationship.inherit(inclusionRelationship);
+
+    containsRelationship.createMapping(node(N_MODULE, metamodel), node(N_PORT, metamodel));
+    containsRelationship.createMapping(node(N_MECHANIC, metamodel), node(N_PORT_MECHANIC, metamodel));
+    containsRelationship.createMapping(node(N_ELECTRONIC, metamodel), node(N_PORT, metamodel));
+    containsRelationship.createMapping(node(N_SOFTWARE, metamodel), node(N_PORT_SOFTWARE, metamodel));
+    containsRelationship.createMapping(node(N_BLOCK, metamodel), node(N_BLOCK, metamodel));
 
     EdgeType includesRelationship = metamodel.createEdgeType(E_RELATIONSHIP_INCLUSION_INCLUDES);
     includesRelationship.inherit(inclusionRelationship);

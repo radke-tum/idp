@@ -106,7 +106,7 @@ public class VisioIoMapper implements IoMapper {
     inShape.setText(fromElement.getAttributeValue(PSSIFConstants.BUILTIN_ATTRIBUTE_NAME));
     for (String attrName : fromElement.getAttributeNames()) {
       if (fromElement.getAttributeValue(attrName) != null) {
-        inShape.setCustomProperty(attrName, attrName);
+        inShape.setCustomProperty(attrName, fromElement.getAttributeValue(attrName));
       }
     }
   }
