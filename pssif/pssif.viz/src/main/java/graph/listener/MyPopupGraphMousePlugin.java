@@ -18,6 +18,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.JTextField;
 
 import de.tum.pssif.core.metamodel.PSSIFCanonicMetamodelCreator;
+import reqtool.RequirementToolbox;
 import reqtool.RequirementTracer;
 import reqtool.RequirementVersionManager;
 import reqtool.TestCaseVerifier;
@@ -28,9 +29,7 @@ import model.ModelBuilder;
 import edu.uci.ics.jung.algorithms.layout.GraphElementAccessor;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.control.AbstractPopupGraphMousePlugin;
-import graph.model.IMyNode;
 import graph.model.MyEdge;
-import graph.model.MyJunctionNode;
 import graph.model.MyNode;
 import graph.model.MyNodeType;
 import gui.graph.GraphVisualization;
@@ -75,10 +74,10 @@ public class MyPopupGraphMousePlugin extends AbstractPopupGraphMousePlugin {
 					JMenu reqMenu = new JMenu("Requirement Tool");
 					JMenu versMenu = new JMenu("Version Management");
 
-					JMenuItem subItem1 = traceRequirement(e, node);
-					JMenuItem subItem2 = createTestCase(e, node);
-					JMenuItem subItem3 = createNewVersion(e, node);
-					JMenuItem subItem4 = showHideVersions(e, node);
+					JMenuItem subItem1 = traceRequirement(node);
+					JMenuItem subItem2 = createTestCase(node);
+					JMenuItem subItem3 = createNewVersion(node);
+					JMenuItem subItem4 = showHideVersions(node);
 					reqMenu.add(subItem1);
 					reqMenu.add(subItem2);
 					reqMenu.add(versMenu);
@@ -86,20 +85,24 @@ public class MyPopupGraphMousePlugin extends AbstractPopupGraphMousePlugin {
 					versMenu.add(subItem4);
 					popup.add(reqMenu);
 				} else if (node.getNodeType().equals((ModelBuilder.getNodeTypes().getValue(PSSIFCanonicMetamodelCreator.N_TEST_CASE)))) {
-					JMenuItem subItem = verifyTestCase(e, node);
+					JMenuItem subItem = verifyTestCase(node);
 					popup.add(subItem);
 
 				} else if (node.getNodeType().equals((ModelBuilder.getNodeTypes().getValue(PSSIFCanonicMetamodelCreator.N_ISSUE)))) {
-					JMenuItem subItem = resolveIssue(e, node);
+					JMenuItem subItem = resolveIssue(node);
 					popup.add(subItem);
 
-
+				} else if (RequirementToolbox.getSpecArtifTypes().contains(node.getNodeType())){
+						
+					JMenuItem subItem = showHideContainer(e, node);
+					popup.add(subItem);
+	
 				}
 				if (ModelBuilder.getNodeTypes().getValue(PSSIFCanonicMetamodelCreator.N_SOL_ARTIFACT).getType().isAssignableFrom(node.getNodeType().getType())) {
 
 					JMenu versMenu = new JMenu("Version Management");
-					JMenuItem subItem3 = createNewVersion(e, node);
-					JMenuItem subItem4 = showHideVersions(e, node);
+					JMenuItem subItem3 = createNewVersion(node);
+					JMenuItem subItem4 = showHideVersions(node);
 					versMenu.add(subItem3);
 					versMenu.add(subItem4);
 					popup.add(versMenu);
@@ -117,6 +120,42 @@ public class MyPopupGraphMousePlugin extends AbstractPopupGraphMousePlugin {
     }
     
 
+	private JMenuItem showHideContainer(MouseEvent e, final MyNode selectedNode) {
+		// TODO Auto-generated method stub
+
+		JMenuItem submenu;
+		submenu = new JMenuItem("");
+		if (RequirementToolbox.hasContainment(selectedNode)) {
+
+			if (RequirementToolbox.containmentIsVisible(selectedNode)) {
+
+				submenu = new JMenuItem("Hide Containment");
+				submenu.addActionListener(new ActionListener() {
+
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						RequirementToolbox.hideContainment(selectedNode);
+						gViz.updateGraph();
+					}
+				});
+			} else {
+				submenu = new JMenuItem("Show Containment");
+				submenu.addActionListener(new ActionListener() {
+
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						RequirementToolbox.showContainment(selectedNode);
+						gViz.updateGraph();
+					}
+				});
+
+			}
+		}
+		else submenu = new JMenuItem("");
+
+		return submenu;
+
+	}
 /**
     * Create the popup which provides the user the possibility to add a Node
     * @param e The MouseEvent which triggered the action
@@ -202,7 +241,7 @@ public class MyPopupGraphMousePlugin extends AbstractPopupGraphMousePlugin {
      * @param selectedNode The Node which was selected when the user pushed the right mouse button
      * @return a menu with all the option to trace a requirement
      */
-    private JMenuItem traceRequirement ( MouseEvent e, final MyNode selectedNode)
+    private JMenuItem traceRequirement ( final MyNode selectedNode)
     {
     	JMenuItem submenu;
         if (RequirementTracer.isTracedNode(selectedNode)) {
@@ -231,7 +270,7 @@ public class MyPopupGraphMousePlugin extends AbstractPopupGraphMousePlugin {
            return submenu;
     }
     
-    private JMenuItem createTestCase(MouseEvent e, final MyNode selectedNode) {
+    private JMenuItem createTestCase( final MyNode selectedNode) {
  		// TODO Auto-generated method stub
     	
     	JMenuItem submenu;
@@ -251,7 +290,7 @@ public class MyPopupGraphMousePlugin extends AbstractPopupGraphMousePlugin {
  		return submenu;
  	}
     
-    private JMenuItem verifyTestCase(MouseEvent e, final MyNode selectedNode) {
+    private JMenuItem verifyTestCase(final MyNode selectedNode) {
     	
     	JMenuItem submenu;
     	
@@ -270,7 +309,7 @@ public class MyPopupGraphMousePlugin extends AbstractPopupGraphMousePlugin {
  		return submenu;
 	}
     
-    private JMenuItem showHideVersions(MouseEvent e, final MyNode selectedNode) {
+    private JMenuItem showHideVersions(final MyNode selectedNode) {
  		// TODO Auto-generated method stub
     	
     	JMenuItem submenu;
@@ -306,7 +345,7 @@ public class MyPopupGraphMousePlugin extends AbstractPopupGraphMousePlugin {
  	}
    
     
-    private JMenuItem createNewVersion(final MouseEvent mouseEvent, final MyNode node) {
+    private JMenuItem createNewVersion(final MyNode node) {
     	JMenuItem submenu;
     	
     	submenu = new JMenuItem("Create new version");
@@ -324,7 +363,7 @@ public class MyPopupGraphMousePlugin extends AbstractPopupGraphMousePlugin {
  		return submenu;
  	}
     
-    private JMenuItem resolveIssue(MouseEvent e, final MyNode selectedNode)  {
+    private JMenuItem resolveIssue(final MyNode selectedNode)  {
     	
     	JMenuItem submenu;
     	

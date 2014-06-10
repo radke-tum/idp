@@ -33,7 +33,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import de.tum.pssif.transform.mapper.reqif.ReqifMapper;
-import reqtool.ReqProjectImporter;
+import reqtool.wizard.SpecificationProjectWizard;
 import model.FileExporter;
 import model.FileImporter;
 
@@ -76,7 +76,7 @@ public class Main {
 	private JMenu deleteEdgeFilter;
 	
 	private FileImporter importer;
-	private ReqProjectImporter reqProjImporter;
+	private SpecificationProjectWizard reqProjImporter;
 	private MasterFilter masterFilter;
 	
 	public static void main(String[] args) {
@@ -100,7 +100,7 @@ public class Main {
 		height = height*3;
 		
 		importer = new FileImporter();
-		reqProjImporter = new ReqProjectImporter();
+		reqProjImporter = new SpecificationProjectWizard();
 		
 		frame.setPreferredSize(new Dimension(width, height));
 		frame.setState(Frame.MAXIMIZED_BOTH);
@@ -143,7 +143,8 @@ public class Main {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if (reqProjImporter.showPopup(frame))
+				
+				if (reqProjImporter.open(frame))
 				{	
 					//Model model = new Model();
 					//ModelBuilder.addModel(ModelBuilder.getMetamodel(), model);
@@ -170,6 +171,7 @@ public class Main {
 					frame.pack();
 					frame.repaint();
 				}
+				
 			}
 		});
 		

@@ -60,6 +60,9 @@ public final class PSSIFCanonicMetamodelCreator {
   public static final String N_ACTIVITY                                = "Activity";
   public static final String N_STATE                                   = "State";
   public static final String N_ACTOR                                   = "Actor";
+  
+  public static final String N_AUTHOR                                  = "Author";
+  public static final String N_PRINCIPAL                               = "Principal";
   public static final String N_SERVICE                                 = "Service";
   public static final String N_SOFTWARE                                = "Software";
   public static final String N_HARDWARE                                = "Hardware";
@@ -116,6 +119,7 @@ public final class PSSIFCanonicMetamodelCreator {
   public static final String E_RELATIONSHIP_INCLUSION_CONTAINS         = "Contains";
   public static final String E_RELATIONSHIP_INCLUSION_INCLUDES         = "Includes";
   public static final String E_RELATIONSHIP_INCLUSION_GENERALIZES      = "Generalizes";
+  public static final String E_RELATIONSHIP_INCLUSION_BELONGS_TO 	   = "Belongs To";
 
   public static final String E_RELATIONSHIP_CAUSAL                     = "Causal Relation";
   public static final String E_RELATIONSHIP_CAUSAL_CREATES             = "Creates";
@@ -266,6 +270,12 @@ public final class PSSIFCanonicMetamodelCreator {
 
     NodeType actor = metamodel.createNodeType(N_ACTOR);
     actor.inherit(block);
+    
+    NodeType author = metamodel.createNodeType(N_AUTHOR);
+    author.inherit(actor);
+    
+    NodeType principal = metamodel.createNodeType(N_PRINCIPAL);
+    principal.inherit(actor);
 
     NodeType service = metamodel.createNodeType(N_SERVICE);
     service.inherit(block);
@@ -409,6 +419,10 @@ public final class PSSIFCanonicMetamodelCreator {
 
     EdgeType generalizesRelationship = metamodel.createEdgeType(E_RELATIONSHIP_INCLUSION_GENERALIZES);
     generalizesRelationship.inherit(inclusionRelationship);
+    
+    MutableEdgeType belongsToRelationship = metamodel.createEdgeType(E_RELATIONSHIP_INCLUSION_BELONGS_TO);
+    belongsToRelationship.createMapping(node(N_REQUIREMENT, metamodel), node(N_ABSTRACTION_LEVEL, metamodel));
+    belongsToRelationship.inherit(inclusionRelationship);
   }
 
   private static void createCausalRelationships(MetamodelImpl metamodel, EdgeType relationship) {
@@ -416,11 +430,11 @@ public final class PSSIFCanonicMetamodelCreator {
     causalRelationship.inherit(relationship);
 
     MutableEdgeType createsRelationship = metamodel.createEdgeType(E_RELATIONSHIP_CAUSAL_CREATES);
-    createsRelationship.createMapping(node(N_ACTOR, metamodel), node(N_REQUIREMENT, metamodel));
+    createsRelationship.createMapping(node(N_AUTHOR, metamodel), node(N_REQUIREMENT, metamodel));
     createsRelationship.inherit(causalRelationship);
 
     MutableEdgeType requestsRelationship = metamodel.createEdgeType(E_RELATIONSHIP_CAUSAL_REQUESTS);
-    requestsRelationship.createMapping(node(N_ACTOR, metamodel), node(N_REQUIREMENT, metamodel));
+    requestsRelationship.createMapping(node(N_PRINCIPAL, metamodel), node(N_REQUIREMENT, metamodel));
     requestsRelationship.inherit(causalRelationship);
 
     EdgeType requiresRelationship = metamodel.createEdgeType(E_RELATIONSHIP_CAUSAL_REQUIRES);
