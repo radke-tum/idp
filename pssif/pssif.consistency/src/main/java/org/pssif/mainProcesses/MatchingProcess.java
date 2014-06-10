@@ -265,52 +265,56 @@ public class MatchingProcess {
 							tokensOriginNodeNormalizedCompundedUnstemmed,
 							tokensNewNodeNormalizedCompundedUnstemmed);
 				} else {
-				if ((currentMethod.getMatchMethod() == MatchingMethods.STRING_EDIT_DISTANCE_MATCHING)
-						|| (currentMethod.getMatchMethod() == MatchingMethods.HYPHEN_MATCHING)) {
-					if ((tokensOriginNodeNormalizedCompundedUnstemmed == null)
-							|| (tokensNewNodeNormalizedCompundedUnstemmed == null)) {
-						tokensOriginNodeNormalizedCompundedUnstemmed = normalizer
-								.createNormalizedTokensFromLabel(
-										labelOriginNode, true, true, false,
-										false);
-						tokensNewNodeNormalizedCompundedUnstemmed = normalizer
-								.createNormalizedTokensFromLabel(labelNewNode,
-										true, true, false, false);
+					if ((currentMethod.getMatchMethod() == MatchingMethods.STRING_EDIT_DISTANCE_MATCHING)
+							|| (currentMethod.getMatchMethod() == MatchingMethods.HYPHEN_MATCHING)) {
+						if ((tokensOriginNodeNormalizedCompundedUnstemmed == null)
+								|| (tokensNewNodeNormalizedCompundedUnstemmed == null)) {
+							tokensOriginNodeNormalizedCompundedUnstemmed = normalizer
+									.createNormalizedTokensFromLabel(
+											labelOriginNode, true, true, false,
+											false);
+							tokensNewNodeNormalizedCompundedUnstemmed = normalizer
+									.createNormalizedTokensFromLabel(
+											labelNewNode, true, true, false,
+											false);
 
-						comparedNormalizedTokensPair
-								.setTokensOriginNodeNormalizedCompundedUnstemmed(tokensOriginNodeNormalizedCompundedUnstemmed);
-						comparedNormalizedTokensPair
-								.setTokensNewNodeNormalizedCompundedUnstemmed(tokensNewNodeNormalizedCompundedUnstemmed);
-					}
-					currentMetricResult = currentMethod.executeMatching(
-							tempNodeOrigin, tempNodeNew, originalModel,
-							newModel, metaModel, actTypeOriginModel,
-							actTypeNewModel, labelOriginNodeNormalized,
-							labelNewNodeNormalized,
-							tokensOriginNodeNormalizedCompundedUnstemmed,
-							tokensNewNodeNormalizedCompundedUnstemmed);
-				} else {
-					if ((tokensOriginNodeNormalized == null)
-							|| (tokensNewNodeNormalized == null)) {
-						tokensOriginNodeNormalized = normalizer
-								.createNormalizedTokensFromLabel(
-										labelOriginNode, true, true, true, true);
-						tokensNewNodeNormalized = normalizer
-								.createNormalizedTokensFromLabel(labelNewNode,
-										true, true, true, true);
+							comparedNormalizedTokensPair
+									.setTokensOriginNodeNormalizedCompundedUnstemmed(tokensOriginNodeNormalizedCompundedUnstemmed);
+							comparedNormalizedTokensPair
+									.setTokensNewNodeNormalizedCompundedUnstemmed(tokensNewNodeNormalizedCompundedUnstemmed);
+						}
+						currentMetricResult = currentMethod.executeMatching(
+								tempNodeOrigin, tempNodeNew, originalModel,
+								newModel, metaModel, actTypeOriginModel,
+								actTypeNewModel, labelOriginNodeNormalized,
+								labelNewNodeNormalized,
+								tokensOriginNodeNormalizedCompundedUnstemmed,
+								tokensNewNodeNormalizedCompundedUnstemmed);
+					} else {
+						if ((tokensOriginNodeNormalized == null)
+								|| (tokensNewNodeNormalized == null)) {
+							tokensOriginNodeNormalized = normalizer
+									.createNormalizedTokensFromLabel(
+											labelOriginNode, true, true, true,
+											true);
+							tokensNewNodeNormalized = normalizer
+									.createNormalizedTokensFromLabel(
+											labelNewNode, true, true, true,
+											true);
 
-						comparedNormalizedTokensPair
-								.setTokensOriginNodeNormalized(tokensOriginNodeNormalized);
-						comparedNormalizedTokensPair
-								.setTokensNewNodeNormalized(tokensNewNodeNormalized);
+							comparedNormalizedTokensPair
+									.setTokensOriginNodeNormalized(tokensOriginNodeNormalized);
+							comparedNormalizedTokensPair
+									.setTokensNewNodeNormalized(tokensNewNodeNormalized);
+						}
+						currentMetricResult = currentMethod.executeMatching(
+								tempNodeOrigin, tempNodeNew, originalModel,
+								newModel, metaModel, actTypeOriginModel,
+								actTypeNewModel, labelOriginNodeNormalized,
+								labelNewNodeNormalized,
+								tokensOriginNodeNormalized,
+								tokensNewNodeNormalized);
 					}
-					currentMetricResult = currentMethod.executeMatching(
-							tempNodeOrigin, tempNodeNew, originalModel,
-							newModel, metaModel, actTypeOriginModel,
-							actTypeNewModel, labelOriginNodeNormalized,
-							labelNewNodeNormalized, tokensOriginNodeNormalized,
-							tokensNewNodeNormalized);
-				}
 				}
 			}
 
@@ -350,7 +354,7 @@ public class MatchingProcess {
 	 * 
 	 */
 	private void printResults(String labelOrigin, String labelNew) {
-		//TODO change to zero after testing (add threshhold variable)
+		// TODO change to zero after testing (add threshhold variable)
 		if (getWeightedSyntacticSimilarity() >= 0.4
 				|| getWeightedSemanticSimilarity() >= 0.4
 				|| getWeightedContextSimilarity() >= 0.4) {
@@ -387,6 +391,12 @@ public class MatchingProcess {
 		comparedNodePair.setNodeTypes(actTypeOriginModel, actTypeNewModel);
 		comparedNodePair.setNodeOriginalModel(tempNodeOrigin);
 		comparedNodePair.setNodeNewModel(tempNodeNew);
+		comparedNodePair
+				.setWeightedSyntacticResult(getWeightedSyntacticSimilarity());
+		comparedNodePair
+				.setWeightedSemanticResult(getWeightedSemanticSimilarity());
+		comparedNodePair
+				.setWeightedContextResult(getWeightedContextSimilarity());
 	}
 
 	/**

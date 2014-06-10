@@ -83,9 +83,12 @@ public class CompairsonProcess {
 
 	private boolean contextMatchingActive = false;
 
-	public static void main(Model originalModel, Model newModel,
+	public static ConsistencyData main(Model originalModel, Model newModel,
 			Metamodel metaModel, List<MatchMethod> matchMethods) {
-		new CompairsonProcess(originalModel, newModel, metaModel, matchMethods);
+		CompairsonProcess compairsonProcess = new CompairsonProcess(
+				originalModel, newModel, metaModel, matchMethods);
+
+		return compairsonProcess.consistencyData;
 	}
 
 	/**
@@ -156,6 +159,7 @@ public class CompairsonProcess {
 						"This can never happen. Maybe the structure of the root node type was changed");
 			}
 			typeIteration();
+
 		}
 	}
 
@@ -387,20 +391,21 @@ public class CompairsonProcess {
 		String globalIDNodeNew = Methods.findGlobalID(tempNodeNew,
 				actTypeNewModel);
 
-	/*	System.out.println("Comparing original: "
-				+ Methods.findName(actTypeOriginModel, tempNodeOrigin)
-				+ " with ID: " + globalIDNodeOrigin + " of type "
-				+ actTypeOriginModel.getName() + " with new node: "
-				+ Methods.findName(actTypeNewModel, tempNodeNew) + " with ID: "
-				+ Methods.findGlobalID(tempNodeNew, actTypeNewModel)
-				+ " of type " + actTypeNewModel.getName());*/
+		/*
+		 * System.out.println("Comparing original: " +
+		 * Methods.findName(actTypeOriginModel, tempNodeOrigin) + " with ID: " +
+		 * globalIDNodeOrigin + " of type " + actTypeOriginModel.getName() +
+		 * " with new node: " + Methods.findName(actTypeNewModel, tempNodeNew) +
+		 * " with ID: " + Methods.findGlobalID(tempNodeNew, actTypeNewModel) +
+		 * " of type " + actTypeNewModel.getName());
+		 */
 
 		if (consistencyData.matchNecessary(globalIDNodeOrigin, globalIDNodeNew)) {
 			matchingProcess.startMatchingProcess(tempNodeOrigin, tempNodeNew,
 					actTypeOriginModel, actTypeNewModel, globalIDNodeOrigin,
 					globalIDNodeNew);
 		} else {
-			//System.out.println("These two nodes have already been compared.");
+			// System.out.println("These two nodes have already been compared.");
 		}
 
 	}

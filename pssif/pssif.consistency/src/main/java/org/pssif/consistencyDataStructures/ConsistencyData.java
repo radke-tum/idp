@@ -36,6 +36,7 @@ public class ConsistencyData {
 		this.comparedNodePairs = new LinkedList<ComparedNodePair>();
 	}
 
+	// TODO Attention! Variable is volatile, will be lost at serialization!
 	/**
 	 * stores the already compared IDs as the pair (originModelElementID,
 	 * newModelElementID)
@@ -58,6 +59,14 @@ public class ConsistencyData {
 	 * stores compared Nodes with similarity information
 	 */
 	private volatile List<ComparedNodePair> comparedNodePairs;
+
+	// TODO let the user adjust these treshholds to enable him to enter his own
+	// values
+	private final double semanticTreshhold = 0.4;
+
+	private final double syntacticTreshhold = 0.4;
+
+	private final double contextTreshhold = 0.4;
 
 	/**
 	 * @return the comparedNodePairs
@@ -171,4 +180,18 @@ public class ConsistencyData {
 		return null;
 	}
 
+	public List<ComparedNodePair> getMatchCandidateList() {
+		List<ComparedNodePair> matchCandidates = new LinkedList<>();
+
+		for (ComparedNodePair actPair : comparedNodePairs) {
+			if ((actPair.getWeightedSyntacticResult() >= syntacticTreshhold)
+					|| (actPair.getWeightedSemanticResult() >= semanticTreshhold)
+					|| (actPair.getWeightedContextResult() >= contextTreshhold)) {
+				matchCandidates.add(actPair);
+			}
+		}
+
+		return matchCandidates;
+
+	}
 }

@@ -3,7 +3,6 @@ package org.pssif.consistencyExtern.consistencyGui;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dialog.ModalityType;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -19,7 +18,9 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.TableModel;
 
+import org.pssif.consistencyDataStructures.ConsistencyData;
 import org.pssif.mainProcesses.CompairsonProcess;
+import org.pssif.mainProcesses.MergingProcess;
 import org.pssif.matchingLogic.MatchMethod;
 import org.pssif.matchingLogic.MatchingMethods;
 
@@ -36,7 +37,7 @@ import de.tum.pssif.core.model.Model;
  *         shall be applied and with which weight.
  */
 public class UserGuidingConsistency {
-
+	
 	/**
 	 * Initializes the desired match methods and starts the compairson process.
 	 */
@@ -45,7 +46,48 @@ public class UserGuidingConsistency {
 
 		List<MatchMethod> matchMethods = openChooseMatchingMethodsPopup();
 
-		CompairsonProcess.main(activeModel, newModel, metaModel, matchMethods);
+		ConsistencyData consistencyData = CompairsonProcess.main(activeModel,
+				newModel, metaModel, matchMethods);
+		
+		consistencyData = openChooseMergeCandidatesPopup(consistencyData);		
+		
+		 MergingProcess mergingProcess = new MergingProcess(consistencyData);		
+	}
+
+	private static ConsistencyData openChooseMergeCandidatesPopup(ConsistencyData consistencyData) {
+		final JDialog dialog = new JDialog();
+		dialog.setLayout(new BorderLayout());
+		dialog.setSize(700, 400);
+		dialog.setModalityType(ModalityType.APPLICATION_MODAL);
+		dialog.setResizable(false);
+
+		final TableModel tableModel = new MatchCandidateTableModel(consistencyData.getMatchCandidateList());
+
+		JTable methodTable = new JTable(tableModel);
+
+		methodTable.setFont(new Font("Arial", Font.PLAIN, 14));
+		methodTable.setGridColor(new Color(808080));
+		methodTable.getTableHeader().setReorderingAllowed(false);
+
+		JScrollPane scrollPane = new JScrollPane(methodTable);
+
+		JButton buttonApply = new JButton("Link the selected Nodes as equal.");
+		buttonApply.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(final ActionEvent e) {
+				dialog.setVisible(false);
+			}
+		});
+
+		JPanel buttonPanel = new JPanel();
+		buttonPanel.add(buttonApply);
+
+		dialog.add(scrollPane, BorderLayout.CENTER);
+		dialog.add(buttonPanel, BorderLayout.SOUTH);
+
+		dialog.setVisible(true);
+
+		return consistencyData;
 	}
 
 	/**

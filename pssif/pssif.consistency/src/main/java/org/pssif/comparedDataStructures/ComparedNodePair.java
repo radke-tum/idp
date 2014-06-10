@@ -49,6 +49,9 @@ public class ComparedNodePair extends Compared {
 	 */
 	private NodeType typeNewModel;
 
+	private double weightedSyntacticResult, weightedSemanticResult,
+			weightedContextResult;
+
 	/**
 	 * @return the contextMatchResult
 	 */
@@ -131,6 +134,48 @@ public class ComparedNodePair extends Compared {
 		this.typeOriginModel = actTypeOriginModel;
 		this.typeNewModel = actTypeNewModel;
 
+	}
+
+	/**
+	 * @return the weightedSyntacticResult
+	 */
+	public double getWeightedSyntacticResult() {
+		return weightedSyntacticResult;
+	}
+
+	/**
+	 * @param weightedSyntacticResult the weightedSyntacticResult to set
+	 */
+	public void setWeightedSyntacticResult(double weightedSyntacticResult) {
+		this.weightedSyntacticResult = weightedSyntacticResult;
+	}
+
+	/**
+	 * @return the weightedSemanticResult
+	 */
+	public double getWeightedSemanticResult() {
+		return weightedSemanticResult;
+	}
+
+	/**
+	 * @param weightedSemanticResult the weightedSemanticResult to set
+	 */
+	public void setWeightedSemanticResult(double weightedSemanticResult) {
+		this.weightedSemanticResult = weightedSemanticResult;
+	}
+
+	/**
+	 * @return the weightedContextResult
+	 */
+	public double getWeightedContextResult() {
+		return weightedContextResult;
+	}
+
+	/**
+	 * @param weightedContextResult the weightedContextResult to set
+	 */
+	public void setWeightedContextResult(double weightedContextResult) {
+		this.weightedContextResult = weightedContextResult;
 	}
 
 	/**
