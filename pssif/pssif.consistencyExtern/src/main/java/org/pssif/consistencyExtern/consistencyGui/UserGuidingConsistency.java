@@ -18,6 +18,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.TableModel;
 
+import org.pssif.comparedDataStructures.ComparedNodePair;
 import org.pssif.consistencyDataStructures.ConsistencyData;
 import org.pssif.mainProcesses.CompairsonProcess;
 import org.pssif.mainProcesses.MergingProcess;
@@ -41,7 +42,7 @@ public class UserGuidingConsistency {
 	/**
 	 * Initializes the desired match methods and starts the compairson process.
 	 */
-	public static void main(Model activeModel, Model newModel,
+	public static List<ComparedNodePair> main(Model activeModel, Model newModel,
 			Metamodel metaModel) {
 
 		List<MatchMethod> matchMethods = openChooseMatchingMethodsPopup();
@@ -51,7 +52,11 @@ public class UserGuidingConsistency {
 		
 		consistencyData = openChooseMergeCandidatesPopup(consistencyData);		
 		
-		 MergingProcess mergingProcess = new MergingProcess(consistencyData);		
+		//TODO do we really need this class?
+		 MergingProcess mergingProcess = new MergingProcess(consistencyData);
+		 
+		 return consistencyData.getMatchedList();
+		 
 	}
 
 	private static ConsistencyData openChooseMergeCandidatesPopup(ConsistencyData consistencyData) {

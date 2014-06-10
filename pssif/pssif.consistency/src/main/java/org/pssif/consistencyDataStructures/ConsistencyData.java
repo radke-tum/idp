@@ -194,4 +194,16 @@ public class ConsistencyData {
 		return matchCandidates;
 
 	}
+	
+	public List<ComparedNodePair> getMatchedList(){
+		List<ComparedNodePair> matchedList = new LinkedList<>();
+
+		for (ComparedNodePair actPair : comparedNodePairs) {
+			if (actPair.isMerged()) {
+				matchedList.add(actPair);
+			}
+		}
+
+		return matchedList;
+	}
 }

@@ -16,6 +16,8 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
 
+import org.pssif.mainProcesses.Methods;
+
 import de.tum.pssif.core.common.PSSIFConstants;
 import de.tum.pssif.core.common.PSSIFOption;
 import de.tum.pssif.core.common.PSSIFValue;
@@ -24,6 +26,7 @@ import de.tum.pssif.core.metamodel.EdgeType;
 import de.tum.pssif.core.metamodel.JunctionNodeType;
 import de.tum.pssif.core.metamodel.Metamodel;
 import de.tum.pssif.core.metamodel.NodeType;
+import de.tum.pssif.core.metamodel.PSSIFCanonicMetamodelCreator;
 import de.tum.pssif.core.model.Edge;
 import de.tum.pssif.core.model.Model;
 import de.tum.pssif.core.model.Node;
@@ -86,7 +89,7 @@ public class MyModelContainer {
    */
   private void createEdgeTypes() {
     Collection<EdgeType> types = meta.getEdgeTypes();
-
+    
     edgeTypes = new MyEdgeTypes(types);
   }
   
@@ -361,6 +364,8 @@ public class MyModelContainer {
       edgetype.getType().getAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_ID).getOne().set(newEdge, id);
 
       MyEdge e = new MyEdge(newEdge, edgetype, source, destination);
+      
+      System.out.println(source.getRealName() + destination.getRealName());
 
       edges.add(e);
       return true;

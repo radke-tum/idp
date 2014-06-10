@@ -117,6 +117,15 @@ public final class PSSIFCanonicMetamodelCreator {
   public static final String E_FULFILLS                                = "fulfills";
   public static final String E_IS_MANDATORY_FOR                        = "isMandatoryFor";
   public static final String E_IS_CONNECTED_TO                         = "isConnectedTo";
+  
+  /**
+   * 
+   * @author Andreas
+   */
+  public static final String E_EQUALS								 = "equals";
+  /**
+   * until here
+   */
 
   private PSSIFCanonicMetamodelCreator() {
     //Nop
@@ -250,6 +259,15 @@ public final class PSSIFCanonicMetamodelCreator {
     isConnectedTo.createMapping(node(N_PORT_ELECTRONIC, metamodel), node(N_PORT_ELECTRONIC, metamodel));
     isConnectedTo.createMapping(node(N_PORT_MECHANIC, metamodel), node(N_PORT_MECHANIC, metamodel));
     isConnectedTo.createMapping(node(N_PORT_SOFTWARE, metamodel), node(N_PORT_SOFTWARE, metamodel));
+    
+    /**
+     * @author Andreas
+     */
+    MutableEdgeType equals = metamodel.createEdgeType(E_EQUALS);
+    equals.createMapping(node(PSSIFConstants.ROOT_NODE_TYPE_NAME, metamodel), node(PSSIFConstants.ROOT_NODE_TYPE_NAME, metamodel));
+    /**
+     * until here
+     */
 
     createAttributionalRelationships(metamodel, relationship);
     createChronologicalRelationships(metamodel, relationship);

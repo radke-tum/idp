@@ -15,6 +15,8 @@ import java.util.LinkedList;
 
 import javax.swing.JMenu;
 
+import model.ModelBuilder;
+
 import org.apache.commons.collections15.Transformer;
 
 import edu.uci.ics.jung.algorithms.layout.CircleLayout;
@@ -71,6 +73,9 @@ public class GraphVisualization
   
   public GraphVisualization(Dimension d, boolean details)
   {
+	ModelBuilder.setgViz(this);
+  
+	  
     int i = 1000;
     this.detailedNodes = details;
     this.gb = new GraphBuilder();

@@ -9,13 +9,17 @@ import graph.model.MyJunctionNodeTypes;
 import graph.model.MyNode;
 import graph.model.MyNodeType;
 import graph.model.MyNodeTypes;
+import gui.graph.GraphVisualization;
 
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
 
+import org.pssif.comparedDataStructures.ComparedNodePair;
 import org.pssif.consistencyExtern.consistencyGui.UserGuidingConsistency;
 
+import de.tum.pssif.core.common.PSSIFConstants;
 import de.tum.pssif.core.common.PSSIFOption;
 import de.tum.pssif.core.metamodel.ConnectionMapping;
 import de.tum.pssif.core.metamodel.EdgeType;
@@ -23,6 +27,7 @@ import de.tum.pssif.core.metamodel.Metamodel;
 import de.tum.pssif.core.metamodel.NodeType;
 import de.tum.pssif.core.metamodel.PSSIFCanonicMetamodelCreator;
 import de.tum.pssif.core.model.Model;
+import de.tum.pssif.core.model.Node;
 
 /**
  * Builds out of a Model and an MetaModel a Model which can be displayed as Graph and Matrix
@@ -37,6 +42,21 @@ public class ModelBuilder {
 	private static Metamodel metaModel = PSSIFCanonicMetamodelCreator.create();
 	private static HashMap<MyPair, LinkedList<MyEdgeType>> possibleMappings;
 	
+	/**
+	 * @author Andreas
+	 */
+	private static GraphVisualization gViz;
+	/**
+	 * until here
+	 */
+	
+	/**
+	 * @param gViz the gViz to set
+	 */
+	public static void setgViz(GraphVisualization gViz) {
+		ModelBuilder.gViz = gViz;
+	}
+
 	/**
 	 * Add a new Model and MetaModel. The new Model might be merged with another
 	 * existing Model
@@ -56,7 +76,34 @@ public class ModelBuilder {
 		else {
 			if (UserGuidingConsistency.openConsistencyPopUp()) {
 				
-				UserGuidingConsistency.main(activeModel.getModel(), Pmodel, Pmeta);
+				List<ComparedNodePair> matchedList =
+						UserGuidingConsistency.main(activeModel.getModel(), Pmodel, Pmeta);
+				
+				ModelMerger merger = new ModelMerger();
+				Model mergedModel = merger.mergeModels(activeModel.getModel(),
+						Pmodel, Pmeta);
+
+				MyModelContainer newModel = new MyModelContainer(mergedModel,
+						Pmeta);
+
+				activeModel = newModel;
+				
+				for(ComparedNodePair comparedNodePair : matchedList){
+					MyNodeType originNodeType = new MyNodeType(comparedNodePair.getTypeOriginModel());
+					MyNode originNode =
+							new MyNode(comparedNodePair.getNodeOriginalModel(), originNodeType);
+					
+					MyNodeType newNodeType = new MyNodeType(comparedNodePair.getTypeNewModel());
+					Node newTemp = comparedNodePair.getNodeNewModel();
+					
+					MyNode newNode =
+							new MyNode(merger.getOldToNewNodes().get(newTemp), newNodeType);
+					
+					MyEdgeType edgeType =
+							new MyEdgeType(metaModel.getEdgeType(PSSIFCanonicMetamodelCreator.E_EQUALS).getOne(), 4);
+					
+					addNewEdgeGUI(originNode, newNode, edgeType, false);
+				}
 				
 			} else {
 				ModelMerger merger = new ModelMerger();

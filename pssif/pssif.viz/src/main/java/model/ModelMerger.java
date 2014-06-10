@@ -3,8 +3,11 @@ package model;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
+
+import org.pssif.comparedDataStructures.ComparedNodePair;
 
 import de.tum.pssif.core.common.PSSIFOption;
 import de.tum.pssif.core.common.PSSIFValue;
@@ -33,6 +36,13 @@ public class ModelMerger {
 	private HashMap<Node, Node> oldToNewNodes;
 	
 	/**
+	 * @return the oldToNewNodes
+	 */
+	public HashMap<Node, Node> getOldToNewNodes() {
+		return oldToNewNodes;
+	}
+
+	/**
 	 * merge two models into one model in respect of the given metamodel
 	 * @param model1 first model
 	 * @param model2 second model
@@ -58,7 +68,7 @@ public class ModelMerger {
 		
 		return this.model1;
 	}
-	
+
 	private void printNbEdges(Model model)
 	{
 		int counter =0;
