@@ -77,7 +77,7 @@ public class UserGuidingConsistency {
 
 		JScrollPane scrollPane = new JScrollPane(methodTable);
 
-		JButton buttonApply = new JButton("Choose the node pairs which shall be linked as 'equal'");
+		JButton buttonApply = new JButton("Link the selected node pairs as 'equal'");
 		buttonApply.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {

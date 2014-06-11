@@ -169,10 +169,10 @@ public class MatchingProcess {
 		 * here the saved normalizations, tokenizations and results of the two
 		 * nodes are retrieved if they have been compared with another node once
 		 */
-		ComparedNodePair nodePairOrigin = consistencyData.nodeAlreadyCompared(
+		/*ComparedNodePair nodePairOrigin = consistencyData.nodeAlreadyCompared(
 				tempNodeOrigin, actTypeOriginModel);
 		ComparedNodePair nodePairNew = consistencyData.nodeAlreadyCompared(
-				tempNodeNew, actTypeNewModel);
+				tempNodeNew, actTypeNewModel);*/
 
 		/**
 		 * here the strings of the old and the new node are read from the model
@@ -191,11 +191,13 @@ public class MatchingProcess {
 		List<Token> tokensOriginNodeNormalizedCompundedUnstemmed = null;
 		List<Token> tokensNewNodeNormalizedCompundedUnstemmed = null;
 
+		
+		//TODO Remove outcommented code
 		/**
 		 * if the node from the origin model has been compared once with any
 		 * other node the tokenization and normalization result is reused.
 		 */
-		if (nodePairOrigin != null) {
+		/*if (nodePairOrigin != null) {
 			tokensOriginNodeNormalized = nodePairOrigin.getTokensComparison()
 					.getTokensOriginNodeNormalized();
 			tokensOriginNodeNormalizedCompundedUnstemmed = nodePairOrigin
@@ -207,13 +209,17 @@ public class MatchingProcess {
 		} else {
 			labelOriginNodeNormalized = normalizer
 					.normalizeLabel(labelOriginNode);
-		}
+		}*/
+		
+		
+		labelOriginNodeNormalized = normalizer
+				.normalizeLabel(labelOriginNode);
 
 		/**
 		 * if the node from the new model has been compared once with any other
 		 * node the tokenization and normalization result is reused.
 		 */
-		if (nodePairNew != null) {
+		/*if (nodePairNew != null) {
 			tokensNewNodeNormalized = nodePairNew.getTokensComparison()
 					.getTokensNewNodeNormalized();
 			tokensNewNodeNormalizedCompundedUnstemmed = nodePairNew
@@ -224,7 +230,10 @@ public class MatchingProcess {
 					.getLabelNewNormalized();
 		} else {
 			labelNewNodeNormalized = normalizer.normalizeLabel(labelNewNode);
-		}
+		}*/
+		
+		labelNewNodeNormalized = normalizer.normalizeLabel(labelNewNode);
+
 
 		/**
 		 * creating objects for the saving of the matching results here

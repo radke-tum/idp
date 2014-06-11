@@ -148,7 +148,7 @@ public class LinguisticMatcher extends MatchMethod {
 
 	/**
 	 * This method initializes the list of tokens which appear uniquely in the
-	 * new nodes label
+	 * origin nodes label
 	 * 
 	 * @param tokensOrigin
 	 *            the tokenset of the original node

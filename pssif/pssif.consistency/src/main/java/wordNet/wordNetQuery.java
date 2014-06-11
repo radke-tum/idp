@@ -9,7 +9,7 @@ public class wordNetQuery {
 	}
 	
 	public static boolean areSynonyms(Token tokenOrigin, Token tokenNew){
-		return true;
+		return false;
 		//TODO establish connection with wordNet database here and check if these two tokens are synonyms;
 	}
 	

@@ -30,7 +30,6 @@ public class AttributeMatcher extends MatchMethod {
 	 * the attributes which are compared between the nodes
 	 */
 	private final String[] pssifAttributes = {
-			PSSIFConstants.BUILTIN_ATTRIBUTE_NAME,
 			PSSIFConstants.BUILTIN_ATTRIBUTE_COMMENT,
 			PSSIFConstants.BUILTIN_ATTRIBUTE_VALIDITY_END,
 			PSSIFConstants.BUILTIN_ATTRIBUTE_VALIDITY_START,

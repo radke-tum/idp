@@ -110,10 +110,10 @@ public class MatchCandidateTableModel extends AbstractTableModel {
 		
 		tableColumnModel.getColumn(COLUMN_IDX_NODEORIGIN).setMinWidth(250);
 		tableColumnModel.getColumn(COLUMN_IDX_NODENEW).setMinWidth(250);
-		tableColumnModel.getColumn(COLUMN_IDX_SYNTACTICSIM).setMaxWidth(80);
-		tableColumnModel.getColumn(COLUMN_IDX_SEMANTICSIM).setMaxWidth(80);
-		tableColumnModel.getColumn(COLUMN_IDX_CONTEXTSIM).setMaxWidth(80);
-		tableColumnModel.getColumn(COLUMN_IDX_MERGE).setMaxWidth(60);
+		tableColumnModel.getColumn(COLUMN_IDX_SYNTACTICSIM).setPreferredWidth(95);
+		tableColumnModel.getColumn(COLUMN_IDX_SEMANTICSIM).setPreferredWidth(95);
+		tableColumnModel.getColumn(COLUMN_IDX_CONTEXTSIM).setPreferredWidth(80);
+		tableColumnModel.getColumn(COLUMN_IDX_MERGE).setPreferredWidth(60);
 	}
 
 }
