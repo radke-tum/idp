@@ -7,12 +7,14 @@ import javax.swing.table.AbstractTableModel;
 import org.pssif.matchingLogic.MatchMethod;
 
 /**
+ * This class is an own implementation of the class AbstractTable Model. It is
+ * used to display the possible match methods in a JTable in the dialogue after
+ * the user hits the button "merge the models".
+ * 
  * @author Andreas
  * 
- *         This class is an own implementation of the class AbstractTable Model.
- *         It is used to display the possible match methods in a JTable in the
- *         dialogue after the user hit the button "merge the models".
  */
+@SuppressWarnings("serial")
 public class MethodChooseTableModel extends AbstractTableModel {
 
 	/**

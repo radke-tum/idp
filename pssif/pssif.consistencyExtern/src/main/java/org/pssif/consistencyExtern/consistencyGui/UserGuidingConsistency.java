@@ -42,7 +42,19 @@ import de.tum.pssif.core.model.Model;
 public class UserGuidingConsistency {
 
 	/**
-	 * Initializes the desired match methods and starts the compairson process.
+	 * This method controls the gui of the consistency process. First the dialog
+	 * to let the user choose the match methods is opened. Then the user is
+	 * supposed to choose the tresholds for the syntactic, semantic and
+	 * contextual metrics. Afterwards the matching process is started and the
+	 * results are displayed to the user.
+	 * 
+	 * @param activeModel
+	 *            The original model
+	 * @param newModel
+	 *            The newly imported model
+	 * @param metaModel
+	 *            the according metamodel
+	 * @return the list of node pairs which shall be merged
 	 */
 	public static List<ComparedNodePair> main(Model activeModel,
 			Model newModel, Metamodel metaModel) {
@@ -62,6 +74,12 @@ public class UserGuidingConsistency {
 
 	}
 
+	/**
+	 * This method opens a dialog where the user can choose the different
+	 * tresholds. After the user confirmed his input the inputs are validated.
+	 * If the input was valid the tresholds are set in the ConsistencyData
+	 * Class. Otherwise the dialog stays open.
+	 */
 	private static void openChooseTresholdsPopup() {
 
 		final JDialog dialog = new JDialog();
@@ -104,7 +122,9 @@ public class UserGuidingConsistency {
 					nonEmptyFields = false;
 				}
 
-				if (nonEmptyFields && tresholdsAreValid(synTreshold, semTreshold, conTreshold)) {
+				if (nonEmptyFields
+						&& tresholdsAreValid(synTreshold, semTreshold,
+								conTreshold)) {
 					dialog.setVisible(false);
 
 					ConsistencyData.initThreshholds(synTreshold, semTreshold,
@@ -114,6 +134,9 @@ public class UserGuidingConsistency {
 				}
 			}
 
+			/**
+			 * @return whether the given tresholds are valid
+			 */
 			private boolean tresholdsAreValid(double synTreshold,
 					double semTreshold, double conTreshold) {
 				boolean result = false;
@@ -144,6 +167,17 @@ public class UserGuidingConsistency {
 		dialog.setVisible(true);
 	}
 
+	/**
+	 * This method shows the user the node pairs where at least one of the
+	 * similarity result exceeds the treshold. Users can then choose which nodes
+	 * shall be linked/merged. After Confirming this dialog the
+	 * comparedNodePairs list in the consistencyData object is updated.
+	 * 
+	 * @param consistencyData
+	 *            the consistencyData object which shall be modified by
+	 *            selecting the "to be merged" nodes.
+	 * @return the modified consistencyData object
+	 */
 	private static ConsistencyData openChooseMergeCandidatesPopup(
 			ConsistencyData consistencyData) {
 		final JDialog dialog = new JDialog();

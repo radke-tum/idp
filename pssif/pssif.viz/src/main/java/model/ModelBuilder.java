@@ -60,8 +60,11 @@ public class ModelBuilder {
 
 	/**
 	 * Add a new Model and MetaModel. The new Model might be merged with another
-	 * existing Model
+	 * existing Model. If a model already exists and an additional Model is
+	 * imported the user decides if he want's to merge the two models. The
+	 * user therefore selects nodes of both models which shall be linked as 'equal'.
 	 * 
+	 * @author Andreas
 	 * @param meta
 	 * @param model
 	 */
@@ -107,6 +110,9 @@ public class ModelBuilder {
 //					
 //					addNewEdgeGUI(originNode, newNode, edgeType, false);
 					
+					/**
+					 * searches for the nodes (in the new active model) which shall be linked and adds new edges between them.
+					 */
 					for(MyNode actNode : activeModel.getAllNodes()){
 						if(Methods.findGlobalID(
 								actNode.getNode(), actNode.getNodeType().getType()).equals

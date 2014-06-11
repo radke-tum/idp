@@ -72,6 +72,7 @@ public class MatchingProcess {
 	private ComparedNodePair comparedNodePair = null;
 
 	private boolean contextMatcherActive = false;
+
 	private boolean debugMode = false;
 
 	/**
@@ -152,7 +153,6 @@ public class MatchingProcess {
 			NodeType actTypeOriginModel, NodeType actTypeNewModel) {
 
 		double currentMetricResult = 0;
-		boolean lastMetricWasContext = false;
 
 		/**
 		 * initializing the consistency Data variables here
@@ -257,7 +257,6 @@ public class MatchingProcess {
 			 */
 			if (currentMethod.isActive()) {
 				if (currentMethod.getMatchMethod() == MatchingMethods.CONTEXT_MATCHING) {
-					lastMetricWasContext = true;
 					currentMetricResult = currentMethod.executeMatching(
 							tempNodeOrigin, tempNodeNew, originalModel,
 							newModel, metaModel, actTypeOriginModel,
@@ -355,7 +354,7 @@ public class MatchingProcess {
 	 * 
 	 */
 	private void printResults(String labelOrigin, String labelNew) {
-		if (debugMode ) {
+		if (debugMode) {
 			System.out.println("The node(origin): " + labelOrigin
 					+ " and the node(new) " + labelNew
 					+ " have the following similarieties:");
@@ -398,6 +397,9 @@ public class MatchingProcess {
 	}
 
 	/**
+	 * This method saves the result of the lastly applied metric in the
+	 * according objects
+	 * 
 	 * @param currentMethod
 	 *            the matchMethod which was currently applied
 	 * @param currentMetricResult
@@ -514,7 +516,6 @@ public class MatchingProcess {
 				;
 			}
 		}
-
 		return result;
 	}
 
@@ -539,7 +540,6 @@ public class MatchingProcess {
 				;
 			}
 		}
-
 		return result;
 	}
 

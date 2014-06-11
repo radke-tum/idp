@@ -61,10 +61,10 @@ public class ConsistencyData {
 	private volatile List<ComparedNodePair> comparedNodePairs;
 
 	/**
-	 * these are the values of the tresholds for the syntactic, semantic and
-	 * contextual metrics. Depending on these tresholds and the results of a
-	 * match between two nodes the match is proposed to the user if one of the
-	 * tresholds is exceeded
+	 * these are the tresholds for the syntactic, semantic and contextual
+	 * metrics. Depending on these tresholds and the results of a match between
+	 * two nodes the match is proposed to the user if one of the tresholds is
+	 * exceeded
 	 */
 	private static double semanticTreshhold;
 	private static double syntacticTreshhold;
@@ -77,6 +77,16 @@ public class ConsistencyData {
 		return comparedNodePairs;
 	}
 
+	/**
+	 * This method initializes the treshold variables
+	 * 
+	 * @param synTreshhold
+	 *            the treshold for the syntactic result
+	 * @param semTreshhold
+	 *            the treshold for the semantic result
+	 * @param conTreshhold
+	 *            the treshold for the context result
+	 */
 	public static void initThreshholds(double synTreshhold,
 			double semTreshhold, double conTreshhold) {
 		syntacticTreshhold = synTreshhold;
@@ -126,7 +136,7 @@ public class ConsistencyData {
 	 *            the global ID of the new node
 	 * @return a bool saying whether the two nodes have been matched already
 	 * @true if a match is necessary
-	 * @false if they have already been matched
+	 * @false if two nodes have already been matched
 	 */
 	public boolean matchNecessary(String globalIDNodeOrigin,
 			String globalIDNodeNew) {
@@ -134,7 +144,7 @@ public class ConsistencyData {
 	}
 
 	/**
-	 * This methhod returns the result of a match in form of a ComparedNodePair
+	 * This method returns the result of a match in form of a ComparedNodePair
 	 * between the two given nodes if they have been matched once
 	 * 
 	 * @param tempNodeOrigin
@@ -193,10 +203,13 @@ public class ConsistencyData {
 		return null;
 	}
 
-	//TODO comment
-	/**Depending on these tresholds and the results of a
-	 * match between two nodes the match is proposed to the user if one of the
-	 * tresholds is exceeded
+	/**
+	 * This methods evaluates which of the compared node pairs have at least one
+	 * similarity score that exceeds the treshold. All those node pairs are
+	 * added to a list and then returned.
+	 * 
+	 * @return the list of node pairs which Syntactic- OR Semantic- OR Context-
+	 *         Similarity exceeds the according treshold.
 	 */
 	public List<ComparedNodePair> getMergeCandidateList() {
 		List<ComparedNodePair> mergeCandidates = new LinkedList<>();
@@ -208,11 +221,16 @@ public class ConsistencyData {
 				mergeCandidates.add(actPair);
 			}
 		}
-
 		return mergeCandidates;
-
 	}
 
+	/**
+	 * This method evaluates which of the compared node pairs were selected by
+	 * the user to be merged. All selected elements are added to a list and then
+	 * returned.
+	 * 
+	 * @return the list of node pairs which the user chose being merged.
+	 */
 	public List<ComparedNodePair> getMergedList() {
 		List<ComparedNodePair> mergedList = new LinkedList<>();
 
@@ -221,7 +239,6 @@ public class ConsistencyData {
 				mergedList.add(actPair);
 			}
 		}
-
 		return mergedList;
 	}
 }
