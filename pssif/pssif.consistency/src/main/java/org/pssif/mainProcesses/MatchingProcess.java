@@ -72,6 +72,7 @@ public class MatchingProcess {
 	private ComparedNodePair comparedNodePair = null;
 
 	private boolean contextMatcherActive = false;
+	private boolean debugMode = false;
 
 	/**
 	 * @return the originalModel
@@ -142,18 +143,13 @@ public class MatchingProcess {
 	 *            the type of the tempNodeOrigin
 	 * @param actTypeNewModel
 	 *            the type of the tempNodeNew
-	 * @param globalIDNodeOrigin
-	 *            TODO
-	 * @param globalIDNodeNew
-	 *            TODO
 	 * @throws RuntimeException
 	 *             If something at the saving goes wrong an exception is thrown.
 	 *             Else nothing besides the saving happens.
 	 * 
 	 */
 	public void startMatchingProcess(Node tempNodeOrigin, Node tempNodeNew,
-			NodeType actTypeOriginModel, NodeType actTypeNewModel,
-			String globalIDNodeOrigin, String globalIDNodeNew) {
+			NodeType actTypeOriginModel, NodeType actTypeNewModel) {
 
 		double currentMetricResult = 0;
 		boolean lastMetricWasContext = false;
@@ -169,10 +165,12 @@ public class MatchingProcess {
 		 * here the saved normalizations, tokenizations and results of the two
 		 * nodes are retrieved if they have been compared with another node once
 		 */
-		/*ComparedNodePair nodePairOrigin = consistencyData.nodeAlreadyCompared(
-				tempNodeOrigin, actTypeOriginModel);
-		ComparedNodePair nodePairNew = consistencyData.nodeAlreadyCompared(
-				tempNodeNew, actTypeNewModel);*/
+		/*
+		 * ComparedNodePair nodePairOrigin =
+		 * consistencyData.nodeAlreadyCompared( tempNodeOrigin,
+		 * actTypeOriginModel); ComparedNodePair nodePairNew =
+		 * consistencyData.nodeAlreadyCompared( tempNodeNew, actTypeNewModel);
+		 */
 
 		/**
 		 * here the strings of the old and the new node are read from the model
@@ -191,49 +189,43 @@ public class MatchingProcess {
 		List<Token> tokensOriginNodeNormalizedCompundedUnstemmed = null;
 		List<Token> tokensNewNodeNormalizedCompundedUnstemmed = null;
 
-		
-		//TODO Remove outcommented code
+		// TODO Remove outcommented code
 		/**
 		 * if the node from the origin model has been compared once with any
 		 * other node the tokenization and normalization result is reused.
 		 */
-		/*if (nodePairOrigin != null) {
-			tokensOriginNodeNormalized = nodePairOrigin.getTokensComparison()
-					.getTokensOriginNodeNormalized();
-			tokensOriginNodeNormalizedCompundedUnstemmed = nodePairOrigin
-					.getTokensComparison()
-					.getTokensOriginNodeNormalizedCompundedUnstemmed();
+		/*
+		 * if (nodePairOrigin != null) { tokensOriginNodeNormalized =
+		 * nodePairOrigin.getTokensComparison()
+		 * .getTokensOriginNodeNormalized();
+		 * tokensOriginNodeNormalizedCompundedUnstemmed = nodePairOrigin
+		 * .getTokensComparison()
+		 * .getTokensOriginNodeNormalizedCompundedUnstemmed();
+		 * 
+		 * labelOriginNodeNormalized = nodePairOrigin.getLabelComparison()
+		 * .getLabelOriginNormalized(); } else { labelOriginNodeNormalized =
+		 * normalizer .normalizeLabel(labelOriginNode); }
+		 */
 
-			labelOriginNodeNormalized = nodePairOrigin.getLabelComparison()
-					.getLabelOriginNormalized();
-		} else {
-			labelOriginNodeNormalized = normalizer
-					.normalizeLabel(labelOriginNode);
-		}*/
-		
-		
-		labelOriginNodeNormalized = normalizer
-				.normalizeLabel(labelOriginNode);
+		labelOriginNodeNormalized = normalizer.normalizeLabel(labelOriginNode);
 
 		/**
 		 * if the node from the new model has been compared once with any other
 		 * node the tokenization and normalization result is reused.
 		 */
-		/*if (nodePairNew != null) {
-			tokensNewNodeNormalized = nodePairNew.getTokensComparison()
-					.getTokensNewNodeNormalized();
-			tokensNewNodeNormalizedCompundedUnstemmed = nodePairNew
-					.getTokensComparison()
-					.getTokensNewNodeNormalizedCompundedUnstemmed();
+		/*
+		 * if (nodePairNew != null) { tokensNewNodeNormalized =
+		 * nodePairNew.getTokensComparison() .getTokensNewNodeNormalized();
+		 * tokensNewNodeNormalizedCompundedUnstemmed = nodePairNew
+		 * .getTokensComparison()
+		 * .getTokensNewNodeNormalizedCompundedUnstemmed();
+		 * 
+		 * labelNewNodeNormalized = nodePairNew.getLabelComparison()
+		 * .getLabelNewNormalized(); } else { labelNewNodeNormalized =
+		 * normalizer.normalizeLabel(labelNewNode); }
+		 */
 
-			labelNewNodeNormalized = nodePairNew.getLabelComparison()
-					.getLabelNewNormalized();
-		} else {
-			labelNewNodeNormalized = normalizer.normalizeLabel(labelNewNode);
-		}*/
-		
 		labelNewNodeNormalized = normalizer.normalizeLabel(labelNewNode);
-
 
 		/**
 		 * creating objects for the saving of the matching results here
@@ -363,10 +355,7 @@ public class MatchingProcess {
 	 * 
 	 */
 	private void printResults(String labelOrigin, String labelNew) {
-		// TODO change to zero after testing (add threshhold variable)
-		if (getWeightedSyntacticSimilarity() >= 0.4
-				|| getWeightedSemanticSimilarity() >= 0.4
-				|| getWeightedContextSimilarity() >= 0.4) {
+		if (debugMode ) {
 			System.out.println("The node(origin): " + labelOrigin
 					+ " and the node(new) " + labelNew
 					+ " have the following similarieties:");

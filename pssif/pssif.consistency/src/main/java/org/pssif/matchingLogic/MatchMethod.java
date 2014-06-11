@@ -26,7 +26,8 @@ public abstract class MatchMethod {
 
 	/**
 	 * @param matchMethod
-	 *            TODO
+	 *            the name of the initialized match method (instance of the enum
+	 *            MatchingMethods)
 	 * @param isActive
 	 *            bool saying whether the method was activated by the user
 	 * @param weigth
@@ -76,7 +77,6 @@ public abstract class MatchMethod {
 	 */
 	public static MatchMethod createMatchMethodObject(
 			MatchingMethods matchMethod, boolean isActive, double weight) {
-		// TODO Initialize with null
 		MatchMethod newMatchMethod = null;
 
 		switch (matchMethod) {

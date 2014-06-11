@@ -91,9 +91,7 @@ public class MethodChooseTableModel extends AbstractTableModel {
 
 		if (columnIndex == COLUMN_IDX_WEIGTH) {
 			method.setWeigth((Double) value);
-			// TODO users have to enter "1.0" for the weigth being correctly
-			// applied. If the user enters "1" the weight isn't correctly
-			// applied.
+
 		} else if (columnIndex == COLUMN_IDX_ACTIVE) {
 			method.setActive((Boolean) value);
 		}

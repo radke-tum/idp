@@ -121,7 +121,8 @@ public class DocumentCorpusData {
 	}
 
 	// TODO Begründung in Arbeit schreiben warum bei VSM Normalisierung ohne
-	// Word splitting durchgeführt wird!!!
+	// Word splitting durchgeführt wird!!! Liegt das daran, da sonst das Vokabular
+	// verfälscht würde? Nochmal nachlesen…
 	/**
 	 * 
 	 * This method get's the label of the given node and creates the tokens of

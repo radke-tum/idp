@@ -45,7 +45,6 @@ public class VsmMatcher extends MatchMethod {
 	public VsmMatcher(MatchingMethods matchMethod, boolean isActive,
 			double weigth) {
 		super(matchMethod, isActive, weigth);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override

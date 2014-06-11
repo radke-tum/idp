@@ -12,10 +12,12 @@ import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.table.TableModel;
 
 import org.pssif.comparedDataStructures.ComparedNodePair;
@@ -29,46 +31,131 @@ import de.tum.pssif.core.metamodel.Metamodel;
 import de.tum.pssif.core.model.Model;
 
 /**
- * @author Andreas
+ * This class is responsible for guiding the user through the whole consistency
+ * process. For example asking whether the user wants to merge the models or
+ * just cope the new one into the workspace. Another thing is that the class
+ * lets the user select which match methods shall be applied and with which
+ * weight.
  * 
- *         This class is responsible for guiding the user through the whole
- *         consistency process. For example asking whether the user wants to
- *         merge the models or just cope the new one into the workspace. Another
- *         thing is that the class lets the user select which match methods
- *         shall be applied and with which weight.
+ * @author Andreas
  */
 public class UserGuidingConsistency {
-	
+
 	/**
 	 * Initializes the desired match methods and starts the compairson process.
 	 */
-	public static List<ComparedNodePair> main(Model activeModel, Model newModel,
-			Metamodel metaModel) {
+	public static List<ComparedNodePair> main(Model activeModel,
+			Model newModel, Metamodel metaModel) {
 
 		List<MatchMethod> matchMethods = openChooseMatchingMethodsPopup();
 
+		openChooseTresholdsPopup();
+
 		ConsistencyData consistencyData = CompairsonProcess.main(activeModel,
 				newModel, metaModel, matchMethods);
-		
-		consistencyData = openChooseMergeCandidatesPopup(consistencyData);		
-		
-		//TODO do we really need this class?
-		 MergingProcess mergingProcess = new MergingProcess(consistencyData);
-		 
-		 return consistencyData.getMatchedList();
-		 
+
+		consistencyData = openChooseMergeCandidatesPopup(consistencyData);
+
+		MergingProcess mergingProcess = new MergingProcess(consistencyData);
+
+		return consistencyData.getMergedList();
+
 	}
 
-	private static ConsistencyData openChooseMergeCandidatesPopup(ConsistencyData consistencyData) {
+	private static void openChooseTresholdsPopup() {
+
+		final JDialog dialog = new JDialog();
+		dialog.setLayout(new BorderLayout());
+		dialog.setSize(280, 180);
+		dialog.setModalityType(ModalityType.APPLICATION_MODAL);
+
+		final JLabel labelSyn = new JLabel("Syntactic Threshold:");
+		final JTextField synTresh = new JTextField();
+		synTresh.setColumns(4);
+
+		final JLabel labelSem = new JLabel("Semantic Threshold:");
+		final JTextField semTresh = new JTextField();
+		semTresh.setColumns(4);
+
+		final JLabel labelCon = new JLabel("Context Threshold:");
+		final JTextField conTresh = new JTextField();
+		conTresh.setColumns(4);
+
+		JButton buttonApply = new JButton("Choose these thresholds");
+		buttonApply.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(final ActionEvent e) {
+				double synTreshold = 0, semTreshold = 0, conTreshold = 0;
+				boolean nonEmptyFields = true;
+
+				if (synTresh.getText() != null) {
+					synTreshold = Double.parseDouble(synTresh.getText());
+				} else {
+					nonEmptyFields = false;
+				}
+				if (semTresh.getText() != null) {
+					semTreshold = Double.parseDouble(semTresh.getText());
+				} else {
+					nonEmptyFields = false;
+				}
+				if (conTresh.getText() != null) {
+					conTreshold = Double.parseDouble(conTresh.getText());
+				} else {
+					nonEmptyFields = false;
+				}
+
+				if (nonEmptyFields && tresholdsAreValid(synTreshold, semTreshold, conTreshold)) {
+					dialog.setVisible(false);
+
+					ConsistencyData.initThreshholds(synTreshold, semTreshold,
+							conTreshold);
+				} else {
+					dialog.setVisible(true);
+				}
+			}
+
+			private boolean tresholdsAreValid(double synTreshold,
+					double semTreshold, double conTreshold) {
+				boolean result = false;
+
+				result = (synTreshold >= 0) && (semTreshold >= 0)
+						&& (conTreshold >= 0);
+				result = result && (synTreshold <= 1) && (semTreshold <= 1)
+						&& (conTreshold <= 1);
+
+				return result;
+			}
+		});
+
+		JPanel treshholdPanel = new JPanel();
+		treshholdPanel.add(labelSyn);
+		treshholdPanel.add(synTresh);
+		treshholdPanel.add(labelSem);
+		treshholdPanel.add(semTresh);
+		treshholdPanel.add(labelCon);
+		treshholdPanel.add(conTresh);
+
+		JPanel buttonPanel = new JPanel();
+		buttonPanel.add(buttonApply);
+
+		dialog.add(treshholdPanel, BorderLayout.CENTER);
+		dialog.add(buttonPanel, BorderLayout.SOUTH);
+
+		dialog.setVisible(true);
+	}
+
+	private static ConsistencyData openChooseMergeCandidatesPopup(
+			ConsistencyData consistencyData) {
 		final JDialog dialog = new JDialog();
 		dialog.setLayout(new BorderLayout());
 		dialog.setSize(900, 600);
 		dialog.setModalityType(ModalityType.APPLICATION_MODAL);
 
-		final TableModel tableModel = new MatchCandidateTableModel(consistencyData.getMatchCandidateList());
+		final TableModel tableModel = new MatchCandidateTableModel(
+				consistencyData.getMergeCandidateList());
 
 		JTable methodTable = new JTable(tableModel);
-		
+
 		MatchCandidateTableModel.initColumnWidths(methodTable);
 
 		methodTable.setFont(new Font("Arial", Font.PLAIN, 14));
@@ -77,7 +164,8 @@ public class UserGuidingConsistency {
 
 		JScrollPane scrollPane = new JScrollPane(methodTable);
 
-		JButton buttonApply = new JButton("Link the selected node pairs as 'equal'");
+		JButton buttonApply = new JButton(
+				"Link the selected node pairs as 'equal'");
 		buttonApply.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
@@ -97,13 +185,12 @@ public class UserGuidingConsistency {
 	}
 
 	/**
-	 * @author: Andreas
+	 * This method opens a modal dialogue where the user has to decide whether
+	 * he wants to merge the two models or just copy the new one into the same
+	 * workspace as the original one
+	 * 
 	 * @return a boolean that says whether the user wants to merge the newly
 	 *         imported model with the old one or not
-	 * 
-	 *         This method opens a modal dialogue where the user has to decide
-	 *         whether he wants to merge the two models or just copy the new one
-	 *         into the same workspace as the original one
 	 */
 	public static boolean openConsistencyPopUp() {
 
@@ -130,11 +217,10 @@ public class UserGuidingConsistency {
 	}
 
 	/**
-	 * @author: Andreas
-	 * @return the set of matchMethods which shall be applied to the data
+	 * This method creates an object for every possible match method and then
+	 * gives this list to the chooseMatchingMethodsPopup() method.
 	 * 
-	 *         This method creates an object for every possible match method and
-	 *         then gives this list to the chooseMatchingMethodsPopup() method.
+	 * @return the set of matchMethods which shall be applied to the data
 	 */
 	private static List<MatchMethod> openChooseMatchingMethodsPopup() {
 
@@ -152,15 +238,15 @@ public class UserGuidingConsistency {
 	}
 
 	/**
+	 * This method creates a dialogue where the user can choose the desired
+	 * methods together with the preferences. Furthermore it's checked if the
+	 * weights which the user entered are valid.
+	 * 
 	 * @param methods
 	 *            the list of match method objects
 	 * @return the edited list of match method objects. Now every object
 	 *         contains the information if its method is active and which weigth
 	 *         it has.
-	 * 
-	 *         This method creates a dialogue where the user can choose the
-	 *         desired methods together with the preferences. Furthermore it's
-	 *         checked if the weights which the user entered are valid.
 	 */
 	private static List<MatchMethod> chooseMatchingMethodsPopup(
 			final List<MatchMethod> methods) {
@@ -221,17 +307,17 @@ public class UserGuidingConsistency {
 	}
 
 	/**
+	 * This method builds the sum of weights for each different metric
+	 * catgeories (syntactic, semantic & contextual) and looks whether they are
+	 * all in the interval [0..1]. Also at least one metric has to be active to
+	 * have a valid list with methods.
+	 * 
 	 * @param methods
 	 *            the match method list with the weight information of each
 	 *            method
 	 * @return if the method list is valid(at least one metric is active and the
 	 *         syntactic, semantic & contextual weights are in the interval
 	 *         [0..1])
-	 * 
-	 *         This method builds the sum of weights for each different metric
-	 *         catgeories (syntactic, semantic & contextual) and looks whether
-	 *         they are all in the interval [0..1]. Also at least one metric has
-	 *         to be active to have a valid list with methods.
 	 */
 	protected static boolean chosenMethodsAreValid(List<MatchMethod> methods) {
 		boolean result;

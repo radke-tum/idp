@@ -34,7 +34,7 @@ public class Normalizer {
 	 * if true the results of each token- and normalization step is printed to
 	 * the console
 	 */
-	private static final boolean debugMode = false;
+	private static final boolean debugMode = true;
 
 	/**
 	 * this bool says whether we need to remove the whitespace from the labels
@@ -125,7 +125,9 @@ public class Normalizer {
 					break;
 				case CONTEXT_MATCHING:
 					matchingProcess.setContextMatcherActive(true);
-					// TODO only works if other match methods were selected
+					/**
+					 * only works if other match methods were selected
+					 */
 					((ContextMatcher) currentMethod)
 							.setMatchMethods(matchMethods);
 					((ContextMatcher) currentMethod)
@@ -187,12 +189,12 @@ public class Normalizer {
 			if (!label.isEmpty()) {
 
 				newSequence = tokenizer.findTokens(label);
-				printTokens("Tokenizer", newSequence);
+//				printTokens("Tokenizer", newSequence);
 
 				if (normalizeCases) {
 					newSequence = caseNormalizer
 							.convertTokensToLowerCase(newSequence);
-					printTokens("CaseNormalizer", newSequence);
+//					printTokens("CaseNormalizer", newSequence);
 
 				}
 				if (filterStopwords) {

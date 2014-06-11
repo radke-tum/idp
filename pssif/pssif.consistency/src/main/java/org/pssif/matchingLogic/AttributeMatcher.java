@@ -43,7 +43,6 @@ public class AttributeMatcher extends MatchMethod {
 	public AttributeMatcher(MatchingMethods matchMethod, boolean isActive,
 			double weight) {
 		super(matchMethod, isActive, weight);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
@@ -52,7 +51,6 @@ public class AttributeMatcher extends MatchMethod {
 			NodeType actTypeOriginModel, NodeType actTypeNewModel,
 			String labelOrigin, String labelNew, List<Token> tokensOrigin,
 			List<Token> tokensNew) {
-		// TODO Auto-generated method stub
 		double result = 0;
 
 		result = iterateOverAttributeTypes(tempNodeOrigin, actTypeOriginModel,

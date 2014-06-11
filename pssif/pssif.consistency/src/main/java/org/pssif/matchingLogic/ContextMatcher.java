@@ -97,7 +97,6 @@ public class ContextMatcher extends MatchMethod {
 	public ContextMatcher(MatchingMethods matchMethod, boolean isActive,
 			double weigth) {
 		super(matchMethod, isActive, weigth);
-		// TODO Auto-generated constructor stub
 	}
 
 	/**
@@ -818,7 +817,7 @@ public class ContextMatcher extends MatchMethod {
 	 * outgoingNeighbourhood = Sets.newHashSet(); for (EdgeType edgeType :
 	 * metaModel.getEdgeTypes()) { for (ConnectionMapping outgoingMapping :
 	 * edgeType .getOutgoingMappings(nodeType)) { for (Edge outgoingEdge :
-	 * outgoingMapping .applyOutgoing(nodeOfInterest)) { // TODO abfrage einbaun
+	 * outgoingMapping .applyOutgoing(nodeOfInterest)) {  abfrage einbaun
 	 * ob type gleich conjunction type temp = new NodeAndType(
 	 * outgoingMapping.applyTo(outgoingEdge), nodeType);
 	 * outgoingNeighbourhood.add(temp); } } }

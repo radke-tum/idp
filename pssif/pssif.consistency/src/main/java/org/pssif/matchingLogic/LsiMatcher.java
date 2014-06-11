@@ -14,7 +14,6 @@ public class LsiMatcher extends MatchMethod {
 	public LsiMatcher(MatchingMethods matchMethod, boolean isActive,
 			double weigth) {
 		super(matchMethod, isActive, weigth);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
@@ -23,7 +22,6 @@ public class LsiMatcher extends MatchMethod {
 			NodeType actTypeOriginModel, NodeType actTypeNewModel,
 			String labelOrigin, String labelNew, List<Token> tokensOrigin,
 			List<Token> tokensNew) {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 

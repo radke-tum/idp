@@ -402,8 +402,7 @@ public class CompairsonProcess {
 
 		if (consistencyData.matchNecessary(globalIDNodeOrigin, globalIDNodeNew)) {
 			matchingProcess.startMatchingProcess(tempNodeOrigin, tempNodeNew,
-					actTypeOriginModel, actTypeNewModel, globalIDNodeOrigin,
-					globalIDNodeNew);
+					actTypeOriginModel, actTypeNewModel);
 		} else {
 			// System.out.println("These two nodes have already been compared.");
 		}

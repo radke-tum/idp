@@ -23,8 +23,7 @@ public class WordSplitter {
 		try {
 			this.splitter = new GermanWordSplitter(true);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new RuntimeException("The German Word Splitter couln't be initialized!");
 		}
 		splitter.setStrictMode(true);
 	}

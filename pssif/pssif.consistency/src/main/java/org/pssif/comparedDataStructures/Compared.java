@@ -8,7 +8,6 @@ package org.pssif.comparedDataStructures;
  *         have been merged or not
  */
 public abstract class Compared {
-//TODO Remember to set this value as some elements are merged!!!
 	/**
 	 * bool saying if the proposed merge was accepted by the user
 	 */
