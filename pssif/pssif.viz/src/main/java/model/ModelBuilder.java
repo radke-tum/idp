@@ -18,6 +18,7 @@ import java.util.List;
 
 import org.pssif.comparedDataStructures.ComparedNodePair;
 import org.pssif.consistencyExtern.consistencyGui.UserGuidingConsistency;
+import org.pssif.mainProcesses.Methods;
 
 import de.tum.pssif.core.common.PSSIFConstants;
 import de.tum.pssif.core.common.PSSIFOption;
@@ -89,20 +90,37 @@ public class ModelBuilder {
 				activeModel = newModel;
 				
 				for(ComparedNodePair comparedNodePair : matchedList){
-					MyNodeType originNodeType = new MyNodeType(comparedNodePair.getTypeOriginModel());
-					MyNode originNode =
-							new MyNode(comparedNodePair.getNodeOriginalModel(), originNodeType);
+					//TODO delete unused code here
 					
-					MyNodeType newNodeType = new MyNodeType(comparedNodePair.getTypeNewModel());
-					Node newTemp = comparedNodePair.getNodeNewModel();
-					
-					MyNode newNode =
-							new MyNode(merger.getOldToNewNodes().get(newTemp), newNodeType);
-					
+//					MyNodeType originNodeType = new MyNodeType(comparedNodePair.getTypeOriginModel());
+//					MyNode originNode =
+//							new MyNode(comparedNodePair.getNodeOriginalModel(), originNodeType);
+//					
+//					MyNodeType newNodeType = new MyNodeType(comparedNodePair.getTypeNewModel());
+//					Node newTemp = comparedNodePair.getNodeNewModel();
+//					
+//					MyNode newNode =
+//							new MyNode(merger.getOldToNewNodes().get(newTemp), newNodeType);
+//					
 					MyEdgeType edgeType =
-							new MyEdgeType(metaModel.getEdgeType(PSSIFCanonicMetamodelCreator.E_EQUALS).getOne(), 4);
+							new MyEdgeType(metaModel.getEdgeType(PSSIFCanonicMetamodelCreator.E_EQUALS).getOne(), 10);
+//					
+//					addNewEdgeGUI(originNode, newNode, edgeType, false);
 					
-					addNewEdgeGUI(originNode, newNode, edgeType, false);
+					for(MyNode actNode : activeModel.getAllNodes()){
+						if(Methods.findGlobalID(
+								actNode.getNode(), actNode.getNodeType().getType()).equals
+								(Methods.findGlobalID(comparedNodePair.getNodeOriginalModel(), comparedNodePair.getTypeOriginModel()))){
+							for(MyNode actNewNode : activeModel.getAllNodes()){
+								if(Methods.findGlobalID(
+										actNewNode.getNode(), actNewNode.getNodeType().getType()).equals
+										(Methods.findGlobalID(comparedNodePair.getNodeNewModel(), comparedNodePair.getTypeNewModel()))){
+									addNewEdgeGUI(actNode, actNewNode, edgeType, false);
+								}
+							}
+						}
+					}
+					
 				}
 				
 			} else {

@@ -51,7 +51,7 @@ public class ModelMerger {
 	 */
 	public Model mergeModels (Model model1, Model model2, Metamodel meta)
 	{
-		this.model1 = model1;
+		this.model1 = model1; 
 		this.model2 = model2;
 		this.meta = meta;
 		this.oldToNewNodes = new HashMap<Node, Node>();
