@@ -62,13 +62,14 @@ public class UserGuidingConsistency {
 	private static ConsistencyData openChooseMergeCandidatesPopup(ConsistencyData consistencyData) {
 		final JDialog dialog = new JDialog();
 		dialog.setLayout(new BorderLayout());
-		dialog.setSize(700, 400);
+		dialog.setSize(900, 600);
 		dialog.setModalityType(ModalityType.APPLICATION_MODAL);
-		dialog.setResizable(false);
 
 		final TableModel tableModel = new MatchCandidateTableModel(consistencyData.getMatchCandidateList());
 
 		JTable methodTable = new JTable(tableModel);
+		
+		MatchCandidateTableModel.initColumnWidths(methodTable);
 
 		methodTable.setFont(new Font("Arial", Font.PLAIN, 14));
 		methodTable.setGridColor(new Color(808080));
@@ -76,7 +77,7 @@ public class UserGuidingConsistency {
 
 		JScrollPane scrollPane = new JScrollPane(methodTable);
 
-		JButton buttonApply = new JButton("Link the selected Nodes as equal.");
+		JButton buttonApply = new JButton("Choose the node pairs which shall be linked as 'equal'");
 		buttonApply.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {

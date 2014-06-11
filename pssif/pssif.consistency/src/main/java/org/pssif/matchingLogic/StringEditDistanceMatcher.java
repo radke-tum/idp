@@ -19,7 +19,7 @@ import de.tum.pssif.core.model.Node;
  *         This class represents a matcher based on the levenshtein distance. It
  *         calculates the weighted string edit distance and returns a similarity
  *         value in the interval [0,1]. The result is 1 if two Strings are equal
- *         and near zero if they are very unsimilar.
+ *         and near zero if they are unsimilar.
  */
 public class StringEditDistanceMatcher extends MatchMethod {
 

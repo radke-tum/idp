@@ -103,7 +103,7 @@ public class ModelBuilder {
 //							new MyNode(merger.getOldToNewNodes().get(newTemp), newNodeType);
 //					
 					MyEdgeType edgeType =
-							new MyEdgeType(metaModel.getEdgeType(PSSIFCanonicMetamodelCreator.E_EQUALS).getOne(), 10);
+							new MyEdgeType(metaModel.getEdgeType(PSSIFCanonicMetamodelCreator.E_EQUALS).getOne(), 4);
 //					
 //					addNewEdgeGUI(originNode, newNode, edgeType, false);
 					

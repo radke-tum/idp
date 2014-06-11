@@ -2,7 +2,9 @@ package org.pssif.consistencyExtern.consistencyGui;
 
 import java.util.List;
 
+import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableColumnModel;
 
 import org.pssif.comparedDataStructures.ComparedNodePair;
 import org.pssif.consistencyDataStructures.ConsistencyData;
@@ -14,7 +16,7 @@ public class MatchCandidateTableModel extends AbstractTableModel {
 	 * The names of the column of the table
 	 */
 	private static final String[] COLUMN_NAMES = { "Node Origin", "Node New", "Syntactic Sim", "Semantic Sim", "Context Sim",
-			"Merge?" };
+			"Link?" };
 
 	/**
 	 * indexes for the columns
@@ -86,7 +88,7 @@ public class MatchCandidateTableModel extends AbstractTableModel {
 
 	@Override
 	public boolean isCellEditable(final int rowIndex, final int columnIndex) {
-		return (columnIndex > COLUMN_IDX_CONTEXTSIM);
+		return (columnIndex == COLUMN_IDX_MERGE);
 	}
 
 	@Override
@@ -101,6 +103,17 @@ public class MatchCandidateTableModel extends AbstractTableModel {
 		}
 
 		fireTableCellUpdated(rowIndex, columnIndex);
+	}
+	
+	public static void initColumnWidths(final JTable table){
+		final TableColumnModel tableColumnModel = table.getColumnModel();
+		
+		tableColumnModel.getColumn(COLUMN_IDX_NODEORIGIN).setMinWidth(250);
+		tableColumnModel.getColumn(COLUMN_IDX_NODENEW).setMinWidth(250);
+		tableColumnModel.getColumn(COLUMN_IDX_SYNTACTICSIM).setMaxWidth(80);
+		tableColumnModel.getColumn(COLUMN_IDX_SEMANTICSIM).setMaxWidth(80);
+		tableColumnModel.getColumn(COLUMN_IDX_CONTEXTSIM).setMaxWidth(80);
+		tableColumnModel.getColumn(COLUMN_IDX_MERGE).setMaxWidth(60);
 	}
 
 }

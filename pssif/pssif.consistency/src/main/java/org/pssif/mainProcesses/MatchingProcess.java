@@ -203,7 +203,7 @@ public class MatchingProcess {
 					.getTokensOriginNodeNormalizedCompundedUnstemmed();
 
 			labelOriginNodeNormalized = nodePairOrigin.getLabelComparison()
-					.getLabelOrigin();
+					.getLabelOriginNormalized();
 		} else {
 			labelOriginNodeNormalized = normalizer
 					.normalizeLabel(labelOriginNode);
@@ -221,7 +221,7 @@ public class MatchingProcess {
 					.getTokensNewNodeNormalizedCompundedUnstemmed();
 
 			labelNewNodeNormalized = nodePairNew.getLabelComparison()
-					.getLabelNew();
+					.getLabelNewNormalized();
 		} else {
 			labelNewNodeNormalized = normalizer.normalizeLabel(labelNewNode);
 		}
@@ -229,8 +229,8 @@ public class MatchingProcess {
 		/**
 		 * creating objects for the saving of the matching results here
 		 */
-		comparedLabelPair = new ComparedLabelPair(labelOriginNodeNormalized,
-				labelNewNodeNormalized);
+		comparedLabelPair = new ComparedLabelPair(labelOriginNode,
+				labelNewNode, labelOriginNodeNormalized, labelNewNodeNormalized);
 		comparedNormalizedTokensPair = new ComparedNormalizedTokensPair();
 
 		Iterator<MatchMethod> currentMatchMethod = matchMethods.iterator();
