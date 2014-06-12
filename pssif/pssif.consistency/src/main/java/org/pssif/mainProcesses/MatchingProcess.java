@@ -52,8 +52,6 @@ public class MatchingProcess {
 		this.metaModel = metaModel;
 		this.consistencyData = consistencyData;
 		this.matchMethods = matchMethods;
-		this.compairsonProcess = compairsonProcess;
-
 		this.normalizer = Normalizer.initialize(matchMethods, this);
 	}
 
@@ -61,8 +59,6 @@ public class MatchingProcess {
 	private Metamodel metaModel;
 
 	private ConsistencyData consistencyData;
-	private CompairsonProcess compairsonProcess;
-
 	private List<MatchMethod> matchMethods;
 
 	private Normalizer normalizer;
@@ -70,8 +66,6 @@ public class MatchingProcess {
 	private ComparedLabelPair comparedLabelPair = null;
 	private ComparedNormalizedTokensPair comparedNormalizedTokensPair = null;
 	private ComparedNodePair comparedNodePair = null;
-
-	private boolean contextMatcherActive = false;
 
 	private boolean debugMode = false;
 
@@ -108,25 +102,6 @@ public class MatchingProcess {
 	 */
 	public ConsistencyData getConsistencyData() {
 		return consistencyData;
-	}
-
-	/**
-	 * @return the contextMatcherActive
-	 */
-	public boolean isContextMatcherActive() {
-		return contextMatcherActive;
-	}
-
-	/**
-	 * @param contextMatcherActive
-	 *            the contextMatcherActive to set
-	 */
-	public void setContextMatcherActive(boolean contextMatcherActive) {
-		this.contextMatcherActive = contextMatcherActive;
-	}
-
-	public void startContextMatching() {
-		throw new RuntimeErrorException(null, "not yet impplemented");
 	}
 
 	/**

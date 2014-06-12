@@ -81,8 +81,6 @@ public class CompairsonProcess {
 
 	private PSSIFOption<Node> nodesOriginalModel;
 
-	private boolean contextMatchingActive = false;
-
 	public static ConsistencyData main(Model originalModel, Model newModel,
 			Metamodel metaModel, List<MatchMethod> matchMethods) {
 		CompairsonProcess compairsonProcess = new CompairsonProcess(
@@ -117,21 +115,6 @@ public class CompairsonProcess {
 		 * compairson process starts here
 		 */
 		this.startTypeAndNodeIteration();
-	}
-
-	/**
-	 * @return the contextMatchingActive
-	 */
-	public boolean isContextMatchingActive() {
-		return contextMatchingActive;
-	}
-
-	/**
-	 * @param contextMatchingActive
-	 *            the contextMatchingActive to set
-	 */
-	public void setContextMatchingActive(boolean contextMatchingActive) {
-		this.contextMatchingActive = contextMatchingActive;
 	}
 
 	/**

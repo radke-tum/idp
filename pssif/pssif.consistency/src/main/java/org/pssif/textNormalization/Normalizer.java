@@ -124,7 +124,6 @@ public class Normalizer {
 					tokenizationRequired = true;
 					break;
 				case CONTEXT_MATCHING:
-					matchingProcess.setContextMatcherActive(true);
 					/**
 					 * only works if other match methods were selected
 					 */
