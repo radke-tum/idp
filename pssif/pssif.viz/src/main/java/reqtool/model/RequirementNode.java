@@ -44,7 +44,7 @@ public class RequirementNode {
 	public static LinkedList<MyNode> getRequirementSourceNodes(MyNode requirementNode, String edgeTypeName) {
 		LinkedList<MyNode> nodes = new LinkedList<MyNode>();
 		for (MyEdge myEdge : ModelBuilder.getAllEdges()) {
-			if (myEdge.getDestinationNode().equals(requirementNode)	&& myEdge.getEdgeType().equals(edgeTypeName)) {
+			if (myEdge.getDestinationNode().equals(requirementNode)	&& myEdge.getEdgeType().getName().equals(edgeTypeName)) {
 				nodes.add((MyNode) myEdge.getSourceNode());
 			}
 		}
@@ -54,7 +54,7 @@ public class RequirementNode {
 	public static LinkedList<MyNode> getRequirementTargetNodes(MyNode requirementNode, String edgeTypeName) {
 		LinkedList<MyNode> nodes = new LinkedList<MyNode>();
 		for (MyEdge myEdge : ModelBuilder.getAllEdges()) {
-			if (myEdge.getDestinationNode().equals(requirementNode)	&& myEdge.getEdgeType().equals(edgeTypeName)) {
+			if (myEdge.getDestinationNode().equals(requirementNode)	&& myEdge.getEdgeType().getName().equals(edgeTypeName)) {
 				nodes.add((MyNode) myEdge.getSourceNode());
 			}
 		}
