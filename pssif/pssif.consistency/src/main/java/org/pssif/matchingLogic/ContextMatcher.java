@@ -44,7 +44,7 @@ public class ContextMatcher extends MatchMethod {
 	 * These are the subclasses of PSIFFDevArtifacts that are checked for
 	 * consistency
 	 */
-	private final String[] PSIFFDevArtifactSubClasses = {
+	private final String[] pssifDevArtifactSubClasses = {
 			PSSIFCanonicMetamodelCreator.N_FUNCTIONALITY,
 			PSSIFCanonicMetamodelCreator.N_REQUIREMENT,
 			PSSIFCanonicMetamodelCreator.N_USE_CASE,
@@ -59,7 +59,7 @@ public class ContextMatcher extends MatchMethod {
 	 * These are the subclasses of PSIFFSolArtifacts that are checked for
 	 * consistency
 	 */
-	private final String[] PSIFFSolArtifactSubClasses = {
+	private final String[] pssifSolArtifactSubClasses = {
 			PSSIFCanonicMetamodelCreator.N_BLOCK,
 			PSSIFCanonicMetamodelCreator.N_FUNCTION,
 			PSSIFCanonicMetamodelCreator.N_ACTIVITY,
@@ -144,13 +144,13 @@ public class ContextMatcher extends MatchMethod {
 	 */
 	public void typeIteration(Node tempNodeOrigin, Node tempNodeNew) {
 
-		for (int i = 0; i < PSIFFDevArtifactSubClasses.length; i++) {
-			findSorroundingNodes(PSIFFDevArtifactSubClasses[i], tempNodeOrigin,
+		for (int i = 0; i < pssifDevArtifactSubClasses.length; i++) {
+			findSorroundingNodes(pssifDevArtifactSubClasses[i], tempNodeOrigin,
 					tempNodeNew);
 		}
 
-		for (int i = 0; i < PSIFFSolArtifactSubClasses.length; i++) {
-			findSorroundingNodes(PSIFFSolArtifactSubClasses[i], tempNodeOrigin,
+		for (int i = 0; i < pssifSolArtifactSubClasses.length; i++) {
+			findSorroundingNodes(pssifSolArtifactSubClasses[i], tempNodeOrigin,
 					tempNodeNew);
 		}
 

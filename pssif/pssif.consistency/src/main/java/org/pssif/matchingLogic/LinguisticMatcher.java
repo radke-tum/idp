@@ -12,16 +12,16 @@ import de.tum.pssif.core.model.Model;
 import de.tum.pssif.core.model.Node;
 
 /**
+ * !!!Source for metric:
+ * "Measuring Similarity between Business Process Models.pdf"
+ * 
+ * This class represents an impelementation of the linguistic Matching. Thereby
+ * the similarity of two nodes is calculated exact matches between tokens of
+ * their labels or synonym matching betwwen tokens. Thereby the exact matching
+ * is weighted higher than a match found with help of a synonym lexicon.
+ * 
  * @author Andreas
  * 
- *         !!!Source for metric:
- *         "Measuring Similarity between Business Process Models.pdf"
- * 
- *         This class represents an impelementation of the linguistic Matching.
- *         Thereby the similarity of two nodes is calculated exact matches
- *         between tokens of their labels or synonym matching betwwen tokens.
- *         Thereby the exact matching is weighted higher than a match found with
- *         help of a synonym lexicon.
  */
 public class LinguisticMatcher extends MatchMethod {
 
@@ -40,13 +40,13 @@ public class LinguisticMatcher extends MatchMethod {
 	 * This variable represents the unique tokens (in compairson to the new node
 	 * tokens) of the original node
 	 */
-	private List<Token> uniqueTokensOriginList;
+	private List<Token> uniqueTokensOrigin;
 
 	/**
 	 * This variable represents the unique tokens (in compairson to the original
 	 * node tokens) of the new node
 	 */
-	private List<Token> uniqueTokensNewList;
+	private List<Token> uniqueTokensNew;
 
 	/**
 	 * This method calculates the linguistic similarity. Thereby it searches for
@@ -94,8 +94,8 @@ public class LinguisticMatcher extends MatchMethod {
 	private int countSynonyms() {
 		int numberOfSynonyms = 0;
 
-		for (Token tokenOrigin : uniqueTokensOriginList) {
-			for (Token tokenNew : uniqueTokensNewList) {
+		for (Token tokenOrigin : uniqueTokensOrigin) {
+			for (Token tokenNew : uniqueTokensNew) {
 				if (areSyonyms(tokenOrigin, tokenNew)) {
 					numberOfSynonyms++;
 				}
@@ -129,7 +129,7 @@ public class LinguisticMatcher extends MatchMethod {
 	 */
 	private void initializeUniqueNewTokenList(List<Token> tokensOrigin,
 			List<Token> tokensNew) {
-		uniqueTokensNewList = new LinkedList<Token>();
+		uniqueTokensNew = new LinkedList<Token>();
 
 		boolean uniqueTokenNew = false;
 
@@ -141,7 +141,7 @@ public class LinguisticMatcher extends MatchMethod {
 				}
 			}
 			if (uniqueTokenNew) {
-				uniqueTokensNewList.add(tokenNew);
+				uniqueTokensNew.add(tokenNew);
 			}
 		}
 	}
@@ -160,7 +160,7 @@ public class LinguisticMatcher extends MatchMethod {
 	private void initializeIntersectionAndUniqueOriginTokenList(
 			List<Token> tokensOrigin, List<Token> tokensNew) {
 		intersectionOfTokenLists = new LinkedList<Token>();
-		uniqueTokensOriginList = new LinkedList<Token>();
+		uniqueTokensOrigin = new LinkedList<Token>();
 
 		boolean uniqueTokenOrigin = false;
 
@@ -175,7 +175,7 @@ public class LinguisticMatcher extends MatchMethod {
 				}
 			}
 			if (uniqueTokenOrigin) {
-				uniqueTokensOriginList.add(tokenOrigin);
+				uniqueTokensOrigin.add(tokenOrigin);
 			}
 		}
 	}
