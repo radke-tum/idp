@@ -7,7 +7,7 @@ package org.pssif.matchingLogic;
 
 import java.util.List;
 
-import org.pssif.consistencyDataStructures.DocumentCorpusData;
+import org.pssif.consistencyDataStructures.DocumentCorpus;
 import org.pssif.consistencyDataStructures.Token;
 import org.pssif.mainProcesses.MatchingProcess;
 import org.pssif.textNormalization.Normalizer;
@@ -38,7 +38,7 @@ import de.tum.pssif.core.model.Node;
  */
 public class VsmMatcher extends MatchMethod {
 
-	private DocumentCorpusData corpusData;
+	private DocumentCorpus corpusData;
 	private MatchingProcess matchingProcess;
 	private Normalizer normalizer;
 
@@ -119,7 +119,7 @@ public class VsmMatcher extends MatchMethod {
 	}
 
 	/**
-	 * this method creates a new DocumentCorpusData object and triggers the
+	 * this method creates a new DocumentCorpus object and triggers the
 	 * building of the document corpus in the corpusData object.
 	 * 
 	 * @param normalizer
@@ -132,7 +132,7 @@ public class VsmMatcher extends MatchMethod {
 		this.normalizer = normalizer;
 		this.matchingProcess = matchingProcess;
 
-		corpusData = new DocumentCorpusData(normalizer, matchingProcess);
+		corpusData = new DocumentCorpus(normalizer, matchingProcess);
 		corpusData.iterateOverAllNodes();
 
 	}

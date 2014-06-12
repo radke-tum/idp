@@ -107,21 +107,19 @@ public class Token {
 	 * this method increases the DocumentCounter by +1
 	 */
 	public void incrementDocumentCounter() {
-		int actCounter = getDocumentCounter();
-		actCounter++;
-		this.setDocumentCounter(actCounter);
+		this.documentCounter += 1;
 	}
 
 	/**
 	 * This method coputes the tf-idf word weight for this token (relative to
 	 * the document corpus)
 	 */
-	public void computeWordWeight() {
-		double weight = 0;
+	public void computeWordWeigth() {
+		double weigth = 0;
 
-		weight = tf * idf;
+		weigth = tf * idf;
 
-		this.wordWeigth = weight;
+		this.wordWeigth = weigth;
 	}
 
 }

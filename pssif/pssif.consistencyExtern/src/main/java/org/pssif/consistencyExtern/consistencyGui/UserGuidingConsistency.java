@@ -127,7 +127,7 @@ public class UserGuidingConsistency {
 								conTreshold)) {
 					dialog.setVisible(false);
 
-					ConsistencyData.initThreshholds(synTreshold, semTreshold,
+					ConsistencyData.initThresholds(synTreshold, semTreshold,
 							conTreshold);
 				} else {
 					dialog.setVisible(true);

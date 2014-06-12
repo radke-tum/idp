@@ -66,9 +66,9 @@ public class ConsistencyData {
 	 * two nodes the match is proposed to the user if one of the tresholds is
 	 * exceeded
 	 */
-	private static double semanticTreshhold;
-	private static double syntacticTreshhold;
-	private static double contextTreshhold;
+	private static double semanticThreshold;
+	private static double syntacticThreshold;
+	private static double contextThreshold;
 
 	/**
 	 * @return the comparedNodePairs
@@ -87,11 +87,11 @@ public class ConsistencyData {
 	 * @param conTreshhold
 	 *            the treshold for the context result
 	 */
-	public static void initThreshholds(double synTreshhold,
+	public static void initThresholds(double synTreshhold,
 			double semTreshhold, double conTreshhold) {
-		syntacticTreshhold = synTreshhold;
-		semanticTreshhold = semTreshhold;
-		contextTreshhold = conTreshhold;
+		syntacticThreshold = synTreshhold;
+		semanticThreshold = semTreshhold;
+		contextThreshold = conTreshhold;
 	}
 
 	/**
@@ -215,9 +215,9 @@ public class ConsistencyData {
 		List<ComparedNodePair> mergeCandidates = new LinkedList<>();
 
 		for (ComparedNodePair actPair : comparedNodePairs) {
-			if ((actPair.getWeightedSyntacticResult() >= ConsistencyData.syntacticTreshhold)
-					|| (actPair.getWeightedSemanticResult() >= ConsistencyData.semanticTreshhold)
-					|| (actPair.getWeightedContextResult() >= ConsistencyData.contextTreshhold)) {
+			if ((actPair.getWeightedSyntacticResult() >= ConsistencyData.syntacticThreshold)
+					|| (actPair.getWeightedSemanticResult() >= ConsistencyData.semanticThreshold)
+					|| (actPair.getWeightedContextResult() >= ConsistencyData.contextThreshold)) {
 				mergeCandidates.add(actPair);
 			}
 		}

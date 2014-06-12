@@ -28,13 +28,9 @@ import de.tum.pssif.core.model.Node;
  *         the total number of documents in the document space and the
  *         vocabulary of the document space.
  */
-public class DocumentCorpusData {
+public class DocumentCorpus {
 
 	private LinkedList<Token> tokens;
-	private Model originalModel;
-	private Model newModel;
-	private Metamodel metaModel;
-
 	/**
 	 * this variable counts the total number of documents(documents are here
 	 * represented by nodes)
@@ -44,7 +40,7 @@ public class DocumentCorpusData {
 	private MatchingProcess matchingProcess;
 	private Normalizer normalizer;
 
-	public DocumentCorpusData(Normalizer normalizer,
+	public DocumentCorpus(Normalizer normalizer,
 			MatchingProcess matchingProcess) {
 
 		this.normalizer = normalizer;
@@ -220,7 +216,7 @@ public class DocumentCorpusData {
 					tokenFound = true;
 
 					tempOrigin.setIdf(savedToken.getIdf());
-					tempOrigin.computeWordWeight();
+					tempOrigin.computeWordWeigth();
 
 					result.add(tempOrigin);
 

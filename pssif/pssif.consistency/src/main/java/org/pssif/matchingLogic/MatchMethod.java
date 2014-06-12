@@ -10,16 +10,16 @@ import de.tum.pssif.core.model.Model;
 import de.tum.pssif.core.model.Node;
 
 /**
+ * 
+ * This class represents a general structure of a matching Method. It supplies
+ * the standard attributes for a matching method to say how the method is
+ * called, if it's active and how much is its weight to the whole similarity
+ * score.
+ * 
+ * New Matching methods can be easily implemented by extending this class and
+ * implementing an own version of the executeMatching() method.
+ * 
  * @author Andreas
- * 
- *         This class represents a general structure of a matching Method. It
- *         supplies the standard attributes for a matching method to say how the
- *         method is called, if it's active and how much is its weight to the
- *         whole similarity score.
- * 
- *         New Matching methods can be easily implemented by extending this
- *         class and implementing an own version of the executeMatching()
- *         method.
  * 
  */
 public abstract class MatchMethod {
