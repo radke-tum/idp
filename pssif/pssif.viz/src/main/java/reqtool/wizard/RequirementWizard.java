@@ -1,5 +1,8 @@
 package reqtool.wizard;
 
+import de.tum.pssif.core.common.PSSIFConstants;
+import de.tum.pssif.core.common.PSSIFOption;
+import de.tum.pssif.core.common.PSSIFValue;
 import de.tum.pssif.core.metamodel.PSSIFCanonicMetamodelCreator;
 import model.ModelBuilder;
 import reqtool.graph.RequirementFromSpecPopup;
@@ -30,7 +33,7 @@ public class RequirementWizard {
 				createPrincipalNode();
 				
 			}
-			if (newReqPopup.selectedAbsLevelCheckBox()){
+			if (true){
 				createAbsLevelNode();
 				
 			}
@@ -40,10 +43,11 @@ public class RequirementWizard {
 
 	private void createAbsLevelNode() {
 		
-		MyNodeType absLevel = ModelBuilder.getNodeTypes().getValue(PSSIFCanonicMetamodelCreator.N_ABSTRACTION_LEVEL);
-		MyEdgeType belongs = ModelBuilder.getEdgeTypes().getValue(PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_INCLUSION_BELONGS_TO);
-		MyNode absLevelNode = ModelBuilder.addNewNodeFromGUI(newReqPopup.getAbstractionLevelName(), absLevel);
-		ModelBuilder.addNewEdgeGUI(requirementNode, absLevelNode, belongs, true);
+		//MyNodeType absLevel = ModelBuilder.getNodeTypes().getValue(PSSIFCanonicMetamodelCreator.N_ABSTRACTION_LEVEL);
+		//MyEdgeType belongs = ModelBuilder.getEdgeTypes().getValue(PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_INCLUSION_BELONGS_TO);
+		//MyNode absLevelNode = ModelBuilder.addNewNodeFromGUI(newReqPopup.getAbstractionLevelName(), absLevel);
+		//ModelBuilder.addNewEdgeGUI(requirementNode, absLevelNode, belongs, true);
+		requirementNode.getNodeType().getType().getAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_ABS_LEVEL).getOne().set(requirementNode.getNode(), PSSIFOption.one(PSSIFValue.create(newReqPopup.getAbstractionLevelName())));
 		
 	}
 
