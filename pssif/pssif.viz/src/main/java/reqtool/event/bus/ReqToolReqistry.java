@@ -1,5 +1,6 @@
 package reqtool.event.bus;
 
+import reqtool.ReqInfoHandler;
 import reqtool.event.Event;
 import reqtool.handler.ContainementVisibilityHandler;
 import reqtool.handler.CreateSpecProjectHandler;
@@ -58,6 +59,7 @@ public class ReqToolReqistry {
 		register(new ContainementVisibilityHandler());
 		register(new CreateSpecProjectHandler());
 		register(new NewDeriveRequirementHandler());
+		register(new ReqInfoHandler());
 		
 	}
 	

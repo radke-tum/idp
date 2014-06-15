@@ -37,7 +37,7 @@ public final class PSSIFCanonicMetamodelCreator {
   public static final String N_DECISION                                = "Decision";
   public static final String N_CHANGE_PROPOSAL                         = "Change Proposal";
   public static final String N_CHANGE_EVENT                            = "Change Event";
-  public static final String N_ABSTRACTION_LEVEL                       = "Abstraction Level";
+  //public static final String N_ABSTRACTION_LEVEL                       = "Abstraction Level";
   
   public static final String N_SPEC_ARTIFACT						   = "Specification Artifact";
   
@@ -218,8 +218,8 @@ public final class PSSIFCanonicMetamodelCreator {
     NodeType changeEvent = metamodel.createNodeType(N_CHANGE_EVENT);
     changeEvent.inherit(event);
     
-    NodeType abstractionLevel = metamodel.createNodeType(N_ABSTRACTION_LEVEL);
-    abstractionLevel.inherit(event);
+    //NodeType abstractionLevel = metamodel.createNodeType(N_ABSTRACTION_LEVEL);
+    //abstractionLevel.inherit(event);
     
     NodeType specArtifact = metamodel.createNodeType(N_SPEC_ARTIFACT);
     specArtifact.inherit(devArtifact);
@@ -423,10 +423,11 @@ public final class PSSIFCanonicMetamodelCreator {
 
     EdgeType generalizesRelationship = metamodel.createEdgeType(E_RELATIONSHIP_INCLUSION_GENERALIZES);
     generalizesRelationship.inherit(inclusionRelationship);
-    
+    /*
     MutableEdgeType belongsToRelationship = metamodel.createEdgeType(E_RELATIONSHIP_INCLUSION_BELONGS_TO);
     belongsToRelationship.createMapping(node(N_REQUIREMENT, metamodel), node(N_ABSTRACTION_LEVEL, metamodel));
     belongsToRelationship.inherit(inclusionRelationship);
+    */
   }
 
   private static void createCausalRelationships(MetamodelImpl metamodel, EdgeType relationship) {

@@ -35,7 +35,6 @@ public class RequirementNode {
 		for (Attribute a : currentType.getAttributes()) {
 			if (a.getName().equalsIgnoreCase(attrName)) {
 				return a.get(node.getNode());
-			
 			}
 		}
 		return null;
@@ -45,6 +44,18 @@ public class RequirementNode {
 		LinkedList<MyNode> nodes = new LinkedList<MyNode>();
 		for (MyEdge myEdge : ModelBuilder.getAllEdges()) {
 			if (myEdge.getDestinationNode().equals(requirementNode)	&& myEdge.getEdgeType().getName().equals(edgeTypeName)) {
+				nodes.add((MyNode) myEdge.getSourceNode());
+			}
+		}
+		return nodes;
+	}
+	
+	public static LinkedList<MyNode> getRequirementSourceNodes(MyNode requirementNode, String edgeTypeName, String nodeTypeName) {
+		LinkedList<MyNode> nodes = new LinkedList<MyNode>();
+		for (MyEdge myEdge : ModelBuilder.getAllEdges()) {
+			if (myEdge.getDestinationNode().equals(requirementNode)	&& 
+				myEdge.getEdgeType().getName().equals(edgeTypeName) && 
+				( (MyNode) myEdge.getSourceNode()).getNodeType().getName().equals(nodeTypeName)) {
 				nodes.add((MyNode) myEdge.getSourceNode());
 			}
 		}
@@ -61,5 +72,33 @@ public class RequirementNode {
 		return nodes;
 	}
 	
+	public static LinkedList<MyNode> getRequirementDestNodes(MyNode requirementNode, String edgeTypeName, String nodeTypeName) {
+		LinkedList<MyNode> nodes = new LinkedList<MyNode>();
+		for (MyEdge myEdge : ModelBuilder.getAllEdges()) {
+			if (myEdge.getDestinationNode().equals(requirementNode)	&& 
+				myEdge.getEdgeType().getName().equals(edgeTypeName) && 
+				( (MyNode) myEdge.getSourceNode()).getNodeType().getName().equals(nodeTypeName)) {
+				nodes.add((MyNode) myEdge.getSourceNode());
+			}
+		}
+		return nodes;
+	}
+	
+	public static LinkedList<MyNode> getRequirementRelNodes(MyNode requirementNode, String edgeTypeName, String nodeTypeName) {
+		LinkedList<MyNode> nodes = new LinkedList<MyNode>();
+		for (MyEdge myEdge : ModelBuilder.getAllEdges()) {
+			if ((myEdge.getDestinationNode().equals(requirementNode)	&& 
+				myEdge.getEdgeType().getName().equals(edgeTypeName) && 
+				( (MyNode) myEdge.getSourceNode()).getNodeType().getName().equals(nodeTypeName)) ||
+				
+				(myEdge.getSourceNode().equals(requirementNode)	&& 
+						myEdge.getEdgeType().getName().equals(edgeTypeName) && 
+						( (MyNode) myEdge.getDestinationNode()).getNodeType().getName().equals(nodeTypeName))
+				) {
+				nodes.add((MyNode) myEdge.getSourceNode());
+			}
+		}
+		return nodes;
+	}
 	
 }

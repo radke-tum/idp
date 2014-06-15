@@ -57,20 +57,16 @@ public class IssueResolverPopup {
 
 	private boolean evalDialog(int dialogResult) {
 		if (dialogResult == 0) {
-			List<Integer> indexes = new ArrayList<Integer>();
+			List<Integer> selectedReqNodes = new ArrayList<Integer>();
 			Component[] reqNodes = reqPanel.getComponents();
 			for (int i=0;i<reqNodes.length;i++) {
 				Component tmp = reqNodes[i];
 				if ((tmp instanceof JCheckBox)) {
 					JCheckBox a = (JCheckBox) tmp;
 					if (a.isSelected()) {
-						indexes.add(i);
+						selectedReqNodes.add(i);
 					}
 				}
-			}
-			
-			for(int index:indexes) {
-				VersionManagerPopup.showPopup(reqs.get(index));
 			}
 			
 			List<Integer> selectedSolNodes = new ArrayList<Integer>();
@@ -103,10 +99,16 @@ public class IssueResolverPopup {
 					MyNode newVersionNode = vm.getMaxVersion();
 					
 					ModelBuilder.addNewEdgeGUI(newVersionNode, changeEvent, ModelBuilder.getEdgeTypes().getValue(PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_CHRONOLOGICAL_BASED_ON), true);
-					/*
-					 * TODO Also a "Based On" edge from ChangeEvent if Requirement node is selected
-					 */
-					//gViz.updateGraph();
+				}
+			}
+			
+			for (int index:selectedReqNodes) {
+				if (VersionManagerPopup.showPopup(reqs.get(index))) {
+					
+					VersionManager vm = new VersionManager(reqs.get(index));
+					MyNode newVersionNode = vm.getMaxVersion();
+					
+					ModelBuilder.addNewEdgeGUI(newVersionNode, changeEvent, ModelBuilder.getEdgeTypes().getValue(PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_CHRONOLOGICAL_BASED_ON), true);
 				}
 			}
 	

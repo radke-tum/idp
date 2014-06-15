@@ -12,6 +12,7 @@ import reqtool.event.CreateTestCaseEvent;
 import reqtool.event.HideContainementEvent;
 import reqtool.event.NewDeriveRequirementEvent;
 import reqtool.event.NewVersionEvent;
+import reqtool.event.ReqInfoEvent;
 import reqtool.event.ResolveIssueEvent;
 import reqtool.event.ShowContainementEvent;
 import reqtool.event.VerifiTestCaseEvent;
@@ -35,12 +36,15 @@ public class CreateReqMenuEventHandler implements EventHandler {
 
 			ReqToolReqistry.getInstance().post(new TraceReqMenuEvent(event.getSelectedNode(), reqMenu, event.getGViz()));;
 			
+			JMenuItem subItem1 = getInfoMenuItem(event);
 			JMenuItem deriveReqItem = deriveRequirement(event);
 			JMenuItem subItem2 = createTestCase(event);
-			JMenuItem subItem3 = createNewVersion(event);
+			
+			reqMenu.add(subItem1);
 			reqMenu.add(deriveReqItem);
 			reqMenu.add(subItem2);
 			reqMenu.add(getVersMngItem(event));
+			
 			event.getPopup().add(reqMenu);
 			
 		} else if (event.getSelectedNode().getNodeType().equals((ModelBuilder.getNodeTypes().getValue(PSSIFCanonicMetamodelCreator.N_TEST_CASE)))) {
@@ -169,6 +173,18 @@ public class CreateReqMenuEventHandler implements EventHandler {
 		}
 
 		return submenu;
+	}
+	
+	private JMenuItem getInfoMenuItem(final CreateReqMenuEvent event) {
+    	JMenuItem submenu;
+    	submenu = new JMenuItem("Get Info");
+    	submenu.addActionListener(new ActionListener() {
+    		@Override
+        	public void actionPerformed(ActionEvent e) {
+    			ReqToolReqistry.getInstance().post(new ReqInfoEvent(event.getSelectedNode()));
+        	}
+		});
+ 		return submenu;
 	}
 	
 }
