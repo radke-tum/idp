@@ -14,20 +14,7 @@ import de.tum.pssif.core.metamodel.PSSIFCanonicMetamodelCreator;
 
 public class TestCaseCreator {
 
-	public static LinkedList<MyNode> getRequirementSatisfyNodes(MyNode requirementNode) {
-		MyEdgeType satisfies = ModelBuilder.getEdgeTypes().getValue(PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_LOGICAL_SATISFIES);
-
-		LinkedList<MyNode> nodes = new LinkedList<MyNode>();
-		for (MyEdge myEdge : ModelBuilder.getAllEdges()) {
-			if (myEdge.getDestinationNode().equals(requirementNode)	&& myEdge.getEdgeType().equals(satisfies)) {
-				nodes.add((MyNode) myEdge.getSourceNode());
-			}
-		}
-		
-		return nodes;
-	}
-
-	public static void createTestCase(GraphVisualization gViz, MyNode mNode, List<MyNode> solutionArtifacts) {
+	public static void createTestCase(MyNode mNode, List<MyNode> solutionArtifacts) {
 
 		System.out.println("Creating Test Case for " + mNode.getName());
 
@@ -46,8 +33,6 @@ public class TestCaseCreator {
 		 * Create verifies edge between testcase and solution artifact requirement
 		 */
 		createVerifyEdges(solutionArtifacts, testCaseNode);
-
-		gViz.updateGraph();
 	}
 
 	private static boolean createVerifyEdges(List<MyNode> solArtifNodes, MyNode testCaseNode) {

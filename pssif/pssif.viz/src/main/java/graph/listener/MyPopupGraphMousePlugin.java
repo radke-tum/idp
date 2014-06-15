@@ -18,19 +18,24 @@ import javax.swing.JPopupMenu;
 import javax.swing.JTextField;
 
 import de.tum.pssif.core.metamodel.PSSIFCanonicMetamodelCreator;
+import reqtool.RequirementToolbox;
 import reqtool.RequirementTracer;
 import reqtool.RequirementVersionManager;
 import reqtool.TestCaseVerifier;
+import reqtool.event.ResolveIssueEvent;
+import reqtool.event.bus.ReqToolReqistry;
+import reqtool.event.menu.CreateReqMenuEvent;
+import reqtool.event.menu.TraceReqMenuEvent;
+import reqtool.event.menu.VersionVisibilityMenuEvent;
 import reqtool.graph.IssueResolverPopup;
 import reqtool.graph.TestCaseCreatorPopup;
 import reqtool.graph.VersionManagerPopup;
+import reqtool.handler.menu.VersionsVisibilityMenuHandler;
 import model.ModelBuilder;
 import edu.uci.ics.jung.algorithms.layout.GraphElementAccessor;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.control.AbstractPopupGraphMousePlugin;
-import graph.model.IMyNode;
 import graph.model.MyEdge;
-import graph.model.MyJunctionNode;
 import graph.model.MyNode;
 import graph.model.MyNodeType;
 import gui.graph.GraphVisualization;
@@ -66,46 +71,11 @@ public class MyPopupGraphMousePlugin extends AbstractPopupGraphMousePlugin {
 			if (node != null) {
 				// if the user made a right click on a Node
 				JPopupMenu popup = new JPopupMenu();
+				
 				JMenu submenu = createEdge(e, node);
 				popup.add(submenu);
-
-
-				if (node.getNodeType().equals((ModelBuilder.getNodeTypes().getValue(PSSIFCanonicMetamodelCreator.N_REQUIREMENT)))) {
-
-					JMenu reqMenu = new JMenu("Requirement Tool");
-					JMenu versMenu = new JMenu("Version Management");
-
-					JMenuItem subItem1 = traceRequirement(e, node);
-					JMenuItem subItem2 = createTestCase(e, node);
-					JMenuItem subItem3 = createNewVersion(e, node);
-					JMenuItem subItem4 = showHideVersions(e, node);
-					reqMenu.add(subItem1);
-					reqMenu.add(subItem2);
-					reqMenu.add(versMenu);
-					versMenu.add(subItem3);
-					versMenu.add(subItem4);
-					popup.add(reqMenu);
-				} else if (node.getNodeType().equals((ModelBuilder.getNodeTypes().getValue(PSSIFCanonicMetamodelCreator.N_TEST_CASE)))) {
-					JMenuItem subItem = verifyTestCase(e, node);
-					popup.add(subItem);
-
-				} else if (node.getNodeType().equals((ModelBuilder.getNodeTypes().getValue(PSSIFCanonicMetamodelCreator.N_ISSUE)))) {
-					JMenuItem subItem = resolveIssue(e, node);
-					popup.add(subItem);
-
-
-				}
-				if (ModelBuilder.getNodeTypes().getValue(PSSIFCanonicMetamodelCreator.N_SOL_ARTIFACT).getType().isAssignableFrom(node.getNodeType().getType())) {
-
-					JMenu versMenu = new JMenu("Version Management");
-					JMenuItem subItem3 = createNewVersion(e, node);
-					JMenuItem subItem4 = showHideVersions(e, node);
-					versMenu.add(subItem3);
-					versMenu.add(subItem4);
-					popup.add(versMenu);
-
-			}
-
+				// if the user made a right click on a Reqtool Node
+				ReqToolReqistry.getInstance().post(new CreateReqMenuEvent(node, popup, gViz));
 
 				popup.show(vv, e.getX(), e.getY());
 			}
@@ -202,36 +172,39 @@ public class MyPopupGraphMousePlugin extends AbstractPopupGraphMousePlugin {
      * @param selectedNode The Node which was selected when the user pushed the right mouse button
      * @return a menu with all the option to trace a requirement
      */
-    private JMenuItem traceRequirement ( MouseEvent e, final MyNode selectedNode)
-    {
-    	JMenuItem submenu;
-        if (RequirementTracer.isTracedNode(selectedNode)) {
-         submenu = new JMenuItem("Untrace requirement");
-         submenu.addActionListener(new ActionListener() {
-          
-       @Override
-       public void actionPerformed(ActionEvent e) {
-        RequirementTracer.stopTracing();
-        gViz.stopTracingNodes(); 
-       }
-       
-      });
-        } else {
-         submenu = new JMenuItem("Trace requirement");
-         submenu.addActionListener(new ActionListener() {
-       
-       @Override
-       public void actionPerformed(ActionEvent e) {
-        RequirementTracer.traceRequirement(selectedNode);;
-        gViz.traceNodes(); 
-       }
-      });
-        }
-         
-           return submenu;
-    }
     
-    private JMenuItem createTestCase(MouseEvent e, final MyNode selectedNode) {
+    /*
+	private JMenuItem traceRequirement(final MyNode selectedNode) {
+		JMenuItem submenu;
+		if (RequirementTracer.isTracedNode(selectedNode)) {
+			submenu = new JMenuItem("Untrace requirement");
+			submenu.addActionListener(new ActionListener() {
+
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					RequirementTracer.stopTracing();
+					gViz.stopTracingNodes();
+				}
+
+			});
+		} else {
+			submenu = new JMenuItem("Trace requirement");
+			submenu.addActionListener(new ActionListener() {
+
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					RequirementTracer.traceRequirement(selectedNode);
+					;
+					gViz.traceNodes();
+				}
+			});
+		}
+
+		return submenu;
+	}
+	
+    
+    private JMenuItem createTestCase( final MyNode selectedNode) {
  		// TODO Auto-generated method stub
     	
     	JMenuItem submenu;
@@ -241,8 +214,9 @@ public class MyPopupGraphMousePlugin extends AbstractPopupGraphMousePlugin {
 
     		@Override
         	public void actionPerformed(ActionEvent e) {
-    			TestCaseCreatorPopup crPopup = new TestCaseCreatorPopup(selectedNode, gViz);
+    			TestCaseCreatorPopup crPopup = new TestCaseCreatorPopup(selectedNode);
     			crPopup.showPopup();
+    			gViz.updateGraph();
         	}
 		}
     	);
@@ -251,7 +225,7 @@ public class MyPopupGraphMousePlugin extends AbstractPopupGraphMousePlugin {
  		return submenu;
  	}
     
-    private JMenuItem verifyTestCase(MouseEvent e, final MyNode selectedNode) {
+    private JMenuItem verifyTestCase(final MyNode selectedNode) {
     	
     	JMenuItem submenu;
     	
@@ -270,7 +244,8 @@ public class MyPopupGraphMousePlugin extends AbstractPopupGraphMousePlugin {
  		return submenu;
 	}
     
-    private JMenuItem showHideVersions(MouseEvent e, final MyNode selectedNode) {
+    /*
+    private JMenuItem showHideVersions(final MyNode selectedNode) {
  		// TODO Auto-generated method stub
     	
     	JMenuItem submenu;
@@ -282,7 +257,7 @@ public class MyPopupGraphMousePlugin extends AbstractPopupGraphMousePlugin {
     			
         		@Override
             	public void actionPerformed(ActionEvent e){
-        			RequirementVersionManager.hideVersions(gViz, selectedNode);
+        			RequirementVersionManager.hideVersions(selectedNode);
         			gViz.updateGraph();
             	}
     		}
@@ -293,7 +268,7 @@ public class MyPopupGraphMousePlugin extends AbstractPopupGraphMousePlugin {
     			
         		@Override
             	public void actionPerformed(ActionEvent e){
-        			RequirementVersionManager.showVersions(gViz, selectedNode);
+        			RequirementVersionManager.showVersions(selectedNode);
         			gViz.updateGraph();
             	}
     		}
@@ -304,9 +279,10 @@ public class MyPopupGraphMousePlugin extends AbstractPopupGraphMousePlugin {
     	    	
  		return submenu;
  	}
+ 	
    
     
-    private JMenuItem createNewVersion(final MouseEvent mouseEvent, final MyNode node) {
+    private JMenuItem createNewVersion(final MyNode node) {
     	JMenuItem submenu;
     	
     	submenu = new JMenuItem("Create new version");
@@ -324,7 +300,7 @@ public class MyPopupGraphMousePlugin extends AbstractPopupGraphMousePlugin {
  		return submenu;
  	}
     
-    private JMenuItem resolveIssue(MouseEvent e, final MyNode selectedNode)  {
+    private JMenuItem resolveIssue(final MyNode selectedNode)  {
     	
     	JMenuItem submenu;
     	
@@ -333,8 +309,12 @@ public class MyPopupGraphMousePlugin extends AbstractPopupGraphMousePlugin {
 
     		@Override
         	public void actionPerformed(ActionEvent e) {
+    			ReqToolReqistry.getInstance().post(new ResolveIssueEvent(selectedNode));
+    			/*
     		IssueResolverPopup popup = new IssueResolverPopup(selectedNode);
-    		popup.showPopup(gViz);
+    		popup.showPopup();
+    		*/
+    /*
     		gViz.updateGraph();
     		}
 		}
@@ -343,6 +323,46 @@ public class MyPopupGraphMousePlugin extends AbstractPopupGraphMousePlugin {
     	    	
  		return submenu;
 	}
+	
+	
+	private JMenuItem showHideContainer(MouseEvent e, final MyNode selectedNode) {
+		// TODO Auto-generated method stub
+
+		JMenuItem submenu;
+		submenu = new JMenuItem("");
+		if (RequirementToolbox.hasContainment(selectedNode)) {
+
+			if (RequirementToolbox.containmentIsVisible(selectedNode)) {
+
+				submenu = new JMenuItem("Hide Containment");
+				submenu.addActionListener(new ActionListener() {
+
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						RequirementToolbox.hideContainment(selectedNode);
+						gViz.updateGraph();
+					}
+				});
+			} else {
+				submenu = new JMenuItem("Show Containment");
+				submenu.addActionListener(new ActionListener() {
+
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						RequirementToolbox.showContainment(selectedNode);
+						gViz.updateGraph();
+					}
+				});
+
+			}
+		}
+		else submenu = new JMenuItem("");
+
+		return submenu;
+
+	}
+	
+	*/
     
     /**
      * Action listener for the Edge creation

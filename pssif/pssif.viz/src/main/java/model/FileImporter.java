@@ -16,6 +16,7 @@ import de.tum.pssif.transform.MapperFactory;
 
 
 public class FileImporter extends FileHandler{
+	private Model importedModel;
 
   public FileImporter() {
 	super("Select a Import File Format:");
@@ -34,13 +35,13 @@ public class FileImporter extends FileHandler{
 
       Mapper importer = MapperFactory.getMapper(super.getSelectedMapperFactoryValue());
 
-      Model model;
+      //Model model;
       try {
-        model = importer.read(ModelBuilder.getMetamodel(), in);
-        if(model!=null)
+    	  importedModel = importer.read(ModelBuilder.getMetamodel(), in);
+        if(importedModel!=null)
         {
 	        // Create the Viz Model
-	        ModelBuilder.addModel(ModelBuilder.getMetamodel(), model);
+	        ModelBuilder.addModel(ModelBuilder.getMetamodel(), importedModel);
 	        return true;
         }
         else
@@ -82,6 +83,10 @@ public class FileImporter extends FileHandler{
     else {
       return false;
     }
+  }
+  
+  public Model getLastImportedModel() {
+	  return importedModel;
   }
   
   private void createErrorPopup (String text)

@@ -39,7 +39,6 @@ public class IssueResolverPopup {
 	private MyNode selectedNode;
 	private LinkedList<MyNode> reqs;
 	private LinkedList<MyNode> sols;
-	private GraphVisualization gViz;
 	
 	public IssueResolverPopup (MyNode issue){
 		selectedNode = issue;
@@ -48,8 +47,7 @@ public class IssueResolverPopup {
 		sols = resolver.getSolArtifacts();
 	}
 	
-	public boolean showPopup(GraphVisualization gViz) {
-		this.gViz = gViz;
+	public boolean showPopup() {
 		JPanel allPanel = createPanel();
 
 		int dialogResult = JOptionPane.showConfirmDialog(null, allPanel, "Resolve this issue", JOptionPane.DEFAULT_OPTION);
@@ -108,7 +106,7 @@ public class IssueResolverPopup {
 					/*
 					 * TODO Also a "Based On" edge from ChangeEvent if Requirement node is selected
 					 */
-					gViz.updateGraph();
+					//gViz.updateGraph();
 				}
 			}
 	

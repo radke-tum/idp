@@ -25,19 +25,19 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
+import de.tum.pssif.core.metamodel.PSSIFCanonicMetamodelCreator;
 import reqtool.TestCaseCreator;
+import reqtool.model.RequirementNode;
 
 public class TestCaseCreatorPopup {
 	private JPanel nodePanel;
 	private JTextField testCaseNameTextField;
 	private LinkedList<MyNode> solutionArtifacts;
 	private MyNode requirementNode;
-	private GraphVisualization gViz;
 
-	public TestCaseCreatorPopup(MyNode requirementNode, GraphVisualization gViz) {
+	public TestCaseCreatorPopup(MyNode requirementNode) {
 		this.requirementNode = requirementNode;
-		this.solutionArtifacts = TestCaseCreator.getRequirementSatisfyNodes(requirementNode);
-		this.gViz = gViz;
+		this.solutionArtifacts = RequirementNode.getRequirementSourceNodes(requirementNode, PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_LOGICAL_SATISFIES);
 	}
 
 	/**
@@ -73,7 +73,7 @@ public class TestCaseCreatorPopup {
 				selectedNodes.add(solutionArtifacts.get(index));
 			}
 	
-			TestCaseCreator.createTestCase(gViz, requirementNode, selectedNodes);
+			TestCaseCreator.createTestCase(requirementNode, selectedNodes);
 			return true;
 		}
 		return false;

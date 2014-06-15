@@ -32,10 +32,10 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-import de.tum.pssif.transform.mapper.reqif.ReqifMapper;
-import reqtool.ReqProjectImporter;
 import model.FileExporter;
 import model.FileImporter;
+import reqtool.event.CreateSpecProjectEvent;
+import reqtool.event.bus.ReqToolReqistry;
 
 /**
  * The main class of the project. Execute this class to start the Visualization Software
@@ -76,7 +76,7 @@ public class Main {
 	private JMenu deleteEdgeFilter;
 	
 	private FileImporter importer;
-	private ReqProjectImporter reqProjImporter;
+	//private SpecificationProjectWizard reqProjImporter;
 	private MasterFilter masterFilter;
 	
 	public static void main(String[] args) {
@@ -100,10 +100,12 @@ public class Main {
 		height = height*3;
 		
 		importer = new FileImporter();
-		reqProjImporter = new ReqProjectImporter();
+		//reqProjImporter = new SpecificationProjectWizard();
 		
 		frame.setPreferredSize(new Dimension(width, height));
 		frame.setState(Frame.MAXIMIZED_BOTH);
+		
+		ReqToolReqistry.newInstance();
 		
 		initFrame();
 	}
@@ -143,8 +145,10 @@ public class Main {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if (reqProjImporter.showPopup(frame))
-				{	
+				
+				//if (reqProjImporter.open(frame))
+				ReqToolReqistry.getInstance().post(new CreateSpecProjectEvent(frame));
+				if (true) {	
 					//Model model = new Model();
 					//ModelBuilder.addModel(ModelBuilder.getMetamodel(), model);
 			        // Create the Views
@@ -170,6 +174,7 @@ public class Main {
 					frame.pack();
 					frame.repaint();
 				}
+				
 			}
 		});
 		

@@ -206,7 +206,7 @@ public class RequirementVersionManager {
 
 	}
 
-		public static void hideVersions(GraphVisualization gViz, MyNode myNode) {
+		public static void hideVersions(MyNode myNode) {
 		MyNode parentNode = getMaxVersion(myNode);
 		LinkedList<MyNode> toBeHidden = new LinkedList<MyNode>();
 		String[] idNV = myNode.getNode().getId().toString().split("_");
@@ -239,7 +239,7 @@ public class RequirementVersionManager {
 		
 		
 
-	public static void showVersions(GraphVisualization gViz, MyNode myNode) {
+	public static void showVersions(MyNode myNode) {
 		MyNode parentNode = getMaxVersion(myNode);
 		String[] idNV = myNode.getNode().getId().toString().split("_");
 		LinkedList<MyNode> toBeShown = new LinkedList<MyNode>();
@@ -249,12 +249,9 @@ public class RequirementVersionManager {
 					&& !mN.equals(parentNode)) {
 				toBeShown.add(mN);
 			}
-
 		}
-		
 
 		for (MyEdge e: ModelBuilder.getAllEdges()){
-			
 			if ( toBeShown.contains((MyNode)e.getDestinationNode()) && ((MyNode)e.getSourceNode()).getNodeType().toString().equals(PSSIFCanonicMetamodelCreator.N_TEST_CASE) ){
 				toBeShown.add((MyNode)e.getSourceNode());
 			}
