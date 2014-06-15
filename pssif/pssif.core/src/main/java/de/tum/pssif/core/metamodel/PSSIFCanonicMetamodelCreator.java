@@ -79,6 +79,8 @@ public final class PSSIFCanonicMetamodelCreator {
   public static final String A_DURATION                                = "duration";
   public static final String A_REQUIREMENT_PRIORITY                    = "priority";
   public static final String A_REQUIREMENT_TYPE                        = "type";
+  public static final String A_REQUIREMENT_ABS_LEVEL                   = "Abstraction Level";
+  
   public static final String A_BLOCK_COST                              = "cost";
   public static final String A_HARDWARE_WEIGHT                         = "weight";
   public static final String A_TEST_CASE_STATUS 					   = "status";
@@ -184,6 +186,8 @@ public final class PSSIFCanonicMetamodelCreator {
         AttributeCategory.METADATA);
     requirement.createAttribute(requirement.getDefaultAttributeGroup(), A_REQUIREMENT_TYPE, PrimitiveDataType.STRING, true,
         AttributeCategory.METADATA);
+    requirement.createAttribute(requirement.getDefaultAttributeGroup(), A_REQUIREMENT_ABS_LEVEL, PrimitiveDataType.STRING, true,
+            AttributeCategory.METADATA);
 
     NodeType useCase = metamodel.createNodeType(N_USE_CASE);
     useCase.inherit(devArtifact);

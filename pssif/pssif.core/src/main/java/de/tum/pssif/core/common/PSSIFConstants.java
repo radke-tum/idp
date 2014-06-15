@@ -13,6 +13,7 @@ public final class PSSIFConstants {
   public static final String BUILTIN_ATTRIBUTE_VALIDITY_END   = "validityEnd";
   public static final String BUILTIN_ATTRIBUTE_VERSION        = "version";
   public static final String BUILTIN_ATTRIBUTE_COMMENT        = "comment";
+  public static final String BUILTIN_ATTRIBUTE_ABS_LEVEL        = "Abstraction Level";
 
   public static final String BUILTIN_ATTRIBUTE_DIRECTED       = "directed";
   
