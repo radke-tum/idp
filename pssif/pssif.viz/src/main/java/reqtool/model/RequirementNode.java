@@ -55,7 +55,8 @@ public class RequirementNode {
 		for (MyEdge myEdge : ModelBuilder.getAllEdges()) {
 			if (myEdge.getDestinationNode().equals(requirementNode)	&& 
 				myEdge.getEdgeType().getName().equals(edgeTypeName) && 
-				( (MyNode) myEdge.getSourceNode()).getNodeType().getName().equals(nodeTypeName)) {
+				( ( (MyNode) myEdge.getSourceNode()).getNodeType().getType().getName().equals(nodeTypeName)) )
+				{
 				nodes.add((MyNode) myEdge.getSourceNode());
 			}
 		}
@@ -65,8 +66,8 @@ public class RequirementNode {
 	public static LinkedList<MyNode> getRequirementTargetNodes(MyNode requirementNode, String edgeTypeName) {
 		LinkedList<MyNode> nodes = new LinkedList<MyNode>();
 		for (MyEdge myEdge : ModelBuilder.getAllEdges()) {
-			if (myEdge.getDestinationNode().equals(requirementNode)	&& myEdge.getEdgeType().getName().equals(edgeTypeName)) {
-				nodes.add((MyNode) myEdge.getSourceNode());
+			if (myEdge.getSourceNode().equals(requirementNode)	&& myEdge.getEdgeType().getName().equals(edgeTypeName)) {
+				nodes.add((MyNode) myEdge.getDestinationNode());
 			}
 		}
 		return nodes;
@@ -75,10 +76,10 @@ public class RequirementNode {
 	public static LinkedList<MyNode> getRequirementDestNodes(MyNode requirementNode, String edgeTypeName, String nodeTypeName) {
 		LinkedList<MyNode> nodes = new LinkedList<MyNode>();
 		for (MyEdge myEdge : ModelBuilder.getAllEdges()) {
-			if (myEdge.getDestinationNode().equals(requirementNode)	&& 
+			if (myEdge.getSourceNode().equals(requirementNode)	&& 
 				myEdge.getEdgeType().getName().equals(edgeTypeName) && 
-				( (MyNode) myEdge.getSourceNode()).getNodeType().getName().equals(nodeTypeName)) {
-				nodes.add((MyNode) myEdge.getSourceNode());
+				( (MyNode) myEdge.getDestinationNode()).getNodeType().getName().equals(nodeTypeName)) {
+				nodes.add((MyNode) myEdge.getDestinationNode());
 			}
 		}
 		return nodes;

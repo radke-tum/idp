@@ -50,27 +50,33 @@ public class RequirementInfoPopup {
 		getConstraints().gridy = 3;
 		addVersionsCount();
 		
-		getConstraints().gridy = 5;
-		getConstraints().insets = new Insets(0, 50, 0, 0);
+		getConstraints().gridy = 10;
+		getConstraints().insets = new Insets(50, 50, 0, 0);
 		getConstraints().gridx = 0 ;
 		addSolArtifNodes();
 		
-		getConstraints().gridy = 5;
+		getConstraints().gridy = 10;
+		getConstraints().insets = new Insets(50, 50, 0, 0);
 		addSpecArtifNodes();
 		
-		getConstraints().gridy = 5;
+		getConstraints().gridy = 10;
+		getConstraints().insets = new Insets(50, 50, 0, 0);
 		addAuthorNodes();
 		
-		getConstraints().gridy = 5;
+		getConstraints().gridy = 10;
+		getConstraints().insets = new Insets(50, 50, 0, 0);
 		addPrincNodes();
 		
-		getConstraints().gridy = 5;
+		getConstraints().gridy = 10;
+		getConstraints().insets = new Insets(50, 50, 0, 0);
 		List<MyNode> tcNodes = addTestCaseNodes();
 		
-		getConstraints().gridy = 5;
+		getConstraints().gridy = 10;
+		getConstraints().insets = new Insets(50, 50, 0, 0);
 		addIssueNodes(tcNodes);
 		
-		getConstraints().gridy = 5;
+		getConstraints().gridy = 10;
+		getConstraints().insets = new Insets(50, 50, 0, 0);
 		addChangeEventNodes();
 	}
 	
@@ -83,6 +89,7 @@ public class RequirementInfoPopup {
 		getConstraints().gridx++;
 		getPanel().add(labelTxt, getConstraints());
 		int i=0;
+		getConstraints().insets = new Insets(0, 50, 0, 0);
 		for (MyNode node : RequirementNode.getRequirementSourceNodes(reqNode, PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_LOGICAL_SATISFIES, PSSIFCanonicMetamodelCreator.N_SOL_ARTIFACT)) {
 			getConstraints().gridy+=i;
 			addMultRows(node.getName());
@@ -95,6 +102,7 @@ public class RequirementInfoPopup {
 		getConstraints().gridx++;
 		getPanel().add(labelTxt, getConstraints());
 		int i=0;
+		getConstraints().insets = new Insets(0, 50, 0, 0);
 		for (MyNode node : RequirementNode.getRequirementSourceNodes(reqNode, PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_REFERENTIAL_DEFINES, PSSIFCanonicMetamodelCreator.N_SPEC_ARTIFACT)) {
 			getConstraints().gridy+=i;
 			addMultRows(node.getName());
@@ -106,9 +114,12 @@ public class RequirementInfoPopup {
 		JLabel labelTxt = new JLabel("<html><B> Author </B></html>");
 		getConstraints().gridx++;
 		getPanel().add(labelTxt, getConstraints());
+		getConstraints().insets = new Insets(0, 50, 0, 0);
+		int i=0;
 		for (MyNode node : RequirementNode.getRequirementSourceNodes(reqNode, PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_CAUSAL_CREATES, PSSIFCanonicMetamodelCreator.N_AUTHOR)) {
-			getConstraints().gridy++;
+			getConstraints().gridy+=i;
 			addMultRows(node.getName());
+			i++;
 		}
 	}
 	
@@ -116,9 +127,12 @@ public class RequirementInfoPopup {
 		JLabel labelTxt = new JLabel("<html><B> Principal </B></html>");
 		getConstraints().gridx++;
 		getPanel().add(labelTxt, getConstraints());
+		getConstraints().insets = new Insets(0, 50, 0, 0);
+		int i=0;
 		for (MyNode node : RequirementNode.getRequirementSourceNodes(reqNode, PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_CAUSAL_REQUESTS, PSSIFCanonicMetamodelCreator.N_PRINCIPAL)) {
-			getConstraints().gridy++;
+			getConstraints().gridy+=i;
 			addMultRows(node.getName());
+			i++;
 		}
 	}
 	
@@ -127,10 +141,13 @@ public class RequirementInfoPopup {
 		getConstraints().gridx++;
 		getPanel().add(labelTxt, getConstraints());
 		List<MyNode> nodes = new ArrayList<MyNode>();
+		getConstraints().insets = new Insets(0, 50, 0, 0);
+		int i=0;
 		for (MyNode node : RequirementNode.getRequirementRelNodes(reqNode, PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_CHRONOLOGICAL_BASED_ON, PSSIFCanonicMetamodelCreator.N_TEST_CASE)) {
-			getConstraints().gridy++;
+			getConstraints().gridy+=i;
 			addMultRows(node.getName());
 			nodes.add(node);
+			i++;
 		}
 		return nodes;
 	}
@@ -139,10 +156,13 @@ public class RequirementInfoPopup {
 		JLabel labelTxt = new JLabel("<html><B> Issue </B></html>");
 		getConstraints().gridx++;
 		getPanel().add(labelTxt, getConstraints());
+		getConstraints().insets = new Insets(0, 50, 0, 0);
+		int i=0;
 		for (MyNode testCaseNode: testCases) {
 			for (MyNode node : RequirementNode.getRequirementDestNodes(testCaseNode, PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_CHRONOLOGICAL_LEADS_TO, PSSIFCanonicMetamodelCreator.N_ISSUE)) {
-				getConstraints().gridy++;
+				getConstraints().gridy+=i;
 				addMultRows(node.getName());
+				i++;
 			}
 		}
 	}
@@ -151,9 +171,12 @@ public class RequirementInfoPopup {
 		JLabel labelTxt = new JLabel("<html><B> Change event </B></html>");
 		getConstraints().gridx++;
 		getPanel().add(labelTxt, getConstraints());
+		getConstraints().insets = new Insets(0, 50, 0, 0);
+		int i=0;
 		for (MyNode node : RequirementNode.getRequirementDestNodes(reqNode, PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_CHRONOLOGICAL_BASED_ON, PSSIFCanonicMetamodelCreator.N_CHANGE_EVENT)) {
-			getConstraints().gridy++;
+			getConstraints().gridy+=i;
 			addMultRows(node.getName());
+			i++;
 		}
 	}
 	
