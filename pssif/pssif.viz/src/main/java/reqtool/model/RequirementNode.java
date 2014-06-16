@@ -63,7 +63,7 @@ public class RequirementNode {
 		return nodes;
 	}
 	
-	public static LinkedList<MyNode> getRequirementTargetNodes(MyNode requirementNode, String edgeTypeName) {
+	public static LinkedList<MyNode> getRequirementDestNodes(MyNode requirementNode, String edgeTypeName) {
 		LinkedList<MyNode> nodes = new LinkedList<MyNode>();
 		for (MyEdge myEdge : ModelBuilder.getAllEdges()) {
 			if (myEdge.getSourceNode().equals(requirementNode)	&& myEdge.getEdgeType().getName().equals(edgeTypeName)) {
