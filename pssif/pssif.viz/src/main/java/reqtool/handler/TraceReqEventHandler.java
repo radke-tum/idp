@@ -11,12 +11,12 @@ public class TraceReqEventHandler implements EventHandler {
 	@Subscribe
 	public void handleTraceReqEvent(TraceReqEvent event) {
 		RequirementTracer.traceRequirement(event.getSelectedNode());
-		event.getGViz().stopTracingNodes();
+		event.getGViz().traceNodes();
 	}
 	
 	@Subscribe
 	public void handleUntraceReqEvent(UntraceReqEvent event) {
 		RequirementTracer.stopTracing();
-		event.getGViz().traceNodes();
+		event.getGViz().stopTracingNodes();
 	}
 }
