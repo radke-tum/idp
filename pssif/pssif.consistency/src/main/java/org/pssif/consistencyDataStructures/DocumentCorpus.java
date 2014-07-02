@@ -40,8 +40,7 @@ public class DocumentCorpus {
 	private MatchingProcess matchingProcess;
 	private Normalizer normalizer;
 
-	public DocumentCorpus(Normalizer normalizer,
-			MatchingProcess matchingProcess) {
+	public DocumentCorpus(Normalizer normalizer, MatchingProcess matchingProcess) {
 
 		this.normalizer = normalizer;
 		this.matchingProcess = matchingProcess;
@@ -116,14 +115,10 @@ public class DocumentCorpus {
 		}
 	}
 
-	// TODO Begründung in Arbeit schreiben warum bei VSM Normalisierung ohne
-	// Word splitting durchgeführt wird!!! Liegt das daran, da sonst das Vokabular
-	// verfälscht würde? Nochmal nachlesen…
 	/**
 	 * 
-	 * This method get's the label of the given node and creates the tokens of
-	 * it (all normalizations except word splitting). Then every token is added
-	 * to the vocabulary list.
+	 * This method get's the label of the given node and creates the normalized
+	 * tokens of it. Then every token is added to the vocabulary list.
 	 * 
 	 * 
 	 * @param tempNode
@@ -136,7 +131,7 @@ public class DocumentCorpus {
 		String labelNode = Methods.findName(actTypeNode, tempNode);
 
 		List<Token> tempTokens = normalizer.createNormalizedTokensFromLabel(
-				labelNode, true, true, false, true);
+				labelNode, true, true, true, true);
 
 		for (Token token : tempTokens) {
 			addTokenToData(token);
@@ -148,7 +143,7 @@ public class DocumentCorpus {
 	 * with the same word is already present in the list the token in the list
 	 * is modified and no additional token is added. Everytime a token is added
 	 * or updated this tokens method incrementDocumentCounter() is called
-	 * because the token is present in (current DocumentCounter + 1) documents.
+	 * because the token is present in (currentDocumentCounter + 1) documents.
 	 * 
 	 * @param token
 	 *            the token to add to the vocabulary list

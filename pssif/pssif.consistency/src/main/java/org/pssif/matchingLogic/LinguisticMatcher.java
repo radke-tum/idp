@@ -16,8 +16,8 @@ import de.tum.pssif.core.model.Node;
  * "Measuring Similarity between Business Process Models.pdf"
  * 
  * This class represents an impelementation of the linguistic Matching. Thereby
- * the similarity of two nodes is calculated exact matches between tokens of
- * their labels or synonym matching betwwen tokens. Thereby the exact matching
+ * the similarity of two nodes is calculated by exact matches between tokens of
+ * their labels or synonym matching betwwen their labels. Thereby the exact matching
  * is weighted higher than a match found with help of a synonym lexicon.
  * 
  * @author Andreas
@@ -73,6 +73,7 @@ public class LinguisticMatcher extends MatchMethod {
 				* countSynonyms();
 		double denominator;
 
+		//TODO use max function here instead
 		if (tokensOrigin.size() >= tokensNew.size()) {
 			denominator = tokensOrigin.size();
 		} else {

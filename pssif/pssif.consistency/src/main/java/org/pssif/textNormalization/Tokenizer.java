@@ -47,16 +47,17 @@ public class Tokenizer {
 		for (int i = 0; i < tokenChars.length; i++) {
 			if (isSplitPoint(tokenChars[i], splitCharacters)) {
 				if (i - start > 0) {
-					newSequence.add(new Token(new String(tokenChars, start, i
-							- start)));
+					newSequence.add(new Token((new String(tokenChars, start, i
+							- start)).replaceAll("\\s+", "")));
 				}
 				start = i + 1;
 			}
 		}
 		if (tokenChars.length - start > 0)
-			newSequence.add(new Token(new String(tokenChars, start,
-					tokenChars.length - start)));
-
+			newSequence.add(new Token((new String(tokenChars, start,
+					tokenChars.length - start)).replaceAll("\\s+", "")));
+		//replaceAll function fixes bug that the last found token can contain any space characters (f.e. '\n'). This leads to wrong results of the matching algorithms.
+	
 		return newSequence;
 
 	}

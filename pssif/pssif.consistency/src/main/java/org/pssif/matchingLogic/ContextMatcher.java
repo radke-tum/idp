@@ -73,6 +73,14 @@ public class ContextMatcher extends MatchMethod {
 			PSSIFCanonicMetamodelCreator.N_MODULE };
 
 	private static final int depth = 1;
+	
+	/**
+	 * these two variables store the weight with which the syntactic and
+	 * semantic results of the sorrounding nodes add to the contextual
+	 * similarity result
+	 */
+	private static final double snytacticWeight = 0.5;
+	private static final double semanticWeight = 0.5;
 
 	private List<MatchMethod> matchMethods;
 	private ConsistencyData consistencyData;
@@ -256,8 +264,9 @@ public class ContextMatcher extends MatchMethod {
 				}
 			}
 		}
-		double denominator = (Math.max(sorroundingNodesOrigin.size(),
-				sorroundingNodesNew.size()));
+		//TODO metriken mit Beschreibung in BA vergleichen
+		double denominator = Math.max(sorroundingNodesOrigin.size(),sorroundingNodesNew
+				.size());
 
 		if (denominator != 0) {
 			result = (similaritySum / denominator);
@@ -346,7 +355,7 @@ public class ContextMatcher extends MatchMethod {
 			 */
 			if (currentMethod.isActive()) {
 				if (currentMethod.getMatchMethod() == MatchingMethods.CONTEXT_MATCHING) {
-					break;
+					continue;
 				}
 				if ((currentMethod.getMatchMethod() == MatchingMethods.STRING_EDIT_DISTANCE_MATCHING)
 						|| (currentMethod.getMatchMethod() == MatchingMethods.HYPHEN_MATCHING)) {
@@ -367,8 +376,22 @@ public class ContextMatcher extends MatchMethod {
 							labelNewNodeNormalized, tokensOriginNodeNormalized,
 							tokensNewNodeNormalized);
 				}
-				result += currentMetricResult * currentMethod.getWeigth();
+				
+				switch (currentMethod.getMatchMethod()) {
+				case EXACT_STRING_MATCHING:
+				case DEPTH_MATCHING:
+				case STRING_EDIT_DISTANCE_MATCHING:
+				case HYPHEN_MATCHING:
+					result += ((currentMetricResult * currentMethod.getWeigth()) * snytacticWeight);
+					break;
+				case LINGUISTIC_MATCHING:
+				case VECTOR_SPACE_MODEL_MATCHING:
+				case LATENT_SEMANTIC_INDEXING_MATCHING:
+				case ATTRIBUTE_MATCHING:
+					result += ((currentMetricResult * currentMethod.getWeigth()) * semanticWeight);
+					break;
 			}
+		}
 		}
 
 		return result;
@@ -380,9 +403,17 @@ public class ContextMatcher extends MatchMethod {
 	 */
 	private double calculateWeightedSimilarities() {
 		double result = 0;
-
-		result += getWeightedSyntacticSimilarity();
-		result += getWeightedSemanticSimilarity();
+		
+		if(normalizer.isSyntacticMetricActive() && normalizer.isSemanticMetricActive()){
+			result += (getWeightedSyntacticSimilarity() * snytacticWeight);
+			result += (getWeightedSemanticSimilarity() * semanticWeight);
+		} else {
+			if(normalizer.isSyntacticMetricActive()){
+				result += getWeightedSyntacticSimilarity();
+			} else {
+				result += getWeightedSemanticSimilarity();
+			}
+		}
 
 		return result;
 	}
@@ -817,8 +848,8 @@ public class ContextMatcher extends MatchMethod {
 	 * outgoingNeighbourhood = Sets.newHashSet(); for (EdgeType edgeType :
 	 * metaModel.getEdgeTypes()) { for (ConnectionMapping outgoingMapping :
 	 * edgeType .getOutgoingMappings(nodeType)) { for (Edge outgoingEdge :
-	 * outgoingMapping .applyOutgoing(nodeOfInterest)) {  abfrage einbaun
-	 * ob type gleich conjunction type temp = new NodeAndType(
+	 * outgoingMapping .applyOutgoing(nodeOfInterest)) { abfrage einbaun ob type
+	 * gleich conjunction type temp = new NodeAndType(
 	 * outgoingMapping.applyTo(outgoingEdge), nodeType);
 	 * outgoingNeighbourhood.add(temp); } } }
 	 * 

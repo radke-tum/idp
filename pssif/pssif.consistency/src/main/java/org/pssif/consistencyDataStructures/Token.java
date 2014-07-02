@@ -1,11 +1,12 @@
 package org.pssif.consistencyDataStructures;
 
 /**
+ * this class represents a token. Each token holds a word
+ * as a String and an according wordWeigth (plus variables necessary for
+ * computing the weight)
+ * 
  * @author Andreas
  * 
- *         this class represents a simple token implementation. Each token holds
- *         a word as a String and an according wordWeigth (plus variables
- *         necessary for computing the weight)
  * 
  */
 public class Token {
@@ -17,7 +18,7 @@ public class Token {
 	}
 
 	/**
-	 * the word held by this tolen
+	 * the word held by this token
 	 */
 	private String word;
 

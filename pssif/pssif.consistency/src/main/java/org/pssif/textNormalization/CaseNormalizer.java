@@ -17,7 +17,7 @@ public class CaseNormalizer {
 			/**
 			 * check if the tokens word doesnt consist of upper case letters
 			 * only (if it only has uppercase letters it is assumed to be an
-			 * abberevation)
+			 * abberevation and remains unnormalized)
 			 */
 			if (!(temp.toUpperCase() == temp)) {
 				temp = temp.toLowerCase();

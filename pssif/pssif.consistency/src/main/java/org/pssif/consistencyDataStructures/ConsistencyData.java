@@ -55,6 +55,7 @@ public class ConsistencyData {
 	 */
 	private List<ComparedNormalizedTokensPair> comparedTokensPairs;
 
+	// TODO Attention! Variable is volatile, will be lost at serialization!
 	/**
 	 * stores compared Nodes with similarity information
 	 */
@@ -128,7 +129,7 @@ public class ConsistencyData {
 	}
 
 	/**
-	 * This method says whether a match between the two given IDs is necessary
+	 * This method returns if a match between the two given IDs is necessary
 	 * 
 	 * @param globalIDNodeOrigin
 	 *            the global ID of the original node

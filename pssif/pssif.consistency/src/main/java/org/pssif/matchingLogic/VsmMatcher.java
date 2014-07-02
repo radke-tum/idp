@@ -18,22 +18,23 @@ import de.tum.pssif.core.model.Model;
 import de.tum.pssif.core.model.Node;
 
 /**
+ * 
+ * This class represents the implementation of the Vector space model metric.
+ * Before executing this metric for every node pair the document corpus is built
+ * by the method initializeDocumentCorpus(). Then the idf weight for every token
+ * of the document vocabulary is calculated.
+ * 
+ * Then the metric can be applied to node pairs. Therefore for every node the tf
+ * (termfrequency of token in label) weights for its tokens are computed and
+ * assigned to them.
+ * 
+ * Afterwards the full token vector for every node is calculated and both token
+ * vectors are given to the calculateCosineSimilarity() method.
+ * 
+ * Then the result of the metric is returned.
+ * 
  * @author Andreas
  * 
- *         This class represents the implementation of the Vector space model
- *         metric. Before executing this metric for every node pair the document
- *         corpus is built by the method initializeDocumentCorpus(). Then the
- *         idf weight for every token of the document vocabulary is calculated.
- * 
- *         Then the metric can be applied to node pairs. Therefore for every
- *         node the tf (termfrequency of token in label) weights for its tokens
- *         are computed and assigned to them.
- * 
- *         Afterwards the full token vector for every node is calculated and
- *         both token vectors are given to the calculateCosineSimilarity()
- *         method.
- * 
- *         Then the result of the metric is returned.
  * 
  */
 public class VsmMatcher extends MatchMethod {
@@ -119,8 +120,8 @@ public class VsmMatcher extends MatchMethod {
 	}
 
 	/**
-	 * this method creates a new DocumentCorpus object and triggers the
-	 * building of the document corpus in the corpusData object.
+	 * this method creates a new DocumentCorpus object and triggers the building
+	 * of the document corpus in the corpusData object.
 	 * 
 	 * @param normalizer
 	 * @param matchingProcess

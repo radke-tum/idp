@@ -15,7 +15,7 @@ import de.tum.pssif.core.model.Model;
 import de.tum.pssif.core.model.Node;
 
 /**
- * This class represents an implementation of an attribute matching algorithm.
+ * This class represents an implementation of the attribute matching algorithm.
  * This match method compares the set attributes of two nodes and returns a
  * similarity value based on the set attributes.
  * 
@@ -144,7 +144,11 @@ public class AttributeMatcher extends MatchMethod {
 			}
 
 		}
-		return (nrOfSimilarAttributes / (Math.max(nrOfAttributesOrigin,
-				nrOfAttributesNew)));
+		if((nrOfAttributesOrigin == 0) && (nrOfAttributesNew == 0)){
+			return 0;
+		} else {
+			return (nrOfSimilarAttributes / (Math.max(nrOfAttributesOrigin,
+					nrOfAttributesNew)));
+		}
 	}
 }

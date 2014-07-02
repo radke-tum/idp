@@ -34,7 +34,7 @@ public class Normalizer {
 	 * if true the results of each token- and normalization step is printed to
 	 * the console
 	 */
-	private static final boolean debugMode = true;
+	private static final boolean debugMode = false;
 
 	/**
 	 * this bool says whether we need to remove the whitespace from the labels
@@ -53,6 +53,37 @@ public class Normalizer {
 	 * stemming) the labels from the nodes for some metrics
 	 */
 	private boolean tokenizationWithoutStemmingRequired;
+
+	/**
+	 * these two boolean variables are set so the context metric is able to look
+	 * up if at least one syntactic metric active and/or if at least one
+	 * semantic metric is active.
+	 */
+	/**
+	 * this variable says whether at least one syntactic matching metric is
+	 * active
+	 */
+	private boolean syntacticMetricActive = false;
+
+	/**
+	 * this variable says whether at least one semantic matching metric is
+	 * active
+	 */
+	private boolean semanticMetricActive = false;
+
+	/**
+	 * @return the syntacticMetricActive
+	 */
+	public boolean isSyntacticMetricActive() {
+		return syntacticMetricActive;
+	}
+
+	/**
+	 * @return the semanticMetricActive
+	 */
+	public boolean isSemanticMetricActive() {
+		return semanticMetricActive;
+	}
 
 	public Normalizer() {
 		this.tokenizer = new Tokenizer();
@@ -101,31 +132,42 @@ public class Normalizer {
 				switch (currentMethod.getMatchMethod()) {
 				case EXACT_STRING_MATCHING:
 					whiteSpaceRemovalRequired = true;
+					syntacticMetricActive = true;
 					break;
 				case DEPTH_MATCHING:
 					tokenizationRequired = true;
+					syntacticMetricActive = true;
 					break;
 				case STRING_EDIT_DISTANCE_MATCHING:
 					tokenizationWithoutStemmingRequired = true;
+					syntacticMetricActive = true;
 					break;
 				case HYPHEN_MATCHING:
 					tokenizationWithoutStemmingRequired = true;
+					syntacticMetricActive = true;
 					break;
 				case LINGUISTIC_MATCHING:
 					tokenizationRequired = true;
+					semanticMetricActive = true;
 					break;
 				case VECTOR_SPACE_MODEL_MATCHING:
 					tokenizationRequired = true;
+					semanticMetricActive = true;
 					((VsmMatcher) currentMethod).initializeDocumentCorpus(this,
 							matchingProcess);
 					((VsmMatcher) currentMethod).computeIDFWeigths();
 					break;
 				case LATENT_SEMANTIC_INDEXING_MATCHING:
 					tokenizationRequired = true;
+					semanticMetricActive = true;
+					break;
+				case ATTRIBUTE_MATCHING:
+					semanticMetricActive = true;
 					break;
 				case CONTEXT_MATCHING:
 					/**
-					 * only works if other match methods were selected
+					 * only works if other match methods were selected because
+					 * they are then applied to the contexts of the nodes
 					 */
 					((ContextMatcher) currentMethod)
 							.setMatchMethods(matchMethods);
@@ -188,12 +230,12 @@ public class Normalizer {
 			if (!label.isEmpty()) {
 
 				newSequence = tokenizer.findTokens(label);
-//				printTokens("Tokenizer", newSequence);
+				// printTokens("Tokenizer", newSequence);
 
 				if (normalizeCases) {
 					newSequence = caseNormalizer
 							.convertTokensToLowerCase(newSequence);
-//					printTokens("CaseNormalizer", newSequence);
+					// printTokens("CaseNormalizer", newSequence);
 
 				}
 				if (filterStopwords) {

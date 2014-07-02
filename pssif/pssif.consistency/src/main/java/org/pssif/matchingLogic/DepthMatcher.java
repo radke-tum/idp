@@ -22,7 +22,7 @@ public class DepthMatcher extends MatchMethod {
 			NodeType actTypeOriginModel, NodeType actTypeNewModel,
 			String labelOrigin, String labelNew, List<Token> tokensOrigin,
 			List<Token> tokensNew) {
-		return 0;
+		throw new RuntimeException("Not yet implemented!");
 	}
 
 }

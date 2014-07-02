@@ -17,10 +17,10 @@ import de.tum.pssif.core.metamodel.PrimitiveDataType;
 import de.tum.pssif.core.model.Node;
 
 /**
+ * A class that provides several methods used in the PSSIF consistency checker
+ * 
  * @author Andreas
  * 
- *         A class that provides several methods used in the PSSIF consistency
- *         checker
  */
 public class Methods {
 
@@ -105,5 +105,5 @@ public class Methods {
 
 		return name;
 	}
-	
+
 }
