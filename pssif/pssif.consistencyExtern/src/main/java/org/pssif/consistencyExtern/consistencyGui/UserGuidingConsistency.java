@@ -48,30 +48,29 @@ public class UserGuidingConsistency {
 	 * contextual metrics. Afterwards the matching process is started and the
 	 * results are displayed to the user.
 	 * 
-	 * @param activeModel
+	 * @param originalModel
 	 *            The original model
 	 * @param newModel
 	 *            The newly imported model
-	 * @param metaModel
-	 *            the according metamodel
+	 * @param metaModelOriginal
+	 *            the metamodel of the original model
+	 * @param metaModelNew
+	 *            the metamodel of the new model
 	 * @return the list of node pairs which shall be merged
 	 */
-	public static List<ComparedNodePair> main(Model activeModel,
-			Model newModel, Metamodel metaModel) {
+	public static List<ComparedNodePair> main(Model originalModel,
+			Model newModel, Metamodel metaModelOriginal, Metamodel metaModelNew) {
 
 		List<MatchMethod> matchMethods = openChooseMatchingMethodsPopup();
 
 		openChooseTresholdsPopup();
 
-		ConsistencyData consistencyData = CompairsonProcess.main(activeModel,
-				newModel, metaModel, matchMethods);
+		ConsistencyData consistencyData = CompairsonProcess.main(originalModel,
+				newModel, metaModelOriginal, metaModelNew, matchMethods);
 
 		consistencyData = openChooseMergeCandidatesPopup(consistencyData);
 
-		MergingProcess mergingProcess = new MergingProcess(consistencyData);
-
 		return consistencyData.getMergedList();
-
 	}
 
 	/**
@@ -322,6 +321,7 @@ public class UserGuidingConsistency {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				// TODO implement
 				// dialog.setVisible(false);
 				throw new RuntimeException(
 						"Unhandled Case!! Cancel merge not yet implemented");

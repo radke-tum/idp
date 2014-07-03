@@ -75,13 +75,13 @@ public class ModelBuilder {
 			activeModel = newModel;
 		}
 		/**
-		 * @author: Andreas
+		 * @author Andreas
 		 */
 		else {
 			if (UserGuidingConsistency.openConsistencyPopUp()) {
 				
 				List<ComparedNodePair> matchedList =
-						UserGuidingConsistency.main(activeModel.getModel(), Pmodel, Pmeta);
+						UserGuidingConsistency.main(activeModel.getModel(), Pmodel, activeModel.getMetamodel(), Pmeta);
 				
 				ModelMerger merger = new ModelMerger();
 				Model mergedModel = merger.mergeModels(activeModel.getModel(),
@@ -93,22 +93,9 @@ public class ModelBuilder {
 				activeModel = newModel;
 				
 				for(ComparedNodePair comparedNodePair : matchedList){
-					//TODO delete unused code here
-					
-//					MyNodeType originNodeType = new MyNodeType(comparedNodePair.getTypeOriginModel());
-//					MyNode originNode =
-//							new MyNode(comparedNodePair.getNodeOriginalModel(), originNodeType);
-//					
-//					MyNodeType newNodeType = new MyNodeType(comparedNodePair.getTypeNewModel());
-//					Node newTemp = comparedNodePair.getNodeNewModel();
-//					
-//					MyNode newNode =
-//							new MyNode(merger.getOldToNewNodes().get(newTemp), newNodeType);
-//					
+			
 					MyEdgeType edgeType =
-							new MyEdgeType(metaModel.getEdgeType(PSSIFCanonicMetamodelCreator.E_EQUALS).getOne(), 4);
-//					
-//					addNewEdgeGUI(originNode, newNode, edgeType, false);
+							new MyEdgeType(metaModel.getEdgeType(PSSIFCanonicMetamodelCreator.E_EQUALS).getOne(), 4);				
 					
 					/**
 					 * searches for the nodes (in the new active model) which shall be linked and adds new edges between them.

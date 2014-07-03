@@ -66,7 +66,7 @@ public class CompairsonProcess {
 			PSSIFCanonicMetamodelCreator.N_MODULE };
 
 	private Model originalModel, newModel;
-	private Metamodel metaModel;
+	private Metamodel metaModelOriginal;
 
 	/**
 	 * the results of the compairson and matching process are all stored here
@@ -82,9 +82,11 @@ public class CompairsonProcess {
 	private PSSIFOption<Node> nodesOriginalModel;
 
 	public static ConsistencyData main(Model originalModel, Model newModel,
-			Metamodel metaModel, List<MatchMethod> matchMethods) {
+			Metamodel metaModelOriginal, Metamodel metaModelNew,
+			List<MatchMethod> matchMethods) {
 		CompairsonProcess compairsonProcess = new CompairsonProcess(
-				originalModel, newModel, metaModel, matchMethods);
+				originalModel, newModel, metaModelOriginal, metaModelNew,
+				matchMethods);
 
 		return compairsonProcess.consistencyData;
 	}
@@ -94,22 +96,26 @@ public class CompairsonProcess {
 	 *            the model firstly imported into the pssif modelling fw
 	 * @param newModel
 	 *            the recent model imported into the pssif modelling fw
-	 * @param metaModel
-	 *            the according metamodel for the models
+	 * @param metaModelOriginal
+	 *            the according metamodel for the original model
+	 * @param metaModelNew
+	 *            the according metamodel for the new model
 	 * @param matchMethods
 	 *            these are the matching methods for the coming matching phase
 	 */
 	public CompairsonProcess(Model originalModel, Model newModel,
-			Metamodel metaModel, List<MatchMethod> matchMethods) {
+			Metamodel metaModelOriginal, Metamodel metaModelNew,
+			List<MatchMethod> matchMethods) {
 
 		this.originalModel = originalModel;
 		this.newModel = newModel;
-		this.metaModel = metaModel;
+		this.metaModelOriginal = metaModelOriginal;
 
 		this.consistencyData = new ConsistencyData();
 
 		this.matchingProcess = new MatchingProcess(originalModel, newModel,
-				metaModel, consistencyData, matchMethods, this);
+				metaModelOriginal, metaModelNew, consistencyData, matchMethods,
+				this);
 
 		/**
 		 * compairson process starts here
@@ -123,7 +129,7 @@ public class CompairsonProcess {
 	 * merge can be conducted so no further methods are called for compairson
 	 */
 	public void startTypeAndNodeIteration() {
-		NodeType rootNodeType = metaModel.getNodeType(
+		NodeType rootNodeType = metaModelOriginal.getNodeType(
 				PSSIFConstants.ROOT_NODE_TYPE_NAME).getOne();
 
 		nodesOriginalModel = rootNodeType.apply(originalModel, true);
@@ -197,7 +203,7 @@ public class CompairsonProcess {
 		NodeType actTypeOriginModel;
 		PSSIFOption<Node> actNodesOriginalModel;
 
-		actTypeOriginModel = metaModel.getNodeType(type).getOne();
+		actTypeOriginModel = metaModelOriginal.getNodeType(type).getOne();
 
 		actNodesOriginalModel = actTypeOriginModel.apply(originalModel,
 				includeSubtypes);

@@ -20,12 +20,12 @@ import de.tum.pssif.core.model.Model;
 import de.tum.pssif.core.model.Node;
 
 /**
+ * This class is responsible for conducting the whole matching process. It
+ * takes two nodes and applies all active matching methods to them. Afterwards
+ * it saves the idpair of the two nodes so they won't be compared again.
+ * 
  * @author Andreas
  * 
- *         This class is responsible for conducting the whole matching process.
- *         It takes two nodes and applies all active matching methods to them.
- *         Afterwards it saves the idpair of the two nodes so they won't be
- *         compared again.
  */
 public class MatchingProcess {
 
@@ -34,8 +34,10 @@ public class MatchingProcess {
 	 *            the model which was first imported
 	 * @param newModel
 	 *            the model which was recently imported
-	 * @param metaModel
-	 *            the metamodel according to the two models
+	 * @param metaModelOriginal
+	 *            the metamodel according to the original model
+	 * @param metaModelNew
+	 *            the metamodel according to the new model
 	 * @param consistencyData
 	 *            the data of the matching process will be stored here and can
 	 *            be accesed both by the Comparsion and the matching process
@@ -44,19 +46,21 @@ public class MatchingProcess {
 	 *            operation
 	 */
 	public MatchingProcess(Model originalModel, Model newModel,
-			Metamodel metaModel, ConsistencyData consistencyData,
-			List<MatchMethod> matchMethods, CompairsonProcess compairsonProcess) {
+			Metamodel metaModelOriginal, Metamodel metaModelNew,
+			ConsistencyData consistencyData, List<MatchMethod> matchMethods,
+			CompairsonProcess compairsonProcess) {
 
 		this.originalModel = originalModel;
 		this.newModel = newModel;
-		this.metaModel = metaModel;
+		this.metaModelOriginal = metaModelOriginal;
+		this.metaModelNew = metaModelNew;
 		this.consistencyData = consistencyData;
 		this.matchMethods = matchMethods;
 		this.normalizer = Normalizer.initialize(matchMethods, this);
 	}
 
 	private Model originalModel, newModel;
-	private Metamodel metaModel;
+	private Metamodel metaModelOriginal, metaModelNew;
 
 	private ConsistencyData consistencyData;
 	private List<MatchMethod> matchMethods;
@@ -84,10 +88,10 @@ public class MatchingProcess {
 	}
 
 	/**
-	 * @return the metaModel
+	 * @return the metaModelOriginal
 	 */
-	public Metamodel getMetaModel() {
-		return metaModel;
+	public Metamodel getMetaModelOriginal() {
+		return metaModelOriginal;
 	}
 
 	/**
@@ -234,11 +238,11 @@ public class MatchingProcess {
 				if (currentMethod.getMatchMethod() == MatchingMethods.CONTEXT_MATCHING) {
 					currentMetricResult = currentMethod.executeMatching(
 							tempNodeOrigin, tempNodeNew, originalModel,
-							newModel, metaModel, actTypeOriginModel,
-							actTypeNewModel, labelOriginNodeNormalized,
+							newModel, metaModelOriginal, metaModelNew,
+							actTypeOriginModel, actTypeNewModel,
+							labelOriginNodeNormalized,
 							labelNewNodeNormalized,
-							tokensOriginNodeNormalizedCompundedUnstemmed,
-							tokensNewNodeNormalizedCompundedUnstemmed);
+							tokensOriginNodeNormalizedCompundedUnstemmed, tokensNewNodeNormalizedCompundedUnstemmed);
 				} else {
 					if ((currentMethod.getMatchMethod() == MatchingMethods.STRING_EDIT_DISTANCE_MATCHING)
 							|| (currentMethod.getMatchMethod() == MatchingMethods.HYPHEN_MATCHING)) {
@@ -260,11 +264,12 @@ public class MatchingProcess {
 						}
 						currentMetricResult = currentMethod.executeMatching(
 								tempNodeOrigin, tempNodeNew, originalModel,
-								newModel, metaModel, actTypeOriginModel,
-								actTypeNewModel, labelOriginNodeNormalized,
+								newModel, metaModelOriginal,
+								metaModelNew, actTypeOriginModel,
+								actTypeNewModel,
+								labelOriginNodeNormalized,
 								labelNewNodeNormalized,
-								tokensOriginNodeNormalizedCompundedUnstemmed,
-								tokensNewNodeNormalizedCompundedUnstemmed);
+								tokensOriginNodeNormalizedCompundedUnstemmed, tokensNewNodeNormalizedCompundedUnstemmed);
 					} else {
 						if ((tokensOriginNodeNormalized == null)
 								|| (tokensNewNodeNormalized == null)) {
@@ -284,11 +289,12 @@ public class MatchingProcess {
 						}
 						currentMetricResult = currentMethod.executeMatching(
 								tempNodeOrigin, tempNodeNew, originalModel,
-								newModel, metaModel, actTypeOriginModel,
-								actTypeNewModel, labelOriginNodeNormalized,
+								newModel, metaModelOriginal,
+								metaModelNew, actTypeOriginModel,
+								actTypeNewModel,
+								labelOriginNodeNormalized,
 								labelNewNodeNormalized,
-								tokensOriginNodeNormalized,
-								tokensNewNodeNormalized);
+								tokensOriginNodeNormalized, tokensNewNodeNormalized);
 					}
 				}
 			}

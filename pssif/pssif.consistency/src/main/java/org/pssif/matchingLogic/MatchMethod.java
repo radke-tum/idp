@@ -53,14 +53,15 @@ public abstract class MatchMethod {
 	 * This methods get's very much information about the currently matched two
 	 * nodes. Though not all matching methods require that much data, some
 	 * methods need quite a lot.
+	 * @param metaModelNew TODO
 	 * 
 	 * @return the result of the applied metric
 	 */
 	public abstract double executeMatching(Node tempNodeOrigin,
 			Node tempNodeNew, Model originalModel, Model newModel,
-			Metamodel metaModel, NodeType actTypeOriginModel,
-			NodeType actTypeNewModel, String labelOrigin, String labelNew,
-			List<Token> tokensOrigin, List<Token> tokensNew);
+			Metamodel metaModelOriginal, Metamodel metaModelNew,
+			NodeType actTypeOriginModel, NodeType actTypeNewModel, String labelOrigin,
+			String labelNew, List<Token> tokensOrigin, List<Token> tokensNew);
 
 	/**
 	 * This method creates a MatchMethod of the given type and with the given

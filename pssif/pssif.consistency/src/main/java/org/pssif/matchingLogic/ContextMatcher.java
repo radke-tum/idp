@@ -1,6 +1,5 @@
 package org.pssif.matchingLogic;
 
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -14,13 +13,9 @@ import org.pssif.consistencyDataStructures.Token;
 import org.pssif.mainProcesses.Methods;
 import org.pssif.textNormalization.Normalizer;
 
-import com.google.common.collect.Sets;
-
 import de.tum.pssif.core.common.PSSIFConstants;
-import de.tum.pssif.core.common.PSSIFOption;
 import de.tum.pssif.core.metamodel.ConnectionMapping;
 import de.tum.pssif.core.metamodel.EdgeType;
-import de.tum.pssif.core.metamodel.JunctionNodeType;
 import de.tum.pssif.core.metamodel.Metamodel;
 import de.tum.pssif.core.metamodel.NodeType;
 import de.tum.pssif.core.metamodel.NodeTypeBase;
@@ -73,7 +68,7 @@ public class ContextMatcher extends MatchMethod {
 			PSSIFCanonicMetamodelCreator.N_MODULE };
 
 	private static final int depth = 1;
-	
+
 	/**
 	 * these two variables store the weight with which the syntactic and
 	 * semantic results of the sorrounding nodes add to the contextual
@@ -88,19 +83,16 @@ public class ContextMatcher extends MatchMethod {
 
 	private Model originalModel;
 	private Model newModel;
-	private Metamodel metaModel;
+	private Metamodel metaModelOriginal;
+	private Metamodel metaModelNew;
 
 	private ComparedNodePair tempNodePair;
 
-	private Set<Edge> edgesOriginIncoming;
-	private Set<Edge> edgesOriginOutgoing;
+	private Set<NodeAndType> sorroundingNodesOrigin;
 
-	private Set<Edge> edgesNewIncoming;
-	private Set<Edge> edgesNewOutgoing;
+	private Set<NodeAndType> sorroundingNodesNew;
 
-	private List<NodeAndType> sorroundingNodesOrigin;
-
-	private List<NodeAndType> sorroundingNodesNew;
+	private NodeTypeBase conjunctionNodeType;
 
 	public ContextMatcher(MatchingMethods matchMethod, boolean isActive,
 			double weigth) {
@@ -131,6 +123,38 @@ public class ContextMatcher extends MatchMethod {
 		this.normalizer = normalizer;
 	}
 
+	@Override
+	public double executeMatching(Node tempNodeOrigin, Node tempNodeNew,
+			Model originalModel, Model newModel, Metamodel metaModelOriginal,
+			Metamodel metaModelNew, NodeType actTypeOriginModel,
+			NodeType actTypeNewModel, String labelOrigin, String labelNew,
+			List<Token> tokensOrigin, List<Token> tokensNew) {
+
+		this.originalModel = originalModel;
+		this.newModel = newModel;
+		this.metaModelOriginal = metaModelOriginal;
+		this.metaModelNew = metaModelNew;
+
+		this.conjunctionNodeType = metaModelOriginal.getBaseNodeType(
+				PSSIFCanonicMetamodelCreator.ENUM_CONJUNCTION).getOne();
+
+		tempNodePair = null;
+
+		sorroundingNodesOrigin = new HashSet<NodeAndType>();
+		sorroundingNodesNew = new HashSet<NodeAndType>();
+
+		/**
+		 * retrieving all from/to nodes connected with the two nodes
+		 */
+		typeIteration(tempNodeOrigin, actTypeOriginModel,
+				sorroundingNodesOrigin, true, true, true);
+		typeIteration(tempNodeNew, actTypeNewModel, sorroundingNodesNew, true,
+				true, false);
+
+		return compareSorroundingNodes(tempNodeOrigin, actTypeOriginModel,
+				tempNodeNew, actTypeNewModel, labelOrigin, labelNew);
+	}
+
 	/**
 	 * this method iterates over every node type of the pssif metamodel and
 	 * calls the method findSorroundingNodes() with the current type. This
@@ -143,90 +167,112 @@ public class ContextMatcher extends MatchMethod {
 	 * findSorroundingNodes(). Then the neighbours of the conjunction are added
 	 * to the node list if the conjunction is a sorrounding node.
 	 * 
-	 * @param tempNodeOrigin
-	 *            the node from the original model which sorrounding nodes shall
-	 *            be found
-	 * @param tempNodeNew
-	 *            the node from the new model which sorrounding nodes shall be
-	 *            found
+	 * @param tempNode
+	 *            the node from which sorrounding nodes shall be found
+	 * @param sorroundingNodes
+	 *            the list with the sorrounding nodes of the given node
+	 * @param incoming
+	 *            TODO
+	 * @param outgoing
+	 *            TODO
+	 * @param isOriginalNode
+	 *            TODO
 	 */
-	public void typeIteration(Node tempNodeOrigin, Node tempNodeNew) {
+	public void typeIteration(Node tempNode, NodeTypeBase typeTempNode,
+			Set<NodeAndType> sorroundingNodes, boolean incoming,
+			boolean outgoing, boolean isOriginalNode) {
 
-		for (int i = 0; i < pssifDevArtifactSubClasses.length; i++) {
-			findSorroundingNodes(pssifDevArtifactSubClasses[i], tempNodeOrigin,
-					tempNodeNew);
-		}
-
-		for (int i = 0; i < pssifSolArtifactSubClasses.length; i++) {
-			findSorroundingNodes(pssifSolArtifactSubClasses[i], tempNodeOrigin,
-					tempNodeNew);
-		}
-
-		findSorroundingNodes(PSSIFCanonicMetamodelCreator.N_DEV_ARTIFACT,
-				tempNodeOrigin, tempNodeNew);
-		findSorroundingNodes(PSSIFCanonicMetamodelCreator.N_SOL_ARTIFACT,
-				tempNodeOrigin, tempNodeNew);
-		findSorroundingNodes(PSSIFConstants.ROOT_NODE_TYPE_NAME,
-				tempNodeOrigin, tempNodeNew);
-
-		// findSorroundingNodes(PSSIFCanonicMetamodelCreator.N_CONJUNCTION,
-		// tempNodeOrigin, tempNodeNew);
+		findSorroundingNodes(typeTempNode, tempNode, sorroundingNodes,
+				incoming, outgoing, isOriginalNode);
 	}
 
-	@Override
-	public double executeMatching(Node tempNodeOrigin, Node tempNodeNew,
-			Model originalModel, Model newModel, Metamodel metaModel,
-			NodeType actTypeOriginModel, NodeType actTypeNewModel,
-			String labelOrigin, String labelNew, List<Token> tokensOrigin,
-			List<Token> tokensNew) {
+	private void findSorroundingNodes(NodeTypeBase type, Node tempNode,
+			Set<NodeAndType> sorroundingNodes, boolean incoming,
+			boolean outgoing, boolean isOriginalNode) {
 
-		this.originalModel = originalModel;
-		this.newModel = newModel;
-		this.metaModel = metaModel;
+		if (incoming) {
+			if (isOriginalNode) {
+				addIncomingNeighourhood(metaModelOriginal, type, tempNode,
+						sorroundingNodes, isOriginalNode);
+			} else {
+				addIncomingNeighourhood(metaModelNew, type, tempNode,
+						sorroundingNodes, isOriginalNode);
+			}
+		}
+		if (outgoing) {
+			if (isOriginalNode) {
+				addOutgoingNeighourhood(metaModelOriginal, type, tempNode,
+						sorroundingNodes, isOriginalNode);
+			} else {
+				addOutgoingNeighourhood(metaModelNew, type, tempNode,
+						sorroundingNodes, isOriginalNode);
+			}
+		}
+	}
 
-		tempNodePair = null;
+	private List<NodeAndType> convertSetToLinkedList(Set<Node> setToConvert,
+			NodeTypeBase actNodeType) {
+		List<NodeAndType> result = new LinkedList<NodeAndType>();
 
-		sorroundingNodesOrigin = new LinkedList<NodeAndType>();
-		sorroundingNodesNew = new LinkedList<NodeAndType>();
-
-		edgesOriginIncoming = new HashSet<Edge>();
-		edgesOriginOutgoing = new HashSet<Edge>();
-		edgesNewIncoming = new HashSet<Edge>();
-		edgesNewOutgoing = new HashSet<Edge>();
-
-		Collection<EdgeType> edgeTypes = metaModel.getEdgeTypes();
-
-		/**
-		 * getting all incoming/outgoing edges of the two nodes
-		 */
-
-		for (EdgeType actEdgeTyp : edgeTypes) {
-			PSSIFOption<Edge> edgesOriginOptionIncoming = actEdgeTyp
-					.applyIncoming(tempNodeOrigin, false);
-			PSSIFOption<Edge> edgesOriginOptionOutgoing = actEdgeTyp
-					.applyOutgoing(tempNodeOrigin, false);
-
-			PSSIFOption<Edge> edgesNewOptionIncoming = actEdgeTyp
-					.applyIncoming(tempNodeNew, false);
-			PSSIFOption<Edge> edgesNewOptionOutgoing = actEdgeTyp
-					.applyOutgoing(tempNodeNew, false);
-
-			initializeEdgeSets(edgesOriginOptionIncoming,
-					edgesOriginOptionOutgoing, edgesNewOptionIncoming,
-					edgesNewOptionOutgoing);
-
+		for (Node tempNode : setToConvert) {
+			result.add(new NodeAndType(tempNode, actNodeType));
 		}
 
-		/**
-		 * retrieving all from/to nodes connected with the two nodes
-		 */
+		return result;
+	}
 
-		typeIteration(tempNodeOrigin, tempNodeNew);
+	private void addIncomingNeighourhood(Metamodel metamodel,
+			NodeTypeBase nodeType, Node nodeOfInterest,
+			Set<NodeAndType> sorroundingNodes, boolean isOriginalNode) {
 
-		// startTypeIteration(tempNodeOrigin, tempNodeNew);
+		for (EdgeType edgeType : metamodel.getEdgeTypes()) {
+			for (ConnectionMapping incomingMapping : edgeType
+					.getIncomingMappings(nodeType)) {
+				for (Edge incomingEdge : incomingMapping
+						.applyIncoming(nodeOfInterest)) {
+					if (incomingEdge.apply(new ReadFromNodesOperation()) != null) {
+						if (incomingMapping.getFrom() == conjunctionNodeType) {
+							typeIteration(
+									incomingEdge
+											.apply(new ReadFromNodesOperation()),
+									incomingMapping.getFrom(),
+									sorroundingNodes, true, false,
+									isOriginalNode);
+						} else {
+							sorroundingNodes.add(new NodeAndType(incomingEdge
+									.apply(new ReadFromNodesOperation()),
+									incomingMapping.getFrom()));
+						}
+					}
+				}
+			}
+		}
+	}
 
-		return compareSorroundingNodes(tempNodeOrigin, actTypeOriginModel,
-				tempNodeNew, actTypeNewModel, labelOrigin, labelNew);
+	private void addOutgoingNeighourhood(Metamodel metamodel,
+			NodeTypeBase nodeType, Node nodeOfInterest,
+			Set<NodeAndType> sorroundingNodes, boolean isOriginalNode) {
+
+		for (EdgeType edgeType : metamodel.getEdgeTypes()) {
+			for (ConnectionMapping outgoingMapping : edgeType
+					.getOutgoingMappings(nodeType)) {
+				for (Edge outgoingEdge : outgoingMapping
+						.applyOutgoing(nodeOfInterest)) {
+
+					if (outgoingMapping.getTo() == conjunctionNodeType) {
+						typeIteration(
+								outgoingEdge.apply(new ReadToNodesOperation()),
+								outgoingMapping.getTo(), sorroundingNodes,
+								false, true, isOriginalNode);
+					} else {
+						sorroundingNodes.add(new NodeAndType(outgoingEdge
+								.apply(new ReadToNodesOperation()),
+								outgoingMapping.getFrom()));
+					}
+
+				}
+			}
+		}
 	}
 
 	/**
@@ -250,8 +296,23 @@ public class ContextMatcher extends MatchMethod {
 		double similaritySum = 0;
 		double result = 0;
 
+		System.out.println("Vergleich zwischen (original): "
+				+ Methods.findName((NodeType) actTypeOriginModel,
+						tempNodeOrigin) + " dem neuen Knoten: "
+				+ Methods.findName((NodeType) actTypeNewModel, tempNodeNew));
+
 		for (NodeAndType tempNodeSorroundingOrigin : sorroundingNodesOrigin) {
 			for (NodeAndType tempNodeSorroundingNew : sorroundingNodesNew) {
+
+				System.out.println("-------Kontext zwischen (original): "
+						+ Methods.findName(
+								(NodeType) tempNodeSorroundingOrigin.getType(),
+								tempNodeSorroundingOrigin.getNode())
+						+ " dem neuen Kontext: "
+						+ Methods.findName(
+								(NodeType) tempNodeSorroundingNew.getType(),
+								tempNodeSorroundingNew.getNode()));
+
 				if (nodesAlreadyCompared(tempNodeSorroundingOrigin.getNode(),
 						tempNodeSorroundingNew.getNode())) {
 					similaritySum += calculateWeightedSimilarities();
@@ -264,9 +325,8 @@ public class ContextMatcher extends MatchMethod {
 				}
 			}
 		}
-		//TODO metriken mit Beschreibung in BA vergleichen
-		double denominator = Math.max(sorroundingNodesOrigin.size(),sorroundingNodesNew
-				.size());
+		double denominator = Math.max(sorroundingNodesOrigin.size(),
+				sorroundingNodesNew.size());
 
 		if (denominator != 0) {
 			result = (similaritySum / denominator);
@@ -362,21 +422,23 @@ public class ContextMatcher extends MatchMethod {
 
 					currentMetricResult = currentMethod.executeMatching(
 							tempNodeOrigin, tempNodeNew, originalModel,
-							newModel, metaModel, actTypeOriginModel,
-							actTypeNewModel, labelOriginNodeNormalized,
-							labelNewNodeNormalized,
+							newModel, metaModelOriginal, metaModelNew,
+							actTypeOriginModel, actTypeNewModel,
+							labelOriginNodeNormalized, labelNewNodeNormalized,
 							tokensOriginNodeNormalizedCompundedUnstemmed,
 							tokensNewNodeNormalizedCompundedUnstemmed);
 				} else {
 
-					currentMetricResult = currentMethod.executeMatching(
-							tempNodeOrigin, tempNodeNew, originalModel,
-							newModel, metaModel, actTypeOriginModel,
-							actTypeNewModel, labelOriginNodeNormalized,
-							labelNewNodeNormalized, tokensOriginNodeNormalized,
-							tokensNewNodeNormalized);
+					currentMetricResult = currentMethod
+							.executeMatching(tempNodeOrigin, tempNodeNew,
+									originalModel, newModel, metaModelOriginal,
+									metaModelNew, actTypeOriginModel,
+									actTypeNewModel, labelOriginNodeNormalized,
+									labelNewNodeNormalized,
+									tokensOriginNodeNormalized,
+									tokensNewNodeNormalized);
 				}
-				
+
 				switch (currentMethod.getMatchMethod()) {
 				case EXACT_STRING_MATCHING:
 				case DEPTH_MATCHING:
@@ -390,8 +452,8 @@ public class ContextMatcher extends MatchMethod {
 				case ATTRIBUTE_MATCHING:
 					result += ((currentMetricResult * currentMethod.getWeigth()) * semanticWeight);
 					break;
+				}
 			}
-		}
 		}
 
 		return result;
@@ -403,12 +465,13 @@ public class ContextMatcher extends MatchMethod {
 	 */
 	private double calculateWeightedSimilarities() {
 		double result = 0;
-		
-		if(normalizer.isSyntacticMetricActive() && normalizer.isSemanticMetricActive()){
+
+		if (normalizer.isSyntacticMetricActive()
+				&& normalizer.isSemanticMetricActive()) {
 			result += (getWeightedSyntacticSimilarity() * snytacticWeight);
 			result += (getWeightedSemanticSimilarity() * semanticWeight);
 		} else {
-			if(normalizer.isSyntacticMetricActive()){
+			if (normalizer.isSyntacticMetricActive()) {
 				result += getWeightedSyntacticSimilarity();
 			} else {
 				result += getWeightedSemanticSimilarity();
@@ -416,279 +479,6 @@ public class ContextMatcher extends MatchMethod {
 		}
 
 		return result;
-	}
-
-	/**
-	 * This method get's all nodes from the given type of the new and the
-	 * original model. It then calls a method to compare if the found nodes are
-	 * relevant for the found edges. (the found Nodes are compared with to/from
-	 * of the edges)
-	 * 
-	 * @param type
-	 *            the type of which nodes are searched
-	 * @param nodeOrigin
-	 *            the node of the original model which sorrounding nodes shall
-	 *            be found
-	 * @param nodeNew
-	 *            the node of the new model which sorrounding nodes shall be
-	 *            found
-	 */
-	private void findSorroundingNodes(String type, Node nodeOrigin, Node nodeNew) {
-		/**
-		 * find all nodes sorrounding the original node here
-		 */
-		NodeTypeBase actType;
-
-		PSSIFOption<Node> actNodesOriginalModel = null;
-
-		if (metaModel.getNodeType(type).isOne()) {
-			actType = metaModel.getNodeType(type).getOne();
-		} else {
-			actType = metaModel.getJunctionNodeType(type).getOne();
-		}
-
-		actNodesOriginalModel = actType.apply(originalModel, false);
-
-		if (nodeOrigin != null) {
-			if (actNodesOriginalModel.isNone()) {
-			} else {
-				if (actNodesOriginalModel.isOne()) {
-					Node tempNodeOrigin = actNodesOriginalModel.getOne();
-
-					checkFoundNodeAgainstNodeOrigin(tempNodeOrigin, actType,
-							nodeOrigin);
-
-				} else {
-
-					Set<Node> tempNodesOrigin = actNodesOriginalModel.getMany();
-
-					Iterator<Node> tempNodeOrigin = tempNodesOrigin.iterator();
-
-					while (tempNodeOrigin.hasNext()) {
-
-						checkFoundNodeAgainstNodeOrigin(tempNodeOrigin.next(),
-								actType, nodeOrigin);
-					}
-				}
-			}
-		}
-
-		if (nodeNew != null) {
-			PSSIFOption<Node> actNodesNewModel = actType.apply(newModel, false);
-
-			if (actNodesNewModel.isNone()) {
-			} else {
-				if (actNodesNewModel.isOne()) {
-					Node tempNodeNew = actNodesNewModel.getOne();
-
-					checkFoundNodeAgainstNodeNew(tempNodeNew, actType, nodeNew);
-
-				} else {
-
-					Set<Node> tempNodesNew = actNodesNewModel.getMany();
-
-					Iterator<Node> tempNodeNew = tempNodesNew.iterator();
-
-					while (tempNodeNew.hasNext()) {
-
-						checkFoundNodeAgainstNodeNew(tempNodeNew.next(),
-								actType, nodeNew);
-					}
-				}
-			}
-		}
-	}
-
-	private void addEdgesIncomingToSet(Node tempNode, Set<Edge> setToAddTo) {
-		Collection<EdgeType> edgeTypes = metaModel.getEdgeTypes();
-
-		for (EdgeType actType : edgeTypes) {
-			Set<Edge> result = new HashSet<Edge>();
-			findEdges(actType.applyIncoming(tempNode, true), result);
-			if (result != null) {
-				setToAddTo.addAll(result);
-			}
-		}
-	}
-
-	private void addEdgesOutgoingToSet(Node tempNode, Set<Edge> setToAddTo) {
-		Collection<EdgeType> edgeTypes = metaModel.getEdgeTypes();
-
-		for (EdgeType actType : edgeTypes) {
-			Set<Edge> result = new HashSet<Edge>();
-			findEdges(actType.applyOutgoing(tempNode, true), result);
-			if (result != null) {
-				setToAddTo.addAll(result);
-			}
-		}
-	}
-
-	/**
-	 * This method compares the given node with the from/to nodes of every
-	 * incoming/outgoing edge. If a match is found, the node and its type are
-	 * added to the relevant nodes. If the given node is of type concjunction
-	 * it's sorrounding nodes are looked up until they are no conjunctions but
-	 * nodes.
-	 * 
-	 * @param tempNodeOrigin
-	 *            the given node to compare with to/from of edges
-	 * @param actNodeType
-	 *            the type of the given node
-	 * @param nodeOrigin
-	 *            the node for which sorrounding nodes shall be found
-	 */
-	private void checkFoundNodeAgainstNodeOrigin(Node tempNodeOrigin,
-			NodeTypeBase actNodeType, Node nodeOrigin) {
-		Node tempFrom, tempTo;
-		JunctionNodeType junctionNodeType = metaModel.getJunctionNodeType(
-				PSSIFCanonicMetamodelCreator.N_CONJUNCTION).getOne();
-
-		if (tempNodeOrigin.equals(nodeOrigin)) {
-			// TODO does this prevent circular behavior?
-		} else {
-
-			for (Edge edgeIn : edgesOriginIncoming) {
-				tempFrom = edgeIn.apply(new ReadFromNodesOperation());
-				tempTo = edgeIn.apply(new ReadToNodesOperation());
-
-				if (junctionNodeType.equals(actNodeType)) {
-					addEdgesIncomingToSet(tempNodeOrigin, edgesOriginIncoming);
-					typeIteration(tempNodeOrigin, null);
-				} else {
-
-					if (tempTo.equals(nodeOrigin)) {
-
-						if (tempFrom.equals(tempNodeOrigin)) {
-							sorroundingNodesOrigin.add(new NodeAndType(
-									tempNodeOrigin, actNodeType));
-						}
-					}
-				}
-			}
-
-			for (Edge edgeOut : edgesOriginOutgoing) {
-				tempFrom = edgeOut.apply(new ReadFromNodesOperation());
-				tempTo = edgeOut.apply(new ReadToNodesOperation());
-
-				if (junctionNodeType.equals(actNodeType)) {
-					addEdgesIncomingToSet(tempNodeOrigin, edgesOriginOutgoing);
-					typeIteration(tempNodeOrigin, null);
-				} else {
-
-					if (tempFrom.equals(nodeOrigin)) {
-
-						if (tempTo.equals(tempNodeOrigin)) {
-							sorroundingNodesOrigin.add(new NodeAndType(
-									tempNodeOrigin, actNodeType));
-						}
-					}
-				}
-			}
-		}
-	}
-
-	/**
-	 * This method compares the given node with the from/to nodes of every
-	 * incoming/outgoing edge. If a match is found, the node and its type are
-	 * added to the relevant nodes. If the given node is of type concjunction
-	 * it's sorrounding nodes are looked up until they are no conjunctions but
-	 * nodes.
-	 * 
-	 * @param tempNodeNew
-	 *            the given node to compare with to/from of edges
-	 * @param actType
-	 *            the type of the given node
-	 * @param nodeNew
-	 *            the node for which sorrounding nodes shall be found
-	 */
-	private void checkFoundNodeAgainstNodeNew(Node tempNodeNew,
-			NodeTypeBase actType, Node nodeNew) {
-
-		Node tempFrom, tempTo;
-		JunctionNodeType junctionNodeType = metaModel.getJunctionNodeType(
-				PSSIFCanonicMetamodelCreator.N_CONJUNCTION).getOne();
-
-		if (tempNodeNew.equals(nodeNew)) {
-			// TODO does this prevent circular behavior?
-		} else {
-
-			for (Edge edgeIn : edgesNewIncoming) {
-				tempFrom = edgeIn.apply(new ReadFromNodesOperation());
-				tempTo = edgeIn.apply(new ReadToNodesOperation());
-
-				if (junctionNodeType.equals(actType)) {
-					addEdgesIncomingToSet(tempNodeNew, edgesNewIncoming);
-					typeIteration(null, tempNodeNew);
-				} else {
-					if (tempTo.equals(nodeNew)) {
-
-						if (tempFrom.equals(tempNodeNew)) {
-							sorroundingNodesNew.add(new NodeAndType(
-									tempNodeNew, actType));
-						}
-					}
-				}
-			}
-
-			for (Edge edgeOut : edgesNewOutgoing) {
-				tempFrom = edgeOut.apply(new ReadFromNodesOperation());
-				tempTo = edgeOut.apply(new ReadToNodesOperation());
-
-				if (junctionNodeType.equals(actType)) {
-					addEdgesIncomingToSet(tempNodeNew, edgesNewOutgoing);
-					typeIteration(null, tempNodeNew);
-				} else {
-					if (tempFrom.equals(nodeNew)) {
-
-						if (tempTo.equals(tempNodeNew)) {
-							sorroundingNodesNew.add(new NodeAndType(
-									tempNodeNew, actType));
-						}
-					}
-				}
-			}
-		}
-	}
-
-	/**
-	 * @param edgesOriginOptionIncoming
-	 * @param edgesOriginOptionOutgoing
-	 * @param edgesNewOptionIncoming
-	 * @param edgesNewOptionOutgoing
-	 */
-	private void initializeEdgeSets(
-			PSSIFOption<Edge> edgesOriginOptionIncoming,
-			PSSIFOption<Edge> edgesOriginOptionOutgoing,
-			PSSIFOption<Edge> edgesNewOptionIncoming,
-			PSSIFOption<Edge> edgesNewOptionOutgoing) {
-		findEdges(edgesOriginOptionIncoming, edgesOriginIncoming);
-		findEdges(edgesOriginOptionOutgoing, edgesOriginOutgoing);
-		findEdges(edgesNewOptionIncoming, edgesNewIncoming);
-		findEdges(edgesNewOptionOutgoing, edgesNewOutgoing);
-	}
-
-	/**
-	 * This method get's real edges from a PSSIFOption.
-	 * 
-	 * @param edgesOriginOption
-	 *            option to convert
-	 * @param edgesNewOption
-	 *            option to convert
-	 * @param edgesOrigin
-	 *            saving place
-	 * @param edgesNew
-	 *            saving place
-	 */
-	private void findEdges(PSSIFOption<Edge> edgesOption, Set<Edge> edges) {
-		if (edgesOption.isNone()) {
-			edges = null;
-		} else {
-			if (edgesOption.isOne()) {
-				edges.add(edgesOption.getOne());
-			} else {
-				edges.addAll(edgesOption.getMany());
-			}
-		}
 	}
 
 	/**
@@ -788,71 +578,4 @@ public class ContextMatcher extends MatchMethod {
 
 		return result;
 	}
-	/*
-	 * private void startTypeIteration(Node tempNodeOrigin, Node tempNodeNew) {
-	 * 
-	 * for (NodeType type : metaModel.getNodeTypes()) {
-	 * sorroundingNodesOrigin.addAll(fetchNeighourhood(type, tempNodeOrigin,
-	 * true, true)); sorroundingNodesNew.addAll(fetchNeighourhood(type,
-	 * tempNodeNew, true, true)); }
-	 * 
-	 * NodeTypeBase actType = metaModel.getBaseNodeType(
-	 * PSSIFCanonicMetamodelCreator.N_CONJUNCTION).getOne();
-	 * 
-	 * sorroundingNodesOrigin.addAll(fetchNeighourhood(actType, tempNodeOrigin,
-	 * true, true)); sorroundingNodesNew.addAll(fetchNeighourhood(actType,
-	 * tempNodeNew, true, true));
-	 * 
-	 * }
-	 * 
-	 * private Set<NodeAndType> fetchNeighourhood(NodeTypeBase nodeType, Node
-	 * nodeOfInterest, boolean incomings, boolean outgoings) {
-	 * 
-	 * // put both together Set<NodeAndType> allNeighbours = Sets.newHashSet();
-	 * 
-	 * if (incomings) { allNeighbours.addAll(fetchIncomingNeighourhood(nodeType,
-	 * nodeOfInterest)); } if (outgoings) {
-	 * allNeighbours.addAll(fetchOutgoingNeighourhood(nodeType,
-	 * nodeOfInterest)); }
-	 * 
-	 * return allNeighbours; }
-	 * 
-	 * private Set<NodeAndType> fetchIncomingNeighourhood(NodeTypeBase nodeType,
-	 * Node nodeOfInterest) {
-	 * 
-	 * NodeAndType temp; NodeTypeBase conjunctionType =
-	 * metaModel.getBaseNodeType(
-	 * PSSIFCanonicMetamodelCreator.N_CONJUNCTION).getOne();
-	 * 
-	 * // neighbours connected over incoming edges Set<NodeAndType>
-	 * incomingNeighbourhood = Sets.newHashSet(); for (EdgeType edgeType :
-	 * metaModel.getEdgeTypes()) { for (ConnectionMapping incomingMapping :
-	 * edgeType .getIncomingMappings(nodeType)) { for (Edge incomingEdge :
-	 * incomingMapping .applyIncoming(nodeOfInterest)) {
-	 * 
-	 * if (nodeType.equals(conjunctionType)) {
-	 * 
-	 * } else { temp = new NodeAndType( incomingMapping.applyFrom(incomingEdge),
-	 * nodeType); incomingNeighbourhood.add(temp); } } } }
-	 * 
-	 * return incomingNeighbourhood; }
-	 * 
-	 * private Set<NodeAndType> fetchOutgoingNeighourhood(NodeTypeBase nodeType,
-	 * Node nodeOfInterest) {
-	 * 
-	 * NodeAndType temp; NodeTypeBase conjunctionType =
-	 * metaModel.getBaseNodeType(
-	 * PSSIFCanonicMetamodelCreator.N_CONJUNCTION).getOne();
-	 * 
-	 * // neighbours connected over outgoing edges Set<NodeAndType>
-	 * outgoingNeighbourhood = Sets.newHashSet(); for (EdgeType edgeType :
-	 * metaModel.getEdgeTypes()) { for (ConnectionMapping outgoingMapping :
-	 * edgeType .getOutgoingMappings(nodeType)) { for (Edge outgoingEdge :
-	 * outgoingMapping .applyOutgoing(nodeOfInterest)) { abfrage einbaun ob type
-	 * gleich conjunction type temp = new NodeAndType(
-	 * outgoingMapping.applyTo(outgoingEdge), nodeType);
-	 * outgoingNeighbourhood.add(temp); } } }
-	 * 
-	 * return outgoingNeighbourhood; }
-	 */
 }

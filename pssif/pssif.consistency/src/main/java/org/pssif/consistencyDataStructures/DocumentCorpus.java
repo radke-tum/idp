@@ -55,7 +55,7 @@ public class DocumentCorpus {
 	public void iterateOverAllNodes() {
 		Model originalModel = matchingProcess.getOriginalModel();
 		Model newModel = matchingProcess.getNewModel();
-		Metamodel metaModel = matchingProcess.getMetaModel();
+		Metamodel metaModel = matchingProcess.getMetaModelOriginal();
 
 		addNodes(PSSIFConstants.ROOT_NODE_TYPE_NAME, originalModel, metaModel);
 

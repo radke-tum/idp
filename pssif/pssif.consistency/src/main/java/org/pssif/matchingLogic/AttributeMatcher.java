@@ -47,10 +47,10 @@ public class AttributeMatcher extends MatchMethod {
 
 	@Override
 	public double executeMatching(Node tempNodeOrigin, Node tempNodeNew,
-			Model originalModel, Model newModel, Metamodel metaModel,
-			NodeType actTypeOriginModel, NodeType actTypeNewModel,
-			String labelOrigin, String labelNew, List<Token> tokensOrigin,
-			List<Token> tokensNew) {
+			Model originalModel, Model newModel, Metamodel metaModelOriginal,
+			Metamodel metaModelNew, NodeType actTypeOriginModel,
+			NodeType actTypeNewModel, String labelOrigin, String labelNew,
+			List<Token> tokensOrigin, List<Token> tokensNew) {
 		double result = 0;
 
 		result = iterateOverAttributeTypes(tempNodeOrigin, actTypeOriginModel,
