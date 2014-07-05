@@ -98,7 +98,6 @@ public class ModelBuilder {
 				List<MergedNodePair> tracedNodes = consistencyData.getTracedList();
 						
 				
-
 				ModelMerger merger = new ModelMerger();
 				Model mergedModel = merger.mergeModels(activeModel.getModel(),
 						Pmodel, Pmeta);
@@ -106,6 +105,12 @@ public class ModelBuilder {
 				MyModelContainer newModel = new MyModelContainer(mergedModel,
 						Pmeta);
 				activeModel = newModel;
+				
+				
+				
+				mergeNodes(mergedNodes);
+				
+				setTracedLinks(tracedNodes);
 
 			} else {
 				List<ComparedNodePair> matchedList = UserGuidingConsistency
@@ -121,37 +126,119 @@ public class ModelBuilder {
 
 				activeModel = newModel;
 
-				for (ComparedNodePair comparedNodePair : matchedList) {
+				setEqualsLinks(matchedList);
+			}
 
-					MyEdgeType edgeType = new MyEdgeType(metaModel.getEdgeType(
-							PSSIFCanonicMetamodelCreator.E_EQUALS).getOne(), 4);
+		}
+	}
 
-					/**
-					 * searches for the nodes (in the new active model) which
-					 * shall be linked and adds new edges between them.
-					 */
-					for (MyNode actNode : activeModel.getAllNodes()) {
-						if (Methods
-								.findGlobalID(actNode.getNode(),
-										actNode.getNodeType().getType())
+	private static void setTracedLinks(List<MergedNodePair> tracedNodes) {
+		for (MergedNodePair tracedPair : tracedNodes) {
+
+			MyEdgeType edgeType = new MyEdgeType(metaModel.getEdgeType(
+					PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_CHRONOLOGICAL_EVOLVES_TO).getOne(), 6);
+
+			/**
+			 * searches for the nodes (in the new active model) which
+			 * shall be linked and adds new edges between them.
+			 */
+			for (MyNode actNode : activeModel.getAllNodes()) {
+				if (Methods
+						.findGlobalID(actNode.getNode(),
+								actNode.getNodeType().getType())
+						.equals(Methods.findGlobalID(
+								tracedPair.getNodeOriginalModel(),
+								tracedPair.getTypeOriginModel()))) {
+					for (MyNode actNewNode : activeModel.getAllNodes()) {
+						if (Methods.findGlobalID(actNewNode.getNode(),
+								actNewNode.getNodeType().getType())
 								.equals(Methods.findGlobalID(
-										comparedNodePair.getNodeOriginalModel(),
-										comparedNodePair.getTypeOriginModel()))) {
-							for (MyNode actNewNode : activeModel.getAllNodes()) {
-								if (Methods.findGlobalID(actNewNode.getNode(),
-										actNewNode.getNodeType().getType())
-										.equals(Methods.findGlobalID(
-												comparedNodePair
-														.getNodeNewModel(),
-												comparedNodePair
-														.getTypeNewModel()))) {
-									addNewEdgeGUI(actNode, actNewNode,
-											edgeType, false);
-								}
-							}
+										tracedPair
+												.getNodeNewModel(),
+										tracedPair
+												.getTypeNewModel()))) {
+							addNewEdgeGUI(actNode, actNewNode,
+									edgeType, false);
 						}
 					}
+				}
+			}
 
+		}
+		
+	}
+
+	private static void mergeNodes(List<MergedNodePair> mergedNodes) {
+		for (MergedNodePair mergedPair : mergedNodes) {
+
+			/**
+			 * searches for the nodes (in the new active model) which
+			 * shall be linked and adds new edges between them.
+			 */
+			for (MyNode actNode : activeModel.getAllNodes()) {
+				if (Methods
+						.findGlobalID(actNode.getNode(),
+								actNode.getNodeType().getType())
+						.equals(Methods.findGlobalID(
+								mergedPair.getNodeOriginalModel(),
+								mergedPair.getTypeOriginModel()))) {
+					for (MyNode actNewNode : activeModel.getAllNodes()) {
+						if (Methods.findGlobalID(actNewNode.getNode(),
+								actNewNode.getNodeType().getType())
+								.equals(Methods.findGlobalID(
+										mergedPair
+												.getNodeNewModel(),
+										mergedPair
+												.getTypeNewModel()))) {
+							replaceOldNode(actNode.getNode(), actNewNode.getNode(), actNode.getNodeType().getType(), actNewNode.getNodeType().getType());
+						}
+					}
+				}
+			}
+
+		}		
+	}
+
+	private static void replaceOldNode(Node tempNodeOrigin, Node tempNodeNew, NodeType typeTempNodeOrigin,
+			NodeType typeTempNodeNew) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/**
+	 * TODO
+	 * @param matchedList
+	 * @author Andreas
+	 */
+	private static void setEqualsLinks(List<ComparedNodePair> matchedList) {
+		for (ComparedNodePair comparedNodePair : matchedList) {
+
+			MyEdgeType edgeType = new MyEdgeType(metaModel.getEdgeType(
+					PSSIFCanonicMetamodelCreator.E_EQUALS).getOne(), 4);
+
+			/**
+			 * searches for the nodes (in the new active model) which
+			 * shall be linked and adds new edges between them.
+			 */
+			for (MyNode actNode : activeModel.getAllNodes()) {
+				if (Methods
+						.findGlobalID(actNode.getNode(),
+								actNode.getNodeType().getType())
+						.equals(Methods.findGlobalID(
+								comparedNodePair.getNodeOriginalModel(),
+								comparedNodePair.getTypeOriginModel()))) {
+					for (MyNode actNewNode : activeModel.getAllNodes()) {
+						if (Methods.findGlobalID(actNewNode.getNode(),
+								actNewNode.getNodeType().getType())
+								.equals(Methods.findGlobalID(
+										comparedNodePair
+												.getNodeNewModel(),
+										comparedNodePair
+												.getTypeNewModel()))) {
+							addNewEdgeGUI(actNode, actNewNode,
+									edgeType, false);
+						}
+					}
 				}
 			}
 

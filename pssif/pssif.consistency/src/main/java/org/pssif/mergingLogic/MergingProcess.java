@@ -1,6 +1,7 @@
 package org.pssif.mergingLogic;
 
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -93,6 +94,7 @@ public class MergingProcess {
 	 * TODO
 	 */
 	private void initializeMatchMethods() {
+		matchMethods = new LinkedList<MatchMethod>();
 
 		exactMatcher = MatchMethod.createMatchMethodObject(
 				MatchingMethods.EXACT_STRING_MATCHING, true, 1.0);

@@ -265,7 +265,10 @@ public final class PSSIFCanonicMetamodelCreator {
      */
     MutableEdgeType equals = metamodel.createEdgeType(E_EQUALS);
     equals.createMapping(node(PSSIFConstants.ROOT_NODE_TYPE_NAME, metamodel), node(PSSIFConstants.ROOT_NODE_TYPE_NAME, metamodel));
-    /**
+    
+    MutableEdgeType traced = metamodel.createEdgeType(E_RELATIONSHIP_CHRONOLOGICAL_EVOLVES_TO);
+    traced.createMapping(node(PSSIFConstants.ROOT_NODE_TYPE_NAME, metamodel), node(PSSIFConstants.ROOT_NODE_TYPE_NAME, metamodel));
+     /**
      * until here
      */
 
@@ -297,8 +300,14 @@ public final class PSSIFCanonicMetamodelCreator {
     EdgeType chronologicalRelationship = metamodel.createEdgeType(E_RELATIONSHIP_CHRONOLOGICAL);
     chronologicalRelationship.inherit(relationship);
 
-    EdgeType evolvesToRelationship = metamodel.createEdgeType(E_RELATIONSHIP_CHRONOLOGICAL_EVOLVES_TO);
-    evolvesToRelationship.inherit(chronologicalRelationship);
+    /**
+     * Andreas
+     */
+//    EdgeType evolvesToRelationship = metamodel.createEdgeType(E_RELATIONSHIP_CHRONOLOGICAL_EVOLVES_TO);
+//    evolvesToRelationship.inherit(chronologicalRelationship);
+    /**
+     * until here
+     */
 
     EdgeType replacesRelationship = metamodel.createEdgeType(E_RELATIONSHIP_CHRONOLOGICAL_REPLACES);
     replacesRelationship.inherit(chronologicalRelationship);

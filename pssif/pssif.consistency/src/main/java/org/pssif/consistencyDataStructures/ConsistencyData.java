@@ -37,6 +37,8 @@ public class ConsistencyData {
 		this.comparedLabelPairs = new LinkedList<ComparedLabelPair>();
 		this.comparedTokensPairs = new LinkedList<ComparedNormalizedTokensPair>();
 		this.comparedNodePairs = new LinkedList<ComparedNodePair>();
+		
+		this.mergedNodePairs = new LinkedList<MergedNodePair>();
 	}
 	
 	public static ConsistencyData getInstance(){
