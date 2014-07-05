@@ -6,10 +6,23 @@ import org.pssif.comparedDataStructures.ComparedNormalizedTokensPair;
 import de.tum.pssif.core.metamodel.NodeType;
 import de.tum.pssif.core.model.Node;
 
+/**
+ * this class stores two nodes. one from the first imported model and the other
+ * one from the recent imported model. In addition to this this class stores the
+ * match result of the label compairson of the two nodes and the result of two
+ * the attributeMatchResult. In addition it's stored whether the two nodes shall
+ * be merged or linked as a trace.
+ * 
+ * @author Andreas
+ * 
+ */
 public class MergedNodePair {
 
+	/**
+	 * the node from the first and recent imported model
+	 */
 	private Node nodeOriginalModel, nodeNewModel;
-	
+
 	/**
 	 * the type of the node from the node nodeOriginalModel
 	 */
@@ -20,15 +33,26 @@ public class MergedNodePair {
 	 */
 	private NodeType typeNewModel;
 
-	private ComparedLabelPair labelComparison;	
-	
+	/**
+	 * the result of the label compairson
+	 */
+	private ComparedLabelPair labelComparison;
+
 	/**
 	 * the result of the matching between two elements based on their attribute
 	 * values
 	 */
 	private double attributeMatchResult;
+
+	/**
+	 * a bool saying whether the two nodes shall be linked by a tracelink
+	 */
+	private boolean traceLink;
 	
-	private boolean traceLink,merge;
+	/**
+	 * a bool saying whether the two nodes shall be merged into one
+	 */
+	private boolean merge;
 
 	/**
 	 * @param nodeOriginalModel
@@ -60,7 +84,8 @@ public class MergedNodePair {
 	}
 
 	/**
-	 * @param nodeOriginalModel the nodeOriginalModel to set
+	 * @param nodeOriginalModel
+	 *            the nodeOriginalModel to set
 	 */
 	public void setNodeOriginalModel(Node nodeOriginalModel) {
 		this.nodeOriginalModel = nodeOriginalModel;
@@ -74,7 +99,8 @@ public class MergedNodePair {
 	}
 
 	/**
-	 * @param nodeNewModel the nodeNewModel to set
+	 * @param nodeNewModel
+	 *            the nodeNewModel to set
 	 */
 	public void setNodeNewModel(Node nodeNewModel) {
 		this.nodeNewModel = nodeNewModel;
@@ -88,7 +114,8 @@ public class MergedNodePair {
 	}
 
 	/**
-	 * @param typeOriginModel the typeOriginModel to set
+	 * @param typeOriginModel
+	 *            the typeOriginModel to set
 	 */
 	public void setTypeOriginModel(NodeType typeOriginModel) {
 		this.typeOriginModel = typeOriginModel;
@@ -102,7 +129,8 @@ public class MergedNodePair {
 	}
 
 	/**
-	 * @param typeNewModel the typeNewModel to set
+	 * @param typeNewModel
+	 *            the typeNewModel to set
 	 */
 	public void setTypeNewModel(NodeType typeNewModel) {
 		this.typeNewModel = typeNewModel;
@@ -116,7 +144,8 @@ public class MergedNodePair {
 	}
 
 	/**
-	 * @param attributeMatchResult the attributeMatchResult to set
+	 * @param attributeMatchResult
+	 *            the attributeMatchResult to set
 	 */
 	public void setAttributeMatchResult(double attributeMatchResult) {
 		this.attributeMatchResult = attributeMatchResult;
@@ -130,7 +159,8 @@ public class MergedNodePair {
 	}
 
 	/**
-	 * @param traceLink the traceLink to set
+	 * @param traceLink
+	 *            the traceLink to set
 	 */
 	public void setTraceLink(boolean traceLink) {
 		this.traceLink = traceLink;
@@ -144,7 +174,8 @@ public class MergedNodePair {
 	}
 
 	/**
-	 * @param merge the merge to set
+	 * @param merge
+	 *            the merge to set
 	 */
 	public void setMerge(boolean merge) {
 		this.merge = merge;

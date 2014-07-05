@@ -1,15 +1,15 @@
 package org.pssif.comparedDataStructures;
 
 /**
+ * Classes extendig this class are able to say whether their elements have
+ * been equals or not
+ * 
  * @author Andreas
  * 
- * 
- *         Classes extendig this class are able to say whether their elements
- *         have been equals or not
  */
 public abstract class Compared {
 	/**
-	 * bool saying if the proposed merge was accepted by the user
+	 * bool saying if the proposed equals link was accepted by the user
 	 */
 	private boolean equals;
 

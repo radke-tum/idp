@@ -32,6 +32,7 @@ import de.tum.pssif.core.metamodel.NodeType;
 import de.tum.pssif.core.metamodel.PSSIFCanonicMetamodelCreator;
 import de.tum.pssif.core.model.Model;
 import de.tum.pssif.core.model.Node;
+import de.tum.pssif.core.model.impl.ModelImpl;
 
 /**
  * Builds out of a Model and an MetaModel a Model which can be displayed as
@@ -68,8 +69,11 @@ public class ModelBuilder {
 	/**
 	 * Add a new Model and MetaModel. The new Model might be merged with another
 	 * existing Model. If a model already exists and an additional Model is
-	 * imported the user decides if he want's to merge the two models. The user
-	 * therefore selects nodes of both models which shall be linked as 'equal'.
+	 * imported the user decides if he want's to merge the two models or search
+	 * for equal elements.
+	 * 
+	 * Depending on the users selection the two models are either merged into
+	 * one or corresponding elements are marked as equals.
 	 * 
 	 * @author Andreas
 	 * @param meta
@@ -85,34 +89,45 @@ public class ModelBuilder {
 		 * @author Andreas
 		 */
 		else {
+			// user selected the two models to be merged
 			if (UserGuidingConsistency.openConsistencyPopUp()) {
-				
+
 				ConsistencyData consistencyData = ConsistencyData.getInstance();
-				
+
 				MergingProcess mergingProcess = new MergingProcess(
-						consistencyData, activeModel.getModel(),
-						Pmodel, activeModel.getMetamodel(), Pmeta);
-				
-				List<MergedNodePair> mergedNodes = consistencyData.getMergedList();
-				
-				List<MergedNodePair> tracedNodes = consistencyData.getTracedList();
-						
-				
+						activeModel.getModel(), Pmodel,
+						activeModel.getMetamodel(), Pmeta);
+
+				List<MergedNodePair> mergedNodePairs = consistencyData
+						.getMergedNodePairs();
+
+				// here une unified model with nodes and edges of both models is
+				// created
 				ModelMerger merger = new ModelMerger();
 				Model mergedModel = merger.mergeModels(activeModel.getModel(),
 						Pmodel, Pmeta);
 
 				MyModelContainer newModel = new MyModelContainer(mergedModel,
 						Pmeta);
+
 				activeModel = newModel;
-				
-				
-				
-				mergeNodes(mergedNodes);
-				
+
+				// here the unified model is reduced by deleting the old to be
+				// merged nodes
+				activeModel = merger.mergeModels(activeModel.getModel(),
+						Pmodel, activeModel.getMetamodel(), Pmeta,
+						mergedNodePairs, activeModel);
+
+				List<MergedNodePair> tracedNodes = consistencyData
+						.getTracedList();
+
+				// here tracelinks are created
 				setTracedLinks(tracedNodes);
 
-			} else {
+			}
+			// user selected the two models to be searched for corresponding
+			// elements
+			else {
 				List<ComparedNodePair> matchedList = UserGuidingConsistency
 						.startConsistencyCheck(activeModel.getModel(), Pmodel,
 								activeModel.getMetamodel(), Pmeta);
@@ -132,82 +147,56 @@ public class ModelBuilder {
 		}
 	}
 
+	/**
+	 * This method creates the tracelink edges between the nodepairs given in
+	 * the traceNode list.
+	 * 
+	 * @param tracedNodes
+	 *            the list with the node pairs which shall be linked by a
+	 *            tracelink
+	 * @author Andreas
+	 */
 	private static void setTracedLinks(List<MergedNodePair> tracedNodes) {
 		for (MergedNodePair tracedPair : tracedNodes) {
 
-			MyEdgeType edgeType = new MyEdgeType(metaModel.getEdgeType(
-					PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_CHRONOLOGICAL_EVOLVES_TO).getOne(), 6);
+			MyEdgeType edgeType = new MyEdgeType(
+					metaModel
+							.getEdgeType(
+									PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_CHRONOLOGICAL_EVOLVES_TO)
+							.getOne(), 6);
 
 			/**
-			 * searches for the nodes (in the new active model) which
-			 * shall be linked and adds new edges between them.
+			 * searches for the nodes (in the new active model) which shall be
+			 * linked and adds new edges between them.
 			 */
 			for (MyNode actNode : activeModel.getAllNodes()) {
-				if (Methods
-						.findGlobalID(actNode.getNode(),
-								actNode.getNodeType().getType())
-						.equals(Methods.findGlobalID(
-								tracedPair.getNodeOriginalModel(),
+				if (Methods.findGlobalID(actNode.getNode(),
+						actNode.getNodeType().getType()).equals(
+						Methods.findGlobalID(tracedPair.getNodeOriginalModel(),
 								tracedPair.getTypeOriginModel()))) {
 					for (MyNode actNewNode : activeModel.getAllNodes()) {
 						if (Methods.findGlobalID(actNewNode.getNode(),
-								actNewNode.getNodeType().getType())
-								.equals(Methods.findGlobalID(
-										tracedPair
-												.getNodeNewModel(),
-										tracedPair
-												.getTypeNewModel()))) {
-							addNewEdgeGUI(actNode, actNewNode,
-									edgeType, false);
+								actNewNode.getNodeType().getType()).equals(
+								Methods.findGlobalID(
+										tracedPair.getNodeNewModel(),
+										tracedPair.getTypeNewModel()))) {
+							addNewEdgeGUI(actNode, actNewNode, edgeType, false);
 						}
 					}
 				}
 			}
 
 		}
-		
-	}
 
-	private static void mergeNodes(List<MergedNodePair> mergedNodes) {
-		for (MergedNodePair mergedPair : mergedNodes) {
-
-			/**
-			 * searches for the nodes (in the new active model) which
-			 * shall be linked and adds new edges between them.
-			 */
-			for (MyNode actNode : activeModel.getAllNodes()) {
-				if (Methods
-						.findGlobalID(actNode.getNode(),
-								actNode.getNodeType().getType())
-						.equals(Methods.findGlobalID(
-								mergedPair.getNodeOriginalModel(),
-								mergedPair.getTypeOriginModel()))) {
-					for (MyNode actNewNode : activeModel.getAllNodes()) {
-						if (Methods.findGlobalID(actNewNode.getNode(),
-								actNewNode.getNodeType().getType())
-								.equals(Methods.findGlobalID(
-										mergedPair
-												.getNodeNewModel(),
-										mergedPair
-												.getTypeNewModel()))) {
-							replaceOldNode(actNode.getNode(), actNewNode.getNode(), actNode.getNodeType().getType(), actNewNode.getNodeType().getType());
-						}
-					}
-				}
-			}
-
-		}		
-	}
-
-	private static void replaceOldNode(Node tempNodeOrigin, Node tempNodeNew, NodeType typeTempNodeOrigin,
-			NodeType typeTempNodeNew) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	/**
-	 * TODO
+	 * This method creates the equals edges between the nodepairs given in the
+	 * matched list.
+	 * 
 	 * @param matchedList
+	 *            the list with the node pairs which shall be linked by a equals
+	 *            link
 	 * @author Andreas
 	 */
 	private static void setEqualsLinks(List<ComparedNodePair> matchedList) {
@@ -217,26 +206,22 @@ public class ModelBuilder {
 					PSSIFCanonicMetamodelCreator.E_EQUALS).getOne(), 4);
 
 			/**
-			 * searches for the nodes (in the new active model) which
-			 * shall be linked and adds new edges between them.
+			 * searches for the nodes (in the new active model) which shall be
+			 * linked and adds new edges between them.
 			 */
 			for (MyNode actNode : activeModel.getAllNodes()) {
-				if (Methods
-						.findGlobalID(actNode.getNode(),
-								actNode.getNodeType().getType())
-						.equals(Methods.findGlobalID(
+				if (Methods.findGlobalID(actNode.getNode(),
+						actNode.getNodeType().getType()).equals(
+						Methods.findGlobalID(
 								comparedNodePair.getNodeOriginalModel(),
 								comparedNodePair.getTypeOriginModel()))) {
 					for (MyNode actNewNode : activeModel.getAllNodes()) {
 						if (Methods.findGlobalID(actNewNode.getNode(),
-								actNewNode.getNodeType().getType())
-								.equals(Methods.findGlobalID(
-										comparedNodePair
-												.getNodeNewModel(),
-										comparedNodePair
-												.getTypeNewModel()))) {
-							addNewEdgeGUI(actNode, actNewNode,
-									edgeType, false);
+								actNewNode.getNodeType().getType()).equals(
+								Methods.findGlobalID(
+										comparedNodePair.getNodeNewModel(),
+										comparedNodePair.getTypeNewModel()))) {
+							addNewEdgeGUI(actNode, actNewNode, edgeType, false);
 						}
 					}
 				}

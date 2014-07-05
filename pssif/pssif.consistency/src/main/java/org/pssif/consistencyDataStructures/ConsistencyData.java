@@ -14,21 +14,27 @@ import de.tum.pssif.core.metamodel.NodeType;
 import de.tum.pssif.core.model.Node;
 
 /**
- * @author Andreas
  * 
- *         This class stores all the information relevant for the consistency
- *         checking process. It Stores the two models that shall be compared and
- *         the according metamodel.
+ *        This class stores all the information relevant for the consistency
+ *         checking process. It stores several list relevant for the processes.
  * 
  *         With this class we know:
  * 
  *         - which IDs already matched (so we don't match them again as we go up
- *         in the class hierachy in the compairson process) - the similarity
+ *         in the class hierachy in the compairson process)
+ *         - the similarity
  *         results for token & label pairs to be able to look them up in future
- *         compairsons -
+ *         compairsons
+ *         - the node pairs which exceed the similarity thresholds
+ *         - the node pairs which were chosen by the user to be merged
+ *         - the node pairs which will be linked by a tracelink
+ *         - the node pairs which will be merged into one
+ *         
+ * @author Andreas
+ * 
  */
 public class ConsistencyData {
-	
+
 	private static ConsistencyData instance = null;
 
 	private ConsistencyData() {
@@ -37,15 +43,15 @@ public class ConsistencyData {
 		this.comparedLabelPairs = new LinkedList<ComparedLabelPair>();
 		this.comparedTokensPairs = new LinkedList<ComparedNormalizedTokensPair>();
 		this.comparedNodePairs = new LinkedList<ComparedNodePair>();
-		
+
 		this.mergedNodePairs = new LinkedList<MergedNodePair>();
 	}
-	
-	public static ConsistencyData getInstance(){
-		if(instance == null){
+
+	public static ConsistencyData getInstance() {
+		if (instance == null) {
 			instance = new ConsistencyData();
 		}
-		
+
 		return instance;
 	}
 
@@ -73,7 +79,7 @@ public class ConsistencyData {
 	 * stores compared Nodes with similarity information
 	 */
 	private volatile List<ComparedNodePair> comparedNodePairs;
-	
+
 	// TODO Attention! Variable is volatile, will be lost at serialization!
 	/**
 	 * stores merged/traced Nodes
@@ -107,15 +113,15 @@ public class ConsistencyData {
 	 * @param conTreshhold
 	 *            the treshold for the context result
 	 */
-	public static void initThresholds(double synTreshhold,
-			double semTreshhold, double conTreshhold) {
+	public static void initThresholds(double synTreshhold, double semTreshhold,
+			double conTreshhold) {
 		syntacticThreshold = synTreshhold;
 		semanticThreshold = semTreshhold;
 		contextThreshold = conTreshhold;
 	}
 
 	/**
-	 * THis method takes the result of the application of all active metrics
+	 * THis method takes the result of the application of all similarity metrics
 	 * onto two nodes and saves the result into the ID Mapping (so Nodes are
 	 * only matched once), the already compared labels & tokens and the compared
 	 * Node pairs
@@ -146,11 +152,15 @@ public class ConsistencyData {
 
 		return success;
 	}
-	
+
 	/**
-	 * TODO
+	 *  THis method takes the result of the application of all merging metrics
+	 * onto two nodes and saves the result into the ID Mapping (so Nodes are
+	 * only merged once) and into the mergedNodePairs list.
+	 * 
 	 * @param mergedNodePair
-	 * @return
+	 * @return true if the new merged elements were added to all relevant
+	 *         variables. false if something went wrong
 	 */
 	public boolean putMergedEntry(MergedNodePair mergedNodePair) {
 
@@ -163,7 +173,7 @@ public class ConsistencyData {
 						+ Methods.findGlobalID(
 								mergedNodePair.getNodeNewModel(),
 								mergedNodePair.getTypeNewModel()));
-		
+
 		success = success && mergedNodePairs.add(mergedNodePair);
 
 		return success;
@@ -268,10 +278,10 @@ public class ConsistencyData {
 
 	/**
 	 * This method evaluates which of the compared node pairs were selected by
-	 * the user to be merged. All selected elements are added to a list and then
+	 * the user to be linked as equals. All selected elements are added to a list and then
 	 * returned.
 	 * 
-	 * @return the list of node pairs which the user chose being merged.
+	 * @return the list of node pairs which the user chose being linked equal.
 	 */
 	public List<ComparedNodePair> getEqualsList() {
 		List<ComparedNodePair> equalsList = new LinkedList<ComparedNodePair>();
@@ -283,44 +293,54 @@ public class ConsistencyData {
 		}
 		return equalsList;
 	}
-	
+
 	/**
-	 * TODO
-	 * @return
+	 * This method returns a list witch node pairs which were proven to be the
+	 * same by the applied smilarity metrics
+	 * 
+	 * @return a list witch node pairs which were proven to be the same by the
+	 *         applied smilarity metrics
 	 */
-	public List<MergedNodePair> getMergedList(){
+	public List<MergedNodePair> getMergedList() {
 		List<MergedNodePair> mergedList = new LinkedList<MergedNodePair>();
-		
-		for(MergedNodePair actPair : mergedNodePairs){
-			if(actPair.isMerge()){
+
+		for (MergedNodePair actPair : mergedNodePairs) {
+			if (actPair.isMerge()) {
 				mergedList.add(actPair);
 			}
 		}
-		
-		return mergedList;		
+
+		return mergedList;
 	}
-	
+
 	/**
-	 * TODO
-	 * @return
+	 * This method returns a list witch node pairs which were proven to be
+	 * different versions of each other by the applied smilarity metrics
+	 * 
+	 * @return a list witch node pairs which were proven to be different
+	 *         versions of each other by the applied smilarity metrics
 	 */
-	public List<MergedNodePair> getTracedList(){
+	public List<MergedNodePair> getTracedList() {
 		List<MergedNodePair> tracedList = new LinkedList<MergedNodePair>();
-		
-		for(MergedNodePair actPair : mergedNodePairs){
-			if(actPair.isTraceLink()){
+
+		for (MergedNodePair actPair : mergedNodePairs) {
+			if (actPair.isTraceLink()) {
 				tracedList.add(actPair);
 			}
 		}
-		
-		return tracedList;		
+
+		return tracedList;
 	}
-	
-	public void resetComparedNodePairList(){
+
+	public List<MergedNodePair> getMergedNodePairs() {
+		return this.mergedNodePairs;
+	}
+
+	public void resetComparedNodePairList() {
 		this.comparedNodePairs = null;
 	}
-	
-	public void resetMergedNodePairList(){
+
+	public void resetMergedNodePairList() {
 		this.mergedNodePairs = null;
 	}
 }

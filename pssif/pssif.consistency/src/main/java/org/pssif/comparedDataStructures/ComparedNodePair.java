@@ -4,14 +4,14 @@ import de.tum.pssif.core.metamodel.NodeType;
 import de.tum.pssif.core.model.Node;
 
 /**
- * @author Andreas
  * 
- *         this class stores two nodes. one from the first imported model and
- *         the other one from the recent imported model. In addition to this
- *         this class stores the match result of the label compairson of the two
- *         nodes, the tokenization of the labels (plus the according metric
- *         results) and the result of two node metrics (depth matching and
- *         contextual similarity)
+ * this class stores two nodes. one from the first imported model and the
+ * other one from the recent imported model. In addition to this this class
+ * stores the match result of the label compairson of the two nodes, the
+ * tokenization of the labels (plus the according metric results) and the result
+ * of two node metrics (depth matching and contextual similarity)
+ * 
+ * @author Andreas
  * 
  */
 public class ComparedNodePair extends Compared {
@@ -144,7 +144,8 @@ public class ComparedNodePair extends Compared {
 	}
 
 	/**
-	 * @param weightedSyntacticResult the weightedSyntacticResult to set
+	 * @param weightedSyntacticResult
+	 *            the weightedSyntacticResult to set
 	 */
 	public void setWeightedSyntacticResult(double weightedSyntacticResult) {
 		this.weightedSyntacticResult = weightedSyntacticResult;
@@ -158,7 +159,8 @@ public class ComparedNodePair extends Compared {
 	}
 
 	/**
-	 * @param weightedSemanticResult the weightedSemanticResult to set
+	 * @param weightedSemanticResult
+	 *            the weightedSemanticResult to set
 	 */
 	public void setWeightedSemanticResult(double weightedSemanticResult) {
 		this.weightedSemanticResult = weightedSemanticResult;
@@ -172,7 +174,8 @@ public class ComparedNodePair extends Compared {
 	}
 
 	/**
-	 * @param weightedContextResult the weightedContextResult to set
+	 * @param weightedContextResult
+	 *            the weightedContextResult to set
 	 */
 	public void setWeightedContextResult(double weightedContextResult) {
 		this.weightedContextResult = weightedContextResult;

@@ -21,6 +21,17 @@ import de.tum.pssif.core.metamodel.PSSIFCanonicMetamodelCreator;
 import de.tum.pssif.core.model.Model;
 import de.tum.pssif.core.model.Node;
 
+/**
+ * 
+ * This class conducts the merging process between two models. Therefore it
+ * compares every node of the first imported model with every node of the same
+ * type in the recently imported model. Depending on the similarity result of
+ * every compared node pair the pair is marked as to be linked by a tracelink or
+ * marked as to be merged.
+ * 
+ * @author Andreas
+ * 
+ */
 public class MergingProcess {
 
 	/**
@@ -55,29 +66,36 @@ public class MergingProcess {
 			PSSIFCanonicMetamodelCreator.N_ELECTRONIC,
 			PSSIFCanonicMetamodelCreator.N_MODULE };
 
-	private ConsistencyData consistencyData;
-
 	private Model originalModel, newModel;
 	private Metamodel metaModelOriginal, metaModelNew;
 
 	private Normalizer normalizer;
 
+	/**
+	 * a list with the match methods (applied in merging process) applied
+	 */
 	private List<MatchMethod> matchMethods;
 
 	private MatchMethod exactMatcher;
 	private MatchMethod attributeMatcher;
 
 	/**
-	 * @param consistencyData
+	 * Here a new MergingProcess object is created, a normalizer is initialized
+	 * with the according match methods (exact & attribute matcher) and the
+	 * merging process is started.
+	 * 
 	 * @param originalModel
+	 *            the first imported model
 	 * @param newModel
+	 *            the recent imported model
 	 * @param metaModelOriginal
+	 *            the metamodel of the first model
 	 * @param metaModelNew
+	 *            the metamodel of the new model
 	 */
-	public MergingProcess(ConsistencyData consistencyData, Model originalModel,
-			Model newModel, Metamodel metaModelOriginal, Metamodel metaModelNew) {
+	public MergingProcess(Model originalModel, Model newModel,
+			Metamodel metaModelOriginal, Metamodel metaModelNew) {
 		super();
-		this.consistencyData = consistencyData;
 		this.originalModel = originalModel;
 		this.newModel = newModel;
 		this.metaModelOriginal = metaModelOriginal;
@@ -87,11 +105,12 @@ public class MergingProcess {
 
 		this.normalizer = Normalizer.initialize(matchMethods);
 
-		mergeModels();
+		startTypeAndNodeIteration();
 	}
 
 	/**
-	 * TODO
+	 * creates the exact & attribute match method and adds them to the
+	 * matchMethods list
 	 */
 	private void initializeMatchMethods() {
 		matchMethods = new LinkedList<MatchMethod>();
@@ -105,10 +124,6 @@ public class MergingProcess {
 				MatchingMethods.ATTRIBUTE_MATCHING, true, 1.0);
 
 		matchMethods.add(attributeMatcher);
-	}
-
-	private void mergeModels() {
-		startTypeAndNodeIteration();
 	}
 
 	/**
@@ -144,8 +159,8 @@ public class MergingProcess {
 	/**
 	 * this method iterates over every node type of the pssif metamodel and
 	 * calls the method iterateNodesOfType() with the current type. This ensures
-	 * that all nodes from the original model are compared with allfrom the
-	 * other model.
+	 * that all nodes from the original model are compared with all nodes of the
+	 * same type of the new model.
 	 * 
 	 * It starts with the children of the Type DevelopmentArtifact and then
 	 * continues with the children of the Type Solution Artifact. After that the
@@ -219,12 +234,19 @@ public class MergingProcess {
 		}
 	}
 
+	/**
+	 * nodes of the actual type are searched in the new model to compare them
+	 * with the original node.
+	 * 
+	 * @param tempNodeOrigin
+	 *            the node of the first model which is compared to nodes in the
+	 *            new model
+	 * @param actTypeOriginModel
+	 *            the type of the node
+	 */
 	public void iterateOverNodesOfNewModel(Node tempNodeOrigin,
 			NodeType actTypeOriginModel) {
-		/**
-		 * the actual type with which nodes to compare are searched in the new
-		 * model
-		 */
+
 		NodeType actTypeNewModel = actTypeOriginModel;
 
 		PSSIFOption<Node> actNodesNewModel = actTypeNewModel.apply(newModel,
@@ -235,6 +257,17 @@ public class MergingProcess {
 
 	}
 
+	/**
+	 * 
+	 * This method gets real nodes from the psiffOption.
+	 * 
+	 * @param tempNodeOrigin
+	 * @param actNodesNewModel
+	 *            the nodes in the new model with the same type as the original
+	 *            node
+	 * @param actTypeOriginModel
+	 * @param actTypeNewModel
+	 */
 	public void matchNodeWithNodesOfActTypeOfNewModel(Node tempNodeOrigin,
 			PSSIFOption<Node> actNodesNewModel, NodeType actTypeOriginModel,
 			NodeType actTypeNewModel) {
@@ -264,6 +297,15 @@ public class MergingProcess {
 		}
 	}
 
+	/**
+	 * If the two given nodes haven't already been matched they are given to a
+	 * matching function.
+	 * 
+	 * @param tempNodeOrigin
+	 * @param tempNodeNew
+	 * @param actTypeOriginModel
+	 * @param actTypeNewModel
+	 */
 	public void matchNodeWithNode(Node tempNodeOrigin, Node tempNodeNew,
 			NodeType actTypeOriginModel, NodeType actTypeNewModel) {
 
@@ -272,7 +314,8 @@ public class MergingProcess {
 		String globalIDNodeNew = Methods.findGlobalID(tempNodeNew,
 				actTypeNewModel);
 
-		if (consistencyData.matchNecessary(globalIDNodeOrigin, globalIDNodeNew)) {
+		if (ConsistencyData.getInstance().matchNecessary(globalIDNodeOrigin,
+				globalIDNodeNew)) {
 			matchNodes(tempNodeOrigin, tempNodeNew, actTypeOriginModel,
 					actTypeNewModel);
 		} else {
@@ -281,6 +324,18 @@ public class MergingProcess {
 
 	}
 
+	/**
+	 * This method conducts the similarity analysis of the two given nodes with
+	 * help of the matchMethods. Then, depending on the result they are marked
+	 * as to be traced, merged or nothing.
+	 * 
+	 * After that the result is stored in the consistencyData instance.
+	 * 
+	 * @param tempNodeOrigin
+	 * @param tempNodeNew
+	 * @param actTypeOriginModel
+	 * @param actTypeNewModel
+	 */
 	private void matchNodes(Node tempNodeOrigin, Node tempNodeNew,
 			NodeType actTypeOriginModel, NodeType actTypeNewModel) {
 
@@ -327,6 +382,9 @@ public class MergingProcess {
 				tempNodeNew, actTypeOriginModel, actTypeNewModel,
 				comparedLabelPair, traceLink, merge);
 
-		consistencyData.putMergedEntry(mergedNodePair);
+		mergedNodePair.setAttributeMatchResult(attributeMatchResult);
+
+		ConsistencyData.getInstance().putMergedEntry(mergedNodePair);
+
 	}
 }
