@@ -8,6 +8,7 @@ import org.pssif.comparedDataStructures.ComparedLabelPair;
 import org.pssif.comparedDataStructures.ComparedNodePair;
 import org.pssif.comparedDataStructures.ComparedNormalizedTokensPair;
 import org.pssif.mainProcesses.Methods;
+import org.pssif.mergedDataStructures.MergedNodePair;
 
 import de.tum.pssif.core.metamodel.NodeType;
 import de.tum.pssif.core.model.Node;
@@ -27,13 +28,23 @@ import de.tum.pssif.core.model.Node;
  *         compairsons -
  */
 public class ConsistencyData {
+	
+	private static ConsistencyData instance = null;
 
-	public ConsistencyData() {
+	private ConsistencyData() {
 
 		IDMapping = new HashSet<String>();
 		this.comparedLabelPairs = new LinkedList<ComparedLabelPair>();
 		this.comparedTokensPairs = new LinkedList<ComparedNormalizedTokensPair>();
 		this.comparedNodePairs = new LinkedList<ComparedNodePair>();
+	}
+	
+	public static ConsistencyData getInstance(){
+		if(instance == null){
+			instance = new ConsistencyData();
+		}
+		
+		return instance;
 	}
 
 	// TODO Attention! Variable is volatile, will be lost at serialization!
@@ -60,6 +71,12 @@ public class ConsistencyData {
 	 * stores compared Nodes with similarity information
 	 */
 	private volatile List<ComparedNodePair> comparedNodePairs;
+	
+	// TODO Attention! Variable is volatile, will be lost at serialization!
+	/**
+	 * stores merged/traced Nodes
+	 */
+	private volatile List<MergedNodePair> mergedNodePairs;
 
 	/**
 	 * these are the tresholds for the syntactic, semantic and contextual
@@ -124,6 +141,28 @@ public class ConsistencyData {
 				&& comparedTokensPairs.add(comparedNodePair
 						.getTokensComparison());
 		success = success && comparedNodePairs.add(comparedNodePair);
+
+		return success;
+	}
+	
+	/**
+	 * TODO
+	 * @param mergedNodePair
+	 * @return
+	 */
+	public boolean putMergedEntry(MergedNodePair mergedNodePair) {
+
+		boolean success = true;
+
+		success = success
+				&& IDMapping.add(Methods.findGlobalID(
+						mergedNodePair.getNodeOriginalModel(),
+						mergedNodePair.getTypeOriginModel())
+						+ Methods.findGlobalID(
+								mergedNodePair.getNodeNewModel(),
+								mergedNodePair.getTypeNewModel()));
+		
+		success = success && mergedNodePairs.add(mergedNodePair);
 
 		return success;
 	}
@@ -212,17 +251,17 @@ public class ConsistencyData {
 	 * @return the list of node pairs which Syntactic- OR Semantic- OR Context-
 	 *         Similarity exceeds the according treshold.
 	 */
-	public List<ComparedNodePair> getMergeCandidateList() {
-		List<ComparedNodePair> mergeCandidates = new LinkedList<>();
+	public List<ComparedNodePair> getEqualsCandidateList() {
+		List<ComparedNodePair> equalsCandidates = new LinkedList<ComparedNodePair>();
 
 		for (ComparedNodePair actPair : comparedNodePairs) {
 			if ((actPair.getWeightedSyntacticResult() >= ConsistencyData.syntacticThreshold)
 					|| (actPair.getWeightedSemanticResult() >= ConsistencyData.semanticThreshold)
 					|| (actPair.getWeightedContextResult() >= ConsistencyData.contextThreshold)) {
-				mergeCandidates.add(actPair);
+				equalsCandidates.add(actPair);
 			}
 		}
-		return mergeCandidates;
+		return equalsCandidates;
 	}
 
 	/**
@@ -232,14 +271,54 @@ public class ConsistencyData {
 	 * 
 	 * @return the list of node pairs which the user chose being merged.
 	 */
-	public List<ComparedNodePair> getMergedList() {
-		List<ComparedNodePair> mergedList = new LinkedList<>();
+	public List<ComparedNodePair> getEqualsList() {
+		List<ComparedNodePair> equalsList = new LinkedList<ComparedNodePair>();
 
 		for (ComparedNodePair actPair : comparedNodePairs) {
-			if (actPair.isMerged()) {
+			if (actPair.isEquals()) {
+				equalsList.add(actPair);
+			}
+		}
+		return equalsList;
+	}
+	
+	/**
+	 * TODO
+	 * @return
+	 */
+	public List<MergedNodePair> getMergedList(){
+		List<MergedNodePair> mergedList = new LinkedList<MergedNodePair>();
+		
+		for(MergedNodePair actPair : mergedNodePairs){
+			if(actPair.isMerge()){
 				mergedList.add(actPair);
 			}
 		}
-		return mergedList;
+		
+		return mergedList;		
+	}
+	
+	/**
+	 * TODO
+	 * @return
+	 */
+	public List<MergedNodePair> getTracedList(){
+		List<MergedNodePair> tracedList = new LinkedList<MergedNodePair>();
+		
+		for(MergedNodePair actPair : mergedNodePairs){
+			if(actPair.isTraceLink()){
+				tracedList.add(actPair);
+			}
+		}
+		
+		return tracedList;		
+	}
+	
+	public void resetComparedNodePairList(){
+		this.comparedNodePairs = null;
+	}
+	
+	public void resetMergedNodePairList(){
+		this.mergedNodePairs = null;
 	}
 }

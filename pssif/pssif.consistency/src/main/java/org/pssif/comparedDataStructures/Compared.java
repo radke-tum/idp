@@ -5,26 +5,26 @@ package org.pssif.comparedDataStructures;
  * 
  * 
  *         Classes extendig this class are able to say whether their elements
- *         have been merged or not
+ *         have been equals or not
  */
 public abstract class Compared {
 	/**
 	 * bool saying if the proposed merge was accepted by the user
 	 */
-	private boolean merged;
+	private boolean equals;
 
 	/**
-	 * @return the merged
+	 * @return the equals
 	 */
-	public boolean isMerged() {
-		return merged;
+	public boolean isEquals() {
+		return equals;
 	}
 
 	/**
-	 * @param merged
-	 *            the merged to set
+	 * @param equals
+	 *            the equals to set
 	 */
-	public void setMerged(boolean merged) {
-		this.merged = merged;
+	public void setEquals(boolean equals) {
+		this.equals = equals;
 	}
 }

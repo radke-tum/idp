@@ -23,7 +23,6 @@ import javax.swing.table.TableModel;
 import org.pssif.comparedDataStructures.ComparedNodePair;
 import org.pssif.consistencyDataStructures.ConsistencyData;
 import org.pssif.mainProcesses.CompairsonProcess;
-import org.pssif.mainProcesses.MergingProcess;
 import org.pssif.matchingLogic.MatchMethod;
 import org.pssif.matchingLogic.MatchingMethods;
 
@@ -58,7 +57,7 @@ public class UserGuidingConsistency {
 	 *            the metamodel of the new model
 	 * @return the list of node pairs which shall be merged
 	 */
-	public static List<ComparedNodePair> main(Model originalModel,
+	public static List<ComparedNodePair> startConsistencyCheck(Model originalModel,
 			Model newModel, Metamodel metaModelOriginal, Metamodel metaModelNew) {
 
 		List<MatchMethod> matchMethods = openChooseMatchingMethodsPopup();
@@ -70,7 +69,11 @@ public class UserGuidingConsistency {
 
 		consistencyData = openChooseMergeCandidatesPopup(consistencyData);
 
-		return consistencyData.getMergedList();
+		List<ComparedNodePair> result = consistencyData.getEqualsList();
+		
+		consistencyData.resetComparedNodePairList();
+		
+		return result;
 	}
 
 	/**
@@ -185,7 +188,7 @@ public class UserGuidingConsistency {
 		dialog.setModalityType(ModalityType.APPLICATION_MODAL);
 
 		final TableModel tableModel = new MatchCandidateTableModel(
-				consistencyData.getMergeCandidateList());
+				consistencyData.getEqualsCandidateList());
 
 		JTable methodTable = new JTable(tableModel);
 

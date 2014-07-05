@@ -111,7 +111,7 @@ public class CompairsonProcess {
 		this.newModel = newModel;
 		this.metaModelOriginal = metaModelOriginal;
 
-		this.consistencyData = new ConsistencyData();
+		this.consistencyData = ConsistencyData.getInstance();
 
 		this.matchingProcess = new MatchingProcess(originalModel, newModel,
 				metaModelOriginal, metaModelNew, consistencyData, matchMethods,

@@ -82,7 +82,7 @@ public class MatchCandidateTableModel extends AbstractTableModel {
 		} else if (columnIndex == COLUMN_IDX_CONTEXTSIM) {
 			return comparedNodePair.getWeightedContextResult();
 		} else if (columnIndex == COLUMN_IDX_MERGE) {
-			return comparedNodePair.isMerged();
+			return comparedNodePair.isEquals();
 		}
 
 		throw new IllegalArgumentException("Invalid column index "
@@ -105,9 +105,9 @@ public class MatchCandidateTableModel extends AbstractTableModel {
 		final ComparedNodePair comparedNodePair = matchCandidates.get(rowIndex);
 
 		if (columnIndex == COLUMN_IDX_MERGE) {
-			comparedNodePair.setMerged((Boolean) value);
-			comparedNodePair.getLabelComparison().setMerged((Boolean) value);
-			comparedNodePair.getTokensComparison().setMerged((Boolean) value);
+			comparedNodePair.setEquals((Boolean) value);
+			comparedNodePair.getLabelComparison().setEquals((Boolean) value);
+			comparedNodePair.getTokensComparison().setEquals((Boolean) value);
 		}
 
 		fireTableCellUpdated(rowIndex, columnIndex);

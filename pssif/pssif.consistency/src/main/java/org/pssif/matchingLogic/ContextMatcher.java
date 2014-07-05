@@ -452,6 +452,8 @@ public class ContextMatcher extends MatchMethod {
 				case ATTRIBUTE_MATCHING:
 					result += ((currentMetricResult * currentMethod.getWeigth()) * semanticWeight);
 					break;
+					default:
+						break;
 				}
 			}
 		}

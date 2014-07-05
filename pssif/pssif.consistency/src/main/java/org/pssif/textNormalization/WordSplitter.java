@@ -20,12 +20,14 @@ public class WordSplitter {
 	private AbstractWordSplitter splitter;
 
 	public WordSplitter() {
+		//TODO make word splitter work
+		/**
 		try {
 			this.splitter = new GermanWordSplitter(true);
 		} catch (IOException e) {
 			throw new RuntimeException("The German Word Splitter couln't be initialized!");
 		}
-		splitter.setStrictMode(true);
+		splitter.setStrictMode(true);*/
 	}
 
 	/**
@@ -40,7 +42,7 @@ public class WordSplitter {
 	 * 
 	 */
 	public List<Token> splitTokens(List<Token> tokens) {
-		List<Token> newSequence = new LinkedList<Token>();
+		/**List<Token> newSequence = new LinkedList<Token>();
 		List<String> splitResult;
 
 		for (Token token : tokens) {
@@ -56,7 +58,8 @@ public class WordSplitter {
 			}
 		}
 
-		return newSequence;
+		return newSequence;*/
+		return tokens;
 	}
 
 }

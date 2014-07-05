@@ -108,6 +108,14 @@ public class Normalizer {
 
 		return normalizer;
 	}
+	
+	public static Normalizer initialize(List<MatchMethod> matchMethods) {
+		Normalizer normalizer = new Normalizer();
+
+		normalizer.checkMatchMethods(matchMethods);
+
+		return normalizer;
+	}
 
 	/**
 	 * This method checks which matching Methods are active and then saves if we

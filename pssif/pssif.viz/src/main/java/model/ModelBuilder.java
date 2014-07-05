@@ -17,8 +17,11 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.pssif.comparedDataStructures.ComparedNodePair;
+import org.pssif.consistencyDataStructures.ConsistencyData;
 import org.pssif.consistencyExtern.consistencyGui.UserGuidingConsistency;
 import org.pssif.mainProcesses.Methods;
+import org.pssif.mergedDataStructures.MergedNodePair;
+import org.pssif.mergingLogic.MergingProcess;
 
 import de.tum.pssif.core.common.PSSIFConstants;
 import de.tum.pssif.core.common.PSSIFOption;
@@ -31,28 +34,32 @@ import de.tum.pssif.core.model.Model;
 import de.tum.pssif.core.model.Node;
 
 /**
- * Builds out of a Model and an MetaModel a Model which can be displayed as Graph and Matrix
+ * Builds out of a Model and an MetaModel a Model which can be displayed as
+ * Graph and Matrix
+ * 
  * @author Luc
- *
+ * 
  */
 public class ModelBuilder {
-	
+
 	private static MyModelContainer activeModel;
-	//private static LinkedList<MyModelContainer> activeModels;
-	//private static boolean mergerOn=true;
+	// private static LinkedList<MyModelContainer> activeModels;
+	// private static boolean mergerOn=true;
 	private static Metamodel metaModel = PSSIFCanonicMetamodelCreator.create();
 	private static HashMap<MyPair, LinkedList<MyEdgeType>> possibleMappings;
-	
+
 	/**
 	 * @author Andreas
 	 */
 	private static GraphVisualization gViz;
+
 	/**
 	 * until here
 	 */
-	
+
 	/**
-	 * @param gViz the gViz to set
+	 * @param gViz
+	 *            the gViz to set
 	 */
 	public static void setgViz(GraphVisualization gViz) {
 		ModelBuilder.gViz = gViz;
@@ -61,8 +68,8 @@ public class ModelBuilder {
 	/**
 	 * Add a new Model and MetaModel. The new Model might be merged with another
 	 * existing Model. If a model already exists and an additional Model is
-	 * imported the user decides if he want's to merge the two models. The
-	 * user therefore selects nodes of both models which shall be linked as 'equal'.
+	 * imported the user decides if he want's to merge the two models. The user
+	 * therefore selects nodes of both models which shall be linked as 'equal'.
 	 * 
 	 * @author Andreas
 	 * @param meta
@@ -80,9 +87,31 @@ public class ModelBuilder {
 		else {
 			if (UserGuidingConsistency.openConsistencyPopUp()) {
 				
-				List<ComparedNodePair> matchedList =
-						UserGuidingConsistency.main(activeModel.getModel(), Pmodel, activeModel.getMetamodel(), Pmeta);
+				ConsistencyData consistencyData = ConsistencyData.getInstance();
 				
+				MergingProcess mergingProcess = new MergingProcess(
+						consistencyData, activeModel.getModel(),
+						Pmodel, activeModel.getMetamodel(), Pmeta);
+				
+				List<MergedNodePair> mergedNodes = consistencyData.getMergedList();
+				
+				List<MergedNodePair> tracedNodes = consistencyData.getTracedList();
+						
+				
+
+				ModelMerger merger = new ModelMerger();
+				Model mergedModel = merger.mergeModels(activeModel.getModel(),
+						Pmodel, Pmeta);
+
+				MyModelContainer newModel = new MyModelContainer(mergedModel,
+						Pmeta);
+				activeModel = newModel;
+
+			} else {
+				List<ComparedNodePair> matchedList = UserGuidingConsistency
+						.startConsistencyCheck(activeModel.getModel(), Pmodel,
+								activeModel.getMetamodel(), Pmeta);
+
 				ModelMerger merger = new ModelMerger();
 				Model mergedModel = merger.mergeModels(activeModel.getModel(),
 						Pmodel, Pmeta);
@@ -91,327 +120,315 @@ public class ModelBuilder {
 						Pmeta);
 
 				activeModel = newModel;
-				
-				for(ComparedNodePair comparedNodePair : matchedList){
-			
-					MyEdgeType edgeType =
-							new MyEdgeType(metaModel.getEdgeType(PSSIFCanonicMetamodelCreator.E_EQUALS).getOne(), 4);				
-					
+
+				for (ComparedNodePair comparedNodePair : matchedList) {
+
+					MyEdgeType edgeType = new MyEdgeType(metaModel.getEdgeType(
+							PSSIFCanonicMetamodelCreator.E_EQUALS).getOne(), 4);
+
 					/**
-					 * searches for the nodes (in the new active model) which shall be linked and adds new edges between them.
+					 * searches for the nodes (in the new active model) which
+					 * shall be linked and adds new edges between them.
 					 */
-					for(MyNode actNode : activeModel.getAllNodes()){
-						if(Methods.findGlobalID(
-								actNode.getNode(), actNode.getNodeType().getType()).equals
-								(Methods.findGlobalID(comparedNodePair.getNodeOriginalModel(), comparedNodePair.getTypeOriginModel()))){
-							for(MyNode actNewNode : activeModel.getAllNodes()){
-								if(Methods.findGlobalID(
-										actNewNode.getNode(), actNewNode.getNodeType().getType()).equals
-										(Methods.findGlobalID(comparedNodePair.getNodeNewModel(), comparedNodePair.getTypeNewModel()))){
-									addNewEdgeGUI(actNode, actNewNode, edgeType, false);
+					for (MyNode actNode : activeModel.getAllNodes()) {
+						if (Methods
+								.findGlobalID(actNode.getNode(),
+										actNode.getNodeType().getType())
+								.equals(Methods.findGlobalID(
+										comparedNodePair.getNodeOriginalModel(),
+										comparedNodePair.getTypeOriginModel()))) {
+							for (MyNode actNewNode : activeModel.getAllNodes()) {
+								if (Methods.findGlobalID(actNewNode.getNode(),
+										actNewNode.getNodeType().getType())
+										.equals(Methods.findGlobalID(
+												comparedNodePair
+														.getNodeNewModel(),
+												comparedNodePair
+														.getTypeNewModel()))) {
+									addNewEdgeGUI(actNode, actNewNode,
+											edgeType, false);
 								}
 							}
 						}
 					}
-					
-				}
-				
-			} else {
-				ModelMerger merger = new ModelMerger();
-				Model mergedModel = merger.mergeModels(activeModel.getModel(),
-						Pmodel, Pmeta);
 
-				MyModelContainer newModel = new MyModelContainer(mergedModel,
-						Pmeta);
-				activeModel = newModel;
+				}
 			}
 
 		}
-	}	
-	
-	public static void resetModel()
-	{
+	}
+
+	public static void resetModel() {
 		activeModel = null;
 	}
 
 	/**
 	 * get all Nodes from the Model
+	 * 
 	 * @return List with the Nodes
 	 */
-	public static LinkedList<MyNode> getAllNodes()
-	{
-		if (activeModel !=null)
+	public static LinkedList<MyNode> getAllNodes() {
+		if (activeModel != null)
 			return activeModel.getAllNodes();
 		else
-			return new LinkedList<MyNode>();	
+			return new LinkedList<MyNode>();
 	}
-	
+
 	/**
 	 * get all JunctionNodes from the Model
+	 * 
 	 * @return List with the JunctionNodes
 	 */
-	public static LinkedList<MyJunctionNode> getAllJunctionNodes()
-	{
-		if (activeModel !=null)
+	public static LinkedList<MyJunctionNode> getAllJunctionNodes() {
+		if (activeModel != null)
 			return activeModel.getAllJunctionNodes();
 		else
-			return new LinkedList<MyJunctionNode>();	
+			return new LinkedList<MyJunctionNode>();
 	}
-	
+
 	/**
 	 * get all Edges from the Model
+	 * 
 	 * @return List with the Edges
 	 */
-	public static LinkedList<MyEdge> getAllEdges()
-	{
-		if (activeModel !=null)
+	public static LinkedList<MyEdge> getAllEdges() {
+		if (activeModel != null)
 			return activeModel.getAllEdges();
 		else
 			return new LinkedList<MyEdge>();
 	}
-	
 
-	
 	/**
 	 * get all Node Types from the Model
+	 * 
 	 * @return the NodeTypes object
 	 */
 	public static MyNodeTypes getNodeTypes() {
-		if (activeModel !=null)
+		if (activeModel != null)
 			return activeModel.getNodeTypes();
-		else
-		{
+		else {
 			return new MyNodeTypes(new HashSet<MyNodeType>());
 		}
 	}
-	
+
 	/**
 	 * get all JunctionNode Types from the Model
+	 * 
 	 * @return the MyJunctionNodeTypes object
 	 */
 	public static MyJunctionNodeTypes getJunctionNodeTypes() {
-		if (activeModel !=null)
+		if (activeModel != null)
 			return activeModel.getJunctionNodeTypes();
-		else
-		{
+		else {
 			return new MyJunctionNodeTypes(new HashSet<MyJunctionNodeType>());
 		}
 	}
-	
+
 	/**
 	 * get all Edge Types from the Model
+	 * 
 	 * @return the EdgeTypes object
 	 */
 	public static MyEdgeTypes getEdgeTypes() {
-		if (activeModel !=null)
+		if (activeModel != null)
 			return activeModel.getEdgeTypes();
-		else
-		{
+		else {
 			return new MyEdgeTypes(new HashSet<MyEdgeType>());
 		}
 	}
-	
+
 	/**
 	 * add an Edge which is added during a collapse operation
-	 * @param newEdge the new Edge 
+	 * 
+	 * @param newEdge
+	 *            the new Edge
 	 */
-	public static void addCollapserEdge(MyEdge newEdge)
-	{
-		if (activeModel !=null)
-		{
+	public static void addCollapserEdge(MyEdge newEdge) {
+		if (activeModel != null) {
 			newEdge.setCollapseEdge(true);
 			activeModel.addEdge(newEdge);
 		}
 	}
-	
+
 	/**
 	 * remove an Edge which was added during a collapse operation
-	 * @param edge the edge in question
+	 * 
+	 * @param edge
+	 *            the edge in question
 	 */
-	public static void removeCollapserEdge(MyEdge edge)
-	{
-		if (activeModel !=null)
-		{
+	public static void removeCollapserEdge(MyEdge edge) {
+		if (activeModel != null) {
 			activeModel.removeCollapserEdge(edge);
 		}
 	}
-	
-	public static void printVisibleStuff ()
-	{
+
+	public static void printVisibleStuff() {
 		System.out.println("------visible Nodes----------");
-		for (MyNode n : getAllNodes())
-		{
+		for (MyNode n : getAllNodes()) {
 			if (n.isVisible())
 				System.out.println(n.getRealName());
 		}
 		System.out.println("--------------------------");
 		System.out.println("------invisible Nodes----------");
-		for (MyNode n : getAllNodes())
-		{
+		for (MyNode n : getAllNodes()) {
 			if (!n.isVisible())
 				System.out.println(n.getRealName());
 		}
 		System.out.println("--------------------------");
 	}
-	
+
 	/**
 	 * Add a new Node which was created through the Gui
-	 * @param nodeName The name of the new Node
-	 * @param type The type of the new Node
+	 * 
+	 * @param nodeName
+	 *            The name of the new Node
+	 * @param type
+	 *            The type of the new Node
 	 */
-	public static void addNewNodeFromGUI (String nodeName, MyNodeType type)
-	{
-		if (activeModel !=null)
-		{
+	public static void addNewNodeFromGUI(String nodeName, MyNodeType type) {
+		if (activeModel != null) {
 			activeModel.addNewNodeFromGUI(nodeName, type);
 		}
 	}
-	
+
 	/**
 	 * Add a new Edge which was created through the Gui
-	 * @param source The start Node of the Edge
-	 * @param destination The destination Node of the Edge
-	 * @param edgetype The type of the Edge
-	 * @param directed should the new edge be directed
+	 * 
+	 * @param source
+	 *            The start Node of the Edge
+	 * @param destination
+	 *            The destination Node of the Edge
+	 * @param edgetype
+	 *            The type of the Edge
+	 * @param directed
+	 *            should the new edge be directed
 	 * @return true if the add operation was successful, false otherwise
 	 */
-	public static boolean addNewEdgeGUI(MyNode source, MyNode destination, MyEdgeType edgetype, boolean directed)
-	{
-		if (activeModel !=null)
-		{
-			return activeModel.addNewEdgeGUI(source, destination, edgetype, directed);
-		}
-		else
+	public static boolean addNewEdgeGUI(MyNode source, MyNode destination,
+			MyEdgeType edgetype, boolean directed) {
+		if (activeModel != null) {
+			return activeModel.addNewEdgeGUI(source, destination, edgetype,
+					directed);
+		} else
 			return false;
 	}
-	
-	public static Metamodel getMetamodel()
-	{
+
+	public static Metamodel getMetamodel() {
 		return metaModel;
 	}
-	
-	public static Model getModel()
-	{
-		if (activeModel !=null)
-		{
+
+	public static Model getModel() {
+		if (activeModel != null) {
 			return activeModel.getModel();
-		}
-		else
+		} else
 			return null;
 	}
-	
-	
-	private static void calcPossibleEdges()
-	{
-		//System.out.println("Call");
-		if (possibleMappings== null)
-		{
+
+	private static void calcPossibleEdges() {
+		// System.out.println("Call");
+		if (possibleMappings == null) {
 			possibleMappings = new HashMap<ModelBuilder.MyPair, LinkedList<MyEdgeType>>();
 		}
-		
-		for (NodeType start :getMetamodel().getNodeTypes())
-		{
-			for (NodeType end :getMetamodel().getNodeTypes())
-			{
-				for (EdgeType et: getMetamodel().getEdgeTypes())
-				{
-					PSSIFOption<ConnectionMapping> tmp = et.getMapping(start, end);
-					
-					
-					/*if (et.getName().equals(PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_INCLUSION_CONTAINS) && tmp!=null)
-					{
-						if ((tmp.isOne() || tmp.isMany()) && (end.getName().equals("Activity") || start.getName().equals("Activity")))
-						{
-							System.out.println(start.getName()+" to "+end.getName());
-							//System.out.println("None "+tmp.isNone());
-							System.out.println("One "+tmp.isOne());
-							System.out.println("Many "+tmp.isMany());
-							System.out.println("-----------------------------");
-						}
-					}*/
-					if (tmp!=null && tmp.isOne())
-					{
-						//ConnectionMapping mapping = tmp.getOne();
-						MyPair p = MyPair.getInsance(start,end);
+
+		for (NodeType start : getMetamodel().getNodeTypes()) {
+			for (NodeType end : getMetamodel().getNodeTypes()) {
+				for (EdgeType et : getMetamodel().getEdgeTypes()) {
+					PSSIFOption<ConnectionMapping> tmp = et.getMapping(start,
+							end);
+
+					/*
+					 * if (et.getName().equals(PSSIFCanonicMetamodelCreator.
+					 * E_RELATIONSHIP_INCLUSION_CONTAINS) && tmp!=null) { if
+					 * ((tmp.isOne() || tmp.isMany()) &&
+					 * (end.getName().equals("Activity") ||
+					 * start.getName().equals("Activity"))) {
+					 * System.out.println(start.getName()+" to "+end.getName());
+					 * //System.out.println("None "+tmp.isNone());
+					 * System.out.println("One "+tmp.isOne());
+					 * System.out.println("Many "+tmp.isMany());
+					 * System.out.println("-----------------------------"); } }
+					 */
+					if (tmp != null && tmp.isOne()) {
+						// ConnectionMapping mapping = tmp.getOne();
+						MyPair p = MyPair.getInsance(start, end);
 						LinkedList<MyEdgeType> data = possibleMappings.get(p);
-						
-						if (data ==null)
-						{
+
+						if (data == null) {
 							data = new LinkedList<MyEdgeType>();
 						}
-						MyEdgeType value = getEdgeTypes().getValue(et.getName());
+						MyEdgeType value = getEdgeTypes()
+								.getValue(et.getName());
 						data.add(value);
-						
-						/*if (value.getName().equals(PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_INCLUSION) )
-						{
-							System.out.println(start.getName() +"--"+ end.getName());
-						}
-						
-						if (value.getParentType()!=null)
-						{
-							if (value.getParentType().getName().equals(PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_INCLUSION))
-								System.out.println(start.getName() +"--"+ end.getName());
-						}*/
+
+						/*
+						 * if
+						 * (value.getName().equals(PSSIFCanonicMetamodelCreator
+						 * .E_RELATIONSHIP_INCLUSION) ) {
+						 * System.out.println(start.getName() +"--"+
+						 * end.getName()); }
+						 * 
+						 * if (value.getParentType()!=null) { if
+						 * (value.getParentType
+						 * ().getName().equals(PSSIFCanonicMetamodelCreator
+						 * .E_RELATIONSHIP_INCLUSION))
+						 * System.out.println(start.getName() +"--"+
+						 * end.getName()); }
+						 */
 						possibleMappings.put(p, data);
 					}
-					
+
 				}
 			}
 		}
 	}
-	
-	public static LinkedList<MyEdgeType> getPossibleEdges(NodeType start, NodeType end) 
-	{
-		if (possibleMappings== null)
+
+	public static LinkedList<MyEdgeType> getPossibleEdges(NodeType start,
+			NodeType end) {
+		if (possibleMappings == null)
 			calcPossibleEdges();
-		
-		LinkedList<MyEdgeType> res = possibleMappings.get(MyPair.getInsance(start, end));
-		
-		if (res ==null)
-		{
+
+		LinkedList<MyEdgeType> res = possibleMappings.get(MyPair.getInsance(
+				start, end));
+
+		if (res == null) {
 			res = new LinkedList<MyEdgeType>();
 		}
-		
+
 		return res;
 	}
-	
-	private static class MyPair
-	{
+
+	private static class MyPair {
 		private NodeType start;
 		private NodeType end;
-		
+
 		private static LinkedList<MyPair> values;
-		
-		private MyPair (NodeType start, NodeType end)
-		{
+
+		private MyPair(NodeType start, NodeType end) {
 			this.start = start;
 			this.end = end;
 		}
-		
-		public static MyPair getInsance(NodeType start, NodeType end)
-		{
-			if (values ==null)
+
+		public static MyPair getInsance(NodeType start, NodeType end) {
+			if (values == null)
 				values = new LinkedList<ModelBuilder.MyPair>();
-			
+
 			MyPair mp = existsAlready(start, end);
-			if (mp!=null)
+			if (mp != null)
 				return mp;
-			else
-			{
+			else {
 				mp = new MyPair(start, end);
 				values.add(mp);
 				return mp;
 			}
 		}
-		
-		private static MyPair existsAlready (NodeType start, NodeType end)
-		{
-			for (MyPair v: values)
-			{
-				if (v.start.getName().equals(start.getName()) && v.end.getName().equals(end.getName()))
+
+		private static MyPair existsAlready(NodeType start, NodeType end) {
+			for (MyPair v : values) {
+				if (v.start.getName().equals(start.getName())
+						&& v.end.getName().equals(end.getName()))
 					return v;
 			}
-			
+
 			return null;
 		}
 
@@ -419,8 +436,10 @@ public class ModelBuilder {
 		public int hashCode() {
 			final int prime = 31;
 			int result = 1;
-			result = prime * result + ((end == null) ? 0 : end.getName().hashCode());
-			result = prime * result + ((start == null) ? 0 : start.getName().hashCode());
+			result = prime * result
+					+ ((end == null) ? 0 : end.getName().hashCode());
+			result = prime * result
+					+ ((start == null) ? 0 : start.getName().hashCode());
 			return result;
 		}
 
@@ -436,8 +455,7 @@ public class ModelBuilder {
 			if (end == null) {
 				if (other.end != null)
 					return false;
-			} 
-			else if (!end.equals(other.end))
+			} else if (!end.equals(other.end))
 				return false;
 			if (start == null) {
 				if (other.start != null)

@@ -22,11 +22,12 @@ import de.tum.pssif.core.model.Model;
 import de.tum.pssif.core.model.Node;
 
 /**
+ * This class holds the data necessary for the VSM metric. This includes the
+ * total number of documents in the document space and the vocabulary of the
+ * document space.
+ * 
  * @author Andreas
  * 
- *         This class holds the data necessary for the VSM metric. This includes
- *         the total number of documents in the document space and the
- *         vocabulary of the document space.
  */
 public class DocumentCorpus {
 
