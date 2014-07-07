@@ -340,7 +340,7 @@ public class ConsistencyData {
 
 	/**
 	 * this method takes alle nodes from the original model and creates a list
-	 * with the nodes which haven't been matched with another node.
+	 * with the nodes which haven't been merged or traced with another node.
 	 * 
 	 * @param nodesOrigin
 	 *            all nodes with their type from the first imported model

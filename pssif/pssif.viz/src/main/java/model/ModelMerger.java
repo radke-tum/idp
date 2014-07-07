@@ -49,14 +49,31 @@ public class ModelMerger {
 
 	private NodeType rootNodeType;
 
+	/**
+	 * this variable maps the unmatched nodes of the old model to the respective
+	 * node in the new model
+	 */
 	private Map<NodeAndType, Node> nodeTransferUnmatchedOldToNewModel = new HashMap<NodeAndType, Node>();
+	/**
+	 * this variable maps the traced nodes of the old model to the respective
+	 * node in the new model
+	 */
 	private Map<NodeAndType, Node> nodeTransferTracedOldToNewModel = new HashMap<NodeAndType, Node>();
 
 	private List<MergedNodePair> mergedNodes;
+	private List<MergedNodePair> tracedNodes;
+
 	private List<NodeAndType> unmatchedNodesOrigin;
 
-	MyModelContainer activeModel, newModel;
-	private List<MergedNodePair> tracedNodes;
+	/**
+	 * the first imported model
+	 */
+	MyModelContainer activeModel;
+
+	/**
+	 * the recently imported model
+	 */
+	MyModelContainer newModel;
 
 	/**
 	 * @return the oldToNewNodes
@@ -99,13 +116,21 @@ public class ModelMerger {
 	 * This method starts the real merge between two given models.
 	 * 
 	 * @param modelOrigin
+	 *            the first imported model
 	 * @param modelNew
+	 *            the recent imported model
 	 * @param activeModel
+	 *            the first imported model as a container
 	 * @param metaModelOrigin
-	 * @return
+	 *            the meta model of the first model
+	 * @return the recently imported model with the old nodes merged into it
 	 * @author Andreas
 	 * @param unmatchedNodesOrigin
+	 *            the nodes of the first model which have no trace/merge partner
+	 *            in the recent model
 	 * @param tracedNodes
+	 *            the nodes of the first model which have a trace partner in the
+	 *            recent model
 	 */
 	public Model mergeModels(Model modelOrigin, Model modelNew,
 			Metamodel metaModelOriginal, Metamodel metaModelNew,
@@ -131,21 +156,14 @@ public class ModelMerger {
 		return mergeNodes();
 	}
 
-	// TODO transfer edges of nodes which are not marked as merged to the new
-	// model, too
 	/**
 	 * This method adds every node from the old model which is not marked as to
 	 * be merged to the new model. The nodes which are marked as to be merged
 	 * are deleted and not transfered to the new model. But their edges are
 	 * transfered to the new model.
 	 * 
-	 * @param activeModel
-	 * @param mergedNodes
-	 *            the list containing the information which nodes shall be
-	 *            merged into the new model
 	 * @return the new active model.
 	 * @author Andreas
-	 * @param unmatchedNodesOrigin
 	 */
 	private Model mergeNodes() {
 
@@ -182,9 +200,6 @@ public class ModelMerger {
 	 * This method creates the tracelink edges between the nodepairs given in
 	 * the traceNode list.
 	 * 
-	 * @param tracedNodes
-	 *            the list with the node pairs which shall be linked by a
-	 *            tracelink
 	 * @author Andreas
 	 */
 	private void setTracedLinks() {
@@ -193,80 +208,61 @@ public class ModelMerger {
 						.getEdgeType(
 								PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_CHRONOLOGICAL_EVOLVES_TO)
 						.getOne(), 6);
-		
+
 		Iterator<Entry<NodeAndType, Node>> it = nodeTransferTracedOldToNewModel
 				.entrySet().iterator();
-		
+
 		NodeAndType tempNodeOrigin;
 		Node tempNodeTransferred;
-		
+
 		MyNode searchedFromNodeNew = null, searchedToNodeNew = null;
 
-		// Iterate over all old nodes transferred to the new model
+		// Iterate over all old nodes (which have a trace partner) transferred
+		// to the new model
 		while (it.hasNext()) {
 			Map.Entry<NodeAndType, Node> pairs = (Entry<NodeAndType, Node>) it
 					.next();
 			tempNodeOrigin = pairs.getKey();
 			tempNodeTransferred = pairs.getValue();
-			
-			for(MergedNodePair tracedPair : tracedNodes){
-				if(Methods.findGlobalID(tempNodeOrigin.getNode(), tempNodeOrigin.getType()).equals(Methods.findGlobalID(tracedPair.getNodeOriginalModel(), tracedPair.getTypeOriginModel()))){
-					
+
+			for (MergedNodePair tracedPair : tracedNodes) {
+				// here the tracepartner of the current node is searched
+				if (Methods.findGlobalID(tempNodeOrigin.getNode(),
+						tempNodeOrigin.getType()).equals(
+						Methods.findGlobalID(tracedPair.getNodeOriginalModel(),
+								tracedPair.getTypeOriginModel()))) {
+
+					// here the two nodes which shall be connected by a
+					// tracelink are retrieved in the new model
 					for (MyNode tempNode : newModel.getAllNodes()) {
 						if (Methods.findGlobalID(tempNode.getNode(),
-								tempNode.getNodeType().getType())
-								.equals(Methods.findGlobalID(
-										pairs.getValue(),
+								tempNode.getNodeType().getType()).equals(
+								Methods.findGlobalID(pairs.getValue(),
 										tempNodeOrigin.getType()))) {
 							searchedFromNodeNew = tempNode;
 						}
 						if (Methods.findGlobalID(tempNode.getNode(),
-								tempNode.getNodeType().getType())
-								.equals(Methods.findGlobalID(tracedPair.getNodeNewModel(),
+								tempNode.getNodeType().getType()).equals(
+								Methods.findGlobalID(
+										tracedPair.getNodeNewModel(),
 										tracedPair.getTypeNewModel()))) {
 							searchedToNodeNew = tempNode;
 						}
 					}
-					
-					newModel.addNewEdgeGUI(searchedFromNodeNew, searchedToNodeNew, edgeType, true);
-					
+					// here the tracelink is generated
+					newModel.addNewEdgeGUI(searchedFromNodeNew,
+							searchedToNodeNew, edgeType, true);
 				}
 			}
-			
-			
-			
 		}
-		
-		//Old tracelink method
-//		for (MergedNodePair tracedPair : tracedNodes) {
-//
-//			
-//
-//			/**
-//			 * searches for the nodes (in the new active model) which shall be
-//			 * linked and adds new edges between them.
-//			 */
-//			for (MyNode actNode : newModel.getAllNodes()) {
-//				if (Methods.findGlobalID(actNode.getNode(),
-//						actNode.getNodeType().getType()).equals(
-//						Methods.findGlobalID(tracedPair.getNodeOriginalModel(),
-//								tracedPair.getTypeOriginModel()))) {
-//					for (MyNode actNewNode : activeModel.getAllNodes()) {
-//						if (Methods.findGlobalID(actNewNode.getNode(),
-//								actNewNode.getNodeType().getType()).equals(
-//								Methods.findGlobalID(
-//										tracedPair.getNodeNewModel(),
-//										tracedPair.getTypeNewModel()))) {
-//							addNewEdgeGUI(actNode, actNewNode, edgeType, false);
-//						}
-//					}
-//				}
-//			}
-//
-//		}
-
 	}
 
+	/**
+	 * This method iterates over all nodes from the original model which have
+	 * been transferred to the new model but have no merge nor tracepartner
+	 * 
+	 * @author Andreas
+	 */
 	private void transferOldEdges() {
 		Iterator<Entry<NodeAndType, Node>> it = nodeTransferUnmatchedOldToNewModel
 				.entrySet().iterator();
@@ -293,11 +289,9 @@ public class ModelMerger {
 	 * 
 	 * @param nodeNew
 	 *            the node in the new model to which the old edge shall link
-	 * @param typeNodeNew
 	 * @param nodeOrigin
 	 *            the node of the origin model from which the old edge shall
 	 *            link
-	 * @param typeNodeOrigin
 	 * @author Andreas
 	 */
 	private void checkForEdgesToTransfer(Node nodeNew,
@@ -309,14 +303,17 @@ public class ModelMerger {
 	}
 
 	/**
-	 * This method transfers the destination of the incoming edges from the
-	 * given old node to the given new node. So the old edge now links to the
-	 * node of the new model. TODO
+	 * This method gets every incoming edges of the given node. Then the edge is
+	 * created in the new model.
 	 * 
 	 * @param nodeNew
+	 *            the transferred node object
 	 * @param nodeNewType
+	 *            the type of the transferred node
 	 * @param nodeOrigin
+	 *            the node whichs edges are retrieved in the original mode
 	 * @param nodeTypeOrigin
+	 *            the type of the original node
 	 * 
 	 * @author Andreas
 	 */
@@ -332,6 +329,7 @@ public class ModelMerger {
 
 		MyEdgeType edgeTypeNew;
 
+		// get all incoming edges here
 		for (EdgeType edgeType : metaModelNew.getEdgeTypes()) {
 			for (ConnectionMapping incomingMapping : edgeType
 					.getIncomingMappings(nodeTypeOrigin)) {
@@ -357,6 +355,8 @@ public class ModelMerger {
 								Methods.findGlobalID(tempNodeOrigin.getNode(),
 										tempNodeOrigin.getType()))) {
 
+							// here the two nodes which shall be connected by a
+							// edge are retrieved in the new model
 							for (MyNode tempNode : newModel.getAllNodes()) {
 								if (Methods.findGlobalID(tempNode.getNode(),
 										tempNode.getNodeType().getType())
@@ -373,21 +373,13 @@ public class ModelMerger {
 								}
 							}
 
-							// edgeTypeNew = new
-							// MyEdgeType(newModel.getMetamodel().getEdgeType(edgeType.getName()).getOne(),
-							// 8);
-							//
-							// Edge newEdge = newModel.addNewEdge(
-							// searchedFromNodeNew, searchedToNodeNew,
-							// edgeTypeNew,incomingMapping, true);
-							//
-							// transferEdgeAttributes(incomingEdge, newEdge,
-							// edgeTypeNew.getType());
-
+							// create the new edge in the new model
 							Edge newEdge = incomingMapping.create(modelNew,
 									searchedFromNodeNew.getNode(),
 									searchedToNodeNew.getNode());
 
+							// transfer the attributes of the old to the new
+							// edge
 							transferEdgeAttributes(incomingEdge, newEdge,
 									edgeType);
 
@@ -395,6 +387,9 @@ public class ModelMerger {
 						}
 					}
 
+					// if the from node has been deleted because it appears in
+					// the recently imported model, too. Then the newer version
+					// becomes the from node of the edge
 					for (MergedNodePair actMerged : mergedNodes) {
 						if (Methods.findGlobalID(tempFromEdgeNode,
 								tempFromEdgeNodeType).equals(
@@ -402,6 +397,8 @@ public class ModelMerger {
 										actMerged.getNodeOriginalModel(),
 										actMerged.getTypeOriginModel()))) {
 
+							// here the two nodes which shall be connected by a
+							// edge are retrieved in the new model
 							for (MyNode tempNode : newModel.getAllNodes()) {
 								if (Methods.findGlobalID(tempNode.getNode(),
 										tempNode.getNodeType().getType())
@@ -417,22 +414,13 @@ public class ModelMerger {
 									searchedToNodeNew = tempNode;
 								}
 							}
-
-							// edgeTypeNew = new
-							// MyEdgeType(newModel.getMetamodel().getEdgeType(edgeType.getName()).getOne(),
-							// 8);
-							//
-							// Edge newEdge = newModel.addNewEdge(
-							// searchedFromNodeNew, searchedToNodeNew,
-							// edgeTypeNew,incomingMapping, true);
-							//
-							// transferEdgeAttributes(incomingEdge, newEdge,
-							// edgeTypeNew.getType());
-
+							// create the new edge in the new model
 							Edge newEdge = incomingMapping.create(modelNew,
 									searchedFromNodeNew.getNode(),
 									searchedToNodeNew.getNode());
 
+							// transfer the attributes of the old to the new
+							// edge
 							transferEdgeAttributes(incomingEdge, newEdge,
 									edgeType);
 
@@ -446,17 +434,18 @@ public class ModelMerger {
 	}
 
 	/**
-	 * This method transfers the origin of the outgoing edges from the given old
-	 * node to the given new node. So the old edge now links to the node of the
-	 * new model.
+	 * This method gets every outgoing edges of the given node. Then the edge is
+	 * created in the new model.
 	 * 
 	 * 
-	 * TODO
-	 * 
-	 * @param nodeTypeOrigin
-	 * @param nodeOrigin
 	 * @param nodeNew
+	 *            the transferred node object
 	 * @param nodeNewType
+	 *            the type of the transferred node
+	 * @param nodeOrigin
+	 *            the node whichs edges are retrieved in the original mode
+	 * @param nodeTypeOrigin
+	 *            the type of the original node
 	 * @author Andreas
 	 */
 	private void checkOutgoingEdges(NodeTypeBase nodeTypeOrigin,
@@ -471,6 +460,7 @@ public class ModelMerger {
 
 		MyEdgeType edgeTypeNew;
 
+		//retrieving all outgoing edges here
 		for (EdgeType edgeType : metaModelNew.getEdgeTypes()) {
 			for (ConnectionMapping outgoingMapping : edgeType
 					.getOutgoingMappings(nodeTypeOrigin)) {
@@ -483,7 +473,7 @@ public class ModelMerger {
 					Iterator<Entry<NodeAndType, Node>> it = nodeTransferUnmatchedOldToNewModel
 							.entrySet().iterator();
 
-					// look up whether the from node of the old edge has also
+					// look up whether the to node of the old edge has also
 					// been transfered to the new model. If this is the case the
 					// edge is created between the two nodes in the new model
 					while (it.hasNext()) {
@@ -496,6 +486,8 @@ public class ModelMerger {
 								Methods.findGlobalID(tempNodeOrigin.getNode(),
 										tempNodeOrigin.getType()))) {
 
+							// here the two nodes which shall be connected by a
+							// edge are retrieved in the new model
 							for (MyNode tempNode : newModel.getAllNodes()) {
 								if (Methods.findGlobalID(tempNode.getNode(),
 										tempNode.getNodeType().getType())
@@ -511,22 +503,13 @@ public class ModelMerger {
 									searchedFromNodeNew = tempNode;
 								}
 							}
-
-							// edgeTypeNew = new
-							// MyEdgeType(newModel.getMetamodel().getEdgeType(edgeType.getName()).getOne(),
-							// 8);
-							//
-							// Edge newEdge = newModel.addNewEdge(
-							// searchedFromNodeNew, searchedToNodeNew,
-							// edgeTypeNew,outgoingMapping, true);
-							//
-							// transferEdgeAttributes(outgoingEdge, newEdge,
-							// edgeTypeNew.getType());
-
+							// create the new edge in the new model
 							Edge newEdge = outgoingMapping.create(modelNew,
 									searchedFromNodeNew.getNode(),
 									searchedToNodeNew.getNode());
-
+							
+							// transfer the attributes of the old to the new
+							// edge
 							transferEdgeAttributes(outgoingEdge, newEdge,
 									edgeType);
 
@@ -534,6 +517,9 @@ public class ModelMerger {
 						}
 					}
 
+					// if the to node has been deleted because it appears in
+					// the recently imported model, too. Then the newer version
+					// becomes the to node of the edge
 					for (MergedNodePair actMerged : mergedNodes) {
 						if (Methods.findGlobalID(tempToEdgeNode,
 								tempToEdgeNodeType).equals(
@@ -541,6 +527,8 @@ public class ModelMerger {
 										actMerged.getNodeOriginalModel(),
 										actMerged.getTypeOriginModel()))) {
 
+							// here the two nodes which shall be connected by a
+							// edge are retrieved in the new model
 							for (MyNode tempNode : newModel.getAllNodes()) {
 								if (Methods.findGlobalID(tempNode.getNode(),
 										tempNode.getNodeType().getType())
@@ -556,22 +544,13 @@ public class ModelMerger {
 									searchedFromNodeNew = tempNode;
 								}
 							}
-
-							// edgeTypeNew = new
-							// MyEdgeType(newModel.getMetamodel().getEdgeType(edgeType.getName()).getOne(),
-							// 8);
-							//
-							// Edge newEdge = newModel.addNewEdge(
-							// searchedFromNodeNew, searchedToNodeNew,
-							// edgeTypeNew,outgoingMapping, true);
-							//
-							// transferEdgeAttributes(outgoingEdge, newEdge,
-							// edgeTypeNew.getType());
-
+							// create the new edge in the new model
 							Edge newEdge = outgoingMapping.create(modelNew,
 									searchedFromNodeNew.getNode(),
 									searchedToNodeNew.getNode());
-
+							
+							// transfer the attributes of the old to the new
+							// edge
 							transferEdgeAttributes(outgoingEdge, newEdge,
 									edgeType);
 
