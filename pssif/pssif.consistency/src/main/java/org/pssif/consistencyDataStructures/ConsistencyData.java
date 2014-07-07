@@ -3,6 +3,7 @@ package org.pssif.consistencyDataStructures;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import org.pssif.comparedDataStructures.ComparedLabelPair;
 import org.pssif.comparedDataStructures.ComparedNodePair;
@@ -15,21 +16,18 @@ import de.tum.pssif.core.model.Node;
 
 /**
  * 
- *        This class stores all the information relevant for the consistency
- *         checking process. It stores several list relevant for the processes.
+ * This class stores all the information relevant for the consistency checking
+ * process. It stores several list relevant for the processes.
  * 
- *         With this class we know:
+ * With this class we know:
  * 
- *         - which IDs already matched (so we don't match them again as we go up
- *         in the class hierachy in the compairson process)
- *         - the similarity
- *         results for token & label pairs to be able to look them up in future
- *         compairsons
- *         - the node pairs which exceed the similarity thresholds
- *         - the node pairs which were chosen by the user to be merged
- *         - the node pairs which will be linked by a tracelink
- *         - the node pairs which will be merged into one
- *         
+ * - which IDs already matched (so we don't match them again as we go up in the
+ * class hierachy in the compairson process) - the similarity results for token
+ * & label pairs to be able to look them up in future compairsons - the node
+ * pairs which exceed the similarity thresholds - the node pairs which were
+ * chosen by the user to be merged - the node pairs which will be linked by a
+ * tracelink - the node pairs which will be merged into one
+ * 
  * @author Andreas
  * 
  */
@@ -45,6 +43,7 @@ public class ConsistencyData {
 		this.comparedNodePairs = new LinkedList<ComparedNodePair>();
 
 		this.mergedNodePairs = new LinkedList<MergedNodePair>();
+		this.unmatchedNodesOrigin = new LinkedList<NodeAndType>();
 	}
 
 	public static ConsistencyData getInstance() {
@@ -60,7 +59,7 @@ public class ConsistencyData {
 	 * stores the already compared IDs as the pair (originModelElementID,
 	 * newModelElementID)
 	 */
-	private volatile HashSet<String> IDMapping;
+	private volatile Set<String> IDMapping;
 
 	/**
 	 * stores the label pairs which were already matched together with the
@@ -85,6 +84,13 @@ public class ConsistencyData {
 	 * stores merged/traced Nodes
 	 */
 	private volatile List<MergedNodePair> mergedNodePairs;
+
+	// TODO Attention! Variable is volatile, will be lost at serialization!
+	/**
+	 * this list stores the nodes from the original model which can't be traced
+	 * or merged into the new version of the model.
+	 */
+	private volatile List<NodeAndType> unmatchedNodesOrigin;
 
 	/**
 	 * these are the tresholds for the syntactic, semantic and contextual
@@ -154,7 +160,7 @@ public class ConsistencyData {
 	}
 
 	/**
-	 *  THis method takes the result of the application of all merging metrics
+	 * THis method takes the result of the application of all merging metrics
 	 * onto two nodes and saves the result into the ID Mapping (so Nodes are
 	 * only merged once) and into the mergedNodePairs list.
 	 * 
@@ -278,8 +284,8 @@ public class ConsistencyData {
 
 	/**
 	 * This method evaluates which of the compared node pairs were selected by
-	 * the user to be linked as equals. All selected elements are added to a list and then
-	 * returned.
+	 * the user to be linked as equals. All selected elements are added to a
+	 * list and then returned.
 	 * 
 	 * @return the list of node pairs which the user chose being linked equal.
 	 */
@@ -330,6 +336,35 @@ public class ConsistencyData {
 		}
 
 		return tracedList;
+	}
+
+	/**
+	 * this method takes alle nodes from the original model and creates a list
+	 * with the nodes which haven't been merged nor traced with another node.
+	 * 
+	 * @param nodesOrigin
+	 *            all nodes with their type from the first imported model
+	 */
+	public void createUnmatchedNodeList(List<NodeAndType> nodesOrigin) {
+		boolean isMergedNode;
+
+		for (NodeAndType actNode : nodesOrigin) {
+			isMergedNode = false;
+			for (MergedNodePair mergedNode : mergedNodePairs) {
+				if (mergedNode.isMerge()) {
+					if (actNode.equals(mergedNode.getNodeOriginalModel())) {
+						isMergedNode = true;
+					}
+				}
+			}
+			if (!isMergedNode) {
+				this.unmatchedNodesOrigin.add(actNode);
+			}
+		}
+	}
+
+	public List<NodeAndType> getUnmatchedNodeList() {
+		return this.unmatchedNodesOrigin;
 	}
 
 	public List<MergedNodePair> getMergedNodePairs() {

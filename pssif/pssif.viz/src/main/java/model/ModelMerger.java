@@ -1,17 +1,17 @@
 package model;
 
+import graph.model.MyEdgeType;
 import graph.model.MyNode;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.pssif.comparedDataStructures.ComparedNodePair;
-import org.pssif.consistencyDataStructures.EdgeAndType;
 import org.pssif.consistencyDataStructures.NodeAndType;
 import org.pssif.mainProcesses.Methods;
 import org.pssif.mergedDataStructures.MergedNodePair;
@@ -27,8 +27,6 @@ import de.tum.pssif.core.metamodel.JunctionNodeType;
 import de.tum.pssif.core.metamodel.Metamodel;
 import de.tum.pssif.core.metamodel.NodeType;
 import de.tum.pssif.core.metamodel.NodeTypeBase;
-import de.tum.pssif.core.metamodel.impl.ReadFromNodesOperation;
-import de.tum.pssif.core.metamodel.impl.ReadToNodesOperation;
 import de.tum.pssif.core.model.Edge;
 import de.tum.pssif.core.model.Model;
 import de.tum.pssif.core.model.Node;
@@ -49,6 +47,12 @@ public class ModelMerger {
 	private HashMap<Node, Node> oldToNewNodes;
 
 	private NodeType rootNodeType;
+
+	private Map<NodeAndType, Node> nodeTransferOldToNewModel = new HashMap<NodeAndType, Node>();
+	private List<MergedNodePair> mergedNodes;
+	private List<NodeAndType> unmatchedNodesOrigin;
+
+	MyModelContainer newModel;
 
 	/**
 	 * @return the oldToNewNodes
@@ -96,14 +100,18 @@ public class ModelMerger {
 	 * @param metaModelOrigin
 	 * @return
 	 * @author Andreas
+	 * @param unmatchedNodesOrigin
 	 */
 	public MyModelContainer mergeModels(Model modelOrigin, Model modelNew,
 			Metamodel metaModelOriginal, Metamodel metaModelNew,
-			List<MergedNodePair> mergedNodes, MyModelContainer activeModel) {
+			List<MergedNodePair> mergedNodes,
+			List<NodeAndType> unmatchedNodesOrigin, MyModelContainer activeModel) {
 		this.modelOrigin = modelOrigin;
 		this.modelNew = modelNew;
 		this.metaModelOrigin = metaModelOrigin;
 		this.metaModelNew = metaModelNew;
+		this.mergedNodes = mergedNodes;
+		this.unmatchedNodesOrigin = unmatchedNodesOrigin;
 
 		this.rootNodeType = metaModelNew.getNodeType(
 				PSSIFConstants.ROOT_NODE_TYPE_NAME).getOne();
@@ -112,7 +120,7 @@ public class ModelMerger {
 		// addAllJunctionNodes();
 		// addAllEdges();
 
-		return mergeNodes(mergedNodes, activeModel);
+		return mergeNodes(activeModel);
 	}
 
 	// TODO transfer edges of nodes which are not marked as merged to the new
@@ -129,44 +137,75 @@ public class ModelMerger {
 	 *            merged into the new model
 	 * @return the new active model.
 	 * @author Andreas
+	 * @param unmatchedNodesOrigin
 	 */
-	private MyModelContainer mergeNodes(List<MergedNodePair> mergedNodePairs,
-			MyModelContainer activeModel) {
+	private MyModelContainer mergeNodes(MyModelContainer activeModel) {
 
-		for (MergedNodePair mergedPair : mergedNodePairs) {
-			if (!mergedPair.isMerge()) {
-				addNodeToNewModel(mergedPair.getNodeOriginalModel(),
-						mergedPair.getTypeOriginModel());
-			}
+		newModel = new MyModelContainer(modelNew, metaModelNew);
+
+		// adding unmerged nodes to the new model
+		for (NodeAndType unmergedNode : unmatchedNodesOrigin) {
+
+			Node newNode = addNodeToNewModel(unmergedNode.getNode(),
+					unmergedNode.getType());
+
+			nodeTransferOldToNewModel.put(unmergedNode, newNode);
+
+			// TODO checkForEdges aufrufen für newNode als Knoten aus neuem
+			// Modell und die alte Version muss gesucht werden im active
+			// Model
+
 		}
 
-		for (MergedNodePair mergedPair : mergedNodePairs) {
-			if (mergedPair.isMerge()) {
-				for (MyNode actNode : activeModel.getAllNodes()) {
-					if (Methods.findGlobalID(actNode.getNode(),
-							actNode.getNodeType().getType()).equals(
-							Methods.findGlobalID(
-									mergedPair.getNodeOriginalModel(),
-									mergedPair.getTypeOriginModel()))) {
-						for (MyNode actNewNode : activeModel.getAllNodes()) {
-							if (Methods.findGlobalID(actNewNode.getNode(),
-									actNewNode.getNodeType().getType()).equals(
-									Methods.findGlobalID(
-											mergedPair.getNodeNewModel(),
-											mergedPair.getTypeNewModel()))) {
-								checkForEdgesToTransfer(actNewNode.getNode(),
-										actNewNode.getNodeType().getType(),
-										actNode.getNode(), actNode
-												.getNodeType().getType());
-							}
-						}
-					}
-				}
-			}
-		}
-		MyModelContainer result = new MyModelContainer(modelNew, metaModelNew);
+		transferOldEdges(activeModel);
 
-		return result;
+		// TODO kann nicht funktionieren, da hier Kanten zwischen dem alten
+		// Modell und dem neuen Modell hergestellt werden sollen
+		// for (MergedNodePair mergedPair : mergedNodePairs) {
+		// if (mergedPair.isMerge()) {
+		// for (MyNode actOriginNode : activeModel.getAllNodes()) {
+		// if (Methods.findGlobalID(actOriginNode.getNode(),
+		// actOriginNode.getNodeType().getType()).equals(
+		// Methods.findGlobalID(
+		// mergedPair.getNodeOriginalModel(),
+		// mergedPair.getTypeOriginModel()))) {
+		// for (MyNode actNewNode : activeModel.getAllNodes()) {
+		// if (Methods.findGlobalID(actNewNode.getNode(),
+		// actNewNode.getNodeType().getType()).equals(
+		// Methods.findGlobalID(
+		// mergedPair.getNodeNewModel(),
+		// mergedPair.getTypeNewModel()))) {
+		// checkForEdgesToTransfer(actNewNode.getNode(),
+		// actNewNode.getNodeType().getType(),
+		// actOriginNode.getNode(), actOriginNode
+		// .getNodeType().getType());
+		// }
+		// }
+		// }
+		// }
+		// }
+		// }
+
+		return newModel;
+	}
+
+	private void transferOldEdges(MyModelContainer activeModel) {
+		Iterator<Entry<NodeAndType, Node>> it = nodeTransferOldToNewModel
+				.entrySet().iterator();
+		NodeAndType tempNodeOrigin;
+		Node tempNodeTransferred;
+
+		// Iterate over all old nodes transferred to the new model
+		while (it.hasNext()) {
+			Map.Entry<NodeAndType, Node> pairs = (Entry<NodeAndType, Node>) it
+					.next();
+			tempNodeOrigin = pairs.getKey();
+			tempNodeTransferred = pairs.getValue();
+
+			checkForEdgesToTransfer(tempNodeTransferred,
+					tempNodeOrigin.getType(), tempNodeOrigin.getNode(),
+					tempNodeOrigin.getType());
+		}
 	}
 
 	/**
@@ -176,42 +215,133 @@ public class ModelMerger {
 	 * 
 	 * @param nodeNew
 	 *            the node in the new model to which the old edge shall link
-	 * @param nodeNewType
+	 * @param typeNodeNew
 	 * @param nodeOrigin
 	 *            the node of the origin model from which the old edge shall
 	 *            link
-	 * @param nodeOriginType
+	 * @param typeNodeOrigin
 	 * @author Andreas
 	 */
-	private void checkForEdgesToTransfer(Node nodeNew, NodeType nodeNewType,
-			Node nodeOrigin, NodeType nodeOriginType) {
+	private void checkForEdgesToTransfer(Node nodeNew,
+			NodeTypeBase typeNodeNew, Node nodeOrigin,
+			NodeTypeBase typeNodeOrigin) {
 
-		checkIncomingEdges(nodeOriginType, nodeOrigin, nodeNew, nodeNewType);
-		checkOutgoingEdges(nodeOriginType, nodeOrigin, nodeNew, nodeNewType);
+		checkIncomingEdges(nodeNew, typeNodeNew, nodeOrigin, typeNodeOrigin);
+		checkOutgoingEdges(typeNodeOrigin, nodeOrigin, nodeNew, typeNodeNew);
 	}
 
 	/**
 	 * This method transfers the destination of the incoming edges from the
 	 * given old node to the given new node. So the old edge now links to the
-	 * node of the new model.
-	 * TODO
-	 * @param nodeTypeOrigin
-	 * @param nodeOrigin
+	 * node of the new model. TODO
+	 * 
 	 * @param nodeNew
 	 * @param nodeNewType
+	 * @param nodeOrigin
+	 * @param nodeTypeOrigin
+	 * 
 	 * @author Andreas
 	 */
-	private void checkIncomingEdges(NodeTypeBase nodeTypeOrigin,
-			Node nodeOrigin, Node nodeNew, NodeTypeBase nodeNewType) {
+	private void checkIncomingEdges(Node nodeNew, NodeTypeBase nodeNewType,
+			Node nodeOrigin, NodeTypeBase nodeTypeOrigin) {
+
+		Node tempFromEdgeNode;
+		NodeTypeBase tempFromEdgeNodeType;
+
+		MyNode searchedFromNodeNew = null, searchedToNodeNew = null;
+
+		NodeAndType tempNodeOrigin;
+		
+		MyEdgeType edgeTypeNew;
 
 		for (EdgeType edgeType : metaModelOrigin.getEdgeTypes()) {
 			for (ConnectionMapping incomingMapping : edgeType
 					.getIncomingMappings(nodeTypeOrigin)) {
 				for (Edge incomingEdge : incomingMapping
 						.applyIncoming(nodeOrigin)) {
-					Edge newEdge = incomingMapping.create(modelNew,
-							incomingMapping.applyFrom(incomingEdge), nodeNew);
-					transferEdgeAttributes(incomingEdge, newEdge, edgeType);
+
+					tempFromEdgeNode = incomingMapping.applyFrom(incomingEdge);
+					tempFromEdgeNodeType = incomingMapping.getFrom();
+
+					Iterator<Entry<NodeAndType, Node>> it = nodeTransferOldToNewModel
+							.entrySet().iterator();
+
+					// look up whether the from node of the old edge has also
+					// been transfered to the new model. If this is the case the
+					// edge is created between the two nodes in the new model
+					while (it.hasNext()) {
+						Map.Entry<NodeAndType, Node> pairs = (Entry<NodeAndType, Node>) it
+								.next();
+						tempNodeOrigin = pairs.getKey();
+
+						if (Methods.findGlobalID(tempFromEdgeNode,
+								tempFromEdgeNodeType).equals(
+								Methods.findGlobalID(tempNodeOrigin.getNode(),
+										tempNodeOrigin.getType()))) {
+
+							for (MyNode tempNode : newModel.getAllNodes()) {
+								if (Methods.findGlobalID(tempNode.getNode(),
+										tempNode.getNodeType().getType())
+										.equals(Methods.findGlobalID(
+												pairs.getValue(),
+												tempNodeOrigin.getType()))) {
+									searchedFromNodeNew = tempNode;
+								}
+								if (Methods.findGlobalID(tempNode.getNode(),
+										tempNode.getNodeType().getType())
+										.equals(Methods.findGlobalID(nodeNew,
+												nodeNewType))) {
+									searchedToNodeNew = tempNode;
+								}
+							}
+							
+							edgeTypeNew = new MyEdgeType(newModel.getMetamodel().getEdgeType(edgeType.getName()).getOne(), 8);
+
+							Edge newEdge = newModel.addNewEdge(
+									searchedFromNodeNew, searchedToNodeNew,
+									edgeTypeNew, true);
+
+							transferEdgeAttributes(incomingEdge, newEdge,
+									edgeTypeNew.getType());
+							break;
+						}
+					}
+
+					for (MergedNodePair actMerged : mergedNodes) {
+						if (Methods.findGlobalID(tempFromEdgeNode,
+								tempFromEdgeNodeType).equals(
+								Methods.findGlobalID(
+										actMerged.getNodeOriginalModel(),
+										actMerged.getTypeOriginModel()))) {
+							
+							for (MyNode tempNode : newModel.getAllNodes()) {
+								if (Methods.findGlobalID(tempNode.getNode(),
+										tempNode.getNodeType().getType())
+										.equals(Methods.findGlobalID(
+												actMerged.getNodeNewModel(),
+												actMerged.getTypeNewModel()))) {
+									searchedFromNodeNew = tempNode;
+								}
+								if (Methods.findGlobalID(tempNode.getNode(),
+										tempNode.getNodeType().getType())
+										.equals(Methods.findGlobalID(nodeNew,
+												nodeNewType))) {
+									searchedToNodeNew = tempNode;
+								}
+							}
+							
+							edgeTypeNew = new MyEdgeType(newModel.getMetamodel().getEdgeType(edgeType.getName()).getOne(), 8);
+
+							Edge newEdge = newModel.addNewEdge(
+									searchedFromNodeNew, searchedToNodeNew,
+									edgeTypeNew, true);
+
+							transferEdgeAttributes(incomingEdge, newEdge,
+									edgeTypeNew.getType());
+							break;
+						}
+					}
+
 				}
 			}
 		}
@@ -224,6 +354,7 @@ public class ModelMerger {
 	 * 
 	 * 
 	 * TODO
+	 * 
 	 * @param nodeTypeOrigin
 	 * @param nodeOrigin
 	 * @param nodeNew
@@ -462,12 +593,12 @@ public class ModelMerger {
 		 */
 	}
 
-	private void addNodeToNewModel(Node dataNode, NodeType currentType) {
+	private Node addNodeToNewModel(Node dataNode, NodeTypeBase nodeTypeBase) {
 		// create Node
-		Node newNode = currentType.create(modelNew);
+		Node newNode = nodeTypeBase.create(modelNew);
 
 		// transfer attribute groups
-		Collection<AttributeGroup> attrgroups = currentType
+		Collection<AttributeGroup> attrgroups = nodeTypeBase
 				.getAttributeGroups();
 
 		if (attrgroups != null) {
@@ -479,7 +610,7 @@ public class ModelMerger {
 					PSSIFOption<PSSIFValue> attrvalue = a.get(dataNode);
 
 					if (attrvalue != null) {
-						currentType.getAttribute(a.getName()).getOne()
+						nodeTypeBase.getAttribute(a.getName()).getOne()
 								.set(newNode, attrvalue);
 					}
 				}
@@ -506,6 +637,8 @@ public class ModelMerger {
 				newNode.annotate(a.getKey(), a.getValue());
 			}
 		}
+
+		return newNode;
 	}
 
 	/**

@@ -374,6 +374,35 @@ public class MyModelContainer {
       return false;
     }
   }
+  
+	public Edge addNewEdge(MyNode source, MyNode destination,
+			MyEdgeType edgetype, Boolean directed) {
+		ConnectionMapping mapping = edgetype
+				.getType()
+				.getMapping(source.getNodeType().getType(),
+						destination.getNodeType().getType()).getOne();
+
+		Edge newEdge = mapping.create(model, source.getNode(),
+				destination.getNode());
+
+		PSSIFOption<PSSIFValue> value = PSSIFOption.one(PSSIFValue
+				.create(directed));
+		edgetype.getType()
+				.getAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_DIRECTED)
+				.getOne().set(newEdge, value);
+		PSSIFOption<PSSIFValue> id = PSSIFOption.one(PSSIFValue.create("egde"
+				+ newEdgeIdCounter++));
+		edgetype.getType().getAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_ID)
+				.getOne().set(newEdge, id);
+
+		MyEdge e = new MyEdge(newEdge, edgetype, source, destination);
+
+		System.out.println(source.getRealName() + destination.getRealName());
+
+		edges.add(e);
+		return newEdge;
+
+	}
 
   public Model getModel() {
     return model;

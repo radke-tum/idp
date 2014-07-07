@@ -13,6 +13,7 @@ import de.tum.pssif.core.common.PSSIFOption;
 import de.tum.pssif.core.common.PSSIFValue;
 import de.tum.pssif.core.metamodel.Attribute;
 import de.tum.pssif.core.metamodel.NodeType;
+import de.tum.pssif.core.metamodel.NodeTypeBase;
 import de.tum.pssif.core.metamodel.PrimitiveDataType;
 import de.tum.pssif.core.model.Node;
 
@@ -30,16 +31,16 @@ public class Methods {
 	 * 
 	 * @param tempNodeOrigin
 	 *            the node from the original modal
-	 * @param actTypeOriginModel
+	 * @param nodeTypeBase
 	 *            the type of the node
 	 * @return a string consisting of the global unique ID of a node from the
 	 *         model
 	 */
 	public static String findGlobalID(Node tempNodeOrigin,
-			NodeType actTypeOriginModel) {
+			NodeTypeBase nodeTypeBase) {
 		String globalID = "Global-ID not available";
 
-		Attribute globalIDAttribute = actTypeOriginModel.getAttribute(
+		Attribute globalIDAttribute = nodeTypeBase.getAttribute(
 				PSSIFConstants.BUILTIN_ATTRIBUTE_GLOBAL_ID).getOne();
 
 		globalID = globalIDAttribute.get(tempNodeOrigin).getOne().asString();

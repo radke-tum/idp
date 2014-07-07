@@ -7,6 +7,7 @@ import java.util.Set;
 
 import org.pssif.comparedDataStructures.ComparedLabelPair;
 import org.pssif.consistencyDataStructures.ConsistencyData;
+import org.pssif.consistencyDataStructures.NodeAndType;
 import org.pssif.mainProcesses.Methods;
 import org.pssif.matchingLogic.MatchMethod;
 import org.pssif.matchingLogic.MatchingMethods;
@@ -79,6 +80,8 @@ public class MergingProcess {
 	private MatchMethod exactMatcher;
 	private MatchMethod attributeMatcher;
 
+	private List<NodeAndType> allNodesOrigin;
+
 	/**
 	 * Here a new MergingProcess object is created, a normalizer is initialized
 	 * with the according match methods (exact & attribute matcher) and the
@@ -101,11 +104,15 @@ public class MergingProcess {
 		this.metaModelOriginal = metaModelOriginal;
 		this.metaModelNew = metaModelNew;
 
+		this.allNodesOrigin = new LinkedList<NodeAndType>();
+
 		initializeMatchMethods();
 
 		this.normalizer = Normalizer.initialize(matchMethods);
 
 		startTypeAndNodeIteration();
+
+		ConsistencyData.getInstance().createUnmatchedNodeList(allNodesOrigin);
 	}
 
 	/**
@@ -216,17 +223,26 @@ public class MergingProcess {
 
 				Node tempNodeOrigin = actNodesOriginalModel.getOne();
 
+				allNodesOrigin.add(new NodeAndType(tempNodeOrigin,
+						actTypeOriginModel));
+
 				iterateOverNodesOfNewModel(tempNodeOrigin, actTypeOriginModel);
 
 			} else {
 
 				Set<Node> tempNodesOrigin = actNodesOriginalModel.getMany();
 
-				Iterator<Node> tempNodeOrigin = tempNodesOrigin.iterator();
+				Iterator<Node> tempNodeOriginIterator = tempNodesOrigin
+						.iterator();
 
-				while (tempNodeOrigin.hasNext()) {
+				while (tempNodeOriginIterator.hasNext()) {
 
-					iterateOverNodesOfNewModel(tempNodeOrigin.next(),
+					Node tempNodeOrigin = tempNodeOriginIterator.next();
+
+					allNodesOrigin.add(new NodeAndType(tempNodeOrigin,
+							actTypeOriginModel));
+
+					iterateOverNodesOfNewModel(tempNodeOrigin,
 							actTypeOriginModel);
 
 				}
@@ -363,15 +379,46 @@ public class MergingProcess {
 		if (exactMatchResult > 0.0) {
 			if (attributeMatchResult >= 1.0) {
 				merge = true;
+				
+				saveMergedNodePair(tempNodeOrigin, tempNodeNew, actTypeOriginModel,
+						actTypeNewModel, labelOrigin, labelNew,
+						labelOriginNormalized, labelNewNormalized, traceLink,
+						merge, exactMatchResult, attributeMatchResult);
 			} else {
 				if (attributeMatchResult >= 0.25) {
 					traceLink = true;
+					
+					saveMergedNodePair(tempNodeOrigin, tempNodeNew, actTypeOriginModel,
+							actTypeNewModel, labelOrigin, labelNew,
+							labelOriginNormalized, labelNewNormalized, traceLink,
+							merge, exactMatchResult, attributeMatchResult);
 				}
 			}
 		} else {
 			// no match found between the two nodes
 		}
 
+	}
+
+	/**
+	 * @param tempNodeOrigin
+	 * @param tempNodeNew
+	 * @param actTypeOriginModel
+	 * @param actTypeNewModel
+	 * @param labelOrigin
+	 * @param labelNew
+	 * @param labelOriginNormalized
+	 * @param labelNewNormalized
+	 * @param traceLink
+	 * @param merge
+	 * @param exactMatchResult
+	 * @param attributeMatchResult
+	 */
+	private void saveMergedNodePair(Node tempNodeOrigin, Node tempNodeNew,
+			NodeType actTypeOriginModel, NodeType actTypeNewModel,
+			String labelOrigin, String labelNew, String labelOriginNormalized,
+			String labelNewNormalized, boolean traceLink, boolean merge,
+			double exactMatchResult, double attributeMatchResult) {
 		ComparedLabelPair comparedLabelPair = new ComparedLabelPair(
 				labelOrigin, labelNew, labelOriginNormalized,
 				labelNewNormalized);
@@ -385,6 +432,5 @@ public class MergingProcess {
 		mergedNodePair.setAttributeMatchResult(attributeMatchResult);
 
 		ConsistencyData.getInstance().putMergedEntry(mergedNodePair);
-
 	}
 }

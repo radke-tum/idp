@@ -18,12 +18,12 @@ import java.util.List;
 
 import org.pssif.comparedDataStructures.ComparedNodePair;
 import org.pssif.consistencyDataStructures.ConsistencyData;
+import org.pssif.consistencyDataStructures.NodeAndType;
 import org.pssif.consistencyExtern.consistencyGui.UserGuidingConsistency;
 import org.pssif.mainProcesses.Methods;
 import org.pssif.mergedDataStructures.MergedNodePair;
 import org.pssif.mergingLogic.MergingProcess;
 
-import de.tum.pssif.core.common.PSSIFConstants;
 import de.tum.pssif.core.common.PSSIFOption;
 import de.tum.pssif.core.metamodel.ConnectionMapping;
 import de.tum.pssif.core.metamodel.EdgeType;
@@ -31,8 +31,6 @@ import de.tum.pssif.core.metamodel.Metamodel;
 import de.tum.pssif.core.metamodel.NodeType;
 import de.tum.pssif.core.metamodel.PSSIFCanonicMetamodelCreator;
 import de.tum.pssif.core.model.Model;
-import de.tum.pssif.core.model.Node;
-import de.tum.pssif.core.model.impl.ModelImpl;
 
 /**
  * Builds out of a Model and an MetaModel a Model which can be displayed as
@@ -101,22 +99,30 @@ public class ModelBuilder {
 				List<MergedNodePair> mergedNodePairs = consistencyData
 						.getMergedNodePairs();
 
-				// here une unified model with nodes and edges of both models is
+				// here one unified model with nodes and edges of both models is
 				// created
+				Model originModel = activeModel.getModel();
+				Metamodel originMeta = activeModel.getMetamodel();
+				
 				ModelMerger merger = new ModelMerger();
-				Model mergedModel = merger.mergeModels(activeModel.getModel(),
+				
+				/**
+				Model mergedModel = merger.mergeModels(originModel,
 						Pmodel, Pmeta);
 
 				MyModelContainer newModel = new MyModelContainer(mergedModel,
 						Pmeta);
 
 				activeModel = newModel;
+				*/
 
 				// here the unified model is reduced by deleting the old to be
 				// merged nodes
-				activeModel = merger.mergeModels(activeModel.getModel(),
-						Pmodel, activeModel.getMetamodel(), Pmeta,
-						mergedNodePairs, activeModel);
+				List<NodeAndType> unmatchedNodesOrigin = consistencyData.getUnmatchedNodeList();
+				
+				activeModel = merger.mergeModels(originModel,
+						Pmodel, originMeta, Pmeta,
+						mergedNodePairs, unmatchedNodesOrigin, activeModel);
 
 				List<MergedNodePair> tracedNodes = consistencyData
 						.getTracedList();
