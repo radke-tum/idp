@@ -98,11 +98,6 @@ public class ModelBuilder {
 
 				List<MergedNodePair> mergedNodePairs = consistencyData
 						.getMergedNodePairs();
-
-				// here one unified model with nodes and edges of both models is
-				// created
-				Model originModel = activeModel.getModel();
-				Metamodel originMeta = activeModel.getMetamodel();
 				
 				ModelMerger merger = new ModelMerger();
 				
@@ -120,8 +115,8 @@ public class ModelBuilder {
 				// merged nodes
 				List<NodeAndType> unmatchedNodesOrigin = consistencyData.getUnmatchedNodeList();
 				
-				activeModel = merger.mergeModels(originModel,
-						Pmodel, originMeta, Pmeta,
+				activeModel = merger.mergeModels(activeModel.getModel(),
+						Pmodel, activeModel.getMetamodel(), Pmeta,
 						mergedNodePairs, unmatchedNodesOrigin, activeModel);
 
 				List<MergedNodePair> tracedNodes = consistencyData
