@@ -375,27 +375,23 @@ public class MyModelContainer {
     }
   }
   
-	public Edge addNewEdge(MyNode source, MyNode destination,
-			MyEdgeType edgetype, Boolean directed) {
-		ConnectionMapping mapping = edgetype
-				.getType()
-				.getMapping(source.getNodeType().getType(),
-						destination.getNodeType().getType()).getOne();
+	public Edge addNewEdge(MyNode source, MyNode destination, MyEdgeType edgeType,
+			ConnectionMapping mapping, Boolean directed) {
 
 		Edge newEdge = mapping.create(model, source.getNode(),
 				destination.getNode());
 
 		PSSIFOption<PSSIFValue> value = PSSIFOption.one(PSSIFValue
 				.create(directed));
-		edgetype.getType()
+		edgeType.getType()
 				.getAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_DIRECTED)
 				.getOne().set(newEdge, value);
 		PSSIFOption<PSSIFValue> id = PSSIFOption.one(PSSIFValue.create("egde"
 				+ newEdgeIdCounter++));
-		edgetype.getType().getAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_ID)
+		edgeType.getType().getAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_ID)
 				.getOne().set(newEdge, id);
 
-		MyEdge e = new MyEdge(newEdge, edgetype, source, destination);
+		MyEdge e = new MyEdge(newEdge, edgeType, source, destination);
 
 		System.out.println(source.getRealName() + destination.getRealName());
 

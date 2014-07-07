@@ -145,7 +145,7 @@ public class AttributeMatcher extends MatchMethod {
 
 		}
 		if((nrOfAttributesOrigin == 0) && (nrOfAttributesNew == 0)){
-			return 0;
+			return 1;
 		} else {
 			return (nrOfSimilarAttributes / (Math.max(nrOfAttributesOrigin,
 					nrOfAttributesNew)));

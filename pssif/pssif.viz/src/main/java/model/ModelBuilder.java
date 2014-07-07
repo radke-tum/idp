@@ -99,32 +99,17 @@ public class ModelBuilder {
 				List<MergedNodePair> mergedNodePairs = consistencyData
 						.getMergedNodePairs();
 				
-				ModelMerger merger = new ModelMerger();
-				
-				/**
-				Model mergedModel = merger.mergeModels(originModel,
-						Pmodel, Pmeta);
-
-				MyModelContainer newModel = new MyModelContainer(mergedModel,
-						Pmeta);
-
-				activeModel = newModel;
-				*/
-
-				// here the unified model is reduced by deleting the old to be
-				// merged nodes
-				List<NodeAndType> unmatchedNodesOrigin = consistencyData.getUnmatchedNodeList();
-				
-				activeModel = merger.mergeModels(activeModel.getModel(),
-						Pmodel, activeModel.getMetamodel(), Pmeta,
-						mergedNodePairs, unmatchedNodesOrigin, activeModel);
-
 				List<MergedNodePair> tracedNodes = consistencyData
 						.getTracedList();
-
-				// here tracelinks are created
-				setTracedLinks(tracedNodes);
-
+				
+				ModelMerger merger = new ModelMerger();
+				
+				// here the model merge ist started
+				List<NodeAndType> unmatchedNodesOrigin = consistencyData.getUnmatchedNodeList();
+				
+				activeModel = new MyModelContainer(merger.mergeModels(activeModel.getModel(),
+						Pmodel, activeModel.getMetamodel(), Pmeta,
+						mergedNodePairs, unmatchedNodesOrigin, tracedNodes, activeModel),Pmeta);
 			}
 			// user selected the two models to be searched for corresponding
 			// elements
@@ -144,52 +129,9 @@ public class ModelBuilder {
 
 				setEqualsLinks(matchedList);
 			}
-
 		}
 	}
 
-	/**
-	 * This method creates the tracelink edges between the nodepairs given in
-	 * the traceNode list.
-	 * 
-	 * @param tracedNodes
-	 *            the list with the node pairs which shall be linked by a
-	 *            tracelink
-	 * @author Andreas
-	 */
-	private static void setTracedLinks(List<MergedNodePair> tracedNodes) {
-		for (MergedNodePair tracedPair : tracedNodes) {
-
-			MyEdgeType edgeType = new MyEdgeType(
-					metaModel
-							.getEdgeType(
-									PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_CHRONOLOGICAL_EVOLVES_TO)
-							.getOne(), 6);
-
-			/**
-			 * searches for the nodes (in the new active model) which shall be
-			 * linked and adds new edges between them.
-			 */
-			for (MyNode actNode : activeModel.getAllNodes()) {
-				if (Methods.findGlobalID(actNode.getNode(),
-						actNode.getNodeType().getType()).equals(
-						Methods.findGlobalID(tracedPair.getNodeOriginalModel(),
-								tracedPair.getTypeOriginModel()))) {
-					for (MyNode actNewNode : activeModel.getAllNodes()) {
-						if (Methods.findGlobalID(actNewNode.getNode(),
-								actNewNode.getNodeType().getType()).equals(
-								Methods.findGlobalID(
-										tracedPair.getNodeNewModel(),
-										tracedPair.getTypeNewModel()))) {
-							addNewEdgeGUI(actNode, actNewNode, edgeType, false);
-						}
-					}
-				}
-			}
-
-		}
-
-	}
 
 	/**
 	 * This method creates the equals edges between the nodepairs given in the

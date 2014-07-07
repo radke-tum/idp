@@ -385,7 +385,8 @@ public class MergingProcess {
 						labelOriginNormalized, labelNewNormalized, traceLink,
 						merge, exactMatchResult, attributeMatchResult);
 			} else {
-				if (attributeMatchResult >= 0.25) {
+				//TODO wert auf 0,25 ändern
+				if (attributeMatchResult >= 0.0) {
 					traceLink = true;
 					
 					saveMergedNodePair(tempNodeOrigin, tempNodeNew, actTypeOriginModel,

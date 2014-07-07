@@ -340,24 +340,24 @@ public class ConsistencyData {
 
 	/**
 	 * this method takes alle nodes from the original model and creates a list
-	 * with the nodes which haven't been merged nor traced with another node.
+	 * with the nodes which haven't been matched with another node.
 	 * 
 	 * @param nodesOrigin
 	 *            all nodes with their type from the first imported model
 	 */
 	public void createUnmatchedNodeList(List<NodeAndType> nodesOrigin) {
-		boolean isMergedNode;
+		boolean isMatchedNode;
 
 		for (NodeAndType actNode : nodesOrigin) {
-			isMergedNode = false;
+			isMatchedNode = false;
 			for (MergedNodePair mergedNode : mergedNodePairs) {
-				if (mergedNode.isMerge()) {
-					if (actNode.equals(mergedNode.getNodeOriginalModel())) {
-						isMergedNode = true;
+				if (mergedNode.isMerge() || mergedNode.isTraceLink()) {
+					if (actNode.getNode().equals(mergedNode.getNodeOriginalModel())) {
+						isMatchedNode = true;
 					}
 				}
 			}
-			if (!isMergedNode) {
+			if (!isMatchedNode) {
 				this.unmatchedNodesOrigin.add(actNode);
 			}
 		}
