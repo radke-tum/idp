@@ -19,9 +19,15 @@ import de.tum.pssif.core.common.PSSIFConstants;
 import de.tum.pssif.core.common.PSSIFOption;
 import de.tum.pssif.core.exception.PSSIFIllegalAccessException;
 import de.tum.pssif.core.exception.PSSIFStructuralIntegrityException;
+import de.tum.pssif.core.metamodel.ConnectionMapping;
+import de.tum.pssif.core.metamodel.EdgeType;
+import de.tum.pssif.core.metamodel.JunctionNodeType;
 import de.tum.pssif.core.metamodel.Metamodel;
 import de.tum.pssif.core.metamodel.NodeType;
+import de.tum.pssif.core.metamodel.NodeTypeBase;
 import de.tum.pssif.core.metamodel.PSSIFCanonicMetamodelCreator;
+import de.tum.pssif.core.model.Edge;
+import de.tum.pssif.core.model.JunctionNode;
 import de.tum.pssif.core.model.Model;
 import de.tum.pssif.core.model.Node;
 
@@ -129,7 +135,266 @@ public class MergingProcess {
 
 		startTypeAndNodeIteration();
 
+		// TODO For testing only
+		ConsistencyData.getInstance().resetUnmatchedJunctionnodesOrigin();
+
+		handleConjunctions();
+		// TODO until here
+
 		ConsistencyData.getInstance().createUnmatchedNodeList(allNodesOrigin);
+	}
+
+	/**
+	 * This method starts the matching of every junction node from the original
+	 * model with every junction node of the new model to see which junction
+	 * nodes aren't in the new model anymore and have to be copied into the new
+	 * model.
+	 */
+	private void handleConjunctions() {
+		JunctionNodeType junctionNodeType = metaModelOriginal
+				.getJunctionNodeType(PSSIFCanonicMetamodelCreator.N_CONJUNCTION)
+				.getOne();
+
+		PSSIFOption<Node> junctionNodesOriginalModel;
+
+		junctionNodesOriginalModel = junctionNodeType
+				.apply(originalModel, true);
+
+		if (junctionNodesOriginalModel.isNone()) {
+			if (debugMode) {
+				System.out
+						.println("There are no nodes of the type \""
+								+ junctionNodeType.getName()
+								+ "\" in the original model. Continuing with the next type");
+			}
+		} else {
+			if (junctionNodesOriginalModel.isOne()) {
+				if (debugMode) {
+					System.out
+							.println("There is one node of the type \""
+									+ junctionNodeType.getName()
+									+ "\" in the original model. Comparing with new model.");
+				}
+
+				Node tempNodeOrigin = junctionNodesOriginalModel.getOne();
+
+				allNodesOrigin.add(new NodeAndType(tempNodeOrigin,
+						junctionNodeType));
+
+				if (compareWithJunctionsOfNewModel(tempNodeOrigin,
+						junctionNodeType)) {
+					// the junction node is still in the new model. We have
+					// nothing to do at this point
+				} else {
+					ConsistencyData.getInstance()
+							.putUnmatchedJunctionnodeEntry(
+									new NodeAndType(tempNodeOrigin,
+											junctionNodeType));
+				}
+
+			} else {
+				if (debugMode) {
+					System.out
+							.println("There are many nodes of the type \""
+									+ junctionNodeType.getName()
+									+ "\" in the original model. Comparing them with new model.");
+				}
+
+				Set<Node> tempNodesOrigin = junctionNodesOriginalModel
+						.getMany();
+
+				Iterator<Node> tempNodeOriginIterator = tempNodesOrigin
+						.iterator();
+
+				while (tempNodeOriginIterator.hasNext()) {
+
+					Node tempNodeOrigin = tempNodeOriginIterator.next();
+
+					allNodesOrigin.add(new NodeAndType(tempNodeOrigin,
+							junctionNodeType));
+
+					if (compareWithJunctionsOfNewModel(tempNodeOrigin,
+							junctionNodeType)) {
+						// the junction node is still in the new model. We have
+						// nothing to do at this point
+					} else {
+						ConsistencyData.getInstance()
+								.putUnmatchedJunctionnodeEntry(
+										new NodeAndType(tempNodeOrigin,
+												junctionNodeType));
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * This method iterates over every junction node of the new model. Then it
+	 * compares the given junction node with every from the new model.
+	 * 
+	 * @param tempNodeOrigin
+	 *            the junction node of the first imported model
+	 * @param junctionNodeType
+	 *            the type of the node
+	 * @return whether the given node has any corresponding junction nodes in
+	 *         the new model
+	 */
+	private boolean compareWithJunctionsOfNewModel(Node tempNodeOrigin,
+			JunctionNodeType junctionNodeType) {
+		PSSIFOption<Node> junctionNodesNewModel;
+
+		junctionNodesNewModel = junctionNodeType.apply(newModel, true);
+
+		boolean matchFound = false;
+
+		if (junctionNodesNewModel.isNone()) {
+			if (debugMode) {
+				System.out.println("There are no nodes of the type \""
+						+ junctionNodeType.getName()
+						+ "\" in the new model. Continuing with the next type");
+			}
+		} else {
+			if (junctionNodesNewModel.isOne()) {
+				if (debugMode) {
+					System.out
+							.println("There is one node of the type \""
+									+ junctionNodeType.getName()
+									+ "\" in the new model. Comparing with given node.");
+				}
+
+				Node tempNodeNew = junctionNodesNewModel.getOne();
+
+				return matchJunctionnodes(junctionNodeType, tempNodeOrigin,
+						tempNodeNew);
+
+			} else {
+				if (debugMode) {
+					System.out
+							.println("There are many nodes of the type \""
+									+ junctionNodeType.getName()
+									+ "\" in the new model. Comparing them with given node.");
+				}
+				boolean anyMatch = false;
+
+				Set<Node> tempNodesNew = junctionNodesNewModel.getMany();
+
+				Iterator<Node> tempNodeNewIterator = tempNodesNew.iterator();
+
+				while (tempNodeNewIterator.hasNext()) {
+
+					Node tempNodeNew = tempNodeNewIterator.next();
+
+					matchJunctionnodes(junctionNodeType, tempNodeOrigin,
+							tempNodeNew);
+
+					anyMatch = anyMatch
+							|| matchJunctionnodes(junctionNodeType,
+									tempNodeOrigin, tempNodeNew);
+
+				}
+				return anyMatch;
+			}
+		}
+
+		return matchFound;
+
+	}
+
+	/**
+	 * This method compares the context of the two given junction nodes to check
+	 * if the two nodes can be assumed being equal.
+	 * 
+	 * @param junctionNodeType
+	 *            the type of the nodes
+	 * @param tempNodeOrigin
+	 *            the junction node of the firstly imported model
+	 * @param tempNodeNew
+	 *            the junction node of the new model
+	 * @return whether the two given nodes have at least one incoming and one
+	 *         outgoing node in common
+	 */
+	private boolean matchJunctionnodes(JunctionNodeType junctionNodeType,
+			Node tempNodeOrigin, Node tempNodeNew) {
+		boolean matchFound = false;
+		boolean incomingMatch = false;
+		boolean outgoingMatch = false;
+
+		for (EdgeType edgeType : metaModelNew.getEdgeTypes()) {
+			for (ConnectionMapping incomingMapping : edgeType
+					.getIncomingMappings(junctionNodeType)) {
+				for (Edge incomingEdge : incomingMapping
+						.applyIncoming(tempNodeOrigin)) {
+
+					for (Edge incomingEdgeNew : incomingMapping
+							.applyIncoming(tempNodeNew)) {
+						incomingMatch = incomingMatch
+								|| applyMatchMethodsToJunctionContext(
+										incomingMapping.applyFrom(incomingEdge),
+										junctionNodeType, incomingMapping
+												.applyFrom(incomingEdgeNew),
+										junctionNodeType);
+					}
+				}
+			}
+			for (ConnectionMapping outgoingMapping : edgeType
+					.getOutgoingMappings(junctionNodeType)) {
+				for (Edge outgoingEdge : outgoingMapping
+						.applyOutgoing(tempNodeOrigin)) {
+
+					for (Edge outgoingEdgeNew : outgoingMapping
+							.applyOutgoing(tempNodeNew)) {
+						outgoingMatch = outgoingMatch
+								|| applyMatchMethodsToJunctionContext(
+										outgoingMapping.applyTo(outgoingEdge),
+										junctionNodeType,
+										outgoingMapping
+												.applyFrom(outgoingEdgeNew),
+										junctionNodeType);
+					}
+				}
+			}
+
+		}
+		matchFound = incomingMatch && outgoingMatch;
+		return matchFound;
+	}
+
+	/**
+	 * This method compares two given nodes and returns true if they are fully
+	 * equals.
+	 * 
+	 * @param contextOrigin
+	 *            the sorrounding node of the origin junction node
+	 * @param typeOrigin
+	 *            the type of the origin node
+	 * @param contextNew
+	 *            the sorrounding node of the new junction node
+	 * @param typeNew
+	 *            the type of the new node
+	 * @return true if the two given nodes are fully equals. False otherwise.
+	 */
+	private boolean applyMatchMethodsToJunctionContext(Node contextOrigin,
+			NodeTypeBase typeOrigin, Node contextNew, NodeTypeBase typeNew) {
+		if ((typeOrigin.getName().equals(
+				PSSIFCanonicMetamodelCreator.N_CONJUNCTION) && typeOrigin
+				.getName().equals(typeNew.getName()))) {
+			// both contextual nodes of the junctions are junctions, so they are
+			// assumed
+			// to be equal
+			return true;
+		}
+
+		return (attributeMatcher.executeMatching(contextOrigin, contextNew,
+				originalModel, newModel, metaModelOriginal, metaModelNew,
+				(NodeType) typeOrigin, (NodeType) typeNew,
+				Methods.findName(typeOrigin, contextOrigin),
+				Methods.findName(typeNew, contextNew), null, null) >= 1)
+				&& (exactMatcher.executeMatching(contextOrigin, contextNew,
+						originalModel, newModel, metaModelOriginal,
+						metaModelNew, (NodeType) typeOrigin,
+						(NodeType) typeNew,
+						Methods.findName(typeOrigin, contextOrigin),
+						Methods.findName(typeNew, contextNew), null, null) >= 1);
 	}
 
 	/**

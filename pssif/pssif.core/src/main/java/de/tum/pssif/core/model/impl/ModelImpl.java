@@ -51,6 +51,17 @@ public class ModelImpl implements Model {
   public Node apply(CreateJunctionNodeOperation op) {
     JunctionNode result = new JunctionNodeImpl(this);
     
+    /**
+     * @author Andreas
+     */
+
+    PSSIFOption<Attribute> globalIdAttribute = op.getType().getAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_GLOBAL_ID);
+    
+    globalIdAttribute.getOne().set(result, PSSIFOption.one(PSSIFValue.create(UUID.randomUUID().toString())));
+    /**
+     * until here
+     */
+    
     nodes.put(op.getType().getName(), result);
     return result;
   }

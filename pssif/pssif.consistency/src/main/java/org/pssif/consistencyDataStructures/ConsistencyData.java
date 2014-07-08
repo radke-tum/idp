@@ -92,6 +92,14 @@ public class ConsistencyData {
 	 */
 	private volatile List<NodeAndType> unmatchedNodesOrigin;
 
+	// TODO Attention! Variable is volatile, will be lost at serialization!
+	//TODO reset after every iteration
+	/**
+	 * this list stores the junction nodes from the original model which weren't
+	 * found in the new version of the model.
+	 */
+	private volatile List<NodeAndType> unmatchedJunctionnodesOrigin;
+
 	/**
 	 * these are the tresholds for the syntactic, semantic and contextual
 	 * metrics. Depending on these tresholds and the results of a match between
@@ -183,6 +191,10 @@ public class ConsistencyData {
 		success = success && mergedNodePairs.add(mergedNodePair);
 
 		return success;
+	}
+	
+	public void putUnmatchedJunctionnodeEntry(NodeAndType junctionNode){
+		this.unmatchedJunctionnodesOrigin.add(junctionNode);
 	}
 
 	/**
@@ -352,7 +364,8 @@ public class ConsistencyData {
 			isMatchedNode = false;
 			for (MergedNodePair mergedNode : mergedNodePairs) {
 				if (mergedNode.isMerge() || mergedNode.isTraceLink()) {
-					if (actNode.getNode().equals(mergedNode.getNodeOriginalModel())) {
+					if (actNode.getNode().equals(
+							mergedNode.getNodeOriginalModel())) {
 						isMatchedNode = true;
 					}
 				}
@@ -378,8 +391,12 @@ public class ConsistencyData {
 	public void resetMergedNodePairList() {
 		this.mergedNodePairs = new LinkedList<MergedNodePair>();
 	}
-	
-	public void resetUnmatchedNodesList(){
+
+	public void resetUnmatchedNodesList() {
 		this.unmatchedNodesOrigin = new LinkedList<NodeAndType>();
+	}
+	
+	public void resetUnmatchedJunctionnodesOrigin(){
+		this.unmatchedJunctionnodesOrigin = new LinkedList<NodeAndType>();
 	}
 }

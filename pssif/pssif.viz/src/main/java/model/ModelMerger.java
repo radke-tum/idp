@@ -366,14 +366,14 @@ public class ModelMerger {
 				for (Edge incomingEdge : incomingMapping
 						.applyIncoming(nodeOrigin)) {
 
-					// undirected edges have to be handled separateley. They are
-					// only transferred in the method checkOutgoingEdges because
-					// if these edges are transfered in both methods,
-					// checkIncoming and checkOutgoingEdges, the undirected edge
-					// will appear twice in the new model
-					if (!isEdgeDirected(edgeType, incomingEdge)) {
-						continue;
-					}
+//					// undirected edges have to be handled separateley. They are
+//					// only transferred in the method checkOutgoingEdges because
+//					// if these edges are transfered in both methods,
+//					// checkIncoming and checkOutgoingEdges, the undirected edge
+//					// will appear twice in the new model
+//					if (!isEdgeDirected(edgeType, incomingEdge)) {
+//						continue;
+//					}
 
 					tempFromEdgeNode = incomingMapping.applyFrom(incomingEdge);
 					tempFromEdgeNodeType = incomingMapping.getFrom();
@@ -410,12 +410,12 @@ public class ModelMerger {
 						continue;
 					}
 
-//					// TODO handle conjunctions separately
-//					// don't match conjunctions
-//					if (tempFromEdgeNodeType.getName().equals(
-//							PSSIFCanonicMetamodelCreator.N_CONJUNCTION)) {
-//						continue;
-//					}
+					// TODO handle conjunctions separately
+					// don't match conjunctions
+					if (tempFromEdgeNodeType.getName().equals(
+							PSSIFCanonicMetamodelCreator.N_CONJUNCTION)) {
+						continue;
+					}
 
 					Iterator<Entry<NodeAndType, Node>> it = nodeTransferUnmatchedOldToNewModel
 							.entrySet().iterator();
