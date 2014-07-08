@@ -378,12 +378,44 @@ public class ModelMerger {
 					tempFromEdgeNode = incomingMapping.applyFrom(incomingEdge);
 					tempFromEdgeNodeType = incomingMapping.getFrom();
 
-					// TODO handle conjunctions separately
-					// don't match conjunctions
-					if (tempFromEdgeNodeType.getName().equals(
-							PSSIFCanonicMetamodelCreator.N_CONJUNCTION)) {
+					// here a bug is fixed, that directed edges between
+					// unmatched nodes double each time when a new model is
+					// merged into the pssif fw. The problem is if a directed
+					// edge is present between two unmatched nodes the edge
+					// would appear twice in the merged model because the edge
+					// is created once through the incoming and once through the
+					// outgoing mapping
+					// This problem is solved by ignoring the problematic edge
+					// in the iteration of the incoming mappings and only
+					// handling it in the iteration of the outgoing mappings.
+					boolean outGoingMappingThere = false;
+
+					for (ConnectionMapping outgoingMapping : edgeType
+							.getOutgoingMappings(tempFromEdgeNodeType)) {
+						for (Edge outgoingEdge : outgoingMapping
+								.applyOutgoing(tempFromEdgeNode)) {
+							if (outgoingMapping.applyTo(outgoingEdge).equals(
+									nodeOrigin)) {
+								for (NodeAndType unmatchedNode : unmatchedNodesOrigin) {
+									if (unmatchedNode.getNode().equals(
+											tempFromEdgeNode)) {
+										outGoingMappingThere = true;
+									}
+								}
+							}
+						}
+					}
+
+					if (outGoingMappingThere) {
 						continue;
 					}
+
+//					// TODO handle conjunctions separately
+//					// don't match conjunctions
+//					if (tempFromEdgeNodeType.getName().equals(
+//							PSSIFCanonicMetamodelCreator.N_CONJUNCTION)) {
+//						continue;
+//					}
 
 					Iterator<Entry<NodeAndType, Node>> it = nodeTransferUnmatchedOldToNewModel
 							.entrySet().iterator();
