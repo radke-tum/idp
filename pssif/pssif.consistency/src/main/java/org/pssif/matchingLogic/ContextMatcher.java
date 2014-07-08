@@ -35,6 +35,7 @@ import de.tum.pssif.core.model.Node;
  */
 public class ContextMatcher extends MatchMethod {
 
+	//TODO extract to constants
 	/**
 	 * These are the subclasses of PSIFFDevArtifacts that are checked for
 	 * consistency
@@ -67,8 +68,7 @@ public class ContextMatcher extends MatchMethod {
 			PSSIFCanonicMetamodelCreator.N_ELECTRONIC,
 			PSSIFCanonicMetamodelCreator.N_MODULE };
 
-	private static final int depth = 1;
-
+	//TODO make these weights editable by the user
 	/**
 	 * these two variables store the weight with which the syntactic and
 	 * semantic results of the sorrounding nodes add to the contextual
@@ -136,7 +136,7 @@ public class ContextMatcher extends MatchMethod {
 		this.metaModelNew = metaModelNew;
 
 		this.conjunctionNodeType = metaModelOriginal.getBaseNodeType(
-				PSSIFCanonicMetamodelCreator.ENUM_CONJUNCTION).getOne();
+				PSSIFCanonicMetamodelCreator.N_CONJUNCTION).getOne();
 
 		tempNodePair = null;
 

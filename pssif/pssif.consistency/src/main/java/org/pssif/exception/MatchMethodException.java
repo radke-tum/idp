@@ -1,0 +1,19 @@
+package org.pssif.exception;
+
+public class MatchMethodException extends ConsistencyException {
+
+	public MatchMethodException(String message, Throwable reason) {
+		super(message, reason);
+		// TODO Auto-generated constructor stub
+	}
+	
+	public MatchMethodException(String message){
+		super(message);
+	}
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -6683130474170484776L;
+
+}

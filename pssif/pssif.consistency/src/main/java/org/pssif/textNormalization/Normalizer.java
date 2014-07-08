@@ -5,6 +5,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.pssif.consistencyDataStructures.Token;
+import org.pssif.exception.ConsistencyException;
+import org.pssif.exception.MatchMethodException;
+import org.pssif.exception.NormalizationException;
 import org.pssif.mainProcesses.MatchingProcess;
 import org.pssif.matchingLogic.MatchMethod;
 import org.pssif.matchingLogic.VsmMatcher;
@@ -14,11 +17,12 @@ import org.pssif.matchingLogic.ContextMatcher;
 // at the moment it's done for every nodepair again
 
 /**
+ * This class is responsible for looking which normalization steps are necessary
+ * based on the active matching Methods. Then the according objects for the
+ * normalization steps are triggered.
+ * 
  * @author Andreas
  * 
- *         This class is responsible for looking which normalization steps are
- *         necessary based on the active matching Methods. Then the according
- *         objects for the normalization steps are triggered.
  */
 public class Normalizer {
 
@@ -94,6 +98,9 @@ public class Normalizer {
 	}
 
 	/**
+	 * This constructor is used in the consistency checker and handles the match
+	 * methods chosen by the user.
+	 * 
 	 * @param matchMethods
 	 *            the list of the matchMethods given by the user
 	 * @return an object of this class with the information which normalization
@@ -108,13 +115,28 @@ public class Normalizer {
 
 		return normalizer;
 	}
-	
+
+	/**
+	 * This constructor is used in the model merger and handles the match
+	 * methods which are used in the model merger.
+	 * 
+	 * @param matchMethods
+	 *            the list of
+	 * @return an object of this class with the information which normalization
+	 *         steps shall be conducted
+	 */
 	public static Normalizer initialize(List<MatchMethod> matchMethods) {
 		Normalizer normalizer = new Normalizer();
 
-		normalizer.checkMatchMethods(matchMethods);
+		if (normalizer == null) {
+			throw new ConsistencyException(
+					"Couldn't initialuze the Normalizer. Maybe something was changed in one of the text normalization classes.",
+					new NullPointerException());
+		} else {
+			normalizer.checkMatchMethods(matchMethods);
 
-		return normalizer;
+			return normalizer;
+		}
 	}
 
 	/**
@@ -129,8 +151,8 @@ public class Normalizer {
 		Iterator<MatchMethod> currentMatchMethod = matchMethods.iterator();
 
 		if (matchMethods.isEmpty()) {
-			throw new RuntimeException(
-					"No match Methods were selected. No Merging possible!");
+			throw new MatchMethodException(
+					"No match Methods were selected. No Matching/Merging possible!");
 		}
 
 		while (currentMatchMethod.hasNext()) {
@@ -238,12 +260,12 @@ public class Normalizer {
 			if (!label.isEmpty()) {
 
 				newSequence = tokenizer.findTokens(label);
-				// printTokens("Tokenizer", newSequence);
+				printTokens("Tokenizer", newSequence);
 
 				if (normalizeCases) {
 					newSequence = caseNormalizer
 							.convertTokensToLowerCase(newSequence);
-					// printTokens("CaseNormalizer", newSequence);
+					 printTokens("CaseNormalizer", newSequence);
 
 				}
 				if (filterStopwords) {
@@ -265,8 +287,8 @@ public class Normalizer {
 				}
 
 			} else {
-				throw new RuntimeException(
-						"The given label is null. No Tokenization possible!");
+				throw new NormalizationException(
+						"The given label is null. No tokenization & normalization possible!", new NullPointerException());
 			}
 		}
 

@@ -11,6 +11,7 @@ import org.pssif.consistencyDataStructures.Token;
 import de.tum.pssif.core.common.PSSIFConstants;
 import de.tum.pssif.core.common.PSSIFOption;
 import de.tum.pssif.core.common.PSSIFValue;
+import de.tum.pssif.core.exception.PSSIFIllegalAccessException;
 import de.tum.pssif.core.metamodel.Attribute;
 import de.tum.pssif.core.metamodel.NodeType;
 import de.tum.pssif.core.metamodel.NodeTypeBase;
@@ -40,12 +41,37 @@ public class Methods {
 			NodeTypeBase nodeTypeBase) {
 		String globalID = "Global-ID not available";
 
-		Attribute globalIDAttribute = nodeTypeBase.getAttribute(
-				PSSIFConstants.BUILTIN_ATTRIBUTE_GLOBAL_ID).getOne();
+		if (tempNodeOrigin == null) {
+			throw new NullPointerException(
+					"The node of type: "
+							+ nodeTypeBase.getName()
+							+ " which GLOBAL_ID should be retrieved is null. "
+							+ "Maybe the node wasn't transferred correctly to the new model.");
+		} else {
+			if (nodeTypeBase.getAttribute(
+					PSSIFConstants.BUILTIN_ATTRIBUTE_GLOBAL_ID).isOne()) {
+				Attribute globalIDAttribute = nodeTypeBase.getAttribute(
+						PSSIFConstants.BUILTIN_ATTRIBUTE_GLOBAL_ID).getOne();
 
-		globalID = globalIDAttribute.get(tempNodeOrigin).getOne().asString();
+				if (globalIDAttribute.get(tempNodeOrigin).isOne()) {
+					globalID = globalIDAttribute.get(tempNodeOrigin).getOne()
+							.asString();
+				} else {
+					throw new PSSIFIllegalAccessException(
+							"The GLOBAL_ID Attribute couln't be found for the given node: "
+									+ findName(nodeTypeBase, tempNodeOrigin)
+									+ " Maybe the global id assignment was changed!");
+				}
 
-		return globalID;
+				return globalID;
+			} else {
+				throw new PSSIFIllegalAccessException(
+						"The GLOBAL_ID Attribute couln't be found for the given nodetype: "
+								+ nodeTypeBase.getName()
+								+ " Maybe the attribute groups were changed!");
+			}
+		}
+
 	}
 
 	/**
@@ -83,10 +109,10 @@ public class Methods {
 	 *         defined
 	 * @author Luc
 	 */
-	public static String findName(NodeType actType, Node actNode) {
+	public static String findName(NodeTypeBase nodeTypeBase, Node actNode) {
 		String name = "Name not available";
 		// find the name of the Node
-		PSSIFOption<Attribute> tmp = actType
+		PSSIFOption<Attribute> tmp = nodeTypeBase
 				.getAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_NAME);
 		if (tmp.isOne()) {
 			Attribute nodeName = tmp.getOne();

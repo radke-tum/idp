@@ -33,6 +33,7 @@ import de.tum.pssif.core.model.Node;
  */
 public class CompairsonProcess {
 
+	//TODO extract to constants
 	/**
 	 * These are the subclasses of PSIFFDevArtifacts that are checked for
 	 * consistency

@@ -8,6 +8,7 @@ import java.util.Set;
 import org.pssif.comparedDataStructures.ComparedLabelPair;
 import org.pssif.consistencyDataStructures.ConsistencyData;
 import org.pssif.consistencyDataStructures.NodeAndType;
+import org.pssif.exception.ConsistencyException;
 import org.pssif.mainProcesses.Methods;
 import org.pssif.matchingLogic.MatchMethod;
 import org.pssif.matchingLogic.MatchingMethods;
@@ -16,6 +17,8 @@ import org.pssif.textNormalization.Normalizer;
 
 import de.tum.pssif.core.common.PSSIFConstants;
 import de.tum.pssif.core.common.PSSIFOption;
+import de.tum.pssif.core.exception.PSSIFIllegalAccessException;
+import de.tum.pssif.core.exception.PSSIFStructuralIntegrityException;
 import de.tum.pssif.core.metamodel.Metamodel;
 import de.tum.pssif.core.metamodel.NodeType;
 import de.tum.pssif.core.metamodel.PSSIFCanonicMetamodelCreator;
@@ -35,6 +38,9 @@ import de.tum.pssif.core.model.Node;
  */
 public class MergingProcess {
 
+	private static final boolean debugMode = false;
+
+	// TODO extract to constants
 	/**
 	 * These are the subclasses of PSIFFDevArtifacts that are checked for
 	 * consistency
@@ -71,12 +77,12 @@ public class MergingProcess {
 	 * the first imported model
 	 */
 	private Model originalModel;
-	
+
 	/**
 	 * the recently imported model
 	 */
 	private Model newModel;
-	
+
 	private Metamodel metaModelOriginal, metaModelNew;
 
 	private Normalizer normalizer;
@@ -157,17 +163,24 @@ public class MergingProcess {
 				originalModel, true);
 
 		if (nodesOriginalModel.isNone()) {
-			// TODO: Alert the user that there are no nodes in the orignal model
-			// to merge with the new one
-			System.out.println("no nodes in the original model");
+			if (debugMode) {
+				System.out.println("no nodes in the original model");
+			}
+
+			throw new PSSIFStructuralIntegrityException(
+					"No nodes could be found in the original model. This should never happen. "
+							+ "Maybe the root node type was changed.");
 		} else {
 			if (nodesOriginalModel.isOne()) {
-				System.out.println("one node in the original model");
+				if (debugMode) {
+					System.out.println("one node in the original model");
+				}
 			} else if (nodesOriginalModel.isMany()) {
-				System.out.println("many nodes in the original model");
+				if (debugMode) {
+					System.out.println("many nodes in the original model");
+				}
 			} else {
-				throw new RuntimeException(
-						"This can never happen. Maybe the structure of the root node type was changed");
+				// doesn't happen
 			}
 			typeIteration();
 
@@ -223,14 +236,33 @@ public class MergingProcess {
 		NodeType actTypeOriginModel;
 		PSSIFOption<Node> actNodesOriginalModel;
 
-		actTypeOriginModel = metaModelOriginal.getNodeType(type).getOne();
+		if (metaModelOriginal.getNodeType(type).isOne()) {
+			actTypeOriginModel = metaModelOriginal.getNodeType(type).getOne();
+		} else {
+			throw new PSSIFIllegalAccessException(
+					"The type \""
+							+ type
+							+ "\" couln't be found in the original model. Maybe the type was deleted in the metamodel.");
+		}
 
 		actNodesOriginalModel = actTypeOriginModel.apply(originalModel,
 				includeSubtypes);
 
 		if (actNodesOriginalModel.isNone()) {
+			if (debugMode) {
+				System.out
+						.println("There are no nodes of the type \""
+								+ type
+								+ "\" in the original model. Continuing with the next type");
+			}
 		} else {
 			if (actNodesOriginalModel.isOne()) {
+				if (debugMode) {
+					System.out
+							.println("There is one node of the type \""
+									+ type
+									+ "\" in the original model. Comparing with new model.");
+				}
 
 				Node tempNodeOrigin = actNodesOriginalModel.getOne();
 
@@ -240,6 +272,12 @@ public class MergingProcess {
 				iterateOverNodesOfNewModel(tempNodeOrigin, actTypeOriginModel);
 
 			} else {
+				if (debugMode) {
+					System.out
+							.println("There are many nodes of the type \""
+									+ type
+									+ "\" in the original model. Comparing them with new model.");
+				}
 
 				Set<Node> tempNodesOrigin = actNodesOriginalModel.getMany();
 
@@ -299,17 +337,32 @@ public class MergingProcess {
 			PSSIFOption<Node> actNodesNewModel, NodeType actTypeOriginModel,
 			NodeType actTypeNewModel) {
 		if (actNodesNewModel.isNone()) {
-			System.out
-					.println("There is no node in the new model of the type "
-							+ actTypeNewModel.getName()
-							+ " to match. Continuing with next node from the original model.");
+			if (debugMode) {
+				System.out
+						.println("There is no node in the new model of the type \""
+								+ actTypeNewModel.getName()
+								+ "\" to match. Continuing with next node from the original model.");
+			}
 		} else {
 			if (actNodesNewModel.isOne()) {
+				if (debugMode) {
+					System.out
+							.println("There is one node in the new model of the type \""
+									+ actTypeNewModel.getName()
+									+ "\" to match. Start matching.");
+				}
 
 				matchNodeWithNode(tempNodeOrigin, actNodesNewModel.getOne(),
 						actTypeOriginModel, actTypeNewModel);
 
 			} else {
+				if (debugMode) {
+					System.out
+							.println("There are many nodes in the new model of the type \""
+									+ actTypeNewModel.getName()
+									+ "\" to match. Start matching.");
+				}
+
 				Set<Node> tempNodesNew = actNodesNewModel.getMany();
 
 				Iterator<Node> tempNodeNew = tempNodesNew.iterator();
@@ -346,7 +399,10 @@ public class MergingProcess {
 			matchNodes(tempNodeOrigin, tempNodeNew, actTypeOriginModel,
 					actTypeNewModel);
 		} else {
-			System.out.println("These two nodes have already been compared.");
+			if (debugMode) {
+				System.out
+						.println("These two nodes have already been compared.");
+			}
 		}
 
 	}
@@ -445,6 +501,14 @@ public class MergingProcess {
 
 		mergedNodePair.setAttributeMatchResult(attributeMatchResult);
 
-		ConsistencyData.getInstance().putMergedEntry(mergedNodePair);
+		if (ConsistencyData.getInstance().putMergedEntry(mergedNodePair)) {
+			// saving worked correctly
+		} else {
+			throw new ConsistencyException(
+					"The result of the currently matched node pair, nodeOrigin: "
+							+ comparedLabelPair.getLabelOrigin() + " nodeNew: "
+							+ comparedLabelPair.getLabelNew()
+							+ " couldn't be saved in the consistency data.");
+		}
 	}
 }

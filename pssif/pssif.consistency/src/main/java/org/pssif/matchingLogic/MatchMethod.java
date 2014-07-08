@@ -3,6 +3,8 @@ package org.pssif.matchingLogic;
 import java.util.List;
 
 import org.pssif.consistencyDataStructures.Token;
+import org.pssif.exception.ConsistencyException;
+import org.pssif.exception.MatchMethodException;
 
 import de.tum.pssif.core.metamodel.Metamodel;
 import de.tum.pssif.core.metamodel.NodeType;
@@ -53,15 +55,18 @@ public abstract class MatchMethod {
 	 * This methods get's very much information about the currently matched two
 	 * nodes. Though not all matching methods require that much data, some
 	 * methods need quite a lot.
-	 * @param metaModelNew TODO
+	 * 
+	 * @param metaModelNew
+	 *            TODO
 	 * 
 	 * @return the result of the applied metric
 	 */
 	public abstract double executeMatching(Node tempNodeOrigin,
 			Node tempNodeNew, Model originalModel, Model newModel,
 			Metamodel metaModelOriginal, Metamodel metaModelNew,
-			NodeType actTypeOriginModel, NodeType actTypeNewModel, String labelOrigin,
-			String labelNew, List<Token> tokensOrigin, List<Token> tokensNew);
+			NodeType actTypeOriginModel, NodeType actTypeNewModel,
+			String labelOrigin, String labelNew, List<Token> tokensOrigin,
+			List<Token> tokensNew);
 
 	/**
 	 * This method creates a MatchMethod of the given type and with the given
@@ -111,8 +116,10 @@ public abstract class MatchMethod {
 			newMatchMethod = new ContextMatcher(matchMethod, isActive, weight);
 			break;
 		default:
-			throw new RuntimeException(
-					"Couldn't create a correct match method with the given match type!");
+			throw new MatchMethodException(
+					"Couldn't create a correct match method with the given matchMethod type: "
+							+ matchMethod
+							+ " Maybe an invalid type was chosen or the corresponding implementation was deleted/changed!");
 		}
 
 		return newMatchMethod;

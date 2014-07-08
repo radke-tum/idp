@@ -13,6 +13,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.pssif.consistencyDataStructures.NodeAndType;
+import org.pssif.exception.ConsistencyException;
 import org.pssif.mainProcesses.Methods;
 import org.pssif.mergedDataStructures.MergedNodePair;
 
@@ -46,8 +47,6 @@ public class ModelMerger {
 	private Metamodel metaModelOrigin, metaModelNew;
 
 	private HashMap<Node, Node> oldToNewNodes;
-
-	private NodeType rootNodeType;
 
 	/**
 	 * this variable maps the unmatched nodes of the old model to the respective
@@ -146,13 +145,6 @@ public class ModelMerger {
 		this.activeModel = activeModel;
 		this.tracedNodes = tracedNodes;
 
-		this.rootNodeType = metaModelNew.getNodeType(
-				PSSIFConstants.ROOT_NODE_TYPE_NAME).getOne();
-
-		// addAllNodes();
-		// addAllJunctionNodes();
-		// addAllEdges();
-
 		return mergeNodes();
 	}
 
@@ -175,23 +167,38 @@ public class ModelMerger {
 			Node newNode = addNodeToNewModel(unmergedNode.getNode(),
 					unmergedNode.getType());
 
-			nodeTransferUnmatchedOldToNewModel.put(unmergedNode, newNode);
+			if (newNode == null) {
+				throw new ConsistencyException("The old, unmatched node: "
+						+ Methods.findName(unmergedNode.getType(),
+								unmergedNode.getNode())
+						+ " couln't be transferred/created in the new model.");
+			} else {
+				nodeTransferUnmatchedOldToNewModel.put(unmergedNode, newNode);
+			}
 		}
 
 		// transferring the traced nodes to the new model
 		for (MergedNodePair tracedPair : tracedNodes) {
+
 			Node newNode = addNodeToNewModel(tracedPair.getNodeOriginalModel(),
 					tracedPair.getTypeOriginModel());
 
-			nodeTransferTracedOldToNewModel.put(
-					new NodeAndType(tracedPair.getNodeOriginalModel(),
-							tracedPair.getTypeOriginModel()), newNode);
+			if (newNode == null) {
+				throw new ConsistencyException("The old (to be traced) node: "
+						+ Methods.findName(tracedPair.getTypeOriginModel(),
+								tracedPair.getNodeOriginalModel())
+						+ " couln't be transferred/created in the new model.");
+			} else {
+				nodeTransferTracedOldToNewModel.put(
+						new NodeAndType(tracedPair.getNodeOriginalModel(),
+								tracedPair.getTypeOriginModel()), newNode);
+			}
 		}
-		
+
 		// transferring the egdes of the unmatched nodes to the new model
 		transferOldEdges();
 
-		//creating tracelinks
+		// creating tracelinks
 		setTracedLinks();
 
 		return newModel.getModel();
@@ -250,6 +257,26 @@ public class ModelMerger {
 							searchedToNodeNew = tempNode;
 						}
 					}
+
+					if (searchedToNodeNew == null) {
+						throw new NullPointerException(
+								"Error at tracelink generation: The To node: "
+										+ Methods.findName(tracedPair
+												.getTypeOriginModel(),
+												tracedPair
+														.getNodeOriginalModel())
+										+ " should have been transferred to the new model but it couldn't be found in the new model.");
+					}
+
+					if (searchedFromNodeNew == null) {
+						throw new NullPointerException(
+								"Error at tracelink generation: The From node "
+										+ Methods.findName(
+												tempNodeOrigin.getType(),
+												tempNodeOrigin.getNode())
+										+ " should have been transferred to the new model. But it couldn't be found in the new model.");
+					}
+
 					// here the tracelink is generated
 					newModel.addNewEdgeGUI(searchedFromNodeNew,
 							searchedToNodeNew, edgeType, true);
@@ -275,6 +302,10 @@ public class ModelMerger {
 			Map.Entry<NodeAndType, Node> pairs = (Entry<NodeAndType, Node>) it
 					.next();
 			tempNodeOrigin = pairs.getKey();
+
+			/**
+			 * the old node in the new model
+			 */
 			tempNodeTransferred = pairs.getValue();
 
 			checkForEdgesToTransfer(tempNodeTransferred,
@@ -328,8 +359,6 @@ public class ModelMerger {
 
 		NodeAndType tempNodeOrigin;
 
-		MyEdgeType edgeTypeNew;
-
 		// get all incoming edges here
 		for (EdgeType edgeType : metaModelNew.getEdgeTypes()) {
 			for (ConnectionMapping incomingMapping : edgeType
@@ -337,8 +366,24 @@ public class ModelMerger {
 				for (Edge incomingEdge : incomingMapping
 						.applyIncoming(nodeOrigin)) {
 
+					// undirected edges have to be handled separateley. They are
+					// only transferred in the method checkOutgoingEdges because
+					// if these edges are transfered in both methods,
+					// checkIncoming and checkOutgoingEdges, the undirected edge
+					// will appear twice in the new model
+					if (!isEdgeDirected(edgeType, incomingEdge)) {
+						continue;
+					}
+
 					tempFromEdgeNode = incomingMapping.applyFrom(incomingEdge);
 					tempFromEdgeNodeType = incomingMapping.getFrom();
+
+					// TODO handle conjunctions separately
+					// don't match conjunctions
+					if (tempFromEdgeNodeType.getName().equals(
+							PSSIFCanonicMetamodelCreator.N_CONJUNCTION)) {
+						continue;
+					}
 
 					Iterator<Entry<NodeAndType, Node>> it = nodeTransferUnmatchedOldToNewModel
 							.entrySet().iterator();
@@ -372,6 +417,24 @@ public class ModelMerger {
 												nodeNewType))) {
 									searchedToNodeNew = tempNode;
 								}
+							}
+
+							if (searchedFromNodeNew == null) {
+								throw new NullPointerException(
+										"Error at incoming edge transfer: The from node: "
+												+ Methods.findName(
+														tempFromEdgeNodeType,
+														tempFromEdgeNode)
+												+ " should have been transferred to the new model. But it couldn't be found in the new model.");
+							}
+
+							if (searchedToNodeNew == null) {
+								throw new NullPointerException(
+										"Error at incoming edge transfer: The to node "
+												+ Methods.findName(
+														nodeTypeOrigin,
+														nodeOrigin)
+												+ " should have been transferred to the new model. But it couldn't be found in the new model.");
 							}
 
 							// create the new edge in the new model
@@ -415,6 +478,27 @@ public class ModelMerger {
 									searchedToNodeNew = tempNode;
 								}
 							}
+
+							if (searchedFromNodeNew == null) {
+								throw new NullPointerException(
+										"Error at incoming edge transfer: The from node: "
+												+ Methods.findName(
+														actMerged
+																.getTypeOriginModel(),
+														actMerged
+																.getNodeOriginalModel())
+												+ " should be available as a new version in the new model but it couldn't be found in the new model.");
+							}
+
+							if (searchedToNodeNew == null) {
+								throw new NullPointerException(
+										"Error at incoming edge transfer: The to node "
+												+ Methods.findName(
+														nodeTypeOrigin,
+														nodeOrigin)
+												+ " should have been transferred to the new model. But it couldn't be found in the new model.");
+							}
+
 							// create the new edge in the new model
 							Edge newEdge = incomingMapping.create(modelNew,
 									searchedFromNodeNew.getNode(),
@@ -459,9 +543,7 @@ public class ModelMerger {
 
 		NodeAndType tempNodeOrigin;
 
-		MyEdgeType edgeTypeNew;
-
-		//retrieving all outgoing edges here
+		// retrieving all outgoing edges here
 		for (EdgeType edgeType : metaModelNew.getEdgeTypes()) {
 			for (ConnectionMapping outgoingMapping : edgeType
 					.getOutgoingMappings(nodeTypeOrigin)) {
@@ -470,6 +552,13 @@ public class ModelMerger {
 
 					tempToEdgeNode = outgoingMapping.applyTo(outgoingEdge);
 					tempToEdgeNodeType = outgoingMapping.getTo();
+
+					// TODO handle conjunctions separately
+					// don't match conjunctions
+					if (tempToEdgeNodeType.getName().equals(
+							PSSIFCanonicMetamodelCreator.N_CONJUNCTION)) {
+						continue;
+					}
 
 					Iterator<Entry<NodeAndType, Node>> it = nodeTransferUnmatchedOldToNewModel
 							.entrySet().iterator();
@@ -504,11 +593,30 @@ public class ModelMerger {
 									searchedFromNodeNew = tempNode;
 								}
 							}
+
+							if (searchedToNodeNew == null) {
+								throw new NullPointerException(
+										"Error at outgoing edge transfer: The To node: "
+												+ Methods.findName(
+														tempToEdgeNodeType,
+														tempToEdgeNode)
+												+ " should have been transferred to the new model but it couldn't be found in the new model.");
+							}
+
+							if (searchedFromNodeNew == null) {
+								throw new NullPointerException(
+										"Error at outgoing edge transfer: The From node "
+												+ Methods.findName(
+														nodeTypeOrigin,
+														nodeOrigin)
+												+ " should have been transferred to the new model. But it couldn't be found in the new model.");
+							}
+
 							// create the new edge in the new model
 							Edge newEdge = outgoingMapping.create(modelNew,
 									searchedFromNodeNew.getNode(),
 									searchedToNodeNew.getNode());
-							
+
 							// transfer the attributes of the old to the new
 							// edge
 							transferEdgeAttributes(outgoingEdge, newEdge,
@@ -545,11 +653,32 @@ public class ModelMerger {
 									searchedFromNodeNew = tempNode;
 								}
 							}
+
+							if (searchedToNodeNew == null) {
+								throw new NullPointerException(
+										"Error at outgoing edge transfer: The To node: "
+												+ Methods.findName(
+														actMerged
+																.getTypeOriginModel(),
+														actMerged
+																.getNodeOriginalModel())
+												+ " should be available as a new version in the new model but it couldn't be found in the new model.");
+							}
+
+							if (searchedFromNodeNew == null) {
+								throw new NullPointerException(
+										"Error at outgoing edge transfer: The From node "
+												+ Methods.findName(
+														nodeTypeOrigin,
+														nodeOrigin)
+												+ " should have been transferred to the new model. But it couldn't be found in the new model.");
+							}
+
 							// create the new edge in the new model
 							Edge newEdge = outgoingMapping.create(modelNew,
 									searchedFromNodeNew.getNode(),
 									searchedToNodeNew.getNode());
-							
+
 							// transfer the attributes of the old to the new
 							// edge
 							transferEdgeAttributes(outgoingEdge, newEdge,
@@ -562,6 +691,41 @@ public class ModelMerger {
 				}
 			}
 		}
+	}
+
+	/**
+	 * @author Andreas
+	 * @param type
+	 * @param edge
+	 * @return
+	 */
+	private boolean isEdgeDirected(EdgeType type, Edge edge) {
+		Collection<AttributeGroup> attrgroups = type.getAttributeGroups();
+
+		boolean isDirectedEdge = false;
+
+		if (attrgroups != null) {
+			for (AttributeGroup ag : attrgroups) {
+
+				Collection<Attribute> attr = ag.getAttributes();
+
+				for (Attribute a : attr) {
+					if (!a.getName().equals(
+							PSSIFConstants.BUILTIN_ATTRIBUTE_DIRECTED)) {
+						continue;
+					}
+
+					PSSIFOption<PSSIFValue> attrvalue = a.get(edge);
+
+					if (attrvalue != null) {
+						isDirectedEdge = attrvalue.getOne().asBoolean()
+								.booleanValue();
+					}
+				}
+			}
+		}
+
+		return isDirectedEdge;
 	}
 
 	private void printNbEdges(Model model) {
