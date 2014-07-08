@@ -95,24 +95,27 @@ public class ModelBuilder {
 				MergingProcess mergingProcess = new MergingProcess(
 						activeModel.getModel(), Pmodel,
 						activeModel.getMetamodel(), Pmeta);
-				
-				//retrieving the results of the merging process
+
+				// retrieving the results of the merging process
 				List<MergedNodePair> mergedNodePairs = consistencyData
 						.getMergedNodePairs();
-				
+
 				List<MergedNodePair> tracedNodes = consistencyData
 						.getTracedList();
-				
-				List<NodeAndType> unmatchedNodesOrigin = consistencyData.getUnmatchedNodeList();
-				
+
+				List<NodeAndType> unmatchedNodesOrigin = consistencyData
+						.getUnmatchedNodeList();
+
 				ModelMerger merger = new ModelMerger();
-				
+
 				// here the model merge is started
-				activeModel = new MyModelContainer(merger.mergeModels(activeModel.getModel(),
-						Pmodel, activeModel.getMetamodel(), Pmeta,
-						mergedNodePairs, unmatchedNodesOrigin, tracedNodes, activeModel),Pmeta);
-				
-				//reset the temporary data
+				activeModel = new MyModelContainer(merger.mergeModels(
+						activeModel.getModel(), Pmodel,
+						activeModel.getMetamodel(), Pmeta, mergedNodePairs,
+						unmatchedNodesOrigin, tracedNodes, activeModel), Pmeta);
+
+				// reset the temporary data so that in the next merge operation
+				// there isn't searched for old node objects in the new model
 				ConsistencyData.getInstance().resetMergedNodePairList();
 				ConsistencyData.getInstance().resetUnmatchedNodesList();
 			}
@@ -136,7 +139,6 @@ public class ModelBuilder {
 			}
 		}
 	}
-
 
 	/**
 	 * This method creates the equals edges between the nodepairs given in the

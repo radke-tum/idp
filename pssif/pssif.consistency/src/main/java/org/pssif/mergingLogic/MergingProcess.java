@@ -67,19 +67,31 @@ public class MergingProcess {
 			PSSIFCanonicMetamodelCreator.N_ELECTRONIC,
 			PSSIFCanonicMetamodelCreator.N_MODULE };
 
-	private Model originalModel, newModel;
+	/**
+	 * the first imported model
+	 */
+	private Model originalModel;
+	
+	/**
+	 * the recently imported model
+	 */
+	private Model newModel;
+	
 	private Metamodel metaModelOriginal, metaModelNew;
 
 	private Normalizer normalizer;
 
 	/**
-	 * a list with the match methods (applied in merging process) applied
+	 * a list with the match methods which are applied in merging process
 	 */
 	private List<MatchMethod> matchMethods;
 
 	private MatchMethod exactMatcher;
 	private MatchMethod attributeMatcher;
 
+	/**
+	 * a list with all nodes from the original model with their according type
+	 */
 	private List<NodeAndType> allNodesOrigin;
 
 	/**
@@ -98,7 +110,6 @@ public class MergingProcess {
 	 */
 	public MergingProcess(Model originalModel, Model newModel,
 			Metamodel metaModelOriginal, Metamodel metaModelNew) {
-		super();
 		this.originalModel = originalModel;
 		this.newModel = newModel;
 		this.metaModelOriginal = metaModelOriginal;
@@ -379,20 +390,22 @@ public class MergingProcess {
 		if (exactMatchResult > 0.0) {
 			if (attributeMatchResult >= 1.0) {
 				merge = true;
-				
-				saveMergedNodePair(tempNodeOrigin, tempNodeNew, actTypeOriginModel,
-						actTypeNewModel, labelOrigin, labelNew,
-						labelOriginNormalized, labelNewNormalized, traceLink,
-						merge, exactMatchResult, attributeMatchResult);
+
+				saveMergedNodePair(tempNodeOrigin, tempNodeNew,
+						actTypeOriginModel, actTypeNewModel, labelOrigin,
+						labelNew, labelOriginNormalized, labelNewNormalized,
+						traceLink, merge, exactMatchResult,
+						attributeMatchResult);
 			} else {
-				//TODO wert auf 0,25 ändern
+				// TODO wert auf 0,25 ändern
 				if (attributeMatchResult >= 0.0) {
 					traceLink = true;
-					
-					saveMergedNodePair(tempNodeOrigin, tempNodeNew, actTypeOriginModel,
-							actTypeNewModel, labelOrigin, labelNew,
-							labelOriginNormalized, labelNewNormalized, traceLink,
-							merge, exactMatchResult, attributeMatchResult);
+
+					saveMergedNodePair(tempNodeOrigin, tempNodeNew,
+							actTypeOriginModel, actTypeNewModel, labelOrigin,
+							labelNew, labelOriginNormalized,
+							labelNewNormalized, traceLink, merge,
+							exactMatchResult, attributeMatchResult);
 				}
 			}
 		} else {
