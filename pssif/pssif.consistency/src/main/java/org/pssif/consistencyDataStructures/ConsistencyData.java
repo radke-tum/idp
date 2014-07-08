@@ -372,10 +372,14 @@ public class ConsistencyData {
 	}
 
 	public void resetComparedNodePairList() {
-		this.comparedNodePairs = null;
+		this.comparedNodePairs = new LinkedList<ComparedNodePair>();
 	}
 
 	public void resetMergedNodePairList() {
-		this.mergedNodePairs = null;
+		this.mergedNodePairs = new LinkedList<MergedNodePair>();
+	}
+	
+	public void resetUnmatchedNodesList(){
+		this.unmatchedNodesOrigin = new LinkedList<NodeAndType>();
 	}
 }

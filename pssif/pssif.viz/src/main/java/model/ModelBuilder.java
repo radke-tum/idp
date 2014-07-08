@@ -95,21 +95,26 @@ public class ModelBuilder {
 				MergingProcess mergingProcess = new MergingProcess(
 						activeModel.getModel(), Pmodel,
 						activeModel.getMetamodel(), Pmeta);
-
+				
+				//retrieving the results of the merging process
 				List<MergedNodePair> mergedNodePairs = consistencyData
 						.getMergedNodePairs();
 				
 				List<MergedNodePair> tracedNodes = consistencyData
 						.getTracedList();
 				
-				ModelMerger merger = new ModelMerger();
-				
-				// here the model merge ist started
 				List<NodeAndType> unmatchedNodesOrigin = consistencyData.getUnmatchedNodeList();
 				
+				ModelMerger merger = new ModelMerger();
+				
+				// here the model merge is started
 				activeModel = new MyModelContainer(merger.mergeModels(activeModel.getModel(),
 						Pmodel, activeModel.getMetamodel(), Pmeta,
 						mergedNodePairs, unmatchedNodesOrigin, tracedNodes, activeModel),Pmeta);
+				
+				//reset the temporary data
+				ConsistencyData.getInstance().resetMergedNodePairList();
+				ConsistencyData.getInstance().resetUnmatchedNodesList();
 			}
 			// user selected the two models to be searched for corresponding
 			// elements

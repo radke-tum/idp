@@ -178,9 +178,6 @@ public class ModelMerger {
 			nodeTransferUnmatchedOldToNewModel.put(unmergedNode, newNode);
 		}
 
-		// transferring the egdes of the unmatched nodes to the new model
-		transferOldEdges();
-
 		// transferring the traced nodes to the new model
 		for (MergedNodePair tracedPair : tracedNodes) {
 			Node newNode = addNodeToNewModel(tracedPair.getNodeOriginalModel(),
@@ -190,7 +187,11 @@ public class ModelMerger {
 					new NodeAndType(tracedPair.getNodeOriginalModel(),
 							tracedPair.getTypeOriginModel()), newNode);
 		}
+		
+		// transferring the egdes of the unmatched nodes to the new model
+		transferOldEdges();
 
+		//creating tracelinks
 		setTracedLinks();
 
 		return newModel.getModel();
