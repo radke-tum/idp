@@ -31,6 +31,7 @@ import de.tum.pssif.core.metamodel.Metamodel;
 import de.tum.pssif.core.metamodel.NodeType;
 import de.tum.pssif.core.metamodel.PSSIFCanonicMetamodelCreator;
 import de.tum.pssif.core.model.Model;
+import de.tum.pssif.core.model.Node;
 
 /**
  * Builds out of a Model and an MetaModel a Model which can be displayed as
@@ -106,13 +107,16 @@ public class ModelBuilder {
 				List<NodeAndType> unmatchedNodesOrigin = consistencyData
 						.getUnmatchedNodeList();
 
+				List<NodeAndType> unmatchedJunctionnodesOrigin = consistencyData
+						.getUnmatchedJunctionnodesList();
+
 				ModelMerger merger = new ModelMerger();
 
 				// here the model merge is started
 				activeModel = new MyModelContainer(merger.mergeModels(
 						activeModel.getModel(), Pmodel,
 						activeModel.getMetamodel(), Pmeta, mergedNodePairs,
-						unmatchedNodesOrigin, tracedNodes, activeModel), Pmeta);
+						unmatchedNodesOrigin,unmatchedJunctionnodesOrigin, tracedNodes, activeModel), Pmeta);
 
 				// reset the temporary data so that in the next merge operation
 				// there isn't searched for old node objects in the new model

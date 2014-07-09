@@ -383,6 +383,10 @@ public class ConsistencyData {
 	public List<MergedNodePair> getMergedNodePairs() {
 		return this.mergedNodePairs;
 	}
+	
+	public List<NodeAndType> getUnmatchedJunctionnodesList(){
+		return this.unmatchedJunctionnodesOrigin;
+	}
 
 	public void resetComparedNodePairList() {
 		this.comparedNodePairs = new LinkedList<ComparedNodePair>();

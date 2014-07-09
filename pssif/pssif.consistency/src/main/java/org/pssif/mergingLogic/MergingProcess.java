@@ -139,6 +139,9 @@ public class MergingProcess {
 		ConsistencyData.getInstance().resetUnmatchedJunctionnodesOrigin();
 
 		handleConjunctions();
+		
+		@SuppressWarnings("unused")
+		List<NodeAndType> test = ConsistencyData.getInstance().getUnmatchedJunctionnodesList();
 		// TODO until here
 
 		ConsistencyData.getInstance().createUnmatchedNodeList(allNodesOrigin);
@@ -178,9 +181,6 @@ public class MergingProcess {
 
 				Node tempNodeOrigin = junctionNodesOriginalModel.getOne();
 
-				allNodesOrigin.add(new NodeAndType(tempNodeOrigin,
-						junctionNodeType));
-
 				if (compareWithJunctionsOfNewModel(tempNodeOrigin,
 						junctionNodeType)) {
 					// the junction node is still in the new model. We have
@@ -210,9 +210,8 @@ public class MergingProcess {
 
 					Node tempNodeOrigin = tempNodeOriginIterator.next();
 
-					allNodesOrigin.add(new NodeAndType(tempNodeOrigin,
-							junctionNodeType));
-
+					System.out.println(Methods.findName(junctionNodeType, tempNodeOrigin));
+					
 					if (compareWithJunctionsOfNewModel(tempNodeOrigin,
 							junctionNodeType)) {
 						// the junction node is still in the new model. We have

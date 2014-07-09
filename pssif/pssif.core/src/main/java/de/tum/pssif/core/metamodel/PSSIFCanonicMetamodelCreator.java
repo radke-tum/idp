@@ -155,7 +155,6 @@ public final class PSSIFCanonicMetamodelCreator {
     MutableJunctionNodeType junction = metamodel.createJunctionNodeType(N_CONJUNCTION);
     junction.createAttribute(junction.getAttributeGroup(PSSIFConstants.DEFAULT_ATTRIBUTE_GROUP_NAME).getOne(), A_CONJUNCTION,
         PrimitiveDataType.STRING, true, AttributeCategory.METADATA);
-    
   }
 
   private static void createDevArtifacts(MetamodelImpl metamodel) {
