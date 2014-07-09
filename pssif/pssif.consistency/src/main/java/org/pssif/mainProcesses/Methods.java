@@ -13,9 +13,12 @@ import de.tum.pssif.core.common.PSSIFOption;
 import de.tum.pssif.core.common.PSSIFValue;
 import de.tum.pssif.core.exception.PSSIFIllegalAccessException;
 import de.tum.pssif.core.metamodel.Attribute;
+import de.tum.pssif.core.metamodel.AttributeGroup;
+import de.tum.pssif.core.metamodel.EdgeType;
 import de.tum.pssif.core.metamodel.NodeType;
 import de.tum.pssif.core.metamodel.NodeTypeBase;
 import de.tum.pssif.core.metamodel.PrimitiveDataType;
+import de.tum.pssif.core.model.Edge;
 import de.tum.pssif.core.model.Node;
 
 /**
@@ -72,6 +75,40 @@ public class Methods {
 			}
 		}
 
+	}
+	
+	/**
+	 * @author Andreas
+	 * @return whether the given edge is directed or not
+	 */
+	@SuppressWarnings("unused")
+	private static boolean isEdgeDirected(EdgeType type, Edge edge) {
+		Collection<AttributeGroup> attrgroups = type.getAttributeGroups();
+
+		boolean isDirectedEdge = false;
+
+		if (attrgroups != null) {
+			for (AttributeGroup ag : attrgroups) {
+
+				Collection<Attribute> attr = ag.getAttributes();
+
+				for (Attribute a : attr) {
+					if (!a.getName().equals(
+							PSSIFConstants.BUILTIN_ATTRIBUTE_DIRECTED)) {
+						continue;
+					}
+
+					PSSIFOption<PSSIFValue> attrvalue = a.get(edge);
+
+					if (attrvalue != null) {
+						isDirectedEdge = attrvalue.getOne().asBoolean()
+								.booleanValue();
+					}
+				}
+			}
+		}
+
+		return isDirectedEdge;
 	}
 
 	/**

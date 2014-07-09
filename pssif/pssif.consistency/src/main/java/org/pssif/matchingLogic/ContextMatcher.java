@@ -75,8 +75,8 @@ public class ContextMatcher extends MatchMethod {
 	 * semantic results of the sorrounding nodes add to the contextual
 	 * similarity result
 	 */
-	private static final double snytacticWeight = 1.0;
-	private static final double semanticWeight = 1.0;
+	private static final double snytacticWeight = 0.5;
+	private static final double semanticWeight = 0.5;
 
 	private List<MatchMethod> matchMethods;
 	private ConsistencyData consistencyData;
@@ -153,10 +153,9 @@ public class ContextMatcher extends MatchMethod {
 			 * retrieving all from/to nodes connected with the two nodes
 			 */
 			sorroundingNodesOrigin = typeIteration(tempNodeOrigin,
-					actTypeOriginModel, sorroundingNodesOrigin, true, true,
-					true);
+					actTypeOriginModel, true, true, true);
 			sorroundingNodesNew = typeIteration(tempNodeNew, actTypeNewModel,
-					sorroundingNodesNew, true, true, false);
+					true, true, false);
 
 			return compareSorroundingNodes(tempNodeOrigin, actTypeOriginModel,
 					tempNodeNew, actTypeNewModel, labelOrigin, labelNew);
@@ -164,58 +163,71 @@ public class ContextMatcher extends MatchMethod {
 	}
 
 	/**
-	 * this method iterates over every node type of the pssif metamodel and
-	 * calls the method findSorroundingNodes() with the current type. This
-	 * ensures that all nodes are compared with all from/to nodes of the edges.
-	 * 
-	 * It starts with the children of the Type DevelopmentArtifact and then
-	 * continues with the children of the Type Solution Artifact. After that the
-	 * Development and Solution Artifact Type and finally the Root Node Type are
-	 * iterated. At the end the type of conjunctions is given to the method
-	 * findSorroundingNodes(). Then the neighbours of the conjunction are added
-	 * to the node list if the conjunction is a sorrounding node.
+	 * this method calls the method findSorroundingNodes() with the current
+	 * type. This ensures that all nodes are compared with all from/to nodes of
+	 * the edges.
 	 * 
 	 * @param tempNode
 	 *            the node from which sorrounding nodes shall be found
-	 * @param sorroundingNodes
-	 *            the list with the sorrounding nodes of the given node
 	 * @param incoming
-	 *            TODO
+	 *            says whether the incoming edges of the given node shall be
+	 *            searched for sorrounding nodes
 	 * @param outgoing
-	 *            TODO
+	 *            says whether the outgoing edges of the given node shall be
+	 *            searched for sorrounding nodes
 	 * @param isOriginalNode
-	 *            TODO
+	 *            says whteher the given node is from the original model or not
+	 * @return the found sorrounding nodes of the given node
 	 */
 	public Set<NodeAndType> typeIteration(Node tempNode,
-			NodeTypeBase typeTempNode, Set<NodeAndType> sorroundingNodes,
-			boolean incoming, boolean outgoing, boolean isOriginalNode) {
+			NodeTypeBase typeTempNode, boolean incoming, boolean outgoing,
+			boolean isOriginalNode) {
 
-		return findSorroundingNodes(typeTempNode, tempNode, sorroundingNodes,
-				incoming, outgoing, isOriginalNode);
+		return findSorroundingNodes(typeTempNode, tempNode, incoming, outgoing,
+				isOriginalNode);
 	}
 
+	/**
+	 * This method calls methods which retrieve and return the incoming and
+	 * outgoing neighbourhood of the given node. Then all found neighbours for
+	 * the given node are returned.
+	 * 
+	 * @param type
+	 *            the type of the given node
+	 * @param tempNode
+	 *            the node from which sorrounding nodes shall be found
+	 * @param incoming
+	 *            says whether the incoming edges of the given node shall be
+	 *            searched for sorrounding nodes
+	 * @param outgoing
+	 *            says whether the outgoing edges of the given node shall be
+	 *            searched for sorrounding nodes
+	 * @param isOriginalNode
+	 *            says whteher the given node is from the original model or not
+	 * @return the found sorrounding nodes of the given node
+	 */
 	private Set<NodeAndType> findSorroundingNodes(NodeTypeBase type,
-			Node tempNode, Set<NodeAndType> sorroundingNodes, boolean incoming,
-			boolean outgoing, boolean isOriginalNode) {
+			Node tempNode, boolean incoming, boolean outgoing,
+			boolean isOriginalNode) {
 
 		Set<NodeAndType> result = new HashSet<NodeAndType>();
 
 		if (incoming) {
 			if (isOriginalNode) {
 				result.addAll(addIncomingNeighbourhood(metaModelOriginal, type,
-						tempNode, sorroundingNodes, isOriginalNode));
+						tempNode, isOriginalNode));
 			} else {
 				result.addAll(addIncomingNeighbourhood(metaModelNew, type,
-						tempNode, sorroundingNodes, isOriginalNode));
+						tempNode, isOriginalNode));
 			}
 		}
 		if (outgoing) {
 			if (isOriginalNode) {
 				result.addAll(addOutgoingNeighbourhood(metaModelOriginal, type,
-						tempNode, sorroundingNodes, isOriginalNode));
+						tempNode, isOriginalNode));
 			} else {
 				result.addAll(addOutgoingNeighbourhood(metaModelNew, type,
-						tempNode, sorroundingNodes, isOriginalNode));
+						tempNode, isOriginalNode));
 			}
 		}
 		return result;
@@ -232,9 +244,25 @@ public class ContextMatcher extends MatchMethod {
 		return result;
 	}
 
+	/**
+	 * This method retrieves the incoming neighbourhood of the given node. This
+	 * means that nodes which are connected over incoming edges to the given
+	 * node are collected and returned. If a conjunction is connected over an
+	 * incoming edge to the given node, the incoming neighbours of this
+	 * conjunction is collected and returned.
+	 * 
+	 * @param metamodel
+	 *            the metamodel according to the given node
+	 * @param nodeType
+	 *            the type of the given node
+	 * @param nodeOfInterest
+	 *            the node from which sorrounding nodes shall be found
+	 * @param isOriginalNode
+	 *            says whteher the given node is from the original model or not
+	 * @return the incoming neighbours of the given node
+	 */
 	private Set<NodeAndType> addIncomingNeighbourhood(Metamodel metamodel,
-			NodeTypeBase nodeType, Node nodeOfInterest,
-			Set<NodeAndType> sorroundingNodes, boolean isOriginalNode) {
+			NodeTypeBase nodeType, Node nodeOfInterest, boolean isOriginalNode) {
 
 		EdgeType controlFlow = metaModelOriginal.getEdgeType(
 				PSSIFCanonicMetamodelCreator.E_FLOW_CONTROL).getOne();
@@ -265,7 +293,9 @@ public class ContextMatcher extends MatchMethod {
 							// incomingMapping.getFrom(),
 							// incomingMapping.applyFrom(incomingEdge),
 							// sorroundingNodes, isOriginalNode));
-							//TODO this jumps only over the first conjunction, jump over the next ones too
+							
+							// TODO this jumps only over the first conjunction,
+							// jump over the next ones too
 							for (ConnectionMapping incomingM : controlFlow
 									.getIncomingMappings(incomingMapping
 											.getFrom())) {
@@ -293,13 +323,29 @@ public class ContextMatcher extends MatchMethod {
 		return result;
 	}
 
+	/**
+	 * This method retrieves the outgoing neighbourhood of the given node. This
+	 * means that nodes which are connected over outgoing edges to the given
+	 * node are collected and returned. If a conjunction is connected over an
+	 * outgoing edge to the given node, the outgoing neighbours of this
+	 * conjunction is collected and returned.
+	 * 
+	 * @param metamodel
+	 *            the metamodel according to the given node
+	 * @param nodeType
+	 *            the type of the given node
+	 * @param nodeOfInterest
+	 *            the node from which sorrounding nodes shall be found
+	 * @param isOriginalNode
+	 *            says whteher the given node is from the original model or not
+	 * @return the incoming neighbours of the given node
+	 */
 	private Set<NodeAndType> addOutgoingNeighbourhood(Metamodel metamodel,
-			NodeTypeBase nodeType, Node nodeOfInterest,
-			Set<NodeAndType> sorroundingNodes, boolean isOriginalNode) {
+			NodeTypeBase nodeType, Node nodeOfInterest, boolean isOriginalNode) {
 
 		EdgeType controlFlow = metaModelOriginal.getEdgeType(
 				PSSIFCanonicMetamodelCreator.E_FLOW_CONTROL).getOne();
-		
+
 		Set<NodeAndType> result = new HashSet<NodeAndType>();
 
 		for (EdgeType edgeType : metamodel.getEdgeTypes()) {
@@ -313,19 +359,21 @@ public class ContextMatcher extends MatchMethod {
 								.getName()
 								.equals(PSSIFCanonicMetamodelCreator.ENUM_CONJUNCTION)) {
 
-//							if (isOriginalNode) {
-//								result.addAll(addOutgoingNeighourhood(
-//										metaModelOriginal,
-//										outgoingMapping.getTo(),
-//										outgoingMapping.applyTo(outgoingEdge),
-//										sorroundingNodes, isOriginalNode));
-//							} else {
-//								result.addAll(addOutgoingNeighourhood(
-//										metaModelNew, outgoingMapping.getTo(),
-//										outgoingMapping.applyTo(outgoingEdge),
-//										sorroundingNodes, isOriginalNode));
-//							}
-							//TODO this jumps only over the first conjunction, jump over the next ones too
+							// if (isOriginalNode) {
+							// result.addAll(addOutgoingNeighourhood(
+							// metaModelOriginal,
+							// outgoingMapping.getTo(),
+							// outgoingMapping.applyTo(outgoingEdge),
+							// sorroundingNodes, isOriginalNode));
+							// } else {
+							// result.addAll(addOutgoingNeighourhood(
+							// metaModelNew, outgoingMapping.getTo(),
+							// outgoingMapping.applyTo(outgoingEdge),
+							// sorroundingNodes, isOriginalNode));
+							// }
+							
+							// TODO this jumps only over the first conjunction,
+							// jump over the next ones too
 							for (ConnectionMapping outgoingM : controlFlow
 									.getOutgoingMappings(outgoingMapping
 											.getTo())) {
@@ -361,12 +409,14 @@ public class ContextMatcher extends MatchMethod {
 	 * @param tempNodeOrigin
 	 *            the node from the original model
 	 * @param actTypeOriginModel
+	 *            the type of tempNodeOrigin
 	 * @param tempNodeNew
 	 *            the node from the new model
 	 * @param actTypeNewModel
+	 *            the type of tempNodeNew
 	 * @param labelOrigin
 	 * @param labelNew
-	 * @return
+	 * @return the contextual similarity between the two given nodes
 	 */
 	private double compareSorroundingNodes(Node tempNodeOrigin,
 			NodeType actTypeOriginModel, Node tempNodeNew,
@@ -391,16 +441,16 @@ public class ContextMatcher extends MatchMethod {
 								(NodeType) tempNodeSorroundingNew.getType(),
 								tempNodeSorroundingNew.getNode()));
 
-				// if (nodesAlreadyCompared(tempNodeSorroundingOrigin.getNode(),
-				// tempNodeSorroundingNew.getNode())) {
-				// similaritySum += calculateWeightedSimilarities();
-				// } else {
-				similaritySum += computeSimilarity(
-						tempNodeSorroundingOrigin.getNode(),
-						tempNodeSorroundingOrigin.getType(),
-						tempNodeSorroundingNew.getNode(),
-						tempNodeSorroundingNew.getType());
-				// }
+				if (nodesAlreadyCompared(tempNodeSorroundingOrigin.getNode(),
+						tempNodeSorroundingNew.getNode())) {
+					similaritySum += calculateWeightedSimilarities();
+				} else {
+					similaritySum += computeSimilarity(
+							tempNodeSorroundingOrigin.getNode(),
+							tempNodeSorroundingOrigin.getType(),
+							tempNodeSorroundingNew.getNode(),
+							tempNodeSorroundingNew.getType());
+				}
 			}
 		}
 		double denominator = Math.max(sorroundingNodesOrigin.size(),
@@ -522,13 +572,13 @@ public class ContextMatcher extends MatchMethod {
 				case DEPTH_MATCHING:
 				case STRING_EDIT_DISTANCE_MATCHING:
 				case HYPHEN_MATCHING:
-					result += ((currentMetricResult * currentMethod.getWeigth()) * snytacticWeight);
+					result += ((currentMetricResult * currentMethod.getWeigth()));
 					break;
 				case LINGUISTIC_MATCHING:
 				case VECTOR_SPACE_MODEL_MATCHING:
 				case LATENT_SEMANTIC_INDEXING_MATCHING:
 				case ATTRIBUTE_MATCHING:
-					result += ((currentMetricResult * currentMethod.getWeigth()) * semanticWeight);
+					result += ((currentMetricResult * currentMethod.getWeigth()));
 					break;
 				default:
 					break;
@@ -566,9 +616,7 @@ public class ContextMatcher extends MatchMethod {
 	 * the result is stored in the variable tempNodePair. It can then be used by
 	 * the context matcher to look up results from past compairsons.
 	 * 
-	 * @param tempNodeOrigin
-	 * @param tempNodeNew
-	 * @return
+	 * @return whether the two nodes have already been compared or not
 	 */
 	private boolean nodesAlreadyCompared(Node tempNodeOrigin, Node tempNodeNew) {
 

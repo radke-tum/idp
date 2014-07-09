@@ -131,12 +131,15 @@ public class ModelMerger {
 	 *            the first imported model as a container
 	 * @param metaModelOrigin
 	 *            the meta model of the first model
-	 * @return the recently imported model with the old nodes merged into it
+	 * @return the recently imported model with the old model appropriately
+	 *         merged into it
 	 * @author Andreas
 	 * @param unmatchedNodesOrigin
 	 *            the nodes of the first model which have no trace/merge partner
 	 *            in the recent model
 	 * @param unmatchedJunctionnodesOrigin
+	 *            the junctionnodes of the firstmodel which don't appear in the
+	 *            new model
 	 * @param tracedNodes
 	 *            the nodes of the first model which have a trace partner in the
 	 *            recent model
@@ -165,13 +168,13 @@ public class ModelMerger {
 	}
 
 	/**
-	 * TODO
-	 * This method adds every node from the old model which is not marked as to
-	 * be merged to the new model. The nodes which are marked as to be merged
-	 * are deleted and not transfered to the new model. But their edges are
-	 * transfered to the new model.
+	 * This method adds every node and junctionnode from the origin model which
+	 * is not marked as to be merged to the new model. The nodes which are
+	 * marked as to be merged are deleted and not transfered to the new model.
+	 * But their edges are transfered to the new model. Furthermore the
+	 * tracelinks between different versions of nodes are set.
 	 * 
-	 * @return the new active model.
+	 * @return the merged model
 	 * @author Andreas
 	 */
 	private Model merge() {
@@ -194,7 +197,8 @@ public class ModelMerger {
 	}
 
 	/**
-	 * transferring the unmatched junction nodes to the new model
+	 * transferring the junction nodes from the origin model which don't appear
+	 * in the new model to the new model
 	 */
 	@SuppressWarnings("unused")
 	private void transferUnmatchedJunctionnodesToNewModel() {
@@ -209,15 +213,17 @@ public class ModelMerger {
 								actJunctionnode.getNode())
 						+ " couln't be transferred/created in the new model.");
 			} else {
-				nodeTransferunmatchedJunctionsOldToNewModel.put(actJunctionnode,
-						newJunctionnode);
+				nodeTransferunmatchedJunctionsOldToNewModel.put(
+						actJunctionnode, newJunctionnode);
 			}
 
 		}
 	}
 
 	/**
-	 * transferring the traced nodes to the new model
+	 * transferring the old versions of nodes from the origin model which have a
+	 * newer corresponding version in the new model to the new model so a
+	 * tracelink can be created between the different versions
 	 */
 	private void transferTracedNodesToNewModel() {
 		for (MergedNodePair tracedPair : tracedNodes) {
@@ -239,7 +245,8 @@ public class ModelMerger {
 	}
 
 	/**
-	 * adding unmatched nodes to the new model
+	 * adding the nodes from the origin model which don't appear in the new
+	 * model to the new model
 	 */
 	private void transferUnmatchedNodesToNewModel() {
 		for (NodeAndType unmergedNode : unmatchedNodesOrigin) {
@@ -259,7 +266,14 @@ public class ModelMerger {
 	}
 
 	/**
-	 * TODO
+	 * Here all edges of the transferred junctionnodes shall be recovered in the
+	 * new model as they were in the original model.
+	 * 
+	 * Therefore this method checks for every junctionnode which was transferred
+	 * to the new model if there is at least one node (which was transferred
+	 * from the origin to the new model) to which the junctionnode can be
+	 * connected. If at least one such node is found an edge between the node
+	 * and the junctionnode is created.
 	 */
 	private void transferJunctionEdges() {
 		EdgeType controlFlow = metaModelOrigin.getEdgeType(
@@ -274,7 +288,7 @@ public class ModelMerger {
 			NodeAndType tempNodeOrigin = null;
 
 			IMyNode searchedFromNodeNew = null, searchedToNodeNew = null;
-			
+
 			Iterator<Entry<NodeAndType, Node>> iterator = nodeTransferunmatchedJunctionsOldToNewModel
 					.entrySet().iterator();
 
@@ -282,8 +296,8 @@ public class ModelMerger {
 				Map.Entry<NodeAndType, Node> pairs = (Entry<NodeAndType, Node>) iterator
 						.next();
 				tempNodeOrigin = pairs.getKey();
-				
-				if(actJunctionnode.getNode().equals(tempNodeOrigin.getNode())){
+
+				if (actJunctionnode.getNode().equals(tempNodeOrigin.getNode())) {
 					newJunctionnode = pairs.getValue();
 				}
 			}
@@ -324,11 +338,10 @@ public class ModelMerger {
 							}
 						}
 						continue;
-					}					
+					}
 
 					Iterator<Entry<NodeAndType, Node>> it = nodeTransferUnmatchedOldToNewModel
 							.entrySet().iterator();
-					
 
 					while (it.hasNext()) {
 						Map.Entry<NodeAndType, Node> pairs = (Entry<NodeAndType, Node>) it
@@ -353,9 +366,8 @@ public class ModelMerger {
 												tempNodeOrigin.getType()))) {
 									searchedFromNodeNew = tempNode;
 								}
-							}					
-							
-							
+							}
+
 							// create the new edge in the new model
 							Edge newEdge = incomingMapping.create(modelNew,
 									searchedFromNodeNew.getNode(),
@@ -490,7 +502,7 @@ public class ModelMerger {
 									searchedToNodeNew = tempNode;
 								}
 							}
-							
+
 							// create the new edge in the new model
 							Edge newEdge = outgoingMapping.create(modelNew,
 									newJunctionnode,
@@ -510,10 +522,11 @@ public class ModelMerger {
 	}
 
 	/**
-	 * Add a given JunctionNode to the new model
+	 * Add a given Junctionnode to the new model and transfer the attributes and
+	 * annotations of it.
 	 * 
 	 * @param dataNode
-	 *            the model which should be transfered to model1
+	 *            the model which should be transfered to the new model
 	 * @param currentType
 	 *            the type of the dataNode
 	 * @return
@@ -572,8 +585,8 @@ public class ModelMerger {
 	}
 
 	/**
-	 * This method creates the tracelink edges between the nodepairs given in
-	 * the traceNode list.
+	 * This method creates the tracelink edges in the new model between the
+	 * nodepairs given in the traceNode list.
 	 * 
 	 * @author Andreas
 	 */
@@ -654,7 +667,9 @@ public class ModelMerger {
 
 	/**
 	 * This method iterates over all nodes from the original model which have
-	 * been transferred to the new model but have no merge nor tracepartner
+	 * been transferred to the new model but have no merge nor tracepartner and
+	 * calls methods to create the edges of every node as they were in the
+	 * original model.
 	 * 
 	 * @author Andreas
 	 */
@@ -683,14 +698,18 @@ public class ModelMerger {
 
 	/**
 	 * This method calls methods to check the incoming and outgoing edges of the
-	 * node which is merged into the new model. So the sorrounding edges can be
-	 * created in the new model.
+	 * given node node which was merged into the new model. So the sorrounding
+	 * edges can be created in the new model.
 	 * 
 	 * @param nodeNew
 	 *            the node in the new model to which the old edge shall link
+	 * @param typeNodeNew
+	 *            the type of nodeNew
 	 * @param nodeOrigin
 	 *            the node of the origin model from which the old edge shall
 	 *            link
+	 * @param typeNodeOrigin
+	 *            the type of nodeOrigin
 	 * @author Andreas
 	 */
 	private void checkForEdgesToTransfer(Node nodeNew,
@@ -702,8 +721,11 @@ public class ModelMerger {
 	}
 
 	/**
-	 * This method gets every incoming edges of the given node. Then the edge is
-	 * created in the new model.
+	 * This method gets every incoming edges of the given node in the original
+	 * model. Then the edge is created in the new model, too, if the node at the
+	 * other end of the edge is present in the new model. The edge is either
+	 * created between the given node and an transferred node from the original
+	 * node or an merged node in the new model.
 	 * 
 	 * @param nodeNew
 	 *            the transferred node object
@@ -921,9 +943,11 @@ public class ModelMerger {
 	}
 
 	/**
-	 * This method gets every outgoing edges of the given node. Then the edge is
-	 * created in the new model.
-	 * 
+	 * This method gets every outgoing edges of the given node in the original
+	 * model. Then the edge is created in the new model, too, if the node at the
+	 * other end of the edge is present in the new model. The edge is either
+	 * created between the given node and an transferred node from the original
+	 * node or an merged node in the new model.
 	 * 
 	 * @param nodeNew
 	 *            the transferred node object
@@ -1093,41 +1117,6 @@ public class ModelMerger {
 				}
 			}
 		}
-	}
-
-	/**
-	 * @author Andreas
-	 * @param type
-	 * @param edge
-	 * @return
-	 */
-	private boolean isEdgeDirected(EdgeType type, Edge edge) {
-		Collection<AttributeGroup> attrgroups = type.getAttributeGroups();
-
-		boolean isDirectedEdge = false;
-
-		if (attrgroups != null) {
-			for (AttributeGroup ag : attrgroups) {
-
-				Collection<Attribute> attr = ag.getAttributes();
-
-				for (Attribute a : attr) {
-					if (!a.getName().equals(
-							PSSIFConstants.BUILTIN_ATTRIBUTE_DIRECTED)) {
-						continue;
-					}
-
-					PSSIFOption<PSSIFValue> attrvalue = a.get(edge);
-
-					if (attrvalue != null) {
-						isDirectedEdge = attrvalue.getOne().asBoolean()
-								.booleanValue();
-					}
-				}
-			}
-		}
-
-		return isDirectedEdge;
 	}
 
 	private void printNbEdges(Model model) {
@@ -1346,6 +1335,14 @@ public class ModelMerger {
 		 */
 	}
 
+	/**
+	 * Add a given Node to the new model
+	 * 
+	 * @param dataNode
+	 *            the node which should be transfered to the newmodel
+	 * @param currentType
+	 *            the type of the dataNode
+	 */
 	private Node addNodeToNewModel(Node dataNode, NodeTypeBase nodeTypeBase) {
 		Model modelNew = newModel.getModel();
 
