@@ -4,7 +4,6 @@ public class NormalizationException extends ConsistencyException {
 
 	public NormalizationException(String message, Throwable reason) {
 		super(message, reason);
-		// TODO Auto-generated constructor stub
 	}
 
 	/**

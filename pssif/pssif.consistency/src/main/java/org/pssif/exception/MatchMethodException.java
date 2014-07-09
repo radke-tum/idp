@@ -4,7 +4,6 @@ public class MatchMethodException extends ConsistencyException {
 
 	public MatchMethodException(String message, Throwable reason) {
 		super(message, reason);
-		// TODO Auto-generated constructor stub
 	}
 	
 	public MatchMethodException(String message){

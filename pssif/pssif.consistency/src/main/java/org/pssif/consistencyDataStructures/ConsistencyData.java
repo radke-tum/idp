@@ -93,7 +93,6 @@ public class ConsistencyData {
 	private volatile List<NodeAndType> unmatchedNodesOrigin;
 
 	// TODO Attention! Variable is volatile, will be lost at serialization!
-	//TODO reset after every iteration
 	/**
 	 * this list stores the junction nodes from the original model which weren't
 	 * found in the new version of the model.

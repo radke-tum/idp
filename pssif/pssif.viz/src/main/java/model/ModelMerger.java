@@ -802,7 +802,6 @@ public class ModelMerger {
 						continue;
 					}
 
-					// TODO handle conjunctions separately
 					// don't match conjunctions
 					if (tempFromEdgeNodeType.getName().equals(
 							PSSIFCanonicMetamodelCreator.N_CONJUNCTION)) {
@@ -979,7 +978,6 @@ public class ModelMerger {
 					tempToEdgeNode = outgoingMapping.applyTo(outgoingEdge);
 					tempToEdgeNodeType = outgoingMapping.getTo();
 
-					// TODO handle conjunctions separately
 					// don't match conjunctions
 					if (tempToEdgeNodeType.getName().equals(
 							PSSIFCanonicMetamodelCreator.N_CONJUNCTION)) {
