@@ -16,6 +16,7 @@ import org.pssif.textNormalization.Normalizer;
 import de.tum.pssif.core.common.PSSIFConstants;
 import de.tum.pssif.core.metamodel.ConnectionMapping;
 import de.tum.pssif.core.metamodel.EdgeType;
+import de.tum.pssif.core.metamodel.JunctionNodeType;
 import de.tum.pssif.core.metamodel.Metamodel;
 import de.tum.pssif.core.metamodel.NodeType;
 import de.tum.pssif.core.metamodel.NodeTypeBase;
@@ -35,7 +36,7 @@ import de.tum.pssif.core.model.Node;
  */
 public class ContextMatcher extends MatchMethod {
 
-	//TODO extract to constants
+	// TODO extract to constants
 	/**
 	 * These are the subclasses of PSIFFDevArtifacts that are checked for
 	 * consistency
@@ -68,14 +69,14 @@ public class ContextMatcher extends MatchMethod {
 			PSSIFCanonicMetamodelCreator.N_ELECTRONIC,
 			PSSIFCanonicMetamodelCreator.N_MODULE };
 
-	//TODO make these weights editable by the user
+	// TODO make these weights editable by the user
 	/**
 	 * these two variables store the weight with which the syntactic and
 	 * semantic results of the sorrounding nodes add to the contextual
 	 * similarity result
 	 */
-	private static final double snytacticWeight = 0.5;
-	private static final double semanticWeight = 0.5;
+	private static final double snytacticWeight = 1.0;
+	private static final double semanticWeight = 1.0;
 
 	private List<MatchMethod> matchMethods;
 	private ConsistencyData consistencyData;
@@ -92,7 +93,7 @@ public class ContextMatcher extends MatchMethod {
 
 	private Set<NodeAndType> sorroundingNodesNew;
 
-	private NodeTypeBase conjunctionNodeType;
+	NodeTypeBase conjunctionNodeType;
 
 	public ContextMatcher(MatchingMethods matchMethod, boolean isActive,
 			double weigth) {
@@ -138,21 +139,28 @@ public class ContextMatcher extends MatchMethod {
 		this.conjunctionNodeType = metaModelOriginal.getBaseNodeType(
 				PSSIFCanonicMetamodelCreator.N_CONJUNCTION).getOne();
 
-		tempNodePair = null;
+		if ((actTypeOriginModel.getName().equals(conjunctionNodeType.getName()) || (actTypeNewModel
+				.getName().equals(conjunctionNodeType.getName())))) {
+			return 0.0;
+		} else {
 
-		sorroundingNodesOrigin = new HashSet<NodeAndType>();
-		sorroundingNodesNew = new HashSet<NodeAndType>();
+			tempNodePair = null;
 
-		/**
-		 * retrieving all from/to nodes connected with the two nodes
-		 */
-		typeIteration(tempNodeOrigin, actTypeOriginModel,
-				sorroundingNodesOrigin, true, true, true);
-		typeIteration(tempNodeNew, actTypeNewModel, sorroundingNodesNew, true,
-				true, false);
+			sorroundingNodesOrigin = new HashSet<NodeAndType>();
+			sorroundingNodesNew = new HashSet<NodeAndType>();
 
-		return compareSorroundingNodes(tempNodeOrigin, actTypeOriginModel,
-				tempNodeNew, actTypeNewModel, labelOrigin, labelNew);
+			/**
+			 * retrieving all from/to nodes connected with the two nodes
+			 */
+			sorroundingNodesOrigin = typeIteration(tempNodeOrigin,
+					actTypeOriginModel, sorroundingNodesOrigin, true, true,
+					true);
+			sorroundingNodesNew = typeIteration(tempNodeNew, actTypeNewModel,
+					sorroundingNodesNew, true, true, false);
+
+			return compareSorroundingNodes(tempNodeOrigin, actTypeOriginModel,
+					tempNodeNew, actTypeNewModel, labelOrigin, labelNew);
+		}
 	}
 
 	/**
@@ -178,36 +186,39 @@ public class ContextMatcher extends MatchMethod {
 	 * @param isOriginalNode
 	 *            TODO
 	 */
-	public void typeIteration(Node tempNode, NodeTypeBase typeTempNode,
-			Set<NodeAndType> sorroundingNodes, boolean incoming,
-			boolean outgoing, boolean isOriginalNode) {
+	public Set<NodeAndType> typeIteration(Node tempNode,
+			NodeTypeBase typeTempNode, Set<NodeAndType> sorroundingNodes,
+			boolean incoming, boolean outgoing, boolean isOriginalNode) {
 
-		findSorroundingNodes(typeTempNode, tempNode, sorroundingNodes,
+		return findSorroundingNodes(typeTempNode, tempNode, sorroundingNodes,
 				incoming, outgoing, isOriginalNode);
 	}
 
-	private void findSorroundingNodes(NodeTypeBase type, Node tempNode,
-			Set<NodeAndType> sorroundingNodes, boolean incoming,
+	private Set<NodeAndType> findSorroundingNodes(NodeTypeBase type,
+			Node tempNode, Set<NodeAndType> sorroundingNodes, boolean incoming,
 			boolean outgoing, boolean isOriginalNode) {
+
+		Set<NodeAndType> result = new HashSet<NodeAndType>();
 
 		if (incoming) {
 			if (isOriginalNode) {
-				addIncomingNeighourhood(metaModelOriginal, type, tempNode,
-						sorroundingNodes, isOriginalNode);
+				result.addAll(addIncomingNeighbourhood(metaModelOriginal, type,
+						tempNode, sorroundingNodes, isOriginalNode));
 			} else {
-				addIncomingNeighourhood(metaModelNew, type, tempNode,
-						sorroundingNodes, isOriginalNode);
+				result.addAll(addIncomingNeighbourhood(metaModelNew, type,
+						tempNode, sorroundingNodes, isOriginalNode));
 			}
 		}
 		if (outgoing) {
 			if (isOriginalNode) {
-				addOutgoingNeighourhood(metaModelOriginal, type, tempNode,
-						sorroundingNodes, isOriginalNode);
+				result.addAll(addOutgoingNeighbourhood(metaModelOriginal, type,
+						tempNode, sorroundingNodes, isOriginalNode));
 			} else {
-				addOutgoingNeighourhood(metaModelNew, type, tempNode,
-						sorroundingNodes, isOriginalNode);
+				result.addAll(addOutgoingNeighbourhood(metaModelNew, type,
+						tempNode, sorroundingNodes, isOriginalNode));
 			}
 		}
+		return result;
 	}
 
 	private List<NodeAndType> convertSetToLinkedList(Set<Node> setToConvert,
@@ -221,58 +232,125 @@ public class ContextMatcher extends MatchMethod {
 		return result;
 	}
 
-	private void addIncomingNeighourhood(Metamodel metamodel,
+	private Set<NodeAndType> addIncomingNeighbourhood(Metamodel metamodel,
 			NodeTypeBase nodeType, Node nodeOfInterest,
 			Set<NodeAndType> sorroundingNodes, boolean isOriginalNode) {
+
+		EdgeType controlFlow = metaModelOriginal.getEdgeType(
+				PSSIFCanonicMetamodelCreator.E_FLOW_CONTROL).getOne();
+
+		Set<NodeAndType> result = new HashSet<NodeAndType>();
 
 		for (EdgeType edgeType : metamodel.getEdgeTypes()) {
 			for (ConnectionMapping incomingMapping : edgeType
 					.getIncomingMappings(nodeType)) {
 				for (Edge incomingEdge : incomingMapping
 						.applyIncoming(nodeOfInterest)) {
-					if (incomingEdge.apply(new ReadFromNodesOperation()) != null) {
-						if (incomingMapping.getFrom() == conjunctionNodeType) {
-							typeIteration(
-									incomingEdge
-											.apply(new ReadFromNodesOperation()),
-									incomingMapping.getFrom(),
-									sorroundingNodes, true, false,
-									isOriginalNode);
+
+					if (incomingMapping.applyFrom(incomingEdge) != null) {
+						if (incomingMapping
+								.getFrom()
+								.getName()
+								.equals(PSSIFCanonicMetamodelCreator.ENUM_CONJUNCTION)) {
+
+							// if (isOriginalNode) {
+							// result.addAll(addIncomingNeighourhood(
+							// metaModelOriginal,
+							// incomingMapping.getFrom(),
+							// incomingMapping.applyFrom(incomingEdge),
+							// sorroundingNodes, isOriginalNode));
+							// } else {
+							// result.addAll(addIncomingNeighourhood(
+							// metaModelNew,
+							// incomingMapping.getFrom(),
+							// incomingMapping.applyFrom(incomingEdge),
+							// sorroundingNodes, isOriginalNode));
+							//TODO this jumps only over the first conjunction, jump over the next ones too
+							for (ConnectionMapping incomingM : controlFlow
+									.getIncomingMappings(incomingMapping
+											.getFrom())) {
+								for (Edge incomingE : incomingM
+										.applyIncoming(incomingMapping
+												.applyFrom(incomingEdge))) {
+									result.add(new NodeAndType(incomingM
+											.applyFrom(incomingE), incomingM
+											.getFrom()));
+								}
+							}
 						} else {
-							sorroundingNodes.add(new NodeAndType(incomingEdge
-									.apply(new ReadFromNodesOperation()),
-									incomingMapping.getFrom()));
+							if (!nodeType
+									.getName()
+									.equals(PSSIFCanonicMetamodelCreator.ENUM_CONJUNCTION)) {
+								result.add(new NodeAndType(incomingMapping
+										.applyFrom(incomingEdge),
+										incomingMapping.getFrom()));
+							}
 						}
 					}
 				}
 			}
 		}
+		return result;
 	}
 
-	private void addOutgoingNeighourhood(Metamodel metamodel,
+	private Set<NodeAndType> addOutgoingNeighbourhood(Metamodel metamodel,
 			NodeTypeBase nodeType, Node nodeOfInterest,
 			Set<NodeAndType> sorroundingNodes, boolean isOriginalNode) {
+
+		EdgeType controlFlow = metaModelOriginal.getEdgeType(
+				PSSIFCanonicMetamodelCreator.E_FLOW_CONTROL).getOne();
+		
+		Set<NodeAndType> result = new HashSet<NodeAndType>();
 
 		for (EdgeType edgeType : metamodel.getEdgeTypes()) {
 			for (ConnectionMapping outgoingMapping : edgeType
 					.getOutgoingMappings(nodeType)) {
 				for (Edge outgoingEdge : outgoingMapping
 						.applyOutgoing(nodeOfInterest)) {
+					if (outgoingMapping.applyTo(outgoingEdge) != null) {
+						if (outgoingMapping
+								.getTo()
+								.getName()
+								.equals(PSSIFCanonicMetamodelCreator.ENUM_CONJUNCTION)) {
 
-					if (outgoingMapping.getTo() == conjunctionNodeType) {
-						typeIteration(
-								outgoingEdge.apply(new ReadToNodesOperation()),
-								outgoingMapping.getTo(), sorroundingNodes,
-								false, true, isOriginalNode);
-					} else {
-						sorroundingNodes.add(new NodeAndType(outgoingEdge
-								.apply(new ReadToNodesOperation()),
-								outgoingMapping.getFrom()));
+//							if (isOriginalNode) {
+//								result.addAll(addOutgoingNeighourhood(
+//										metaModelOriginal,
+//										outgoingMapping.getTo(),
+//										outgoingMapping.applyTo(outgoingEdge),
+//										sorroundingNodes, isOriginalNode));
+//							} else {
+//								result.addAll(addOutgoingNeighourhood(
+//										metaModelNew, outgoingMapping.getTo(),
+//										outgoingMapping.applyTo(outgoingEdge),
+//										sorroundingNodes, isOriginalNode));
+//							}
+							//TODO this jumps only over the first conjunction, jump over the next ones too
+							for (ConnectionMapping outgoingM : controlFlow
+									.getOutgoingMappings(outgoingMapping
+											.getTo())) {
+								for (Edge outgoingE : outgoingM
+										.applyOutgoing(outgoingMapping
+												.applyTo(outgoingEdge))) {
+									result.add(new NodeAndType(outgoingM
+											.applyTo(outgoingE), outgoingM
+											.getTo()));
+								}
+							}
+						} else {
+							if (!nodeType
+									.getName()
+									.equals(PSSIFCanonicMetamodelCreator.ENUM_CONJUNCTION)) {
+								result.add(new NodeAndType(outgoingMapping
+										.applyTo(outgoingEdge), outgoingMapping
+										.getTo()));
+							}
+						}
 					}
-
 				}
 			}
 		}
+		return result;
 	}
 
 	/**
@@ -313,16 +391,16 @@ public class ContextMatcher extends MatchMethod {
 								(NodeType) tempNodeSorroundingNew.getType(),
 								tempNodeSorroundingNew.getNode()));
 
-				if (nodesAlreadyCompared(tempNodeSorroundingOrigin.getNode(),
-						tempNodeSorroundingNew.getNode())) {
-					similaritySum += calculateWeightedSimilarities();
-				} else {
-					similaritySum += computeSimilarity(
-							tempNodeSorroundingOrigin.getNode(),
-							tempNodeSorroundingOrigin.getType(),
-							tempNodeSorroundingNew.getNode(),
-							tempNodeSorroundingNew.getType());
-				}
+				// if (nodesAlreadyCompared(tempNodeSorroundingOrigin.getNode(),
+				// tempNodeSorroundingNew.getNode())) {
+				// similaritySum += calculateWeightedSimilarities();
+				// } else {
+				similaritySum += computeSimilarity(
+						tempNodeSorroundingOrigin.getNode(),
+						tempNodeSorroundingOrigin.getType(),
+						tempNodeSorroundingNew.getNode(),
+						tempNodeSorroundingNew.getType());
+				// }
 			}
 		}
 		double denominator = Math.max(sorroundingNodesOrigin.size(),
@@ -452,8 +530,8 @@ public class ContextMatcher extends MatchMethod {
 				case ATTRIBUTE_MATCHING:
 					result += ((currentMetricResult * currentMethod.getWeigth()) * semanticWeight);
 					break;
-					default:
-						break;
+				default:
+					break;
 				}
 			}
 		}
