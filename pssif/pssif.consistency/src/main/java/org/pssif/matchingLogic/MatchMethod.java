@@ -48,7 +48,6 @@ public abstract class MatchMethod {
 	protected double weigth;
 
 	/**
-	 * 
 	 * An abstract implementation of a matching method. Concrete implementations
 	 * are to find in the classes extending this class
 	 * 
@@ -56,10 +55,31 @@ public abstract class MatchMethod {
 	 * nodes. Though not all matching methods require that much data, some
 	 * methods need quite a lot.
 	 * 
+	 * @param tempNodeOrigin
+	 *            the node from the original model
+	 * @param tempNodeNew
+	 *            the node from the new model
+	 * @param originalModel
+	 *            the original (first imported) model
+	 * @param newModel
+	 *            the recently imported model
+	 * @param metaModelOriginal
+	 *            the metamodel of the originalModel
 	 * @param metaModelNew
-	 *            TODO
-	 * 
-	 * @return the result of the applied metric
+	 *            the metamodel of the newMOdel
+	 * @param actTypeOriginModel
+	 *            the type of tempNodeOrigin
+	 * @param actTypeNewModel
+	 *            the type of actTypeNewModel
+	 * @param labelOrigin
+	 *            the label of tempNodeOrigin
+	 * @param labelNew
+	 *            the label of labelNew
+	 * @param tokensOrigin
+	 *            the tokens of tempNodeOrigin
+	 * @param tokensNew
+	 *            the tokens of tokensNew
+	 * @return the result of the applied match metric
 	 */
 	public abstract double executeMatching(Node tempNodeOrigin,
 			Node tempNodeNew, Model originalModel, Model newModel,

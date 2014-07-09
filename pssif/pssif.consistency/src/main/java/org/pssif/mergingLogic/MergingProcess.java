@@ -135,14 +135,11 @@ public class MergingProcess {
 
 		startTypeAndNodeIteration();
 
-		// TODO For testing only
+
 		ConsistencyData.getInstance().resetUnmatchedJunctionnodesOrigin();
 
 		handleConjunctions();
 		
-		@SuppressWarnings("unused")
-		List<NodeAndType> test = ConsistencyData.getInstance().getUnmatchedJunctionnodesList();
-		// TODO until here
 
 		ConsistencyData.getInstance().createUnmatchedNodeList(allNodesOrigin);
 	}
