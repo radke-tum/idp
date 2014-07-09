@@ -1,6 +1,8 @@
 package model;
 
+import graph.model.IMyNode;
 import graph.model.MyEdgeType;
+import graph.model.MyJunctionNode;
 import graph.model.MyNode;
 
 import java.util.Collection;
@@ -53,12 +55,17 @@ public class ModelMerger {
 	 * this variable maps the unmatched nodes of the old model to the respective
 	 * node in the new model
 	 */
-	private Map<NodeAndType, Node> nodeTransferUnmatchedOldToNewModel = new HashMap<NodeAndType, Node>();
+	private Map<NodeAndType, Node> nodeTransferUnmatchedOldToNewModel;
 	/**
 	 * this variable maps the traced nodes of the old model to the respective
 	 * node in the new model
 	 */
-	private Map<NodeAndType, Node> nodeTransferTracedOldToNewModel = new HashMap<NodeAndType, Node>();
+	private Map<NodeAndType, Node> nodeTransferTracedOldToNewModel;
+	/**
+	 * this variable maps the unmerged junctionnodes of the old model to the
+	 * respective node in the new model
+	 */
+	private Map<NodeAndType, Node> nodeTransferunmatchedJunctionsOldToNewModel;
 
 	private List<MergedNodePair> mergedNodes;
 	private List<MergedNodePair> tracedNodes;
@@ -150,10 +157,15 @@ public class ModelMerger {
 		this.tracedNodes = tracedNodes;
 		this.unmatchedJunctionnodesOrigin = unmatchedJunctionnodesOrigin;
 
-		return mergeNodes();
+		nodeTransferUnmatchedOldToNewModel = new HashMap<NodeAndType, Node>();
+		nodeTransferTracedOldToNewModel = new HashMap<NodeAndType, Node>();
+		nodeTransferunmatchedJunctionsOldToNewModel = new HashMap<NodeAndType, Node>();
+
+		return merge();
 	}
 
 	/**
+	 * TODO
 	 * This method adds every node from the old model which is not marked as to
 	 * be merged to the new model. The nodes which are marked as to be merged
 	 * are deleted and not transfered to the new model. But their edges are
@@ -162,27 +174,52 @@ public class ModelMerger {
 	 * @return the new active model.
 	 * @author Andreas
 	 */
-	private Model mergeNodes() {
+	private Model merge() {
 
 		newModel = new MyModelContainer(modelNew, metaModelNew);
 
-		// adding unmatched nodes to the new model
-		for (NodeAndType unmergedNode : unmatchedNodesOrigin) {
+		transferUnmatchedNodesToNewModel();
 
-			Node newNode = addNodeToNewModel(unmergedNode.getNode(),
-					unmergedNode.getType());
+		transferTracedNodesToNewModel();
 
-			if (newNode == null) {
-				throw new ConsistencyException("The old, unmatched node: "
-						+ Methods.findName(unmergedNode.getType(),
-								unmergedNode.getNode())
+		transferUnmatchedJunctionnodesToNewModel();
+
+		transferJunctionEdges();
+
+		transferOldEdges();
+
+		createTracelinks();
+
+		return newModel.getModel();
+	}
+
+	/**
+	 * transferring the unmatched junction nodes to the new model
+	 */
+	@SuppressWarnings("unused")
+	private void transferUnmatchedJunctionnodesToNewModel() {
+		for (NodeAndType actJunctionnode : unmatchedJunctionnodesOrigin) {
+			Node newJunctionnode = addJunctionNodeToNewModel(
+					actJunctionnode.getNode(),
+					(JunctionNodeType) actJunctionnode.getType());
+
+			if (actJunctionnode == null) {
+				throw new ConsistencyException("The old junction node: "
+						+ Methods.findName(actJunctionnode.getType(),
+								actJunctionnode.getNode())
 						+ " couln't be transferred/created in the new model.");
 			} else {
-				nodeTransferUnmatchedOldToNewModel.put(unmergedNode, newNode);
+				nodeTransferunmatchedJunctionsOldToNewModel.put(actJunctionnode,
+						newJunctionnode);
 			}
-		}
 
-		// transferring the traced nodes to the new model
+		}
+	}
+
+	/**
+	 * transferring the traced nodes to the new model
+	 */
+	private void transferTracedNodesToNewModel() {
 		for (MergedNodePair tracedPair : tracedNodes) {
 
 			Node newNode = addNodeToNewModel(tracedPair.getNodeOriginalModel(),
@@ -199,36 +236,57 @@ public class ModelMerger {
 								tracedPair.getTypeOriginModel()), newNode);
 			}
 		}
-
-		transferUnmatchedJunctionnodes();
-
-		// transferring the egdes of the unmatched nodes to the new model
-		transferOldEdges();
-
-		// creating tracelinks
-		setTracedLinks();
-
-		return newModel.getModel();
 	}
 
-	private void transferUnmatchedJunctionnodes() {
+	/**
+	 * adding unmatched nodes to the new model
+	 */
+	private void transferUnmatchedNodesToNewModel() {
+		for (NodeAndType unmergedNode : unmatchedNodesOrigin) {
+
+			Node newNode = addNodeToNewModel(unmergedNode.getNode(),
+					unmergedNode.getType());
+
+			if (newNode == null) {
+				throw new ConsistencyException("The old, unmatched node: "
+						+ Methods.findName(unmergedNode.getType(),
+								unmergedNode.getNode())
+						+ " couln't be transferred/created in the new model.");
+			} else {
+				nodeTransferUnmatchedOldToNewModel.put(unmergedNode, newNode);
+			}
+		}
+	}
+
+	/**
+	 * TODO
+	 */
+	private void transferJunctionEdges() {
 		EdgeType controlFlow = metaModelOrigin.getEdgeType(
 				PSSIFCanonicMetamodelCreator.E_FLOW_CONTROL).getOne();
 
-		// TODO handle the case that a junction node is connected with other
-		// junction nodes
-		// TODO transfer the edge attributes
 		for (NodeAndType actJunctionnode : unmatchedJunctionnodesOrigin) {
 
 			Node newJunctionnode = null;
-
-			boolean junctionNodeAlreadyCreated = false;
 
 			NodeAndType tempFromEdgeNode = null, tempToEdgeNode = null;
 
 			NodeAndType tempNodeOrigin = null;
 
-			MyNode searchedFromNodeNew = null, searchedToNodeNew = null;
+			IMyNode searchedFromNodeNew = null, searchedToNodeNew = null;
+			
+			Iterator<Entry<NodeAndType, Node>> iterator = nodeTransferunmatchedJunctionsOldToNewModel
+					.entrySet().iterator();
+
+			while (iterator.hasNext()) {
+				Map.Entry<NodeAndType, Node> pairs = (Entry<NodeAndType, Node>) iterator
+						.next();
+				tempNodeOrigin = pairs.getKey();
+				
+				if(actJunctionnode.getNode().equals(tempNodeOrigin.getNode())){
+					newJunctionnode = pairs.getValue();
+				}
+			}
 
 			for (ConnectionMapping incomingMapping : controlFlow
 					.getIncomingMappings(actJunctionnode.getType())) {
@@ -238,8 +296,39 @@ public class ModelMerger {
 							incomingMapping.applyFrom(incomingEdge),
 							incomingMapping.getFrom());
 
+					// handles the case that a junction node gets an incoming
+					// edge from another junction node
+					if (tempFromEdgeNode.getType().getName()
+							.equals(actJunctionnode.getType().getName())) {
+
+						Iterator<Entry<NodeAndType, Node>> temp = nodeTransferunmatchedJunctionsOldToNewModel
+								.entrySet().iterator();
+
+						while (temp.hasNext()) {
+							Map.Entry<NodeAndType, Node> pairs = (Entry<NodeAndType, Node>) temp
+									.next();
+							tempNodeOrigin = pairs.getKey();
+
+							if (tempNodeOrigin.getNode().equals(
+									tempFromEdgeNode.getNode())) {
+								// create the new edge in the new model
+								Edge newEdge = incomingMapping.create(modelNew,
+										pairs.getValue(), newJunctionnode);
+
+								// transfer the attributes of the old to the new
+								// edge
+								transferEdgeAttributes(incomingEdge, newEdge,
+										controlFlow);
+
+								break;
+							}
+						}
+						continue;
+					}					
+
 					Iterator<Entry<NodeAndType, Node>> it = nodeTransferUnmatchedOldToNewModel
 							.entrySet().iterator();
+					
 
 					while (it.hasNext()) {
 						Map.Entry<NodeAndType, Node> pairs = (Entry<NodeAndType, Node>) it
@@ -254,14 +343,6 @@ public class ModelMerger {
 								Methods.findGlobalID(tempNodeOrigin.getNode(),
 										tempNodeOrigin.getType()))) {
 
-							if (!junctionNodeAlreadyCreated) {
-								newJunctionnode = addJunctionNodeToNewModel(
-										actJunctionnode.getNode(),
-										(JunctionNodeType) actJunctionnode
-												.getType());
-								junctionNodeAlreadyCreated = true;
-							}
-
 							// here the two nodes which shall be connected by a
 							// edge are retrieved in the new model
 							for (MyNode tempNode : newModel.getAllNodes()) {
@@ -272,10 +353,9 @@ public class ModelMerger {
 												tempNodeOrigin.getType()))) {
 									searchedFromNodeNew = tempNode;
 								}
-								if (tempNode.getNode().equals(newJunctionnode)) {
-									searchedToNodeNew = tempNode;
-								}
-							}
+							}					
+							
+							
 							// create the new edge in the new model
 							Edge newEdge = incomingMapping.create(modelNew,
 									searchedFromNodeNew.getNode(),
@@ -300,14 +380,6 @@ public class ModelMerger {
 										actMerged.getNodeOriginalModel(),
 										actMerged.getTypeOriginModel()))) {
 
-							if (!junctionNodeAlreadyCreated) {
-								newJunctionnode = addJunctionNodeToNewModel(
-										actJunctionnode.getNode(),
-										(JunctionNodeType) actJunctionnode
-												.getType());
-								junctionNodeAlreadyCreated = true;
-							}
-
 							// here the two nodes which shall be connected by a
 							// edge are retrieved in the new model
 							for (MyNode tempNode : newModel.getAllNodes()) {
@@ -317,9 +389,6 @@ public class ModelMerger {
 												actMerged.getNodeNewModel(),
 												actMerged.getTypeNewModel()))) {
 									searchedFromNodeNew = tempNode;
-								}
-								if (tempNode.getNode().equals(newJunctionnode)) {
-									searchedToNodeNew = tempNode;
 								}
 							}
 
@@ -349,6 +418,15 @@ public class ModelMerger {
 							outgoingMapping.applyTo(outgoingEdge),
 							outgoingMapping.getTo());
 
+					// handles the case that a junction node connects to another
+					// junction node via an outgoing edge. This edge is already
+					// created through the above for each iteration with the
+					// ingoing mappings.
+					if (tempFromEdgeNode.getType().getName()
+							.equals(actJunctionnode.getType().getName())) {
+						continue;
+					}
+
 					Iterator<Entry<NodeAndType, Node>> it = nodeTransferUnmatchedOldToNewModel
 							.entrySet().iterator();
 
@@ -365,14 +443,6 @@ public class ModelMerger {
 								Methods.findGlobalID(tempNodeOrigin.getNode(),
 										tempNodeOrigin.getType()))) {
 
-							if (!junctionNodeAlreadyCreated) {
-								newJunctionnode = addJunctionNodeToNewModel(
-										actJunctionnode.getNode(),
-										(JunctionNodeType) actJunctionnode
-												.getType());
-								junctionNodeAlreadyCreated = true;
-							}
-							
 							// here the two nodes which shall be connected by a
 							// edge are retrieved in the new model
 							for (MyNode tempNode : newModel.getAllNodes()) {
@@ -383,11 +453,8 @@ public class ModelMerger {
 												tempNodeOrigin.getType()))) {
 									searchedToNodeNew = tempNode;
 								}
-								if (tempNode.getNode().equals(newJunctionnode)) {
-									searchedFromNodeNew = tempNode;
-								}
 							}
-							
+
 							// create the new edge in the new model
 							Edge newEdge = outgoingMapping.create(modelNew,
 									newJunctionnode,
@@ -412,14 +479,6 @@ public class ModelMerger {
 										actMerged.getNodeOriginalModel(),
 										actMerged.getTypeOriginModel()))) {
 
-							if (!junctionNodeAlreadyCreated) {
-								newJunctionnode = addJunctionNodeToNewModel(
-										actJunctionnode.getNode(),
-										(JunctionNodeType) actJunctionnode
-												.getType());
-								junctionNodeAlreadyCreated = true;
-							}
-
 							// here the two nodes which shall be connected by a
 							// edge are retrieved in the new model
 							for (MyNode tempNode : newModel.getAllNodes()) {
@@ -430,10 +489,8 @@ public class ModelMerger {
 												actMerged.getTypeNewModel()))) {
 									searchedToNodeNew = tempNode;
 								}
-								if (tempNode.getNode().equals(newJunctionnode)) {
-									searchedFromNodeNew = tempNode;
-								}
 							}
+							
 							// create the new edge in the new model
 							Edge newEdge = outgoingMapping.create(modelNew,
 									newJunctionnode,
@@ -520,7 +577,7 @@ public class ModelMerger {
 	 * 
 	 * @author Andreas
 	 */
-	private void setTracedLinks() {
+	private void createTracelinks() {
 		MyEdgeType edgeType = new MyEdgeType(
 				metaModelNew
 						.getEdgeType(
