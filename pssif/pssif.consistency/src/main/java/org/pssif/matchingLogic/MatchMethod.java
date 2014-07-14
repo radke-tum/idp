@@ -51,6 +51,10 @@ public abstract class MatchMethod {
 	 * An abstract implementation of a matching method. Concrete implementations
 	 * are to find in the classes extending this class
 	 * 
+	 * The method gets two nodes and some additional informations about them.
+	 * Then a similarity score (depending on the applied metric) between [0,1]
+	 * is calculated and returned.
+	 * 
 	 * This methods get's very much information about the currently matched two
 	 * nodes. Though not all matching methods require that much data, some
 	 * methods need quite a lot.

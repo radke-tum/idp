@@ -21,12 +21,12 @@ public enum MatchingMethods {
 
 	EXACT_STRING_MATCHING(0, "Exact String Compairson"), DEPTH_MATCHING(1,
 			"Depth Compairson (no Impl)"), STRING_EDIT_DISTANCE_MATCHING(2,
-			"Levenshtein Distance"), HYPHEN_MATCHING(3,
+			"String Edit Distance Compairson"), HYPHEN_MATCHING(3,
 			"Hyphen Compairson (no Impl)"), LINGUISTIC_MATCHING(4,
 			"Linguistic Compairson"), VECTOR_SPACE_MODEL_MATCHING(5,
 			"VSM Compairson"), LATENT_SEMANTIC_INDEXING_MATCHING(6,
 			"LSI Compairson (no Impl)"), ATTRIBUTE_MATCHING(7,
-			"Attribute Matching"), CONTEXT_MATCHING(8,
+			"Attribute Compairson"), CONTEXT_MATCHING(8,
 			"Contextual Compairson");
 
 	private final int value;
