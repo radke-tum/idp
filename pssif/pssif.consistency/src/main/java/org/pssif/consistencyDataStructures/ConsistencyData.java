@@ -46,6 +46,7 @@ public class ConsistencyData {
 		this.unmatchedNodesOrigin = new LinkedList<NodeAndType>();
 	}
 
+	// TODO Attention: This singleton implementation is not multi threading safe
 	public static ConsistencyData getInstance() {
 		if (instance == null) {
 			instance = new ConsistencyData();
@@ -191,8 +192,8 @@ public class ConsistencyData {
 
 		return success;
 	}
-	
-	public void putUnmatchedJunctionnodeEntry(NodeAndType junctionNode){
+
+	public void putUnmatchedJunctionnodeEntry(NodeAndType junctionNode) {
 		this.unmatchedJunctionnodesOrigin.add(junctionNode);
 	}
 
@@ -382,8 +383,8 @@ public class ConsistencyData {
 	public List<MergedNodePair> getMergedNodePairs() {
 		return this.mergedNodePairs;
 	}
-	
-	public List<NodeAndType> getUnmatchedJunctionnodesList(){
+
+	public List<NodeAndType> getUnmatchedJunctionnodesList() {
 		return this.unmatchedJunctionnodesOrigin;
 	}
 
@@ -398,8 +399,8 @@ public class ConsistencyData {
 	public void resetUnmatchedNodesList() {
 		this.unmatchedNodesOrigin = new LinkedList<NodeAndType>();
 	}
-	
-	public void resetUnmatchedJunctionnodesOrigin(){
+
+	public void resetUnmatchedJunctionnodesOrigin() {
 		this.unmatchedJunctionnodesOrigin = new LinkedList<NodeAndType>();
 	}
 }

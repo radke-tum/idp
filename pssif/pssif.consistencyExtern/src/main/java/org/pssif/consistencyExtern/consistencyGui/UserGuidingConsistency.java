@@ -232,7 +232,7 @@ public class UserGuidingConsistency {
 
 		boolean result = false;
 
-		Object[] options = { "Merge new into existing", "Copy new to existing" };
+		Object[] options = { "Merge existing into new one", "Copy new to existing" };
 		int n = JOptionPane
 				.showOptionDialog(
 						null,
