@@ -199,6 +199,20 @@ public class ModelBuilder {
 	}
 	
 	/**
+	 * Remove a Node from the Gui
+	 * @param node The Node
+	 */
+	public static boolean removeNodeFromGUI (MyNode node)
+	{
+		if (activeModel !=null)
+		{
+			return activeModel.removeNodeFromGUI(node);
+			
+		}
+		return false;
+	}
+	
+	/**
 	 * Add a new Edge which was created through the Gui
 	 * @param source The start Node of the Edge
 	 * @param destination The destination Node of the Edge

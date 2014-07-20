@@ -1,12 +1,15 @@
 package de.tum.pssif.core.model;
 
 import de.tum.pssif.core.common.PSSIFOption;
+import de.tum.pssif.core.metamodel.EdgeType;
+import de.tum.pssif.core.metamodel.NodeType;
 import de.tum.pssif.core.metamodel.impl.CreateEdgeOperation;
 import de.tum.pssif.core.metamodel.impl.CreateJunctionNodeOperation;
 import de.tum.pssif.core.metamodel.impl.CreateNodeOperation;
 import de.tum.pssif.core.metamodel.impl.ReadEdgesOperation;
 import de.tum.pssif.core.metamodel.impl.ReadNodeOperation;
 import de.tum.pssif.core.metamodel.impl.ReadNodesOperation;
+import de.tum.pssif.core.metamodel.impl.RemoveNodeOperation;
 
 
 public interface Model {
@@ -63,6 +66,20 @@ public interface Model {
    *    A PSS-IF Option containing the nodes.
    */
   PSSIFOption<Edge> apply(ReadEdgesOperation op);
+  
+  /**
+   * Removes a node.
+   * @param op
+   *    The node is gone..
+   * @return
+   *    True if removed.
+   */
+  boolean apply(RemoveNodeOperation op);
+  
+  boolean removeNode(NodeType type, Node node);
 
   String generateId();
+
+  void removeEdge(Edge edge);
+
 }

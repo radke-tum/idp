@@ -1,4 +1,5 @@
 package graph.listener;
+import java.awt.Event;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -22,6 +23,7 @@ import reqtool.RequirementToolbox;
 import reqtool.RequirementTracer;
 import reqtool.RequirementVersionManager;
 import reqtool.TestCaseVerifier;
+import reqtool.event.ReqInfoEvent;
 import reqtool.event.ResolveIssueEvent;
 import reqtool.event.bus.ReqToolReqistry;
 import reqtool.event.menu.CreateReqMenuEvent;
@@ -32,6 +34,7 @@ import reqtool.graph.TestCaseCreatorPopup;
 import reqtool.graph.VersionManagerPopup;
 import reqtool.handler.menu.VersionsVisibilityMenuHandler;
 import model.ModelBuilder;
+import model.MyModelContainer;
 import edu.uci.ics.jung.algorithms.layout.GraphElementAccessor;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.control.AbstractPopupGraphMousePlugin;
@@ -73,7 +76,9 @@ public class MyPopupGraphMousePlugin extends AbstractPopupGraphMousePlugin {
 				JPopupMenu popup = new JPopupMenu();
 				
 				JMenu submenu = createEdge(e, node);
+				JMenuItem submenuRemove = removeNode(e, node);
 				popup.add(submenu);
+				popup.add(submenuRemove);
 				// if the user made a right click on a Reqtool Node
 				ReqToolReqistry.getInstance().post(new CreateReqMenuEvent(node, popup, gViz));
 
@@ -167,202 +172,27 @@ public class MyPopupGraphMousePlugin extends AbstractPopupGraphMousePlugin {
     }
     
     /**
-     * provide the SubMenu options to trace a requirement
+     * provide the SubMenu options to remove a node
      * @param e The MouseEvent which triggered the action
      * @param selectedNode The Node which was selected when the user pushed the right mouse button
      * @return a menu with all the option to trace a requirement
      */
-    
-    /*
-	private JMenuItem traceRequirement(final MyNode selectedNode) {
-		JMenuItem submenu;
-		if (RequirementTracer.isTracedNode(selectedNode)) {
-			submenu = new JMenuItem("Untrace requirement");
-			submenu.addActionListener(new ActionListener() {
-
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					RequirementTracer.stopTracing();
-					gViz.stopTracingNodes();
-				}
-
-			});
-		} else {
-			submenu = new JMenuItem("Trace requirement");
-			submenu.addActionListener(new ActionListener() {
-
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					RequirementTracer.traceRequirement(selectedNode);
-					;
-					gViz.traceNodes();
-				}
-			});
-		}
-
-		return submenu;
-	}
-	
-    
-    private JMenuItem createTestCase( final MyNode selectedNode) {
- 		// TODO Auto-generated method stub
-    	
-    	JMenuItem submenu;
-    	
-    	submenu = new JMenuItem("Create Test Case");
-    	submenu.addActionListener(new ActionListener() {
-
-    		@Override
-        	public void actionPerformed(ActionEvent e) {
-    			TestCaseCreatorPopup crPopup = new TestCaseCreatorPopup(selectedNode);
-    			crPopup.showPopup();
-    			gViz.updateGraph();
-        	}
-		}
-    	);
-    	
-    	    	
- 		return submenu;
- 	}
-    
-    private JMenuItem verifyTestCase(final MyNode selectedNode) {
-    	
-    	JMenuItem submenu;
-    	
-    	submenu = new JMenuItem("Verify Test Case");
-    	submenu.addActionListener(new ActionListener() {
-
-    		@Override
-        	public void actionPerformed(ActionEvent e) {
-    			new TestCaseVerifier(selectedNode).verifyTestCase();
-    			gViz.updateGraph();
-        	}
-		}
-    	);
-    	
-    	    	
- 		return submenu;
-	}
-    
-    /*
-    private JMenuItem showHideVersions(final MyNode selectedNode) {
- 		// TODO Auto-generated method stub
-    	
-    	JMenuItem submenu;
-    	
-    	if (RequirementVersionManager.getMinVersion(selectedNode).isVisible()){
-    	
-    		submenu = new JMenuItem("Hide Versions");
-        	submenu.addActionListener(new ActionListener() {
-    			
-        		@Override
-            	public void actionPerformed(ActionEvent e){
-        			RequirementVersionManager.hideVersions(selectedNode);
-        			gViz.updateGraph();
-            	}
-    		}
-        	);
-    	} else {
-    		submenu = new JMenuItem("Show Versions");
-        	submenu.addActionListener(new ActionListener() {
-    			
-        		@Override
-            	public void actionPerformed(ActionEvent e){
-        			RequirementVersionManager.showVersions(selectedNode);
-        			gViz.updateGraph();
-            	}
-    		}
-        	);
-    		
-    	}
-    	
-    	    	
- 		return submenu;
- 	}
- 	
    
-    
-    private JMenuItem createNewVersion(final MyNode node) {
-    	JMenuItem submenu;
-    	
-    	submenu = new JMenuItem("Create new version");
+    private JMenuItem removeNode(MouseEvent e, final MyNode selectedNode) {
+    	JMenuItem submenu = new JMenuItem("Remove node");
     	submenu.addActionListener(new ActionListener() {
-
     		@Override
         	public void actionPerformed(ActionEvent e) {
-    			if (VersionManagerPopup.showPopup(node)) {
-    				gViz.updateGraph();
-    			}
-            }
-
-        });
-    	    	
+    			ModelBuilder.removeNodeFromGUI(selectedNode);
+    			ModelBuilder.printVisibleStuff();
+        		gViz.updateGraph();
+        	}
+		});
  		return submenu;
- 	}
+    }
+
+
     
-    private JMenuItem resolveIssue(final MyNode selectedNode)  {
-    	
-    	JMenuItem submenu;
-    	
-    	submenu = new JMenuItem("Resolve Issue");
-    	submenu.addActionListener(new ActionListener() {
-
-    		@Override
-        	public void actionPerformed(ActionEvent e) {
-    			ReqToolReqistry.getInstance().post(new ResolveIssueEvent(selectedNode));
-    			/*
-    		IssueResolverPopup popup = new IssueResolverPopup(selectedNode);
-    		popup.showPopup();
-    		*/
-    /*
-    		gViz.updateGraph();
-    		}
-		}
-    	);
-    	
-    	    	
- 		return submenu;
-	}
-	
-	
-	private JMenuItem showHideContainer(MouseEvent e, final MyNode selectedNode) {
-		// TODO Auto-generated method stub
-
-		JMenuItem submenu;
-		submenu = new JMenuItem("");
-		if (RequirementToolbox.hasContainment(selectedNode)) {
-
-			if (RequirementToolbox.containmentIsVisible(selectedNode)) {
-
-				submenu = new JMenuItem("Hide Containment");
-				submenu.addActionListener(new ActionListener() {
-
-					@Override
-					public void actionPerformed(ActionEvent e) {
-						RequirementToolbox.hideContainment(selectedNode);
-						gViz.updateGraph();
-					}
-				});
-			} else {
-				submenu = new JMenuItem("Show Containment");
-				submenu.addActionListener(new ActionListener() {
-
-					@Override
-					public void actionPerformed(ActionEvent e) {
-						RequirementToolbox.showContainment(selectedNode);
-						gViz.updateGraph();
-					}
-				});
-
-			}
-		}
-		else submenu = new JMenuItem("");
-
-		return submenu;
-
-	}
-	
-	*/
     
     /**
      * Action listener for the Edge creation

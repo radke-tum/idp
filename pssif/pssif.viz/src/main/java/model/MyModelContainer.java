@@ -14,6 +14,7 @@ import graph.model.MyNodeTypes;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
 import de.tum.pssif.core.common.PSSIFConstants;
@@ -338,6 +339,28 @@ public class MyModelContainer {
     nodes.add(newMyNode);
     return newMyNode;
   }
+  
+  /**
+   * Remove a node from Gui
+   * @param nodeName The Node
+   */
+  public boolean removeNodeFromGUI(MyNode node) {
+	  List<MyEdge> remEdges = new LinkedList<MyEdge>();
+    for (MyEdge edge : edges) {
+    	if (edge.getSourceNode().equals(node) || edge.getDestinationNode().equals(node)) {
+    		remEdges.add(edge);
+    	}
+    }
+    for(MyEdge edge : remEdges) {
+    	removeEdgeGUI(edge);
+    }
+    
+    if (model != null) {
+    	model.removeNode(node.getNodeType().getType(), node.getNode());
+    	
+    }
+    return nodes.remove(node);
+  }
 
   /**
    * Add a new Edge which was created from the Gui
@@ -366,6 +389,15 @@ public class MyModelContainer {
     else {
       return false;
     }
+  }
+  
+  /**
+   * Remove Edge from the Gui
+   * @param edge The Edge which should be removed
+   */
+  public void removeEdgeGUI(MyEdge edge) {
+    edges.remove(edge);
+    model.removeEdge(edge.getEdge());
   }
 
   public Model getModel() {

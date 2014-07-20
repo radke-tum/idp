@@ -1,17 +1,22 @@
 package de.tum.pssif.core.model.impl;
 
+import java.util.Map.Entry;
 import java.util.concurrent.atomic.AtomicLong;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 
 import de.tum.pssif.core.common.PSSIFOption;
+import de.tum.pssif.core.metamodel.EdgeType;
+import de.tum.pssif.core.metamodel.NodeType;
 import de.tum.pssif.core.metamodel.impl.CreateEdgeOperation;
 import de.tum.pssif.core.metamodel.impl.CreateJunctionNodeOperation;
 import de.tum.pssif.core.metamodel.impl.CreateNodeOperation;
 import de.tum.pssif.core.metamodel.impl.ReadEdgesOperation;
+import de.tum.pssif.core.metamodel.impl.ReadFromNodesOperation;
 import de.tum.pssif.core.metamodel.impl.ReadNodeOperation;
 import de.tum.pssif.core.metamodel.impl.ReadNodesOperation;
+import de.tum.pssif.core.metamodel.impl.RemoveNodeOperation;
 import de.tum.pssif.core.model.Edge;
 import de.tum.pssif.core.model.JunctionNode;
 import de.tum.pssif.core.model.Model;
@@ -68,9 +73,33 @@ public class ModelImpl implements Model {
     }
     return PSSIFOption.none();
   }
+  
+  @Override
+  public boolean apply(RemoveNodeOperation op) {
+	return nodes.remove(op.getType(), op.getNode());
+  }
 
   @Override
   public synchronized String generateId() {
     return "pssif_artificial_id_" + idGenerator.getAndIncrement();
   }
+  
+   public boolean removeNode(NodeType type, Node node){
+	   return nodes.remove(type.getName(), node);   
+   }
+
+	@Override
+	public void removeEdge(Edge edge) {
+		Entry<ConnectionMappingSignature, Edge> remEdge = null;	  
+		for (Entry<ConnectionMappingSignature, Edge> e : edges.entries()) {
+			if (e.getValue().equals(edge)) {
+				remEdge = e;
+				break;
+			}
+		}
+		if (remEdge != null) {
+			edges.remove(remEdge.getKey(), remEdge.getValue());
+		}
+	}
+  
 }
