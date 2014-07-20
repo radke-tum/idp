@@ -25,6 +25,9 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
+import de.tum.pssif.core.common.PSSIFConstants;
+import de.tum.pssif.core.common.PSSIFOption;
+import de.tum.pssif.core.common.PSSIFValue;
 import de.tum.pssif.core.metamodel.PSSIFCanonicMetamodelCreator;
 import reqtool.TestCaseCreator;
 import reqtool.model.RequirementNode;
@@ -72,8 +75,10 @@ public class TestCaseCreatorPopup {
 			for(int index:indexes) {
 				selectedNodes.add(solutionArtifacts.get(index));
 			}
-	
-			TestCaseCreator.createTestCase(requirementNode, selectedNodes);
+			
+			String nodeName = testCaseNameTextField.getText();
+			TestCaseCreator.createTestCase(requirementNode, selectedNodes, nodeName);
+			
 			return true;
 		}
 		return false;
@@ -143,7 +148,7 @@ public class TestCaseCreatorPopup {
 		testCaseNameTextField = new JTextField(10);
 		
 		JLabel nodeTypesJL = new JLabel("Choose Node Types:");
-		JLabel graphNameJL = new JLabel("Graph Node name:");
+		JLabel graphNameJL = new JLabel("TestCase name:");
 
 		c.gridx = 0;
 		c.gridy = 0;

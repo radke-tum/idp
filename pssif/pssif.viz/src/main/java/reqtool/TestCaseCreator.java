@@ -14,7 +14,7 @@ import de.tum.pssif.core.metamodel.PSSIFCanonicMetamodelCreator;
 
 public class TestCaseCreator {
 
-	public static void createTestCase(MyNode mNode, List<MyNode> solutionArtifacts) {
+	public static void createTestCase(MyNode mNode, List<MyNode> solutionArtifacts, String name) {
 
 		System.out.println("Creating Test Case for " + mNode.getName());
 
@@ -22,7 +22,7 @@ public class TestCaseCreator {
 
 		MyEdgeType basedOn = ModelBuilder.getEdgeTypes().getValue(PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_CHRONOLOGICAL_BASED_ON);
 
-		MyNode testCaseNode = ModelBuilder.addNewNodeFromGUI("TC" + mNode.getNode().getId(), testCaseNodeType);
+		MyNode testCaseNode = ModelBuilder.addNewNodeFromGUI(name, testCaseNodeType);
 
 		/*
 		 * Create edge "based on" between testcase and requirement

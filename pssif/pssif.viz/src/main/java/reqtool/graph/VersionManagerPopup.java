@@ -34,7 +34,13 @@ public class VersionManagerPopup {
 			Attribute attr = iterator.next();
 			if (!attr.getName().equals(PSSIFConstants.BUILTIN_ATTRIBUTE_ID) && !attr.getName().equals(PSSIFConstants.BUILTIN_ATTRIBUTE_NAME)){
 				JTextField attrText = new JTextField();
-				inputs[i] = new JLabel(attr.getName().toString());
+				PSSIFOption<PSSIFValue> oldAttr = node.getNodeType().getType().getAttribute(attr.getName().toString()).getOne().get(node.getNode());
+				String attrValue = "No entry";
+				if (!oldAttr.isNone()) {
+					attrValue = oldAttr.getOne().asString();
+				}
+				inputs[i] = new JLabel(attr.getName().toString()+" ("+attrValue +")");
+				
 				i++;
 				inputs[i] = attrText;
 				attrTextFields.put(attr, attrText);
@@ -42,15 +48,8 @@ public class VersionManagerPopup {
 			}
 		}
 		
-    	JTextField VersionText = new JTextField();
-    	JComponent[] inputsFrr = new JComponent[] {
-    			new JLabel("Version"),
-    			VersionText,
-    	};
     	
     	JOptionPane.showMessageDialog(null, inputs, "Create new version node", JOptionPane.PLAIN_MESSAGE);
-    	// check if the user filled all the input field
-    	PSSIFOption<PSSIFValue> version2 = node.getNodeType().getType().getAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_VERSION).getOne().get(node.getNode());
 		 
     	for (Entry<Attribute, JTextField> input:attrTextFields.entrySet()) {
         	if (  input.getKey().getName().equals(PSSIFConstants.BUILTIN_ATTRIBUTE_VERSION)  &&
