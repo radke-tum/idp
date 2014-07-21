@@ -191,7 +191,9 @@ public class GraphMLGraph {
       writeKeyElement(writer, attr.getName(), attr.getType(), GraphMLTokens.EDGE, attr.getId());
     }
     writer.writeStartElement(GraphMLTokens.GRAPH);
-    writer.writeAttribute(GraphMLTokens.EDGEDEFAULT, GraphMLTokens.DIRECTED);
+    if (!edges.isEmpty()) {
+    	writer.writeAttribute(GraphMLTokens.EDGEDEFAULT, GraphMLTokens.DIRECTED);
+    }
   }
 
   private void writeKeyElement(XMLStreamWriter writer, String attrName, String attrType, String forAttr, String id) throws XMLStreamException {

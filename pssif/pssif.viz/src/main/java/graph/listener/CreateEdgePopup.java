@@ -81,8 +81,6 @@ public class CreateEdgePopup extends MyPopup{
 	{		
 		MyEdgeType[] possibilities = ModelBuilder.getPossibleEdges(source.getNodeType().getType(), dest.getNodeType().getType()).toArray(new MyEdgeType[0]);
 		
-		//System.out.println(possibilities.length);
-		
 		Arrays.sort(possibilities, new MyEdgeTypeComparator());
 		
 		JPanel allPanel = new JPanel(new GridBagLayout());

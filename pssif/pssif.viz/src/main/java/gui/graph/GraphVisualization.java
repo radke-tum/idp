@@ -19,6 +19,8 @@ import model.ModelBuilder;
 
 import org.apache.commons.collections15.Transformer;
 
+import reqtool.RequirementTracer;
+import reqtool.graph.operations.ReqTraceVertexStrokeHighlight;
 import edu.uci.ics.jung.algorithms.layout.CircleLayout;
 import edu.uci.ics.jung.algorithms.layout.FRLayout;
 import edu.uci.ics.jung.algorithms.layout.ISOMLayout;
@@ -57,6 +59,7 @@ public class GraphVisualization
   public static final String SpringLayout  ="SpringLayout";
   public static final String ISOMLayout  ="ISOMLayout";
   public static final String CircleLayout  ="CircleLayout";
+  public static final String TestLayout  ="TestLayout";
 	
   private Graph<IMyNode, MyEdge> g;
   private AbstractModalGraphMouse gm;
@@ -119,28 +122,25 @@ public class GraphVisualization
     this.gm.add(new MyPopupGraphMousePlugin(this));
   }
   
-  /**
-   * Create all Transformes which help to visualize the Nodes
-   */
+	/**
+	 * Create all Transformes which help to visualize the Nodes
+	 */
+	Transformer<IMyNode, Paint> vertexColor = new Transformer<IMyNode, Paint>() {
+		public Paint transform(IMyNode i) {
+
+			if (nodeColorMapping != null && i instanceof MyNode) {
+				MyNode node = (MyNode) i;
+				Color c = nodeColorMapping.get(node.getNodeType());
+				if (c != null)
+					return c;
+			}
+
+			return Color.LIGHT_GRAY;
+		}
+	};
+  
   private void createNodeTransformers()
   {
-	  Transformer<IMyNode, Paint> vertexColor = new Transformer<IMyNode, Paint>()
-			    {
-			      public Paint transform(IMyNode i)
-			      {
-			    	
-			    	if (nodeColorMapping!=null && i instanceof MyNode)
-			    	{
-				    	MyNode node = (MyNode) i;
-			    		Color c = nodeColorMapping.get(node.getNodeType());
-				    	if (c!=null)
-				    		return c;
-			    	}
-			    	
-			    	return Color.LIGHT_GRAY;
-			      }
-			    };
-			    
 	Transformer<IMyNode, Shape> vertexSize = new Transformer<IMyNode, Shape>()
 			    {
 			      public Shape transform(IMyNode node)
@@ -339,11 +339,46 @@ public class GraphVisualization
    * Get the Edge Types which are followed during the highlighting
    * @return List with Edge Types
    */
-  public LinkedList<MyEdgeType> getFollowEdgeTypes()
-  {
-    return this.vsh.getFollowEdges();
-  }
+  	public LinkedList<MyEdgeType> getFollowEdgeTypes() {
+  		return this.vsh.getFollowEdges();
+  	}
   
+	/**
+	 * Which Nodes should be followed during requirements traceability
+	 * 
+	 * @return List with Edge Types
+	 */
+	public void traceNodes() {
+		Transformer<IMyNode, Paint> tracedVertexColor = new Transformer<IMyNode, Paint>() {
+			public Paint transform(IMyNode i) {
+				if (RequirementTracer.isTracedNode(i)) {
+					return Color.GREEN;
+				} else if (RequirementTracer.isOnTraceList(i)) {
+					return Color.CYAN;
+				} else {
+					Color c = nodeColorMapping.get(((MyNode) i).getNodeType());
+					if (c != null)
+						return c;
+				}
+				return Color.LIGHT_GRAY;
+			}
+		};
+		ReqTraceVertexStrokeHighlight<IMyNode, Paint> trans = new ReqTraceVertexStrokeHighlight(g, vertexColor);
+		trans.setHighlight(true);
+		this.vv.getRenderContext().setVertexFillPaintTransformer(trans);
+		this.vv.repaint();
+	}
+
+	/**
+	 * Stop requirements traceability
+	 * 
+	 * @return List with Edge Types
+	 */
+	public void stopTracingNodes() {
+		this.vv.getRenderContext().setVertexFillPaintTransformer(vertexColor);
+		this.vv.repaint();
+	}
+	
   /**
    * Try to collapse the currently selected Node
    */
@@ -513,6 +548,10 @@ public class GraphVisualization
 			this.layout = new CircleLayout<IMyNode, MyEdge>(g);
 		}
 		
+		if (newLayout.equals(TestLayout))
+		{
+			this.layout = new gui.TestLayout<IMyNode, MyEdge>(g);
+		}
 		
 		layout.setInitializer(vv.getGraphLayout());
 		layout.setSize(vv.getSize());

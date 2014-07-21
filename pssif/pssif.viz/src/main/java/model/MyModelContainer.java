@@ -14,6 +14,7 @@ import graph.model.MyNodeTypes;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
 import org.pssif.mainProcesses.Methods;
@@ -156,7 +157,6 @@ public class MyModelContainer {
     		else
     		if (tmp.isOne())	
     		{
-    			//mappings = new HashSet<ConnectionMapping>();
     			mappings.add(tmp.getOne());
     		}
     		
@@ -169,7 +169,6 @@ public class MyModelContainer {
     		        for (Edge e : edges.getMany()) {
     		        	Node source = mapping.applyFrom(e);
     		        	Node target = mapping.applyTo(e);
-
     		        	addEdge(new MyEdge(e, t, findNode(source), findNode(target)));
     		        }
     	        }
@@ -240,6 +239,10 @@ public class MyModelContainer {
    */
   public boolean isContained(MyEdge edge) {
     return edges.contains(edge);
+  }
+  
+  public boolean isEmpty() {
+	  return nodes.size() + junctionNodes.size() + edges.size() == 0;
   }
 
   /**
@@ -333,15 +336,38 @@ public class MyModelContainer {
    * @param nodeName The name of the new Node
    * @param type The type of the new Node
    */
-  public void addNewNodeFromGUI(String nodeName, MyNodeType type) {
+  public MyNode addNewNodeFromGUI(String nodeName, MyNodeType type) {
     NodeType nodeType = meta.getNodeType(type.getName()).getOne();
 
     Node newNode = nodeType.create(model);
 
     nodeType.getAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_NAME).getOne().set(newNode, PSSIFOption.one(PSSIFValue.create(nodeName)));
     nodeType.getAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_ID).getOne().set(newNode, PSSIFOption.one(PSSIFValue.create(nodeName+newNodeIdCounter++)));
-
-    nodes.add(new MyNode(newNode, type));
+    MyNode newMyNode = new MyNode(newNode, type);
+    nodes.add(newMyNode);
+    return newMyNode;
+  }
+  
+  /**
+   * Remove a node from Gui
+   * @param nodeName The Node
+   */
+  public boolean removeNodeFromGUI(MyNode node) {
+	  List<MyEdge> remEdges = new LinkedList<MyEdge>();
+    for (MyEdge edge : edges) {
+    	if (edge.getSourceNode().equals(node) || edge.getDestinationNode().equals(node)) {
+    		remEdges.add(edge);
+    	}
+    }
+    for(MyEdge edge : remEdges) {
+    	removeEdgeGUI(edge);
+    }
+    
+    if (model != null) {
+    	model.removeNode(node.getNodeType().getType(), node.getNode());
+    	
+    }
+    return nodes.remove(node);
   }
 
   /**
@@ -399,6 +425,15 @@ public class MyModelContainer {
 		return newEdge;
 
 	}
+
+	/**
+	   * Remove Edge from the Gui
+	   * @param edge The Edge which should be removed
+	   */
+	  public void removeEdgeGUI(MyEdge edge) {
+	    edges.remove(edge);
+	    model.removeEdge(edge.getEdge());
+	  }
 
   public Model getModel() {
     return model;

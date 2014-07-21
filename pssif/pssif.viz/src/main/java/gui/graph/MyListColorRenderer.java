@@ -26,12 +26,10 @@ public class MyListColorRenderer extends DefaultListCellRenderer
 	                isSelected, cellHasFocus );  
 	         
 	        MyNodeType t = (MyNodeType) value;
-
 	        if( colorMapper.containsKey( t ) )  
 	        {  
 	            Color c = colorMapper.get(t);
 
-	            
 	            setBackground(c);
 	        }  
 

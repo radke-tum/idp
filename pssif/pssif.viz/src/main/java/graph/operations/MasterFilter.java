@@ -195,7 +195,6 @@ public class MasterFilter {
 		GraphViewContainer gvc = new GraphViewContainer(nodes, edges, viewName);
 		this.nodeAndEdgeTypeFilters.put(viewName, gvc);
 		
-		
 		if (activate)
 		{
 			applyNodeAndEdgeTypeFilter(viewName);

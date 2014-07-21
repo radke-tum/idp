@@ -102,6 +102,12 @@ public class MyCollapser {
 				boolean test = false;
 				// test if one of the outgoing edges is an containment
 				if (parent!=null && parent.getName()!="Edge")
+					test = parent.getName().equals(MyEdgeTypes.CONTAINMENT);
+				else
+					test = e.getEdgeType().getName().equals(MyEdgeTypes.CONTAINMENT);
+				
+				// if it was a containment edge, the connected nodes have to get further treatment
+				if (test)
 					test = parent.getName().equals(PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_INCLUSION);
 				else
 					test = e.getEdgeType().getName().equals(PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_INCLUSION);

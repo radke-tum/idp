@@ -33,6 +33,7 @@ public class FileHandler {
 	    comboBoxValues.put("EPK", MapperFactory.EPK);
 	    comboBoxValues.put("SysML", MapperFactory.SYSML);
 	    comboBoxValues.put("PSS-IF", MapperFactory.PSSIF);
+	    comboBoxValues.put("ReqIf", MapperFactory.REQ_IF);
 	    
 	    // bind the label and the combobox to the dialog
 	    fileChooser = new JFileChooser();

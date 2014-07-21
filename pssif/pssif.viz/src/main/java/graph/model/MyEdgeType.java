@@ -2,6 +2,7 @@ package graph.model;
 
 import de.tum.pssif.core.common.PSSIFOption;
 import de.tum.pssif.core.metamodel.EdgeType;
+import de.tum.pssif.core.metamodel.NodeType;
 
 /**
  * A container for the EdgeType from the PSSIF Model

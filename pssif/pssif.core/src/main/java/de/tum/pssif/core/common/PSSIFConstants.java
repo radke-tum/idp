@@ -18,8 +18,13 @@ public final class PSSIFConstants {
   public static final String BUILTIN_ATTRIBUTE_VALIDITY_END   = "validityEnd";
   public static final String BUILTIN_ATTRIBUTE_VERSION        = "version";
   public static final String BUILTIN_ATTRIBUTE_COMMENT        = "comment";
+  public static final String BUILTIN_ATTRIBUTE_ABS_LEVEL        = "Abstraction Level";
 
   public static final String BUILTIN_ATTRIBUTE_DIRECTED       = "directed";
+  
+  public static final String A_TEST_CASE_CONDITION_ATTRIBUTE 		   = "verified attribute";
+  public static final String A_TEST_CASE_CONDITION_OP 				   = "operator";
+  public static final String A_TEST_CASE_CONDITION_VALUE 			   = "value";
 
   public static final String ALIAS_ANNOTATION_KEY             = "PSSIF_aliased_key";
 

@@ -117,6 +117,7 @@ public class AttributeFilter {
 				}
 			}
 		}
+
 		checkInvisibleEdges();
 		checkConjunctionNodes();
 	}
@@ -201,7 +202,6 @@ public class AttributeFilter {
 					
 					if (result == false)
 					{
-						//System.out.println("Not visible");
 						currentEdge.setVisible(visiblity);
 					}
 				}
@@ -262,7 +262,7 @@ public class AttributeFilter {
 	 * @param RefValue the value to which the attribute value should be compared to
 	 * @return true if the condition is fulfilled, false otherwise 
 	 */
-	private static boolean BooleanEval (PSSIFValue attrValue, AttributeOperations op , Object RefValue)
+	public static boolean BooleanEval (PSSIFValue attrValue, AttributeOperations op , Object RefValue)
 	{
 		boolean result = false;
 		
@@ -293,7 +293,7 @@ public class AttributeFilter {
 	 * @param RefValue the value to which the attribute value should be compared to
 	 * @return true if the condition is fulfilled, false otherwise 
 	 */
-	private static boolean StringEval (PSSIFValue attrValue, AttributeOperations op , Object RefValue)
+	public static boolean StringEval (PSSIFValue attrValue, AttributeOperations op , Object RefValue)
 	{
 		boolean result = false;
 		
@@ -327,7 +327,7 @@ public class AttributeFilter {
 	 * @param RefValue the value to which the attribute value should be compared to
 	 * @return true if the condition is fulfilled, false otherwise 
 	 */
-	private static boolean DateEval (PSSIFValue attrValue, AttributeOperations op , Object RefValue) throws ParseException
+	public static boolean DateEval (PSSIFValue attrValue, AttributeOperations op , Object RefValue) throws ParseException
 	{
 		boolean result = false;
 		
@@ -361,7 +361,7 @@ public class AttributeFilter {
 	 * @param RefValue the value to which the attribute value should be compared to
 	 * @return true if the condition is fulfilled, false otherwise 
 	 */
-	private static boolean DecimalEval (PSSIFValue attrValue, AttributeOperations op , Object RefValue)
+	public static boolean DecimalEval (PSSIFValue attrValue, AttributeOperations op , Object RefValue)
 	{
 		boolean result = false;
 		
@@ -397,7 +397,7 @@ public class AttributeFilter {
 	 * @param RefValue the value to which the attribute value should be compared to
 	 * @return true if the condition is fulfilled, false otherwise 
 	 */
-	private static boolean IntegerEval (PSSIFValue attrValue, AttributeOperations op , Object RefValue)
+	public static boolean IntegerEval (PSSIFValue attrValue, AttributeOperations op , Object RefValue)
 	{
 		boolean result = false;
 		
@@ -571,6 +571,7 @@ public class AttributeFilter {
 	 * @throws Exception if the given condition contains a problem. Datatypes cannot be compared, Wrong data format,..
 	 */
 /*	private static void applyAllOtherNodeConditions (String condition, LinkedList<String> activeConditions) throws Exception
+>>>>>>> origin/attempt4:pssif/pssif.viz/src/main/java/graph/operations/AttributeFilter.java
 	{
 		for (Entry<String, ConditionContainer> e : nodeConditions.entrySet())
 		{
@@ -580,6 +581,9 @@ public class AttributeFilter {
 				filterNode(c.attributeName, c.operation, c.refValue);
 			}
 		}
+<<<<<<< HEAD:pssif/pssif.viz/src/main/java/graph/operations/AttributeFilter.java
+	}
+=======
 	}*/
 	
 	/**

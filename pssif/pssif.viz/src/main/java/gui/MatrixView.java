@@ -110,7 +110,7 @@ public class MatrixView {
 			
 			mainTable.setEnabled(false);
 
-			
+
 			TableCellRenderer headerRenderer = new VerticalTableHeaderCellRenderer();
 		    Enumeration<TableColumn> columns = mainTable.getColumnModel().getColumns();
 		      while (columns.hasMoreElements())

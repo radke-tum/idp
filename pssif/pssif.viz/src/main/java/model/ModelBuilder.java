@@ -80,67 +80,67 @@ public class ModelBuilder {
 	 */
 	public static void addModel(Metamodel Pmeta, Model Pmodel) {
 		// check if we have to merge the model with an existing
-		if (activeModel == null) {
+		if (activeModel == null || activeModel.isEmpty()) {
 			MyModelContainer newModel = new MyModelContainer(Pmodel, Pmeta);
 			activeModel = newModel;
-		}
+			
 		/**
 		 * @author Andreas
 		 */
-		else {
+		} else {
 			// user selected the two models to be merged
-			if (UserGuidingConsistency.openConsistencyPopUp()) {
+				if (UserGuidingConsistency.openConsistencyPopUp()) {
 
-				ConsistencyData consistencyData = ConsistencyData.getInstance();
-
-				MergingProcess mergingProcess = new MergingProcess(
-						activeModel.getModel(), Pmodel,
-						activeModel.getMetamodel(), Pmeta);
-
-				// retrieving the results of the merging process
-				List<MergedNodePair> mergedNodePairs = consistencyData
-						.getMergedNodePairs();
-
-				List<MergedNodePair> tracedNodes = consistencyData
-						.getTracedList();
-
-				List<NodeAndType> unmatchedNodesOrigin = consistencyData
-						.getUnmatchedNodeList();
-
-				List<NodeAndType> unmatchedJunctionnodesOrigin = consistencyData
-						.getUnmatchedJunctionnodesList();
-
-				ModelMerger merger = new ModelMerger();
-
-				// here the model merge is started
-				activeModel = new MyModelContainer(merger.mergeModels(
-						activeModel.getModel(), Pmodel,
-						activeModel.getMetamodel(), Pmeta, mergedNodePairs,
-						unmatchedNodesOrigin,unmatchedJunctionnodesOrigin, tracedNodes, activeModel), Pmeta);
-
-				// reset the temporary data so that in the next merge operation
-				// there isn't searched for old node objects in the new model
-				ConsistencyData.getInstance().resetMergedNodePairList();
-				ConsistencyData.getInstance().resetUnmatchedNodesList();
-			}
-			// user selected the two models to be searched for corresponding
-			// elements
-			else {
-				List<ComparedNodePair> matchedList = UserGuidingConsistency
-						.startConsistencyCheck(activeModel.getModel(), Pmodel,
-								activeModel.getMetamodel(), Pmeta);
-
-				ModelMerger merger = new ModelMerger();
-				Model mergedModel = merger.mergeModels(activeModel.getModel(),
-						Pmodel, Pmeta);
-
-				MyModelContainer newModel = new MyModelContainer(mergedModel,
-						Pmeta);
-
-				activeModel = newModel;
-
-				setEqualsLinks(matchedList);
-			}
+					ConsistencyData consistencyData = ConsistencyData.getInstance();
+	
+					MergingProcess mergingProcess = new MergingProcess(
+							activeModel.getModel(), Pmodel,
+							activeModel.getMetamodel(), Pmeta);
+	
+					// retrieving the results of the merging process
+					List<MergedNodePair> mergedNodePairs = consistencyData
+							.getMergedNodePairs();
+	
+					List<MergedNodePair> tracedNodes = consistencyData
+							.getTracedList();
+	
+					List<NodeAndType> unmatchedNodesOrigin = consistencyData
+							.getUnmatchedNodeList();
+	
+					List<NodeAndType> unmatchedJunctionnodesOrigin = consistencyData
+							.getUnmatchedJunctionnodesList();
+	
+					ModelMerger merger = new ModelMerger();
+	
+					// here the model merge is started
+					activeModel = new MyModelContainer(merger.mergeModels(
+							activeModel.getModel(), Pmodel,
+							activeModel.getMetamodel(), Pmeta, mergedNodePairs,
+							unmatchedNodesOrigin,unmatchedJunctionnodesOrigin, tracedNodes, activeModel), Pmeta);
+	
+					// reset the temporary data so that in the next merge operation
+					// there isn't searched for old node objects in the new model
+					ConsistencyData.getInstance().resetMergedNodePairList();
+					ConsistencyData.getInstance().resetUnmatchedNodesList();
+				}
+				// user selected the two models to be searched for corresponding
+				// elements
+				else {
+					List<ComparedNodePair> matchedList = UserGuidingConsistency
+							.startConsistencyCheck(activeModel.getModel(), Pmodel,
+									activeModel.getMetamodel(), Pmeta);
+	
+					ModelMerger merger = new ModelMerger();
+					Model mergedModel = merger.mergeModels(activeModel.getModel(),
+							Pmodel, Pmeta);
+	
+					MyModelContainer newModel = new MyModelContainer(mergedModel,
+							Pmeta);
+	
+					activeModel = newModel;
+	
+					setEqualsLinks(matchedList);
+				}
 		}
 	}
 
@@ -311,10 +311,28 @@ public class ModelBuilder {
 	 * @param type
 	 *            The type of the new Node
 	 */
-	public static void addNewNodeFromGUI(String nodeName, MyNodeType type) {
-		if (activeModel != null) {
-			activeModel.addNewNodeFromGUI(nodeName, type);
+	public static MyNode addNewNodeFromGUI (String nodeName, MyNodeType type)
+	{
+		if (activeModel !=null)
+		{
+			return activeModel.addNewNodeFromGUI(nodeName, type);
+			
 		}
+		return null;
+	}
+	
+	/**
+	 * Remove a Node from the Gui
+	 * @param node The Node
+	 */
+	public static boolean removeNodeFromGUI (MyNode node)
+	{
+		if (activeModel !=null)
+		{
+			return activeModel.removeNodeFromGUI(node);
+			
+		}
+		return false;
 	}
 
 	/**
@@ -349,34 +367,35 @@ public class ModelBuilder {
 		} else
 			return null;
 	}
-
-	private static void calcPossibleEdges() {
-		// System.out.println("Call");
-		if (possibleMappings == null) {
+	
+	private static void calcPossibleEdges()	{
+		if (possibleMappings== null)
+		{
 			possibleMappings = new HashMap<ModelBuilder.MyPair, LinkedList<MyEdgeType>>();
 		}
-
-		for (NodeType start : getMetamodel().getNodeTypes()) {
-			for (NodeType end : getMetamodel().getNodeTypes()) {
-				for (EdgeType et : getMetamodel().getEdgeTypes()) {
-					PSSIFOption<ConnectionMapping> tmp = et.getMapping(start,
-							end);
-
-					/*
-					 * if (et.getName().equals(PSSIFCanonicMetamodelCreator.
-					 * E_RELATIONSHIP_INCLUSION_CONTAINS) && tmp!=null) { if
-					 * ((tmp.isOne() || tmp.isMany()) &&
-					 * (end.getName().equals("Activity") ||
-					 * start.getName().equals("Activity"))) {
-					 * System.out.println(start.getName()+" to "+end.getName());
-					 * //System.out.println("None "+tmp.isNone());
-					 * System.out.println("One "+tmp.isOne());
-					 * System.out.println("Many "+tmp.isMany());
-					 * System.out.println("-----------------------------"); } }
-					 */
-					if (tmp != null && tmp.isOne()) {
-						// ConnectionMapping mapping = tmp.getOne();
-						MyPair p = MyPair.getInsance(start, end);
+		
+		for (NodeType start :getMetamodel().getNodeTypes())
+		{
+			for (NodeType end :getMetamodel().getNodeTypes())
+			{
+				for (EdgeType et: getMetamodel().getEdgeTypes())
+				{
+					PSSIFOption<ConnectionMapping> tmp = et.getMapping(start, end);
+					/*if (et.getName().equals(PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_INCLUSION_CONTAINS) && tmp!=null)
+					{
+						if ((tmp.isOne() || tmp.isMany()) && (end.getName().equals("Activity") || start.getName().equals("Activity")))
+						{
+							System.out.println(start.getName()+" to "+end.getName());
+							//System.out.println("None "+tmp.isNone());
+							System.out.println("One "+tmp.isOne());
+							System.out.println("Many "+tmp.isMany());
+							System.out.println("-----------------------------");
+						}
+					}*/
+					if (tmp!=null && tmp.isOne())
+					{
+						//ConnectionMapping mapping = tmp.getOne();
+						MyPair p = MyPair.getInsance(start,end);
 						LinkedList<MyEdgeType> data = possibleMappings.get(p);
 
 						if (data == null) {
@@ -422,7 +441,7 @@ public class ModelBuilder {
 
 		return res;
 	}
-
+	
 	private static class MyPair {
 		private NodeType start;
 		private NodeType end;

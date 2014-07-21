@@ -34,6 +34,8 @@ import javax.swing.JPanel;
 
 import model.FileExporter;
 import model.FileImporter;
+import reqtool.event.CreateSpecProjectEvent;
+import reqtool.event.bus.ReqToolReqistry;
 
 /**
  * The main class of the project. Execute this class to start the Visualization Software
@@ -49,6 +51,7 @@ public class Main {
 	private JMenuItem resetGraph;
 	private JMenuItem resetMatrix;
 	private JMenuItem colorNodes;
+	private JMenuItem newProject;
 	private JMenuItem modelStatistics;
 	private JMenuItem createView;
 	private JMenuItem attributFilter;
@@ -73,6 +76,7 @@ public class Main {
 	private JMenu deleteEdgeFilter;
 	
 	private FileImporter importer;
+	//private SpecificationProjectWizard reqProjImporter;
 	private MasterFilter masterFilter;
 	
 	public static void main(String[] args) {
@@ -96,9 +100,12 @@ public class Main {
 		height = height*3;
 		
 		importer = new FileImporter();
+		//reqProjImporter = new SpecificationProjectWizard();
 		
 		frame.setPreferredSize(new Dimension(width, height));
 		frame.setState(Frame.MAXIMIZED_BOTH);
+		
+		ReqToolReqistry.newInstance();
 		
 		initFrame();
 	}
@@ -129,10 +136,51 @@ public class Main {
 	 */
 	private JMenuBar createFileMenu()
 	{
-		
 		JMenuBar menuBar = new JMenuBar();
 		
 		JMenu fileMenu = new JMenu("File");
+		
+		newProject = new JMenuItem("New Project from Req");
+		newProject.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				
+				//if (reqProjImporter.open(frame))
+				ReqToolReqistry.getInstance().post(new CreateSpecProjectEvent(frame));
+				if (true) {	
+					//Model model = new Model();
+					//ModelBuilder.addModel(ModelBuilder.getMetamodel(), model);
+			        // Create the Views
+			        matrixView = new MatrixView();
+					graphView = new GraphView();
+					// instance which manages all the filters
+					masterFilter = new MasterFilter(graphView);
+					
+					Dimension d = frame.getSize();
+					
+					// Setup the frame
+					frame.getContentPane().removeAll();
+					// Standard start with Graph
+					frame.getContentPane().add(graphView.getGraphPanel());
+					graphView.setActive(true);
+					matrixView.setActive(false);
+					
+					//create the full menuBar after first import
+					frame.setJMenuBar(createMenu());
+					adjustButtons();
+					
+					frame.setPreferredSize(d);
+					frame.pack();
+					frame.repaint();
+				}
+				
+			}
+		});
+		
+		fileMenu.add(newProject);
+		
+		
 		importFile = new JMenuItem("Import File");
 		importFile.addActionListener(new ActionListener() {
 			

@@ -53,7 +53,6 @@ public class NodeAndEdgeTypeFilter {
 	public static void applyAllFilters()
 	{		
 		init();
-		
 		calcVisibleNodesAndEdges(false);
 	}
 	
