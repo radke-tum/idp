@@ -70,6 +70,7 @@ public class MyPopupGraphMousePlugin extends AbstractPopupGraphMousePlugin {
         GraphElementAccessor<MyNode,MyEdge> pickSupport = vv.getPickSupport();
         if(pickSupport != null) {
             MyNode node = pickSupport.getVertex(vv.getGraphLayout(), p.getX(), p.getY());
+            MyEdge edge = pickSupport.getEdge(vv.getGraphLayout(), p.getX(), p.getY());
             // check where did the user click
 			if (node != null) {
 				// if the user made a right click on a Node
@@ -82,6 +83,13 @@ public class MyPopupGraphMousePlugin extends AbstractPopupGraphMousePlugin {
 				// if the user made a right click on a Reqtool Node
 				ReqToolReqistry.getInstance().post(new CreateReqMenuEvent(node, popup, gViz));
 
+				popup.show(vv, e.getX(), e.getY());
+			} else if (edge != null) {
+				JPopupMenu popup = new JPopupMenu();
+				
+				JMenuItem submenu = removeEdge(e, edge);
+				popup.add(submenu);
+				
 				popup.show(vv, e.getX(), e.getY());
 			}
             else {
@@ -184,6 +192,19 @@ public class MyPopupGraphMousePlugin extends AbstractPopupGraphMousePlugin {
     		@Override
         	public void actionPerformed(ActionEvent e) {
     			ModelBuilder.removeNodeFromGUI(selectedNode);
+    			ModelBuilder.printVisibleStuff();
+        		gViz.updateGraph();
+        	}
+		});
+ 		return submenu;
+    }
+    
+    private JMenuItem removeEdge(MouseEvent e, final MyEdge selectedEdge) {
+    	JMenuItem submenu = new JMenuItem("Remove edge");
+    	submenu.addActionListener(new ActionListener() {
+    		@Override
+        	public void actionPerformed(ActionEvent e) {
+    			ModelBuilder.removeEdgeFromGUI(selectedEdge);
     			ModelBuilder.printVisibleStuff();
         		gViz.updateGraph();
         	}

@@ -334,6 +334,13 @@ public class ModelBuilder {
 		}
 		return false;
 	}
+	
+	public static void removeEdgeFromGUI(MyEdge edge) {
+		if (activeModel !=null)
+		{
+			 activeModel.removeEdgeGUI(edge);
+		}
+	}
 
 	/**
 	 * Add a new Edge which was created through the Gui
@@ -510,4 +517,6 @@ public class ModelBuilder {
 			return true;
 		}
 	}
+
+	
 }
