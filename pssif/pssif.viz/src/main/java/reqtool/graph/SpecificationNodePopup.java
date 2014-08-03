@@ -24,14 +24,34 @@ import de.tum.pssif.core.metamodel.NodeType;
 import de.tum.pssif.core.metamodel.PSSIFCanonicMetamodelCreator;
 import model.ModelBuilder;
 
+/**
+ * The Class SpecificationNodePopup.
+ */
 public class SpecificationNodePopup {
+	
+	/** The specification types. */
 	private Vector<MyNodeType> specificationTypes;
+	
+	/** The all panel. */
 	private JPanel allPanel;
+	
+	/** The specification artifact name text field. */
 	private JTextField mJTSpecArtifName;
+	
+	/** The specification artifact types combo box. */
 	private JComboBox<MyNodeType> mJCSpecArtifTypes;
+	
+	/** The check box for importing a file. */
 	private JCheckBox mJCheckBoxImportFile;
+	
+	/** The new requirement check box. */
 	private JCheckBox newReqCheckBox;
 	
+	/**
+	 * Show popup.
+	 *
+	 * @return true, if successful
+	 */
 	public boolean showPopup() {
 		createPanel();
 		
@@ -40,6 +60,12 @@ public class SpecificationNodePopup {
 		return evalDialog(dialogResult);
 	}
 	
+	/**
+	 * Evaluates the user input from the dialog
+	 *
+	 * @param dialogResult the dialog result
+	 * @return true, if successful
+	 */
 	private boolean evalDialog(int dialogResult) {
 		if (dialogResult == 0) {
 			return true;
@@ -47,6 +73,9 @@ public class SpecificationNodePopup {
 		return false;
 	}
 
+	/**
+	 * Creates the panel.
+	 */
 	private void createPanel() {
 		allPanel = new JPanel(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
@@ -92,7 +121,8 @@ public class SpecificationNodePopup {
 	}
 
 	/**
-	 * Get the selected Specification Artifact Type Format
+	 * Get the selected Specification Artifact Type Format.
+	 *
 	 * @return the String which the Mapper Factory needs, to create the correct Mapper
 	 */
 	public MyNodeType getSelectedSpecArtifType() {
@@ -102,6 +132,11 @@ public class SpecificationNodePopup {
 		return null;
 	}
 
+	/**
+	 * Selected file import.
+	 *
+	 * @return true, if successful
+	 */
 	public boolean selectedFileImport() {
 		if ( mJCheckBoxImportFile != null ) {
 			return mJCheckBoxImportFile.isSelected();
@@ -109,6 +144,11 @@ public class SpecificationNodePopup {
 		return false;
 	}
 	
+	/**
+	 * Selected new requirement.
+	 *
+	 * @return true, if successful
+	 */
 	public boolean selectedNewReq() {
 		if ( newReqCheckBox != null ) {
 			return newReqCheckBox.isSelected();
@@ -116,6 +156,11 @@ public class SpecificationNodePopup {
 		return false;
 	}
 	
+	/**
+	 * Gets the specification artifact name.
+	 *
+	 * @return the specification artifact name
+	 */
 	public String getSpecArtifName() {
 		if (mJTSpecArtifName != null) {
 			return mJTSpecArtifName.getText();
@@ -123,6 +168,11 @@ public class SpecificationNodePopup {
 		return "";
 	}
 	
+	/**
+	 * Gets the specification artifact types.
+	 *
+	 * @return the specification artifact types.
+	 */
 	private Vector<MyNodeType> getSpecArtifTypes() {
 		if (specificationTypes == null) {
 			specificationTypes = new Vector<MyNodeType>();

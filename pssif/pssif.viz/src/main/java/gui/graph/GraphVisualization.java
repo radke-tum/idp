@@ -19,7 +19,7 @@ import model.ModelBuilder;
 
 import org.apache.commons.collections15.Transformer;
 
-import reqtool.RequirementTracer;
+import reqtool.controller.RequirementTracer;
 import reqtool.graph.operations.ReqTraceVertexStrokeHighlight;
 import edu.uci.ics.jung.algorithms.layout.CircleLayout;
 import edu.uci.ics.jung.algorithms.layout.FRLayout;

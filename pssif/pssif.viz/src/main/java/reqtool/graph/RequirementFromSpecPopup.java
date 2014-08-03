@@ -1,7 +1,5 @@
 package reqtool.graph;
 
-import graph.model.MyNodeType;
-
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -12,18 +10,41 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+/**
+ * The Class RequirementFromSpecPopup.
+ */
 public class RequirementFromSpecPopup {
 	
+	/** The all panel. */
 	private JPanel allPanel;
+	
+	/** The requirement name text field. */
 	private JTextField reqName;
+	
+	/** The author name text field. */
 	private JTextField authorName;
+	
+	/** The principal name. */
 	private JTextField principalName;
+	
+	/** The abstraction level name text field. */
 	private JTextField abstractionLevelName;
+	
+	/** The has author check box. */
 	private JCheckBox hasAuthorCheckBox;
+	
+	/** The has principal check box. */
 	private JCheckBox hasPrincipalCheckBox;
+	
+	/** The has abs level check box. */
 	private JCheckBox hasAbsLevelCheckBox;
 	
 	
+	/**
+	 * Show the popup for creating a requirement node from the specification wizard.
+	 *
+	 * @return true, if successful
+	 */
 	public boolean showPopup() {
 		JPanel allPanel = createPanel();
 		
@@ -32,6 +53,12 @@ public class RequirementFromSpecPopup {
 		return evalDialog(dialogResult);
 	}
 	
+	/**
+	 * Evaluates the user input from the dialog.
+	 *
+	 * @param dialogResult the dialog result
+	 * @return true, if successful
+	 */
 	private boolean evalDialog(int dialogResult) {
 		if (dialogResult == 0) {
 			return true;
@@ -39,6 +66,11 @@ public class RequirementFromSpecPopup {
 		return false;
 	}
 	
+	/**
+	 * Creates the main panel.
+	 *
+	 * @return the main panel
+	 */
 	private JPanel createPanel() {
 		allPanel = new JPanel(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
@@ -100,6 +132,11 @@ public class RequirementFromSpecPopup {
 		return allPanel;
 	}
 	
+	/**
+	 * Gets the requirement name.
+	 *
+	 * @return the requirement name
+	 */
 	public String getReqName() {
 		if (reqName != null) {
 			return reqName.getText();
@@ -107,6 +144,11 @@ public class RequirementFromSpecPopup {
 		return "";
 	}
 	
+	/**
+	 * Gets the author name.
+	 *
+	 * @return the author name
+	 */
 	public String getAuthorName() {
 		if (authorName != null) {
 			return authorName.getText();
@@ -114,6 +156,11 @@ public class RequirementFromSpecPopup {
 		return "";
 	}
 	
+	/**
+	 * Gets the principal name.
+	 *
+	 * @return the principal name
+	 */
 	public String getPrincipalName() {
 		if (principalName != null) {
 			return principalName.getText();
@@ -121,6 +168,11 @@ public class RequirementFromSpecPopup {
 		return "";
 	}
 	
+	/**
+	 * Gets the abstraction level name.
+	 *
+	 * @return the abstraction level name
+	 */
 	public String getAbstractionLevelName() {
 		if (abstractionLevelName != null) {
 			return abstractionLevelName.getText();
@@ -129,6 +181,11 @@ public class RequirementFromSpecPopup {
 		
 	}
 	
+	/**
+	 * Selected author check box.
+	 *
+	 * @return true, if successful
+	 */
 	public boolean selectedAuthorCheckBox() {
 		if ( hasAuthorCheckBox != null ) {
 			return hasAuthorCheckBox.isSelected();
@@ -136,6 +193,11 @@ public class RequirementFromSpecPopup {
 		return false;
 	}
 	
+	/**
+	 * Selected principal check box.
+	 *
+	 * @return true, if successful
+	 */
 	public boolean selectedPrincipalCheckBox() {
 		if ( hasPrincipalCheckBox != null ) {
 			return hasPrincipalCheckBox.isSelected();
@@ -143,6 +205,11 @@ public class RequirementFromSpecPopup {
 		return false;
 	}
 	
+	/**
+	 * Selected abs level check box.
+	 *
+	 * @return true, if successful
+	 */
 	public boolean selectedAbsLevelCheckBox() {
 		if ( hasAbsLevelCheckBox != null ) {
 			return hasAbsLevelCheckBox.isSelected();

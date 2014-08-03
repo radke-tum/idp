@@ -1,21 +1,26 @@
-package reqtool;
+package reqtool.controller;
 
-import graph.model.MyEdge;
 import graph.model.MyEdgeType;
 import graph.model.MyNode;
 import graph.model.MyNodeType;
-import gui.graph.GraphVisualization;
-
-import java.util.LinkedList;
 import java.util.List;
 
 import model.ModelBuilder;
 import de.tum.pssif.core.metamodel.PSSIFCanonicMetamodelCreator;
 
+/**
+ * The Class TestCaseCreator.
+ */
 public class TestCaseCreator {
 
+	/**
+	 * Creates the test case node.
+	 *
+	 * @param mNode the requirement node for which the test case should be created
+	 * @param solutionArtifacts the solution artifacts
+	 * @param name the name
+	 */
 	public static void createTestCase(MyNode mNode, List<MyNode> solutionArtifacts, String name) {
-
 		System.out.println("Creating Test Case for " + mNode.getName());
 
 		MyNodeType testCaseNodeType = ModelBuilder.getNodeTypes().getValue(PSSIFCanonicMetamodelCreator.N_TEST_CASE);
@@ -35,6 +40,13 @@ public class TestCaseCreator {
 		createVerifyEdges(solutionArtifacts, testCaseNode);
 	}
 
+	/**
+	 * Creates the verify edges.
+	 *
+	 * @param solArtifNodes the sol artif nodes
+	 * @param testCaseNode the test case node
+	 * @return true, if successful
+	 */
 	private static boolean createVerifyEdges(List<MyNode> solArtifNodes, MyNode testCaseNode) {
 		MyEdgeType verifies = ModelBuilder.getEdgeTypes().getValue(PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_LOGICAL_VERIFIES);
 		for(MyNode solArtfNode:solArtifNodes) {

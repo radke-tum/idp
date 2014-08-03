@@ -2,7 +2,6 @@ package reqtool.graph;
 
 import graph.model.MyEdgeType;
 import graph.model.MyNode;
-import gui.graph.GraphVisualization;
 
 import java.awt.Component;
 import java.awt.Dimension;
@@ -13,40 +12,63 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.naming.spi.Resolver;
 import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import model.ModelBuilder;
+import reqtool.controller.IssueResolver;
+import reqtool.controller.VersionManager;
 import de.tum.pssif.core.metamodel.PSSIFCanonicMetamodelCreator;
-import de.tum.pssif.core.model.Model;
-import reqtool.IssueResolver;
-import reqtool.TestCaseCreator;
-import reqtool.VersionManager;
 
+/**
+ * The Class IssueResolverPopup.
+ */
 public class IssueResolverPopup {
+	
+	/** The Constant LEADS_TO. */
 	private static final MyEdgeType LEADS_TO =  ModelBuilder.getEdgeTypes().getValue(PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_CHRONOLOGICAL_LEADS_TO);
+	
+	/** The Constant REFERENCIAL. */
 	private static final MyEdgeType REFERENCIAL = ModelBuilder.getEdgeTypes().getValue(PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_REFERENTIAL);
 	
+	/** The main panel. */
 	private JPanel allPanel;
+	
+	/** The requirement panel. */
 	private JPanel reqPanel;
+	
+	/** The solution artifacts panel. */
 	private JPanel solPanel;
 	
+	/** The selected node. */
 	private MyNode selectedNode;
+	
+	/** The requirement nodes. */
 	private LinkedList<MyNode> reqs;
+	
+	/** The solution artifact nodes. */
 	private LinkedList<MyNode> sols;
 	
-	public IssueResolverPopup (MyNode issue){
+	/**
+	 * Instantiates a new issue resolver popup.
+	 *
+	 * @param issue the issue node
+	 */
+	public IssueResolverPopup (MyNode issue) {
 		selectedNode = issue;
 		IssueResolver resolver = new IssueResolver(issue);
 		reqs = resolver.getRequirement();
 		sols = resolver.getSolArtifacts();
 	}
 	
+	/**
+	 * Show the popup for resolving an issue.
+	 *
+	 * @return true, if successful
+	 */
 	public boolean showPopup() {
 		JPanel allPanel = createPanel();
 
@@ -55,6 +77,12 @@ public class IssueResolverPopup {
 		return evalDialog(dialogResult);
 	}
 
+	/**
+	 * Evaluates the user input from the dialog.
+	 *
+	 * @param dialogResult the dialog result
+	 * @return true, if successful
+	 */
 	private boolean evalDialog(int dialogResult) {
 		if (dialogResult == 0) {
 			List<Integer> selectedReqNodes = new ArrayList<Integer>();
@@ -117,6 +145,11 @@ public class IssueResolverPopup {
 		return false;
 	}
 
+	/**
+	 * Creates the main panel.
+	 *
+	 * @return the main panel
+	 */
 	private JPanel createPanel() {
 		allPanel = new JPanel(new GridBagLayout());
 
@@ -163,9 +196,6 @@ public class IssueResolverPopup {
 		c.gridy = ypos+60;
 		allPanel.add(solScrollNodes, c);
 
-		//c.weighty = 1;
-		//c.weightx = 1;
-		
 		allPanel.setPreferredSize(new Dimension(400, 150));
 		allPanel.setMaximumSize(new Dimension(400, 200));
 		allPanel.setMinimumSize(new Dimension(400, 200));

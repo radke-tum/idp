@@ -1,4 +1,4 @@
-package reqtool;
+package reqtool.controller;
 
 import graph.model.MyEdge;
 import graph.model.MyEdgeType;
@@ -14,20 +14,44 @@ import de.tum.pssif.core.metamodel.Attribute;
 import de.tum.pssif.core.metamodel.NodeType;
 import de.tum.pssif.core.metamodel.PSSIFCanonicMetamodelCreator;
 
+/**
+ * The Class VersionManager.
+ */
 public class VersionManager {
+	
+	/** The Constant SEPARATOR. */
 	private static final String SEPARATOR = "_";
 
+	/** The selected node. */
 	private MyNode selectedNode;
+	
+	/** The old version value. */
 	private PSSIFOption<PSSIFValue> oldVersion;
+	
+	/** The new version node. */
 	private MyNode newVersionNode;
+	
+	/** The evolves to edge type. */
 	private MyEdgeType evolvesTo;
+	
+	/** The selected node type. */
 	private NodeType selectedNodeType;
 
+	/**
+	 * Instantiates a new version manager.
+	 *
+	 * @param myNode the selected node
+	 */
 	public VersionManager(MyNode myNode) {
 		this.evolvesTo = ModelBuilder.getEdgeTypes().getValue(PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_CHRONOLOGICAL_EVOLVES_TO);
 		initSelectedNode(myNode);
 	}
 
+	/**
+	 * Inits the selected node.
+	 *
+	 * @param node the node
+	 */
 	private void initSelectedNode(MyNode node) {
 		this.selectedNode = node;
 		this.selectedNodeType = ModelBuilder.getMetamodel().getNodeType(selectedNode.getNodeType().getName()).getOne();
@@ -37,6 +61,12 @@ public class VersionManager {
 		}
 	}
 
+	/**
+	 * Creates the new version node.
+	 *
+	 * @param newVersion the new version
+	 * @return true, if successful
+	 */
 	public boolean createNewVersion(String newVersion) {
 		try {
 			initSelectedNode(getMaxVersion());
@@ -52,6 +82,12 @@ public class VersionManager {
 		return false;
 	}
 
+	/**
+	 * Move the selected nodes edges to the new version node.
+	 *
+	 * @param selNode the selected node
+	 * @param newVersNode the new version node
+	 */
 	private void moveEdges(MyNode selNode, MyNode newVersNode) {
 		LinkedList<MyEdge> allEdges = new LinkedList<MyEdge>();
 		allEdges.addAll(ModelBuilder.getAllEdges());
@@ -71,6 +107,12 @@ public class VersionManager {
 
 	}
 
+	/**
+	 * Checks for previous versions.
+	 *
+	 * @param myNode the my node
+	 * @return true, if successful
+	 */
 	public boolean hasPreviousVersions(MyNode myNode) {
 		for (MyEdge e : ModelBuilder.getAllEdges()) {
 			if (e.getEdgeType().equals(evolvesTo)
@@ -81,6 +123,12 @@ public class VersionManager {
 		return false;
 	}
 
+	/**
+	 * Checks for next versions.
+	 *
+	 * @param myNode the my node
+	 * @return true, if successful
+	 */
 	public boolean hasNextVersions(MyNode myNode) {
 		for (MyEdge e : ModelBuilder.getAllEdges()) {
 			if (e.getEdgeType().equals(evolvesTo)
@@ -91,6 +139,11 @@ public class VersionManager {
 		return false;
 	}
 
+	/**
+	 * Creates the new version node.
+	 *
+	 * @param newVersion the new version
+	 */
 	public void createNewVersionNode(String newVersion) {
 		this.newVersionNode = ModelBuilder.addNewNodeFromGUI(selectedNode.getNode().getId()
 				+ SEPARATOR, selectedNode.getNodeType());
@@ -103,6 +156,11 @@ public class VersionManager {
 		selectedNode.getNodeType().getType().getAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_VERSION).getOne().set(selectedNode.getNode(), PSSIFOption.one(PSSIFValue.create(String.valueOf(oldVersion.getOne().asString()))));
 	}
 
+	/**
+	 * Gets the max version node.
+	 *
+	 * @return the max version node
+	 */
 	public MyNode getMaxVersion() {
 		MyNode maxVersionNode = null;
 		double maxVersion = Integer.MIN_VALUE;
@@ -123,10 +181,22 @@ public class VersionManager {
 		return maxVersionNode;
 	}
 
+	/**
+	 * Gets the node version.
+	 *
+	 * @param node the node
+	 * @return the node version
+	 */
 	private Attribute getNodeVersion(MyNode node) {
 		return node.getNodeType().getType().getAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_VERSION).getOne();
 	}
 
+	/**
+	 * Sets the node version.
+	 *
+	 * @param node the node
+	 * @param version the version
+	 */
 	private void setNodeVersion(MyNode node, String version) {
 		getNodeVersion(node).set(node.getNode(), PSSIFOption.one(PSSIFValue.create(String.valueOf(version))));
 	}

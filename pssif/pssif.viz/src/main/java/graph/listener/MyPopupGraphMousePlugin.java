@@ -1,5 +1,4 @@
 package graph.listener;
-import java.awt.Event;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -18,23 +17,9 @@ import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.JTextField;
 
-import de.tum.pssif.core.metamodel.PSSIFCanonicMetamodelCreator;
-import reqtool.RequirementToolbox;
-import reqtool.RequirementTracer;
-import reqtool.RequirementVersionManager;
-import reqtool.TestCaseVerifier;
-import reqtool.event.ReqInfoEvent;
-import reqtool.event.ResolveIssueEvent;
-import reqtool.event.bus.ReqToolReqistry;
-import reqtool.event.menu.CreateReqMenuEvent;
-import reqtool.event.menu.TraceReqMenuEvent;
-import reqtool.event.menu.VersionVisibilityMenuEvent;
-import reqtool.graph.IssueResolverPopup;
-import reqtool.graph.TestCaseCreatorPopup;
-import reqtool.graph.VersionManagerPopup;
-import reqtool.handler.menu.VersionsVisibilityMenuHandler;
 import model.ModelBuilder;
-import model.MyModelContainer;
+import reqtool.bus.ReqToolReqistry;
+import reqtool.event.menu.CreateReqMenuEvent;
 import edu.uci.ics.jung.algorithms.layout.GraphElementAccessor;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.control.AbstractPopupGraphMousePlugin;
@@ -100,7 +85,7 @@ public class MyPopupGraphMousePlugin extends AbstractPopupGraphMousePlugin {
     }
     
 
-/**
+    /**
     * Create the popup which provides the user the possibility to add a Node
     * @param e The MouseEvent which triggered the action
     */

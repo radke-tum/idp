@@ -27,19 +27,48 @@ import de.tum.pssif.core.metamodel.DataType;
 import de.tum.pssif.core.metamodel.PSSIFCanonicMetamodelCreator;
 import de.tum.pssif.core.metamodel.PrimitiveDataType;
 
+/**
+ * The Class TestCaseValidatorPopup.
+ */
 public class TestCaseValidatorPopup {
+	
+	/** The Constant RESULT_OK. */
 	public static final int RESULT_OK = 1;
+	
+	/** The Constant RESULT_NOK. */
 	public static final int RESULT_NOK = 0;
+	
+	/** The Constant RESULT_CANCEL. */
 	public static final int RESULT_CANCEL = -1;
 	
+	/** The all panel. */
 	private JPanel allPanel;
+	
+	/** The attribute list. */
 	private JComboBox<String> attributeList;
+	
+	/** The operation list. */
 	private JComboBox<String> operationList;
+	
+	/** The value text field. */
 	private JTextField valueTextField;
+	
+	/** The attribute names. */
 	private Map<String, DataType> attributeNames;
+	
+	/** The nodes. */
 	private LinkedList<MyNode> nodes;
+	
+	/** The selected node. */
 	private MyNode selectedNode;
 
+	/**
+	 * Instantiates a new test case validator popup.
+	 *
+	 * @param verifiedNodes the verified nodes
+	 * @param attributes the attributes
+	 * @param myNode the my node
+	 */
 	public TestCaseValidatorPopup(LinkedList<MyNode> verifiedNodes,	Map<String, DataType> attributes, MyNode myNode) {
 		this.selectedNode = myNode;
 		this.attributeNames = attributes;
@@ -47,8 +76,8 @@ public class TestCaseValidatorPopup {
 	}
 
 	/**
-	 * Show the Popup to the user
-	 * 
+	 * Show the Popup for validating a test case to the user.
+	 *
 	 * @return "Edge" if an Edge Condition was added, "Node" of a Node condition
 	 *         was added, null otherwise
 	 */
@@ -60,6 +89,12 @@ public class TestCaseValidatorPopup {
 		return evalDialog(dialogResult);
 	}
 
+	/**
+	 * Evaluates the user input from the dialog
+	 *
+	 * @param dialogResult the dialog result
+	 * @return the int
+	 */
 	private int evalDialog(int dialogResult) {
 		if (dialogResult == 0) {
 
@@ -137,6 +172,11 @@ public class TestCaseValidatorPopup {
 		return -1;
 	}
 
+	/**
+	 * Creates the panel.
+	 *
+	 * @return the j panel
+	 */
 	private JPanel createPanel() {
 		allPanel = new JPanel(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
@@ -205,10 +245,9 @@ public class TestCaseValidatorPopup {
 	}
 
 	/**
-	 * Defines which compare operations are possible for the given Datatype
-	 * 
-	 * @param type
-	 *            the datatype for which we have to define the compare
+	 * Defines which compare operations are possible for the given Datatype.
+	 *
+	 * @param type            the datatype for which we have to define the compare
 	 *            possibilities
 	 * @return a String array with all the possible compare operation names
 	 */

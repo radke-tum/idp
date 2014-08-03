@@ -5,16 +5,24 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JMenuItem;
 
-import reqtool.RequirementVersionManager;
+import reqtool.bus.ReqToolReqistry;
+import reqtool.controller.RequirementVersionManager;
 import reqtool.event.HideVersionsEvent;
 import reqtool.event.ShowVersionsEvent;
-import reqtool.event.bus.ReqToolReqistry;
 import reqtool.event.menu.VersionVisibilityMenuEvent;
 
 import com.google.common.eventbus.Subscribe;
 
+/**
+ * The Class VersionsVisibilityMenuHandler.
+ */
 public class VersionsVisibilityMenuHandler implements MenuEventHandler {
 
+	/**
+	 * Handle versions visibility menu event.
+	 *
+	 * @param event the menu event
+	 */
 	@Subscribe
 	public void handleEventMenu(final VersionVisibilityMenuEvent event) {
 		JMenuItem submenu;
@@ -40,8 +48,7 @@ public class VersionsVisibilityMenuHandler implements MenuEventHandler {
             	public void actionPerformed(ActionEvent e){
         			ReqToolReqistry.getInstance().post(new ShowVersionsEvent(event.getSelectedNode(), event.getGViz()));
             	}
-    		}
-        	);
+    		});
     		
     	}
     	event.getMenu().add(submenu);

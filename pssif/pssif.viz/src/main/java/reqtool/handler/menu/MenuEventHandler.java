@@ -1,9 +1,9 @@
 package reqtool.handler.menu;
 
-import javax.swing.JMenuItem;
-
-import reqtool.event.menu.MenuEvent;
 import reqtool.handler.EventHandler;
 
+/**
+ * The Interface MenuEventHandler.
+ */
 public interface MenuEventHandler extends EventHandler{
 }

@@ -1,5 +1,6 @@
 package reqtool.handler;
 
-import reqtool.event.Event;
-
+/**
+ * The Interface EventHandler.
+ */
 public interface EventHandler {}

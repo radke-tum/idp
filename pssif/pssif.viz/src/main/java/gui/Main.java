@@ -34,8 +34,8 @@ import javax.swing.JPanel;
 
 import model.FileExporter;
 import model.FileImporter;
+import reqtool.bus.ReqToolReqistry;
 import reqtool.event.CreateSpecProjectEvent;
-import reqtool.event.bus.ReqToolReqistry;
 
 /**
  * The main class of the project. Execute this class to start the Visualization Software

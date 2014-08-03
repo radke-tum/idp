@@ -17,13 +17,28 @@ import de.tum.pssif.core.common.PSSIFOption;
 import de.tum.pssif.core.common.PSSIFValue;
 import de.tum.pssif.core.metamodel.Attribute;
 
+/**
+ * The Class DeriveRequirementPopup.
+ */
 public class DeriveRequirementPopup {
+	
+	/** The Constant RESULT_OK. */
 	public static final int RESULT_OK = 1;
+	
+	/** The Constant RESULT_NOK. */
 	public static final int RESULT_NOK = 0;
+	
+	/** The Constant RESULT_CANCEL. */
 	public static final int RESULT_CANCEL = -1;
 	
+	/** The attr text fields. */
 	private HashMap<Attribute, JTextField> attrTextFields;
 	
+	/**
+	 * Show the popup for deriving a requirement node.
+	 *
+	 * @param node the selected node
+	 */
 	public void showPopup(MyNode node) {
 		Collection<Attribute> nodeAttributes = node.getNodeType().getType().getAttributes();
 		
@@ -44,6 +59,11 @@ public class DeriveRequirementPopup {
     	JOptionPane.showMessageDialog(null, inputs, "derive requirement node", JOptionPane.PLAIN_MESSAGE);
 	}
 	
+	/**
+	 * Gets the attr text fields.
+	 *
+	 * @return the attr text fields
+	 */
 	public HashMap<Attribute, JTextField> getAttrTextFields() {
 		return attrTextFields;
 	}

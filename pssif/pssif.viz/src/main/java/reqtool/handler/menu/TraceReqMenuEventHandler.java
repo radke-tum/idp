@@ -5,16 +5,24 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JMenuItem;
 
-import reqtool.RequirementTracer;
+import reqtool.bus.ReqToolReqistry;
+import reqtool.controller.RequirementTracer;
 import reqtool.event.TraceReqEvent;
 import reqtool.event.UntraceReqEvent;
-import reqtool.event.bus.ReqToolReqistry;
 import reqtool.event.menu.TraceReqMenuEvent;
 
 import com.google.common.eventbus.Subscribe;
 
+/**
+ * The Class TraceReqMenuEventHandler.
+ */
 public class TraceReqMenuEventHandler implements MenuEventHandler {
 	
+	/**
+	 * Handle trace requirement menu event.
+	 *
+	 * @param event the event
+	 */
 	@Subscribe
 	public void handleTraceReqMenuEvent(final TraceReqMenuEvent event) {
 		JMenuItem submenu;

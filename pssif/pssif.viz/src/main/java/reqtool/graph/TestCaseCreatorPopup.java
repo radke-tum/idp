@@ -1,7 +1,6 @@
 package reqtool.graph;
 
 import graph.model.MyNode;
-import gui.graph.GraphVisualization;
 
 import java.awt.Component;
 import java.awt.Dimension;
@@ -25,28 +24,41 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
-import de.tum.pssif.core.common.PSSIFConstants;
-import de.tum.pssif.core.common.PSSIFOption;
-import de.tum.pssif.core.common.PSSIFValue;
+import reqtool.controller.RequirementToolbox;
+import reqtool.controller.TestCaseCreator;
 import de.tum.pssif.core.metamodel.PSSIFCanonicMetamodelCreator;
-import reqtool.TestCaseCreator;
-import reqtool.model.RequirementNode;
 
+/**
+ * The Class TestCaseCreatorPopup.
+ */
 public class TestCaseCreatorPopup {
+	
+	/** The node panel. */
 	private JPanel nodePanel;
+	
+	/** The test case name text field. */
 	private JTextField testCaseNameTextField;
+	
+	/** The solution artifacts. */
 	private LinkedList<MyNode> solutionArtifacts;
+	
+	/** The requirement node. */
 	private MyNode requirementNode;
 
+	/**
+	 * Instantiates a new test case creator popup.
+	 *
+	 * @param requirementNode the requirement node
+	 */
 	public TestCaseCreatorPopup(MyNode requirementNode) {
 		this.requirementNode = requirementNode;
-		this.solutionArtifacts = RequirementNode.getRequirementSourceNodes(requirementNode, PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_LOGICAL_SATISFIES);
+		this.solutionArtifacts = RequirementToolbox.getRequirementSourceNodes(requirementNode, PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_LOGICAL_SATISFIES);
 	}
 
 	/**
-	 * Show the Popup to the user
-	 * 
-	 * @return
+	 * Show the Popup to the user.
+	 *
+	 * @return true, if successful
 	 */
 	public boolean showPopup() {
 		JPanel allPanel = createPanel();
@@ -56,6 +68,12 @@ public class TestCaseCreatorPopup {
 		return evalDialog(dialogResult);
 	}
 
+	/**
+	 * Evaluates the user input from the dialog
+	 *
+	 * @param dialogResult the dialog result
+	 * @return true, if successful
+	 */
 	private boolean evalDialog(int dialogResult) {
 		if (dialogResult == 0) {
 			LinkedList<MyNode> selectedNodes = new LinkedList<MyNode>();
@@ -84,6 +102,11 @@ public class TestCaseCreatorPopup {
 		return false;
 	}
 
+	/**
+	 * Creates the panel.
+	 *
+	 * @return the j panel
+	 */
 	private JPanel createPanel() {
 		JPanel allPanel = new JPanel(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
@@ -175,10 +198,8 @@ public class TestCaseCreatorPopup {
 		c.gridwidth = 2;
 		allPanel.add(testCaseNameTextField, c);
 
-		allPanel.setPreferredSize(null);/*new Dimension(330, 
-				80 + nodeTypesJL.HEIGHT + solutionArtifacts.size() * 35 + selectAllNodes.HEIGHT + testCaseNameTextField.HEIGHT));
-		*/
-				allPanel.setMaximumSize(new Dimension(400, 50));
+		allPanel.setPreferredSize(null);
+		allPanel.setMaximumSize(new Dimension(400, 50));
 		allPanel.setMinimumSize(new Dimension(400, 50));
 
 		return allPanel;

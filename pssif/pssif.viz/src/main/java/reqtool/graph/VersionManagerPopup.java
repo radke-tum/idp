@@ -12,17 +12,32 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
-import reqtool.VersionManager;
+import reqtool.controller.VersionManager;
 import de.tum.pssif.core.common.PSSIFConstants;
 import de.tum.pssif.core.common.PSSIFOption;
 import de.tum.pssif.core.common.PSSIFValue;
 import de.tum.pssif.core.metamodel.Attribute;
 
+/**
+ * The Class VersionManagerPopup.
+ */
 public class VersionManagerPopup {
+	
+	/** The Constant RESULT_OK. */
 	public static final int RESULT_OK = 1;
+	
+	/** The Constant RESULT_NOK. */
 	public static final int RESULT_NOK = 0;
+	
+	/** The Constant RESULT_CANCEL. */
 	public static final int RESULT_CANCEL = -1;
 	
+	/**
+	 * Show the popup for creating a new version.
+	 *
+	 * @param node the selected node
+	 * @return true, if successful
+	 */
 	public static boolean showPopup(MyNode node) {
 		Collection<Attribute> nodeAttributes = node.getNodeType().getType().getAttributes();
 		

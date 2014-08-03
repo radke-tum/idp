@@ -1,4 +1,4 @@
-package reqtool;
+package reqtool.controller;
 
 import graph.model.MyEdge;
 import graph.model.MyEdgeType;
@@ -18,13 +18,26 @@ import de.tum.pssif.core.metamodel.Attribute;
 import de.tum.pssif.core.metamodel.DataType;
 import de.tum.pssif.core.metamodel.PSSIFCanonicMetamodelCreator;
 
+/**
+ * The Class TestCaseVerifier.
+ */
 public class TestCaseVerifier {
+	
+	/** The selected node. */
 	private MyNode myNode;
 	
+	/**
+	 * Instantiates a new test case verifier.
+	 *
+	 * @param node the node
+	 */
 	public TestCaseVerifier(MyNode node) {
 		this.myNode = node;
 	}
 
+	/**
+	 * Verify test case.
+	 */
 	public void verifyTestCase() {
 		Map<String, DataType> attributes = getSolArtifactAttributes(getVerifiedSolArtifacts());
 		TestCaseValidatorPopup popUp = new TestCaseValidatorPopup(getVerifiedSolArtifacts(), attributes, myNode);
@@ -54,6 +67,11 @@ public class TestCaseVerifier {
 		}
 	}
 
+	/**
+	 * Gets the verified solution artifacts.
+	 *
+	 * @return the verified solution artifacts
+	 */
 	public LinkedList<MyNode> getVerifiedSolArtifacts() {
 		MyEdgeType verifies = ModelBuilder.getEdgeTypes().getValue(PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_LOGICAL_VERIFIES);
 		LinkedList<MyNode> verSolArtifacts = new LinkedList<MyNode>();
@@ -69,6 +87,12 @@ public class TestCaseVerifier {
 		return verSolArtifacts;
 	}
 
+	/**
+	 * Gets the solution artifact attributes.
+	 *
+	 * @param verifiedSolArtifacts the verified solution artifacts
+	 * @return the solution artifact attributes
+	 */
 	public Map<String, DataType> getSolArtifactAttributes(LinkedList<MyNode> verifiedSolArtifacts) {
 		Map<String, DataType> attrNames = new TreeMap<String, DataType>();
 
