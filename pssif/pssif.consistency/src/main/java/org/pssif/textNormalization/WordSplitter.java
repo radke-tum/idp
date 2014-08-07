@@ -1,13 +1,15 @@
 package org.pssif.textNormalization;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.pssif.consistencyDataStructures.Token;
 
-import de.danielnaber.jwordsplitter.AbstractWordSplitter;
-import de.danielnaber.jwordsplitter.GermanWordSplitter;
+import de.abelssoft.wordtools.jwordsplitter.AbstractWordSplitter;
+import de.abelssoft.wordtools.jwordsplitter.impl.GermanWordSplitter;
+
 
 /**
  * @author Andreas
@@ -22,11 +24,11 @@ public class WordSplitter {
 	public WordSplitter() throws IOException {
 		//TODO make word splitter work
 		
-		try {
+//		try {
 			this.splitter = new GermanWordSplitter(true);
-		} catch (IOException e) {
-			throw new RuntimeException("The German Word Splitter couln't be initialized!");
-		}
+//		} catch (IOException e) {
+//			throw new RuntimeException("The German Word Splitter couln't be initialized!");
+//		}
 		splitter.setStrictMode(true);
 	}
 
@@ -43,7 +45,7 @@ public class WordSplitter {
 	 */
 	public List<Token> splitTokens(List<Token> tokens) {
 		List<Token> newSequence = new LinkedList<Token>();
-		List<String> splitResult;
+		Collection<String> splitResult;
 
 		for (Token token : tokens) {
 

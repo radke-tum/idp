@@ -23,5 +23,9 @@
     	<groupId>de.tum</groupId>
     	<artifactId>pssif.core</artifactId>
     </dependency>
+    <dependency>
+    	<groupId>de.abelssoft</groupId>
+    	<artifactId>jwordsplitter</artifactId>
+    </dependency>
   </dependencies>
 </project>
