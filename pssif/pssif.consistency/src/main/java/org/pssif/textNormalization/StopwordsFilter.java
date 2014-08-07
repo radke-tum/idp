@@ -29,14 +29,16 @@ public class StopwordsFilter {
 	}
 	
 	/**
-	 * Source:(modified)
+	 * modified by Andreas Genz
+	 * 
+	 * Source: 
 	 * StopWordList
 	 *  StopWordlistGerman
 	 * StopWordListEnglish
 	 * GermanStopWordFilterOperator
 	 * EnglishStopWordFilterOperator
 	 * 
-	 * aus Ordner: Text Processing (Tokenizing, Stemming, StopWords)
+	 * from folder: Text Processing (Tokenizing, Stemming, StopWords)
 	 * @author RapidMiner
 	 *
 	 */

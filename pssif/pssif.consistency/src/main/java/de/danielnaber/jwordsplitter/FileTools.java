@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.danielnaber.jwordsplitter.tools;
+package de.danielnaber.jwordsplitter;
 
 import java.io.*;
 import java.util.HashSet;

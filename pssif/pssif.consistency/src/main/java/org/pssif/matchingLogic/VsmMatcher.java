@@ -1,10 +1,5 @@
 package org.pssif.matchingLogic;
 
-/**
- *  Source for method: Paper:
- *         "Improving Requirements Tracing via Information Retrieval"
- */
-
 import java.util.List;
 
 import org.pssif.consistencyDataStructures.DocumentCorpus;

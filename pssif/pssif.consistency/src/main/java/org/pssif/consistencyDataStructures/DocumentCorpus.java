@@ -1,10 +1,5 @@
 package org.pssif.consistencyDataStructures;
 
-/**
- * Source for method: Paper:
- *        "Improving Requirements Tracing via Information Retrieval"
- */
-
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -179,8 +174,10 @@ public class DocumentCorpus {
 		double idf = 0;
 
 		for (Token savedToken : tokens) {
-			idf = Methods.logarithmBaseTwo(numberOfDocuments
+			idf = Math.log(numberOfDocuments
 					/ (savedToken.getDocumentCounter()));
+//			idf = Methods.logarithmBaseTwo(numberOfDocuments
+//					/ (savedToken.getDocumentCounter()));
 			savedToken.setIdf(idf);
 		}
 	}

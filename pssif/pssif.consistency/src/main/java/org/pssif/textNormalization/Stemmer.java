@@ -19,7 +19,8 @@ public class Stemmer {
 	
 	
 	/**
-	 * Source: GermanStemming Operator (modified)
+	 * modified by Andreas Genz
+	 * Source: GermanStemming Operator
 	 * from folder: Text Processing (Tokenizing, Stemming, StopWords) 
 	 */
 	

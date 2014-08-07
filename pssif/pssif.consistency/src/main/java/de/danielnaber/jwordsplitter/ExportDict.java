@@ -1,3 +1,5 @@
+package de.danielnaber.jwordsplitter;
+
 /**
  * Copyright 2004-2007 Sven Abels
  *
@@ -13,13 +15,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.danielnaber.jwordsplitter.converter;
 
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
-import de.danielnaber.jwordsplitter.tools.FastObjectSaver;
 
 /**
  * This dumps the contents of the given *.ser file in the JAR to stdout.

@@ -1,14 +1,15 @@
 package org.pssif.comparedDataStructures;
 
 /**
+ * this class saves the labels of two compared nodes in their original and
+ * normalized (whitespace removed & converted to lowercase) form. In addition it
+ * saves the according match result of these labels. Saving this information
+ * allows, in further matchings, to look up if similar labels have once been
+ * matched (and maybe merged). So this information can be useful as more and
+ * more models have been matched.
+ * 
  * @author Andreas
  * 
- *         this class saves the labels of two compared nodes in their original
- *         and normalized (whitespace removed & converted to lowercase) form. In
- *         addition it saves the according match result of these labels. Saving
- *         this information allows, in further matchings, to look up if similar
- *         labels have once been matched (and maybe merged). So this information
- *         can be useful as more and more models have been matched.
  * 
  */
 public class ComparedLabelPair extends Compared {

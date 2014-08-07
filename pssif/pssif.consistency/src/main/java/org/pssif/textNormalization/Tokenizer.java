@@ -9,8 +9,12 @@ import org.pssif.consistencyDataStructures.Token;
 public class Tokenizer {
 
 	/**
-	 * Modifzierter Code von RapidMiner! StringTokenizerOperator.java (aus
-	 * ordner: Text Processing(Tokenizing, Stemming, Stopwords)
+	 * modified by Andreas Genz
+	 * 
+	 * Source code:
+	 * StringTokenizerOperator.java
+	 * 
+	 * from folder: Text Processing(Tokenizing, Stemming, Stopwords)
 	 */
 
 	/*

@@ -12,8 +12,6 @@ import de.tum.pssif.core.model.Model;
 import de.tum.pssif.core.model.Node;
 
 /**
- * !!!Source for metric:
- * "Measuring Similarity between Business Process Models.pdf"
  * 
  * This class represents an impelementation of the linguistic Matching. Thereby
  * the similarity of two nodes is calculated by exact matches between tokens of

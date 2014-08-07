@@ -1,4 +1,5 @@
 /**
+ * modified by Andreas Genz
  * Source: GermanStemming
  * from folder: Text Processing (Tokenizing, Stemming, StopWords)
  */

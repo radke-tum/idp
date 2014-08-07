@@ -13,7 +13,6 @@ import de.tum.pssif.core.model.Node;
 
 /**
  * !!!Source for metric application:
- * "Similarity of Business Process Models Metrics and Evaluation" and
  * "Simmetrics"
  * 
  * This class represents a matcher based on the levenshtein distance. It

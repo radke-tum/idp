@@ -236,7 +236,7 @@ public class UserGuidingConsistency {
 		int n = JOptionPane
 				.showOptionDialog(
 						null,
-						"You have imported a second model into the integration framework.\n \n Would you like to merge the original and the newly imported model into one?",
+						"You have imported a second model into the integration framework.\n \n What would you like to do with the original and the newly imported model?",
 						"Merge Models", JOptionPane.YES_NO_OPTION,
 						JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
 

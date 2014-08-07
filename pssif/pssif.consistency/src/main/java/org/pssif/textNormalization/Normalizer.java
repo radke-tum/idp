@@ -1,5 +1,6 @@
 package org.pssif.textNormalization;
 
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -9,9 +10,9 @@ import org.pssif.exception.ConsistencyException;
 import org.pssif.exception.MatchMethodException;
 import org.pssif.exception.NormalizationException;
 import org.pssif.mainProcesses.MatchingProcess;
+import org.pssif.matchingLogic.ContextMatcher;
 import org.pssif.matchingLogic.MatchMethod;
 import org.pssif.matchingLogic.VsmMatcher;
-import org.pssif.matchingLogic.ContextMatcher;
 
 //TODO only do normalzation once for each node
 // at the moment it's done for every nodepair again
@@ -93,7 +94,12 @@ public class Normalizer {
 		this.tokenizer = new Tokenizer();
 		this.caseNormalizer = new CaseNormalizer();
 		this.stopwordsFilter = new StopwordsFilter();
-		this.wordSplitter = new WordSplitter();
+		try {
+			this.wordSplitter = new WordSplitter();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		this.stemmer = new Stemmer();
 	}
 

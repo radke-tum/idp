@@ -13,15 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.danielnaber.jwordsplitter;
 
-import de.danielnaber.jwordsplitter.tools.FileTools;
-import de.danielnaber.jwordsplitter.tools.FastObjectSaver;
+/**
+ * classes might have been modified by Andreas Genz
+ */
+package de.danielnaber.jwordsplitter;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Split German compound words. Based on an embedded dictionary, or on an
@@ -29,8 +33,10 @@ import java.util.*;
  */
 public class GermanWordSplitter extends AbstractWordSplitter {
 
-    private static final String SERIALIZED_DICT = "/de/danielnaber/jwordsplitter/wordsGerman.ser";   // dict inside the JAR
-    private static final String EXCEPTION_DICT = "/de/danielnaber/jwordsplitter/exceptionsGerman.txt";   // dict inside the JAR
+//    private static final String SERIALIZED_DICT = "src/main/java/de/danielnaber/jwordsplitter/wordsGerman.ser";   // dict inside the JAR
+//    private static final String EXCEPTION_DICT = "src/main/java/de/danielnaber/jwordsplitter/exceptionsGerman.txt";   // dict inside the JAR
+    private static final String SERIALIZED_DICT = "src/main/java/de/danielnaber/jwordsplitter/wordsGerman.ser";   // dict inside the JAR
+    private static final String EXCEPTION_DICT = "src/main/java/de/danielnaber/jwordsplitter/exceptionsGerman.txt";   // dict inside the JAR
     /** Interfixes = Fugenelemente */
     private static final Collection<String> INTERFIXES = Arrays.asList(
             "s-",  // combination of the characters below
