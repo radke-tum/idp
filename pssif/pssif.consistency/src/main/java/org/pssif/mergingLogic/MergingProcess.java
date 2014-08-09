@@ -100,6 +100,7 @@ public class MergingProcess {
 
 	private MatchMethod exactMatcher;
 	private MatchMethod attributeMatcher;
+	private MatchMethod stringEditDistanceMatcher;
 
 	/**
 	 * a list with all nodes from the original model with their according type
@@ -135,11 +136,9 @@ public class MergingProcess {
 
 		startTypeAndNodeIteration();
 
-
 		ConsistencyData.getInstance().resetUnmatchedJunctionnodesOrigin();
 
 		handleConjunctions();
-		
 
 		ConsistencyData.getInstance().createUnmatchedNodeList(allNodesOrigin);
 	}
@@ -207,8 +206,9 @@ public class MergingProcess {
 
 					Node tempNodeOrigin = tempNodeOriginIterator.next();
 
-					System.out.println(Methods.findName(junctionNodeType, tempNodeOrigin));
-					
+					System.out.println(Methods.findName(junctionNodeType,
+							tempNodeOrigin));
+
 					if (compareWithJunctionsOfNewModel(tempNodeOrigin,
 							junctionNodeType)) {
 						// the junction node is still in the new model. We have
@@ -409,6 +409,12 @@ public class MergingProcess {
 				MatchingMethods.ATTRIBUTE_MATCHING, true, 1.0);
 
 		matchMethods.add(attributeMatcher);
+
+		stringEditDistanceMatcher = MatchMethod.createMatchMethodObject(
+				MatchingMethods.STRING_EDIT_DISTANCE_MATCHING, true, 1.0);
+		
+		matchMethods.add(stringEditDistanceMatcher);
+
 	}
 
 	/**
@@ -689,6 +695,9 @@ public class MergingProcess {
 
 		String labelOriginNormalized = normalizer.normalizeLabel(labelOrigin);
 		String labelNewNormalized = normalizer.normalizeLabel(labelNew);
+		
+		String labelOriginSEDNormalized = Methods.getStringFromTokens(normalizer.createNormalizedTokensFromLabel(labelOrigin, true, true, false, false));
+		String labelNewSEDNormalized = Methods.getStringFromTokens(normalizer.createNormalizedTokensFromLabel(labelNew, true, true, false, false));
 
 		boolean traceLink = false;
 		boolean merge = false;
@@ -703,26 +712,31 @@ public class MergingProcess {
 				metaModelOriginal, metaModelNew, actTypeOriginModel,
 				actTypeNewModel, labelOriginNormalized, labelNewNormalized,
 				null, null);
+		
+		double stringEditDistanceResult = stringEditDistanceMatcher.executeMatching(
+				tempNodeOrigin, tempNodeNew, originalModel, newModel,
+				metaModelOriginal, metaModelNew, actTypeOriginModel,
+				actTypeNewModel, labelOriginSEDNormalized, labelNewSEDNormalized,
+				null, null);
 
-		if (exactMatchResult > 0.0) {
-			if (attributeMatchResult >= 1.0) {
+		if (exactMatchResult != 0) {
+			if ((attributeMatchResult >= 1.0) && (exactMatchResult == 1)) {
 				merge = true;
 
 				saveMergedNodePair(tempNodeOrigin, tempNodeNew,
 						actTypeOriginModel, actTypeNewModel, labelOrigin,
 						labelNew, labelOriginNormalized, labelNewNormalized,
 						traceLink, merge, exactMatchResult,
-						attributeMatchResult);
+						attributeMatchResult, stringEditDistanceResult);
 			} else {
-				// TODO wert auf 0,25 ändern
-				if (attributeMatchResult >= 0.0) {
+				if ((attributeMatchResult >= 0.5) || (stringEditDistanceResult >= 0.7)) {
 					traceLink = true;
 
 					saveMergedNodePair(tempNodeOrigin, tempNodeNew,
 							actTypeOriginModel, actTypeNewModel, labelOrigin,
 							labelNew, labelOriginNormalized,
 							labelNewNormalized, traceLink, merge,
-							exactMatchResult, attributeMatchResult);
+							exactMatchResult, attributeMatchResult, stringEditDistanceResult);
 				}
 			}
 		} else {
@@ -744,12 +758,13 @@ public class MergingProcess {
 	 * @param merge
 	 * @param exactMatchResult
 	 * @param attributeMatchResult
+	 * @param stringEditDistanceMatchResult TODO
 	 */
 	private void saveMergedNodePair(Node tempNodeOrigin, Node tempNodeNew,
 			NodeType actTypeOriginModel, NodeType actTypeNewModel,
 			String labelOrigin, String labelNew, String labelOriginNormalized,
 			String labelNewNormalized, boolean traceLink, boolean merge,
-			double exactMatchResult, double attributeMatchResult) {
+			double exactMatchResult, double attributeMatchResult, double stringEditDistanceMatchResult) {
 		ComparedLabelPair comparedLabelPair = new ComparedLabelPair(
 				labelOrigin, labelNew, labelOriginNormalized,
 				labelNewNormalized);
@@ -761,6 +776,7 @@ public class MergingProcess {
 				comparedLabelPair, traceLink, merge);
 
 		mergedNodePair.setAttributeMatchResult(attributeMatchResult);
+		mergedNodePair.setStringEditDistanceResult(stringEditDistanceMatchResult);
 
 		if (ConsistencyData.getInstance().putMergedEntry(mergedNodePair)) {
 			// saving worked correctly

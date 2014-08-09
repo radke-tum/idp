@@ -45,10 +45,16 @@ public class MergedNodePair {
 	private double attributeMatchResult;
 
 	/**
+	 * the result of the matching between two elements based on the
+	 * levenshtein-distance of their labels
+	 */
+	private double stringEditDistanceResult;
+
+	/**
 	 * a bool saying whether the two nodes shall be linked by a tracelink
 	 */
 	private boolean traceLink;
-	
+
 	/**
 	 * a bool saying whether the two nodes shall be merged into one
 	 */
@@ -149,6 +155,20 @@ public class MergedNodePair {
 	 */
 	public void setAttributeMatchResult(double attributeMatchResult) {
 		this.attributeMatchResult = attributeMatchResult;
+	}
+
+	/**
+	 * @return the stringEditDistanceResult
+	 */
+	public double getStringEditDistanceResult() {
+		return stringEditDistanceResult;
+	}
+
+	/**
+	 * @param stringEditDistanceResult the stringEditDistanceResult to set
+	 */
+	public void setStringEditDistanceResult(double stringEditDistanceResult) {
+		this.stringEditDistanceResult = stringEditDistanceResult;
 	}
 
 	/**
