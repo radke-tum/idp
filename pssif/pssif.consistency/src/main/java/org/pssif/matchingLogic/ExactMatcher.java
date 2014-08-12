@@ -10,15 +10,17 @@ import de.tum.pssif.core.model.Model;
 import de.tum.pssif.core.model.Node;
 
 /**
+ * This class represents a simple matching method for two labels. If the two
+ * labels are equal we get 1 as a result. Else 0.
+ * 
  * @author Andreas
  * 
- *         This class represents a simple matching method for two labels. If the
- *         two labels are equal we get 1 as a result. Else 0.
  * 
  */
 public class ExactMatcher extends MatchMethod {
 
-	public ExactMatcher(MatchingMethods matchMethod, boolean isActive, double weigth) {
+	public ExactMatcher(MatchingMethods matchMethod, boolean isActive,
+			double weigth) {
 		super(matchMethod, isActive, weigth);
 	}
 

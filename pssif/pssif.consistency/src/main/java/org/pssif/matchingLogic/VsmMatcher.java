@@ -62,7 +62,6 @@ public class VsmMatcher extends MatchMethod {
 		return result;
 	}
 
-	// TODO eventually add thesaurus match here as seen in paper
 	/**
 	 * This method calculates the similarity of two given token vecctors/lists
 	 * based on the cosine similarity function

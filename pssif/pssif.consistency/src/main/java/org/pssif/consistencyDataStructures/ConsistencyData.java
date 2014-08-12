@@ -46,7 +46,6 @@ public class ConsistencyData {
 		this.unmatchedNodesOrigin = new LinkedList<NodeAndType>();
 	}
 
-	// TODO Attention: This singleton implementation is not multi threading safe
 	public static ConsistencyData getInstance() {
 		if (instance == null) {
 			instance = new ConsistencyData();
@@ -55,10 +54,11 @@ public class ConsistencyData {
 		return instance;
 	}
 
-	// TODO Attention! Variable is volatile, will be lost at serialization!
 	/**
 	 * stores the already compared IDs as the pair (originModelElementID,
 	 * newModelElementID)
+	 * 
+	 * Variable is volatile, will be lost at serialization!
 	 */
 	private volatile Set<String> IDMapping;
 
@@ -74,29 +74,33 @@ public class ConsistencyData {
 	 */
 	private List<ComparedNormalizedTokensPair> comparedTokensPairs;
 
-	// TODO Attention! Variable is volatile, will be lost at serialization!
 	/**
 	 * stores compared Nodes with similarity information
+	 * 
+	 * Variable is volatile, will be lost at serialization!
 	 */
 	private volatile List<ComparedNodePair> comparedNodePairs;
 
-	// TODO Attention! Variable is volatile, will be lost at serialization!
 	/**
 	 * stores merged/traced Nodes
+	 * 
+	 * Variable is volatile, will be lost at serialization!
 	 */
 	private volatile List<MergedNodePair> mergedNodePairs;
 
-	// TODO Attention! Variable is volatile, will be lost at serialization!
 	/**
 	 * this list stores the nodes from the original model which can't be traced
 	 * or merged into the new version of the model.
+	 * 
+	 * Variable is volatile, will be lost at serialization!
 	 */
 	private volatile List<NodeAndType> unmatchedNodesOrigin;
 
-	// TODO Attention! Variable is volatile, will be lost at serialization!
 	/**
 	 * this list stores the junction nodes from the original model which weren't
 	 * found in the new version of the model.
+	 * 
+	 * Variable is volatile, will be lost at serialization!
 	 */
 	private volatile List<NodeAndType> unmatchedJunctionnodesOrigin;
 
@@ -235,11 +239,10 @@ public class ConsistencyData {
 		return null;
 	}
 
-	// TODO Delete?
 	/**
-	 * This method returns the result of a match between two nodes if they one
+	 * This method returns the result of a match between two nodes if one
 	 * of the nodes has already been compared with at least one other node. So
-	 * the normalization doesn't have to be computed again.
+	 * the normalizations don't have to be computed again.
 	 * 
 	 * @param tempNode
 	 *            the node which is looked up in the stored results
@@ -248,7 +251,6 @@ public class ConsistencyData {
 	 * @return a ComparedNodePair which holds inter alia the normalized label of
 	 *         the looked up token
 	 */
-	@Deprecated
 	public ComparedNodePair nodeAlreadyCompared(Node tempNode,
 			NodeType tempNodeType) {
 

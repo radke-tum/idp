@@ -136,7 +136,7 @@ public class Normalizer {
 
 		if (normalizer == null) {
 			throw new ConsistencyException(
-					"Couldn't initialuze the Normalizer. Maybe something was changed in one of the text normalization classes.",
+					"Couldn't initialize the Normalizer. Maybe something was changed in one of the text normalization classes.",
 					new NullPointerException());
 		} else {
 			normalizer.checkMatchMethods(matchMethods);
@@ -275,7 +275,6 @@ public class Normalizer {
 
 				}
 				if (filterStopwords) {
-					// TODO ask user which stopword language he wants to filter
 					newSequence = stopwordsFilter.filterStopWords(newSequence,
 							true, false);
 					printTokens("StopWordFilter", newSequence);

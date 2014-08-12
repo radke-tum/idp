@@ -67,7 +67,7 @@ public class AttributeMatcher extends MatchMethod {
 	 * @param tempNodeOriginType
 	 * @param tempNodeNew
 	 * @param tempNodeNewType
-	 * @return
+	 * @return TODO
 	 */
 	private double iterateOverAttributeTypes(Node tempNodeOrigin,
 			NodeType tempNodeOriginType, Node tempNodeNew,

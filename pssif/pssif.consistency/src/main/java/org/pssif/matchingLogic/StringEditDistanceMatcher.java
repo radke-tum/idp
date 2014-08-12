@@ -40,6 +40,7 @@ public class StringEditDistanceMatcher extends MatchMethod {
 			List<Token> tokensOrigin, List<Token> tokensNew) {
 		double result = 0;
 
+	
 		result = levenshtein.getSimilarity(
 				Methods.getStringFromTokens(tokensOrigin),
 				Methods.getStringFromTokens(tokensNew));

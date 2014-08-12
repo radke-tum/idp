@@ -8,6 +8,7 @@ import java.util.Set;
 import org.pssif.comparedDataStructures.ComparedLabelPair;
 import org.pssif.consistencyDataStructures.ConsistencyData;
 import org.pssif.consistencyDataStructures.NodeAndType;
+import org.pssif.consistencyDataStructures.Token;
 import org.pssif.exception.ConsistencyException;
 import org.pssif.mainProcesses.Methods;
 import org.pssif.matchingLogic.MatchMethod;
@@ -27,7 +28,6 @@ import de.tum.pssif.core.metamodel.NodeType;
 import de.tum.pssif.core.metamodel.NodeTypeBase;
 import de.tum.pssif.core.metamodel.PSSIFCanonicMetamodelCreator;
 import de.tum.pssif.core.model.Edge;
-import de.tum.pssif.core.model.JunctionNode;
 import de.tum.pssif.core.model.Model;
 import de.tum.pssif.core.model.Node;
 
@@ -205,9 +205,6 @@ public class MergingProcess {
 				while (tempNodeOriginIterator.hasNext()) {
 
 					Node tempNodeOrigin = tempNodeOriginIterator.next();
-
-					System.out.println(Methods.findName(junctionNodeType,
-							tempNodeOrigin));
 
 					if (compareWithJunctionsOfNewModel(tempNodeOrigin,
 							junctionNodeType)) {
@@ -696,8 +693,8 @@ public class MergingProcess {
 		String labelOriginNormalized = normalizer.normalizeLabel(labelOrigin);
 		String labelNewNormalized = normalizer.normalizeLabel(labelNew);
 		
-		String labelOriginSEDNormalized = Methods.getStringFromTokens(normalizer.createNormalizedTokensFromLabel(labelOrigin, true, true, false, false));
-		String labelNewSEDNormalized = Methods.getStringFromTokens(normalizer.createNormalizedTokensFromLabel(labelNew, true, true, false, false));
+		List<Token> labelOriginSEDNormalized = normalizer.createNormalizedTokensFromLabel(labelOrigin, true, false, false, false);
+		List<Token> labelNewSEDNormalized = normalizer.createNormalizedTokensFromLabel(labelNew, true, false, false, false);
 
 		boolean traceLink = false;
 		boolean merge = false;
@@ -716,10 +713,9 @@ public class MergingProcess {
 		double stringEditDistanceResult = stringEditDistanceMatcher.executeMatching(
 				tempNodeOrigin, tempNodeNew, originalModel, newModel,
 				metaModelOriginal, metaModelNew, actTypeOriginModel,
-				actTypeNewModel, labelOriginSEDNormalized, labelNewSEDNormalized,
-				null, null);
+				actTypeNewModel,null , null,
+				labelOriginSEDNormalized, labelNewSEDNormalized);
 
-		if (exactMatchResult != 0) {
 			if ((attributeMatchResult >= 1.0) && (exactMatchResult == 1)) {
 				merge = true;
 
@@ -729,7 +725,7 @@ public class MergingProcess {
 						traceLink, merge, exactMatchResult,
 						attributeMatchResult, stringEditDistanceResult);
 			} else {
-				if ((attributeMatchResult >= 0.5) || (stringEditDistanceResult >= 0.7)) {
+				if ((attributeMatchResult >= 0.75) && (stringEditDistanceResult >= 0.8)) {
 					traceLink = true;
 
 					saveMergedNodePair(tempNodeOrigin, tempNodeNew,
@@ -739,10 +735,6 @@ public class MergingProcess {
 							exactMatchResult, attributeMatchResult, stringEditDistanceResult);
 				}
 			}
-		} else {
-			// no match found between the two nodes
-		}
-
 	}
 
 	/**
