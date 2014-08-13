@@ -49,11 +49,14 @@ public class DeriveRequirementPopup {
 		while (iterator.hasNext()) {
 			Attribute attr = iterator.next();
 			JTextField attrText = new JTextField();
-			inputs[i] = new JLabel(attr.getName().toString());
-			i++;
-			inputs[i] = attrText;
-			attrTextFields.put(attr, attrText);
-			i++;
+			if (!(attr.getName().equalsIgnoreCase(PSSIFConstants.BUILTIN_ATTRIBUTE_VALIDITY_START) ||
+					attr.getName().equalsIgnoreCase(PSSIFConstants.BUILTIN_ATTRIBUTE_VALIDITY_END)	)) {
+				inputs[i] = new JLabel(attr.getName().toString()); 
+				i++;
+				inputs[i] = attrText;
+				attrTextFields.put(attr, attrText);
+				i++;
+			}
 		}
 		
     	JOptionPane.showMessageDialog(null, inputs, "derive requirement node", JOptionPane.PLAIN_MESSAGE);
