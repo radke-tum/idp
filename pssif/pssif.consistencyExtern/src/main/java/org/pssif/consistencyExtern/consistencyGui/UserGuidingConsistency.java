@@ -18,6 +18,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.WindowConstants;
 import javax.swing.table.TableModel;
 
 import org.pssif.comparedDataStructures.ComparedNodePair;
@@ -40,6 +41,8 @@ import de.tum.pssif.core.model.Model;
  */
 public class UserGuidingConsistency {
 
+	static boolean cancelMerge = false;
+
 	/**
 	 * This method controls the gui of the consistency process. First the dialog
 	 * to let the user choose the match methods is opened. Then the user is
@@ -57,23 +60,30 @@ public class UserGuidingConsistency {
 	 *            the metamodel of the new model
 	 * @return the list of node pairs which shall be merged
 	 */
-	public static List<ComparedNodePair> startConsistencyCheck(Model originalModel,
-			Model newModel, Metamodel metaModelOriginal, Metamodel metaModelNew) {
+	public static List<ComparedNodePair> startConsistencyCheck(
+			Model originalModel, Model newModel, Metamodel metaModelOriginal,
+			Metamodel metaModelNew) {
 
 		List<MatchMethod> matchMethods = openChooseMatchingMethodsPopup();
 
-		openChooseTresholdsPopup();
+		if (matchMethods != null) {
 
-		ConsistencyData consistencyData = CompairsonProcess.main(originalModel,
-				newModel, metaModelOriginal, metaModelNew, matchMethods);
+			openChooseTresholdsPopup();
 
-		consistencyData = openChooseMergeCandidatesPopup(consistencyData);
+			ConsistencyData consistencyData = CompairsonProcess.main(
+					originalModel, newModel, metaModelOriginal, metaModelNew,
+					matchMethods);
 
-		List<ComparedNodePair> result = consistencyData.getEqualsList();
-		
-		consistencyData.resetComparedNodePairList();
-		
-		return result;
+			consistencyData = openChooseMergeCandidatesPopup(consistencyData);
+
+			List<ComparedNodePair> result = consistencyData.getEqualsList();
+
+			consistencyData.resetComparedNodePairList();
+
+			return result;
+		} else {
+			return null;
+		}
 	}
 
 	/**
@@ -88,6 +98,7 @@ public class UserGuidingConsistency {
 		dialog.setLayout(new BorderLayout());
 		dialog.setSize(280, 180);
 		dialog.setModalityType(ModalityType.APPLICATION_MODAL);
+		dialog.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 
 		final JLabel labelSyn = new JLabel("Syntactic Threshold:");
 		final JTextField synTresh = new JTextField();
@@ -107,24 +118,38 @@ public class UserGuidingConsistency {
 			public void actionPerformed(final ActionEvent e) {
 				double synTreshold = 0, semTreshold = 0, conTreshold = 0;
 				boolean nonEmptyFields = true;
+				boolean valuesAreDouble = true;
 
-				if (synTresh.getText() != null) {
-					synTreshold = Double.parseDouble(synTresh.getText());
+				if (!synTresh.getText().isEmpty()) {
+					try {
+						synTreshold = Double.parseDouble(synTresh.getText());
+					} catch (NumberFormatException nfE) {
+						valuesAreDouble = false;
+					}
 				} else {
 					nonEmptyFields = false;
 				}
-				if (semTresh.getText() != null) {
-					semTreshold = Double.parseDouble(semTresh.getText());
+				if (!semTresh.getText().isEmpty()) {
+					try {
+						semTreshold = Double.parseDouble(semTresh.getText());
+					} catch (NumberFormatException nfE) {
+						valuesAreDouble = false;
+					}
 				} else {
 					nonEmptyFields = false;
 				}
-				if (conTresh.getText() != null) {
-					conTreshold = Double.parseDouble(conTresh.getText());
+				if (!conTresh.getText().isEmpty()) {
+					try {
+						conTreshold = Double.parseDouble(conTresh.getText());
+					} catch (NumberFormatException nfE) {
+						valuesAreDouble = false;
+					}
 				} else {
 					nonEmptyFields = false;
 				}
 
 				if (nonEmptyFields
+						&& valuesAreDouble
 						&& tresholdsAreValid(synTreshold, semTreshold,
 								conTreshold)) {
 					dialog.setVisible(false);
@@ -186,6 +211,7 @@ public class UserGuidingConsistency {
 		dialog.setLayout(new BorderLayout());
 		dialog.setSize(900, 600);
 		dialog.setModalityType(ModalityType.APPLICATION_MODAL);
+		dialog.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 
 		final TableModel tableModel = new MatchCandidateTableModel(
 				consistencyData.getEqualsCandidateList());
@@ -230,26 +256,33 @@ public class UserGuidingConsistency {
 	 */
 	public static boolean openConsistencyPopUp() {
 
-		boolean result = false;
+		boolean res = false;
 
-		Object[] options = { "Merge existing into new one", "Copy new to existing" };
-		int n = JOptionPane
-				.showOptionDialog(
-						null,
-						"You have imported a second model into the integration framework.\n \n What would you like to do with the original and the newly imported model?",
-						"Merge Models", JOptionPane.YES_NO_OPTION,
-						JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+		Object[] options = { "Merge existing into new one",
+				"Copy new to existing" };
 
-		switch (n) {
-		case JOptionPane.YES_OPTION:
-			result = true;
-			break;
-		case JOptionPane.NO_OPTION:
-			result = false;
-			break;
+		JOptionPane jop = new JOptionPane(
+				"You have imported a second model into the integration framework.\n \n What would you like to do with the original and the newly imported model?");
+		jop.setOptionType(JOptionPane.YES_NO_OPTION);
+		jop.setMessageType(JOptionPane.QUESTION_MESSAGE);
+		jop.setOptions(options);
+
+		JDialog dialog = jop.createDialog(null,
+				"Find model corresponces or merge different model versions");
+		dialog.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+
+		dialog.add(jop);
+		dialog.setVisible(true);
+
+		String result = (String) jop.getValue();
+
+		if (result.equals("Merge existing into new one")) {
+			res = true;
+		} else if (result.equals("Copy new to existing")) {
+			res = false;
 		}
 
-		return result;
+		return res;
 	}
 
 	/**
@@ -276,7 +309,8 @@ public class UserGuidingConsistency {
 	/**
 	 * This method creates a dialogue where the user can choose the desired
 	 * methods together with the preferences. Furthermore it's checked if the
-	 * weights which the user entered are valid.
+	 * weights which the user entered are valid. If the user hits
+	 * "Cancel the merge" nothing happens and no additional model is imported.
 	 * 
 	 * @param methods
 	 *            the list of match method objects
@@ -292,6 +326,7 @@ public class UserGuidingConsistency {
 		dialog.setSize(700, 400);
 		dialog.setModalityType(ModalityType.APPLICATION_MODAL);
 		dialog.setResizable(false);
+		dialog.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 
 		final TableModel tableModel = new MethodChooseTableModel(methods);
 
@@ -310,8 +345,6 @@ public class UserGuidingConsistency {
 				if (chosenMethodsAreValid(methods)) {
 					dialog.setVisible(false);
 				} else {
-					// TODO alert the user that metric weights have to be in the
-					// interval between [0..1];
 					dialog.setVisible(false);
 					chooseMatchingMethodsPopup(methods);
 				}
@@ -324,10 +357,9 @@ public class UserGuidingConsistency {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO implement
-				// dialog.setVisible(false);
-				throw new RuntimeException(
-						"Unhandled Case!! Cancel merge not yet implemented");
+				cancelMerge = true;
+
+				dialog.setVisible(false);
 			}
 		});
 
@@ -340,7 +372,11 @@ public class UserGuidingConsistency {
 
 		dialog.setVisible(true);
 
-		return methods;
+		if (!cancelMerge) {
+			return methods;
+		} else {
+			return null;
+		}
 	}
 
 	/**
