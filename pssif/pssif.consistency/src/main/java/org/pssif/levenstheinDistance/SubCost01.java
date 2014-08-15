@@ -1,5 +1,5 @@
 /**
- * Source: SubCost01 (modified)
+ * Source: SubCost01 (modified by Andreas Genz)
  * from folder SimMetrics --> Src
  */
 

@@ -1,5 +1,5 @@
 /**
- * Source: Levenshtein (modified)
+ * Source: Levenshtein (modified by Andreas Genz)
  * from folder SimMetrics --> Src
  */
 
