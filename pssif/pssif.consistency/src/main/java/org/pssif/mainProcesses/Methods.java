@@ -144,8 +144,11 @@ public class Methods {
 	public static String getStringFromTokens(List<Token> tokens) {
 		String result = "";
 
-		for (Token token : tokens) {
-			result += token.getWord() + " ";
+		for(int i=0; i<tokens.size(); i++){
+			result += tokens.get(i).getWord();
+			if(!(i == (tokens.size()-1))){
+				result+= " ";
+			}
 		}
 
 		return result;

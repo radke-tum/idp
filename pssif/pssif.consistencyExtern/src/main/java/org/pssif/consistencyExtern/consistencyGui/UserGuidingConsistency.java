@@ -395,6 +395,7 @@ public class UserGuidingConsistency {
 		if (!cancelMerge) {
 			return methods;
 		} else {
+			cancelMerge = false;
 			return null;
 		}
 	}
