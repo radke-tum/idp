@@ -2,26 +2,22 @@ package model;
 
 import graph.model.IMyNode;
 import graph.model.MyEdgeType;
-import graph.model.MyJunctionNode;
 import graph.model.MyNode;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.LinkedHashMap;
 import java.util.Map.Entry;
 import java.util.Set;
 
 import org.pssif.consistencyDataStructures.NodeAndType;
-import org.pssif.exception.ConsistencyException;
+import org.pssif.consistencyExceptions.ConsistencyException;
 import org.pssif.mainProcesses.Methods;
 import org.pssif.mergedDataStructures.MergedNodePair;
 
-import de.tum.pssif.core.common.PSSIFConstants;
 import de.tum.pssif.core.common.PSSIFOption;
 import de.tum.pssif.core.common.PSSIFValue;
 import de.tum.pssif.core.metamodel.Attribute;
