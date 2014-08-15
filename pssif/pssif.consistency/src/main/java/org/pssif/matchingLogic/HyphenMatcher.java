@@ -3,6 +3,7 @@ package org.pssif.matchingLogic;
 import java.util.List;
 
 import org.pssif.consistencyDataStructures.Token;
+import org.pssif.consistencyExceptions.MatchMethodException;
 
 import de.tum.pssif.core.metamodel.Metamodel;
 import de.tum.pssif.core.metamodel.NodeType;
@@ -42,7 +43,7 @@ public class HyphenMatcher extends MatchMethod {
 			Metamodel metaModelNew, NodeType actTypeOriginModel,
 			NodeType actTypeNewModel, String labelOrigin, String labelNew,
 			List<Token> tokensOrigin, List<Token> tokensNew) {
-		throw new RuntimeException("Not yet implemented!");
+		throw new MatchMethodException("Not yet implemented!");
 	}
 
 }

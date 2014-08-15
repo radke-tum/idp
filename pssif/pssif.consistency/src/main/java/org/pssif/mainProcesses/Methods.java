@@ -102,7 +102,6 @@ public class Methods {
 	 * @author Andreas
 	 * @return whether the given edge is directed or not
 	 */
-	@SuppressWarnings("unused")
 	private static boolean isEdgeDirected(EdgeType type, Edge edge) {
 		Collection<AttributeGroup> attrgroups = type.getAttributeGroups();
 

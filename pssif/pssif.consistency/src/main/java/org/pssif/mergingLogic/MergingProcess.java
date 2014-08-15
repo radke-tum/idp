@@ -9,7 +9,7 @@ import org.pssif.comparedDataStructures.ComparedLabelPair;
 import org.pssif.consistencyDataStructures.ConsistencyData;
 import org.pssif.consistencyDataStructures.NodeAndType;
 import org.pssif.consistencyDataStructures.Token;
-import org.pssif.exception.ConsistencyException;
+import org.pssif.consistencyExceptions.ConsistencyException;
 import org.pssif.mainProcesses.Methods;
 import org.pssif.matchingLogic.MatchMethod;
 import org.pssif.matchingLogic.MatchingMethods;

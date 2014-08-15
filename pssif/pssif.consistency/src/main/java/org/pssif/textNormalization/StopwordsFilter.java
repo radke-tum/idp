@@ -7,42 +7,59 @@ import java.util.List;
 
 import org.pssif.consistencyDataStructures.Token;
 
+/**
+ * THis class implements a normalization step used in the normalization class.
+ * It takes a list of tokens and deletes the germand and/or english stopwords
+ * from it.
+ * 
+ * @author Andreas
+ * 
+ */
 public class StopwordsFilter {
 
-	private final StopWordList stopwordListGerman,stopwordListEnglish;
-	
-	public StopwordsFilter(){
+	private final StopWordList stopwordListGerman, stopwordListEnglish;
+
+	public StopwordsFilter() {
 		stopwordListGerman = new StopWordListGerman();
 		stopwordListEnglish = new StopWordListEnglish();
 	}
 
-	
-	public List<Token> filterStopWords(List<Token> tokens, boolean filterGermanStopWords, boolean filterEnglishStopWords){
-		if(filterGermanStopWords){
+	/**
+	 * This method get's a list of tokens and deletes german and/or english
+	 * stopwords from it.
+	 * 
+	 * @param tokens
+	 *            The list of tokens where stopwords should be filtered.
+	 * @param filterGermanStopWords
+	 *            A bool saying whether german stopwords should be filtered
+	 * @param filterEnglishStopWords
+	 *            A bool saying whether english stopwords should be filtered
+	 * @return The list without the stopwords.
+	 */
+	public List<Token> filterStopWords(List<Token> tokens,
+			boolean filterGermanStopWords, boolean filterEnglishStopWords) {
+		if (filterGermanStopWords) {
 			tokens = doWork(tokens, stopwordListGerman);
 		}
-		if(filterEnglishStopWords){
+		if (filterEnglishStopWords) {
 			tokens = doWork(tokens, stopwordListEnglish);
 		}
-		
+
 		return tokens;
 	}
-	
+
 	/**
 	 * modified by Andreas Genz
 	 * 
-	 * Source: 
-	 * StopWordList
-	 *  StopWordlistGerman
-	 * StopWordListEnglish
-	 * GermanStopWordFilterOperator
-	 * EnglishStopWordFilterOperator
+	 * Source: StopWordList StopWordlistGerman StopWordListEnglish
+	 * GermanStopWordFilterOperator EnglishStopWordFilterOperator
 	 * 
 	 * from folder: Text Processing (Tokenizing, Stemming, StopWords)
+	 * 
 	 * @author RapidMiner
-	 *
+	 * 
 	 */
-	
+
 	/*
 	 * RapidMiner Text Processing Extension
 	 * 
@@ -67,7 +84,7 @@ public class StopwordsFilter {
 	 */
 	/**
 	 * @author Sebastian Land
-	 *
+	 * 
 	 */
 	private interface StopWordList {
 		/**
@@ -76,28 +93,27 @@ public class StopwordsFilter {
 		public boolean isStopword(String str);
 	}
 
-	
-	
 	/**
 	 * Stopwords for the German language
+	 * 
 	 * @author Sebastian Land
 	 */
 	private class StopWordListGerman implements StopWordList {
 
-		public final String[] STOP_WORDS_SENTIMENT = new String[] {
-				"ab", "bei", "da", "deshalb", "ein", "für", "haben", "hier",
-				"ich", "ja", "kann", "machen", "muesste", "nach", "oder",
-				"seid", "sonst", "und", "vom", "wann", "wenn", "wie", "zu",
-				"bin", "eines", "hat", "manche", "solches", "an", "anderm",
-				"bis", "das", "deinem", "demselben", "dir", "doch", "einig",
-				"er", "eurer", "hatte", "ihnen", "ihre", "ins", "jenen",
-				"keinen", "manchem", "meinen", "seine", "soll", "unserm",
-				"welche", "werden", "wollte", "während", "alle", "allem",
-				"allen", "aller", "alles", "als", "also", "am", "ander",
-				"andere", "anderem", "anderen", "anderer", "anderes", "andern",
-				"anderr", "anders", "auch", "auf", "aus", "bist", "bsp.",
-				"daher", "damit", "dann", "dasselbe", "dazu", "daß", "dein",
-				"deine", "deinen", "deiner", "deines", "dem", "den", "denn",
+		public final String[] STOP_WORDS_SENTIMENT = new String[] { "ab",
+				"bei", "da", "deshalb", "ein", "für", "haben", "hier", "ich",
+				"ja", "kann", "machen", "muesste", "nach", "oder", "seid",
+				"sonst", "und", "vom", "wann", "wenn", "wie", "zu", "bin",
+				"eines", "hat", "manche", "solches", "an", "anderm", "bis",
+				"das", "deinem", "demselben", "dir", "doch", "einig", "er",
+				"eurer", "hatte", "ihnen", "ihre", "ins", "jenen", "keinen",
+				"manchem", "meinen", "seine", "soll", "unserm", "welche",
+				"werden", "wollte", "während", "alle", "allem", "allen",
+				"aller", "alles", "als", "also", "am", "ander", "andere",
+				"anderem", "anderen", "anderer", "anderes", "andern", "anderr",
+				"anders", "auch", "auf", "aus", "bist", "bsp.", "daher",
+				"damit", "dann", "dasselbe", "dazu", "daß", "dein", "deine",
+				"deinen", "deiner", "deines", "dem", "den", "denn",
 				"denselben", "der", "derer", "derselbe", "derselben", "des",
 				"desselben", "dessen", "dich", "die", "dies", "diese",
 				"dieselbe", "dieselben", "diesem", "diesen", "dieser",
@@ -245,9 +261,9 @@ public class StopwordsFilter {
 				"überall", "überallhin", "überdies", "übermorgen", "übrig",
 				"übrigens" };
 
-		public final String[] STOP_WORDS = new String[] { "ab", "aber",
-				"Aber", "alle", "allein", "allem", "allen", "aller", "als",
-				"Als", "also", "alt", "am", "Am", "an", "andere", "anderen",
+		public final String[] STOP_WORDS = new String[] { "ab", "aber", "Aber",
+				"alle", "allein", "allem", "allen", "aller", "als", "Als",
+				"also", "alt", "am", "Am", "an", "andere", "anderen",
 				"arbeiten", "auch", "Auch", "auf", "Auf", "Aufgabe", "aus",
 				"außer", "bald", "beginnen", "bei", "Bei", "beide", "beiden",
 				"beim", "bekannt", "bekennen", "bereits", "berichten",
@@ -313,7 +329,7 @@ public class StopwordsFilter {
 				"womit", "worden", "wurde", "wurden", "würden", "zehn",
 				"zeigen", "zentral", "zu", "Zu", "zum", "zur", "zwar", "zwei",
 				"zweit", "zwischen", "zwischens" };
-		
+
 		private HashSet<String> stopWordSet = new HashSet<String>();
 
 		public StopWordListGerman() {
@@ -326,47 +342,100 @@ public class StopwordsFilter {
 		}
 
 	}
-	
+
 	/**
 	 * Stopwords for the English language
+	 * 
 	 * @author Sebastian Land
 	 */
-	private class StopWordListEnglish implements StopWordList{
+	private class StopWordListEnglish implements StopWordList {
 
-		private final String[] STOP_WORDS = new String[] { "a", "abaft", "aboard", "about", "above", "across", "afore", "aforesaid", "after", "again", "against", "agin", "ago", "aint", "albeit", "all", "almost", "alone", "along", "alongside", "already", "also", "although", "always", "am", "american", "amid", "amidst", "among", "amongst", "an", "and", "anent",
-				"another", "any", "anybody", "anyone", "anything", "are", "aren", "around", "as", "aslant", "astride", "at", "athwart", "away", "back", "bar", "barring", "be", "because", "been", "before", "behind", "being", "below", "beneath", "beside", "besides", "best", "better", "between", "betwixt", "beyond", "both", "but", "by", "can", "cannot", "certain",
-				"circa", "close", "concerning", "considering", "cos", "could", "couldn", "couldst", "dare", "dared", "daren", "dares", "daring", "despite", "did", "didn", "different", "directly", "do", "does", "doesn", "doing", "done", "don", "dost", "doth", "down", "during", "durst", "each", "early", "either", "em", "english", "enough", "ere", "even", "ever",
-				"every", "everybody", "everyone", "everything", "except", "excepting", "failing", "far", "few", "first", "five", "following", "for", "four", "from", "gonna", "gotta", "had", "hadn", "hard", "has", "hasn", "hast", "hath", "have", "haven", "having", "he", "her", "here", "hers", "herself", "high", "him", "himself", "his", "home", "how", "howbeit",
-				"however", "id", "if", "ill", "immediately", "important", "in", "inside", "instantly", "into", "is", "isn", "it", "its", "itself", "ve", "just", "large", "last", "later", "least", "left", "less", "lest", "let", "like", "likewise", "little", "living", "long", "many", "may", "mayn", "me", "mid", "midst", "might", "mightn", "mine", "minus", "more",
-				"most", "much", "must", "mustn", "my", "myself", "near", "neath", "need", "needed", "needing", "needn", "needs", "neither", "never", "nevertheless", "new", "next", "nigh", "nigher", "nighest", "nisi", "no", "one", "nobody", "none", "nor", "not", "nothing", "notwithstanding", "now", "er", "of", "off", "often", "on", "once", "oneself", "only",
-				"onto", "open", "or", "other", "otherwise", "ought", "oughtn", "our", "ours", "ourselves", "out", "outside", "over", "own", "past", "pending", "per", "perhaps", "plus", "possible", "present", "probably", "provided", "providing", "public", "qua", "quite", "rather", "re", "real", "really", "respecting", "right", "round", "same", "sans", "save",
-				"saving", "second", "several", "shall", "shalt", "shan", "she", "shed", "shell", "short", "should", "shouldn", "since", "six", "small", "so", "some", "somebody", "someone", "something", "sometimes", "soon", "special", "still", "such", "summat", "supposing", "sure", "than", "that", "the", "thee", "their", "theirs", "them", "themselves", "then",
-				"there", "these", "they", "thine", "this", "tho", "those", "thou", "though", "three", "thro", "through", "throughout", "thru", "thyself", "till", "to", "today", "together", "too", "touching", "toward", "towards", "true", "twas", "tween", "twere", "twill", "twixt", "two", "twould", "under", "underneath", "unless", "unlike", "until", "unto", "up",
-				"upon", "us", "used", "usually", "versus", "very", "via", "vice", "vis-a-vis", "wanna", "wanting", "was", "wasn", "way", "we", "well", "were", "weren", "wert", "what", "whatever", "when", "whencesoever", "whenever", "whereas", "where", "whether", "which", "whichever", "whichsoever", "while", "whilst", "who", "whoever", "whole", "whom", "whore",
-				"whose", "whoso", "whosoever", "will", "with", "within", "without", "wont", "would", "wouldn", "wouldst", "ye", "yet", "you", "your", "yours", "yourself", "yourselves" };
-		
-		public final HashSet<String> STOPWORD_SET = new HashSet<String>(Arrays.asList(STOP_WORDS));
+		private final String[] STOP_WORDS = new String[] { "a", "abaft",
+				"aboard", "about", "above", "across", "afore", "aforesaid",
+				"after", "again", "against", "agin", "ago", "aint", "albeit",
+				"all", "almost", "alone", "along", "alongside", "already",
+				"also", "although", "always", "am", "american", "amid",
+				"amidst", "among", "amongst", "an", "and", "anent", "another",
+				"any", "anybody", "anyone", "anything", "are", "aren",
+				"around", "as", "aslant", "astride", "at", "athwart", "away",
+				"back", "bar", "barring", "be", "because", "been", "before",
+				"behind", "being", "below", "beneath", "beside", "besides",
+				"best", "better", "between", "betwixt", "beyond", "both",
+				"but", "by", "can", "cannot", "certain", "circa", "close",
+				"concerning", "considering", "cos", "could", "couldn",
+				"couldst", "dare", "dared", "daren", "dares", "daring",
+				"despite", "did", "didn", "different", "directly", "do",
+				"does", "doesn", "doing", "done", "don", "dost", "doth",
+				"down", "during", "durst", "each", "early", "either", "em",
+				"english", "enough", "ere", "even", "ever", "every",
+				"everybody", "everyone", "everything", "except", "excepting",
+				"failing", "far", "few", "first", "five", "following", "for",
+				"four", "from", "gonna", "gotta", "had", "hadn", "hard", "has",
+				"hasn", "hast", "hath", "have", "haven", "having", "he", "her",
+				"here", "hers", "herself", "high", "him", "himself", "his",
+				"home", "how", "howbeit", "however", "id", "if", "ill",
+				"immediately", "important", "in", "inside", "instantly",
+				"into", "is", "isn", "it", "its", "itself", "ve", "just",
+				"large", "last", "later", "least", "left", "less", "lest",
+				"let", "like", "likewise", "little", "living", "long", "many",
+				"may", "mayn", "me", "mid", "midst", "might", "mightn", "mine",
+				"minus", "more", "most", "much", "must", "mustn", "my",
+				"myself", "near", "neath", "need", "needed", "needing",
+				"needn", "needs", "neither", "never", "nevertheless", "new",
+				"next", "nigh", "nigher", "nighest", "nisi", "no", "one",
+				"nobody", "none", "nor", "not", "nothing", "notwithstanding",
+				"now", "er", "of", "off", "often", "on", "once", "oneself",
+				"only", "onto", "open", "or", "other", "otherwise", "ought",
+				"oughtn", "our", "ours", "ourselves", "out", "outside", "over",
+				"own", "past", "pending", "per", "perhaps", "plus", "possible",
+				"present", "probably", "provided", "providing", "public",
+				"qua", "quite", "rather", "re", "real", "really", "respecting",
+				"right", "round", "same", "sans", "save", "saving", "second",
+				"several", "shall", "shalt", "shan", "she", "shed", "shell",
+				"short", "should", "shouldn", "since", "six", "small", "so",
+				"some", "somebody", "someone", "something", "sometimes",
+				"soon", "special", "still", "such", "summat", "supposing",
+				"sure", "than", "that", "the", "thee", "their", "theirs",
+				"them", "themselves", "then", "there", "these", "they",
+				"thine", "this", "tho", "those", "thou", "though", "three",
+				"thro", "through", "throughout", "thru", "thyself", "till",
+				"to", "today", "together", "too", "touching", "toward",
+				"towards", "true", "twas", "tween", "twere", "twill", "twixt",
+				"two", "twould", "under", "underneath", "unless", "unlike",
+				"until", "unto", "up", "upon", "us", "used", "usually",
+				"versus", "very", "via", "vice", "vis-a-vis", "wanna",
+				"wanting", "was", "wasn", "way", "we", "well", "were", "weren",
+				"wert", "what", "whatever", "when", "whencesoever", "whenever",
+				"whereas", "where", "whether", "which", "whichever",
+				"whichsoever", "while", "whilst", "who", "whoever", "whole",
+				"whom", "whore", "whose", "whoso", "whosoever", "will", "with",
+				"within", "without", "wont", "would", "wouldn", "wouldst",
+				"ye", "yet", "you", "your", "yours", "yourself", "yourselves" };
+
+		public final HashSet<String> STOPWORD_SET = new HashSet<String>(
+				Arrays.asList(STOP_WORDS));
 
 		public boolean isStopword(String str) {
 			return STOPWORD_SET.contains(str.toLowerCase());
 		}
 
 	}
-	
+
 	/**
-	 * A standard stopword operator for German texts, which removes every token equal to a stopword.
+	 * A standard stopword operator for German texts, which removes every token
+	 * equal to a stopword.
 	 * 
 	 * @author Sebastian Land
 	 */
-		private List<Token> doWork(List<Token> tokens, StopWordList stopwords) {
-			
-			List<Token> newSequence = new LinkedList<Token>();
-			
-			for (Token token: tokens) {
-				if (!stopwords.isStopword(token.getWord()))
-					newSequence.add(token);
-			}
-			
-			return newSequence;
+	private List<Token> doWork(List<Token> tokens, StopWordList stopwords) {
+
+		List<Token> newSequence = new LinkedList<Token>();
+
+		for (Token token : tokens) {
+			if (!stopwords.isStopword(token.getWord()))
+				newSequence.add(token);
 		}
+
+		return newSequence;
+	}
 }

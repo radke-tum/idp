@@ -6,13 +6,20 @@ import java.util.List;
 
 import org.pssif.consistencyDataStructures.Token;
 
+/**
+ * This class implements a normalization step used in the normalizer class. This
+ * class supplies a method "findTokens" that gets a string and returns the string as a list
+ * of tokens.
+ * 
+ * @author Andreas
+ * 
+ */
 public class Tokenizer {
 
 	/**
 	 * modified by Andreas Genz
 	 * 
-	 * Source code:
-	 * StringTokenizerOperator.java
+	 * Source code: StringTokenizerOperator.java
 	 * 
 	 * from folder: Text Processing(Tokenizing, Stemming, Stopwords)
 	 */
@@ -60,8 +67,10 @@ public class Tokenizer {
 		if (tokenChars.length - start > 0)
 			newSequence.add(new Token((new String(tokenChars, start,
 					tokenChars.length - start)).replaceAll("\\s+", "")));
-		//replaceAll function fixes bug that the last found token can contain any space characters (f.e. '\n'). This leads to wrong results of the matching algorithms.
-	
+		// replaceAll function fixes bug that the last found token can contain
+		// any space characters (f.e. '\n'). This leads to wrong results of the
+		// matching algorithms.
+
 		return newSequence;
 
 	}

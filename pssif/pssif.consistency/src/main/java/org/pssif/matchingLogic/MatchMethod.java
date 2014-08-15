@@ -23,8 +23,7 @@ Copyright (C) 2014 Andreas Genz
 import java.util.List;
 
 import org.pssif.consistencyDataStructures.Token;
-import org.pssif.exception.ConsistencyException;
-import org.pssif.exception.MatchMethodException;
+import org.pssif.consistencyExceptions.MatchMethodException;
 
 import de.tum.pssif.core.metamodel.Metamodel;
 import de.tum.pssif.core.metamodel.NodeType;

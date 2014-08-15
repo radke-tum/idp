@@ -160,16 +160,6 @@ public class MatchingProcess {
 		comparedNormalizedTokensPair = null;
 		comparedNodePair = new ComparedNodePair();
 
-		/**
-		 * here the saved normalizations, tokenizations and results of the two
-		 * nodes are retrieved if they have been compared with another node once
-		 */
-		/*
-		 * ComparedNodePair nodePairOrigin =
-		 * consistencyData.nodeAlreadyCompared( tempNodeOrigin,
-		 * actTypeOriginModel); ComparedNodePair nodePairNew =
-		 * consistencyData.nodeAlreadyCompared( tempNodeNew, actTypeNewModel);
-		 */
 
 		/**
 		 * here the strings of the old and the new node are read from the model
@@ -188,41 +178,7 @@ public class MatchingProcess {
 		List<Token> tokensOriginNodeNormalizedCompundedUnstemmed = null;
 		List<Token> tokensNewNodeNormalizedCompundedUnstemmed = null;
 
-		// TODO Remove outcommented code
-		/**
-		 * if the node from the origin model has been compared once with any
-		 * other node the tokenization and normalization result is reused.
-		 */
-		/*
-		 * if (nodePairOrigin != null) { tokensOriginNodeNormalized =
-		 * nodePairOrigin.getTokensComparison()
-		 * .getTokensOriginNodeNormalized();
-		 * tokensOriginNodeNormalizedCompundedUnstemmed = nodePairOrigin
-		 * .getTokensComparison()
-		 * .getTokensOriginNodeNormalizedCompundedUnstemmed();
-		 * 
-		 * labelOriginNodeNormalized = nodePairOrigin.getLabelComparison()
-		 * .getLabelOriginNormalized(); } else { labelOriginNodeNormalized =
-		 * normalizer .normalizeLabel(labelOriginNode); }
-		 */
-
 		labelOriginNodeNormalized = normalizer.normalizeLabel(labelOriginNode);
-
-		/**
-		 * if the node from the new model has been compared once with any other
-		 * node the tokenization and normalization result is reused.
-		 */
-		/*
-		 * if (nodePairNew != null) { tokensNewNodeNormalized =
-		 * nodePairNew.getTokensComparison() .getTokensNewNodeNormalized();
-		 * tokensNewNodeNormalizedCompundedUnstemmed = nodePairNew
-		 * .getTokensComparison()
-		 * .getTokensNewNodeNormalizedCompundedUnstemmed();
-		 * 
-		 * labelNewNodeNormalized = nodePairNew.getLabelComparison()
-		 * .getLabelNewNormalized(); } else { labelNewNodeNormalized =
-		 * normalizer.normalizeLabel(labelNewNode); }
-		 */
 
 		labelNewNodeNormalized = normalizer.normalizeLabel(labelNewNode);
 

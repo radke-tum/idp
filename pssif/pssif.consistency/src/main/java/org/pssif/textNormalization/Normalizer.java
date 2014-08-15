@@ -1,41 +1,36 @@
 package org.pssif.textNormalization;
 
-import java.io.IOException;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.pssif.consistencyDataStructures.Token;
-import org.pssif.exception.ConsistencyException;
-import org.pssif.exception.MatchMethodException;
-import org.pssif.exception.NormalizationException;
+import org.pssif.consistencyExceptions.MatchMethodException;
+import org.pssif.consistencyExceptions.NormalizationException;
 import org.pssif.mainProcesses.MatchingProcess;
 import org.pssif.matchingLogic.ContextMatcher;
 import org.pssif.matchingLogic.MatchMethod;
 import org.pssif.matchingLogic.VsmMatcher;
 
 /**
-This file is part of PSSIF Consistency. It is responsible for keeping consistency between different requirements models or versions of models.
-Copyright (C) 2014 Andreas Genz
+ This file is part of PSSIF Consistency. It is responsible for keeping consistency between different requirements models or versions of models.
+ Copyright (C) 2014 Andreas Genz
 
-    PSSIF Consistency is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+ PSSIF Consistency is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
 
-    PSSIF Consistency is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+ PSSIF Consistency is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with PSSIF Consistency.  If not, see <http://www.gnu.org/licenses/>.
-    
-    Feel free to contact me via eMail: genz@in.tum.de
-*/
+ You should have received a copy of the GNU General Public License
+ along with PSSIF Consistency.  If not, see <http://www.gnu.org/licenses/>.
 
-//TODO only do normalzation once for each node
-// at the moment it's done for every nodepair again
+ Feel free to contact me via eMail: genz@in.tum.de
+ */
 
 /**
  * This class is responsible for looking which normalization steps are necessary
@@ -110,16 +105,14 @@ public class Normalizer {
 		return semanticMetricActive;
 	}
 
+	/**
+	 * initializing all objects necessary for the normalization steps
+	 */
 	public Normalizer() {
 		this.tokenizer = new Tokenizer();
 		this.caseNormalizer = new CaseNormalizer();
 		this.stopwordsFilter = new StopwordsFilter();
-		try {
-			this.wordSplitter = new WordSplitter();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		this.wordSplitter = new WordSplitter();
 		this.stemmer = new Stemmer();
 	}
 
@@ -155,7 +148,7 @@ public class Normalizer {
 		Normalizer normalizer = new Normalizer();
 
 		if (normalizer == null) {
-			throw new ConsistencyException(
+			throw new NormalizationException(
 					"Couldn't initialize the Normalizer. Maybe something was changed in one of the text normalization classes.",
 					new NullPointerException());
 		} else {
@@ -257,7 +250,7 @@ public class Normalizer {
 					tmp = tmp.replaceAll("\\s+", "").toLowerCase();
 				}
 			} else {
-				throw new RuntimeException(
+				throw new NormalizationException(
 						"The given label is null. No Normalization possible!");
 			}
 		}
@@ -291,7 +284,7 @@ public class Normalizer {
 				if (normalizeCases) {
 					newSequence = caseNormalizer
 							.convertTokensToLowerCase(newSequence);
-					 printTokens("CaseNormalizer", newSequence);
+					printTokens("CaseNormalizer", newSequence);
 
 				}
 				if (filterStopwords) {
@@ -313,7 +306,7 @@ public class Normalizer {
 
 			} else {
 				throw new NormalizationException(
-						"The given label is null. No tokenization & normalization possible!", new NullPointerException());
+						"The given label is null. No tokenization & normalization possible!");
 			}
 		}
 
