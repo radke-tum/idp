@@ -71,8 +71,6 @@ public class GermanStemming {
 	 */
 	public String stem(String term) {
 		// Use lowercase for medium stemming.
-		// TODO Remove repeated toLowerCase conversion because given Strings are
-		// already lowerCase @author: Andreas
 		term = term.toLowerCase();
 		if (!isStemmable(term))
 			return term;

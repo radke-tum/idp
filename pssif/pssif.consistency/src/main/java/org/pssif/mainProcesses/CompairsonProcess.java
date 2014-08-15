@@ -39,8 +39,6 @@ import de.tum.pssif.core.model.Node;
  Feel free to contact me via eMail: genz@in.tum.de
  */
 
-//TODO: Add Try Catch blocks where necessary
-
 /**
  * this class represents the main class of the PSSIF-consistency checker. It is
  * responsible for the whole compairson process to run correctly. It ensures
@@ -266,9 +264,6 @@ public class CompairsonProcess {
 	 *            type in the new model
 	 * @param actTypeOriginModel
 	 *            the type of the given node
-	 * 
-	 * 
-	 * 
 	 */
 	public void iterateOverTypesOfNewModel(Node tempNodeOrigin,
 			NodeType actTypeOriginModel) {
@@ -280,12 +275,10 @@ public class CompairsonProcess {
 
 		boolean firstIteration = true;
 
-		// TODO: do a proper fix for this problem
-		// QuickFIX only!!! (problem is: If the program shall compare a node of
-		// type
-		// 'node' with the other model
-		// it's currently not matched with any other 'node' because the subtypes
-		// are not included in the first iteration of the matching
+		/**
+		 * fixes the problem, that nodes of type 'node' aren't compared
+		 * properly.
+		 */
 		if (actTypeNewModel.getName() == PSSIFConstants.ROOT_NODE_TYPE_NAME) {
 			firstIteration = false;
 		}

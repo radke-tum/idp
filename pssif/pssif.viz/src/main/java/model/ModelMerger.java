@@ -578,8 +578,6 @@ public class ModelMerger {
 			}
 		}
 
-		// TODO Performance improvement: don't create a new mymodel container
-		// each time you copy a node from an old to a new model
 		this.newModel = new MyModelContainer(modelNew, newModel.getMetamodel());
 
 		return newNode;
@@ -1388,8 +1386,7 @@ public class ModelMerger {
 				newNode.annotate(a.getKey(), a.getValue());
 			}
 		}
-		// TODO Performance improvement: don't create a new mymodel container
-		// each time you copy a node from an old to a new model
+
 		this.newModel = new MyModelContainer(modelNew, newModel.getMetamodel());
 
 		return newNode;

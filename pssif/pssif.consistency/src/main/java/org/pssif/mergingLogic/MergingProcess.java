@@ -14,6 +14,7 @@ import org.pssif.mainProcesses.Methods;
 import org.pssif.matchingLogic.MatchMethod;
 import org.pssif.matchingLogic.MatchingMethods;
 import org.pssif.mergedDataStructures.MergedNodePair;
+import org.pssif.settings.Constants;
 import org.pssif.textNormalization.Normalizer;
 
 import de.tum.pssif.core.common.PSSIFConstants;
@@ -32,24 +33,24 @@ import de.tum.pssif.core.model.Model;
 import de.tum.pssif.core.model.Node;
 
 /**
-This file is part of PSSIF Consistency. It is responsible for keeping consistency between different requirements models or versions of models.
-Copyright (C) 2014 Andreas Genz
+ This file is part of PSSIF Consistency. It is responsible for keeping consistency between different requirements models or versions of models.
+ Copyright (C) 2014 Andreas Genz
 
-    PSSIF Consistency is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+ PSSIF Consistency is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
 
-    PSSIF Consistency is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+ PSSIF Consistency is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with PSSIF Consistency.  If not, see <http://www.gnu.org/licenses/>.
-    
-    Feel free to contact me via eMail: genz@in.tum.de
-*/
+ You should have received a copy of the GNU General Public License
+ along with PSSIF Consistency.  If not, see <http://www.gnu.org/licenses/>.
+
+ Feel free to contact me via eMail: genz@in.tum.de
+ */
 
 /**
  * 
@@ -65,39 +66,6 @@ Copyright (C) 2014 Andreas Genz
 public class MergingProcess {
 
 	private static final boolean debugMode = false;
-
-	// TODO extract to constants
-	/**
-	 * These are the subclasses of PSIFFDevArtifacts that are checked for
-	 * consistency
-	 */
-	private final String[] PSIFFDevArtifactSubClasses = {
-			PSSIFCanonicMetamodelCreator.N_FUNCTIONALITY,
-			PSSIFCanonicMetamodelCreator.N_REQUIREMENT,
-			PSSIFCanonicMetamodelCreator.N_USE_CASE,
-			PSSIFCanonicMetamodelCreator.N_TEST_CASE,
-			PSSIFCanonicMetamodelCreator.N_VIEW,
-			PSSIFCanonicMetamodelCreator.N_EVENT,
-			PSSIFCanonicMetamodelCreator.N_ISSUE,
-			PSSIFCanonicMetamodelCreator.N_DECISION,
-			PSSIFCanonicMetamodelCreator.N_CHANGE_EVENT };
-
-	/**
-	 * These are the subclasses of PSIFFSolArtifacts that are checked for
-	 * consistency
-	 */
-	private final String[] PSIFFSolArtifactSubClasses = {
-			PSSIFCanonicMetamodelCreator.N_BLOCK,
-			PSSIFCanonicMetamodelCreator.N_FUNCTION,
-			PSSIFCanonicMetamodelCreator.N_ACTIVITY,
-			PSSIFCanonicMetamodelCreator.N_STATE,
-			PSSIFCanonicMetamodelCreator.N_ACTOR,
-			PSSIFCanonicMetamodelCreator.N_SERVICE,
-			PSSIFCanonicMetamodelCreator.N_SOFTWARE,
-			PSSIFCanonicMetamodelCreator.N_HARDWARE,
-			PSSIFCanonicMetamodelCreator.N_MECHANIC,
-			PSSIFCanonicMetamodelCreator.N_ELECTRONIC,
-			PSSIFCanonicMetamodelCreator.N_MODULE };
 
 	/**
 	 * the first imported model
@@ -429,7 +397,7 @@ public class MergingProcess {
 
 		stringEditDistanceMatcher = MatchMethod.createMatchMethodObject(
 				MatchingMethods.STRING_EDIT_DISTANCE_MATCHING, true, 1.0);
-		
+
 		matchMethods.add(stringEditDistanceMatcher);
 
 	}
@@ -484,12 +452,12 @@ public class MergingProcess {
 	 */
 	public void typeIteration() {
 
-		for (int i = 0; i < PSIFFDevArtifactSubClasses.length; i++) {
-			iterateNodesOfType(PSIFFDevArtifactSubClasses[i], false);
+		for (int i = 0; i < Constants.PSIFFDevArtifactSubClasses.length; i++) {
+			iterateNodesOfType(Constants.PSIFFDevArtifactSubClasses[i], false);
 		}
 
-		for (int i = 0; i < PSIFFSolArtifactSubClasses.length; i++) {
-			iterateNodesOfType(PSIFFSolArtifactSubClasses[i], false);
+		for (int i = 0; i < Constants.PSIFFSolArtifactSubClasses.length; i++) {
+			iterateNodesOfType(Constants.PSIFFSolArtifactSubClasses[i], false);
 		}
 
 		iterateNodesOfType(PSSIFCanonicMetamodelCreator.N_DEV_ARTIFACT, false);
@@ -511,9 +479,6 @@ public class MergingProcess {
 	 * @param includeSubtypes
 	 *            a bool specifying whether nodes with a subtype of type shall
 	 *            too be part of the compairson process
-	 * 
-	 * 
-	 * 
 	 */
 	public void iterateNodesOfType(String type, boolean includeSubtypes) {
 
@@ -608,14 +573,18 @@ public class MergingProcess {
 
 	/**
 	 * 
-	 * This method gets real nodes from the psiffOption.
+	 * This method gets real nodes from the psiffOption and calls the method
+	 * matchNodeWithNode.
 	 * 
 	 * @param tempNodeOrigin
+	 *            node from the original model
 	 * @param actNodesNewModel
 	 *            the nodes in the new model with the same type as the original
 	 *            node
 	 * @param actTypeOriginModel
+	 *            the type of the original node
 	 * @param actTypeNewModel
+	 *            the type of the nodes in the list actNodesNewModel
 	 */
 	public void matchNodeWithNodesOfActTypeOfNewModel(Node tempNodeOrigin,
 			PSSIFOption<Node> actNodesNewModel, NodeType actTypeOriginModel,
@@ -666,9 +635,13 @@ public class MergingProcess {
 	 * matching function.
 	 * 
 	 * @param tempNodeOrigin
+	 *            a node from the original model
 	 * @param tempNodeNew
+	 *            a node from the new model
 	 * @param actTypeOriginModel
+	 *            the type of the original node
 	 * @param actTypeNewModel
+	 *            the type of the new node
 	 */
 	public void matchNodeWithNode(Node tempNodeOrigin, Node tempNodeNew,
 			NodeType actTypeOriginModel, NodeType actTypeNewModel) {
@@ -699,9 +672,13 @@ public class MergingProcess {
 	 * After that the result is stored in the consistencyData instance.
 	 * 
 	 * @param tempNodeOrigin
+	 *            a node from the original model
 	 * @param tempNodeNew
+	 *            a node from the new model
 	 * @param actTypeOriginModel
+	 *            the type of the original node
 	 * @param actTypeNewModel
+	 *            the type of the new node
 	 */
 	private void matchNodes(Node tempNodeOrigin, Node tempNodeNew,
 			NodeType actTypeOriginModel, NodeType actTypeNewModel) {
@@ -712,9 +689,13 @@ public class MergingProcess {
 
 		String labelOriginNormalized = normalizer.normalizeLabel(labelOrigin);
 		String labelNewNormalized = normalizer.normalizeLabel(labelNew);
-		
-		List<Token> labelOriginSEDNormalized = normalizer.createNormalizedTokensFromLabel(labelOrigin, true, false, false, false);
-		List<Token> labelNewSEDNormalized = normalizer.createNormalizedTokensFromLabel(labelNew, true, false, false, false);
+
+		List<Token> labelOriginSEDNormalized = normalizer
+				.createNormalizedTokensFromLabel(labelOrigin, true, false,
+						false, false);
+		List<Token> labelNewSEDNormalized = normalizer
+				.createNormalizedTokensFromLabel(labelNew, true, false, false,
+						false);
 
 		boolean traceLink = false;
 		boolean merge = false;
@@ -729,54 +710,45 @@ public class MergingProcess {
 				metaModelOriginal, metaModelNew, actTypeOriginModel,
 				actTypeNewModel, labelOriginNormalized, labelNewNormalized,
 				null, null);
-		
-		double stringEditDistanceResult = stringEditDistanceMatcher.executeMatching(
-				tempNodeOrigin, tempNodeNew, originalModel, newModel,
-				metaModelOriginal, metaModelNew, actTypeOriginModel,
-				actTypeNewModel,null , null,
-				labelOriginSEDNormalized, labelNewSEDNormalized);
 
-			if ((attributeMatchResult >= 1.0) && (exactMatchResult == 1)) {
-				merge = true;
+		double stringEditDistanceResult = stringEditDistanceMatcher
+				.executeMatching(tempNodeOrigin, tempNodeNew, originalModel,
+						newModel, metaModelOriginal, metaModelNew,
+						actTypeOriginModel, actTypeNewModel, null, null,
+						labelOriginSEDNormalized, labelNewSEDNormalized);
+
+		if ((attributeMatchResult >= 1.0) && (exactMatchResult == 1)) {
+			merge = true;
+
+			saveMergedNodePair(tempNodeOrigin, tempNodeNew, actTypeOriginModel,
+					actTypeNewModel, labelOrigin, labelNew,
+					labelOriginNormalized, labelNewNormalized, traceLink,
+					merge, exactMatchResult, attributeMatchResult,
+					stringEditDistanceResult);
+		} else {
+			if ((attributeMatchResult >= 0.75)
+					&& (stringEditDistanceResult >= 0.8)) {
+				traceLink = true;
 
 				saveMergedNodePair(tempNodeOrigin, tempNodeNew,
 						actTypeOriginModel, actTypeNewModel, labelOrigin,
 						labelNew, labelOriginNormalized, labelNewNormalized,
 						traceLink, merge, exactMatchResult,
 						attributeMatchResult, stringEditDistanceResult);
-			} else {
-				if ((attributeMatchResult >= 0.75) && (stringEditDistanceResult >= 0.8)) {
-					traceLink = true;
-
-					saveMergedNodePair(tempNodeOrigin, tempNodeNew,
-							actTypeOriginModel, actTypeNewModel, labelOrigin,
-							labelNew, labelOriginNormalized,
-							labelNewNormalized, traceLink, merge,
-							exactMatchResult, attributeMatchResult, stringEditDistanceResult);
-				}
 			}
+		}
 	}
 
 	/**
-	 * @param tempNodeOrigin
-	 * @param tempNodeNew
-	 * @param actTypeOriginModel
-	 * @param actTypeNewModel
-	 * @param labelOrigin
-	 * @param labelNew
-	 * @param labelOriginNormalized
-	 * @param labelNewNormalized
-	 * @param traceLink
-	 * @param merge
-	 * @param exactMatchResult
-	 * @param attributeMatchResult
-	 * @param stringEditDistanceMatchResult TODO
+	 * This method takes the results of the matching of two nodes, prepares them
+	 * for saving and then saves them in the consistency data object.
 	 */
 	private void saveMergedNodePair(Node tempNodeOrigin, Node tempNodeNew,
 			NodeType actTypeOriginModel, NodeType actTypeNewModel,
 			String labelOrigin, String labelNew, String labelOriginNormalized,
 			String labelNewNormalized, boolean traceLink, boolean merge,
-			double exactMatchResult, double attributeMatchResult, double stringEditDistanceMatchResult) {
+			double exactMatchResult, double attributeMatchResult,
+			double stringEditDistanceMatchResult) {
 		ComparedLabelPair comparedLabelPair = new ComparedLabelPair(
 				labelOrigin, labelNew, labelOriginNormalized,
 				labelNewNormalized);
@@ -788,7 +760,8 @@ public class MergingProcess {
 				comparedLabelPair, traceLink, merge);
 
 		mergedNodePair.setAttributeMatchResult(attributeMatchResult);
-		mergedNodePair.setStringEditDistanceResult(stringEditDistanceMatchResult);
+		mergedNodePair
+				.setStringEditDistanceResult(stringEditDistanceMatchResult);
 
 		if (ConsistencyData.getInstance().putMergedEntry(mergedNodePair)) {
 			// saving worked correctly

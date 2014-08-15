@@ -16,6 +16,12 @@ import org.pssif.consistencyDataStructures.Token;
  */
 public class Tokenizer {
 
+	private static char[] splitCharacters = { '.', ';', ',', ' ' }; 
+	
+	public Tokenizer(){
+		Arrays.sort(splitCharacters);
+	}
+	
 	/**
 	 * modified by Andreas Genz
 	 * 
@@ -47,9 +53,6 @@ public class Tokenizer {
 	 * along with this program. If not, see http://www.gnu.org/licenses/.
 	 */
 	public List<Token> findTokens(String label) {
-		// TODO initialize and sort only once for performance reasons
-		char[] splitCharacters = { '.', ';', ',', ' ' };
-		Arrays.sort(splitCharacters);
 
 		List<Token> newSequence = new LinkedList<Token>();
 
@@ -68,11 +71,9 @@ public class Tokenizer {
 			newSequence.add(new Token((new String(tokenChars, start,
 					tokenChars.length - start)).replaceAll("\\s+", "")));
 		// replaceAll function fixes bug that the last found token can contain
-		// any space characters (f.e. '\n'). This leads to wrong results of the
-		// matching algorithms.
+		// any space characters (f.e. '\n').
 
 		return newSequence;
-
 	}
 
 	/*

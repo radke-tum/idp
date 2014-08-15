@@ -4,8 +4,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.pssif.consistencyDataStructures.Token;
+import org.pssif.wordNet.wordNetQuery;
 
-import wordNet.wordNetQuery;
 import de.tum.pssif.core.metamodel.Metamodel;
 import de.tum.pssif.core.metamodel.NodeType;
 import de.tum.pssif.core.model.Model;
