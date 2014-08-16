@@ -31,7 +31,7 @@ Copyright (C) 2014 Andreas Genz
 */
 
 /**
- * * This class is an own implementation of the class AbstractTable Model. It is
+ * This class is an own implementation of the class AbstractTable Model. It is
  * used to display the possible match candidates in a JTable in the dialogue
  * after the match metrics were all calculated.
  * 

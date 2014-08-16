@@ -38,6 +38,9 @@ import org.pssif.matchingLogic.VsmMatcher;
  * based on the active matching Methods. Then the according objects for the
  * normalization steps are triggered.
  * 
+ * Furthermore it supplied methods to normalize labels in different ways
+ * depending on the given parameters.
+ * 
  * @author Andreas
  * 
  */
@@ -257,14 +260,21 @@ public class Normalizer {
 
 	/**
 	 * This method takes a label and applies several normalization techniques to
-	 * it based on the active matching methods.
+	 * it based on the active matching methods and the given parameters.
 	 * 
 	 * @param label
 	 *            the label to be tokenized & normalized
 	 * @param normalizeCases
+	 *            a bool saying whether all tokens shall be converted to
+	 *            lowercase
 	 * @param filterStopwords
+	 *            a bool saying whether the stopwords shall be filtered from the
+	 *            given label
 	 * @param splitWords
+	 *            a bool saying whether compounded words shall be split into
+	 *            distinct words
 	 * @param stemWords
+	 *            a bool saying whether words shall be reduced to their stem
 	 * @return the given label in its tokenized & normalized form
 	 * 
 	 */
@@ -301,13 +311,11 @@ public class Normalizer {
 					printTokens("Stemming", newSequence);
 
 				}
-
 			} else {
 				throw new NormalizationException(
 						"The given label is null. No tokenization & normalization possible!");
 			}
 		}
-
 		return newSequence;
 	}
 

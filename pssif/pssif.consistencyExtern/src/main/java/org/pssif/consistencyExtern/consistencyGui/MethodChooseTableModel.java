@@ -29,7 +29,7 @@ Copyright (C) 2014 Andreas Genz
 /**
  * This class is an own implementation of the class AbstractTable Model. It is
  * used to display the possible match methods in a JTable in the dialogue after
- * the user hits the button "merge the models".
+ * the user hits the button "Copy new to existing".
  * 
  * @author Andreas
  * 

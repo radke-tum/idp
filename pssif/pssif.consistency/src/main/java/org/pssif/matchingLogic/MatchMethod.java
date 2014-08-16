@@ -1,24 +1,24 @@
 package org.pssif.matchingLogic;
 
 /**
-This file is part of PSSIF Consistency. It is responsible for keeping consistency between different requirements models or versions of models.
-Copyright (C) 2014 Andreas Genz
+ This file is part of PSSIF Consistency. It is responsible for keeping consistency between different requirements models or versions of models.
+ Copyright (C) 2014 Andreas Genz
 
-    PSSIF Consistency is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+ PSSIF Consistency is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
 
-    PSSIF Consistency is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+ PSSIF Consistency is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with PSSIF Consistency.  If not, see <http://www.gnu.org/licenses/>.
-    
-    Feel free to contact me via eMail: genz@in.tum.de
-*/
+ You should have received a copy of the GNU General Public License
+ along with PSSIF Consistency.  If not, see <http://www.gnu.org/licenses/>.
+
+ Feel free to contact me via eMail: genz@in.tum.de
+ */
 
 import java.util.List;
 
@@ -32,13 +32,12 @@ import de.tum.pssif.core.model.Node;
 
 /**
  * 
- * This class represents a general structure of a matching Method. It supplies
- * the standard attributes for a matching method to say how the method is
- * called, if it's active and how much is its weight to the whole similarity
- * score.
+ * This class represents an abstract structure of a matching Method. It supplies
+ * the standard attributes for a matching method to say what's the methods name
+ * is, if it's active and how much is its weight to the whole similarity score.
  * 
- * New Matching methods can be easily implemented by extending this class and
- * implementing an own version of the executeMatching() method.
+ * If a class is derived by this class it must be implemented by implementing an
+ * own version of the executeMatching() method.
  * 
  * @author Andreas
  * 
@@ -112,8 +111,8 @@ public abstract class MatchMethod {
 			List<Token> tokensNew);
 
 	/**
-	 * This method creates a MatchMethod of the given type and with the given
-	 * attributes
+	 * This method creates a MatchMethod instance of the given type and with the
+	 * given attributes
 	 * 
 	 * @param matchMethod
 	 *            The type of match method which shall be created

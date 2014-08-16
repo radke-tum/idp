@@ -1,5 +1,6 @@
 package org.pssif.settings;
 
+import de.tum.pssif.core.common.PSSIFConstants;
 import de.tum.pssif.core.metamodel.PSSIFCanonicMetamodelCreator;
 
 /**
@@ -62,4 +63,18 @@ public abstract class Constants {
 			PSSIFCanonicMetamodelCreator.N_ELECTRONIC,
 			PSSIFCanonicMetamodelCreator.N_MODULE };
 
+	/**
+	 * the attributes which are compared between the nodes
+	 */
+	public static final String[] pssifAttributes = {
+			PSSIFConstants.BUILTIN_ATTRIBUTE_COMMENT,
+			PSSIFConstants.BUILTIN_ATTRIBUTE_VALIDITY_END,
+			PSSIFConstants.BUILTIN_ATTRIBUTE_VALIDITY_START,
+			PSSIFConstants.BUILTIN_ATTRIBUTE_VERSION,
+			PSSIFCanonicMetamodelCreator.A_BLOCK_COST,
+			PSSIFCanonicMetamodelCreator.A_DURATION,
+			PSSIFCanonicMetamodelCreator.A_HARDWARE_WEIGHT,
+			PSSIFCanonicMetamodelCreator.A_REQUIREMENT_PRIORITY,
+			PSSIFCanonicMetamodelCreator.A_REQUIREMENT_TYPE };
+	
 }

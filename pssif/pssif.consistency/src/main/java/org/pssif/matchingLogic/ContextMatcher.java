@@ -75,8 +75,14 @@ public class ContextMatcher extends MatchMethod {
 
 	private ComparedNodePair tempNodePair;
 
+	/**
+	 * the list of nodes sorrounding the original node
+	 */
 	private Set<NodeAndType> sorroundingNodesOrigin;
 
+	/**
+	 * the list of nodes sorrounding the new node
+	 */
 	private Set<NodeAndType> sorroundingNodesNew;
 
 	NodeTypeBase conjunctionNodeType;
@@ -102,6 +108,11 @@ public class ContextMatcher extends MatchMethod {
 		this.normalizer = normalizer;
 	}
 
+	/**
+	 * This method first gets all neighbours of the two nodes and then compares
+	 * each of the neighbours of the original node with every neighbour of the
+	 * new node.
+	 */
 	@Override
 	public double executeMatching(Node tempNodeOrigin, Node tempNodeNew,
 			Model originalModel, Model newModel, Metamodel metaModelOriginal,
@@ -135,6 +146,9 @@ public class ContextMatcher extends MatchMethod {
 			sorroundingNodesNew = typeIteration(tempNodeNew, actTypeNewModel,
 					true, true, false);
 
+			/**
+			 * calculate the similarity of the contexts and return the result
+			 */
 			return compareSorroundingNodes(tempNodeOrigin, actTypeOriginModel,
 					tempNodeNew, actTypeNewModel, labelOrigin, labelNew);
 		}
@@ -211,6 +225,7 @@ public class ContextMatcher extends MatchMethod {
 		return result;
 	}
 
+	@SuppressWarnings("unused")
 	private List<NodeAndType> convertSetToLinkedList(Set<Node> setToConvert,
 			NodeTypeBase actNodeType) {
 		List<NodeAndType> result = new LinkedList<NodeAndType>();
@@ -265,7 +280,7 @@ public class ContextMatcher extends MatchMethod {
 								for (Edge incomingE : incomingM
 										.applyIncoming(incomingMapping
 												.applyFrom(incomingEdge))) {
-									
+
 									result.add(new NodeAndType(incomingM
 											.applyFrom(incomingE), incomingM
 											.getFrom()));
@@ -352,8 +367,10 @@ public class ContextMatcher extends MatchMethod {
 
 	/**
 	 * This method iterates over all found nodes of the two models and compares
-	 * them based on the set matching methods. After every iteration the
-	 * similarity value is added to the result.
+	 * them based on the set matching methods. If two nodes have already been
+	 * compared before the former result is used instead of calculating the
+	 * similarities again. After every iteration the similarity value is added
+	 * to the contextual result.
 	 * 
 	 * @param tempNodeOrigin
 	 *            the node from the original model
@@ -534,13 +551,14 @@ public class ContextMatcher extends MatchMethod {
 				}
 			}
 		}
-
 		return result;
 	}
 
 	/**
-	 * @return the result of similarity analysis from past matches if two nodes
-	 *         have already been compared.
+	 * If two nodes have already been compared, their compairson result is
+	 * retrieved and used instead of calculating the similarities again.
+	 * 
+	 * @return The former weighted similarity score for the two nodes.
 	 */
 	private double calculateWeightedSimilarities() {
 		double result = 0;
@@ -569,8 +587,8 @@ public class ContextMatcher extends MatchMethod {
 	 */
 	private boolean nodesAlreadyCompared(Node tempNodeOrigin, Node tempNodeNew) {
 
-		this.tempNodePair = ConsistencyData.getInstance().getNodeMatch(tempNodeOrigin,
-				tempNodeNew);
+		this.tempNodePair = ConsistencyData.getInstance().getNodeMatch(
+				tempNodeOrigin, tempNodeNew);
 
 		return (this.tempNodePair != null);
 	}

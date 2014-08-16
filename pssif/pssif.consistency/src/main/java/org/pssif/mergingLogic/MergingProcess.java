@@ -58,7 +58,7 @@ import de.tum.pssif.core.model.Node;
  * compares every node of the first imported model with every node of the same
  * type in the recently imported model. Depending on the similarity result of
  * every compared node pair the pair is marked as to be linked by a tracelink or
- * marked as to be merged.
+ * marked as to be merged or as to be transferred to the new model.
  * 
  * @author Andreas
  * 
@@ -86,6 +86,9 @@ public class MergingProcess {
 	 */
 	private List<MatchMethod> matchMethods;
 
+	/**
+	 * the methods applied in model merging
+	 */
 	private MatchMethod exactMatcher;
 	private MatchMethod attributeMatcher;
 	private MatchMethod stringEditDistanceMatcher;
@@ -97,8 +100,12 @@ public class MergingProcess {
 
 	/**
 	 * Here a new MergingProcess object is created, a normalizer is initialized
-	 * with the according match methods (exact & attribute matcher) and the
-	 * merging process is started.
+	 * with the according match methods (exact, attribute, stringEdit matcher)
+	 * and the merging process is started.
+	 * 
+	 * In the merging process first the node pairs are searched which have to be
+	 * merged, traced or transferred. Then the junction nodes of the origin
+	 * model are checked if they have to be transferred to the new model.
 	 * 
 	 * @param originalModel
 	 *            the first imported model
@@ -379,8 +386,8 @@ public class MergingProcess {
 	}
 
 	/**
-	 * creates the exact & attribute match method and adds them to the
-	 * matchMethods list
+	 * creates the exact & attribute & stringEditDistance match method and adds
+	 * them to the matchMethods list
 	 */
 	private void initializeMatchMethods() {
 		matchMethods = new LinkedList<MatchMethod>();
@@ -568,7 +575,6 @@ public class MergingProcess {
 
 		matchNodeWithNodesOfActTypeOfNewModel(tempNodeOrigin, actNodesNewModel,
 				actTypeOriginModel, actTypeNewModel);
-
 	}
 
 	/**

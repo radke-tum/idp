@@ -21,15 +21,14 @@ package org.pssif.matchingLogic;
  */
 
 /**
- * This enum represents all currently available match methods between nodes in
- * the PSSIF-FW.
+ * This enum represents all match methods in the PSSIF-FW.
  * 
  * If one match method shall be added. The method checkMatchMethods() in the
  * class Normalizer and the methods saveMatchMethodResult
  * (),getWeightedSyntacticSimilarity(),getWeightedSemanticSimilarity() and
- * getWeightedContextSimilarity in the class "MatchingProcess" have to be
- * adapted properly. Furthermore the method createMatchMethodObject() in the
- * class MatchMethod has to be adapted.
+ * getWeightedContextSimilarity in the class "MatchingProcess" and
+ * "ContextMatcher" have to be adapted properly. Furthermore the method
+ * createMatchMethodObject() in the class MatchMethod has to be adapted.
  * 
  * Additionally the new matching method has to be implemented through extending
  * the abstract Class "MatchMethod".
@@ -72,7 +71,7 @@ public enum MatchingMethods {
 	}
 
 	/**
-	 * @return all names of each enum value as a String array
+	 * @return The names of all matchingMethods as a String array
 	 */
 	public static String[] methods() {
 		MatchingMethods[] methods = values();

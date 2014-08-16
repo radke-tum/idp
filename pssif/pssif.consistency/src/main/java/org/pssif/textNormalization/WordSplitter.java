@@ -32,7 +32,7 @@ import de.abelssoft.wordtools.jwordsplitter.impl.GermanWordSplitter;
  */
 
 /**
- * This class splits a given token (if it's a word compund), if possible, into
+ * This class splits a given token if possible (if it's a word compound) into
  * smaller tokens. Therefore the jwordsplitter in version 3.4 is used (a dev
  * version of jwordsplitter is available but won't work).
  * 
