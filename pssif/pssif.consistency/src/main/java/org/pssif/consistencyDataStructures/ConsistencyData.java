@@ -14,40 +14,48 @@ import org.pssif.mergedDataStructures.MergedNodePair;
 import de.tum.pssif.core.metamodel.NodeType;
 import de.tum.pssif.core.model.Node;
 
-
 /**
-This file is part of PSSIF Consistency. It is responsible for keeping consistency between different requirements models or versions of models.
-Copyright (C) 2014 Andreas Genz
+ This file is part of PSSIF Consistency. It is responsible for keeping consistency between different requirements models or versions of models.
+ Copyright (C) 2014 Andreas Genz
 
-    PSSIF Consistency is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+ PSSIF Consistency is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
 
-    PSSIF Consistency is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+ PSSIF Consistency is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with PSSIF Consistency.  If not, see <http://www.gnu.org/licenses/>.
-    
-    Feel free to contact me via eMail: genz@in.tum.de
-*/
+ You should have received a copy of the GNU General Public License
+ along with PSSIF Consistency.  If not, see <http://www.gnu.org/licenses/>.
+
+ Feel free to contact me via eMail: genz@in.tum.de
+ */
 
 /**
  * 
- * This class stores all the information relevant for the consistency checking
- * process. It stores several list relevant for the processes.
+ * This singleton class stores all the information relevant for the consistency
+ * checking process. It stores several list relevant for the processes.
  * 
  * With this class we know:
  * 
  * - which IDs already matched (so we don't match them again as we go up in the
- * class hierachy in the compairson process) - the similarity results for token
- * & label pairs to be able to look them up in future compairsons - the node
- * pairs which exceed the similarity thresholds - the node pairs which were
- * chosen by the user to be merged - the node pairs which will be linked by a
- * tracelink - the node pairs which will be merged into one
+ * class hierachy in the compairson process)
+ * 
+ * - the similarity results for token & label pairs to be able to look them up
+ * in future compairsons
+ * 
+ * - the node pairs which exceed the similarity thresholds
+ * 
+ * - the node pairs which have to be transferred to the new model
+ * 
+ * - the node pairs which will be linked by a tracelink
+ * 
+ * - the node pairs which will be merged into one
+ * 
+ * - the junction nodes which have to be transferred to the new model
  * 
  * @author Andreas
  * 
@@ -128,8 +136,8 @@ public class ConsistencyData {
 	/**
 	 * these are the tresholds for the syntactic, semantic and contextual
 	 * metrics. Depending on these tresholds and the results of a match between
-	 * two nodes the match is proposed to the user if one of the tresholds is
-	 * exceeded
+	 * two nodes the two nodes are proposed as equal to the user if one of the
+	 * tresholds is exceeded
 	 */
 	private static double semanticThreshold;
 	private static double syntacticThreshold;
@@ -261,9 +269,9 @@ public class ConsistencyData {
 	}
 
 	/**
-	 * This method returns the result of a match between two nodes if one
-	 * of the nodes has already been compared with at least one other node. So
-	 * the normalizations don't have to be computed again.
+	 * This method returns the result of a match between two nodes if one of the
+	 * nodes has already been compared with at least one other node. So the
+	 * normalizations don't have to be computed again.
 	 * 
 	 * @param tempNode
 	 *            the node which is looked up in the stored results

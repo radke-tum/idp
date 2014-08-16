@@ -34,11 +34,12 @@ import de.tum.pssif.core.model.Model;
 import de.tum.pssif.core.model.Node;
 
 /**
- * Very basic Model Merger. Can merge two models into one model. Does only copy
- * everything from one model to the other. No matching at all!
+ * THis class is responsible for conduction the merge between two models based
+ * on the given information which nodes/junctions shall be transferred to the
+ * new model and where tracelinks shall be created. Furthermore it's checked
+ * whether junction nodes and edges have to be transferred from the old model.
  * 
- * @author Luc
- * 
+ * @author Andreas (partly Luc as annotated)
  */
 public class ModelMerger {
 
@@ -64,10 +65,32 @@ public class ModelMerger {
 	 */
 	private Map<NodeAndType, Node> nodeTransferunmatchedJunctionsOldToNewModel;
 
+	/**
+	 * This list contains all nodes that don't have to be tranferred from the
+	 * old to the new model. It's needed to transfer the edges of the nodes from
+	 * the old model.
+	 */
 	private List<MergedNodePair> mergedNodes;
+
+	/**
+	 * This list contains all nodes that need to be created in the new model
+	 * (from the old model) and have to be linked to a node in the new model by
+	 * a tracelink.
+	 */
 	private List<MergedNodePair> tracedNodes;
 
+	/**
+	 * this list contains all nodes from the original node that have no
+	 * corresponding node in the new model but have to be transferred to the new
+	 * model.
+	 */
 	private List<NodeAndType> unmatchedNodesOrigin;
+
+	/**
+	 * This list contains all junctions from the orignal node which have no
+	 * corresponding junction in the new model but have to be transferred to the
+	 * new model.
+	 */
 	private List<NodeAndType> unmatchedJunctionnodesOrigin;
 
 	/**
@@ -81,13 +104,6 @@ public class ModelMerger {
 	MyModelContainer newModel;
 
 	/**
-	 * @return the oldToNewNodes
-	 */
-	public HashMap<Node, Node> getOldToNewNodes() {
-		return oldToNewNodes;
-	}
-
-	/**
 	 * merge two models into one model in respect of the given metamodel
 	 * 
 	 * @param model1
@@ -97,6 +113,7 @@ public class ModelMerger {
 	 * @param metaModelOrigin
 	 *            metamodel
 	 * @return the merged model
+	 * @Author Luc
 	 */
 	public Model mergeModels(Model model1, Model model2, Metamodel meta) {
 		this.modelOrigin = model1;
@@ -165,11 +182,15 @@ public class ModelMerger {
 	}
 
 	/**
-	 * This method adds every node and junctionnode from the origin model which
-	 * is not marked as to be merged to the new model. The nodes which are
-	 * marked as to be merged are deleted and not transfered to the new model.
-	 * But their edges are transfered to the new model. Furthermore the
-	 * tracelinks between different versions of nodes are set.
+	 * This method adds every node and junctionnode together with their edges
+	 * from the origin model which is not marked as to be merged to the new
+	 * model.
+	 * 
+	 * The nodes which are marked as to be merged are deleted and not transfered
+	 * to the new model but their edges are transfered to the new model.
+	 * 
+	 * Furthermore the different versions of nodes are copied to the new model
+	 * and tracelinks between different versions of nodes are set.
 	 * 
 	 * @return the merged model
 	 * @author Andreas
@@ -196,6 +217,8 @@ public class ModelMerger {
 	/**
 	 * transferring the junction nodes from the origin model which don't appear
 	 * in the new model to the new model
+	 * 
+	 * @author Andreas
 	 */
 	@SuppressWarnings("unused")
 	private void transferUnmatchedJunctionnodesToNewModel() {
@@ -221,6 +244,8 @@ public class ModelMerger {
 	 * transferring the old versions of nodes from the origin model which have a
 	 * newer corresponding version in the new model to the new model so a
 	 * tracelink can be created between the different versions
+	 * 
+	 * @author Andreas
 	 */
 	private void transferTracedNodesToNewModel() {
 		for (MergedNodePair tracedPair : tracedNodes) {
@@ -244,6 +269,8 @@ public class ModelMerger {
 	/**
 	 * adding the nodes from the origin model which don't appear in the new
 	 * model to the new model
+	 * 
+	 * @author Andreas
 	 */
 	private void transferUnmatchedNodesToNewModel() {
 		for (NodeAndType unmergedNode : unmatchedNodesOrigin) {
@@ -267,10 +294,12 @@ public class ModelMerger {
 	 * new model as they were in the original model.
 	 * 
 	 * Therefore this method checks for every junctionnode which was transferred
-	 * to the new model if there is at least one node (which was transferred
-	 * from the origin to the new model) to which the junctionnode can be
-	 * connected. If at least one such node is found an edge between the node
-	 * and the junctionnode is created.
+	 * to the new model if there is at least one merged node or copied
+	 * node/junction to which the junctionnode can be connected. If at least one
+	 * such node/junction is found an edge between the node/junction and the
+	 * junctionnode is created.
+	 * 
+	 * @author Andreas
 	 */
 	private void transferJunctionEdges() {
 		EdgeType controlFlow = metaModelOrigin.getEdgeType(
@@ -526,7 +555,8 @@ public class ModelMerger {
 	 *            the model which should be transfered to the new model
 	 * @param currentType
 	 *            the type of the dataNode
-	 * @return
+	 * @return The newly created junction node object
+	 * @author Andreas
 	 */
 	private Node addJunctionNodeToNewModel(Node dataNode,
 			JunctionNodeType currentType) {
@@ -758,9 +788,6 @@ public class ModelMerger {
 					// // checkIncoming and checkOutgoingEdges, the undirected
 					// edge
 					// // will appear twice in the new model
-					// if (!isEdgeDirected(edgeType, incomingEdge)) {
-					// continue;
-					// }
 
 					tempFromEdgeNode = incomingMapping.applyFrom(incomingEdge);
 					tempFromEdgeNodeType = incomingMapping.getFrom();
@@ -1112,60 +1139,10 @@ public class ModelMerger {
 		}
 	}
 
-	private void printNbEdges(Model model) {
-		int counter = 0;
-		for (EdgeType t : metaModelOrigin.getEdgeTypes()) {
-			PSSIFOption<ConnectionMapping> tmp = t.getMappings();
-
-			if (tmp != null && (tmp.isMany() || tmp.isOne())) {
-				Set<ConnectionMapping> mappings;
-
-				if (tmp.isMany())
-					mappings = tmp.getMany();
-				else {
-					mappings = new HashSet<ConnectionMapping>();
-					mappings.add(tmp.getOne());
-				}
-
-				for (ConnectionMapping mapping : mappings) {
-					PSSIFOption<Edge> edges = mapping.apply(model);
-
-					if (edges.isMany()) {
-						for (Edge e : edges.getMany()) {
-							counter++;
-						}
-					} else {
-						if (edges.isOne()) {
-							counter++;
-						}
-					}
-				}
-			}
-		}
-		System.out.println("Nb edges :" + counter);
-	}
-
-	private void printNbNodes(Model model) {
-		int counter = 0;
-		for (NodeType t : metaModelOrigin.getNodeTypes()) {
-			// get all the Nodes of this type
-			PSSIFOption<Node> tempNodes = t.apply(model, true);
-
-			if (tempNodes.isMany()) {
-				Set<Node> many = tempNodes.getMany();
-				for (Node n : many) {
-					counter++;
-				}
-			} else if (tempNodes.isOne()) {
-				counter++;
-			}
-
-		}
-		System.out.println("Nb nodes :" + counter);
-	}
-
 	/**
 	 * add all the Nodes from modelNew to model1
+	 * 
+	 * @author Luc
 	 */
 	private void addAllNodes() {
 		// loop over all Node types
@@ -1191,6 +1168,8 @@ public class ModelMerger {
 
 	/**
 	 * add all the JunctionNodes from modelNew to model1
+	 * 
+	 * @author Luc
 	 */
 	private void addAllJunctionNodes() {
 		// loop over all JunctionNode types
@@ -1216,6 +1195,8 @@ public class ModelMerger {
 
 	/**
 	 * Add all the Edges from modelNew to model1
+	 * 
+	 * @author Luc
 	 */
 	private void addAllEdges() {
 		for (EdgeType t : metaModelOrigin.getEdgeTypes()) {
@@ -1265,6 +1246,7 @@ public class ModelMerger {
 	 *            the model which should be transfered to model1
 	 * @param currentType
 	 *            the type of the dataNode
+	 * @Author Luc
 	 */
 	private void addNode(Node dataNode, NodeType currentType) {
 		// create Node
@@ -1312,20 +1294,6 @@ public class ModelMerger {
 				newNode.annotate(a.getKey(), a.getValue());
 			}
 		}
-
-		/*
-		 * Collection<Annotation> annotations =
-		 * currentType.getAnnotations(dataNode);
-		 * 
-		 * if (annotations!=null) { for (Annotation a : annotations) {
-		 * PSSIFOption<String> value = a.getValue(); if (value!=null &&
-		 * value.isOne()) { currentType.setAnnotation(newNode,
-		 * a.getKey(),value.getOne()); }
-		 * 
-		 * if (value!=null && value.isMany()) { Set<String> concreteValues =
-		 * value.getMany(); for (String s : concreteValues) {
-		 * currentType.setAnnotation(newNode, a.getKey(),s); } } } }
-		 */
 	}
 
 	/**
@@ -1335,6 +1303,7 @@ public class ModelMerger {
 	 *            the node which should be transfered to the newmodel
 	 * @param currentType
 	 *            the type of the dataNode
+	 * @author Andreas
 	 */
 	private Node addNodeToNewModel(Node dataNode, NodeTypeBase nodeTypeBase) {
 		Model modelNew = newModel.getModel();
@@ -1395,6 +1364,7 @@ public class ModelMerger {
 	 *            the model which should be transfered to model1
 	 * @param currentType
 	 *            the type of the dataNode
+	 * @author Luc
 	 */
 	private void addJunctionNode(Node dataNode, JunctionNodeType currentType) {
 		// create Node
@@ -1453,6 +1423,7 @@ public class ModelMerger {
 	 *            the edge which should get all the information
 	 * @param type
 	 *            the type of both edges
+	 * @author Luc
 	 */
 	private void transferEdgeAttributes(Edge oldEdge, Edge newEdge,
 			EdgeType type) {
@@ -1495,18 +1466,5 @@ public class ModelMerger {
 				newEdge.annotate(a.getKey(), a.getValue());
 			}
 		}
-
-		/*
-		 * Collection<Annotation> annotations = type.getAnnotations(oldEdge);
-		 * 
-		 * if (annotations!=null) { for (Annotation a : annotations) {
-		 * PSSIFOption<String> value = a.getValue(); if (value!=null &&
-		 * value.isOne()) { type.setAnnotation(newEdge,
-		 * a.getKey(),value.getOne()); }
-		 * 
-		 * if (value!=null && value.isMany()) { Set<String> concreteValues =
-		 * value.getMany(); for (String s : concreteValues) {
-		 * type.setAnnotation(newEdge, a.getKey(),s); } } } }
-		 */
 	}
 }

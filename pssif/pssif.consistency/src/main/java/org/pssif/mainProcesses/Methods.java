@@ -22,25 +22,24 @@ import de.tum.pssif.core.model.Edge;
 import de.tum.pssif.core.model.Node;
 
 /**
-This file is part of PSSIF Consistency. It is responsible for keeping consistency between different requirements models or versions of models.
-Copyright (C) 2014 Andreas Genz
+ This file is part of PSSIF Consistency. It is responsible for keeping consistency between different requirements models or versions of models.
+ Copyright (C) 2014 Andreas Genz
 
-    PSSIF Consistency is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+ PSSIF Consistency is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
 
-    PSSIF Consistency is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+ PSSIF Consistency is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with PSSIF Consistency.  If not, see <http://www.gnu.org/licenses/>.
-    
-    Feel free to contact me via eMail: genz@in.tum.de
-*/
+ You should have received a copy of the GNU General Public License
+ along with PSSIF Consistency.  If not, see <http://www.gnu.org/licenses/>.
 
+ Feel free to contact me via eMail: genz@in.tum.de
+ */
 
 /**
  * A class that provides several methods used in the PSSIF consistency checker
@@ -97,11 +96,18 @@ public class Methods {
 		}
 
 	}
-	
+
 	/**
 	 * @author Andreas
 	 * @return whether the given edge is directed or not
+	 * @param type
+	 *            the type of the edge
+	 * @param edge
+	 *            the edge for which it shall be checked if its directed or
+	 *            undirected
+	 * @return
 	 */
+	@SuppressWarnings("unused")
 	private static boolean isEdgeDirected(EdgeType type, Edge edge) {
 		Collection<AttributeGroup> attrgroups = type.getAttributeGroups();
 
@@ -143,13 +149,12 @@ public class Methods {
 	public static String getStringFromTokens(List<Token> tokens) {
 		String result = "";
 
-		for(int i=0; i<tokens.size(); i++){
+		for (int i = 0; i < tokens.size(); i++) {
 			result += tokens.get(i).getWord();
-			if(!(i == (tokens.size()-1))){
-				result+= " ";
+			if (!(i == (tokens.size() - 1))) {
+				result += " ";
 			}
 		}
-
 		return result;
 	}
 

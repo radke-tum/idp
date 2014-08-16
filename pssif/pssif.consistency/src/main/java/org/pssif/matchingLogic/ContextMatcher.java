@@ -66,7 +66,6 @@ public class ContextMatcher extends MatchMethod {
 	private static final double semanticWeight = 0.5;
 
 	private List<MatchMethod> matchMethods;
-	private ConsistencyData consistencyData;
 	private Normalizer normalizer;
 
 	private Model originalModel;
@@ -93,14 +92,6 @@ public class ContextMatcher extends MatchMethod {
 	 */
 	public void setMatchMethods(List<MatchMethod> matchMethods) {
 		this.matchMethods = matchMethods;
-	}
-
-	/**
-	 * @param consistencyData
-	 *            the consistencyData to set
-	 */
-	public void setConsistencyData(ConsistencyData consistencyData) {
-		this.consistencyData = consistencyData;
 	}
 
 	/**
@@ -578,7 +569,7 @@ public class ContextMatcher extends MatchMethod {
 	 */
 	private boolean nodesAlreadyCompared(Node tempNodeOrigin, Node tempNodeNew) {
 
-		this.tempNodePair = consistencyData.getNodeMatch(tempNodeOrigin,
+		this.tempNodePair = ConsistencyData.getInstance().getNodeMatch(tempNodeOrigin,
 				tempNodeNew);
 
 		return (this.tempNodePair != null);

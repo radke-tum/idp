@@ -4,6 +4,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.pssif.consistencyDataStructures.ConsistencyData;
 import org.pssif.consistencyDataStructures.Token;
 import org.pssif.consistencyExceptions.MatchMethodException;
 import org.pssif.consistencyExceptions.NormalizationException;
@@ -220,9 +221,6 @@ public class Normalizer {
 					 */
 					((ContextMatcher) currentMethod)
 							.setMatchMethods(matchMethods);
-					((ContextMatcher) currentMethod)
-							.setConsistencyData(matchingProcess
-									.getConsistencyData());
 					((ContextMatcher) currentMethod).setNormalizer(this);
 					break;
 				default:

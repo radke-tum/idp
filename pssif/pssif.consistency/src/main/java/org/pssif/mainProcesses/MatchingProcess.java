@@ -20,29 +20,31 @@ import de.tum.pssif.core.model.Model;
 import de.tum.pssif.core.model.Node;
 
 /**
-This file is part of PSSIF Consistency. It is responsible for keeping consistency between different requirements models or versions of models.
-Copyright (C) 2014 Andreas Genz
+ This file is part of PSSIF Consistency. It is responsible for keeping consistency between different requirements models or versions of models.
+ Copyright (C) 2014 Andreas Genz
 
-    PSSIF Consistency is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+ PSSIF Consistency is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
 
-    PSSIF Consistency is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+ PSSIF Consistency is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with PSSIF Consistency.  If not, see <http://www.gnu.org/licenses/>.
-    
-    Feel free to contact me via eMail: genz@in.tum.de
-*/
+ You should have received a copy of the GNU General Public License
+ along with PSSIF Consistency.  If not, see <http://www.gnu.org/licenses/>.
+
+ Feel free to contact me via eMail: genz@in.tum.de
+ */
 
 /**
- * This class is responsible for conducting the whole matching process. It
- * takes two nodes and applies all active matching methods to them. Afterwards
- * it saves the idpair of the two nodes so they won't be compared again.
+ * This class is responsible for conducting the whole matching process. It takes
+ * two nodes and applies all active matching methods to them. Afterwards it
+ * saves the idpair of the two nodes so they won't be compared again.
+ * Additionaly all results of the different matchings etc. are stored in the
+ * consistency data object.
  * 
  * @author Andreas
  * 
@@ -58,23 +60,18 @@ public class MatchingProcess {
 	 *            the metamodel according to the original model
 	 * @param metaModelNew
 	 *            the metamodel according to the new model
-	 * @param consistencyData
-	 *            the data of the matching process will be stored here and can
-	 *            be accesed both by the Comparsion and the matching process
 	 * @param matchMethods
 	 *            these are the matching metrics for the current matching
 	 *            operation
 	 */
 	public MatchingProcess(Model originalModel, Model newModel,
 			Metamodel metaModelOriginal, Metamodel metaModelNew,
-			ConsistencyData consistencyData, List<MatchMethod> matchMethods,
-			CompairsonProcess compairsonProcess) {
+			List<MatchMethod> matchMethods, CompairsonProcess compairsonProcess) {
 
 		this.originalModel = originalModel;
 		this.newModel = newModel;
 		this.metaModelOriginal = metaModelOriginal;
 		this.metaModelNew = metaModelNew;
-		this.consistencyData = consistencyData;
 		this.matchMethods = matchMethods;
 		this.normalizer = Normalizer.initialize(matchMethods, this);
 	}
@@ -82,7 +79,6 @@ public class MatchingProcess {
 	private Model originalModel, newModel;
 	private Metamodel metaModelOriginal, metaModelNew;
 
-	private ConsistencyData consistencyData;
 	private List<MatchMethod> matchMethods;
 
 	private Normalizer normalizer;
@@ -122,18 +118,11 @@ public class MatchingProcess {
 	}
 
 	/**
-	 * @return the consistencyData
-	 */
-	public ConsistencyData getConsistencyData() {
-		return consistencyData;
-	}
-
-	/**
 	 * This method guides the whole matching process. It initializes the
 	 * variables where the consistencyData will be stored later. Then it
 	 * triggers the normalization and/or tokenization of the labels if
-	 * necessary. Then it applies the active matching methods to the nodes and
-	 * saves the results
+	 * necessary. Then it applies all active matching methods to the nodes and
+	 * saves the results.
 	 * 
 	 * @param tempNodeOrigin
 	 *            the node from the original model
@@ -159,7 +148,6 @@ public class MatchingProcess {
 		comparedLabelPair = null;
 		comparedNormalizedTokensPair = null;
 		comparedNodePair = new ComparedNodePair();
-
 
 		/**
 		 * here the strings of the old and the new node are read from the model
@@ -216,9 +204,9 @@ public class MatchingProcess {
 							tempNodeOrigin, tempNodeNew, originalModel,
 							newModel, metaModelOriginal, metaModelNew,
 							actTypeOriginModel, actTypeNewModel,
-							labelOriginNodeNormalized,
-							labelNewNodeNormalized,
-							tokensOriginNodeNormalizedCompundedUnstemmed, tokensNewNodeNormalizedCompundedUnstemmed);
+							labelOriginNodeNormalized, labelNewNodeNormalized,
+							tokensOriginNodeNormalizedCompundedUnstemmed,
+							tokensNewNodeNormalizedCompundedUnstemmed);
 				} else {
 					if ((currentMethod.getMatchMethod() == MatchingMethods.STRING_EDIT_DISTANCE_MATCHING)
 							|| (currentMethod.getMatchMethod() == MatchingMethods.HYPHEN_MATCHING)) {
@@ -240,12 +228,12 @@ public class MatchingProcess {
 						}
 						currentMetricResult = currentMethod.executeMatching(
 								tempNodeOrigin, tempNodeNew, originalModel,
-								newModel, metaModelOriginal,
-								metaModelNew, actTypeOriginModel,
-								actTypeNewModel,
+								newModel, metaModelOriginal, metaModelNew,
+								actTypeOriginModel, actTypeNewModel,
 								labelOriginNodeNormalized,
 								labelNewNodeNormalized,
-								tokensOriginNodeNormalizedCompundedUnstemmed, tokensNewNodeNormalizedCompundedUnstemmed);
+								tokensOriginNodeNormalizedCompundedUnstemmed,
+								tokensNewNodeNormalizedCompundedUnstemmed);
 					} else {
 						if ((tokensOriginNodeNormalized == null)
 								|| (tokensNewNodeNormalized == null)) {
@@ -265,12 +253,12 @@ public class MatchingProcess {
 						}
 						currentMetricResult = currentMethod.executeMatching(
 								tempNodeOrigin, tempNodeNew, originalModel,
-								newModel, metaModelOriginal,
-								metaModelNew, actTypeOriginModel,
-								actTypeNewModel,
+								newModel, metaModelOriginal, metaModelNew,
+								actTypeOriginModel, actTypeNewModel,
 								labelOriginNodeNormalized,
 								labelNewNodeNormalized,
-								tokensOriginNodeNormalized, tokensNewNodeNormalized);
+								tokensOriginNodeNormalized,
+								tokensNewNodeNormalized);
 					}
 				}
 			}
@@ -282,9 +270,10 @@ public class MatchingProcess {
 		}
 
 		/**
-		 * save the result of the recent node compairson properly
+		 * updates the compairedNodePair object with the result of the recent
+		 * node compairson
 		 */
-		saveComparedNodePair(tempNodeOrigin, tempNodeNew, actTypeOriginModel,
+		updateComparedNodePair(tempNodeOrigin, tempNodeNew, actTypeOriginModel,
 				actTypeNewModel);
 
 		/**
@@ -292,7 +281,7 @@ public class MatchingProcess {
 		 * consistencyData object. If something goes wrong an exception is
 		 * thrown. Else nothing besides the saving happens.
 		 */
-		if (!(consistencyData.putComparedEntry(comparedNodePair))) {
+		if (!(ConsistencyData.getInstance().putComparedEntry(comparedNodePair))) {
 			throw new RuntimeException(
 					"Something went wrong with the saving of the recently matched elements.");
 		}
@@ -338,7 +327,7 @@ public class MatchingProcess {
 	 *            the type of the new node
 	 * 
 	 */
-	private void saveComparedNodePair(Node tempNodeOrigin, Node tempNodeNew,
+	private void updateComparedNodePair(Node tempNodeOrigin, Node tempNodeNew,
 			NodeType actTypeOriginModel, NodeType actTypeNewModel) {
 		comparedNodePair.setLabelComparison(comparedLabelPair);
 		comparedNodePair.setTokensComparison(comparedNormalizedTokensPair);

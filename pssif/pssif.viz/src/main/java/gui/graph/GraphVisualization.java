@@ -75,9 +75,7 @@ public class GraphVisualization
 
   
   public GraphVisualization(Dimension d, boolean details)
-  {
-	ModelBuilder.setgViz(this);
-  
+  { 
 	  
     int i = 1000;
     this.detailedNodes = details;

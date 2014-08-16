@@ -23,6 +23,7 @@ import javax.swing.table.TableModel;
 
 import org.pssif.comparedDataStructures.ComparedNodePair;
 import org.pssif.consistencyDataStructures.ConsistencyData;
+import org.pssif.consistencyExceptions.MatchMethodException;
 import org.pssif.mainProcesses.CompairsonProcess;
 import org.pssif.matchingLogic.MatchMethod;
 import org.pssif.matchingLogic.MatchingMethods;
@@ -31,31 +32,32 @@ import de.tum.pssif.core.metamodel.Metamodel;
 import de.tum.pssif.core.model.Model;
 
 /**
-This file is part of PSSIF Consistency. It is responsible for keeping consistency between different requirements models or versions of models.
-Copyright (C) 2014 Andreas Genz
+ This file is part of PSSIF Consistency. It is responsible for keeping consistency between different requirements models or versions of models.
+ Copyright (C) 2014 Andreas Genz
 
-    PSSIF Consistency is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+ PSSIF Consistency is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
 
-    PSSIF Consistency is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+ PSSIF Consistency is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with PSSIF Consistency.  If not, see <http://www.gnu.org/licenses/>.
-    
-    Feel free to contact me via eMail: genz@in.tum.de
-*/
+ You should have received a copy of the GNU General Public License
+ along with PSSIF Consistency.  If not, see <http://www.gnu.org/licenses/>.
+
+ Feel free to contact me via eMail: genz@in.tum.de
+ */
 
 /**
  * This class is responsible for guiding the user through the whole consistency
- * process. For example asking whether the user wants to merge the models or
- * just cope the new one into the workspace. Another thing is that the class
- * lets the user select which match methods shall be applied and with which
- * weight.
+ * process. For example asking whether the user wants to merge the models or do
+ * the similarity analysis between the old and the new model. Another thing is
+ * that the class lets the user select which match methods shall be applied with
+ * which weight, which thresholds for each metric group shall be active and
+ * which nodes shall be linked as equals.
  * 
  * @author Andreas
  */
@@ -68,7 +70,8 @@ public class UserGuidingConsistency {
 	 * to let the user choose the match methods is opened. Then the user is
 	 * supposed to choose the tresholds for the syntactic, semantic and
 	 * contextual metrics. Afterwards the matching process is started and the
-	 * results are displayed to the user.
+	 * results are displayed to the user where he can choose which nodes shall
+	 * be linked as equal.
 	 * 
 	 * @param originalModel
 	 *            The original model
@@ -90,15 +93,15 @@ public class UserGuidingConsistency {
 
 			openChooseTresholdsPopup();
 
-			ConsistencyData consistencyData = CompairsonProcess.main(
-					originalModel, newModel, metaModelOriginal, metaModelNew,
-					matchMethods);
+			CompairsonProcess.main(originalModel, newModel, metaModelOriginal,
+					metaModelNew, matchMethods);
 
-			consistencyData = openChooseMergeCandidatesPopup(consistencyData);
+			openChooseMergeCandidatesPopup();
 
-			List<ComparedNodePair> result = consistencyData.getEqualsList();
+			List<ComparedNodePair> result = ConsistencyData.getInstance()
+					.getEqualsList();
 
-			consistencyData.resetComparedNodePairList();
+			ConsistencyData.getInstance().resetComparedNodePairList();
 
 			return result;
 		} else {
@@ -110,7 +113,8 @@ public class UserGuidingConsistency {
 	 * This method opens a dialog where the user can choose the different
 	 * tresholds. After the user confirmed his input the inputs are validated.
 	 * If the input was valid the tresholds are set in the ConsistencyData
-	 * Class. Otherwise the dialog stays open.
+	 * Class. Otherwise the dialog remains open unitl the user enters valid
+	 * data.
 	 */
 	private static void openChooseTresholdsPopup() {
 
@@ -182,7 +186,7 @@ public class UserGuidingConsistency {
 			}
 
 			/**
-			 * @return whether the given tresholds are valid
+			 * @return whether every given tresholds is valid (between 0 and 1)
 			 */
 			private boolean tresholdsAreValid(double synTreshold,
 					double semTreshold, double conTreshold) {
@@ -216,17 +220,12 @@ public class UserGuidingConsistency {
 
 	/**
 	 * This method shows the user the node pairs where at least one of the
-	 * similarity result exceeds the treshold. Users can then choose which nodes
-	 * shall be linked/merged. After Confirming this dialog the
+	 * similarity result exceeds the threshold. Users can then choose which
+	 * nodes shall be linked/merged. After Confirming this dialog the
 	 * comparedNodePairs list in the consistencyData object is updated.
 	 * 
-	 * @param consistencyData
-	 *            the consistencyData object which shall be modified by
-	 *            selecting the "to be merged" nodes.
-	 * @return the modified consistencyData object
 	 */
-	private static ConsistencyData openChooseMergeCandidatesPopup(
-			ConsistencyData consistencyData) {
+	private static void openChooseMergeCandidatesPopup() {
 		final JDialog dialog = new JDialog();
 		dialog.setLayout(new BorderLayout());
 		dialog.setSize(900, 600);
@@ -234,7 +233,7 @@ public class UserGuidingConsistency {
 		dialog.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 
 		final TableModel tableModel = new MatchCandidateTableModel(
-				consistencyData.getEqualsCandidateList());
+				ConsistencyData.getInstance().getEqualsCandidateList());
 
 		JTable methodTable = new JTable(tableModel);
 
@@ -262,17 +261,15 @@ public class UserGuidingConsistency {
 		dialog.add(buttonPanel, BorderLayout.SOUTH);
 
 		dialog.setVisible(true);
-
-		return consistencyData;
 	}
 
 	/**
 	 * This method opens a modal dialogue where the user has to decide whether
-	 * he wants to merge the two models or just copy the new one into the same
-	 * workspace as the original one
+	 * he wants to merge the two models or conduct the similarity analysis
+	 * between old and new model.
 	 * 
 	 * @return a boolean that says whether the user wants to merge the newly
-	 *         imported model with the old one or not
+	 *         imported model with the old one or do the similarity analysis
 	 */
 	public static boolean openConsistencyPopUp() {
 
@@ -309,7 +306,8 @@ public class UserGuidingConsistency {
 	 * This method creates an object for every possible match method and then
 	 * gives this list to the chooseMatchingMethodsPopup() method.
 	 * 
-	 * @return the set of matchMethods which shall be applied to the data
+	 * @return the set of matchMethods which can be adjusted by the user to
+	 *         match his requirements
 	 */
 	private static List<MatchMethod> openChooseMatchingMethodsPopup() {
 
@@ -328,9 +326,12 @@ public class UserGuidingConsistency {
 
 	/**
 	 * This method creates a dialogue where the user can choose the desired
-	 * methods together with the preferences. Furthermore it's checked if the
-	 * weights which the user entered are valid. If the user hits
-	 * "Cancel the merge" nothing happens and no additional model is imported.
+	 * methods together with their preferences. After the user entered the
+	 * desired methods with according weigths and if they're active it's checked
+	 * if the weights which the user entered are valid.
+	 * 
+	 * If the user hits "Cancel the merge" nothing happens and no additional
+	 * model is imported.
 	 * 
 	 * @param methods
 	 *            the list of match method objects
@@ -406,6 +407,9 @@ public class UserGuidingConsistency {
 	 * all in the interval [0..1]. Also at least one metric has to be active to
 	 * have a valid list with methods.
 	 * 
+	 * If the context metric is active at least one other metric has to be
+	 * active.
+	 * 
 	 * @param methods
 	 *            the match method list with the weight information of each
 	 *            method
@@ -428,7 +432,11 @@ public class UserGuidingConsistency {
 			method = matchMethod.next();
 
 			if (method.isActive()) {
-				atLeastOneMetricSelected = true;
+				if ((method.getMatchMethod() == MatchingMethods.CONTEXT_MATCHING)
+						&& (!atLeastOneMetricSelected)) {
+				} else {
+					atLeastOneMetricSelected = true;
+				}
 
 				switch (method.getMatchMethod()) {
 				case EXACT_STRING_MATCHING:
@@ -443,11 +451,12 @@ public class UserGuidingConsistency {
 				case ATTRIBUTE_MATCHING:
 					semanticWeight += method.getWeigth();
 					break;
-				case CONTEXT_MATCHING:
+				case CONTEXT_MATCHING: {
 					contextualWeight += method.getWeigth();
 					break;
+				}
 				default:
-					throw new RuntimeException("Invalid metrics were chosen. "
+					throw new MatchMethodException("Invalid metrics were chosen. "
 							+ method.getMatchMethod()
 							+ " Please choose correct metrics!");
 				}

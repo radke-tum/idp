@@ -35,48 +35,32 @@ import de.tum.pssif.core.model.Node;
 
 /**
  * Builds out of a Model and an MetaModel a Model which can be displayed as
- * Graph and Matrix
+ * Graph and Matrix. Furthermore if a new model is added to an existing the user
+ * is asked what he want's to do: Merge or correspondence analysis.
  * 
- * @author Luc
+ * @author Luc (partly Andreas as annotated)
  * 
  */
 public class ModelBuilder {
 
 	private static MyModelContainer activeModel;
-	// private static LinkedList<MyModelContainer> activeModels;
-	// private static boolean mergerOn=true;
 	private static Metamodel metaModel = PSSIFCanonicMetamodelCreator.create();
 	private static HashMap<MyPair, LinkedList<MyEdgeType>> possibleMappings;
 
 	/**
-	 * @author Andreas
-	 */
-	private static GraphVisualization gViz;
-
-	/**
-	 * until here
-	 */
-
-	/**
-	 * @param gViz
-	 *            the gViz to set
-	 */
-	public static void setgViz(GraphVisualization gViz) {
-		ModelBuilder.gViz = gViz;
-	}
-
-	/**
-	 * Add a new Model and MetaModel. The new Model might be merged with another
-	 * existing Model. If a model already exists and an additional Model is
-	 * imported the user decides if he want's to merge the two models or search
-	 * for equal elements.
+	 * If the user imports a new Model and MetaModel this method is called. The
+	 * new Model might be merged or analysed for correspondences with another
+	 * existing Model. The user can decide if he want's to merge the two models
+	 * or search for equal elements.
 	 * 
 	 * Depending on the users selection the two models are either merged into
 	 * one or corresponding elements are marked as equals.
 	 * 
 	 * @author Andreas
 	 * @param meta
+	 *            the metamodel of the new model
 	 * @param model
+	 *            the newly imported model
 	 */
 	public static void addModel(Metamodel Pmeta, Model Pmodel) {
 		// check if we have to merge the model with an existing
@@ -150,11 +134,14 @@ public class ModelBuilder {
 	}
 
 	/**
-	 * This method creates the equals edges between the nodepairs given in the
-	 * matched list.
+	 * This method creates the equals edges selected by the user between the
+	 * nodepairs given in the matched list. Therefore it searches for the two
+	 * nodes of the actual comparedNodePair in the new active model and adds a
+	 * new equals edge between them.
+	 * 
 	 * 
 	 * @param matchedList
-	 *            the list with the node pairs which shall be linked by a equals
+	 *            the list with the node pairs which shall be linked by an equals
 	 *            link
 	 * @author Andreas
 	 */
@@ -164,10 +151,6 @@ public class ModelBuilder {
 			MyEdgeType edgeType = new MyEdgeType(metaModel.getEdgeType(
 					PSSIFCanonicMetamodelCreator.E_EQUALS).getOne(), 4);
 
-			/**
-			 * searches for the nodes (in the new active model) which shall be
-			 * linked and adds new edges between them.
-			 */
 			for (MyNode actNode : activeModel.getAllNodes()) {
 				if (Methods.findGlobalID(actNode.getNode(),
 						actNode.getNodeType().getType()).equals(

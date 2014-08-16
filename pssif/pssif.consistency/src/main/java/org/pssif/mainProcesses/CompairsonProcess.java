@@ -67,16 +67,30 @@ public class CompairsonProcess {
 	 */
 	private MatchingProcess matchingProcess;
 
+	/**
+	 * all nodes from the original model
+	 */
 	private PSSIFOption<Node> nodesOriginalModel;
 
-	public static ConsistencyData main(Model originalModel, Model newModel,
+	/**
+	 * Initiates the begin of the correspondence analysis
+	 * 
+	 * @param originalModel
+	 *            the model firstly imported into the pssif modelling fw
+	 * @param newModel
+	 *            the recent model imported into the pssif modelling fw
+	 * @param metaModelOriginal
+	 *            the according metamodel for the original model
+	 * @param metaModelNew
+	 *            the according metamodel for the new model
+	 * @param matchMethods
+	 *            these are the matching methods for the coming matching phase
+	 */
+	public static void main(Model originalModel, Model newModel,
 			Metamodel metaModelOriginal, Metamodel metaModelNew,
 			List<MatchMethod> matchMethods) {
-		CompairsonProcess compairsonProcess = new CompairsonProcess(
-				originalModel, newModel, metaModelOriginal, metaModelNew,
-				matchMethods);
-
-		return compairsonProcess.consistencyData;
+		new CompairsonProcess(originalModel, newModel, metaModelOriginal,
+				metaModelNew, matchMethods);
 	}
 
 	/**
@@ -102,8 +116,7 @@ public class CompairsonProcess {
 		this.consistencyData = ConsistencyData.getInstance();
 
 		this.matchingProcess = new MatchingProcess(originalModel, newModel,
-				metaModelOriginal, metaModelNew, consistencyData, matchMethods,
-				this);
+				metaModelOriginal, metaModelNew, matchMethods, this);
 
 		/**
 		 * compairson process starts here
@@ -147,8 +160,8 @@ public class CompairsonProcess {
 	/**
 	 * this method iterates over every node type of the pssif metamodel and
 	 * calls the method iterateNodesOfType() with the current type. This ensures
-	 * that all nodes from the original model are compared with allfrom the
-	 * other model.
+	 * that all nodes from the original model are compared with allfrom the new
+	 * model.
 	 * 
 	 * It starts with the children of the Type DevelopmentArtifact and then
 	 * continues with the children of the Type Solution Artifact. After that the
@@ -251,7 +264,7 @@ public class CompairsonProcess {
 	}
 
 	/**
-	 * This method is supposed to call the compairson process
+	 * This method is supposed to call the matching
 	 * (matchNodeWithNodesOfActTypeOfNewModel()) between the given node and
 	 * every node in the new model Therefore this method gets all nodes from the
 	 * new model with the given type. Then the process works bottom-up. This
@@ -303,7 +316,7 @@ public class CompairsonProcess {
 
 	/**
 	 * this method checks if there are any nodes of the given type in the new
-	 * model. If there are none there has to be no compairson done between the
+	 * model. If there are none there has to be no matching done between the
 	 * given node and nodes in the other model of the actual type. If there is
 	 * one or many nodes with the actual type in the new model each node from
 	 * the new model is compared separately with the node from the original
@@ -316,9 +329,6 @@ public class CompairsonProcess {
 	 *            the nodes with the acutal type found in the new model
 	 * @param actTypeOriginModel
 	 *            the actual type of the originalNode
-	 * 
-	 * 
-	 * 
 	 * @param actTypeNewModel
 	 *            the actual type with which nodes to compare are searched in
 	 *            the new model
@@ -354,7 +364,9 @@ public class CompairsonProcess {
 
 	/**
 	 * this method finally calls the appropriate matching functions between two
-	 * nodes. Then a similarity score will be computed.
+	 * nodes if they haven't been compared before. If they have been compared
+	 * before is checked based on their global id. Then a similarity score will
+	 * be computed.
 	 * 
 	 * @param tempNodeOrigin
 	 *            the node that shall be compared to the node from the new model
@@ -363,9 +375,6 @@ public class CompairsonProcess {
 	 *            model
 	 * @param actTypeOriginModel
 	 *            the actual type of the originalNode
-	 * 
-	 * 
-	 * 
 	 * @param actTypeNewModel
 	 *            the actual type of the node from the new model
 	 */
