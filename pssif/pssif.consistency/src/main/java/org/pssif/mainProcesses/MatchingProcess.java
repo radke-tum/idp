@@ -66,7 +66,7 @@ public class MatchingProcess {
 	 */
 	public MatchingProcess(Model originalModel, Model newModel,
 			Metamodel metaModelOriginal, Metamodel metaModelNew,
-			List<MatchMethod> matchMethods, CompairsonProcess compairsonProcess) {
+			List<MatchMethod> matchMethods, ComparisonProcess compairsonProcess) {
 
 		this.originalModel = originalModel;
 		this.newModel = newModel;

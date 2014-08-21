@@ -24,7 +24,7 @@ import javax.swing.table.TableModel;
 import org.pssif.comparedDataStructures.ComparedNodePair;
 import org.pssif.consistencyDataStructures.ConsistencyData;
 import org.pssif.consistencyExceptions.MatchMethodException;
-import org.pssif.mainProcesses.CompairsonProcess;
+import org.pssif.mainProcesses.ComparisonProcess;
 import org.pssif.matchingLogic.MatchMethod;
 import org.pssif.matchingLogic.MatchingMethods;
 
@@ -93,7 +93,7 @@ public class UserGuidingConsistency {
 
 			openChooseTresholdsPopup();
 
-			CompairsonProcess.main(originalModel, newModel, metaModelOriginal,
+			ComparisonProcess.main(originalModel, newModel, metaModelOriginal,
 					metaModelNew, matchMethods);
 
 			openChooseMergeCandidatesPopup();

@@ -407,16 +407,16 @@ public class ContextMatcher extends MatchMethod {
 								(NodeType) tempNodeSorroundingNew.getType(),
 								tempNodeSorroundingNew.getNode()));
 
-				if (nodesAlreadyCompared(tempNodeSorroundingOrigin.getNode(),
-						tempNodeSorroundingNew.getNode())) {
-					similaritySum += calculateWeightedSimilarities();
-				} else {
-					similaritySum += computeSimilarity(
-							tempNodeSorroundingOrigin.getNode(),
-							tempNodeSorroundingOrigin.getType(),
-							tempNodeSorroundingNew.getNode(),
-							tempNodeSorroundingNew.getType());
-				}
+				// if (nodesAlreadyCompared(tempNodeSorroundingOrigin.getNode(),
+				// tempNodeSorroundingNew.getNode())) {
+				// similaritySum += calculateWeightedSimilarities();
+				// } else {
+				similaritySum += computeSimilarity(
+						tempNodeSorroundingOrigin.getNode(),
+						tempNodeSorroundingOrigin.getType(),
+						tempNodeSorroundingNew.getNode(),
+						tempNodeSorroundingNew.getType());
+				// }
 			}
 		}
 		double denominator = Math.max(sorroundingNodesOrigin.size(),
@@ -427,8 +427,11 @@ public class ContextMatcher extends MatchMethod {
 		} else {
 			return 0;
 		}
-
-		return result;
+		if (result > 1) {
+			return 1;
+		} else {
+			return result;
+		}
 	}
 
 	/**

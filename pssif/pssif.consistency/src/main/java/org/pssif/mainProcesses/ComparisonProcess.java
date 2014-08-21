@@ -49,7 +49,7 @@ import de.tum.pssif.core.model.Node;
  * @author Andreas
  * 
  */
-public class CompairsonProcess {
+public class ComparisonProcess {
 
 	private static final boolean debugMode = false;
 
@@ -89,7 +89,7 @@ public class CompairsonProcess {
 	public static void main(Model originalModel, Model newModel,
 			Metamodel metaModelOriginal, Metamodel metaModelNew,
 			List<MatchMethod> matchMethods) {
-		new CompairsonProcess(originalModel, newModel, metaModelOriginal,
+		new ComparisonProcess(originalModel, newModel, metaModelOriginal,
 				metaModelNew, matchMethods);
 	}
 
@@ -105,7 +105,7 @@ public class CompairsonProcess {
 	 * @param matchMethods
 	 *            these are the matching methods for the coming matching phase
 	 */
-	public CompairsonProcess(Model originalModel, Model newModel,
+	public ComparisonProcess(Model originalModel, Model newModel,
 			Metamodel metaModelOriginal, Metamodel metaModelNew,
 			List<MatchMethod> matchMethods) {
 
