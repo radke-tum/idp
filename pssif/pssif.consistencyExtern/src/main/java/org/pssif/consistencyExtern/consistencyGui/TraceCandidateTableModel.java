@@ -40,6 +40,11 @@ import org.pssif.mergedDataStructures.MergedNodePair;
 public class TraceCandidateTableModel extends AbstractTableModel {
 
 	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8571148330311284772L;
+
+	/**
 	 * The names of the column of the table
 	 */
 	private static final String[] COLUMN_NAMES = { "Node Origin", "Node New",

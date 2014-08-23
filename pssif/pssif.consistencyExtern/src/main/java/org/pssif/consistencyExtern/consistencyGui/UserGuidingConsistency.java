@@ -27,6 +27,7 @@ import org.pssif.consistencyExceptions.MatchMethodException;
 import org.pssif.mainProcesses.ComparisonProcess;
 import org.pssif.matchingLogic.MatchMethod;
 import org.pssif.matchingLogic.MatchingMethods;
+import org.pssif.mergedDataStructures.MergedNodePair;
 
 import de.tum.pssif.core.metamodel.Metamodel;
 import de.tum.pssif.core.model.Model;
@@ -58,6 +59,10 @@ import de.tum.pssif.core.model.Model;
  * that the class lets the user select which match methods shall be applied with
  * which weight, which thresholds for each metric group shall be active and
  * which nodes shall be linked as equals.
+ * 
+ * Furthermore this class lets the user in the model merge choose which nodes
+ * shall be linked by a tracelink, merged into node one or the old node just be
+ * copied to the new model.
  * 
  * @author Andreas
  */
@@ -475,10 +480,10 @@ public class UserGuidingConsistency {
 	/**
 	 * This method shows the user the node pairs which the merging process
 	 * assessed as to be traced. Users can then choose which node pairs shall be
-	 * linked by a trace link or if only the new version shall be kept.
-	 * After
-	 * Confirming this dialog the mergedNodePairs list in the consistencyData
-	 * object is updated.
+	 * linked by a trace link or if only the new version shall be kept. If the
+	 * user chooses neither trace nor merge the old version of the node is
+	 * copied to the new model together with his edges. After Confirming this
+	 * dialog the mergedNodePairs list in the consistencyData object is updated.
 	 * 
 	 */
 	public static void openChooseTraceLinksWindows() {
@@ -501,14 +506,32 @@ public class UserGuidingConsistency {
 
 		JScrollPane scrollPane = new JScrollPane(traceTable);
 
-		JButton buttonApply = new JButton(
-				"Handle the selected node pairs as selected");
+		JButton buttonApply = new JButton("Handle the node pairs as selected");
 		buttonApply.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				// TODO check if valid fields were checked (not traced AND
-				// MERGED)
-				dialog.setVisible(false);
+				if (chosenOptionsAreValid()) {
+					dialog.setVisible(false);
+				} else {
+					dialog.setVisible(true);
+				}
+			}
+
+			/**
+			 * @return returns if the options in the model merger dialogue are
+			 *         valid. They are valid if merge and trace aren't chosen
+			 *         simultaneously and invalid otherwise
+			 */
+			private boolean chosenOptionsAreValid() {
+				boolean result = true;
+
+				for (MergedNodePair actPair : ConsistencyData.getInstance()
+						.getTraceCandidateList()) {
+					result = result
+							&& !(actPair.isMerge() && actPair.isTraceLink());
+				}
+
+				return result;
 			}
 		});
 

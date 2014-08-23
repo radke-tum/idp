@@ -56,6 +56,9 @@ public class ModelBuilder {
 	 * Depending on the users selection the two models are either merged into
 	 * one or corresponding elements are marked as equals.
 	 * 
+	 * The user can choose which nodes shall be merged/traced or marked as
+	 * equals.
+	 * 
 	 * @author Andreas
 	 * @param meta
 	 *            the metamodel of the new model
@@ -80,9 +83,9 @@ public class ModelBuilder {
 				MergingProcess mergingProcess = new MergingProcess(
 						activeModel.getModel(), Pmodel,
 						activeModel.getMetamodel(), Pmeta);
-				
+
 				UserGuidingConsistency.openChooseTraceLinksWindows();
-				
+
 				ConsistencyData.getInstance().createUnmatchedNodeList();
 
 				// retrieving the results of the merging process
@@ -145,8 +148,8 @@ public class ModelBuilder {
 	 * 
 	 * 
 	 * @param matchedList
-	 *            the list with the node pairs which shall be linked by an equals
-	 *            link
+	 *            the list with the node pairs which shall be linked by an
+	 *            equals link
 	 * @author Andreas
 	 */
 	private static void setEqualsLinks(List<ComparedNodePair> matchedList) {
