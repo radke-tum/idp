@@ -94,7 +94,9 @@ public class MergingProcess {
 	private MatchMethod stringEditDistanceMatcher;
 
 	/**
-	 * a list with all nodes from the original model with their according type
+	 * a list with all nodes from the original model with their according type.
+	 * It's needed to transfer all nodes who weren't matched or traced with a
+	 * new node in the new model.
 	 */
 	private List<NodeAndType> allNodesOrigin;
 
@@ -129,13 +131,35 @@ public class MergingProcess {
 
 		this.normalizer = Normalizer.initialize(matchMethods);
 
+		fillAllNodesOrigin();
+
 		startTypeAndNodeIteration();
 
 		ConsistencyData.getInstance().resetUnmatchedJunctionnodesOrigin();
 
 		handleConjunctions();
 
-		ConsistencyData.getInstance().createUnmatchedNodeList(allNodesOrigin);
+		ConsistencyData.getInstance().setAllNodesOrigin(allNodesOrigin);
+	}
+
+	private void fillAllNodesOrigin() {
+
+		PSSIFOption<Node> nodesOriginalModel;
+
+		for (NodeType actType : metaModelOriginal.getNodeTypes()) {
+			nodesOriginalModel = actType.apply(originalModel, false);
+
+			if (nodesOriginalModel.isOne()) {
+				allNodesOrigin.add(new NodeAndType(nodesOriginalModel.getOne(),
+						actType));
+			}
+			if (nodesOriginalModel.isMany()) {
+
+				for (Node actNode : nodesOriginalModel.getMany()) {
+					allNodesOrigin.add(new NodeAndType(actNode, actType));
+				}
+			}
+		}
 	}
 
 	/**
@@ -349,7 +373,7 @@ public class MergingProcess {
 
 	/**
 	 * This method compares two given nodes and returns true if they are fully
-	 * equals.
+	 * equal.
 	 * 
 	 * @param contextOrigin
 	 *            the sorrounding node of the origin junction node
@@ -522,9 +546,6 @@ public class MergingProcess {
 
 				Node tempNodeOrigin = actNodesOriginalModel.getOne();
 
-				allNodesOrigin.add(new NodeAndType(tempNodeOrigin,
-						actTypeOriginModel));
-
 				iterateOverNodesOfNewModel(tempNodeOrigin, actTypeOriginModel);
 
 			} else {
@@ -543,9 +564,6 @@ public class MergingProcess {
 				while (tempNodeOriginIterator.hasNext()) {
 
 					Node tempNodeOrigin = tempNodeOriginIterator.next();
-
-					allNodesOrigin.add(new NodeAndType(tempNodeOrigin,
-							actTypeOriginModel));
 
 					iterateOverNodesOfNewModel(tempNodeOrigin,
 							actTypeOriginModel);
@@ -760,6 +778,10 @@ public class MergingProcess {
 				labelNewNormalized);
 
 		comparedLabelPair.setExactMatchResult(exactMatchResult);
+		
+		if(exactMatchResult >= 1){
+			comparedLabelPair.setEquals(true);
+		}
 
 		MergedNodePair mergedNodePair = new MergedNodePair(tempNodeOrigin,
 				tempNodeNew, actTypeOriginModel, actTypeNewModel,

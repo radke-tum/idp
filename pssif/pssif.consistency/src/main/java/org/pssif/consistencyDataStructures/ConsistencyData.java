@@ -134,6 +134,12 @@ public class ConsistencyData {
 	private volatile List<NodeAndType> unmatchedJunctionnodesOrigin;
 
 	/**
+	 * a list with all nodes of the original model together with their according
+	 * type
+	 */
+	private List<NodeAndType> allNodesOrigin;
+
+	/**
 	 * these are the tresholds for the syntactic, semantic and contextual
 	 * metrics. Depending on these tresholds and the results of a match between
 	 * two nodes the two nodes are proposed as equal to the user if one of the
@@ -344,6 +350,24 @@ public class ConsistencyData {
 	}
 
 	/**
+	 * This methods evaluates which of the node pairs compared in the merging
+	 * process were marked as to be traced. All those node pairs are added to a
+	 * list and then returned.
+	 * 
+	 * @return the list of node pairs which were marked as to be traced
+	 */
+	public List<MergedNodePair> getTraceCandidateList() {
+		List<MergedNodePair> traceCandidates = new LinkedList<MergedNodePair>();
+
+		for (MergedNodePair actPair : mergedNodePairs) {
+			if (actPair.isTraceLink()) {
+				traceCandidates.add(actPair);
+			}
+		}
+		return traceCandidates;
+	}
+
+	/**
 	 * This method returns a list witch node pairs which were proven to be the
 	 * same by the applied smilarity metrics
 	 * 
@@ -384,14 +408,11 @@ public class ConsistencyData {
 	/**
 	 * this method takes alle nodes from the original model and creates a list
 	 * with the nodes which haven't been merged or traced with another node.
-	 * 
-	 * @param nodesOrigin
-	 *            all nodes with their type from the first imported model
 	 */
-	public void createUnmatchedNodeList(List<NodeAndType> nodesOrigin) {
+	public void createUnmatchedNodeList() {
 		boolean isMatchedNode;
 
-		for (NodeAndType actNode : nodesOrigin) {
+		for (NodeAndType actNode : allNodesOrigin) {
 			isMatchedNode = false;
 			for (MergedNodePair mergedNode : mergedNodePairs) {
 				if (mergedNode.isMerge() || mergedNode.isTraceLink()) {
@@ -433,5 +454,9 @@ public class ConsistencyData {
 
 	public void resetUnmatchedJunctionnodesOrigin() {
 		this.unmatchedJunctionnodesOrigin = new LinkedList<NodeAndType>();
+	}
+
+	public void setAllNodesOrigin(List<NodeAndType> allNodesOrigin) {
+		this.allNodesOrigin = allNodesOrigin;
 	}
 }

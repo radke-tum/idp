@@ -80,6 +80,10 @@ public class ModelBuilder {
 				MergingProcess mergingProcess = new MergingProcess(
 						activeModel.getModel(), Pmodel,
 						activeModel.getMetamodel(), Pmeta);
+				
+				UserGuidingConsistency.openChooseTraceLinksWindows();
+				
+				ConsistencyData.getInstance().createUnmatchedNodeList();
 
 				// retrieving the results of the merging process
 				List<MergedNodePair> mergedNodePairs = consistencyData

@@ -235,15 +235,15 @@ public class UserGuidingConsistency {
 		final TableModel tableModel = new MatchCandidateTableModel(
 				ConsistencyData.getInstance().getEqualsCandidateList());
 
-		JTable methodTable = new JTable(tableModel);
+		JTable mergeTable = new JTable(tableModel);
 
-		MatchCandidateTableModel.initColumnWidths(methodTable);
+		MatchCandidateTableModel.initColumnWidths(mergeTable);
 
-		methodTable.setFont(new Font("Arial", Font.PLAIN, 14));
-		methodTable.setGridColor(new Color(808080));
-		methodTable.getTableHeader().setReorderingAllowed(false);
+		mergeTable.setFont(new Font("Arial", Font.PLAIN, 14));
+		mergeTable.setGridColor(new Color(808080));
+		mergeTable.getTableHeader().setReorderingAllowed(false);
 
-		JScrollPane scrollPane = new JScrollPane(methodTable);
+		JScrollPane scrollPane = new JScrollPane(mergeTable);
 
 		JButton buttonApply = new JButton(
 				"Link the selected node pairs as 'equal'");
@@ -456,9 +456,10 @@ public class UserGuidingConsistency {
 					break;
 				}
 				default:
-					throw new MatchMethodException("Invalid metrics were chosen. "
-							+ method.getMatchMethod()
-							+ " Please choose correct metrics!");
+					throw new MatchMethodException(
+							"Invalid metrics were chosen. "
+									+ method.getMatchMethod()
+									+ " Please choose correct metrics!");
 				}
 			}
 		}
@@ -469,5 +470,58 @@ public class UserGuidingConsistency {
 		result = result && (contextualWeight >= 0) && (contextualWeight <= 1);
 
 		return result;
+	}
+
+	/**
+	 * This method shows the user the node pairs which the merging process
+	 * assessed as to be traced. Users can then choose which node pairs shall be
+	 * linked by a trace link or if only the new version shall be kept.
+	 * After
+	 * Confirming this dialog the mergedNodePairs list in the consistencyData
+	 * object is updated.
+	 * 
+	 */
+	public static void openChooseTraceLinksWindows() {
+		final JDialog dialog = new JDialog();
+		dialog.setLayout(new BorderLayout());
+		dialog.setSize(900, 600);
+		dialog.setModalityType(ModalityType.APPLICATION_MODAL);
+		dialog.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+
+		final TableModel tableModel = new TraceCandidateTableModel(
+				ConsistencyData.getInstance().getTraceCandidateList());
+
+		JTable traceTable = new JTable(tableModel);
+
+		TraceCandidateTableModel.initColumnWidths(traceTable);
+
+		traceTable.setFont(new Font("Arial", Font.PLAIN, 14));
+		traceTable.setGridColor(new Color(808080));
+		traceTable.getTableHeader().setReorderingAllowed(false);
+
+		JScrollPane scrollPane = new JScrollPane(traceTable);
+
+		JButton buttonApply = new JButton(
+				"Handle the selected node pairs as selected");
+		buttonApply.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(final ActionEvent e) {
+				// TODO check if valid fields were checked (not traced AND
+				// MERGED)
+				dialog.setVisible(false);
+			}
+		});
+
+		final JLabel description = new JLabel(
+				"Select if the proposed node pairs shall be merged or traced. If nothing is selected the node from the old model will be copied to the new model.");
+
+		JPanel buttonPanel = new JPanel();
+		buttonPanel.add(buttonApply);
+
+		dialog.add(description, BorderLayout.NORTH);
+		dialog.add(scrollPane, BorderLayout.CENTER);
+		dialog.add(buttonPanel, BorderLayout.SOUTH);
+
+		dialog.setVisible(true);
 	}
 }

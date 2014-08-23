@@ -98,7 +98,7 @@ public class MergedNodePair {
 		this.nodeNewModel = nodeNewModel;
 		this.typeOriginModel = typeOriginModel;
 		this.typeNewModel = typeNewModel;
-		this.labelComparison = labelComparison;
+		this.setLabelComparison(labelComparison);
 		this.traceLink = traceLink;
 		this.merge = merge;
 	}
@@ -191,6 +191,20 @@ public class MergedNodePair {
 	 */
 	public void setStringEditDistanceResult(double stringEditDistanceResult) {
 		this.stringEditDistanceResult = stringEditDistanceResult;
+	}
+
+	/**
+	 * @return the labelComparison
+	 */
+	public ComparedLabelPair getLabelComparison() {
+		return labelComparison;
+	}
+
+	/**
+	 * @param labelComparison the labelComparison to set
+	 */
+	public void setLabelComparison(ComparedLabelPair labelComparison) {
+		this.labelComparison = labelComparison;
 	}
 
 	/**
