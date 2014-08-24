@@ -56,7 +56,6 @@ import de.tum.pssif.core.model.Node;
  */
 public class ContextMatcher extends MatchMethod {
 
-	// TODO make these weights editable by the user
 	/**
 	 * these two variables store the weight with which the syntactic and
 	 * semantic results of the sorrounding nodes add to the contextual
@@ -368,9 +367,11 @@ public class ContextMatcher extends MatchMethod {
 	/**
 	 * This method iterates over all found nodes of the two models and compares
 	 * them based on the set matching methods. If two nodes have already been
-	 * compared before the former result is used instead of calculating the
+	 * compared before, the former result is used instead of calculating the
 	 * similarities again. After every iteration the similarity value is added
-	 * to the contextual result.
+	 * to the contextual result. Then the sum of similarity is divided through
+	 * the maximum number of sorrounding nodes of either the original node or
+	 * the new node.
 	 * 
 	 * @param tempNodeOrigin
 	 *            the node from the original model
@@ -390,33 +391,19 @@ public class ContextMatcher extends MatchMethod {
 		double similaritySum = 0;
 		double result = 0;
 
-		System.out.println("Vergleich zwischen (original): "
-				+ Methods.findName((NodeType) actTypeOriginModel,
-						tempNodeOrigin) + " dem neuen Knoten: "
-				+ Methods.findName((NodeType) actTypeNewModel, tempNodeNew));
-
 		for (NodeAndType tempNodeSorroundingOrigin : sorroundingNodesOrigin) {
 			for (NodeAndType tempNodeSorroundingNew : sorroundingNodesNew) {
 
-				System.out.println("-------Kontext zwischen (original): "
-						+ Methods.findName(
-								(NodeType) tempNodeSorroundingOrigin.getType(),
-								tempNodeSorroundingOrigin.getNode())
-						+ " dem neuen Kontext: "
-						+ Methods.findName(
-								(NodeType) tempNodeSorroundingNew.getType(),
-								tempNodeSorroundingNew.getNode()));
-
-				// if (nodesAlreadyCompared(tempNodeSorroundingOrigin.getNode(),
-				// tempNodeSorroundingNew.getNode())) {
-				// similaritySum += calculateWeightedSimilarities();
-				// } else {
-				similaritySum += computeSimilarity(
-						tempNodeSorroundingOrigin.getNode(),
-						tempNodeSorroundingOrigin.getType(),
-						tempNodeSorroundingNew.getNode(),
-						tempNodeSorroundingNew.getType());
-				// }
+				if (nodesAlreadyCompared(tempNodeSorroundingOrigin.getNode(),
+						tempNodeSorroundingNew.getNode())) {
+					similaritySum += calculateWeightedSimilarities();
+				} else {
+					similaritySum += computeSimilarity(
+							tempNodeSorroundingOrigin.getNode(),
+							tempNodeSorroundingOrigin.getType(),
+							tempNodeSorroundingNew.getNode(),
+							tempNodeSorroundingNew.getType());
+				}
 			}
 		}
 		double denominator = Math.max(sorroundingNodesOrigin.size(),
