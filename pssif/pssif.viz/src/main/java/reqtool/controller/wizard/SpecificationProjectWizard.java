@@ -9,7 +9,7 @@ import model.FileImporter;
 import model.ModelBuilder;
 import reqtool.graph.SpecificationNodePopup;
 import de.tum.pssif.core.common.PSSIFOption;
-import de.tum.pssif.core.metamodel.PSSIFCanonicMetamodelCreator;
+import de.tum.pssif.core.metamodel.external.PSSIFCanonicMetamodelCreator;
 import de.tum.pssif.core.model.Model;
 import de.tum.pssif.core.model.Node;
 import de.tum.pssif.core.model.impl.ModelImpl;
@@ -81,7 +81,7 @@ public class SpecificationProjectWizard {
 	 * @param newModel the new model
 	 */
 	private void createEdges(Model newModel/*LinkedList<MyNode> excludedNodes*/) {
-		MyEdgeType contains = ModelBuilder.getEdgeTypes().getValue(PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_INCLUSION_CONTAINS);
+		MyEdgeType contains = ModelBuilder.getEdgeTypes().getValue(PSSIFCanonicMetamodelCreator.TAGS.get("E_RELATIONSHIP_INCLUSION_CONTAINS"));
 		for (MyNode node : ModelBuilder.getAllNodes()) {
 			PSSIFOption<? extends Node> result = node.getNodeType().getType().apply(newModel, node.getNode().getId(), false);
 			if (!result.isNone() && !result.getOne().equals(specificationArtifactNode.getNode())) {

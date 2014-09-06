@@ -10,7 +10,7 @@ import java.util.List;
 
 import model.ModelBuilder;
 import de.tum.pssif.core.metamodel.EdgeType;
-import de.tum.pssif.core.metamodel.PSSIFCanonicMetamodelCreator;
+import de.tum.pssif.core.metamodel.external.PSSIFCanonicMetamodelCreator;
 
 /**
  * Allows to collapse or expand Nodes
@@ -376,7 +376,7 @@ public class MyCollapser {
 		}*/
 		
 		boolean res = false;
-		res = res || e.getEdgeType().getName().equals(PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_INCLUSION_CONTAINS);
+		res = res || e.getEdgeType().getName().equals(PSSIFCanonicMetamodelCreator.TAGS.get("E_RELATIONSHIP_INCLUSION_CONTAINS"));
 		
 		return res;
 	}

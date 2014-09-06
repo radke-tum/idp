@@ -15,7 +15,7 @@ import de.tum.pssif.core.common.PSSIFValue;
 import de.tum.pssif.core.metamodel.Attribute;
 import de.tum.pssif.core.metamodel.Metamodel;
 import de.tum.pssif.core.metamodel.NodeType;
-import de.tum.pssif.core.metamodel.PSSIFCanonicMetamodelCreator;
+import de.tum.pssif.core.metamodel.external.PSSIFCanonicMetamodelCreator;
 import de.tum.pssif.core.model.Model;
 import de.tum.pssif.core.model.Node;
 
@@ -169,6 +169,8 @@ public class ComparisonProcess {
 	 * iterated.
 	 */
 	public void typeIteration() {
+		
+		Constants.initialize();
 
 		for (int i = 0; i < Constants.PSIFFDevArtifactSubClasses.length; i++) {
 			iterateNodesOfType(Constants.PSIFFDevArtifactSubClasses[i], false);
@@ -178,9 +180,9 @@ public class ComparisonProcess {
 			iterateNodesOfType(Constants.PSIFFSolArtifactSubClasses[i], false);
 		}
 
-		iterateNodesOfType(PSSIFCanonicMetamodelCreator.N_DEV_ARTIFACT, false);
+		iterateNodesOfType(PSSIFCanonicMetamodelCreator.TAGS.get("N_DEV_ARTIFACT"), false);
 
-		iterateNodesOfType(PSSIFCanonicMetamodelCreator.N_SOL_ARTIFACT, false);
+		iterateNodesOfType(PSSIFCanonicMetamodelCreator.TAGS.get("N_SOL_ARTIFACT"), false);
 		iterateNodesOfType(PSSIFConstants.ROOT_NODE_TYPE_NAME, false);
 	}
 

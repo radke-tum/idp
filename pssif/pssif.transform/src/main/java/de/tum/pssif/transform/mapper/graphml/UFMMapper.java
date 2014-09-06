@@ -9,7 +9,7 @@ import de.tum.pssif.core.metamodel.ConnectionMapping;
 import de.tum.pssif.core.metamodel.EdgeType;
 import de.tum.pssif.core.metamodel.Metamodel;
 import de.tum.pssif.core.metamodel.NodeType;
-import de.tum.pssif.core.metamodel.PSSIFCanonicMetamodelCreator;
+import de.tum.pssif.core.metamodel.external.PSSIFCanonicMetamodelCreator;
 import de.tum.pssif.core.model.Model;
 import de.tum.pssif.transform.transformation.CreateArtificialEdgeTransformation;
 import de.tum.pssif.transform.transformation.CreateArtificialNodeTransformation;
@@ -28,21 +28,21 @@ import de.tum.pssif.transform.transformation.joined.JoinPath;
 public class UFMMapper extends GraphMLMapper {
   private static final String E_MATERIAL_FLOW    = "MaterialFlow";
   private static final String E_ENERGY_FLOW      = "EnergyFlow";
-  private static final String E_CONTROL_FLOW     = PSSIFCanonicMetamodelCreator.E_FLOW_CONTROL;
+  private static final String E_CONTROL_FLOW     = PSSIFCanonicMetamodelCreator.TAGS.get("E_FLOW_CONTROL");
   private static final String E_INFORMATION_FLOW = "InformationFlow";
-  private static final String N_SOL_ARTIFACT     = PSSIFCanonicMetamodelCreator.N_SOL_ARTIFACT;
-  private static final String A_COST             = PSSIFCanonicMetamodelCreator.A_BLOCK_COST;
-  private static final String A_DURATION         = PSSIFCanonicMetamodelCreator.A_DURATION;
-  private static final String A_PRIORITY         = PSSIFCanonicMetamodelCreator.A_REQUIREMENT_PRIORITY;
-  private static final String A_TYPE             = PSSIFCanonicMetamodelCreator.A_REQUIREMENT_TYPE;
-  private static final String A_WEIGHT           = PSSIFCanonicMetamodelCreator.A_HARDWARE_WEIGHT;
+  private static final String N_SOL_ARTIFACT     = PSSIFCanonicMetamodelCreator.TAGS.get("N_SOL_ARTIFACT");
+  private static final String A_COST             = PSSIFCanonicMetamodelCreator.TAGS.get("A_BLOCK_COST");
+  private static final String A_DURATION         = PSSIFCanonicMetamodelCreator.TAGS.get("A_DURATION");
+  private static final String A_PRIORITY         = PSSIFCanonicMetamodelCreator.TAGS.get("A_REQUIREMENT_PRIORITY");
+  private static final String A_TYPE             = PSSIFCanonicMetamodelCreator.TAGS.get("A_REQUIREMENT_TYPE");
+  private static final String A_WEIGHT           = PSSIFCanonicMetamodelCreator.TAGS.get("A_HARDWARE_WEIGHT");
   private static final String A_FUNCTIONARY      = "functionary";
-  private static final String N_STATE            = PSSIFCanonicMetamodelCreator.N_STATE;
-  private static final String E_RELATIONSHIP     = PSSIFCanonicMetamodelCreator.E_RELATIONSHIP;
-  private static final String N_BLOCK            = PSSIFCanonicMetamodelCreator.N_BLOCK;
-  private static final String N_FUNCTION         = PSSIFCanonicMetamodelCreator.N_FUNCTION;
-  private static final String N_REQUIREMENT      = PSSIFCanonicMetamodelCreator.N_REQUIREMENT;
-  private static final String N_HARDWARE         = PSSIFCanonicMetamodelCreator.N_HARDWARE;
+  private static final String N_STATE            = PSSIFCanonicMetamodelCreator.TAGS.get("N_STATE");
+  private static final String E_RELATIONSHIP     = PSSIFCanonicMetamodelCreator.TAGS.get("E_RELATIONSHIP");
+  private static final String N_BLOCK            = PSSIFCanonicMetamodelCreator.TAGS.get("N_BLOCK");
+  private static final String N_FUNCTION         = PSSIFCanonicMetamodelCreator.TAGS.get("N_FUNCTION");
+  private static final String N_REQUIREMENT      = PSSIFCanonicMetamodelCreator.TAGS.get("N_REQUIREMENT");
+  private static final String N_HARDWARE         = PSSIFCanonicMetamodelCreator.TAGS.get("N_HARDWARE");
 
   @Override
   public Model read(Metamodel metamodel, InputStream inputStream) {
@@ -55,10 +55,10 @@ public class UFMMapper extends GraphMLMapper {
   }
 
   public static Metamodel createUfpView(Metamodel metamodel) {
-    Metamodel view = new RenameEdgeTypeTransformation(et(PSSIFCanonicMetamodelCreator.E_FLOW_INFORMATION, metamodel), E_INFORMATION_FLOW)
+    Metamodel view = new RenameEdgeTypeTransformation(et(PSSIFCanonicMetamodelCreator.TAGS.get("E_FLOW_INFORMATION"), metamodel), E_INFORMATION_FLOW)
         .apply(metamodel);
-    view = new RenameEdgeTypeTransformation(et(PSSIFCanonicMetamodelCreator.E_FLOW_ENERGY, view), E_ENERGY_FLOW).apply(view);
-    view = new RenameEdgeTypeTransformation(et(PSSIFCanonicMetamodelCreator.E_FLOW_MATERIAL, view), E_MATERIAL_FLOW).apply(view);
+    view = new RenameEdgeTypeTransformation(et(PSSIFCanonicMetamodelCreator.TAGS.get("E_FLOW_ENERGY"), view), E_ENERGY_FLOW).apply(view);
+    view = new RenameEdgeTypeTransformation(et(PSSIFCanonicMetamodelCreator.TAGS.get("E_FLOW_MATERIAL"), view), E_MATERIAL_FLOW).apply(view);
     view = new RenameNodeTypeTransformation(nt(N_FUNCTION, view), "AbstractFunction").apply(view);
     view = new RenameNodeTypeTransformation(nt("Activity", view), N_FUNCTION).apply(view);
 

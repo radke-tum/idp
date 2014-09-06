@@ -24,7 +24,7 @@ import reqtool.handler.EventHandler;
 
 import com.google.common.eventbus.Subscribe;
 
-import de.tum.pssif.core.metamodel.PSSIFCanonicMetamodelCreator;
+import de.tum.pssif.core.metamodel.external.PSSIFCanonicMetamodelCreator;
 
 /**
  * The Class CreateReqMenuEventHandler.
@@ -38,7 +38,7 @@ public class CreateReqMenuEventHandler implements EventHandler {
 	 */
 	@Subscribe
 	public void handleReqPopupMenuEvent(CreateReqMenuEvent event) {
-		if (event.getSelectedNode().getNodeType().equals((ModelBuilder.getNodeTypes().getValue(PSSIFCanonicMetamodelCreator.N_REQUIREMENT)))) {
+		if (event.getSelectedNode().getNodeType().equals((ModelBuilder.getNodeTypes().getValue(PSSIFCanonicMetamodelCreator.TAGS.get("N_REQUIREMENT"))))) {
 			
 			JMenu reqMenu = new JMenu("Requirement Tool");
 
@@ -55,12 +55,12 @@ public class CreateReqMenuEventHandler implements EventHandler {
 			
 			event.getPopup().add(reqMenu);
 			
-		} else if (event.getSelectedNode().getNodeType().equals((ModelBuilder.getNodeTypes().getValue(PSSIFCanonicMetamodelCreator.N_TEST_CASE)))) {
+		} else if (event.getSelectedNode().getNodeType().equals((ModelBuilder.getNodeTypes().getValue(PSSIFCanonicMetamodelCreator.TAGS.get("N_TEST_CASE"))))) {
 			
 			JMenuItem subItem = verifyTestCaseMenuItem(event);
 			event.getPopup().add(subItem);
 		
-		} else if (event.getSelectedNode().getNodeType().equals((ModelBuilder.getNodeTypes().getValue(PSSIFCanonicMetamodelCreator.N_ISSUE)))) {
+		} else if (event.getSelectedNode().getNodeType().equals((ModelBuilder.getNodeTypes().getValue(PSSIFCanonicMetamodelCreator.TAGS.get("N_ISSUE"))))) {
 			
 			JMenuItem subItem = resolveIssueMenuItem(event);
 			event.getPopup().add(subItem);
@@ -71,7 +71,7 @@ public class CreateReqMenuEventHandler implements EventHandler {
 			event.getPopup().add(subItem);
 		}
 		
-		if (ModelBuilder.getNodeTypes().getValue(PSSIFCanonicMetamodelCreator.N_SOL_ARTIFACT).getType().isAssignableFrom(event.getSelectedNode().getNodeType().getType())) {
+		if (ModelBuilder.getNodeTypes().getValue(PSSIFCanonicMetamodelCreator.TAGS.get("N_SOL_ARTIFACT")).getType().isAssignableFrom(event.getSelectedNode().getNodeType().getType())) {
 
 			event.getPopup().add(getVersMngMenuItem(event));
 

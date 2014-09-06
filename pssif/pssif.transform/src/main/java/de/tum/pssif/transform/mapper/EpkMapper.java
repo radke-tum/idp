@@ -8,7 +8,7 @@ import de.tum.pssif.core.metamodel.EdgeType;
 import de.tum.pssif.core.metamodel.JunctionNodeType;
 import de.tum.pssif.core.metamodel.Metamodel;
 import de.tum.pssif.core.metamodel.NodeType;
-import de.tum.pssif.core.metamodel.PSSIFCanonicMetamodelCreator;
+import de.tum.pssif.core.metamodel.external.PSSIFCanonicMetamodelCreator;
 import de.tum.pssif.transform.ModelMapper;
 import de.tum.pssif.transform.model.EpkModelMapper;
 import de.tum.pssif.transform.transformation.AliasJunctionNodeTypeTransformation;
@@ -52,13 +52,13 @@ public class EpkMapper extends BaseVisioMapper {
     view = new AliasNodeTypeTransformation(view.getNodeType("Block").getOne(), "Information/ Material", "Information/ Material").apply(view);
     view = new AliasNodeTypeTransformation(view.getNodeType("Block").getOne(), "Organizational unit", "Organizational unit").apply(view);
     view = new HideNodeTypeTransformation(view.getNodeType("Block").getOne()).apply(view);
-    view = new AliasJunctionNodeTypeTransformation(view.getJunctionNodeType(PSSIFCanonicMetamodelCreator.N_CONJUNCTION).getOne(), "XOR", "XOR")
+    view = new AliasJunctionNodeTypeTransformation(view.getJunctionNodeType(PSSIFCanonicMetamodelCreator.TAGS.get("N_CONJUNCTION")).getOne(), "XOR", "XOR")
         .apply(view);
-    view = new AliasJunctionNodeTypeTransformation(view.getJunctionNodeType(PSSIFCanonicMetamodelCreator.N_CONJUNCTION).getOne(), "AND", "AND")
+    view = new AliasJunctionNodeTypeTransformation(view.getJunctionNodeType(PSSIFCanonicMetamodelCreator.TAGS.get("N_CONJUNCTION")).getOne(), "AND", "AND")
         .apply(view);
-    view = new AliasJunctionNodeTypeTransformation(view.getJunctionNodeType(PSSIFCanonicMetamodelCreator.N_CONJUNCTION).getOne(), "OR", "OR")
+    view = new AliasJunctionNodeTypeTransformation(view.getJunctionNodeType(PSSIFCanonicMetamodelCreator.TAGS.get("N_CONJUNCTION")).getOne(), "OR", "OR")
         .apply(view);
-    view = new HideJunctionNodeTypeTransformation(view.getJunctionNodeType(PSSIFCanonicMetamodelCreator.N_CONJUNCTION).getOne()).apply(view);
+    view = new HideJunctionNodeTypeTransformation(view.getJunctionNodeType(PSSIFCanonicMetamodelCreator.TAGS.get("N_CONJUNCTION")).getOne()).apply(view);
 
     DelegatingEdgeTypeTransformation dynamicConnector = new DelegatingEdgeTypeTransformation("Dynamic connector");
     EdgeType controlFlow = view.getEdgeType("Control Flow").getOne();

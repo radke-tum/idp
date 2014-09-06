@@ -6,7 +6,7 @@ import graph.model.MyNodeType;
 import java.util.List;
 
 import model.ModelBuilder;
-import de.tum.pssif.core.metamodel.PSSIFCanonicMetamodelCreator;
+import de.tum.pssif.core.metamodel.external.PSSIFCanonicMetamodelCreator;
 
 /**
  * The Class TestCaseCreator.
@@ -23,9 +23,9 @@ public class TestCaseCreator {
 	public static void createTestCase(MyNode mNode, List<MyNode> solutionArtifacts, String name) {
 		System.out.println("Creating Test Case for " + mNode.getName());
 
-		MyNodeType testCaseNodeType = ModelBuilder.getNodeTypes().getValue(PSSIFCanonicMetamodelCreator.N_TEST_CASE);
+		MyNodeType testCaseNodeType = ModelBuilder.getNodeTypes().getValue(PSSIFCanonicMetamodelCreator.TAGS.get("N_TEST_CASE"));
 
-		MyEdgeType basedOn = ModelBuilder.getEdgeTypes().getValue(PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_CHRONOLOGICAL_BASED_ON);
+		MyEdgeType basedOn = ModelBuilder.getEdgeTypes().getValue(PSSIFCanonicMetamodelCreator.TAGS.get("E_RELATIONSHIP_CHRONOLOGICAL_BASED_ON"));
 
 		MyNode testCaseNode = ModelBuilder.addNewNodeFromGUI(name, testCaseNodeType);
 
@@ -48,7 +48,7 @@ public class TestCaseCreator {
 	 * @return true, if successful
 	 */
 	private static boolean createVerifyEdges(List<MyNode> solArtifNodes, MyNode testCaseNode) {
-		MyEdgeType verifies = ModelBuilder.getEdgeTypes().getValue(PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_LOGICAL_VERIFIES);
+		MyEdgeType verifies = ModelBuilder.getEdgeTypes().getValue(PSSIFCanonicMetamodelCreator.TAGS.get("E_RELATIONSHIP_LOGICAL_VERIFIES"));
 		for(MyNode solArtfNode:solArtifNodes) {
 			ModelBuilder.addNewEdgeGUI(testCaseNode, solArtfNode, verifies, true);
 		}

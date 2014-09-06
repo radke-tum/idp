@@ -21,7 +21,7 @@ import javax.swing.JScrollPane;
 import model.ModelBuilder;
 import reqtool.controller.IssueResolver;
 import reqtool.controller.VersionManager;
-import de.tum.pssif.core.metamodel.PSSIFCanonicMetamodelCreator;
+import de.tum.pssif.core.metamodel.external.PSSIFCanonicMetamodelCreator;
 
 /**
  * The Class IssueResolverPopup.
@@ -29,10 +29,10 @@ import de.tum.pssif.core.metamodel.PSSIFCanonicMetamodelCreator;
 public class IssueResolverPopup {
 	
 	/** The Constant LEADS_TO. */
-	private static final MyEdgeType LEADS_TO =  ModelBuilder.getEdgeTypes().getValue(PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_CHRONOLOGICAL_LEADS_TO);
+	private static final MyEdgeType LEADS_TO =  ModelBuilder.getEdgeTypes().getValue(PSSIFCanonicMetamodelCreator.TAGS.get("E_RELATIONSHIP_CHRONOLOGICAL_LEADS_TO"));
 	
 	/** The Constant REFERENCIAL. */
-	private static final MyEdgeType REFERENCIAL = ModelBuilder.getEdgeTypes().getValue(PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_REFERENTIAL);
+	private static final MyEdgeType REFERENCIAL = ModelBuilder.getEdgeTypes().getValue(PSSIFCanonicMetamodelCreator.TAGS.get("E_RELATIONSHIP_REFERENTIAL"));
 	
 	/** The main panel. */
 	private JPanel allPanel;
@@ -109,13 +109,13 @@ public class IssueResolverPopup {
 				}
 			}
 			
-			MyNode changeProposal = ModelBuilder.addNewNodeFromGUI("ChangeProposal for Issue"+selectedNode.getName() , ModelBuilder.getNodeTypes().getValue(PSSIFCanonicMetamodelCreator.N_CHANGE_PROPOSAL));
+			MyNode changeProposal = ModelBuilder.addNewNodeFromGUI("ChangeProposal for Issue"+selectedNode.getName() , ModelBuilder.getNodeTypes().getValue(PSSIFCanonicMetamodelCreator.TAGS.get("N_CHANGE_PROPOSAL")));
 			ModelBuilder.addNewEdgeGUI(selectedNode, changeProposal, LEADS_TO, true);
 			
-			MyNode decision = ModelBuilder.addNewNodeFromGUI("Decision for ChangeProposal"+selectedNode.getName() , ModelBuilder.getNodeTypes().getValue(PSSIFCanonicMetamodelCreator.N_DECISION));
+			MyNode decision = ModelBuilder.addNewNodeFromGUI("Decision for ChangeProposal"+selectedNode.getName() , ModelBuilder.getNodeTypes().getValue(PSSIFCanonicMetamodelCreator.TAGS.get("N_DECISION")));
 			ModelBuilder.addNewEdgeGUI(changeProposal, decision, LEADS_TO, true);
 			
-			MyNode changeEvent = ModelBuilder.addNewNodeFromGUI("ChangeEvent"+selectedNode.getName(),  ModelBuilder.getNodeTypes().getValue(PSSIFCanonicMetamodelCreator.N_CHANGE_EVENT));
+			MyNode changeEvent = ModelBuilder.addNewNodeFromGUI("ChangeEvent"+selectedNode.getName(),  ModelBuilder.getNodeTypes().getValue(PSSIFCanonicMetamodelCreator.TAGS.get("N_CHANGE_EVENT")));
 			ModelBuilder.addNewEdgeGUI(selectedNode, changeEvent,REFERENCIAL, true);
 			ModelBuilder.addNewEdgeGUI(changeProposal, changeEvent, REFERENCIAL, true);
 			ModelBuilder.addNewEdgeGUI(decision, changeEvent,REFERENCIAL, true);
@@ -126,7 +126,7 @@ public class IssueResolverPopup {
 					VersionManager vm = new VersionManager(sols.get(index));
 					MyNode newVersionNode = vm.getMaxVersion();
 					
-					ModelBuilder.addNewEdgeGUI(newVersionNode, changeEvent, ModelBuilder.getEdgeTypes().getValue(PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_CHRONOLOGICAL_BASED_ON), true);
+					ModelBuilder.addNewEdgeGUI(newVersionNode, changeEvent, ModelBuilder.getEdgeTypes().getValue(PSSIFCanonicMetamodelCreator.TAGS.get("E_RELATIONSHIP_CHRONOLOGICAL_BASED_ON")), true);
 				}
 			}
 			
@@ -136,7 +136,7 @@ public class IssueResolverPopup {
 					VersionManager vm = new VersionManager(reqs.get(index));
 					MyNode newVersionNode = vm.getMaxVersion();
 					
-					ModelBuilder.addNewEdgeGUI(newVersionNode, changeEvent, ModelBuilder.getEdgeTypes().getValue(PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_CHRONOLOGICAL_BASED_ON), true);
+					ModelBuilder.addNewEdgeGUI(newVersionNode, changeEvent, ModelBuilder.getEdgeTypes().getValue(PSSIFCanonicMetamodelCreator.TAGS.get("E_RELATIONSHIP_CHRONOLOGICAL_BASED_ON")), true);
 				}
 			}
 	

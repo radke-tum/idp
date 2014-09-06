@@ -12,7 +12,7 @@ import de.tum.pssif.core.common.PSSIFConstants;
 import de.tum.pssif.core.common.PSSIFOption;
 import de.tum.pssif.core.common.PSSIFValue;
 import de.tum.pssif.core.metamodel.NodeType;
-import de.tum.pssif.core.metamodel.PSSIFCanonicMetamodelCreator;
+import de.tum.pssif.core.metamodel.external.PSSIFCanonicMetamodelCreator;
 
 /**
  * The Class RequirementVersionManager.
@@ -29,8 +29,8 @@ public class RequirementVersionManager {
 	 */
 	public static boolean createNewVersion(GraphVisualization gViz, MyNode node, String newVersion) {
 		MyNode mNode = node;
-		MyNodeType requirementNodeType = ModelBuilder.getNodeTypes().getValue(PSSIFCanonicMetamodelCreator.N_REQUIREMENT);
-		MyEdgeType evolvesTo = ModelBuilder.getEdgeTypes().getValue(PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_CHRONOLOGICAL_EVOLVES_TO);
+		MyNodeType requirementNodeType = ModelBuilder.getNodeTypes().getValue(PSSIFCanonicMetamodelCreator.TAGS.get("N_REQUIREMENT"));
+		MyEdgeType evolvesTo = ModelBuilder.getEdgeTypes().getValue(PSSIFCanonicMetamodelCreator.TAGS.get("E_RELATIONSHIP_CHRONOLOGICAL_EVOLVES_TO"));
 	
 		NodeType nodeType = ModelBuilder.getMetamodel().getNodeType(requirementNodeType.getName()).getOne();
 	
@@ -148,7 +148,7 @@ public class RequirementVersionManager {
 	 */
 	public static boolean hasPreviousVersions(MyNode myNode) {
 		for (MyEdge e : ModelBuilder.getAllEdges()) {
-			if (e.getEdgeType().getName().equals(PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_CHRONOLOGICAL_EVOLVES_TO)
+			if (e.getEdgeType().getName().equals(PSSIFCanonicMetamodelCreator.TAGS.get("E_RELATIONSHIP_CHRONOLOGICAL_EVOLVES_TO"))
 					&& e.getDestinationNode().getNode().equals(myNode.getNode())) {
 				return true;
 			}
@@ -164,7 +164,7 @@ public class RequirementVersionManager {
 	 */
 	public static boolean hasNextVersions(MyNode myNode) {
 		for (MyEdge e : ModelBuilder.getAllEdges()) {
-			if (e.getEdgeType().getName().equals(PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_CHRONOLOGICAL_EVOLVES_TO)
+			if (e.getEdgeType().getName().equals(PSSIFCanonicMetamodelCreator.TAGS.get("E_RELATIONSHIP_CHRONOLOGICAL_EVOLVES_TO"))
 					&& e.getSourceNode().getNode().equals(myNode.getNode())) {
 				return true;
 			}
@@ -179,7 +179,7 @@ public class RequirementVersionManager {
 	 * @return the max version
 	 */
 	public static MyNode getMaxVersion(MyNode myNode) {
-		MyNodeType requirementNodeType = ModelBuilder.getNodeTypes().getValue(PSSIFCanonicMetamodelCreator.N_REQUIREMENT);
+		MyNodeType requirementNodeType = ModelBuilder.getNodeTypes().getValue(PSSIFCanonicMetamodelCreator.TAGS.get("N_REQUIREMENT"));
 		NodeType nodeType = ModelBuilder.getMetamodel().getNodeType(requirementNodeType.getName()).getOne();
 		MyNode maxVersionNode = null;
 		double maxVersion = Integer.MIN_VALUE;
@@ -220,7 +220,7 @@ public class RequirementVersionManager {
 		}
 		
 		for (MyEdge e: ModelBuilder.getAllEdges()){
-			if ( toBeHidden.contains((MyNode)e.getDestinationNode()) && ((MyNode)e.getSourceNode()).getNodeType().toString().equals(PSSIFCanonicMetamodelCreator.N_TEST_CASE) ){
+			if ( toBeHidden.contains((MyNode)e.getDestinationNode()) && ((MyNode)e.getSourceNode()).getNodeType().toString().equals(PSSIFCanonicMetamodelCreator.TAGS.get("N_TEST_CASE")) ){
 				toBeHidden.add((MyNode)e.getSourceNode());
 			}
 		}
@@ -248,7 +248,7 @@ public class RequirementVersionManager {
 		}
 	
 		for (MyEdge e: ModelBuilder.getAllEdges()){
-			if ( toBeShown.contains((MyNode)e.getDestinationNode()) && ((MyNode)e.getSourceNode()).getNodeType().toString().equals(PSSIFCanonicMetamodelCreator.N_TEST_CASE) ){
+			if ( toBeShown.contains((MyNode)e.getDestinationNode()) && ((MyNode)e.getSourceNode()).getNodeType().toString().equals(PSSIFCanonicMetamodelCreator.TAGS.get("N_TEST_CASE")) ){
 				toBeShown.add((MyNode)e.getSourceNode());
 			}
 		}
@@ -266,7 +266,7 @@ public class RequirementVersionManager {
 	 * @return the min version
 	 */
 	public static MyNode getMinVersion(MyNode myNode) {
-		MyNodeType requirementNodeType = ModelBuilder.getNodeTypes().getValue(PSSIFCanonicMetamodelCreator.N_REQUIREMENT);
+		MyNodeType requirementNodeType = ModelBuilder.getNodeTypes().getValue(PSSIFCanonicMetamodelCreator.TAGS.get("N_REQUIREMENT"));
 		NodeType nodeType = ModelBuilder.getMetamodel().getNodeType(requirementNodeType.getName()).getOne();
 		
 		MyNode minVersionNode = myNode;

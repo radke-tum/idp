@@ -19,7 +19,7 @@ import de.tum.pssif.core.common.PSSIFConstants;
 import de.tum.pssif.core.common.PSSIFOption;
 import de.tum.pssif.core.common.PSSIFValue;
 import de.tum.pssif.core.metamodel.Attribute;
-import de.tum.pssif.core.metamodel.PSSIFCanonicMetamodelCreator;
+import de.tum.pssif.core.metamodel.external.PSSIFCanonicMetamodelCreator;
 
 /**
  * The Class NewDeriveRequirementHandler.
@@ -40,7 +40,7 @@ public class NewDeriveRequirementHandler implements EventHandler {
 	}
 	
 	public void addNode(MyNode selectedNode, Set<Entry<Attribute, JTextField>> entries) {
-		MyNodeType reqType = ModelBuilder.getNodeTypes().getValue(PSSIFCanonicMetamodelCreator.N_REQUIREMENT);
+		MyNodeType reqType = ModelBuilder.getNodeTypes().getValue(PSSIFCanonicMetamodelCreator.TAGS.get("N_REQUIREMENT"));
 		MyNode derivedReq = null;
 		HashMap< String, String> entriesStr = new HashMap<String, String>();
 		for (Entry<Attribute, JTextField> input:entries) {
@@ -48,7 +48,7 @@ public class NewDeriveRequirementHandler implements EventHandler {
 			String value = input.getValue().getText();
         	if ( key.equals(PSSIFConstants.BUILTIN_ATTRIBUTE_NAME)  && value !=null && value.length()>0 ) {
         		derivedReq = ModelBuilder.addNewNodeFromGUI(input.getValue().getText(), reqType);
-        		ModelBuilder.addNewEdgeGUI(derivedReq, selectedNode, ModelBuilder.getEdgeTypes().getValue(PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_CHRONOLOGICAL_BASED_ON), true);
+        		ModelBuilder.addNewEdgeGUI(derivedReq, selectedNode, ModelBuilder.getEdgeTypes().getValue(PSSIFCanonicMetamodelCreator.TAGS.get("E_RELATIONSHIP_CHRONOLOGICAL_BASED_ON")), true);
         	} else if ( value !=null && value.length()>0 ) {
         		entriesStr.put(key, value);
         	}

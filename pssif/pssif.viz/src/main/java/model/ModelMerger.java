@@ -28,7 +28,7 @@ import de.tum.pssif.core.metamodel.JunctionNodeType;
 import de.tum.pssif.core.metamodel.Metamodel;
 import de.tum.pssif.core.metamodel.NodeType;
 import de.tum.pssif.core.metamodel.NodeTypeBase;
-import de.tum.pssif.core.metamodel.PSSIFCanonicMetamodelCreator;
+import de.tum.pssif.core.metamodel.external.PSSIFCanonicMetamodelCreator;
 import de.tum.pssif.core.model.Edge;
 import de.tum.pssif.core.model.Model;
 import de.tum.pssif.core.model.Node;
@@ -303,7 +303,7 @@ public class ModelMerger {
 	 */
 	private void transferJunctionEdges() {
 		EdgeType controlFlow = metaModelOrigin.getEdgeType(
-				PSSIFCanonicMetamodelCreator.E_FLOW_CONTROL).getOne();
+				PSSIFCanonicMetamodelCreator.TAGS.get("E_FLOW_CONTROL")).getOne();
 
 		for (NodeAndType actJunctionnode : unmatchedJunctionnodesOrigin) {
 
@@ -619,7 +619,7 @@ public class ModelMerger {
 		MyEdgeType edgeType = new MyEdgeType(
 				metaModelNew
 						.getEdgeType(
-								PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_CHRONOLOGICAL_EVOLVES_TO)
+								PSSIFCanonicMetamodelCreator.TAGS.get("E_RELATIONSHIP_CHRONOLOGICAL_EVOLVES_TO"))
 						.getOne(), 6);
 
 		Iterator<Entry<NodeAndType, Node>> it = nodeTransferTracedOldToNewModel
@@ -826,7 +826,7 @@ public class ModelMerger {
 
 					// don't match conjunctions
 					if (tempFromEdgeNodeType.getName().equals(
-							PSSIFCanonicMetamodelCreator.N_CONJUNCTION)) {
+							PSSIFCanonicMetamodelCreator.TAGS.get("N_CONJUNCTION"))) {
 						continue;
 					}
 
@@ -1002,7 +1002,7 @@ public class ModelMerger {
 
 					// don't match conjunctions
 					if (tempToEdgeNodeType.getName().equals(
-							PSSIFCanonicMetamodelCreator.N_CONJUNCTION)) {
+							PSSIFCanonicMetamodelCreator.TAGS.get("N_CONJUNCTION"))) {
 						continue;
 					}
 

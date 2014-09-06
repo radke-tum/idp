@@ -12,7 +12,7 @@ import de.tum.pssif.core.common.PSSIFOption;
 import de.tum.pssif.core.common.PSSIFValue;
 import de.tum.pssif.core.metamodel.Attribute;
 import de.tum.pssif.core.metamodel.NodeType;
-import de.tum.pssif.core.metamodel.PSSIFCanonicMetamodelCreator;
+import de.tum.pssif.core.metamodel.external.PSSIFCanonicMetamodelCreator;
 import de.tum.pssif.core.model.Node;
 
 /**
@@ -160,7 +160,7 @@ public class RequirementToolbox {
 	 * @param specNode the specification node
 	 */
 	public static void showContainment(MyNode specNode){
-		MyEdgeType contains = ModelBuilder.getEdgeTypes().getValue(PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_INCLUSION_CONTAINS);
+		MyEdgeType contains = ModelBuilder.getEdgeTypes().getValue(PSSIFCanonicMetamodelCreator.TAGS.get("E_RELATIONSHIP_INCLUSION_CONTAINS"));
 		for (MyEdge e : ModelBuilder.getAllEdges()){
 			if (e.getSourceNode().equals(specNode)&&e.getEdgeType().equals(contains)) {
 				getMyNode(e.getDestinationNode().getNode()).setVisible(true);
@@ -174,7 +174,7 @@ public class RequirementToolbox {
 	 * @param specNode the specification node
 	 */
 	public static void hideContainment(MyNode specNode){
-		MyEdgeType contains = ModelBuilder.getEdgeTypes().getValue(PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_INCLUSION_CONTAINS);
+		MyEdgeType contains = ModelBuilder.getEdgeTypes().getValue(PSSIFCanonicMetamodelCreator.TAGS.get("E_RELATIONSHIP_INCLUSION_CONTAINS"));
 		for (MyEdge e : ModelBuilder.getAllEdges()) {
 			if (e.getSourceNode().equals(specNode)&&e.getEdgeType().equals(contains)&&!e.getDestinationNode().equals(specNode)) {
 				getMyNode(e.getDestinationNode().getNode()).setVisible(false);
@@ -189,7 +189,7 @@ public class RequirementToolbox {
 	 * @return true, if successful
 	 */
 	public static boolean hasContainment(MyNode specNode){
-		MyEdgeType contains = ModelBuilder.getEdgeTypes().getValue(PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_INCLUSION_CONTAINS);
+		MyEdgeType contains = ModelBuilder.getEdgeTypes().getValue(PSSIFCanonicMetamodelCreator.TAGS.get("E_RELATIONSHIP_INCLUSION_CONTAINS"));
 		for (MyEdge e : ModelBuilder.getAllEdges()){
 			if (e.getSourceNode().equals(specNode)&&e.getEdgeType().equals(contains)) {
 				return true;
@@ -205,7 +205,7 @@ public class RequirementToolbox {
 	 * @return true, if successful
 	 */
 	public static boolean containmentIsVisible(MyNode specNode) {
-		MyEdgeType contains = ModelBuilder.getEdgeTypes().getValue(PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_INCLUSION_CONTAINS);
+		MyEdgeType contains = ModelBuilder.getEdgeTypes().getValue(PSSIFCanonicMetamodelCreator.TAGS.get("E_RELATIONSHIP_INCLUSION_CONTAINS"));
 		for (MyEdge e : ModelBuilder.getAllEdges()){
 			if (e.getSourceNode().equals(specNode)&&e.getEdgeType().equals(contains)) {
 				return e.getDestinationNode().isVisible();
@@ -223,7 +223,7 @@ public class RequirementToolbox {
 	public static Vector<MyNodeType> getSpecArtifTypes() {
 		Vector<MyNodeType> specificationTypes = new Vector<MyNodeType>();
 
-		MyNodeType specType = ModelBuilder.getNodeTypes().getValue(PSSIFCanonicMetamodelCreator.N_SPEC_ARTIFACT);
+		MyNodeType specType = ModelBuilder.getNodeTypes().getValue(PSSIFCanonicMetamodelCreator.TAGS.get("N_SPEC_ARTIFACT"));
 		specificationTypes.add(specType);
 
 		for (NodeType nodeType : specType.getType().getSpecials()) {

@@ -16,7 +16,7 @@ import reqtool.graph.TestCaseValidatorPopup;
 import model.ModelBuilder;
 import de.tum.pssif.core.metamodel.Attribute;
 import de.tum.pssif.core.metamodel.DataType;
-import de.tum.pssif.core.metamodel.PSSIFCanonicMetamodelCreator;
+import de.tum.pssif.core.metamodel.external.PSSIFCanonicMetamodelCreator;
 
 /**
  * The Class TestCaseVerifier.
@@ -46,16 +46,16 @@ public class TestCaseVerifier {
 		switch (result) {
 		case TestCaseValidatorPopup.RESULT_OK:
 			System.out.println("Validation successfull");
-			myNode.updateAttribute(PSSIFCanonicMetamodelCreator.A_TEST_CASE_STATUS, "Succes");
+			myNode.updateAttribute(PSSIFCanonicMetamodelCreator.TAGS.get("A_TEST_CASE_STATUS"), "Succes");
 			break;
 		case TestCaseValidatorPopup.RESULT_NOK:
 			System.out.println("Validation not successfull");
 			
-			MyNodeType issueNodeType = ModelBuilder.getNodeTypes().getValue(PSSIFCanonicMetamodelCreator.N_ISSUE);
-			MyEdgeType leadsTo = ModelBuilder.getEdgeTypes().getValue(PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_CHRONOLOGICAL_LEADS_TO);
+			MyNodeType issueNodeType = ModelBuilder.getNodeTypes().getValue(PSSIFCanonicMetamodelCreator.TAGS.get("N_ISSUE"));
+			MyEdgeType leadsTo = ModelBuilder.getEdgeTypes().getValue(PSSIFCanonicMetamodelCreator.TAGS.get("E_RELATIONSHIP_CHRONOLOGICAL_LEADS_TO"));
 			ModelBuilder.addNewEdgeGUI(myNode, ModelBuilder.addNewNodeFromGUI(myNode.getNode().getId(), issueNodeType), leadsTo, true);
 			
-			myNode.updateAttribute(PSSIFCanonicMetamodelCreator.A_TEST_CASE_STATUS, "Fail");
+			myNode.updateAttribute(PSSIFCanonicMetamodelCreator.TAGS.get("A_TEST_CASE_STATUS"), "Fail");
 			
 			break;
 		case TestCaseValidatorPopup.RESULT_CANCEL:
@@ -73,7 +73,7 @@ public class TestCaseVerifier {
 	 * @return the verified solution artifacts
 	 */
 	public LinkedList<MyNode> getVerifiedSolArtifacts() {
-		MyEdgeType verifies = ModelBuilder.getEdgeTypes().getValue(PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_LOGICAL_VERIFIES);
+		MyEdgeType verifies = ModelBuilder.getEdgeTypes().getValue(PSSIFCanonicMetamodelCreator.TAGS.get("E_RELATIONSHIP_LOGICAL_VERIFIES"));
 		LinkedList<MyNode> verSolArtifacts = new LinkedList<MyNode>();
 		for (MyEdge e : ModelBuilder.getAllEdges()) {
 			if (e.getSourceNode().equals(myNode)

@@ -39,8 +39,8 @@ import de.tum.pssif.core.metamodel.ConnectionMapping;
 import de.tum.pssif.core.metamodel.EdgeType;
 import de.tum.pssif.core.metamodel.Metamodel;
 import de.tum.pssif.core.metamodel.NodeTypeBase;
-import de.tum.pssif.core.metamodel.PSSIFCanonicMetamodelCreator;
 import de.tum.pssif.core.metamodel.PrimitiveDataType;
+import de.tum.pssif.core.metamodel.external.PSSIFCanonicMetamodelCreator;
 import de.tum.pssif.core.model.Edge;
 import de.tum.pssif.core.model.Model;
 import de.tum.pssif.core.model.Node;
@@ -138,18 +138,18 @@ public class SysMlMapper implements Mapper {
   private Map<EObject, Node> readNodes(Metamodel metamodel, EPackage ePackage, Model model, EObject eModel) {
     Map<EObject, Node> nodes = Maps.newHashMap();
     //read blocks
-    readNodesOfType(metamodel, ePackage, model, eModel.eAllContents(), nodes, BLOCK_MODULE, PSSIFCanonicMetamodelCreator.N_MODULE);
-    readNodesOfType(metamodel, ePackage, model, eModel.eAllContents(), nodes, BLOCK_SOFTWARE, PSSIFCanonicMetamodelCreator.N_SOFTWARE);
-    readNodesOfType(metamodel, ePackage, model, eModel.eAllContents(), nodes, BLOCK_ELECTRONIC, PSSIFCanonicMetamodelCreator.N_ELECTRONIC);
-    readNodesOfType(metamodel, ePackage, model, eModel.eAllContents(), nodes, BLOCK_MECHANIC, PSSIFCanonicMetamodelCreator.N_MECHANIC);
+    readNodesOfType(metamodel, ePackage, model, eModel.eAllContents(), nodes, BLOCK_MODULE, PSSIFCanonicMetamodelCreator.TAGS.get("N_MODULE"));
+    readNodesOfType(metamodel, ePackage, model, eModel.eAllContents(), nodes, BLOCK_SOFTWARE, PSSIFCanonicMetamodelCreator.TAGS.get("N_SOFTWARE"));
+    readNodesOfType(metamodel, ePackage, model, eModel.eAllContents(), nodes, BLOCK_ELECTRONIC, PSSIFCanonicMetamodelCreator.TAGS.get("N_ELECTRONIC"));
+    readNodesOfType(metamodel, ePackage, model, eModel.eAllContents(), nodes, BLOCK_MECHANIC, PSSIFCanonicMetamodelCreator.TAGS.get("N_MECHANIC"));
 
     //read ports
-    readNodesOfType(metamodel, ePackage, model, eModel.eAllContents(), nodes, PORT_ELECTRONIC, PSSIFCanonicMetamodelCreator.N_PORT_ELECTRONIC);
-    readNodesOfType(metamodel, ePackage, model, eModel.eAllContents(), nodes, PORT_MECHANIC, PSSIFCanonicMetamodelCreator.N_PORT_MECHANIC);
-    readNodesOfType(metamodel, ePackage, model, eModel.eAllContents(), nodes, PORT_SOFTWARE, PSSIFCanonicMetamodelCreator.N_PORT_SOFTWARE);
+    readNodesOfType(metamodel, ePackage, model, eModel.eAllContents(), nodes, PORT_ELECTRONIC, PSSIFCanonicMetamodelCreator.TAGS.get("N_PORT_ELECTRONIC"));
+    readNodesOfType(metamodel, ePackage, model, eModel.eAllContents(), nodes, PORT_MECHANIC, PSSIFCanonicMetamodelCreator.TAGS.get("N_PORT_MECHANIC"));
+    readNodesOfType(metamodel, ePackage, model, eModel.eAllContents(), nodes, PORT_SOFTWARE, PSSIFCanonicMetamodelCreator.TAGS.get("N_PORT_SOFTWARE"));
 
     //read functionalities
-    readNodesOfType(metamodel, ePackage, model, eModel.eAllContents(), nodes, FUNCTIONALITY, PSSIFCanonicMetamodelCreator.N_FUNCTIONALITY);
+    readNodesOfType(metamodel, ePackage, model, eModel.eAllContents(), nodes, FUNCTIONALITY, PSSIFCanonicMetamodelCreator.TAGS.get("N_FUNCTIONALITY"));
 
     //read interface blocks and data types
     readInterfaceBlocksAndEeDataTypes(metamodel, ePackage, nodes);
@@ -160,47 +160,47 @@ public class SysMlMapper implements Mapper {
   private void readEdges(Metamodel metamodel, EPackage ePackage, Model model, Map<EObject, Node> nodes, Set<EObject> eObjects) {
 
     //block2block containment
-    readEdgesOfType(metamodel, ePackage, model, PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_INCLUSION_CONTAINS, OWNED_BLOCK,
-        PSSIFCanonicMetamodelCreator.N_BLOCK, PSSIFCanonicMetamodelCreator.N_BLOCK, BLOCK_MODULE, nodes, eObjects);
+    readEdgesOfType(metamodel, ePackage, model, PSSIFCanonicMetamodelCreator.TAGS.get("E_RELATIONSHIP_INCLUSION_CONTAINS"), OWNED_BLOCK,
+        PSSIFCanonicMetamodelCreator.TAGS.get("N_BLOCK"), PSSIFCanonicMetamodelCreator.TAGS.get("N_BLOCK"), BLOCK_MODULE, nodes, eObjects);
 
     //block2port containment
-    readEdgesOfType(metamodel, ePackage, model, PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_INCLUSION_CONTAINS, OWNED_PORT,
-        PSSIFCanonicMetamodelCreator.N_MODULE, PSSIFCanonicMetamodelCreator.N_PORT_ELECTRONIC, BLOCK_MODULE, nodes, eObjects);
-    readEdgesOfType(metamodel, ePackage, model, PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_INCLUSION_CONTAINS, OWNED_PORT,
-        PSSIFCanonicMetamodelCreator.N_MODULE, PSSIFCanonicMetamodelCreator.N_PORT_MECHANIC, BLOCK_MODULE, nodes, eObjects);
-    readEdgesOfType(metamodel, ePackage, model, PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_INCLUSION_CONTAINS, OWNED_PORT,
-        PSSIFCanonicMetamodelCreator.N_MODULE, PSSIFCanonicMetamodelCreator.N_PORT_SOFTWARE, BLOCK_MODULE, nodes, eObjects);
+    readEdgesOfType(metamodel, ePackage, model, PSSIFCanonicMetamodelCreator.TAGS.get("E_RELATIONSHIP_INCLUSION_CONTAINS"), OWNED_PORT,
+        PSSIFCanonicMetamodelCreator.TAGS.get("N_MODULE"), PSSIFCanonicMetamodelCreator.TAGS.get("N_PORT_ELECTRONIC"), BLOCK_MODULE, nodes, eObjects);
+    readEdgesOfType(metamodel, ePackage, model, PSSIFCanonicMetamodelCreator.TAGS.get("E_RELATIONSHIP_INCLUSION_CONTAINS"), OWNED_PORT,
+        PSSIFCanonicMetamodelCreator.TAGS.get("N_MODULE"), PSSIFCanonicMetamodelCreator.TAGS.get("N_PORT_MECHANIC"), BLOCK_MODULE, nodes, eObjects);
+    readEdgesOfType(metamodel, ePackage, model, PSSIFCanonicMetamodelCreator.TAGS.get("E_RELATIONSHIP_INCLUSION_CONTAINS"), OWNED_PORT,
+        PSSIFCanonicMetamodelCreator.TAGS.get("N_MODULE"), PSSIFCanonicMetamodelCreator.TAGS.get("N_PORT_SOFTWARE"), BLOCK_MODULE, nodes, eObjects);
 
-    readEdgesOfType(metamodel, ePackage, model, PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_INCLUSION_CONTAINS, OWNED_PORT,
-        PSSIFCanonicMetamodelCreator.N_SOFTWARE, PSSIFCanonicMetamodelCreator.N_PORT_SOFTWARE, BLOCK_SOFTWARE, nodes, eObjects);
+    readEdgesOfType(metamodel, ePackage, model, PSSIFCanonicMetamodelCreator.TAGS.get("E_RELATIONSHIP_INCLUSION_CONTAINS"), OWNED_PORT,
+        PSSIFCanonicMetamodelCreator.TAGS.get("N_SOFTWARE"), PSSIFCanonicMetamodelCreator.TAGS.get("N_PORT_SOFTWARE"), BLOCK_SOFTWARE, nodes, eObjects);
 
-    readEdgesOfType(metamodel, ePackage, model, PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_INCLUSION_CONTAINS, OWNED_PORT,
-        PSSIFCanonicMetamodelCreator.N_ELECTRONIC, PSSIFCanonicMetamodelCreator.N_PORT_ELECTRONIC, BLOCK_ELECTRONIC, nodes, eObjects);
+    readEdgesOfType(metamodel, ePackage, model, PSSIFCanonicMetamodelCreator.TAGS.get("E_RELATIONSHIP_INCLUSION_CONTAINS"), OWNED_PORT,
+        PSSIFCanonicMetamodelCreator.TAGS.get("N_ELECTRONIC"), PSSIFCanonicMetamodelCreator.TAGS.get("N_PORT_ELECTRONIC"), BLOCK_ELECTRONIC, nodes, eObjects);
 
-    readEdgesOfType(metamodel, ePackage, model, PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_INCLUSION_CONTAINS, OWNED_PORT,
-        PSSIFCanonicMetamodelCreator.N_MECHANIC, PSSIFCanonicMetamodelCreator.N_PORT_MECHANIC, BLOCK_MECHANIC, nodes, eObjects);
+    readEdgesOfType(metamodel, ePackage, model, PSSIFCanonicMetamodelCreator.TAGS.get("E_RELATIONSHIP_INCLUSION_CONTAINS"), OWNED_PORT,
+        PSSIFCanonicMetamodelCreator.TAGS.get("N_MECHANIC"), PSSIFCanonicMetamodelCreator.TAGS.get("N_PORT_MECHANIC"), BLOCK_MECHANIC, nodes, eObjects);
 
     //port2port
-    readEdgesOfType(metamodel, ePackage, model, PSSIFCanonicMetamodelCreator.E_IS_CONNECTED_TO, IS_CONNECTED_TO,
-        PSSIFCanonicMetamodelCreator.N_PORT_ELECTRONIC, PSSIFCanonicMetamodelCreator.N_PORT_ELECTRONIC, PORT_ELECTRONIC, nodes, eObjects);
-    readEdgesOfType(metamodel, ePackage, model, PSSIFCanonicMetamodelCreator.E_IS_CONNECTED_TO, IS_CONNECTED_TO,
-        PSSIFCanonicMetamodelCreator.N_PORT_MECHANIC, PSSIFCanonicMetamodelCreator.N_PORT_MECHANIC, PORT_MECHANIC, nodes, eObjects);
-    readEdgesOfType(metamodel, ePackage, model, PSSIFCanonicMetamodelCreator.E_IS_CONNECTED_TO, IS_CONNECTED_TO,
-        PSSIFCanonicMetamodelCreator.N_PORT_SOFTWARE, PSSIFCanonicMetamodelCreator.N_PORT_SOFTWARE, PORT_SOFTWARE, nodes, eObjects);
+    readEdgesOfType(metamodel, ePackage, model, PSSIFCanonicMetamodelCreator.TAGS.get("E_IS_CONNECTED_TO"), IS_CONNECTED_TO,
+        PSSIFCanonicMetamodelCreator.TAGS.get("N_PORT_ELECTRONIC"), PSSIFCanonicMetamodelCreator.TAGS.get("N_PORT_ELECTRONIC"), PORT_ELECTRONIC, nodes, eObjects);
+    readEdgesOfType(metamodel, ePackage, model, PSSIFCanonicMetamodelCreator.TAGS.get("E_IS_CONNECTED_TO"), IS_CONNECTED_TO,
+        PSSIFCanonicMetamodelCreator.TAGS.get("N_PORT_MECHANIC"), PSSIFCanonicMetamodelCreator.TAGS.get("N_PORT_MECHANIC"), PORT_MECHANIC, nodes, eObjects);
+    readEdgesOfType(metamodel, ePackage, model, PSSIFCanonicMetamodelCreator.TAGS.get("E_IS_CONNECTED_TO"), IS_CONNECTED_TO,
+        PSSIFCanonicMetamodelCreator.TAGS.get("N_PORT_SOFTWARE"), PSSIFCanonicMetamodelCreator.TAGS.get("N_PORT_SOFTWARE"), PORT_SOFTWARE, nodes, eObjects);
 
     //block2functionality
-    readEdgesOfType(metamodel, ePackage, model, PSSIFCanonicMetamodelCreator.E_FULFILLS, OWNED_FUNCTIONALITY,
-        PSSIFCanonicMetamodelCreator.N_ELECTRONIC, PSSIFCanonicMetamodelCreator.N_FUNCTIONALITY, BLOCK_ELECTRONIC, nodes, eObjects);
-    readEdgesOfType(metamodel, ePackage, model, PSSIFCanonicMetamodelCreator.E_FULFILLS, OWNED_FUNCTIONALITY,
-        PSSIFCanonicMetamodelCreator.N_MECHANIC, PSSIFCanonicMetamodelCreator.N_FUNCTIONALITY, BLOCK_MECHANIC, nodes, eObjects);
-    readEdgesOfType(metamodel, ePackage, model, PSSIFCanonicMetamodelCreator.E_FULFILLS, OWNED_FUNCTIONALITY,
-        PSSIFCanonicMetamodelCreator.N_SOFTWARE, PSSIFCanonicMetamodelCreator.N_FUNCTIONALITY, BLOCK_SOFTWARE, nodes, eObjects);
-    readEdgesOfType(metamodel, ePackage, model, PSSIFCanonicMetamodelCreator.E_FULFILLS, OWNED_FUNCTIONALITY, PSSIFCanonicMetamodelCreator.N_MODULE,
-        PSSIFCanonicMetamodelCreator.N_FUNCTIONALITY, BLOCK_MODULE, nodes, eObjects);
+    readEdgesOfType(metamodel, ePackage, model, PSSIFCanonicMetamodelCreator.TAGS.get("E_FULFILLS"), OWNED_FUNCTIONALITY,
+        PSSIFCanonicMetamodelCreator.TAGS.get("N_ELECTRONIC"), PSSIFCanonicMetamodelCreator.TAGS.get("N_FUNCTIONALITY"), BLOCK_ELECTRONIC, nodes, eObjects);
+    readEdgesOfType(metamodel, ePackage, model, PSSIFCanonicMetamodelCreator.TAGS.get("E_FULFILLS"), OWNED_FUNCTIONALITY,
+        PSSIFCanonicMetamodelCreator.TAGS.get("N_MECHANIC"), PSSIFCanonicMetamodelCreator.TAGS.get("N_FUNCTIONALITY"), BLOCK_MECHANIC, nodes, eObjects);
+    readEdgesOfType(metamodel, ePackage, model, PSSIFCanonicMetamodelCreator.TAGS.get("E_FULFILLS"), OWNED_FUNCTIONALITY,
+        PSSIFCanonicMetamodelCreator.TAGS.get("N_SOFTWARE"), PSSIFCanonicMetamodelCreator.TAGS.get("N_FUNCTIONALITY"), BLOCK_SOFTWARE, nodes, eObjects);
+    readEdgesOfType(metamodel, ePackage, model, PSSIFCanonicMetamodelCreator.TAGS.get("E_FULFILLS"), OWNED_FUNCTIONALITY, PSSIFCanonicMetamodelCreator.TAGS.get("N_MODULE"),
+        PSSIFCanonicMetamodelCreator.TAGS.get("N_FUNCTIONALITY"), BLOCK_MODULE, nodes, eObjects);
 
     //port2functionality
-    readEdgesOfType(metamodel, ePackage, model, PSSIFCanonicMetamodelCreator.E_IS_MANDATORY_FOR, IS_MANDATORY_FOR,
-        PSSIFCanonicMetamodelCreator.N_PORT, PSSIFCanonicMetamodelCreator.N_FUNCTIONALITY, PORT_SYSML4MECHATRONICS, nodes, eObjects);
+    readEdgesOfType(metamodel, ePackage, model, PSSIFCanonicMetamodelCreator.TAGS.get("E_IS_MANDATORY_FOR"), IS_MANDATORY_FOR,
+        PSSIFCanonicMetamodelCreator.TAGS.get("N_PORT"), PSSIFCanonicMetamodelCreator.TAGS.get("N_FUNCTIONALITY"), PORT_SYSML4MECHATRONICS, nodes, eObjects);
   }
 
   @SuppressWarnings("unchecked")
@@ -298,7 +298,7 @@ public class SysMlMapper implements Mapper {
     ePorts.addAll(getEInstances(getEClass(ePackage, PORT_ELECTRONIC), nodes.keySet().iterator()));
     ePorts.addAll(getEInstances(getEClass(ePackage, PORT_MECHANIC), nodes.keySet().iterator()));
     ePorts.addAll(getEInstances(getEClass(ePackage, PORT_SOFTWARE), nodes.keySet().iterator()));
-    NodeTypeBase portNodeType = metamodel.getNodeType(PSSIFCanonicMetamodelCreator.N_PORT).getOne();
+    NodeTypeBase portNodeType = metamodel.getNodeType(PSSIFCanonicMetamodelCreator.TAGS.get("N_PORT")).getOne();
 
     for (EObject ePort : ePorts) {
       EReference ownedInterfaceBlock = findEFeature(ePort.eClass(), OWNED_INTERFACE_BLOCK);
@@ -306,15 +306,15 @@ public class SysMlMapper implements Mapper {
       if (eInterfaceBlock == null || nodes.get(ePort) == null) {
         continue;
       }
-      EAttribute direction = findEFeature(eInterfaceBlock.eClass(), PSSIFCanonicMetamodelCreator.A_DIRECTION);
+      EAttribute direction = findEFeature(eInterfaceBlock.eClass(), PSSIFCanonicMetamodelCreator.TAGS.get("A_DIRECTION"));
       if (eInterfaceBlock.eGet(direction) != null) {
-        Attribute directionAttr = portNodeType.getAttribute(PSSIFCanonicMetamodelCreator.A_DIRECTION).getOne();
+        Attribute directionAttr = portNodeType.getAttribute(PSSIFCanonicMetamodelCreator.TAGS.get("A_DIRECTION")).getOne();
         String directionValue = ((EEnumLiteral) eInterfaceBlock.eGet(direction)).getName();
         directionAttr.set(nodes.get(ePort), PSSIFOption.one(PSSIFValue.create(directionValue)));
       }
       if (INTERFACE_SOFTWARE.equals(eInterfaceBlock.eClass().getName())) {
         EAttribute opName = findEFeature(eInterfaceBlock.eClass(), OPERATION_NAME);
-        Attribute dataType = portNodeType.getAttribute(PSSIFCanonicMetamodelCreator.A_DATA_TYPE).getOne();
+        Attribute dataType = portNodeType.getAttribute(PSSIFCanonicMetamodelCreator.TAGS.get("A_DATA_TYPE")).getOne();
         if (eInterfaceBlock.eGet(opName) != null) {
           dataType.set(nodes.get(ePort), PSSIFOption.one(PSSIFValue.create(eInterfaceBlock.eGet(opName))));
         }
@@ -322,7 +322,7 @@ public class SysMlMapper implements Mapper {
       else {
         EReference ownedDataType = findEFeature(eInterfaceBlock.eClass(), OWNED_DATA_TYPE);
         if (eInterfaceBlock.eGet(ownedDataType) != null) {
-          Attribute dataType = portNodeType.getAttribute(PSSIFCanonicMetamodelCreator.A_DATA_TYPE).getOne();
+          Attribute dataType = portNodeType.getAttribute(PSSIFCanonicMetamodelCreator.TAGS.get("A_DATA_TYPE")).getOne();
           EObject eOwnedDataType = (EObject) eInterfaceBlock.eGet(ownedDataType);
           Node portNode = nodes.get(ePort);
           dataType.set(portNode, PSSIFOption.one(PSSIFValue.create(eOwnedDataType.eGet(findEFeature(eOwnedDataType.eClass(), "name")))));
@@ -350,25 +350,25 @@ public class SysMlMapper implements Mapper {
 
     //mechanic blocks
     linkTo(sysMlModel, SML4M_BLOCKS,
-        writeNodes(getNodeType(metamodel, PSSIFCanonicMetamodelCreator.N_MECHANIC), getEClass(ePackage, BLOCK_MECHANIC), model, nodesMap, true));
+        writeNodes(getNodeType(metamodel, PSSIFCanonicMetamodelCreator.TAGS.get("N_MECHANIC")), getEClass(ePackage, BLOCK_MECHANIC), model, nodesMap, true));
     //electronics blocks
     linkTo(sysMlModel, SML4M_BLOCKS,
-        writeNodes(getNodeType(metamodel, PSSIFCanonicMetamodelCreator.N_ELECTRONIC), getEClass(ePackage, BLOCK_ELECTRONIC), model, nodesMap, true));
+        writeNodes(getNodeType(metamodel, PSSIFCanonicMetamodelCreator.TAGS.get("N_ELECTRONIC")), getEClass(ePackage, BLOCK_ELECTRONIC), model, nodesMap, true));
     //software blocks
     linkTo(sysMlModel, SML4M_BLOCKS,
-        writeNodes(getNodeType(metamodel, PSSIFCanonicMetamodelCreator.N_SOFTWARE), getEClass(ePackage, BLOCK_SOFTWARE), model, nodesMap, true));
+        writeNodes(getNodeType(metamodel, PSSIFCanonicMetamodelCreator.TAGS.get("N_SOFTWARE")), getEClass(ePackage, BLOCK_SOFTWARE), model, nodesMap, true));
     //modules
     linkTo(sysMlModel, SML4M_BLOCKS,
-        writeNodes(getNodeType(metamodel, PSSIFCanonicMetamodelCreator.N_MODULE), getEClass(ePackage, BLOCK_MODULE), model, nodesMap, true));
+        writeNodes(getNodeType(metamodel, PSSIFCanonicMetamodelCreator.TAGS.get("N_MODULE")), getEClass(ePackage, BLOCK_MODULE), model, nodesMap, true));
 
     //ports
-    writeNodes(getNodeType(metamodel, PSSIFCanonicMetamodelCreator.N_PORT_MECHANIC), getEClass(ePackage, PORT_MECHANIC), model, nodesMap, true);
-    writeNodes(getNodeType(metamodel, PSSIFCanonicMetamodelCreator.N_PORT_ELECTRONIC), getEClass(ePackage, PORT_ELECTRONIC), model, nodesMap, true);
-    writeNodes(getNodeType(metamodel, PSSIFCanonicMetamodelCreator.N_PORT_SOFTWARE), getEClass(ePackage, PORT_SOFTWARE), model, nodesMap, true);
+    writeNodes(getNodeType(metamodel, PSSIFCanonicMetamodelCreator.TAGS.get("N_PORT_MECHANIC")), getEClass(ePackage, PORT_MECHANIC), model, nodesMap, true);
+    writeNodes(getNodeType(metamodel, PSSIFCanonicMetamodelCreator.TAGS.get("N_PORT_ELECTRONIC")), getEClass(ePackage, PORT_ELECTRONIC), model, nodesMap, true);
+    writeNodes(getNodeType(metamodel, PSSIFCanonicMetamodelCreator.TAGS.get("N_PORT_SOFTWARE")), getEClass(ePackage, PORT_SOFTWARE), model, nodesMap, true);
 
     //functionalities
     linkTo(sysMlModel, SML4M_FUNCTIONALITIES,
-        writeNodes(getNodeType(metamodel, PSSIFCanonicMetamodelCreator.N_FUNCTIONALITY), getEClass(ePackage, FUNCTIONALITY), model, nodesMap, true));
+        writeNodes(getNodeType(metamodel, PSSIFCanonicMetamodelCreator.TAGS.get("N_FUNCTIONALITY")), getEClass(ePackage, FUNCTIONALITY), model, nodesMap, true));
 
     //relationships
     writeBlock2BlockRelationships(metamodel, ePackage, model, nodesMap);
@@ -398,9 +398,9 @@ public class SysMlMapper implements Mapper {
   private void writeInterfaceBlocks(Metamodel metamodel, EPackage ePackage, Model model, EObject eModel, Map<Node, EObject> eObjects) {
     Set<EObject> interfaceBlocks = Sets.newHashSet();
     Set<EObject> dataTypes = Sets.newHashSet();
-    NodeTypeBase portType = getNodeType(metamodel, PSSIFCanonicMetamodelCreator.N_PORT);
-    Attribute directionAttribute = portType.getAttribute(PSSIFCanonicMetamodelCreator.A_DIRECTION).getOne();
-    Attribute dataTypeAttribute = portType.getAttribute(PSSIFCanonicMetamodelCreator.A_DATA_TYPE).getOne();
+    NodeTypeBase portType = getNodeType(metamodel, PSSIFCanonicMetamodelCreator.TAGS.get("N_PORT"));
+    Attribute directionAttribute = portType.getAttribute(PSSIFCanonicMetamodelCreator.TAGS.get("A_DIRECTION")).getOne();
+    Attribute dataTypeAttribute = portType.getAttribute(PSSIFCanonicMetamodelCreator.TAGS.get("A_DATA_TYPE")).getOne();
 
     for (Node portNode : portType.apply(model, true)) {
       EObject ePort = eObjects.get(portNode);
@@ -458,51 +458,51 @@ public class SysMlMapper implements Mapper {
   }
 
   private void writeBlock2BlockRelationships(Metamodel metamodel, EPackage ePackage, Model model, Map<Node, EObject> eObjects) {
-    writeRelationship(metamodel, ePackage, PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_INCLUSION_CONTAINS, OWNED_BLOCK,
-        PSSIFCanonicMetamodelCreator.N_BLOCK, PSSIFCanonicMetamodelCreator.N_BLOCK, model, eObjects);
+    writeRelationship(metamodel, ePackage, PSSIFCanonicMetamodelCreator.TAGS.get("E_RELATIONSHIP_INCLUSION_CONTAINS"), OWNED_BLOCK,
+        PSSIFCanonicMetamodelCreator.TAGS.get("N_BLOCK"), PSSIFCanonicMetamodelCreator.TAGS.get("N_BLOCK"), model, eObjects);
   }
 
   private void writeBlock2PortRelationships(Metamodel metamodel, EPackage ePackage, Model model, Map<Node, EObject> eObjects) {
-    writeRelationship(metamodel, ePackage, PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_INCLUSION_CONTAINS, OWNED_PORT,
-        PSSIFCanonicMetamodelCreator.N_SOFTWARE, PSSIFCanonicMetamodelCreator.N_PORT_SOFTWARE, model, eObjects);
+    writeRelationship(metamodel, ePackage, PSSIFCanonicMetamodelCreator.TAGS.get("E_RELATIONSHIP_INCLUSION_CONTAINS"), OWNED_PORT,
+        PSSIFCanonicMetamodelCreator.TAGS.get("N_SOFTWARE"), PSSIFCanonicMetamodelCreator.TAGS.get("N_PORT_SOFTWARE"), model, eObjects);
 
-    writeRelationship(metamodel, ePackage, PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_INCLUSION_CONTAINS, OWNED_PORT,
-        PSSIFCanonicMetamodelCreator.N_MECHANIC, PSSIFCanonicMetamodelCreator.N_PORT_MECHANIC, model, eObjects);
+    writeRelationship(metamodel, ePackage, PSSIFCanonicMetamodelCreator.TAGS.get("E_RELATIONSHIP_INCLUSION_CONTAINS"), OWNED_PORT,
+        PSSIFCanonicMetamodelCreator.TAGS.get("N_MECHANIC"), PSSIFCanonicMetamodelCreator.TAGS.get("N_PORT_MECHANIC"), model, eObjects);
 
-    writeRelationship(metamodel, ePackage, PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_INCLUSION_CONTAINS, OWNED_PORT,
-        PSSIFCanonicMetamodelCreator.N_ELECTRONIC, PSSIFCanonicMetamodelCreator.N_PORT_SOFTWARE, model, eObjects);
-    writeRelationship(metamodel, ePackage, PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_INCLUSION_CONTAINS, OWNED_PORT,
-        PSSIFCanonicMetamodelCreator.N_ELECTRONIC, PSSIFCanonicMetamodelCreator.N_PORT_MECHANIC, model, eObjects);
-    writeRelationship(metamodel, ePackage, PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_INCLUSION_CONTAINS, OWNED_PORT,
-        PSSIFCanonicMetamodelCreator.N_ELECTRONIC, PSSIFCanonicMetamodelCreator.N_PORT_ELECTRONIC, model, eObjects);
+    writeRelationship(metamodel, ePackage, PSSIFCanonicMetamodelCreator.TAGS.get("E_RELATIONSHIP_INCLUSION_CONTAINS"), OWNED_PORT,
+        PSSIFCanonicMetamodelCreator.TAGS.get("N_ELECTRONIC"), PSSIFCanonicMetamodelCreator.TAGS.get("N_PORT_SOFTWARE"), model, eObjects);
+    writeRelationship(metamodel, ePackage, PSSIFCanonicMetamodelCreator.TAGS.get("E_RELATIONSHIP_INCLUSION_CONTAINS"), OWNED_PORT,
+        PSSIFCanonicMetamodelCreator.TAGS.get("N_ELECTRONIC"), PSSIFCanonicMetamodelCreator.TAGS.get("N_PORT_MECHANIC"), model, eObjects);
+    writeRelationship(metamodel, ePackage, PSSIFCanonicMetamodelCreator.TAGS.get("E_RELATIONSHIP_INCLUSION_CONTAINS"), OWNED_PORT,
+        PSSIFCanonicMetamodelCreator.TAGS.get("N_ELECTRONIC"), PSSIFCanonicMetamodelCreator.TAGS.get("N_PORT_ELECTRONIC"), model, eObjects);
 
-    writeRelationship(metamodel, ePackage, PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_INCLUSION_CONTAINS, OWNED_PORT,
-        PSSIFCanonicMetamodelCreator.N_MODULE, PSSIFCanonicMetamodelCreator.N_PORT, model, eObjects);
+    writeRelationship(metamodel, ePackage, PSSIFCanonicMetamodelCreator.TAGS.get("E_RELATIONSHIP_INCLUSION_CONTAINS"), OWNED_PORT,
+        PSSIFCanonicMetamodelCreator.TAGS.get("N_MODULE"), PSSIFCanonicMetamodelCreator.TAGS.get("N_PORT"), model, eObjects);
   }
 
   private void writePort2PortRelationships(Metamodel metamodel, EPackage ePackage, Model model, Map<Node, EObject> eObjects) {
-    writeRelationship(metamodel, ePackage, PSSIFCanonicMetamodelCreator.E_IS_CONNECTED_TO, IS_CONNECTED_TO,
-        PSSIFCanonicMetamodelCreator.N_PORT_ELECTRONIC, PSSIFCanonicMetamodelCreator.N_PORT_ELECTRONIC, model, eObjects);
-    writeRelationship(metamodel, ePackage, PSSIFCanonicMetamodelCreator.E_IS_CONNECTED_TO, IS_CONNECTED_TO,
-        PSSIFCanonicMetamodelCreator.N_PORT_MECHANIC, PSSIFCanonicMetamodelCreator.N_PORT_MECHANIC, model, eObjects);
-    writeRelationship(metamodel, ePackage, PSSIFCanonicMetamodelCreator.E_IS_CONNECTED_TO, IS_CONNECTED_TO,
-        PSSIFCanonicMetamodelCreator.N_PORT_SOFTWARE, PSSIFCanonicMetamodelCreator.N_PORT_SOFTWARE, model, eObjects);
+    writeRelationship(metamodel, ePackage, PSSIFCanonicMetamodelCreator.TAGS.get("E_IS_CONNECTED_TO"), IS_CONNECTED_TO,
+        PSSIFCanonicMetamodelCreator.TAGS.get("N_PORT_ELECTRONIC"), PSSIFCanonicMetamodelCreator.TAGS.get("N_PORT_ELECTRONIC"), model, eObjects);
+    writeRelationship(metamodel, ePackage, PSSIFCanonicMetamodelCreator.TAGS.get("E_IS_CONNECTED_TO"), IS_CONNECTED_TO,
+        PSSIFCanonicMetamodelCreator.TAGS.get("N_PORT_MECHANIC"), PSSIFCanonicMetamodelCreator.TAGS.get("N_PORT_MECHANIC"), model, eObjects);
+    writeRelationship(metamodel, ePackage, PSSIFCanonicMetamodelCreator.TAGS.get("E_IS_CONNECTED_TO"), IS_CONNECTED_TO,
+        PSSIFCanonicMetamodelCreator.TAGS.get("N_PORT_SOFTWARE"), PSSIFCanonicMetamodelCreator.TAGS.get("N_PORT_SOFTWARE"), model, eObjects);
   }
 
   private void writeBlock2FunctionalityRelationships(Metamodel metamodel, EPackage ePackage, Model model, Map<Node, EObject> eObjects) {
-    writeRelationship(metamodel, ePackage, PSSIFCanonicMetamodelCreator.E_FULFILLS, OWNED_FUNCTIONALITY, PSSIFCanonicMetamodelCreator.N_ELECTRONIC,
-        PSSIFCanonicMetamodelCreator.N_FUNCTIONALITY, model, eObjects);
-    writeRelationship(metamodel, ePackage, PSSIFCanonicMetamodelCreator.E_FULFILLS, OWNED_FUNCTIONALITY, PSSIFCanonicMetamodelCreator.N_MECHANIC,
-        PSSIFCanonicMetamodelCreator.N_FUNCTIONALITY, model, eObjects);
-    writeRelationship(metamodel, ePackage, PSSIFCanonicMetamodelCreator.E_FULFILLS, OWNED_FUNCTIONALITY, PSSIFCanonicMetamodelCreator.N_SOFTWARE,
-        PSSIFCanonicMetamodelCreator.N_FUNCTIONALITY, model, eObjects);
-    writeRelationship(metamodel, ePackage, PSSIFCanonicMetamodelCreator.E_FULFILLS, OWNED_FUNCTIONALITY, PSSIFCanonicMetamodelCreator.N_MODULE,
-        PSSIFCanonicMetamodelCreator.N_FUNCTIONALITY, model, eObjects);
+    writeRelationship(metamodel, ePackage, PSSIFCanonicMetamodelCreator.TAGS.get("E_FULFILLS"), OWNED_FUNCTIONALITY, PSSIFCanonicMetamodelCreator.TAGS.get("N_ELECTRONIC"),
+        PSSIFCanonicMetamodelCreator.TAGS.get("N_FUNCTIONALITY"), model, eObjects);
+    writeRelationship(metamodel, ePackage, PSSIFCanonicMetamodelCreator.TAGS.get("E_FULFILLS"), OWNED_FUNCTIONALITY, PSSIFCanonicMetamodelCreator.TAGS.get("N_MECHANIC"),
+        PSSIFCanonicMetamodelCreator.TAGS.get("N_FUNCTIONALITY"), model, eObjects);
+    writeRelationship(metamodel, ePackage, PSSIFCanonicMetamodelCreator.TAGS.get("E_FULFILLS"), OWNED_FUNCTIONALITY, PSSIFCanonicMetamodelCreator.TAGS.get("N_SOFTWARE"),
+        PSSIFCanonicMetamodelCreator.TAGS.get("N_FUNCTIONALITY"), model, eObjects);
+    writeRelationship(metamodel, ePackage, PSSIFCanonicMetamodelCreator.TAGS.get("E_FULFILLS"), OWNED_FUNCTIONALITY, PSSIFCanonicMetamodelCreator.TAGS.get("N_MODULE"),
+        PSSIFCanonicMetamodelCreator.TAGS.get("N_FUNCTIONALITY"), model, eObjects);
   }
 
   private void writePort2FunctionalityRelationships(Metamodel metamodel, EPackage ePackage, Model model, Map<Node, EObject> eObjects) {
-    writeRelationship(metamodel, ePackage, PSSIFCanonicMetamodelCreator.E_IS_MANDATORY_FOR, IS_MANDATORY_FOR, PSSIFCanonicMetamodelCreator.N_PORT,
-        PSSIFCanonicMetamodelCreator.N_FUNCTIONALITY, model, eObjects);
+    writeRelationship(metamodel, ePackage, PSSIFCanonicMetamodelCreator.TAGS.get("E_IS_MANDATORY_FOR"), IS_MANDATORY_FOR, PSSIFCanonicMetamodelCreator.TAGS.get("N_PORT"),
+        PSSIFCanonicMetamodelCreator.TAGS.get("N_FUNCTIONALITY"), model, eObjects);
   }
 
   private void writeRelationship(Metamodel metamodel, EPackage ePackage, String edgeTypeName, String eReferenceName, String fromTypeName,

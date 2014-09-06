@@ -13,7 +13,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import reqtool.controller.RequirementToolbox;
-import de.tum.pssif.core.metamodel.PSSIFCanonicMetamodelCreator;
+import de.tum.pssif.core.metamodel.external.PSSIFCanonicMetamodelCreator;
 
 /**
  * The Class RequirementInfoPopup.
@@ -124,7 +124,7 @@ public class RequirementInfoPopup {
 		getPanel().add(labelTxt, getConstraints());
 		int i=0;
 		getConstraints().insets = new Insets(5, 50, 0, 0);
-		for (MyNode node : RequirementToolbox.getRequirementSourceNodes(reqNode, PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_LOGICAL_SATISFIES)) {
+		for (MyNode node : RequirementToolbox.getRequirementSourceNodes(reqNode, PSSIFCanonicMetamodelCreator.TAGS.get("E_RELATIONSHIP_LOGICAL_SATISFIES"))) {
 			getConstraints().gridy+=i;
 			addMultRows(node.getName());
 			i++;
@@ -140,7 +140,7 @@ public class RequirementInfoPopup {
 		getPanel().add(labelTxt, getConstraints());
 		int i=0;
 		getConstraints().insets = new Insets(5, 50, 0, 0);
-		for (MyNode node : RequirementToolbox.getRequirementSourceNodes(reqNode, PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_REFERENTIAL_DEFINES)) {
+		for (MyNode node : RequirementToolbox.getRequirementSourceNodes(reqNode, PSSIFCanonicMetamodelCreator.TAGS.get("E_RELATIONSHIP_REFERENTIAL_DEFINES"))) {
 			getConstraints().gridy+=i;
 			addMultRows(node.getName());
 			i++;
@@ -156,7 +156,7 @@ public class RequirementInfoPopup {
 		getPanel().add(labelTxt, getConstraints());
 		getConstraints().insets = new Insets(5, 50, 0, 0);
 		int i=0;
-		for (MyNode node : RequirementToolbox.getRequirementSourceNodes(reqNode, PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_CAUSAL_CREATES, PSSIFCanonicMetamodelCreator.N_AUTHOR)) {
+		for (MyNode node : RequirementToolbox.getRequirementSourceNodes(reqNode, PSSIFCanonicMetamodelCreator.TAGS.get("E_RELATIONSHIP_CAUSAL_CREATES"), PSSIFCanonicMetamodelCreator.TAGS.get("N_AUTHOR"))) {
 			getConstraints().gridy+=i;
 			addMultRows(node.getName());
 			i++;
@@ -172,7 +172,7 @@ public class RequirementInfoPopup {
 		getPanel().add(labelTxt, getConstraints());
 		getConstraints().insets = new Insets(5, 50, 0, 0);
 		int i=0;
-		for (MyNode node : RequirementToolbox.getRequirementSourceNodes(reqNode, PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_CAUSAL_REQUESTS, PSSIFCanonicMetamodelCreator.N_PRINCIPAL)) {
+		for (MyNode node : RequirementToolbox.getRequirementSourceNodes(reqNode, PSSIFCanonicMetamodelCreator.TAGS.get("E_RELATIONSHIP_CAUSAL_REQUESTS"), PSSIFCanonicMetamodelCreator.TAGS.get("N_PRINCIPAL"))) {
 			getConstraints().gridy+=i;
 			addMultRows(node.getName());
 			i++;
@@ -191,7 +191,7 @@ public class RequirementInfoPopup {
 		List<MyNode> nodes = new ArrayList<MyNode>();
 		getConstraints().insets = new Insets(5, 50, 0, 0);
 		int i=0;
-		for (MyNode node : RequirementToolbox.getRequirementRelNodes(reqNode, PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_CHRONOLOGICAL_BASED_ON, PSSIFCanonicMetamodelCreator.N_TEST_CASE)) {
+		for (MyNode node : RequirementToolbox.getRequirementRelNodes(reqNode, PSSIFCanonicMetamodelCreator.TAGS.get("E_RELATIONSHIP_CHRONOLOGICAL_BASED_ON"), PSSIFCanonicMetamodelCreator.TAGS.get("N_TEST_CASE"))) {
 			getConstraints().gridy+=i;
 			addMultRows(node.getName());
 			nodes.add(node);
@@ -212,7 +212,7 @@ public class RequirementInfoPopup {
 		getConstraints().insets = new Insets(5, 50, 0, 0);
 		int i=0;
 		for (MyNode testCaseNode: testCases) {
-			for (MyNode node : RequirementToolbox.getRequirementDestNodes(testCaseNode, PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_CHRONOLOGICAL_LEADS_TO, PSSIFCanonicMetamodelCreator.N_ISSUE)) {
+			for (MyNode node : RequirementToolbox.getRequirementDestNodes(testCaseNode, PSSIFCanonicMetamodelCreator.TAGS.get("E_RELATIONSHIP_CHRONOLOGICAL_LEADS_TO"), PSSIFCanonicMetamodelCreator.TAGS.get("N_ISSUE"))) {
 				getConstraints().gridy+=i;
 				addMultRows(node.getName());
 				i++;
@@ -229,7 +229,7 @@ public class RequirementInfoPopup {
 		getPanel().add(labelTxt, getConstraints());
 		getConstraints().insets = new Insets(5, 50, 0, 0);
 		int i=0;
-		for (MyNode node : RequirementToolbox.getRequirementDestNodes(reqNode, PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_CHRONOLOGICAL_BASED_ON, PSSIFCanonicMetamodelCreator.N_CHANGE_EVENT)) {
+		for (MyNode node : RequirementToolbox.getRequirementDestNodes(reqNode, PSSIFCanonicMetamodelCreator.TAGS.get("E_RELATIONSHIP_CHRONOLOGICAL_BASED_ON"), PSSIFCanonicMetamodelCreator.TAGS.get("N_CHANGE_EVENT"))) {
 			getConstraints().gridy+=i;
 			addMultRows(node.getName());
 			i++;
@@ -306,7 +306,7 @@ public class RequirementInfoPopup {
 		
 		String reqAbsLevel = "";
 		try {
-			reqAbsLevel  = RequirementToolbox.getAttributeValue(reqNode, PSSIFCanonicMetamodelCreator.A_REQUIREMENT_ABS_LEVEL).getOne().asString();
+			reqAbsLevel  = RequirementToolbox.getAttributeValue(reqNode, PSSIFCanonicMetamodelCreator.TAGS.get("A_REQUIREMENT_ABS_LEVEL")).getOne().asString();
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}

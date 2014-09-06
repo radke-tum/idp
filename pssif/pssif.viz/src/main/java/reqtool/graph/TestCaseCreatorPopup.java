@@ -26,7 +26,7 @@ import javax.swing.JTextField;
 
 import reqtool.controller.RequirementToolbox;
 import reqtool.controller.TestCaseCreator;
-import de.tum.pssif.core.metamodel.PSSIFCanonicMetamodelCreator;
+import de.tum.pssif.core.metamodel.external.PSSIFCanonicMetamodelCreator;
 
 /**
  * The Class TestCaseCreatorPopup.
@@ -52,7 +52,7 @@ public class TestCaseCreatorPopup {
 	 */
 	public TestCaseCreatorPopup(MyNode requirementNode) {
 		this.requirementNode = requirementNode;
-		this.solutionArtifacts = RequirementToolbox.getRequirementSourceNodes(requirementNode, PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_LOGICAL_SATISFIES);
+		this.solutionArtifacts = RequirementToolbox.getRequirementSourceNodes(requirementNode, PSSIFCanonicMetamodelCreator.TAGS.get("E_RELATIONSHIP_LOGICAL_SATISFIES"));
 	}
 
 	/**

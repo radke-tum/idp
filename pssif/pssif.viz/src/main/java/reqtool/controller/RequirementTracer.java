@@ -9,7 +9,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import model.ModelBuilder;
-import de.tum.pssif.core.metamodel.PSSIFCanonicMetamodelCreator;
+import de.tum.pssif.core.metamodel.external.PSSIFCanonicMetamodelCreator;
 
 /**
  * The Class RequirementTracer.
@@ -34,9 +34,9 @@ public class RequirementTracer {
 		mNode = node;
 		mTracedNodes.clear();
 		
-		traceableEdges.add(PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_CHRONOLOGICAL_BASED_ON);
-		traceableEdges.add(PSSIFCanonicMetamodelCreator.E_RELATIONSHIP);
-		traceableEdges.add(PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_LOGICAL_SATISFIES);
+		traceableEdges.add(PSSIFCanonicMetamodelCreator.TAGS.get("E_RELATIONSHIP_CHRONOLOGICAL_BASED_ON"));
+		traceableEdges.add(PSSIFCanonicMetamodelCreator.TAGS.get("E_RELATIONSHIP"));
+		traceableEdges.add(PSSIFCanonicMetamodelCreator.TAGS.get("E_RELATIONSHIP_LOGICAL_SATISFIES"));
 
 		for (MyEdge edge : ModelBuilder.getAllEdges()) {
 			if (edge.getSourceNode().getNode().getId().equals(node.getNode().getId()) && traceableEdges.contains(edge.getEdgeType().getName())) {

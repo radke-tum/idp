@@ -21,7 +21,7 @@ import de.tum.pssif.core.common.PSSIFConstants;
 import de.tum.pssif.core.common.PSSIFOption;
 import de.tum.pssif.core.common.PSSIFValue;
 import de.tum.pssif.core.metamodel.Attribute;
-import de.tum.pssif.core.metamodel.PSSIFCanonicMetamodelCreator;
+import de.tum.pssif.core.metamodel.external.PSSIFCanonicMetamodelCreator;
 
 public class AttributeAggregation {
 
@@ -241,9 +241,9 @@ public class AttributeAggregation {
 	{
 	//	HashMap<String,Attribute> attributes = n.getAttributesHashMap();
 		
-		if (attributes.get(PSSIFCanonicMetamodelCreator.A_BLOCK_COST)!=null)
+		if (attributes.get(PSSIFCanonicMetamodelCreator.TAGS.get("A_BLOCK_COST"))!=null)
 		{
-			PSSIFOption<PSSIFValue> tmp = attributes.get(PSSIFCanonicMetamodelCreator.A_BLOCK_COST).get(n.getNode());
+			PSSIFOption<PSSIFValue> tmp = attributes.get(PSSIFCanonicMetamodelCreator.TAGS.get("A_BLOCK_COST")).get(n.getNode());
 		
 			if (tmp.isOne())
 			{
@@ -258,9 +258,9 @@ public class AttributeAggregation {
 	{
 	//	HashMap<String,Attribute> attributes = n.getAttributesHashMap();
 		
-		if (attributes.get(PSSIFCanonicMetamodelCreator.A_DURATION)!=null)
+		if (attributes.get(PSSIFCanonicMetamodelCreator.TAGS.get("A_DURATION"))!=null)
 		{
-			PSSIFOption<PSSIFValue> tmp = attributes.get(PSSIFCanonicMetamodelCreator.A_DURATION).get(n.getNode());
+			PSSIFOption<PSSIFValue> tmp = attributes.get(PSSIFCanonicMetamodelCreator.TAGS.get("A_DURATION")).get(n.getNode());
 			
 			if (tmp.isOne())
 			{
@@ -275,9 +275,9 @@ public class AttributeAggregation {
 	{
 	//	HashMap<String,Attribute> attributes = n.getAttributesHashMap();
 		
-		if (attributes.get(PSSIFCanonicMetamodelCreator.A_HARDWARE_WEIGHT)!=null)
+		if (attributes.get(PSSIFCanonicMetamodelCreator.TAGS.get("A_HARDWARE_WEIGHT"))!=null)
 		{
-			PSSIFOption<PSSIFValue> tmp = attributes.get(PSSIFCanonicMetamodelCreator.A_HARDWARE_WEIGHT).get(n.getNode());
+			PSSIFOption<PSSIFValue> tmp = attributes.get(PSSIFCanonicMetamodelCreator.TAGS.get("A_HARDWARE_WEIGHT")).get(n.getNode());
 			
 			if (tmp.isOne())
 			{

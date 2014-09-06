@@ -21,7 +21,7 @@ import javax.swing.JTextField;
 import org.apache.poi.hssf.util.HSSFColor.YELLOW;
 
 import de.tum.pssif.core.metamodel.NodeType;
-import de.tum.pssif.core.metamodel.PSSIFCanonicMetamodelCreator;
+import de.tum.pssif.core.metamodel.external.PSSIFCanonicMetamodelCreator;
 import model.ModelBuilder;
 
 /**
@@ -177,7 +177,7 @@ public class SpecificationNodePopup {
 		if (specificationTypes == null) {
 			specificationTypes = new Vector<MyNodeType>();
 			
-			MyNodeType specType = ModelBuilder.getNodeTypes().getValue(PSSIFCanonicMetamodelCreator.N_SPEC_ARTIFACT); 
+			MyNodeType specType = ModelBuilder.getNodeTypes().getValue(PSSIFCanonicMetamodelCreator.TAGS.get("N_SPEC_ARTIFACT")); 
 			specificationTypes.add(specType);
 			
 			for(NodeType nodeType : specType.getType().getSpecials()) {

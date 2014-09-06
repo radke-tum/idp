@@ -20,7 +20,7 @@ import de.tum.pssif.core.metamodel.JunctionNodeType;
 import de.tum.pssif.core.metamodel.Metamodel;
 import de.tum.pssif.core.metamodel.NodeType;
 import de.tum.pssif.core.metamodel.NodeTypeBase;
-import de.tum.pssif.core.metamodel.PSSIFCanonicMetamodelCreator;
+import de.tum.pssif.core.metamodel.external.PSSIFCanonicMetamodelCreator;
 import de.tum.pssif.core.metamodel.impl.ReadFromNodesOperation;
 import de.tum.pssif.core.metamodel.impl.ReadToNodesOperation;
 import de.tum.pssif.core.model.Edge;
@@ -125,7 +125,7 @@ public class ContextMatcher extends MatchMethod {
 		this.metaModelNew = metaModelNew;
 
 		this.conjunctionNodeType = metaModelOriginal.getBaseNodeType(
-				PSSIFCanonicMetamodelCreator.N_CONJUNCTION).getOne();
+				PSSIFCanonicMetamodelCreator.TAGS.get("N_CONJUNCTION")).getOne();
 
 		if ((actTypeOriginModel.getName().equals(conjunctionNodeType.getName()) || (actTypeNewModel
 				.getName().equals(conjunctionNodeType.getName())))) {
@@ -257,7 +257,7 @@ public class ContextMatcher extends MatchMethod {
 			NodeTypeBase nodeType, Node nodeOfInterest, boolean isOriginalNode) {
 
 		EdgeType controlFlow = metaModelOriginal.getEdgeType(
-				PSSIFCanonicMetamodelCreator.E_FLOW_CONTROL).getOne();
+				PSSIFCanonicMetamodelCreator.TAGS.get("E_FLOW_CONTROL")).getOne();
 
 		Set<NodeAndType> result = new HashSet<NodeAndType>();
 
@@ -271,7 +271,7 @@ public class ContextMatcher extends MatchMethod {
 						if (incomingMapping
 								.getFrom()
 								.getName()
-								.equals(PSSIFCanonicMetamodelCreator.ENUM_CONJUNCTION)) {
+								.equals(PSSIFCanonicMetamodelCreator.TAGS.get("ENUM_CONJUNCTION"))) {
 
 							for (ConnectionMapping incomingM : controlFlow
 									.getIncomingMappings(incomingMapping
@@ -288,7 +288,7 @@ public class ContextMatcher extends MatchMethod {
 						} else {
 							if (!nodeType
 									.getName()
-									.equals(PSSIFCanonicMetamodelCreator.ENUM_CONJUNCTION)) {
+									.equals(PSSIFCanonicMetamodelCreator.TAGS.get("ENUM_CONJUNCTION"))) {
 								result.add(new NodeAndType(incomingMapping
 										.applyFrom(incomingEdge),
 										incomingMapping.getFrom()));
@@ -322,7 +322,7 @@ public class ContextMatcher extends MatchMethod {
 			NodeTypeBase nodeType, Node nodeOfInterest, boolean isOriginalNode) {
 
 		EdgeType controlFlow = metaModelOriginal.getEdgeType(
-				PSSIFCanonicMetamodelCreator.E_FLOW_CONTROL).getOne();
+				PSSIFCanonicMetamodelCreator.TAGS.get("E_FLOW_CONTROL")).getOne();
 
 		Set<NodeAndType> result = new HashSet<NodeAndType>();
 
@@ -335,7 +335,7 @@ public class ContextMatcher extends MatchMethod {
 						if (outgoingMapping
 								.getTo()
 								.getName()
-								.equals(PSSIFCanonicMetamodelCreator.ENUM_CONJUNCTION)) {
+								.equals(PSSIFCanonicMetamodelCreator.TAGS.get("ENUM_CONJUNCTION"))) {
 
 							for (ConnectionMapping outgoingM : controlFlow
 									.getOutgoingMappings(outgoingMapping
@@ -351,7 +351,7 @@ public class ContextMatcher extends MatchMethod {
 						} else {
 							if (!nodeType
 									.getName()
-									.equals(PSSIFCanonicMetamodelCreator.ENUM_CONJUNCTION)) {
+									.equals(PSSIFCanonicMetamodelCreator.TAGS.get("ENUM_CONJUNCTION"))) {
 								result.add(new NodeAndType(outgoingMapping
 										.applyTo(outgoingEdge), outgoingMapping
 										.getTo()));

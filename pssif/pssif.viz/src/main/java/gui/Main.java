@@ -10,6 +10,7 @@ import gui.graph.CreateNewGraphViewPopup;
 import gui.graph.GraphVisualization;
 import gui.graph.HighlightNodePopup;
 import gui.graph.NodeColorPopup;
+import gui.metamodel.MetamodelPopUp;
 
 import java.awt.Dimension;
 import java.awt.Font;
@@ -248,6 +249,9 @@ public class Main {
 		// Color Options
 		menuBar.add(addGraphOperations());
 		
+		// Open Menu to display and manipulate the metamodel
+		menuBar.add(addMetaModelChangeOption());
+			
 		return menuBar;
 	}
 	
@@ -307,6 +311,31 @@ public class Main {
 		menuBar.getMenu(0).add(modelStatistics);
 		
 		return menuBar;
+	}
+	
+	/**
+	 * Adds the Option to view and change the metamodel
+	 * @return The updated MenuBar
+	 */
+	private JMenu addMetaModelChangeOption()
+	{
+		JMenu metamodelMenu = new JMenu();
+		metamodelMenu.setText("Metamodel");
+		metamodelMenu.setIcon(null); 
+		metamodelMenu.setPreferredSize(new Dimension(80,20));
+		
+		JMenuItem changeOption = new JMenuItem("Manipulate Metamodel");
+		metamodelMenu.add(changeOption);
+		
+		changeOption.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				new MetamodelPopUp().showMetamodelView();
+			}
+		});
+		
+		return metamodelMenu;
 	}
 	
 	/**

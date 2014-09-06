@@ -29,7 +29,7 @@ import de.tum.pssif.core.metamodel.ConnectionMapping;
 import de.tum.pssif.core.metamodel.EdgeType;
 import de.tum.pssif.core.metamodel.Metamodel;
 import de.tum.pssif.core.metamodel.NodeType;
-import de.tum.pssif.core.metamodel.PSSIFCanonicMetamodelCreator;
+import de.tum.pssif.core.metamodel.external.PSSIFCanonicMetamodelCreator;
 import de.tum.pssif.core.model.Model;
 import de.tum.pssif.core.model.Node;
 
@@ -156,7 +156,7 @@ public class ModelBuilder {
 		for (ComparedNodePair comparedNodePair : matchedList) {
 
 			MyEdgeType edgeType = new MyEdgeType(metaModel.getEdgeType(
-					PSSIFCanonicMetamodelCreator.E_EQUALS).getOne(), 4);
+					PSSIFCanonicMetamodelCreator.TAGS.get("E_EQUALS")).getOne(), 4);
 
 			for (MyNode actNode : activeModel.getAllNodes()) {
 				if (Methods.findGlobalID(actNode.getNode(),

@@ -27,7 +27,7 @@ import de.tum.pssif.core.metamodel.JunctionNodeType;
 import de.tum.pssif.core.metamodel.Metamodel;
 import de.tum.pssif.core.metamodel.NodeType;
 import de.tum.pssif.core.metamodel.NodeTypeBase;
-import de.tum.pssif.core.metamodel.PSSIFCanonicMetamodelCreator;
+import de.tum.pssif.core.metamodel.external.PSSIFCanonicMetamodelCreator;
 import de.tum.pssif.core.model.Edge;
 import de.tum.pssif.core.model.Model;
 import de.tum.pssif.core.model.Node;
@@ -170,7 +170,7 @@ public class MergingProcess {
 	 */
 	private void handleConjunctions() {
 		JunctionNodeType junctionNodeType = metaModelOriginal
-				.getJunctionNodeType(PSSIFCanonicMetamodelCreator.N_CONJUNCTION)
+				.getJunctionNodeType(PSSIFCanonicMetamodelCreator.TAGS.get("N_CONJUNCTION"))
 				.getOne();
 
 		PSSIFOption<Node> junctionNodesOriginalModel;
@@ -388,7 +388,7 @@ public class MergingProcess {
 	private boolean applyMatchMethodsToJunctionContext(Node contextOrigin,
 			NodeTypeBase typeOrigin, Node contextNew, NodeTypeBase typeNew) {
 		if ((typeOrigin.getName().equals(
-				PSSIFCanonicMetamodelCreator.N_CONJUNCTION) && typeOrigin
+				PSSIFCanonicMetamodelCreator.TAGS.get("N_CONJUNCTION")) && typeOrigin
 				.getName().equals(typeNew.getName()))) {
 			// both contextual nodes of the junctions are junctions, so they are
 			// assumed
@@ -483,6 +483,8 @@ public class MergingProcess {
 	 */
 	public void typeIteration() {
 
+		Constants.initialize();
+		
 		for (int i = 0; i < Constants.PSIFFDevArtifactSubClasses.length; i++) {
 			iterateNodesOfType(Constants.PSIFFDevArtifactSubClasses[i], false);
 		}
@@ -491,9 +493,9 @@ public class MergingProcess {
 			iterateNodesOfType(Constants.PSIFFSolArtifactSubClasses[i], false);
 		}
 
-		iterateNodesOfType(PSSIFCanonicMetamodelCreator.N_DEV_ARTIFACT, false);
+		iterateNodesOfType(PSSIFCanonicMetamodelCreator.TAGS.get("N_DEV_ARTIFACT"), false);
 
-		iterateNodesOfType(PSSIFCanonicMetamodelCreator.N_SOL_ARTIFACT, false);
+		iterateNodesOfType(PSSIFCanonicMetamodelCreator.TAGS.get("N_SOL_ARTIFACT"), false);
 		iterateNodesOfType(PSSIFConstants.ROOT_NODE_TYPE_NAME, false);
 	}
 

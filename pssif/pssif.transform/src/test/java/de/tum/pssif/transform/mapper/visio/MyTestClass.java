@@ -9,7 +9,7 @@ import org.junit.Test;
 
 import com.google.common.collect.Sets;
 
-import de.tum.pssif.core.metamodel.PSSIFCanonicMetamodelCreator;
+import de.tum.pssif.core.metamodel.external.PSSIFCanonicMetamodelCreator;
 import de.tum.pssif.core.model.Model;
 import de.tum.pssif.transform.Mapper;
 import de.tum.pssif.transform.MapperFactory;

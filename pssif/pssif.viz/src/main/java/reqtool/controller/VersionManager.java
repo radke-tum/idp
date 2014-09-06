@@ -12,7 +12,7 @@ import de.tum.pssif.core.common.PSSIFOption;
 import de.tum.pssif.core.common.PSSIFValue;
 import de.tum.pssif.core.metamodel.Attribute;
 import de.tum.pssif.core.metamodel.NodeType;
-import de.tum.pssif.core.metamodel.PSSIFCanonicMetamodelCreator;
+import de.tum.pssif.core.metamodel.external.PSSIFCanonicMetamodelCreator;
 
 /**
  * The Class VersionManager.
@@ -43,7 +43,7 @@ public class VersionManager {
 	 * @param myNode the selected node
 	 */
 	public VersionManager(MyNode myNode) {
-		this.evolvesTo = ModelBuilder.getEdgeTypes().getValue(PSSIFCanonicMetamodelCreator.E_RELATIONSHIP_CHRONOLOGICAL_EVOLVES_TO);
+		this.evolvesTo = ModelBuilder.getEdgeTypes().getValue(PSSIFCanonicMetamodelCreator.TAGS.get("E_RELATIONSHIP_CHRONOLOGICAL_EVOLVES_TO"));
 		initSelectedNode(myNode);
 	}
 
@@ -95,7 +95,7 @@ public class VersionManager {
 		for (MyEdge e : allEdges) {
 			if (!e.getEdgeType().equals(evolvesTo)) {
 				if (e.getDestinationNode().equals(selNode)
-						&& !((MyNode) e.getSourceNode()).getNodeType().toString().equals(PSSIFCanonicMetamodelCreator.N_TEST_CASE)) {
+						&& !((MyNode) e.getSourceNode()).getNodeType().toString().equals(PSSIFCanonicMetamodelCreator.TAGS.get("N_TEST_CASE"))) {
 					ModelBuilder.addNewEdgeGUI((MyNode) e.getSourceNode(), newVersNode, e.getEdgeType(), e.isDirected());
 					ModelBuilder.getAllEdges().remove(e);
 				} else if (e.getSourceNode().equals(selNode)) {
