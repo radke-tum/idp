@@ -34,6 +34,7 @@ import javax.swing.JPanel;
 
 import jena.database.URIs;
 import jena.mapper.impl.DBMapperImpl;
+import jena.mapper.impl.PssifMapperImpl;
 import model.FileExporter;
 import model.FileImporter;
 import model.ModelBuilder;
@@ -223,6 +224,19 @@ public class Main {
 
 		fileMenu.add(importFile);
 
+		// needed to import Graph from DB @author Andrea
+		importDB = new JMenuItem("Import from DB");
+		importDB.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				PssifMapperImpl db = new PssifMapperImpl();
+				// TODO db to model
+			}
+		});
+
+		fileMenu.add(importDB);
+
 		menuBar.add(fileMenu);
 
 		return menuBar;
@@ -300,8 +314,6 @@ public class Main {
 			public void actionPerformed(ActionEvent e) {
 				DBMapperImpl db = new DBMapperImpl();
 				db.modelToDB(ModelBuilder.activeModel, URIs.modelname);
-				// TODO just for testing
-				db.removeModel();
 
 				JOptionPane.showMessageDialog(null, "Successfully saved!",
 						"PSSIF", JOptionPane.INFORMATION_MESSAGE);

@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import jena.database.Properties;
 import jena.database.URIs;
@@ -26,6 +27,7 @@ import de.tum.pssif.core.common.PSSIFValue;
 import de.tum.pssif.core.metamodel.Attribute;
 import de.tum.pssif.core.metamodel.impl.GetValueOperation;
 import de.tum.pssif.core.model.Edge;
+import de.tum.pssif.core.model.JunctionNode;
 import de.tum.pssif.core.model.Node;
 
 // Model to DB Mapper
@@ -43,12 +45,15 @@ public class DBMapperImpl implements DBMapper {
 
 		db.begin(ReadWrite.WRITE);
 		saveNodes(model.getAllNodes());
+		// TODO Testing
 		rdfModel.writeModelToFile("TestPSSIFNodes",
 				"C:\\Users\\Andrea\\Desktop\\");
 		saveJunctionNodes(model.getAllJunctionNodes());
+		// TODO Testing
 		rdfModel.writeModelToFile("TestPSSIFJNodes",
 				"C:\\Users\\Andrea\\Desktop\\");
 		saveEdges(model.getAllEdges());
+		// TODO Testing
 		rdfModel.writeModelToFile("TestPSSIF", "C:\\Users\\Andrea\\Desktop\\");
 		db.commit();
 		db.end();
@@ -57,6 +62,7 @@ public class DBMapperImpl implements DBMapper {
 	public void removeModel() {
 		db.begin(ReadWrite.WRITE);
 		rdfModel.removeAll();
+		db.removeNamedModel(rdfModel.toString());
 		db.commit();
 		db.end();
 	}
@@ -74,7 +80,7 @@ public class DBMapperImpl implements DBMapper {
 		Node n = mynode.getNode();
 		// Falls Edge noch nicht vorhanden
 		String uri = URIs.uriNode.concat(n.getId());
-	//	if (!rdfModel.containsNode(uri)) {
+		if (!rdfModel.containsNode(uri)) {
 			// create Subject with URI from NodeID
 			Resource subjectNode = rdfModel.createResource(URIs.uriNode
 					.concat(n.getId()));
@@ -92,7 +98,7 @@ public class DBMapperImpl implements DBMapper {
 
 			// Add all Annotations to Model
 			addAllAnnotations(n.getAnnotations(), subjectNode);
-	//	}
+		}
 	}
 
 	private void removeNode(MyNode mynode) {
@@ -181,7 +187,7 @@ public class DBMapperImpl implements DBMapper {
 							.getName());
 
 			// Remove Attributes from Node
-			// TODO
+			// TODO What Attributes? and Where From?
 
 			// Remove all Annotations to Model
 			removeAllAnnotations(jn.getAnnotations(), subjectJNode);
@@ -257,8 +263,8 @@ public class DBMapperImpl implements DBMapper {
 					.getName());
 
 			// Add Attributes from Edge
-			// addAllAttributes(myedge.getAttributesHashMap(), subjectEdge,
-			// URIs.uriEdge);
+			addAllAttributes(myedge.getAttributesHashMap(), subjectEdge,
+					URIs.uriEdge, e);
 
 			// Add all Annotations to Model
 			addAllAnnotations(e.getAnnotations(), subjectEdge);
@@ -356,8 +362,8 @@ public class DBMapperImpl implements DBMapper {
 	// ATTRIBUTES
 
 	// add all Attributes from a Node/Edge
-	private void addAllAttributes(HashMap<String, Attribute> attr,
-			Resource subject, String prop, Node n) {
+	private <T> void addAllAttributes(HashMap<String, Attribute> attr,
+			Resource subject, String prop, T n) {
 		for (Iterator<Entry<String, Attribute>> it = attr.entrySet().iterator(); it
 				.hasNext();) {
 			Entry<String, Attribute> attrEntry = it.next();
@@ -367,9 +373,21 @@ public class DBMapperImpl implements DBMapper {
 
 	// add Attribute from one Entry-Set
 	// TODO make generic for Node/Edge
-	private void addAttribute(Entry<String, Attribute> attrEntry,
-			Resource subject, String propURI, Node n) {
+	private <T> void addAttribute(Entry<String, Attribute> attrEntry,
+			Resource subject, String propURI, T n) {
 		Attribute attr = attrEntry.getValue();
+		String datatype = attr.getType().getName();
+		String unit = attr.getUnit().getName();
+
+		// Get Value and define what Type n is
+		PSSIFOption<PSSIFValue> value = null;
+
+		if (n instanceof Node)
+			value = ((Node) n).apply(new GetValueOperation(attr));
+		if (n instanceof JunctionNode)
+			value = ((JunctionNode) n).apply(new GetValueOperation(attr));
+		if (n instanceof Edge)
+			value = ((Edge) n).apply(new GetValueOperation(attr));
 
 		// Get the ID of subject to add it to the Attribute Node URI
 		String[] uri = subject.getURI().split("#");
@@ -383,18 +401,33 @@ public class DBMapperImpl implements DBMapper {
 		rdfModel.insert(subject, prop, subjectAttr);
 
 		// Add Value
-		// TODO this is not the value!?
-		//PSSIFOption<PSSIFValue> value = n.apply(new GetValueOperation(attr));
-		//PSSIFValue v = value.getOne();
-		//String testValue = v.getValue().toString();
+		if (value.isNone())
+			return;
 
-		subjectAttr.addProperty(Properties.PROP_ATTR_VALUE, attr.getName());
+		if (value.isOne()) {
+			PSSIFValue v = value.getOne();
+			String attrValue = v.getValue().toString();
+			addPSSIFValue(subjectAttr, attrValue, unit, datatype);
+			return;
+		}
+
+		if (value.isMany()) {
+			Set<PSSIFValue> values = value.getMany();
+			for (PSSIFValue val : values)
+				addPSSIFValue(subjectAttr, val.getValue().toString(), unit,
+						datatype);
+		}
+	}
+
+	// adds PSSIF Attribute to subject
+	private void addPSSIFValue(Resource subjectAttr, String value, String unit,
+			String datatype) {
+		// Add Value
+		subjectAttr.addProperty(Properties.PROP_ATTR_VALUE, value);
 		// Add Unit
-		subjectAttr.addProperty(Properties.PROP_ATTR_UNIT, attr.getUnit()
-				.getName());
+		subjectAttr.addProperty(Properties.PROP_ATTR_UNIT, unit);
 		// Add Datatype
-		subjectAttr.addProperty(Properties.PROP_ATTR_DATATYPE, attr.getType()
-				.getName());
+		subjectAttr.addProperty(Properties.PROP_ATTR_DATATYPE, datatype);
 	}
 
 	// removes all Attributes

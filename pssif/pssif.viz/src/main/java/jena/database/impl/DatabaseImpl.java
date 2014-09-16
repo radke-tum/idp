@@ -99,4 +99,9 @@ public class DatabaseImpl implements Database {
 	public void end() {
 		ds.end();
 	}
+
+	// TODO override
+	public void removeNamedModel(String uri) {
+		ds.removeNamedModel(uri);
+	}
 }
