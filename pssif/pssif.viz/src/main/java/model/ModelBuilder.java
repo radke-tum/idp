@@ -43,7 +43,7 @@ import de.tum.pssif.core.model.Node;
  */
 public class ModelBuilder {
 
-	private static MyModelContainer activeModel;
+	public static MyModelContainer activeModel;
 	private static Metamodel metaModel = PSSIFCanonicMetamodelCreator.create();
 	private static HashMap<MyPair, LinkedList<MyEdgeType>> possibleMappings;
 
