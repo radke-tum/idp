@@ -40,20 +40,17 @@ import de.tum.pssif.core.model.impl.ModelImpl;
 public class PssifMapperImpl implements PssifMapper {
 	public RDFModelImpl rdfModel;
 	public DatabaseImpl db;
-	// public MyModelContainer modelContainer;
 	private de.tum.pssif.core.model.Model pssifModel;
 	private Metamodel metamodel = PSSIFCanonicMetamodelCreator.create();
 	private HashMap<String, Node> nodes = new HashMap<>();
+	private HashMap<String, Edge> edges = new HashMap<>();
 
 	// private HashMap<String, JunctionNode> junctionNodes = new HashMap<>();
-	// private HashMap<String, Edge> edges = new HashMap<>();
 
 	public void DBToModel() {
 		db = new DatabaseImpl(URIs.location, URIs.namespace);
 		rdfModel = db.getRdfModel();
 		pssifModel = new ModelImpl();
-
-		// modelContainer = new MyModelContainer(pssifModel, metamodel);
 
 		db.begin(ReadWrite.READ);
 		getNodes();
@@ -62,8 +59,6 @@ public class PssifMapperImpl implements PssifMapper {
 		db.end();
 
 		ModelBuilder.addModel(ModelBuilder.getMetamodel(), pssifModel);
-
-		MyModelContainer modelContainer = ModelBuilder.activeModel;
 	}
 
 	// NODES
@@ -93,62 +88,12 @@ public class PssifMapperImpl implements PssifMapper {
 		Statement resNodeType = subject.getProperty(Properties.PROP_TYPE);
 		String nodeTypeName = resNodeType.getObject().toString();
 
+		// Create new Node and NodeType
 		NodeType nodeType = metamodel.getNodeType(nodeTypeName).getOne();
-
-		// TODO Mit welcher Version einen neuen Knoten erstellen?
-		// Node newNode = new NodeImpl(pssifModel);
 		newNode = nodeType.create(pssifModel);
 
-		// TODO Wie an Model binden?
-		// MyNode mynode = modelContainer.addNewNodeFromGUI(name, nodeType);
-		// newNode = pssifModel.apply(new CreateNodeOperation(nodeType))
-		// -> Konstruktor nicht freigegeben
-
+		// add attributes and annotations to Node
 		id = createAttributeOrAnnotation(subject, nodeType, newNode);
-
-		// // find Attributes an Annotations by iterating over all Statements of
-		// // the subject Node
-		// for (StmtIterator iter = subject.listProperties(); iter.hasNext();) {
-		// Statement stmt = iter.nextStatement();
-		// // to get the Attribute/Annotation Name you have to get the URI of
-		// // the Property
-		// // and take the String behind the # sign
-		// String[] propURI = stmt.getPredicate().getURI().split("#");
-		//
-		// // Property is an Attribute
-		// if (propURI[0].concat("#").equals(URIs.uriAttribute)) {
-		// String attribute = propURI[1];
-		//
-		// // get the value of the Attribute
-		// Resource object = stmt.getObject().asResource();
-		// String value = "";
-		// Statement st = object.getProperty(Properties.PROP_ATTR_VALUE);
-		// value = st.getObject().toString();
-		//
-		// // Add the Attribute to the node
-		// // TODO legt man so ein neues Attribut zu einem Knoten an?
-		// nodeType.getAttribute(attribute)
-		// .getOne()
-		// .set(newNode, PSSIFOption.one(PSSIFValue.create(value)));
-		//
-		// // if attribute is the ID -> save it
-		// if (PSSIFConstants.BUILTIN_ATTRIBUTE_ID.contains(attribute))
-		// id = value;
-		// }
-		// // Property is an Annotation
-		// else if (propURI[0].concat("#").equals(URIs.uriAnnotation)) {
-		// String annotKey = propURI[1];
-		// // get the value of the Annotation
-		// Literal object = stmt.getObject().asLiteral();
-		// String value = object.getString();
-		//
-		// // Add the Annotation to the node
-		// newNode.annotate(annotKey, value);
-		// }
-		// }
-		// TODO add node to Container
-		// modelContainer.addNode(new MyNode(newNode, new
-		// MyNodeType(nodeType)));
 
 		// add node to hashmap
 		nodes.put(id, newNode);
@@ -190,73 +135,34 @@ public class PssifMapperImpl implements PssifMapper {
 	}
 
 	private void constructEdge(Resource subject) {
-		// find NodeType
+		// find EdgeType
 		Statement resEdgeType = subject.getProperty(Properties.PROP_TYPE);
 		String edgeTypeName = resEdgeType.getObject().toString();
 
+		// create new Edge and EdgeType
 		EdgeType edgeType = metamodel.getEdgeType(edgeTypeName).getOne();
 
 		// get incoming and outgoing nodes
 		Edge newEdge = constructInOutNodes(subject, edgeType);
 
-		createAttributeOrAnnotation(subject, edgeType, newEdge);
+		// add annotations and attributes to Edge
+		String id = createAttributeOrAnnotation(subject, edgeType, newEdge);
 
-		// // find Attributes an Annotations by iterating over all Statements of
-		// // the subject Node
-		// for (StmtIterator iter = subject.listProperties(); iter.hasNext();) {
-		// Statement stmt = iter.nextStatement();
-		// // to get the Attribute/Annotation Name you have to get the URI of
-		// // the Property
-		// // and take the String behind the # sign
-		// String[] propURI = stmt.getPredicate().getURI().split("#");
-		//
-		// // Property is an Attribute
-		// if (propURI[0].concat("#").equals(URIs.uriAttribute)) {
-		// String attribute = propURI[1];
-		//
-		// // get the value of the Attribute
-		// Resource object = stmt.getObject().asResource();
-		// String value = "";
-		// Statement st = object.getProperty(Properties.PROP_ATTR_VALUE);
-		// value = st.getObject().toString();
-		//
-		// // Add the Attribute to the node
-		// // TODO legt man so ein neues Attribut zu einem Knoten an?
-		// // edgeType.getAttribute(attribute)
-		// // .getOne()
-		// // .set(newEdge, PSSIFOption.one(PSSIFValue.create(value)));
-		//
-		// PSSIFOption<Attribute> attributePssif = edgeType
-		// .getAttribute(attribute);
-		// if (attributePssif.isOne()) {
-		// attributePssif.getOne().set(
-		// newEdge,
-		// PSSIFOption.one(attributePssif.getOne().getType()
-		// .fromObject(value)));
-		// }
-		// }
-		// // Property is an Annotation
-		// else if (propURI[0].concat("#").equals(URIs.uriAnnotation)) {
-		// String annotKey = propURI[1];
-		// // get the value of the Annotation
-		// Literal object = stmt.getObject().asLiteral();
-		// String value = object.getString();
-		//
-		// // Add the Annotation to the node
-		// newEdge.annotate(annotKey, value);
-		// }
-		// }
-
+		// add edge to Hashmap
+		edges.put(id, newEdge);
 	}
 
 	private Edge constructInOutNodes(Resource subject, EdgeType edgeType) {
-		// Multimap<String, Node> nodes = pssifModel.getNodes();
 		Node nodeIn = null;
 		Node nodeOut = null;
 		NodeType nodeTypeIn = null;
 		NodeType nodeTypeOut = null;
+
+		// get Statements for incoming and outgoing Nodes
 		Statement stmtNodeIn = subject.getProperty(Properties.PROP_NODE_IN);
 		Statement stmtNodeOut = subject.getProperty(Properties.PROP_NODE_OUT);
+
+		// get incoming Node from statement
 		if (stmtNodeIn != null) {
 			// get Node
 			Resource resNodeIn = stmtNodeIn.getObject().asResource();
@@ -270,9 +176,10 @@ public class PssifMapperImpl implements PssifMapper {
 					.getObject().asResource();
 			Statement st = resNodeID.getProperty(Properties.PROP_ATTR_VALUE);
 			String id = st.getObject().toString();
-			// get Node from ID
+			// get existing Node from ID
 			nodeIn = nodes.get(id);
 		}
+		// get outgoing Node from statement
 		if (stmtNodeOut != null) {
 			// get Node
 			Resource resNodeOut = stmtNodeOut.getObject().asResource();
@@ -287,14 +194,11 @@ public class PssifMapperImpl implements PssifMapper {
 					.asResource();
 			Statement st = resNodeID.getProperty(Properties.PROP_ATTR_VALUE);
 			String id = st.getObject().toString();
-			// get Node from ID
-			// Collection<Node> nodeColl =
-			// Iterator<Node> it = nodeColl.iterator();
+			// get existing Node from ID
 			nodeOut = nodes.get(id);
 		}
 
-		// TODO Edge wird aktuell nicht angezeigt, aber in pssifModel und Nodes
-		// vorhanden
+		// TODO
 		// Edge newEdge = new EdgeImpl(pssifModel, nodeIn, nodeOut);
 		// Edge newEdge = edgeType.create(pssifModel);
 
@@ -314,8 +218,8 @@ public class PssifMapperImpl implements PssifMapper {
 		// nodeOut, nodeIn));
 
 		PSSIFOption<ConnectionMapping> mapping = edgeType.getMapping(
-				nodeTypeOut, nodeTypeIn);
-		Edge newEdge = mapping.getOne().create(pssifModel, nodeOut, nodeIn);
+				nodeTypeIn, nodeTypeOut);
+		Edge newEdge = mapping.getOne().create(pssifModel, nodeIn, nodeOut);
 
 		return newEdge;
 	}
@@ -327,7 +231,7 @@ public class PssifMapperImpl implements PssifMapper {
 		String id = "";
 
 		// find Attributes an Annotations by iterating over all Statements of
-		// the subject Node
+		// the subject element
 		for (StmtIterator iter = subject.listProperties(); iter.hasNext();) {
 			Statement stmt = iter.nextStatement();
 			// to get the Attribute/Annotation Name you have to get the URI of
@@ -345,7 +249,7 @@ public class PssifMapperImpl implements PssifMapper {
 				Statement st = object.getProperty(Properties.PROP_ATTR_VALUE);
 				value = st.getObject().toString();
 
-				// Add the Attribute to the node
+				// Add the Attribute to the element
 				PSSIFOption<Attribute> attributePssif = type
 						.getAttribute(attribute);
 				if (attributePssif.isOne()) {
@@ -366,7 +270,7 @@ public class PssifMapperImpl implements PssifMapper {
 				Literal object = stmt.getObject().asLiteral();
 				String value = object.getString();
 
-				// Add the Annotation to the node
+				// Add the Annotation to the element
 				elem.annotate(annotKey, value);
 			}
 		}
