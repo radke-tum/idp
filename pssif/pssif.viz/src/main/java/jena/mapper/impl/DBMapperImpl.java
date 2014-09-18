@@ -37,21 +37,18 @@ public class DBMapperImpl implements DBMapper {
 	public RDFModelImpl rdfModel;
 	public DatabaseImpl db;
 
+	public DBMapperImpl() {
+		super();
+		db = new DatabaseImpl(URIs.location, URIs.namespace);
+		rdfModel = db.getRdfModel();
+	}
+
 	// MODEL
 
 	public void modelToDB(MyModelContainer model, String modelname) {
-		db = new DatabaseImpl(URIs.location, URIs.namespace);
-		rdfModel = db.getRdfModel();
-
 		db.begin(ReadWrite.WRITE);
 		saveNodes(model.getAllNodes());
-		// TODO Testing
-		rdfModel.writeModelToFile("TestPSSIFNodes",
-				"C:\\Users\\Andrea\\Desktop\\");
 		saveJunctionNodes(model.getAllJunctionNodes());
-		// TODO Testing
-		rdfModel.writeModelToFile("TestPSSIFJNodes",
-				"C:\\Users\\Andrea\\Desktop\\");
 		saveEdges(model.getAllEdges());
 		// TODO Testing
 		rdfModel.writeModelToFile("TestPSSIF", "C:\\Users\\Andrea\\Desktop\\");
@@ -389,6 +386,10 @@ public class DBMapperImpl implements DBMapper {
 		if (n instanceof Edge)
 			value = ((Edge) n).apply(new GetValueOperation(attr));
 
+		// if there is no Attribute value don't save anything
+		if (value.isNone())
+			return;
+
 		// Get the ID of subject to add it to the Attribute Node URI
 		String[] uri = subject.getURI().split("#");
 		String id = uri[1];
@@ -401,9 +402,7 @@ public class DBMapperImpl implements DBMapper {
 		rdfModel.insert(subject, prop, subjectAttr);
 
 		// Add Value
-		if (value.isNone())
-			return;
-
+		// You have to differ weather the Attribute isOne or isMany
 		if (value.isOne()) {
 			PSSIFValue v = value.getOne();
 			String attrValue = v.getValue().toString();

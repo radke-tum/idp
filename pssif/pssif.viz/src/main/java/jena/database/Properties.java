@@ -4,13 +4,15 @@ import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.Property;
 
+import de.tum.pssif.core.common.PSSIFConstants;
+
 public class Properties {
 	private static Model m = ModelFactory.createDefaultModel();
 
 	// // Properties of Attributes
-	// public static final Property PROP_ATTR_ID = m
-	// .createProperty(URIs.uriAttribute
-	// + PSSIFConstants.BUILTIN_ATTRIBUTE_ID);
+	 public static final Property PROP_ATTR_ID = m
+	 .createProperty(URIs.uriAttribute
+	 + PSSIFConstants.BUILTIN_ATTRIBUTE_ID);
 	// public static final Property PROP_ATTR_NAME = m
 	// .createProperty(URIs.uriAttribute
 	// + PSSIFConstants.BUILTIN_ATTRIBUTE_NAME);

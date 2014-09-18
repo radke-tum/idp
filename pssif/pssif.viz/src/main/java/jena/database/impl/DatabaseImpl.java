@@ -3,6 +3,7 @@ package jena.database.impl;
 import java.util.Iterator;
 
 import jena.database.Database;
+import jena.database.URIs;
 
 import com.hp.hpl.jena.query.Dataset;
 import com.hp.hpl.jena.query.ReadWrite;
@@ -13,7 +14,7 @@ public class DatabaseImpl implements Database {
 	public static Dataset ds;
 	private String location = ""; // Speicherort der Daten
 	private String ns = ""; // Create Namespace
-	private String modelname = "PSSIF_Model";
+	private String modelname = URIs.modelname;
 	private RDFModelImpl rdfModel = null;
 
 	public DatabaseImpl(String location, String ns) {

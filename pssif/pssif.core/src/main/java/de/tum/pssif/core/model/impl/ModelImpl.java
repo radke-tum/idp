@@ -24,89 +24,93 @@ import de.tum.pssif.core.model.JunctionNode;
 import de.tum.pssif.core.model.Model;
 import de.tum.pssif.core.model.Node;
 
-
 public class ModelImpl implements Model {
-  private final AtomicLong                           idGenerator = new AtomicLong();
-  private Multimap<String, Node>                     nodes       = HashMultimap.create();
-  private Multimap<ConnectionMappingSignature, Edge> edges       = HashMultimap.create();
+	private final AtomicLong idGenerator = new AtomicLong();
+	private Multimap<String, Node> nodes = HashMultimap.create();
+	private Multimap<ConnectionMappingSignature, Edge> edges = HashMultimap
+			.create();
 
-  @Override
-  public Node apply(CreateNodeOperation op) {
-    Node result = new NodeImpl(this);
-    
-    /**
-     * @author Andreas
-     */
+	@Override
+	public Node apply(CreateNodeOperation op) {
+		Node result = new NodeImpl(this);
 
-    PSSIFOption<Attribute> globalIdAttribute = op.getType().getAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_GLOBAL_ID);
-    
-    globalIdAttribute.getOne().set(result, PSSIFOption.one(PSSIFValue.create(UUID.randomUUID().toString())));
-    /**
-     * until here
-     */
-    
-    nodes.put(op.getType().getName(), result);
-    
-    return result;
-  }
+		/**
+		 * @author Andreas
+		 */
 
-  @Override
-  public Node apply(CreateJunctionNodeOperation op) {
-    JunctionNode result = new JunctionNodeImpl(this);
-    
-    nodes.put(op.getType().getName(), result);
-    return result;
-  }
+		PSSIFOption<Attribute> globalIdAttribute = op.getType().getAttribute(
+				PSSIFConstants.BUILTIN_ATTRIBUTE_GLOBAL_ID);
 
-  @Override
-  public Edge apply(CreateEdgeOperation op) {
-    Edge result = new EdgeImpl(this, op.getFrom(), op.getTo());
-    edges.put(new ConnectionMappingSignature(op.getMapping()), result);
-    return result;
-  }
+		globalIdAttribute.getOne()
+				.set(result,
+						PSSIFOption.one(PSSIFValue.create(UUID.randomUUID()
+								.toString())));
+		/**
+		 * until here
+		 */
 
-  @Override
-  public PSSIFOption<Node> apply(ReadNodesOperation op) {
-    return PSSIFOption.many(nodes.get(op.getType().getName()));
-  }
+		nodes.put(op.getType().getName(), result);
 
-  @Override
-  public PSSIFOption<Node> apply(ReadNodeOperation op) {
-    for (Node n : nodes.get(op.getType().getName())) {
-      if (n.getId().equals(op.getId())) {
-        return PSSIFOption.one(n);
-      }
-    }
-    return PSSIFOption.none();
-  }
+		return result;
+	}
 
-  @Override
-  public PSSIFOption<Edge> apply(ReadEdgesOperation op) {
-    for (ConnectionMappingSignature candidate : edges.keySet()) {
-      if (candidate.isCompatibleWith(op.getMapping())) {
-        return PSSIFOption.many(edges.get(candidate));
-      }
-    }
-    return PSSIFOption.none();
-  }
-  
-  @Override
-  public boolean apply(RemoveNodeOperation op) {
-	return nodes.remove(op.getType(), op.getNode());
-  }
+	@Override
+	public Node apply(CreateJunctionNodeOperation op) {
+		JunctionNode result = new JunctionNodeImpl(this);
 
-  @Override
-  public synchronized String generateId() {
-    return "pssif_artificial_id_" + idGenerator.getAndIncrement();
-  }
-  
-   public boolean removeNode(NodeType type, Node node){
-	   return nodes.remove(type.getName(), node);   
-   }
+		nodes.put(op.getType().getName(), result);
+		return result;
+	}
+
+	@Override
+	public Edge apply(CreateEdgeOperation op) {
+		Edge result = new EdgeImpl(this, op.getFrom(), op.getTo());
+		edges.put(new ConnectionMappingSignature(op.getMapping()), result);
+		return result;
+	}
+
+	@Override
+	public PSSIFOption<Node> apply(ReadNodesOperation op) {
+		return PSSIFOption.many(nodes.get(op.getType().getName()));
+	}
+
+	@Override
+	public PSSIFOption<Node> apply(ReadNodeOperation op) {
+		for (Node n : nodes.get(op.getType().getName())) {
+			if (n.getId().equals(op.getId())) {
+				return PSSIFOption.one(n);
+			}
+		}
+		return PSSIFOption.none();
+	}
+
+	@Override
+	public PSSIFOption<Edge> apply(ReadEdgesOperation op) {
+		for (ConnectionMappingSignature candidate : edges.keySet()) {
+			if (candidate.isCompatibleWith(op.getMapping())) {
+				return PSSIFOption.many(edges.get(candidate));
+			}
+		}
+		return PSSIFOption.none();
+	}
+
+	@Override
+	public boolean apply(RemoveNodeOperation op) {
+		return nodes.remove(op.getType(), op.getNode());
+	}
+
+	@Override
+	public synchronized String generateId() {
+		return "pssif_artificial_id_" + idGenerator.getAndIncrement();
+	}
+
+	public boolean removeNode(NodeType type, Node node) {
+		return nodes.remove(type.getName(), node);
+	}
 
 	@Override
 	public void removeEdge(Edge edge) {
-		Entry<ConnectionMappingSignature, Edge> remEdge = null;	  
+		Entry<ConnectionMappingSignature, Edge> remEdge = null;
 		for (Entry<ConnectionMappingSignature, Edge> e : edges.entries()) {
 			if (e.getValue().equals(edge)) {
 				remEdge = e;
@@ -117,5 +121,4 @@ public class ModelImpl implements Model {
 			edges.remove(remEdge.getKey(), remEdge.getValue());
 		}
 	}
-  
 }

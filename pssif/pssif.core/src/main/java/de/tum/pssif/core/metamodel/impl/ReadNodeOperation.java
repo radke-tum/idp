@@ -10,7 +10,7 @@ public final class ReadNodeOperation {
   private final NodeTypeBase type;
   private final String   id;
 
-  /*package*/ReadNodeOperation(NodeTypeBase type, String id) {
+  /*package*/ ReadNodeOperation(NodeTypeBase type, String id) {
     this.type = type;
     this.id = id;
   }

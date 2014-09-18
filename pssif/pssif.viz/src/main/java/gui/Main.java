@@ -232,6 +232,30 @@ public class Main {
 			public void actionPerformed(ActionEvent e) {
 				PssifMapperImpl db = new PssifMapperImpl();
 				// TODO db to model
+				db.DBToModel();
+				
+				// Create the Views
+				matrixView = new MatrixView();
+				graphView = new GraphView();
+				// instance which manages all the filters
+				masterFilter = new MasterFilter(graphView);
+
+				Dimension d = frame.getSize();
+
+				// Setup the frame
+				frame.getContentPane().removeAll();
+				// Standard start with Graph
+				frame.getContentPane().add(graphView.getGraphPanel());
+				graphView.setActive(true);
+				matrixView.setActive(false);
+
+				// create the full menuBar after first import
+				frame.setJMenuBar(createMenu());
+				adjustButtons();
+
+				frame.setPreferredSize(d);
+				frame.pack();
+				frame.repaint();
 			}
 		});
 
@@ -312,11 +336,17 @@ public class Main {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				DBMapperImpl db = new DBMapperImpl();
-				db.modelToDB(ModelBuilder.activeModel, URIs.modelname);
+				try {
+					DBMapperImpl db = new DBMapperImpl();
+					db.modelToDB(ModelBuilder.activeModel, URIs.modelname);
+					JOptionPane.showMessageDialog(null, "Successfully saved!",
+							"PSSIF", JOptionPane.INFORMATION_MESSAGE);
+				} catch (Exception e1) {
+					JOptionPane.showMessageDialog(null, "Error with saving!\n"
+							+ e1.getLocalizedMessage(), "PSSIF",
+							JOptionPane.ERROR_MESSAGE);
+				}
 
-				JOptionPane.showMessageDialog(null, "Successfully saved!",
-						"PSSIF", JOptionPane.INFORMATION_MESSAGE);
 			}
 		});
 
