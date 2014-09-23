@@ -11,11 +11,12 @@ import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.tdb.TDBFactory;
 
 public class DatabaseImpl implements Database {
-	public static Dataset ds;
-	private String location = ""; // Speicherort der Daten
+	public static Dataset ds = null;
+	private String location = ""; // location of data
 	private String ns = ""; // Create Namespace
-	private String modelname = URIs.modelname;
-	private RDFModelImpl rdfModel = null;
+	private static String modelname = URIs.modelname;
+	private static RDFModelImpl rdfModel = null;
+	private static Model model = null;
 
 	public DatabaseImpl(String location, String ns) {
 		this.ns = ns;
@@ -58,13 +59,12 @@ public class DatabaseImpl implements Database {
 	@Override
 	public RDFModelImpl createModel(String name) {
 
-		Model model = null;
-
 		// Create Model
 		// Alternative default model: model = ds.getDefaultModel() -> But
 		// it's good practice to use a named model. The default model always
 		// exist in the Dataset. It will exist even if it is not used.
-		model = ds.getNamedModel(name);
+		if (model == null)
+			model = ds.getNamedModel(name);
 
 		// If model doesn't exist already
 		if (rdfModel == null) {
@@ -99,6 +99,11 @@ public class DatabaseImpl implements Database {
 	// TODO override
 	public void end() {
 		ds.end();
+	}
+
+	// TODO override
+	public void close() {
+		ds.close();
 	}
 
 	// TODO override

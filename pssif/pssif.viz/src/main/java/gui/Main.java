@@ -87,6 +87,9 @@ public class Main {
 	// private SpecificationProjectWizard reqProjImporter;
 	private MasterFilter masterFilter;
 
+	private PssifMapperImpl fromDB = null;
+	private DBMapperImpl toDB = null;
+
 	public static void main(String[] args) {
 
 		new Main();
@@ -230,10 +233,18 @@ public class Main {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				PssifMapperImpl db = new PssifMapperImpl();
-				// TODO db to model
-				db.DBToModel();
-				
+				try {
+					if (fromDB == null)
+						fromDB = new PssifMapperImpl();
+					fromDB.DBToModel();
+				} catch (Exception e1) {
+					JOptionPane.showMessageDialog(
+							null,
+							"Error with importing!\n"
+									+ e1.getLocalizedMessage(), "PSSIF",
+							JOptionPane.ERROR_MESSAGE);
+				}
+
 				// Create the Views
 				matrixView = new MatrixView();
 				graphView = new GraphView();
@@ -337,8 +348,9 @@ public class Main {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				try {
-					DBMapperImpl db = new DBMapperImpl();
-					db.modelToDB(ModelBuilder.activeModel, URIs.modelname);
+					if (toDB == null)
+						toDB = new DBMapperImpl();
+					toDB.modelToDB(ModelBuilder.activeModel, URIs.modelname);
 					JOptionPane.showMessageDialog(null, "Successfully saved!",
 							"PSSIF", JOptionPane.INFORMATION_MESSAGE);
 				} catch (Exception e1) {

@@ -35,11 +35,12 @@ import de.tum.pssif.core.model.Node;
 public class DBMapperImpl implements DBMapper {
 
 	public RDFModelImpl rdfModel;
-	public DatabaseImpl db;
+	public static DatabaseImpl db;
 
 	public DBMapperImpl() {
 		super();
-		db = new DatabaseImpl(URIs.location, URIs.namespace);
+		if (db == null)
+			db = new DatabaseImpl(URIs.location, URIs.namespace);
 		rdfModel = db.getRdfModel();
 	}
 

@@ -39,7 +39,7 @@ import de.tum.pssif.core.model.impl.ModelImpl;
 // TODO create Interface
 public class PssifMapperImpl implements PssifMapper {
 	public RDFModelImpl rdfModel;
-	public DatabaseImpl db;
+	public static DatabaseImpl db;
 	private de.tum.pssif.core.model.Model pssifModel;
 	private Metamodel metamodel = PSSIFCanonicMetamodelCreator.create();
 	private HashMap<String, Node> nodes = new HashMap<>();
@@ -48,7 +48,8 @@ public class PssifMapperImpl implements PssifMapper {
 	// private HashMap<String, JunctionNode> junctionNodes = new HashMap<>();
 
 	public void DBToModel() {
-		db = new DatabaseImpl(URIs.location, URIs.namespace);
+		if (db == null)
+			db = new DatabaseImpl(URIs.location, URIs.namespace);
 		rdfModel = db.getRdfModel();
 		pssifModel = new ModelImpl();
 
@@ -81,22 +82,28 @@ public class PssifMapperImpl implements PssifMapper {
 
 	// reconstruct a Node like pssif.core.node from a Node subject in the db
 	private void constructNode(Resource subject) {
-		String id = "";
-		Node newNode = null;
+		try {
+			String id = "";
+			Node newNode = null;
 
-		// find NodeType
-		Statement resNodeType = subject.getProperty(Properties.PROP_TYPE);
-		String nodeTypeName = resNodeType.getObject().toString();
+			// find NodeType
+			Statement resNodeType = subject.getProperty(Properties.PROP_TYPE);
+			String nodeTypeName = resNodeType.getObject().toString();
 
-		// Create new Node and NodeType
-		NodeType nodeType = metamodel.getNodeType(nodeTypeName).getOne();
-		newNode = nodeType.create(pssifModel);
+			// Create new Node and NodeType
+			NodeType nodeType = metamodel.getNodeType(nodeTypeName).getOne();
+			newNode = nodeType.create(pssifModel);
 
-		// add attributes and annotations to Node
-		id = createAttributeOrAnnotation(subject, nodeType, newNode);
+			// add attributes and annotations to Node
+			id = createAttributeOrAnnotation(subject, nodeType, newNode);
 
-		// add node to hashmap
-		nodes.put(id, newNode);
+			// add node to hashmap
+			nodes.put(id, newNode);
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(null,
+					"Problem with constructing an Edge", "PSSIF",
+					JOptionPane.ERROR_MESSAGE);
+		}
 	}
 
 	// JUNCTION NODES
@@ -135,21 +142,27 @@ public class PssifMapperImpl implements PssifMapper {
 	}
 
 	private void constructEdge(Resource subject) {
-		// find EdgeType
-		Statement resEdgeType = subject.getProperty(Properties.PROP_TYPE);
-		String edgeTypeName = resEdgeType.getObject().toString();
+		try {
+			// find EdgeType
+			Statement resEdgeType = subject.getProperty(Properties.PROP_TYPE);
+			String edgeTypeName = resEdgeType.getObject().toString();
 
-		// create new Edge and EdgeType
-		EdgeType edgeType = metamodel.getEdgeType(edgeTypeName).getOne();
+			// create new Edge and EdgeType
+			EdgeType edgeType = metamodel.getEdgeType(edgeTypeName).getOne();
 
-		// get incoming and outgoing nodes
-		Edge newEdge = constructInOutNodes(subject, edgeType);
+			// get incoming and outgoing nodes
+			Edge newEdge = constructInOutNodes(subject, edgeType);
 
-		// add annotations and attributes to Edge
-		String id = createAttributeOrAnnotation(subject, edgeType, newEdge);
+			// add annotations and attributes to Edge
+			String id = createAttributeOrAnnotation(subject, edgeType, newEdge);
 
-		// add edge to Hashmap
-		edges.put(id, newEdge);
+			// add edge to Hashmap
+			edges.put(id, newEdge);
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(null,
+					"Problem with constructing an Edge", "PSSIF",
+					JOptionPane.ERROR_MESSAGE);
+		}
 	}
 
 	private Edge constructInOutNodes(Resource subject, EdgeType edgeType) {

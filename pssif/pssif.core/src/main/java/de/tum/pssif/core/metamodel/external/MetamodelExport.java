@@ -182,8 +182,9 @@ public class MetamodelExport {
 			DOMSource source = new DOMSource(doc);
 
 			// Path to file
-			String path = System.getProperty("user.dir");
-			path = path.substring(0, path.length() - 9) + "Meta-Modell.xml";
+			// String path = System.getProperty("user.dir");
+			// path = path.substring(0, path.length() - 9) + "Meta-Modell.xml";
+			String path = "C:\\Users\\Meta-Model.xml";
 
 			StreamResult result = new StreamResult(new File(path));
 
