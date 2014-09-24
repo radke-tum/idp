@@ -48,6 +48,8 @@ public class DBMapperImpl implements DBMapper {
 
 	public void modelToDB(MyModelContainer model, String modelname) {
 		db.begin(ReadWrite.WRITE);
+		rdfModel.removeAll();
+		db.removeNamedModel(rdfModel.getName());
 		saveNodes(model.getAllNodes());
 		saveJunctionNodes(model.getAllJunctionNodes());
 		saveEdges(model.getAllEdges());
@@ -147,6 +149,7 @@ public class DBMapperImpl implements DBMapper {
 
 	private void addJunctionNode(MyJunctionNode myJNode) {
 		Node jn = myJNode.getNode();
+
 		// Falls Edge noch nicht vorhanden
 		if (!rdfModel.containsJunctionNode(URIs.uriJunctionNode.concat(jn
 				.getId()))) {
@@ -163,7 +166,8 @@ public class DBMapperImpl implements DBMapper {
 					.getNodeType().getName());
 
 			// Add Attributes from JNode
-			// TODO Welche Attribute kommen vor??
+			addAllAttributes(myJNode.getAttributesHashMap(), subjectJNode,
+					URIs.uriJunctionNode, jn);
 
 			// Add all Annotations to Model
 			addAllAnnotations(jn.getAnnotations(), subjectJNode);
@@ -185,7 +189,8 @@ public class DBMapperImpl implements DBMapper {
 							.getName());
 
 			// Remove Attributes from Node
-			// TODO What Attributes? and Where From?
+			removeAllAttributes(mynode.getAttributesHashMap(), subjectJNode,
+					URIs.uriJunctionNode);
 
 			// Remove all Annotations to Model
 			removeAllAnnotations(jn.getAnnotations(), subjectJNode);
@@ -245,6 +250,7 @@ public class DBMapperImpl implements DBMapper {
 
 	private void addEdge(MyEdge myedge) {
 		Edge e = myedge.getEdge();
+		String uri;
 
 		// Falls Edge noch nicht vorhanden
 		if (!rdfModel.containsEdge(URIs.uriEdge.concat(e.getId()))) {
@@ -269,13 +275,23 @@ public class DBMapperImpl implements DBMapper {
 
 			// Add outgoing Nodes to Edge
 			Node out = myedge.getDestinationNode().getNode();
-			Resource objectNode = rdfModel.createResource(URIs.uriNode
-					.concat(out.getId()));
+			// check if outgoing Node is Node or JunctionNode
+			if (out instanceof JunctionNode)
+				uri = URIs.uriJunctionNode;
+			else
+				uri = URIs.uriNode;
+			Resource objectNode = rdfModel.createResource(uri.concat(out
+					.getId()));
 			rdfModel.insert(subjectEdge, Properties.PROP_NODE_OUT, objectNode);
 
 			// Add incoming Nodes to Edge
 			Node in = myedge.getSourceNode().getNode();
-			objectNode = rdfModel.getResource(URIs.uriNode.concat(in.getId()));
+			// check if incoming Node is Node or JunctionNode
+			if (in instanceof JunctionNode)
+				uri = URIs.uriJunctionNode;
+			else
+				uri = URIs.uriNode;
+			objectNode = rdfModel.getResource(uri.concat(in.getId()));
 			rdfModel.insert(subjectEdge, Properties.PROP_NODE_IN, objectNode);
 		}
 	}
@@ -370,12 +386,12 @@ public class DBMapperImpl implements DBMapper {
 	}
 
 	// add Attribute from one Entry-Set
-	// TODO make generic for Node/Edge
 	private <T> void addAttribute(Entry<String, Attribute> attrEntry,
 			Resource subject, String propURI, T n) {
 		Attribute attr = attrEntry.getValue();
 		String datatype = attr.getType().getName();
 		String unit = attr.getUnit().getName();
+		String category = attr.getCategory().getName();
 
 		// Get Value and define what Type n is
 		PSSIFOption<PSSIFValue> value = null;
@@ -407,7 +423,7 @@ public class DBMapperImpl implements DBMapper {
 		if (value.isOne()) {
 			PSSIFValue v = value.getOne();
 			String attrValue = v.getValue().toString();
-			addPSSIFValue(subjectAttr, attrValue, unit, datatype);
+			addPSSIFValue(subjectAttr, attrValue, unit, datatype, category);
 			return;
 		}
 
@@ -415,19 +431,21 @@ public class DBMapperImpl implements DBMapper {
 			Set<PSSIFValue> values = value.getMany();
 			for (PSSIFValue val : values)
 				addPSSIFValue(subjectAttr, val.getValue().toString(), unit,
-						datatype);
+						datatype, category);
 		}
 	}
 
 	// adds PSSIF Attribute to subject
 	private void addPSSIFValue(Resource subjectAttr, String value, String unit,
-			String datatype) {
+			String datatype, String category) {
 		// Add Value
 		subjectAttr.addProperty(Properties.PROP_ATTR_VALUE, value);
 		// Add Unit
 		subjectAttr.addProperty(Properties.PROP_ATTR_UNIT, unit);
 		// Add Datatype
 		subjectAttr.addProperty(Properties.PROP_ATTR_DATATYPE, datatype);
+		// Add Category
+		subjectAttr.addProperty(Properties.PROP_ATTR_CATEGORY, category);
 	}
 
 	// removes all Attributes

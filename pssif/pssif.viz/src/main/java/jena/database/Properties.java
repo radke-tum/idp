@@ -10,9 +10,9 @@ public class Properties {
 	private static Model m = ModelFactory.createDefaultModel();
 
 	// // Properties of Attributes
-	 public static final Property PROP_ATTR_ID = m
-	 .createProperty(URIs.uriAttribute
-	 + PSSIFConstants.BUILTIN_ATTRIBUTE_ID);
+	public static final Property PROP_ATTR_ID = m
+			.createProperty(URIs.uriAttribute
+					+ PSSIFConstants.BUILTIN_ATTRIBUTE_ID);
 	// public static final Property PROP_ATTR_NAME = m
 	// .createProperty(URIs.uriAttribute
 	// + PSSIFConstants.BUILTIN_ATTRIBUTE_NAME);
@@ -57,6 +57,8 @@ public class Properties {
 			.createProperty(URIs.uriAttribute.concat("UNIT"));
 	public static final Property PROP_ATTR_DATATYPE = m
 			.createProperty(URIs.uriAttribute.concat("DATATYPE"));
+	public static final Property PROP_ATTR_CATEGORY = m
+			.createProperty(URIs.uriAttribute.concat("CATEGORY"));
 
 	// Property of Type
 	public static final Property PROP_TYPE = m.createProperty(URIs.namespace

@@ -27,11 +27,14 @@ import de.tum.pssif.core.metamodel.Attribute;
 import de.tum.pssif.core.metamodel.ConnectionMapping;
 import de.tum.pssif.core.metamodel.EdgeType;
 import de.tum.pssif.core.metamodel.ElementType;
+import de.tum.pssif.core.metamodel.JunctionNodeType;
 import de.tum.pssif.core.metamodel.Metamodel;
 import de.tum.pssif.core.metamodel.NodeType;
+import de.tum.pssif.core.metamodel.NodeTypeBase;
 import de.tum.pssif.core.metamodel.external.PSSIFCanonicMetamodelCreator;
 import de.tum.pssif.core.model.Edge;
 import de.tum.pssif.core.model.Element;
+import de.tum.pssif.core.model.JunctionNode;
 import de.tum.pssif.core.model.Node;
 import de.tum.pssif.core.model.impl.ModelImpl;
 
@@ -44,8 +47,7 @@ public class PssifMapperImpl implements PssifMapper {
 	private Metamodel metamodel = PSSIFCanonicMetamodelCreator.create();
 	private HashMap<String, Node> nodes = new HashMap<>();
 	private HashMap<String, Edge> edges = new HashMap<>();
-
-	// private HashMap<String, JunctionNode> junctionNodes = new HashMap<>();
+	private HashMap<String, JunctionNode> junctionNodes = new HashMap<>();
 
 	public void DBToModel() {
 		if (db == null)
@@ -55,7 +57,7 @@ public class PssifMapperImpl implements PssifMapper {
 
 		db.begin(ReadWrite.READ);
 		getNodes();
-		// getJunctionNodes();
+		getJunctionNodes();
 		getEdges();
 		db.end();
 
@@ -101,7 +103,7 @@ public class PssifMapperImpl implements PssifMapper {
 			nodes.put(id, newNode);
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(null,
-					"Problem with constructing an Edge", "PSSIF",
+					"Problem with constructing an Node", "PSSIF",
 					JOptionPane.ERROR_MESSAGE);
 		}
 	}
@@ -121,7 +123,30 @@ public class PssifMapperImpl implements PssifMapper {
 	}
 
 	private void constructJunctionNode(Resource subject) {
-		// TODO
+		try {
+			String id = "";
+			Node newJNode = null;
+
+			// find JNodeType
+			Statement resJNodeType = subject.getProperty(Properties.PROP_TYPE);
+			String jNodeTypeName = resJNodeType.getObject().toString();
+
+			// create new JNode and JNodeType
+			JunctionNodeType jNodeType = metamodel.getJunctionNodeType(
+					jNodeTypeName).getOne();
+			newJNode = jNodeType.create(pssifModel);
+
+			// add annotations and attributes to Edge
+			id = createAttributeOrAnnotation(subject, jNodeType, newJNode);
+
+			// add edge to Hashmap
+			nodes.put(id, newJNode);
+
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(null,
+					"Problem with constructing an JunctionNode", "PSSIF",
+					JOptionPane.ERROR_MESSAGE);
+		}
 	}
 
 	// EDGES
@@ -168,8 +193,8 @@ public class PssifMapperImpl implements PssifMapper {
 	private Edge constructInOutNodes(Resource subject, EdgeType edgeType) {
 		Node nodeIn = null;
 		Node nodeOut = null;
-		NodeType nodeTypeIn = null;
-		NodeType nodeTypeOut = null;
+		NodeTypeBase nodeTypeIn = null;
+		NodeTypeBase nodeTypeOut = null;
 
 		// get Statements for incoming and outgoing Nodes
 		Statement stmtNodeIn = subject.getProperty(Properties.PROP_NODE_IN);
@@ -183,7 +208,13 @@ public class PssifMapperImpl implements PssifMapper {
 			Statement stmtNodeType = resNodeIn
 					.getProperty(Properties.PROP_TYPE);
 			String nodeTypeName = stmtNodeType.getObject().toString();
-			nodeTypeIn = metamodel.getNodeType(nodeTypeName).getOne();
+			// if node is a Junction node you have to get the JunctionNodeType
+			if (resNodeIn.toString().contains(URIs.uriJunctionNode)) {
+				PSSIFOption<NodeTypeBase> nodeTypeIn1 = metamodel
+						.getBaseNodeType(nodeTypeName);
+				nodeTypeIn = nodeTypeIn1.getOne();
+			} else
+				nodeTypeIn = metamodel.getNodeType(nodeTypeName).getOne();
 			// get ID
 			Resource resNodeID = resNodeIn.getProperty(Properties.PROP_ATTR_ID)
 					.getObject().asResource();
@@ -200,7 +231,13 @@ public class PssifMapperImpl implements PssifMapper {
 			Statement stmtNodeType = resNodeOut
 					.getProperty(Properties.PROP_TYPE);
 			String nodeTypeName = stmtNodeType.getObject().toString();
-			nodeTypeOut = metamodel.getNodeType(nodeTypeName).getOne();
+			// if node is a Junction node you have to get the JunctionNodeType
+			if (resNodeOut.toString().contains(URIs.uriJunctionNode)) {
+				PSSIFOption<NodeTypeBase> nodeTypeOut1 = metamodel
+						.getBaseNodeType(nodeTypeName);
+				nodeTypeOut = nodeTypeOut1.getOne();
+			} else
+				nodeTypeOut = metamodel.getNodeType(nodeTypeName).getOne();
 			// get ID
 			Resource resNodeID = resNodeOut
 					.getProperty(Properties.PROP_ATTR_ID).getObject()
