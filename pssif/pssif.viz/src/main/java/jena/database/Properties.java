@@ -69,4 +69,8 @@ public class Properties {
 			.concat("in"));
 	public static final Property PROP_NODE_OUT = m
 			.createProperty(URIs.namespace.concat("out"));
+
+	// Property of Bags
+	public static final Property PROP_BAG = m
+			.createProperty("http://www.w3.org/1999/02/22-rdf-syntax-ns#BagElement");
 }

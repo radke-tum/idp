@@ -12,7 +12,6 @@ import jena.database.impl.DatabaseImpl;
 import jena.database.impl.RDFModelImpl;
 import jena.mapper.PssifMapper;
 import model.ModelBuilder;
-import model.MyModelContainer;
 
 import com.hp.hpl.jena.query.ReadWrite;
 import com.hp.hpl.jena.rdf.model.Literal;
@@ -22,7 +21,6 @@ import com.hp.hpl.jena.rdf.model.StmtIterator;
 
 import de.tum.pssif.core.common.PSSIFConstants;
 import de.tum.pssif.core.common.PSSIFOption;
-import de.tum.pssif.core.common.PSSIFValue;
 import de.tum.pssif.core.metamodel.Attribute;
 import de.tum.pssif.core.metamodel.ConnectionMapping;
 import de.tum.pssif.core.metamodel.EdgeType;
@@ -39,7 +37,6 @@ import de.tum.pssif.core.model.Node;
 import de.tum.pssif.core.model.impl.ModelImpl;
 
 //DB to Model Mapper
-// TODO create Interface
 public class PssifMapperImpl implements PssifMapper {
 	public RDFModelImpl rdfModel;
 	public static DatabaseImpl db;
@@ -49,6 +46,7 @@ public class PssifMapperImpl implements PssifMapper {
 	private HashMap<String, Edge> edges = new HashMap<>();
 	private HashMap<String, JunctionNode> junctionNodes = new HashMap<>();
 
+	@Override
 	public void DBToModel() {
 		if (db == null)
 			db = new DatabaseImpl(URIs.location, URIs.namespace);
@@ -66,7 +64,9 @@ public class PssifMapperImpl implements PssifMapper {
 
 	// NODES
 
-	// get all Nodes from the database
+	/**
+	 * Get all Nodes from the database
+	 */
 	private void getNodes() {
 		try {
 			List<Resource> subjectNodes = rdfModel
@@ -82,7 +82,13 @@ public class PssifMapperImpl implements PssifMapper {
 		}
 	}
 
-	// reconstruct a Node like pssif.core.node from a Node subject in the db
+	/**
+	 * Reconstruct a Node like pssif.core.Node from a Node subject in the
+	 * database
+	 * 
+	 * @param subject
+	 *            Resource of the Node
+	 */
 	private void constructNode(Resource subject) {
 		try {
 			String id = "";
@@ -103,13 +109,16 @@ public class PssifMapperImpl implements PssifMapper {
 			nodes.put(id, newNode);
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(null,
-					"Problem with constructing an Node", "PSSIF",
+					"Problem with constructing a Node", "PSSIF",
 					JOptionPane.ERROR_MESSAGE);
 		}
 	}
 
 	// JUNCTION NODES
 
+	/**
+	 * Get all JunctionNodes from the database
+	 */
 	private void getJunctionNodes() {
 		try {
 			List<Resource> subjectJNodes = rdfModel
@@ -122,6 +131,13 @@ public class PssifMapperImpl implements PssifMapper {
 		}
 	}
 
+	/**
+	 * Reconstruct a JunctionNode like pssif.core.JunctionNode from a
+	 * JunctionNode subject in the database
+	 * 
+	 * @param subject
+	 *            Resource of the JunctionNode
+	 */
 	private void constructJunctionNode(Resource subject) {
 		try {
 			String id = "";
@@ -151,6 +167,9 @@ public class PssifMapperImpl implements PssifMapper {
 
 	// EDGES
 
+	/**
+	 * Get all Edges from the database
+	 */
 	private void getEdges() {
 		try {
 			List<Resource> subjectEdges = rdfModel
@@ -166,6 +185,13 @@ public class PssifMapperImpl implements PssifMapper {
 		}
 	}
 
+	/**
+	 * Reconstruct a Edge like pssif.core.Edge from a Edge subject in the
+	 * database
+	 * 
+	 * @param subject
+	 *            Resource of the Edge
+	 */
 	private void constructEdge(Resource subject) {
 		try {
 			// find EdgeType
@@ -190,6 +216,15 @@ public class PssifMapperImpl implements PssifMapper {
 		}
 	}
 
+	/**
+	 * Gets the incoming and outgoing Nodes of an Edge. Adds the Nodes to the
+	 * Edge. Adds the Edge to the Nodes.
+	 * 
+	 * @param subject
+	 *            Resource of the Edge
+	 * @param edgeType
+	 *            EdgeType of the resource Edge
+	 */
 	private Edge constructInOutNodes(Resource subject, EdgeType edgeType) {
 		Node nodeIn = null;
 		Node nodeOut = null;
@@ -248,25 +283,6 @@ public class PssifMapperImpl implements PssifMapper {
 			nodeOut = nodes.get(id);
 		}
 
-		// TODO
-		// Edge newEdge = new EdgeImpl(pssifModel, nodeIn, nodeOut);
-		// Edge newEdge = edgeType.create(pssifModel);
-
-		// ConnectionMappingImpl mapping = new ConnectionMappingImpl(edgeType,
-		// nodeTypeIn, nodeTypeOut);
-		//
-		// nodeIn.registerIncomingEdge(mapping, newEdge);
-		// nodeOut.registerOutgoingEdge(mapping, newEdge);
-
-		// Edge newEdge = new CreateEdgeOperation(mapping, nodeIn, nodeOut)
-		// .apply(pssifModel);
-
-		// Fehler: could not find one of the nodes to connect
-		// newEdge = mapping.create(pssifModel, nodeOut, nodeIn);
-
-		// Edge newEdge = pssifModel.apply(new CreateEdgeOperation(mapping,
-		// nodeOut, nodeIn));
-
 		PSSIFOption<ConnectionMapping> mapping = edgeType.getMapping(
 				nodeTypeIn, nodeTypeOut);
 		Edge newEdge = mapping.getOne().create(pssifModel, nodeIn, nodeOut);
@@ -275,6 +291,18 @@ public class PssifMapperImpl implements PssifMapper {
 	}
 
 	// ATTRIBUTES
+
+	/**
+	 * Adds Attributes and Annotations to a Node/Edge/JunctionNode from a given
+	 * resource
+	 * 
+	 * @param subject
+	 *            Resource of the Node/Edge/JunctionNode
+	 * @param type
+	 *            Type of the resource
+	 * @param elem
+	 *            Node/Edge/JunctionNode
+	 */
 	private String createAttributeOrAnnotation(Resource subject,
 			ElementType type, Element elem) {
 

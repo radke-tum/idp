@@ -350,12 +350,13 @@ public class Main {
 				try {
 					if (toDB == null)
 						toDB = new DBMapperImpl();
-					toDB.modelToDB(ModelBuilder.activeModel, URIs.modelname);
+					// toDB.modelToDB(ModelBuilder.activeModel, URIs.modelname);
+					toDB.saveToDB(URIs.modelname);
 					JOptionPane.showMessageDialog(null, "Successfully saved!",
 							"PSSIF", JOptionPane.INFORMATION_MESSAGE);
 				} catch (Exception e1) {
 					JOptionPane.showMessageDialog(null, "Error with saving!\n"
-							+ e1.getLocalizedMessage(), "PSSIF",
+							+ e1.getMessage(), "PSSIF",
 							JOptionPane.ERROR_MESSAGE);
 				}
 
@@ -621,6 +622,9 @@ public class Main {
 			public void actionPerformed(ActionEvent e) {
 				graphView.resetGraph();
 				initFrame();
+
+				DBMapperImpl.deleteAll = true;
+				DBMapperImpl.clearAll();
 			}
 		});
 

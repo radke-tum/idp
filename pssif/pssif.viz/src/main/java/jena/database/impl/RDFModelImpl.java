@@ -7,12 +7,12 @@ import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.List;
 
+import jena.database.Properties;
 import jena.database.RDFModel;
 import jena.database.URIs;
 
 import com.hp.hpl.jena.rdf.model.Bag;
 import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.NodeIterator;
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.ResIterator;
 import com.hp.hpl.jena.rdf.model.Resource;
@@ -73,7 +73,23 @@ public class RDFModelImpl implements RDFModel {
 		Bag b = model.createBag(uri);
 		// add subject to bag if it doesn't already exist
 		if (!b.contains(subject))
-			b.add(subject);
+			b.addProperty(Properties.PROP_BAG, subject);
+	}
+
+	@Override
+	public void removeFromBag(String uri, String subject) {
+		// create bag if not existing otherwise get existing bag
+		Bag b = model.createBag(uri);
+		// add subject to bag if it doesn't already exist
+		if (!b.contains(subject)) {
+			List<Statement> list = b.listProperties(Properties.PROP_BAG)
+					.toList();
+			for (Statement stmt : list) {
+				String test = stmt.getObject().toString();
+				if (subject.contains(test))
+					model.remove(stmt);
+			}
+		}
 	}
 
 	@Override
@@ -83,12 +99,21 @@ public class RDFModelImpl implements RDFModel {
 		try {
 			// get bag with given name
 			Bag b = model.getBag(uri);
-			NodeIterator iter = b.iterator();
-			if (!iter.hasNext())
-				return null;
-			while (iter.hasNext())
 
-				res.add(iter.nextNode().asResource());
+			// NodeIterator iter = b.iterator();
+			// if (!iter.hasNext())
+			// return null;
+			// while (iter.hasNext())
+			//
+			// res.add(iter.nextNode().asResource());
+
+			List<Statement> list = b.listProperties(Properties.PROP_BAG)
+					.toList();
+			if (list.size() == 0)
+				return null;
+
+			for (Statement stmt : list)
+				res.add(stmt.getObject().asResource());
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -96,22 +121,16 @@ public class RDFModelImpl implements RDFModel {
 		return res;
 	}
 
-	// TODO in Interface
-	public boolean containsNode(String uri) {
-		Bag b = model.getBag(URIs.uriBagNodes);
-		return b.contains(uri);
+	@Override
+	public boolean bagContainsResource(String uri, String bag) {
+		Bag b = model.getBag(bag);
+		return b.hasProperty(Properties.PROP_BAG, model.createResource(uri));
 	}
 
-	// TODO in Interface
-	public boolean containsEdge(String uri) {
-		Bag b = model.getBag(URIs.uriBagEdges);
-		return b.contains(uri);
-	}
-
-	// TODO in Interface
+	@Override
 	public boolean containsJunctionNode(String uri) {
 		Bag b = model.getBag(URIs.uriBagJunctionNodes);
-		return b.contains(uri);
+		return b.contains(model.createResource(uri));
 	}
 
 	@Override
@@ -132,6 +151,12 @@ public class RDFModelImpl implements RDFModel {
 				model.getProperty(p), o));
 	}
 
+	/**
+	 * Removes a Statement.
+	 * 
+	 * @param selector
+	 *            contains the Statements to be removed
+	 */
 	private void removeStatement(SimpleSelector selector) {
 		List<Statement> statementsToRemove = new ArrayList<Statement>();
 
@@ -176,7 +201,7 @@ public class RDFModelImpl implements RDFModel {
 		return model.createProperty(uri);
 	}
 
-	// TODO in Interface
+	@Override
 	public Property getProperty(String uri) {
 		return model.getProperty(uri);
 	}

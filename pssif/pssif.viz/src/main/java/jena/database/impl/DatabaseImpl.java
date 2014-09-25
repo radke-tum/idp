@@ -12,15 +12,11 @@ import com.hp.hpl.jena.tdb.TDBFactory;
 
 public class DatabaseImpl implements Database {
 	public static Dataset ds = null;
-	private String location = ""; // location of data
-	private String ns = ""; // Create Namespace
 	private static String modelname = URIs.modelname;
 	private static RDFModelImpl rdfModel = null;
 	private static Model model = null;
 
 	public DatabaseImpl(String location, String ns) {
-		this.ns = ns;
-		this.location = location;
 
 		// Create Dataset
 		// TDB is a serious triple store suitable for enterprise applications
@@ -31,7 +27,7 @@ public class DatabaseImpl implements Database {
 		createModel(modelname);
 	}
 
-	// TODO in interface
+	// Getter
 	public RDFModelImpl getRdfModel() {
 		return rdfModel;
 	}
@@ -46,15 +42,6 @@ public class DatabaseImpl implements Database {
 		}
 		ds.end();
 	}
-
-	// // Adds all models in database to list of RDFModelImpl
-	// private void setModels() {
-	// // get names of all stored models
-	// for (Iterator<String> is = ds.listNames(); is.hasNext();) {
-	// String modelName = is.next();
-	// createModel(modelName);
-	// }
-	// }
 
 	@Override
 	public RDFModelImpl createModel(String name) {
@@ -75,38 +62,27 @@ public class DatabaseImpl implements Database {
 		return rdfModel;
 	}
 
-	// @Override
-	// public RDFModelImpl getModel(String name) {
-	// Iterator<RDFModelImpl> iter = models.iterator();
-	// while (iter.hasNext()) {
-	// RDFModelImpl mod = iter.next();
-	// if (mod.getName() == name)
-	// return mod;
-	// }
-	// return null;
-	// }
-
-	// TODO override
+	@Override
 	public void commit() {
 		ds.commit();
 	}
 
-	// TODO override
+	@Override
 	public void begin(ReadWrite rw) {
 		ds.begin(rw);
 	}
 
-	// TODO override
+	@Override
 	public void end() {
 		ds.end();
 	}
 
-	// TODO override
+	@Override
 	public void close() {
 		ds.close();
 	}
 
-	// TODO override
+	@Override
 	public void removeNamedModel(String uri) {
 		ds.removeNamedModel(uri);
 	}

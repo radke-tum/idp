@@ -159,4 +159,49 @@ public interface RDFModel {
 	 * Commit the current transaction.
 	 */
 	public void commit();
+
+	/**
+	 * Removes an element from a bag.
+	 * 
+	 * @param uri
+	 *            the URI of the bag
+	 * @param uri
+	 *            the URI of the element to be removed
+	 */
+	void removeFromBag(String uri, String subject);
+
+	/**
+	 * Checks whether a bag contains an element
+	 * 
+	 * @param uri
+	 *            the URI of the element
+	 * @param bag
+	 *            the URI of the bag
+	 * @return result of the check
+	 */
+	boolean bagContainsResource(String uri, String bag);
+
+	/**
+	 * Checks whether a bag contains an JunctionNode
+	 * 
+	 * @param uri
+	 *            the URI of the JunctionNode
+	 * @return result of the check
+	 */
+	boolean containsJunctionNode(String uri);
+
+	/**
+	 * Return a Property instance in this model.
+	 * 
+	 * Subsequent operations on the returned property may modify this model.
+	 * 
+	 * The property is assumed to already exist in the model. If it does not,
+	 * createProperty should be used instead.
+	 * 
+	 * @param uri
+	 *            the URI of the property
+	 * 
+	 * @return a property object
+	 */
+	Property getProperty(String uri);
 }

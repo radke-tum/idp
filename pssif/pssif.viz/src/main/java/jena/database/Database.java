@@ -1,5 +1,7 @@
 package jena.database;
 
+import com.hp.hpl.jena.query.ReadWrite;
+
 public interface Database {
 	/**
 	 * Creates a new RDF model if not already existing else return existing RDF
@@ -16,12 +18,31 @@ public interface Database {
 	 */
 	public void printModelNames();
 
-	// /**
-	// * Searches for a certain RDFModel in the list of RDFModels
-	// *
-	// * @param Name
-	// * of the model
-	// * @return If found the RDFModel else null
-	// */
-	// public RDFModelImpl getModel(String name);
+	/**
+	 * Commits a transaction of the dataset
+	 */
+	void commit();
+
+	/**
+	 * Starts a transaction of the dataset
+	 */
+	void begin(ReadWrite rw);
+
+	/**
+	 * Ends a transaction of the dataset
+	 */
+	void end();
+
+	/**
+	 * Closes the dataset
+	 */
+	void close();
+
+	/**
+	 * Removes a Model from the dataset
+	 * 
+	 * @param uri
+	 *            URI of the model to be removed
+	 */
+	void removeNamedModel(String uri);
 }
