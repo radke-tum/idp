@@ -32,7 +32,7 @@ import de.tum.pssif.core.metamodel.external.MetamodelEdge;
 import de.tum.pssif.core.metamodel.external.MetamodelExport;
 import de.tum.pssif.core.metamodel.external.MetamodelNode;
 import de.tum.pssif.core.metamodel.external.PSSIFCanonicMetamodelCreator;
-import de.tum.pssif.core.model.Tupel;
+import de.tum.pssif.core.metamodel.external.Tupel;
 
 /**
  * Enables the user to see all details of the components in detail
@@ -438,7 +438,7 @@ public class ComponentDetailPopup {
 	 * Checks if the user currently has two times the same mapping in the view.
 	 * If so, the it is tried to disable the saveButton.
 	 */
-	public boolean checkForDoubles(ArrayList<String> listToCheck) {
+	private boolean checkForDoubles(ArrayList<String> listToCheck) {
 		ArrayList<String> usedNames = new ArrayList<String>();
 		for (String component : listToCheck) {
 			if (usedNames.contains(component)) {

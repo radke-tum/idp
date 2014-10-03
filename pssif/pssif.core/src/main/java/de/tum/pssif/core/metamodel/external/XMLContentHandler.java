@@ -8,8 +8,6 @@ import org.xml.sax.ContentHandler;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 
-import de.tum.pssif.core.model.Tupel;
-
 /**
  * Runs the parser importing the .xml data
  * 

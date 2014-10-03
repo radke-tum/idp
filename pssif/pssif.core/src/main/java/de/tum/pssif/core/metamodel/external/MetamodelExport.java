@@ -3,7 +3,6 @@ package de.tum.pssif.core.metamodel.external;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
-
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -12,11 +11,8 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-
-import de.tum.pssif.core.model.Tupel;
 
 /**
  * Responsible for exporting the Metamodel to XML
@@ -157,7 +153,7 @@ public class MetamodelExport {
 	/**
 	 * Write the entire metamodel to XML
 	 */
-	public void writeMetaModelToXML() {
+	private void writeMetaModelToXML() {
 
 		try {
 
@@ -198,6 +194,11 @@ public class MetamodelExport {
 		}
 	}
 
+	/**
+	 * Add every conjunction to the base element
+	 * @param rootElement Base element
+	 * @param doc Document to create the structure with
+	 */
 	private void addConjunctions(Element rootElement, Document doc) {
 
 		// Conjunctions elements
@@ -215,6 +216,11 @@ public class MetamodelExport {
 
 	}
 
+	/**
+	 * Add every node to the base element
+	 * @param rootElement Base element
+	 * @param doc Document to create the structure with
+	 */
 	private void addNodes(Element rootElement, Document doc) {
 
 		// Nodes elements
@@ -248,6 +254,11 @@ public class MetamodelExport {
 
 	}
 
+	/**
+	 * Add every edges to the base element
+	 * @param rootElement Base element
+	 * @param doc Document to create the structure with
+	 */
 	private void addEdges(Element rootElement, Document doc) {
 
 		// Edges elements
@@ -285,6 +296,11 @@ public class MetamodelExport {
 		}
 	}
 
+	/**
+	 * Add every attributes to the base element
+	 * @param rootElement Base element
+	 * @param doc Document to create the structure with
+	 */
 	private void addAttributes(Element rootElement, Document doc) {
 
 		Element attributeElement = doc.createElement("ATTRIBUTES");
@@ -325,6 +341,9 @@ public class MetamodelExport {
 
 	}
 
+	/**
+	 * Reload the data used in the exporter
+	 */
 	public void resetData() {
 		conjunctions = PSSIFCanonicMetamodelCreator.conjunctions;
 		nodes = PSSIFCanonicMetamodelCreator.nodes;
@@ -332,7 +351,11 @@ public class MetamodelExport {
 		attributes = PSSIFCanonicMetamodelCreator.attributes;
 	}
 
-	public void resetByDeletedParentAffectedNodes(
+	/**
+	 * Set the list of nodes affected by deleting another node
+	 * @param componentToDelete The deleted component
+	 */
+	private void resetByDeletedParentAffectedNodes(
 			MetamodelComponent componentToDelete) {
 
 		// Check for interdependencies
@@ -347,7 +370,11 @@ public class MetamodelExport {
 		}
 	}
 
-	public void resetByDeletedParentAffectedEdges(
+	/**
+	 * Set the list of edges affected by deleting another edge
+	 * @param componentToDelete The deleted component
+	 */
+	private void resetByDeletedParentAffectedEdges(
 			MetamodelComponent componentToDelete) {
 
 		// Check for interdependencies
@@ -409,7 +436,11 @@ public class MetamodelExport {
 		}
 	}
 
-	public void removeComponentFromList(MetamodelComponent componentToDelete) {
+	/**
+	 * Remove the component to delete from the correct list
+	 * @param componentToDelete The component to delete
+	 */
+	private void removeComponentFromList(MetamodelComponent componentToDelete) {
 		if (componentToDelete.getType().equals("CONJUNCTION")) {
 			conjunctions.remove(componentToDelete.getName());
 		} else if (componentToDelete.getType().equals("NODE")) {

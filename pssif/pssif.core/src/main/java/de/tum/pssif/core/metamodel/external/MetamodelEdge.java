@@ -2,8 +2,6 @@ package de.tum.pssif.core.metamodel.external;
 
 import java.util.ArrayList;
 
-import de.tum.pssif.core.model.Tupel;
-
 /**
  * Represents an edge as it is represented in the external metamodel file
  * @author Alex

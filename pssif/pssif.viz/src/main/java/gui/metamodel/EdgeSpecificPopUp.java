@@ -22,7 +22,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import de.tum.pssif.core.metamodel.external.MetamodelEdge;
-import de.tum.pssif.core.model.Tupel;
+import de.tum.pssif.core.metamodel.external.Tupel;
 
 /**
  * Initiate every component for an edge specific view

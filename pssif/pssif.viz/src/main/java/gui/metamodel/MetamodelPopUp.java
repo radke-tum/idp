@@ -69,7 +69,6 @@ public class MetamodelPopUp {
 	private ArrayList<String> edgeComponentsAsString;
 	private ArrayList<String> nodeComponentsAsString;
 	private ArrayList<String> potentialNodesForMappings;
-	ArrayList<String> allAttributesByName;
 	private MetamodelPopUp thisClass;
 	private Box hBox;
 	private Box hBox1;
@@ -394,7 +393,7 @@ public class MetamodelPopUp {
 				if (component.getType().equals("NODE")) {
 					for (MetamodelNode currentNode : nodes.values()) {
 						if (currentNode.getParent() != null
-								&& currentNode.getParent().equals(component)) {
+								&& currentNode.getParent().getTag().equals(component.getTag())) {
 							hasChildren = true;
 							break;
 						}
@@ -402,7 +401,7 @@ public class MetamodelPopUp {
 				} else {
 					for (MetamodelEdge currentEdge : edges.values()) {
 						if (currentEdge.getParent() != null
-								&& currentEdge.getParent().equals(component)) {
+								&& currentEdge.getParent().getTag().equals(component.getTag())) {
 							hasChildren = true;
 							break;
 						}

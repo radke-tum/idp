@@ -23,7 +23,6 @@ import de.tum.pssif.core.metamodel.mutable.MutableElementType;
 import de.tum.pssif.core.metamodel.mutable.MutableEnumeration;
 import de.tum.pssif.core.metamodel.mutable.MutableJunctionNodeType;
 import de.tum.pssif.core.metamodel.mutable.MutableNodeType;
-import de.tum.pssif.core.model.Tupel;
 
 /**
  * Creates the metamodel out of imported data
@@ -53,7 +52,7 @@ public final class PSSIFCanonicMetamodelCreator {
 		createNodeTypes(metamodel);
 		createEdgeTypes(metamodel);
 		createInternalInheritanceRelations(metamodel);
-
+		
 		return metamodel;
 	}
 
@@ -61,7 +60,7 @@ public final class PSSIFCanonicMetamodelCreator {
 	 * Get Node from Metamodel
 	 * 
 	 * @param name
-	 *            name of Nodn
+	 *            name of Node
 	 * @param metamodel
 	 *            metamodel to extract the node from
 	 * @return Requested node
@@ -246,10 +245,9 @@ public final class PSSIFCanonicMetamodelCreator {
 					String from = mapping.getFirst();
 					String to = mapping.getSecond();
 
-					// Every child of flow has an addition "junction" property
+					// Every child of flow has an additional "junction" property
 					// when created
-					if (edge.getTempParent() != null
-							&& edge.getTempParent().equals("Flow")) {
+					if (edge.getTempParent() != null && edge.getTempParent().equals("Flow")) {
 						PSSIFOption<JunctionNodeType> junction = metamodel
 								.getJunctionNodeType("Conjunction");
 						newEdge.createMapping(node(from, metamodel),

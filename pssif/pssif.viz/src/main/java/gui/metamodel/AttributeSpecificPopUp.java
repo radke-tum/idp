@@ -19,6 +19,11 @@ import de.tum.pssif.core.metamodel.PrimitiveDataType;
 import de.tum.pssif.core.metamodel.external.MetamodelAttribute;
 import de.tum.pssif.core.metamodel.impl.EdgeTypeImpl;
 
+/**
+ * Represents the part of the view specific for attributes
+ * @author Alex
+ *
+ */
 public class AttributeSpecificPopUp {
 
 	private JPanel attributePanel;
@@ -39,7 +44,7 @@ public class AttributeSpecificPopUp {
 	private int attributeCounter = 0;
 
 	/**
-	 * Construct for attribute specific views
+	 * Constructor for attribute specific views
 	 * @param attributePanel Panel to att the attribute related view components to
 	 * @param currentAttribute Currently selected attribute containing the data
 	 * @param parent MetamodelDetailView to revalidate the save button
@@ -196,7 +201,7 @@ public class AttributeSpecificPopUp {
 	/**
 	 * Revalidate the unit box depending on what datatype object is selected
 	 */
-	public void checkDataTypeBoxContent() {
+	private void checkDataTypeBoxContent() {
 		// if true => enable unit = false
 		PrimitiveDataType searchType = null;
 		for (PrimitiveDataType currentDataType : PrimitiveDataType.TYPES

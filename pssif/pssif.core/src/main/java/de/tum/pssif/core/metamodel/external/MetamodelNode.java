@@ -13,15 +13,30 @@ public class MetamodelNode extends MetamodelComponent {
 	private MetamodelNode parent;
 	private String tempParent;
 
+	/**
+	 * Constructor for Nodes
+	 * Caution! Only use for imports
+	 * @param tag Tag of the component
+	 * @param name Name of the component
+	 */
 	public MetamodelNode(String tag, String name) {
 		super(tag, name, "NODE");
 	}
 	
+	/**
+	 * Constructor for Nodes
+	 * @param tag Tag of the component
+	 * @param name Name of the component
+	 * @param parent parent of the compponent
+	 */
 	public MetamodelNode(String tag, String name, MetamodelNode parent) {
 		super(tag, name, "NODE");
 		this.parent = parent;
 	}
 	
+	/**
+	 * As a string formatted node
+	 */
 	public String toString() {
 
 		String result = "";

@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
@@ -22,8 +21,7 @@ public class MetamodelImport {
 	 * Initiate the parser and return its result
 	 * @return A list of the component as imported by the parser
 	 */
-	public void runParser() {
-		
+	public void runParser() {	
 		try {
 			// Create Reader
 			XMLReader xmlReader = XMLReaderFactory.createXMLReader();
@@ -31,9 +29,7 @@ public class MetamodelImport {
 			// Path to file
 			String path = System.getProperty("user.dir");		
 			FileReader reader = new FileReader(path.substring(0, path.length()-9) + "Meta-Modell.xml");			
-			InputSource inputSource = new InputSource(reader);
-
-			
+			InputSource inputSource = new InputSource(reader);	
 			
 			// XMLConentHandler is handed over 
 			handler = new XMLContentHandler();
