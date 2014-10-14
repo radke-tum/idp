@@ -26,6 +26,12 @@ import javax.swing.JScrollPane;
 import de.tum.pssif.core.metamodel.external.MetamodelAttribute;
 import de.tum.pssif.core.metamodel.external.MetamodelNode;
 
+/**
+ * Class reperesenting a node's related data
+ * 
+ * @author Alex
+ * 
+ */
 public class NodeSpecificPopUp {
 
 	private JPanel nodePanel;
@@ -165,10 +171,10 @@ public class NodeSpecificPopUp {
 	private void createAttribute(final JPanel attributePanel,
 			final MetamodelAttribute attribute) {
 
-		if(currentAttributeNames == null) {
+		if (currentAttributeNames == null) {
 			currentAttributeNames = new ArrayList<String>();
 		}
-		
+
 		final JLabel attributeTag;
 		final JLabel attributeTagValueLabel;
 		final JLabel attributeName;
@@ -216,6 +222,20 @@ public class NodeSpecificPopUp {
 		attributeNameComboBox = new JComboBox<String>(attributeNames);
 		attributeNameComboBox.setSelectedItem(attribute.getName());
 		currentAttributeNames.add(attribute.getName());
+//		attributeNameComboBox.addItemListener(new ItemListener() {
+//
+//			@Override
+//			public void itemStateChanged(ItemEvent arg0) {
+//								
+//				if (arg0.getStateChange() == ItemEvent.SELECTED) {
+//					currentAttributeNames.add(arg0.getItem() + "");
+//				}
+//				
+//				if (arg0.getStateChange() == ItemEvent.DESELECTED) {
+//					currentAttributeNames.remove(arg0.getItem() + "");
+//				}
+//			}
+//		});
 		cAttField.gridx = 2;
 		cAttField.gridy = attributeCounter + 1;
 		attributePanel.add(attributeNameComboBox, cAttField);
@@ -246,7 +266,8 @@ public class NodeSpecificPopUp {
 		cAttLabel.gridy = attributeCounter + 4;
 		attributePanel.add(visibilityLabel, cAttLabel);
 
-		visibilityValueLabel = new JLabel(attribute.getAttributeVisiblity() + "");
+		visibilityValueLabel = new JLabel(attribute.getAttributeVisiblity()
+				+ "");
 		cAttField.gridx = 2;
 		cAttField.gridy = attributeCounter + 4;
 		attributePanel.add(visibilityValueLabel, cAttField);
@@ -298,7 +319,7 @@ public class NodeSpecificPopUp {
 					parent.revalidateSaveButton();
 					originalSelectedAttribute = attributeInQuestion.getName();
 				} else {
-					originalSelectedAttribute = attribute.getName();
+					originalSelectedAttribute = itemEvent.getItem() + "";
 				}
 			}
 		});
@@ -356,6 +377,7 @@ public class NodeSpecificPopUp {
 
 	/**
 	 * Return every currently set attribute
+	 * 
 	 * @return Names of every set attribute
 	 */
 	public ArrayList<String> getCurrentAttributeNames() {
