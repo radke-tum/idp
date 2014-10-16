@@ -11,7 +11,7 @@ public final class CreateEdgeOperation {
   private final Node              from;
   private final Node              to;
 
-  /*package*/CreateEdgeOperation(ConnectionMapping mapping, Node from, Node to) {
+  /*package*/ CreateEdgeOperation(ConnectionMapping mapping, Node from, Node to) {
     this.mapping = mapping;
     this.from = from;
     this.to = to;

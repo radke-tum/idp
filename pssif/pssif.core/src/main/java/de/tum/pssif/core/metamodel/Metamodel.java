@@ -2,83 +2,35 @@ package de.tum.pssif.core.metamodel;
 
 import java.util.Collection;
 
+import de.tum.pssif.core.common.PSSIFOption;
 
-/**
- * A PSS-IF Metamodel.
- */
+
 public interface Metamodel {
-  /**
-   * Finds a node type by name.
-   * @param name
-   *    The name of the node type.
-   * @return
-   *    The node type, or <b>null</b> if it does not exist in this metamodel.
-   */
-  NodeType findNodeType(String name);
-
-  /**
-   * Finds an edge type by name.
-   * @param name
-   *    The name of the edge type.
-   * @return
-   *     The edge type, or <b>null</b> if it does not exist in this metamodel.
-   */
-  EdgeType findEdgeType(String name);
-
-  /**
-   * @return
-   *    The collection of all node types in this metamodel. May not be <b>null</b>, but may be empty.
-   */
-  Collection<NodeType> getNodeTypes();
-
-  /**
-   * @return
-   *    The collection of all edge types in this metamodel. May not be <b>null</b>, but may be empty.
-   */
-  Collection<EdgeType> getEdgeTypes();
-
-  /**
-   * @return
-   *    The collection of all enumerations in this metamodel. May not be <b>null</b>, but may be empty.
-   */
   Collection<Enumeration> getEnumerations();
 
-  /**
-   * Finds an enumeration by name.
-   * @param name
-   *    The name of the enumeration.
-   * @return
-   *     The enumeration , or <b>null</b> if it does not exist in this metamodel.
-   */
-  Enumeration findEnumeration(String name);
+  Collection<NodeTypeBase> getBaseNodeTypes();
 
-  /**
-   * Finds a data type by name.
-   * @param name
-   *    The name of the data type.
-   * @return
-   *     The data type, or <b>null</b> if it does not exist in this metamodel.
-   */
-  DataType findDataType(String name);
+  Collection<NodeType> getNodeTypes();
 
-  /**
-   * @return
-   *    The collection of all data types within this metamodel.
-   */
+  Collection<JunctionNodeType> getJunctionNodeTypes();
+
+  Collection<EdgeType> getEdgeTypes();
+
+  PSSIFOption<Enumeration> getEnumeration(String name);
+
   Collection<DataType> getDataTypes();
 
-  /**
-   * @return
-   *    The collection of all primitive types within this metamodel.
-   */
+  PSSIFOption<DataType> getDataType(String name);
+
   Collection<PrimitiveDataType> getPrimitiveTypes();
 
-  /**
-   * Finds a primitive type by name.
-   * @param name
-   *    The name of the primitive type.
-   * @return
-   *     The primitive type, or <b>null</b> if it does not exist in this metamodel.
-   */
-  PrimitiveDataType findPrimitiveType(String name);
+  PSSIFOption<PrimitiveDataType> getPrimitiveType(String name);
+
+  PSSIFOption<NodeTypeBase> getBaseNodeType(String name);
+
+  PSSIFOption<NodeType> getNodeType(String name);
+
+  PSSIFOption<JunctionNodeType> getJunctionNodeType(String name);
+
+  PSSIFOption<EdgeType> getEdgeType(String name);
 }

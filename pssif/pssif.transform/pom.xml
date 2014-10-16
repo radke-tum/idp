@@ -15,10 +15,12 @@
 		<dependency>
 			<groupId>de.tum</groupId>
 			<artifactId>pssif.core</artifactId>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>de.tum</groupId>
 			<artifactId>pssif.vsdx</artifactId>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>

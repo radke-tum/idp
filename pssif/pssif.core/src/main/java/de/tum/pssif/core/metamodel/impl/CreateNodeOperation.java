@@ -1,18 +1,18 @@
 package de.tum.pssif.core.metamodel.impl;
 
-import de.tum.pssif.core.metamodel.NodeType;
+import de.tum.pssif.core.metamodel.NodeTypeBase;
 import de.tum.pssif.core.model.Model;
 import de.tum.pssif.core.model.Node;
 
 
 public final class CreateNodeOperation {
-  private final NodeType type;
+  private final NodeTypeBase type;
 
-  /*package*/CreateNodeOperation(NodeType type) {
+  /*package*/CreateNodeOperation(NodeTypeBase type) {
     this.type = type;
   }
 
-  public NodeType getType() {
+  public NodeTypeBase getType() {
     return type;
   }
 

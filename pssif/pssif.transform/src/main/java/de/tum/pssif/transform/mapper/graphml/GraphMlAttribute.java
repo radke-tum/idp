@@ -8,4 +8,5 @@ public interface GraphMlAttribute {
 
   String getId();
 
+  boolean isAnnotation();
 }

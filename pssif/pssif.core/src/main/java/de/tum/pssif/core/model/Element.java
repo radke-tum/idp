@@ -1,15 +1,17 @@
 package de.tum.pssif.core.model;
 
+import java.util.Map.Entry;
+
+import de.tum.pssif.core.common.PSSIFOption;
+import de.tum.pssif.core.common.PSSIFValue;
 import de.tum.pssif.core.metamodel.impl.GetValueOperation;
 import de.tum.pssif.core.metamodel.impl.SetValueOperation;
-import de.tum.pssif.core.util.PSSIFOption;
-import de.tum.pssif.core.util.PSSIFValue;
 
 
-/**
- * Common super-type for nodes and edges.
- */
 public interface Element {
+  Model getModel();
+
+  void setId(String id);
 
   String getId();
 
@@ -17,6 +19,11 @@ public interface Element {
 
   PSSIFOption<PSSIFValue> apply(GetValueOperation op);
 
-  Model getModel();
+  void annotate(String key, String value);
 
+  void annotate(String key, String value, boolean overwrite);
+
+  PSSIFOption<Entry<String, String>> getAnnotations();
+
+  PSSIFOption<String> getAnnotation(String key);
 }

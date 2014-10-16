@@ -1,54 +1,50 @@
 package de.tum.pssif.transform.transformation.artificial;
 
-import java.util.Iterator;
-import java.util.Set;
+import java.util.Collection;
 
 import com.google.common.collect.Sets;
 
+import de.tum.pssif.core.common.PSSIFOption;
 import de.tum.pssif.core.metamodel.ConnectionMapping;
 import de.tum.pssif.core.metamodel.EdgeType;
 import de.tum.pssif.core.metamodel.NodeType;
 import de.tum.pssif.core.model.Edge;
 import de.tum.pssif.core.model.Model;
 import de.tum.pssif.core.model.Node;
-import de.tum.pssif.core.util.PSSIFOption;
 import de.tum.pssif.transform.transformation.viewed.ViewedNodeType;
 
 
 public class ArtificializedNodeType extends ViewedNodeType {
-  private final NodeType sourceType;
-  private final EdgeType edgeType;
-  private final NodeType targetType;
+  private final ConnectionMapping mapping;
+  private final NodeType          sourceType;
 
   public ArtificializedNodeType(NodeType sourceType, EdgeType edgeType, NodeType targetType) {
     super(targetType);
+    mapping = edgeType.getMapping(sourceType, targetType).getOne();
     this.sourceType = sourceType;
-    this.edgeType = edgeType;
-    this.targetType = targetType;
   }
 
   @Override
-  public PSSIFOption<Node> apply(Model model, boolean includeSubTypes) {
-    Set<Node> sources = sourceType.apply(model, true).getMany();
-    Set<Node> result = Sets.newHashSet(targetType.apply(model, includeSubTypes).getMany());
+  public PSSIFOption<Node> apply(Model model, boolean includeSubtypes) {
+    return filter(model, getBaseType().apply(model, includeSubtypes));
+  }
 
-    ConnectionMapping mapping = edgeType.getMapping(sourceType, targetType);
+  @Override
+  public PSSIFOption<Node> apply(Model model, String id, boolean includeSubtypes) {
+    return filter(model, getBaseType().apply(model, id, includeSubtypes));
+  }
 
-    Iterator<Node> it = result.iterator();
-    while (it.hasNext()) {
-      Node current = it.next();
-      Set<Edge> edges = mapping.getTo().apply(current).getMany();
-
-      edges: for (Edge e : edges) {
-        for (Node n : mapping.getFrom().apply(e).getMany()) {
-          if (sources.contains(n)) {
-            it.remove();
-            break edges;
-          }
+  protected PSSIFOption<Node> filter(Model model, PSSIFOption<Node> candidates) {
+    Collection<Node> sources = sourceType.apply(model, true).getMany();
+    Collection<Node> result = Sets.newHashSet();
+    candidate: for (Node candidate : candidates.getMany()) {
+      for (Edge e : mapping.applyIncoming(candidate).getMany()) {
+        if (sources.contains(mapping.applyFrom(e))) {
+          continue candidate;
         }
       }
+      result.add(candidate);
     }
-
     return PSSIFOption.many(result);
   }
 }

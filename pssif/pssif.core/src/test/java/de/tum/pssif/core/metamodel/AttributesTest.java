@@ -3,16 +3,20 @@ package de.tum.pssif.core.metamodel;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Before;
 import org.junit.Test;
 
+import de.tum.pssif.core.common.PSSIFConstants;
+import de.tum.pssif.core.common.PSSIFOption;
 import de.tum.pssif.core.exception.PSSIFStructuralIntegrityException;
-import de.tum.pssif.core.metamodel.Multiplicity.MultiplicityContainer;
-import de.tum.pssif.core.metamodel.Multiplicity.UnlimitedNatural;
 import de.tum.pssif.core.metamodel.impl.MetamodelImpl;
+import de.tum.pssif.core.metamodel.mutable.MutableEdgeType;
+import de.tum.pssif.core.metamodel.mutable.MutableEnumeration;
+import de.tum.pssif.core.metamodel.mutable.MutableMetamodel;
+import de.tum.pssif.core.metamodel.mutable.MutableNodeType;
+import de.tum.pssif.core.metamodel.mutable.MutableNodeTypeBase;
 
 
 public class AttributesTest {
@@ -22,37 +26,35 @@ public class AttributesTest {
   @Before
   public void createMetamodel() {
     this.metamodel = new MetamodelImpl();
-    NodeType a = metamodel.createNodeType("A");
-    NodeType b = metamodel.createNodeType("B");
-    Multiplicity inMult = MultiplicityContainer.of(1, 1, 0, UnlimitedNatural.UNLIMITED);
-    Multiplicity outMult = MultiplicityContainer.of(1, 1, 0, UnlimitedNatural.UNLIMITED);
+    metamodel.createNodeType("A");
+    metamodel.createNodeType("B");
   }
 
   @Test
   public void testCreatePrimitiveNodeAttribute() {
     nodeA().createAttribute(nodeA().getDefaultAttributeGroup(), "attr", PrimitiveDataType.INTEGER, Units.INCH, true, AttributeCategory.METADATA);
-    Attribute attr = nodeA().findAttribute("attr");
-    assertNotNull(attr);
-    assertEquals(PrimitiveDataType.INTEGER, attr.getType());
-    assertEquals(Units.INCH, attr.getUnit());
+    PSSIFOption<Attribute> attr = nodeA().getAttribute("attr");
+    assertTrue(attr.isOne());
+    assertEquals(PrimitiveDataType.INTEGER, attr.getOne().getType());
+    assertEquals(Units.INCH, attr.getOne().getUnit());
   }
 
   @Test
   public void testCreatePrimitiveEdgeAttribute() {
     edge().createAttribute(nodeA().getDefaultAttributeGroup(), "attr", PrimitiveDataType.INTEGER, Units.INCH, true, AttributeCategory.METADATA);
-    Attribute attr = edge().findAttribute("attr");
-    assertNotNull(attr);
-    assertEquals(PrimitiveDataType.INTEGER, attr.getType());
-    assertEquals(Units.INCH, attr.getUnit());
+    PSSIFOption<Attribute> attr = edge().getAttribute("attr");
+    assertTrue(attr.isOne());
+    assertEquals(PrimitiveDataType.INTEGER, attr.getOne().getType());
+    assertEquals(Units.INCH, attr.getOne().getUnit());
   }
 
   @Test
   public void testRemoveNodeAttribute() {
     nodeA().createAttribute(nodeA().getDefaultAttributeGroup(), "attr", PrimitiveDataType.INTEGER, Units.INCH, true, AttributeCategory.METADATA);
-    Attribute attr = nodeA().findAttribute("attr");
-    assertNotNull(attr);
-    assertEquals(PrimitiveDataType.INTEGER, attr.getType());
-    assertEquals(Units.INCH, attr.getUnit());
+    PSSIFOption<Attribute> attr = nodeA().getAttribute("attr");
+    assertTrue(attr.isOne());
+    assertEquals(PrimitiveDataType.INTEGER, attr.getOne().getType());
+    assertEquals(Units.INCH, attr.getOne().getUnit());
 
     //    nodeA().getDefaultAttributeGroup().removeAttribute(attr);
     //    assertNull(nodeA().findAttribute("attr"));
@@ -61,10 +63,10 @@ public class AttributesTest {
   @Test
   public void testRemoveEdgeAttribute() {
     edge().createAttribute(nodeA().getDefaultAttributeGroup(), "attr", PrimitiveDataType.INTEGER, Units.INCH, true, AttributeCategory.METADATA);
-    Attribute attr = edge().findAttribute("attr");
-    assertNotNull(attr);
-    assertEquals(PrimitiveDataType.INTEGER, attr.getType());
-    assertEquals(Units.INCH, attr.getUnit());
+    PSSIFOption<Attribute> attr = edge().getAttribute("attr");
+    assertTrue(attr.isOne());
+    assertEquals(PrimitiveDataType.INTEGER, attr.getOne().getType());
+    assertEquals(Units.INCH, attr.getOne().getUnit());
 
     //    edge().getDefaultAttributeGroup().removeAttribute(attr);
     //    assertNull(edge().findAttribute("attr"));
@@ -73,96 +75,96 @@ public class AttributesTest {
   @Test
   public void testCreateEnumeration() {
     metamodel.createEnumeration("enum");
-    Enumeration enumeration = metamodel.findEnumeration("enum");
-    assertNotNull(enumeration);
-    assertEquals(0, enumeration.getLiterals().size());
-    assertEquals("enum", enumeration.getName());
+    PSSIFOption<Enumeration> enumeration = metamodel.getEnumeration("enum");
+    assertTrue(enumeration.isOne());
+    assertEquals(0, enumeration.getOne().getLiterals().size());
+    assertEquals("enum", enumeration.getOne().getName());
   }
 
   @Test
   public void testRemoveEnumeration() {
     metamodel.createEnumeration("enum");
-    Enumeration enumeration = metamodel.findEnumeration("enum");
-    assertNotNull(enumeration);
-    assertEquals(0, enumeration.getLiterals().size());
-    assertEquals("enum", enumeration.getName());
+    PSSIFOption<Enumeration> enumeration = metamodel.getEnumeration("enum");
+    assertTrue(enumeration.isOne());
+    assertEquals(0, enumeration.getOne().getLiterals().size());
+    assertEquals("enum", enumeration.getOne().getName());
 
     //should accept null unit, since enums have no units.
-    nodeA().createAttribute(nodeA().getDefaultAttributeGroup(), "enumAttr", enumeration, true, AttributeCategory.METADATA);
+    nodeA().createAttribute(nodeA().getDefaultAttributeGroup(), "enumAttr", enumeration.getOne(), true, AttributeCategory.METADATA);
 
-    Attribute enumAttr = nodeA().findAttribute("enumAttr");
-    assertNotNull(enumAttr);
-    assertEquals(enumeration, enumAttr.getType());
-    assertEquals("enumAttr", enumAttr.getName());
-    assertEquals(Units.NONE, enumAttr.getUnit());
+    PSSIFOption<Attribute> enumAttr = nodeA().getAttribute("enumAttr");
+    assertTrue(enumAttr.isOne());
+    assertEquals(enumeration.getOne(), enumAttr.getOne().getType());
+    assertEquals("enumAttr", enumAttr.getOne().getName());
+    assertEquals(Units.NONE, enumAttr.getOne().getUnit());
 
-    metamodel.removeEnumeration(enumeration);
-    assertNull(metamodel.findEnumeration("enum"));
-    assertNull(metamodel.findDataType("enum"));
+    metamodel.removeEnumeration(enumeration.getOne());
+    assertTrue(metamodel.getEnumeration("enum").isNone());
+    assertTrue(metamodel.getDataType("enum").isNone());
 
-    assertNull(nodeA().findAttribute("enum"));
+    assertTrue(nodeA().getAttribute("enum").isNone());
   }
 
   @Test
   public void testCreateLiteral() {
     metamodel.createEnumeration("enum");
-    Enumeration enumeration = metamodel.findEnumeration("enum");
+    PSSIFOption<MutableEnumeration> enumeration = metamodel.getMutableEnumeration("enum");
 
-    assertNotNull(enumeration);
+    assertTrue(enumeration.isOne());
 
-    EnumerationLiteral literal1 = enumeration.createLiteral("literal1");
-    EnumerationLiteral literal2 = enumeration.createLiteral("literal2");
+    EnumerationLiteral literal1 = enumeration.getOne().createLiteral("literal1");
+    EnumerationLiteral literal2 = enumeration.getOne().createLiteral("literal2");
 
-    assertEquals(2, enumeration.getLiterals().size());
-    assertNotNull(enumeration.findLiteral("literal1"));
-    assertNotNull(enumeration.findLiteral("literal2"));
+    assertEquals(2, enumeration.getOne().getLiterals().size());
+    assertNotNull(enumeration.getOne().getLiteral("literal1"));
+    assertNotNull(enumeration.getOne().getLiteral("literal2"));
 
-    assertTrue(enumeration.getLiterals().contains(literal1));
-    assertTrue(enumeration.getLiterals().contains(literal2));
+    assertTrue(enumeration.getOne().getLiterals().contains(literal1));
+    assertTrue(enumeration.getOne().getLiterals().contains(literal2));
   }
 
   @Test
   public void testRemoveLiteral() {
     metamodel.createEnumeration("enum");
-    Enumeration enumeration = metamodel.findEnumeration("enum");
+    PSSIFOption<MutableEnumeration> enumeration = metamodel.getMutableEnumeration("enum");
 
-    assertNotNull(enumeration);
+    assertTrue(enumeration.isOne());
 
-    EnumerationLiteral literal1 = enumeration.createLiteral("literal1");
-    EnumerationLiteral literal2 = enumeration.createLiteral("literal2");
+    EnumerationLiteral literal1 = enumeration.getOne().createLiteral("literal1");
+    EnumerationLiteral literal2 = enumeration.getOne().createLiteral("literal2");
 
-    assertEquals(2, enumeration.getLiterals().size());
-    assertNotNull(enumeration.findLiteral("literal1"));
-    assertNotNull(enumeration.findLiteral("literal2"));
+    assertEquals(2, enumeration.getOne().getLiterals().size());
+    assertNotNull(enumeration.getOne().getLiteral("literal1"));
+    assertNotNull(enumeration.getOne().getLiteral("literal2"));
 
-    assertTrue(enumeration.getLiterals().contains(literal1));
-    assertTrue(enumeration.getLiterals().contains(literal2));
+    assertTrue(enumeration.getOne().getLiterals().contains(literal1));
+    assertTrue(enumeration.getOne().getLiterals().contains(literal2));
 
-    enumeration.removeLiteral(literal1);
+    enumeration.getOne().removeLiteral(literal1);
 
-    assertEquals(1, enumeration.getLiterals().size());
-    assertNull(enumeration.findLiteral("literal1"));
-    assertNotNull(enumeration.findLiteral("literal2"));
+    assertEquals(1, enumeration.getOne().getLiterals().size());
+    assertTrue(enumeration.getOne().getLiteral("literal1").isNone());
+    assertNotNull(enumeration.getOne().getLiteral("literal2"));
 
-    assertFalse(enumeration.getLiterals().contains(literal1));
-    assertTrue(enumeration.getLiterals().contains(literal2));
+    assertFalse(enumeration.getOne().getLiterals().contains(literal1));
+    assertTrue(enumeration.getOne().getLiterals().contains(literal2));
   }
 
   @Test(expected = PSSIFStructuralIntegrityException.class)
   public void testCreateDuplicateLiteral() {
     metamodel.createEnumeration("enum");
-    Enumeration enumeration = metamodel.findEnumeration("enum");
+    PSSIFOption<MutableEnumeration> enumeration = metamodel.getMutableEnumeration("enum");
 
-    assertNotNull(enumeration);
+    assertTrue(enumeration.isOne());
 
-    enumeration.createLiteral("literal1");
-    enumeration.createLiteral("literal1");
+    enumeration.getOne().createLiteral("literal1");
+    enumeration.getOne().createLiteral("literal1");
   }
 
   @Test(expected = PSSIFStructuralIntegrityException.class)
   public void testDuplicateEnumerations() {
     metamodel.createEnumeration("enum");
-    Enumeration enumeration = metamodel.findEnumeration("enum");
+    PSSIFOption<Enumeration> enumeration = metamodel.getEnumeration("enum");
 
     assertNotNull(enumeration);
 
@@ -182,28 +184,30 @@ public class AttributesTest {
 
   @Test(expected = PSSIFStructuralIntegrityException.class)
   public void testCreateEnumerationAttributeWithUnit() {
-    Enumeration enumeration = metamodel.createEnumeration("enum");
+    MutableEnumeration enumeration = metamodel.createEnumeration("enum");
     enumeration.createLiteral("lit");
     nodeA().createAttribute(nodeA().getDefaultAttributeGroup(), "enumAttr", enumeration, Units.CENTIMETER, true, AttributeCategory.METADATA);
   }
 
+  @Test
   public void testStaticDataTypes() {
-    assertNotNull(metamodel.findDataType(PrimitiveDataType.BOOLEAN.getName()));
-    assertNotNull(metamodel.findPrimitiveType(PrimitiveDataType.BOOLEAN.getName()));
+    assertNotNull(metamodel.getDataType(PrimitiveDataType.BOOLEAN.getName()));
+    assertNotNull(metamodel.getPrimitiveType(PrimitiveDataType.BOOLEAN.getName()));
 
-    assertNotNull(metamodel.findDataType(PrimitiveDataType.DATE.getName()));
-    assertNotNull(metamodel.findPrimitiveType(PrimitiveDataType.DATE.getName()));
+    assertNotNull(metamodel.getDataType(PrimitiveDataType.DATE.getName()));
+    assertNotNull(metamodel.getPrimitiveType(PrimitiveDataType.DATE.getName()));
 
-    assertNotNull(metamodel.findDataType(PrimitiveDataType.DECIMAL.getName()));
-    assertNotNull(metamodel.findPrimitiveType(PrimitiveDataType.DECIMAL.getName()));
+    assertNotNull(metamodel.getDataType(PrimitiveDataType.DECIMAL.getName()));
+    assertNotNull(metamodel.getPrimitiveType(PrimitiveDataType.DECIMAL.getName()));
 
-    assertNotNull(metamodel.findDataType(PrimitiveDataType.INTEGER.getName()));
-    assertNotNull(metamodel.findPrimitiveType(PrimitiveDataType.INTEGER.getName()));
+    assertNotNull(metamodel.getDataType(PrimitiveDataType.INTEGER.getName()));
+    assertNotNull(metamodel.getPrimitiveType(PrimitiveDataType.INTEGER.getName()));
 
-    assertNotNull(metamodel.findDataType(PrimitiveDataType.STRING.getName()));
-    assertNotNull(metamodel.findPrimitiveType(PrimitiveDataType.STRING.getName()));
+    assertNotNull(metamodel.getDataType(PrimitiveDataType.STRING.getName()));
+    assertNotNull(metamodel.getPrimitiveType(PrimitiveDataType.STRING.getName()));
   }
 
+  @Test
   public void testUnits() {
     assertNotNull(Units.CENTIMETER.getName());
     assertNotNull(Units.INCH.getName());
@@ -211,11 +215,26 @@ public class AttributesTest {
     //TODO all other units!
   }
 
-  private NodeType nodeA() {
-    return metamodel.findNodeType("A");
+  @Test
+  public void testAttributeInheritance() {
+    MutableNodeType node = metamodel.getMutableNodeType(PSSIFConstants.ROOT_NODE_TYPE_NAME).getOne();
+    AttributeGroup nodeGroup = node.createAttributeGroup("test");
+    node.createAttribute(nodeGroup, "1", PrimitiveDataType.STRING, true, AttributeCategory.METADATA);
+
+    MutableNodeType a = metamodel.getMutableNodeType("A").getOne();
+    AttributeGroup aGroup = a.createAttributeGroup("test");
+    a.createAttribute(aGroup, "2", PrimitiveDataType.STRING, true, AttributeCategory.METADATA);
+
+    PSSIFOption<AttributeGroup> group = a.getAttributeGroup("test");
+    assertTrue(group.isOne());
+    assertEquals(nodeGroup.getAttributes().size() + 1, group.getOne().getAttributes().size());
   }
 
-  private EdgeType edge() {
-    return metamodel.findEdgeType("edge");
+  private MutableNodeTypeBase nodeA() {
+    return metamodel.getMutableNodeType("A").getOne();
+  }
+
+  private MutableEdgeType edge() {
+    return metamodel.getMutableEdgeType("edge").getOne();
   }
 }

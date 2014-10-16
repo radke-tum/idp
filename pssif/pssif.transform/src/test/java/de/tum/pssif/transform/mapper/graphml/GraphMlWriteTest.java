@@ -7,30 +7,29 @@ import java.io.InputStream;
 import org.junit.Test;
 
 import de.tum.pssif.core.metamodel.Metamodel;
+import de.tum.pssif.core.metamodel.external.PSSIFCanonicMetamodelCreator;
 import de.tum.pssif.core.model.Model;
-import de.tum.pssif.core.util.PSSIFCanonicMetamodelCreator;
 import de.tum.pssif.transform.Mapper;
 import de.tum.pssif.transform.MapperFactory;
 
 
 public class GraphMlWriteTest {
   private final Metamodel     metamodel     = PSSIFCanonicMetamodelCreator.create();
-  private final GraphMLMapper canonicMapper = new PssifMapper();
+  private final GraphMLMapper canonicMapper = new PSSIFMapper();
 
   @Test
   public void testWrite() {
 
     InputStream in = getClass().getResourceAsStream("/flow.graphml");
-    GraphMLMapper importer = new UfpMapper();
+    GraphMLMapper importer = new UFMMapper();
 
     Metamodel metamodel = PSSIFCanonicMetamodelCreator.create();
-    Metamodel view = GraphMLMapper.createGraphMlView(metamodel);
 
-    Model model = importer.read(view, in);
+    Model model = importer.read(metamodel, in);
 
     ByteArrayOutputStream out = new ByteArrayOutputStream();
     Mapper mapper = MapperFactory.getMapper(MapperFactory.UOFP);
-    mapper.write(view, model, out);
+    mapper.write(metamodel, model, out);
 
     byte[] result = out.toByteArray();
     String str = new String(result);

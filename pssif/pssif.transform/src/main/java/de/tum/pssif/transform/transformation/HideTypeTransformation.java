@@ -3,14 +3,14 @@ package de.tum.pssif.transform.transformation;
 import de.tum.pssif.core.metamodel.ElementType;
 
 
-public abstract class HideTypeTransformation<T extends ElementType<T, ?>> extends AbstractTransformation {
-  private T type;
+public abstract class HideTypeTransformation<T extends ElementType> extends AbstractTransformation {
+  private String type;
 
-  protected T getType() {
+  protected String getType() {
     return type;
   }
 
   public HideTypeTransformation(T type) {
-    this.type = type;
+    this.type = type.getName();
   }
 }

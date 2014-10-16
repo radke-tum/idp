@@ -27,6 +27,9 @@
 \usepackage{listings}
 \usepackage{footnote}
 
+\usepackage[nonumberlist,nopostdot,nomain,toc,acronym]{glossaries}
+\makeglossaries
+
 %Settings applicable to the complete document
 
 %Breaks URLs properly and draws them in a nice font
@@ -68,7 +71,6 @@
 
 %hyphenation rules
 \hyphenation{ele-ments}
-\hyphenation{itera-plan}
 \hyphenation{Composite-Expression}
 \hyphenation{dia-gram}
 
@@ -112,9 +114,8 @@
 %List of Listings
 %\lstlistoflistings
 
-%TODO ENABLE
-%\input{acronyms.tex}
-
+\include{acronyms}
+\printglossary[title=List of Abbreviations,type=acronym]
 
 \mainmatter
 \pagestyle{headings}
@@ -123,11 +124,11 @@
 % Chapters. Each one in its own file
 
 \input{sections/01-introduction.tex}
-\input{sections/02-requirements.tex}
+%\input{sections/02-requirements.tex}
 \input{sections/03-approach.tex}
 \input{sections/04-implementation.tex}
 \input{sections/05-results.tex}
-\input{sections/06-conclusion.tex}
+\input{sections/06-outlook.tex}
 %\input{sections/requirements.tex}
 %\input{sections/related.tex}
 %\input{sections/formal_ql.tex}
@@ -135,11 +136,11 @@
 %\input{sections/evaluation.tex}
 %\input{sections/conclusion.tex}
 
-%\appendix
-%\input{sections/appendix-ql.tex}
+\appendix
+\input{sections/00-appendix-distribution.tex}
 %\input{sections/appendix-owl.tex}
 
 % the bibliography
-%\bibliography{papers}
+\bibliography{papers}
 
 \end{document}

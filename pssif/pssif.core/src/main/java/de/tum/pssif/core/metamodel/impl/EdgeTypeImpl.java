@@ -1,105 +1,279 @@
 package de.tum.pssif.core.metamodel.impl;
 
-import de.tum.pssif.core.PSSIFConstants;
+import java.util.Collection;
+import java.util.Set;
+
+import com.google.common.base.Predicate;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
+
+import de.tum.pssif.core.common.PSSIFConstants;
+import de.tum.pssif.core.common.PSSIFOption;
 import de.tum.pssif.core.exception.PSSIFStructuralIntegrityException;
-import de.tum.pssif.core.metamodel.Attribute;
-import de.tum.pssif.core.metamodel.AttributeCategory;
 import de.tum.pssif.core.metamodel.AttributeGroup;
 import de.tum.pssif.core.metamodel.ConnectionMapping;
-import de.tum.pssif.core.metamodel.DataType;
-import de.tum.pssif.core.metamodel.EdgeEnd;
 import de.tum.pssif.core.metamodel.EdgeType;
-import de.tum.pssif.core.metamodel.Multiplicity;
-import de.tum.pssif.core.metamodel.NodeType;
-import de.tum.pssif.core.metamodel.PrimitiveDataType;
-import de.tum.pssif.core.metamodel.Unit;
-import de.tum.pssif.core.metamodel.Units;
-import de.tum.pssif.core.metamodel.impl.base.AbstractEdgeType;
-import de.tum.pssif.core.util.PSSIFUtil;
+import de.tum.pssif.core.metamodel.ElementType;
+import de.tum.pssif.core.metamodel.JunctionNodeType;
+import de.tum.pssif.core.metamodel.NodeTypeBase;
+import de.tum.pssif.core.metamodel.mutable.MutableAttributeGroup;
+import de.tum.pssif.core.metamodel.mutable.MutableConnectionMapping;
+import de.tum.pssif.core.metamodel.mutable.MutableEdgeType;
+import de.tum.pssif.core.model.Edge;
+import de.tum.pssif.core.model.Model;
+import de.tum.pssif.core.model.Node;
 
 
-public class EdgeTypeImpl extends AbstractEdgeType {
+public class EdgeTypeImpl extends ElementTypeImpl implements MutableEdgeType {
+  private Collection<MutableConnectionMapping> mappings        = Sets.newHashSet();
+  private EdgeType                             general         = null;
+  private final Set<EdgeType>                  specializations = Sets.newHashSet();
+
   public EdgeTypeImpl(String name) {
     super(name);
-    addAttributeGroup(new AttributeGroupImpl(PSSIFConstants.DEFAULT_ATTRIBUTE_GROUP_NAME, this));
+    addAttributeGroup(new InheritingAttributeGroup<EdgeType>(PSSIFConstants.DEFAULT_ATTRIBUTE_GROUP_NAME, this));
   }
 
   @Override
-  public ConnectionMapping createMapping(String inName, NodeType in, Multiplicity inMultiplicity, String outName, NodeType out,
-                                         Multiplicity outMultiplicity) {
-    EdgeEnd from = new EdgeEndImpl(inName, this, inMultiplicity, in);
-    EdgeEnd to = new EdgeEndImpl(outName, this, outMultiplicity, out);
-    ConnectionMapping result = new ConnectionMappingImpl(from, to);
-    addMappingInternal(result);
+  public AttributeGroup createAttributeGroup(String name) {
+    if (!getAttributeGroup(name).isNone()) {
+      throw new PSSIFStructuralIntegrityException("group with name " + name + " already exists in type " + getName());
+    }
+    MutableAttributeGroup result = new InheritingAttributeGroup<EdgeType>(name, this);
+    addAttributeGroup(result);
+    return result;
+  }
+
+  @Override
+  public ConnectionMapping createMapping(NodeTypeBase from, NodeTypeBase to, JunctionNodeType... junctions) {
+    return createMapping(from, to, PSSIFOption.many(junctions));
+  }
+
+  @Override
+  public ConnectionMapping createMapping(NodeTypeBase from, NodeTypeBase to, PSSIFOption<JunctionNodeType> junctions) {
+    for (JunctionNodeType junction : junctions.getMany()) {
+      mappings.add(new ConnectionMappingImpl(this, junction, junction));
+      for (JunctionNodeType other : junctions.getMany()) {
+        if (other != junction) {
+          mappings.add(new ConnectionMappingImpl(this, junction, other));
+        }
+      }
+      mappings.add(new ConnectionMappingImpl(this, from, junction));
+      mappings.add(new ConnectionMappingImpl(this, junction, to));
+    }
+
+    MutableConnectionMapping result = new ConnectionMappingImpl(this, from, to);
+    addMapping(result);
+    return result;
+  }
+
+  @Override
+  public final void addMapping(MutableConnectionMapping mapping) {
+    mappings.add(mapping);
+  }
+
+  @Override
+  public void removeMapping(ConnectionMapping mapping) {
+    mappings.remove(mapping);
+  }
+
+  @Override
+  public PSSIFOption<ConnectionMapping> getMappings() {
+    return PSSIFOption.<ConnectionMapping> many(mappings);
+  }
+
+  @Override
+  public PSSIFOption<ConnectionMapping> getMapping(NodeTypeBase from, NodeTypeBase to) {
+    return PSSIFOption.<ConnectionMapping> many(getMutableMapping(from, to).getMany());
+  }
+
+  @Override
+  public PSSIFOption<ConnectionMapping> getOutgoingMappings(final NodeTypeBase from) {
+    return PSSIFOption.<ConnectionMapping> many(getOutgoingMutableMappings(from).getMany());
+  }
+
+  @Override
+  public PSSIFOption<ConnectionMapping> getIncomingMappings(final NodeTypeBase to) {
+    return PSSIFOption.<ConnectionMapping> many(getIncomingMutableMappings(to).getMany());
+  }
+
+  @Override
+  public boolean isAssignableFrom(ElementType type) {
+    if (this.equals(type)) {
+      return true;
+    }
+    else {
+      for (EdgeType special : getSpecials()) {
+        if (special.isAssignableFrom(type)) {
+          return true;
+        }
+      }
+    }
+
+    return false;
+  }
+
+  @Override
+  public void inherit(EdgeType general) {
+    if (general.isAssignableFrom(this)) {
+      throw new PSSIFStructuralIntegrityException("inheritance cycle detected");
+    }
+    if (this.general != null) {
+      this.general.unregisterSpecialization(this);
+    }
+    this.general = general;
+    this.general.registerSpecialization(this);
+  }
+
+  @Override
+  public PSSIFOption<EdgeType> getGeneral() {
+    return PSSIFOption.one(general);
+  }
+
+  @Override
+  public Collection<EdgeType> getSpecials() {
+    return ImmutableSet.copyOf(specializations);
+  }
+
+  @Override
+  public void registerSpecialization(EdgeType special) {
+    specializations.add(special);
+  }
+
+  @Override
+  public void unregisterSpecialization(EdgeType special) {
+    specializations.remove(special);
+  }
+
+  @Override
+  public Class<?> getMetaType() {
+    return EdgeType.class;
+  }
+
+  @Override
+  public PSSIFOption<MutableConnectionMapping> getMutableMapping(NodeTypeBase from, NodeTypeBase to) {
+    MutableConnectionMapping result = null;
+
+    for (MutableConnectionMapping candidate : mappings) {
+      if (candidate.getFrom().isAssignableFrom(from) && candidate.getTo().isAssignableFrom(to)) {
+        if (result != null) {
+          if (result.getFrom().isAssignableFrom(candidate.getFrom()) && result.getTo().isAssignableFrom(candidate.getTo())) {
+            result = candidate;
+          }
+        }
+        else {
+          result = candidate;
+        }
+      }
+    }
+
+    return PSSIFOption.one(result);
+  }
+
+  @Override
+  public PSSIFOption<MutableConnectionMapping> getMutableMappings() {
+    return PSSIFOption.many(mappings);
+  }
+
+  @Override
+  public PSSIFOption<MutableConnectionMapping> getOutgoingMutableMappings(final NodeTypeBase from) {
+    return PSSIFOption.many(Collections2.filter(mappings, new Predicate<ConnectionMapping>() {
+      @Override
+      public boolean apply(ConnectionMapping input) {
+        return input.getFrom().isAssignableFrom(from);
+      }
+    }));
+  }
+
+  @Override
+  public PSSIFOption<MutableConnectionMapping> getIncomingMutableMappings(final NodeTypeBase to) {
+    return PSSIFOption.many(Collections2.filter(mappings, new Predicate<ConnectionMapping>() {
+      @Override
+      public boolean apply(ConnectionMapping input) {
+        return input.getTo().isAssignableFrom(to);
+      }
+    }));
+  }
+
+  @Override
+  public PSSIFOption<Edge> apply(Model model, boolean includeSubtypes) {
+    PSSIFOption<Edge> result = PSSIFOption.none();
+
+    for (ConnectionMapping mapping : getMappings().getMany()) {
+      result = PSSIFOption.merge(result, mapping.apply(model));
+    }
+
+    if (includeSubtypes) {
+      for (EdgeType special : getSpecials()) {
+        result = PSSIFOption.merge(result, special.apply(model, includeSubtypes));
+      }
+    }
 
     return result;
   }
 
   @Override
-  public EdgeEnd createAuxiliary(String name, Multiplicity multiplicity, NodeType to) {
-    EdgeEnd aux = findAuxiliary(name);
-    if (aux != null) {
-      throw new PSSIFStructuralIntegrityException("An auxiliary edge end with this name already exists.");
+  public PSSIFOption<Edge> applyOutgoing(Node node, boolean includeSubtypes) {
+    PSSIFOption<Edge> result = PSSIFOption.none();
+
+    for (ConnectionMapping mapping : getMappings().getMany()) {
+      result = PSSIFOption.merge(result, mapping.applyOutgoing(node));
     }
-    EdgeEnd result = new EdgeEndImpl(name, this, multiplicity, to);
-    addAuxiliaryInternal(result);
-    to.registerAuxiliary(this);
+
+    if (includeSubtypes) {
+      for (EdgeType special : getSpecials()) {
+        result = PSSIFOption.merge(result, special.applyOutgoing(node, includeSubtypes));
+      }
+    }
+
     return result;
   }
 
   @Override
-  public Attribute createAttribute(AttributeGroup group, String name, DataType type, Unit unit, boolean visible, AttributeCategory category) {
-    if (name == null || name.trim().isEmpty()) {
-      throw new PSSIFStructuralIntegrityException("name can not be null or empty");
+  public PSSIFOption<Edge> applyIncoming(Node node, boolean includeSubtypes) {
+    PSSIFOption<Edge> result = PSSIFOption.none();
+
+    for (ConnectionMapping mapping : getMappings().getMany()) {
+      result = PSSIFOption.merge(result, mapping.applyIncoming(node));
     }
-    //Note: this disables attribute overloading. If we want
-    //to overload attributes in specialization element types
-    //we need to find only locally, and filter on getAttributes
-    //so that inherited attributes are only taken when no local ones exist.
-    if (findAttribute(name) != null || findAttributeInSpecializations(name) != null) {
-      throw new PSSIFStructuralIntegrityException("duplicate attribute with name " + name);
+
+    if (includeSubtypes) {
+      for (EdgeType special : getSpecials()) {
+        result = PSSIFOption.merge(result, special.applyIncoming(node, includeSubtypes));
+      }
     }
-    if (!(PrimitiveDataType.DECIMAL.equals(type) || PrimitiveDataType.INTEGER.equals(type)) && !Units.NONE.equals(unit)) {
-      throw new PSSIFStructuralIntegrityException("Only numeric attributes can have units!");
-    }
-    AttributeImpl result = new AttributeImpl(name, type, unit, visible, category);
-    addAttribute(group, result);
+
     return result;
   }
 
-  private Attribute findAttributeInSpecializations(String name) {
-    for (EdgeType specialization : getSpecials()) {
-      Attribute attr = specialization.findAttribute(name);
-      if (attr != null) {
-        return attr;
+  @Override
+  public Node applyFrom(Edge edge) {
+    for (ConnectionMapping mapping : getMappings().getMany()) {
+      if (mapping.apply(edge.getModel()).getMany().contains(edge)) {
+        return mapping.applyFrom(edge);
+      }
+    }
+    for (EdgeType et : getSpecials()) {
+      if (et.applyFrom(edge) != null) {
+        return et.applyFrom(edge);
       }
     }
     return null;
   }
 
   @Override
-  public Attribute createAttribute(AttributeGroup group, String name, DataType dataType, boolean visible, AttributeCategory category) {
-    return createAttribute(group, name, dataType, Units.NONE, visible, category);
-  }
-
-  @Override
-  public AttributeGroup createAttributeGroup(String name) {
-    if (PSSIFUtil.normalize(name).isEmpty()) {
-      throw new PSSIFStructuralIntegrityException("The name of an attrobute group can not be null or empty!");
+  public Node applyTo(Edge edge) {
+    for (ConnectionMapping mapping : getMappings().getMany()) {
+      if (mapping.apply(edge.getModel()).getMany().contains(edge)) {
+        return mapping.applyTo(edge);
+      }
     }
-    if (findAttributeGroup(name) != null) {
-      throw new PSSIFStructuralIntegrityException("An attribute group with the name " + name + " already exists for element type " + getName());
+    for (EdgeType et : getSpecials()) {
+      if (et.applyTo(edge) != null) {
+        return et.applyTo(edge);
+      }
     }
-    AttributeGroupImpl result = new AttributeGroupImpl(name, this);
-    addAttributeGroup(result);
-    return result;
-  }
-
-  @Override
-  public void removeAttributeGroup(AttributeGroup group) {
-    if (PSSIFUtil.areSame(group.getName(), PSSIFConstants.DEFAULT_ATTRIBUTE_GROUP_NAME)) {
-      throw new PSSIFStructuralIntegrityException("The default attribute group can not be removed!");
-    }
-    super.removeAttributeGroup(findAttributeGroup(group.getName()));
+    return null;
   }
 }

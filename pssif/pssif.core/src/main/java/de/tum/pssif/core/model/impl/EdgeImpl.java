@@ -1,42 +1,29 @@
 package de.tum.pssif.core.model.impl;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
-
-import de.tum.pssif.core.metamodel.EdgeEnd;
-import de.tum.pssif.core.metamodel.impl.ConnectOperation;
-import de.tum.pssif.core.metamodel.impl.DisconnectOperation;
-import de.tum.pssif.core.metamodel.impl.ReadConnectedOperation;
+import de.tum.pssif.core.metamodel.impl.ReadFromNodesOperation;
+import de.tum.pssif.core.metamodel.impl.ReadToNodesOperation;
 import de.tum.pssif.core.model.Edge;
 import de.tum.pssif.core.model.Model;
 import de.tum.pssif.core.model.Node;
-import de.tum.pssif.core.util.PSSIFOption;
 
 
 public class EdgeImpl extends ElementImpl implements Edge {
-  private final Multimap<EdgeEnd, Node> nodes = HashMultimap.create();
+  private final Node from;
+  private final Node to;
 
-  public EdgeImpl(Model model) {
+  public EdgeImpl(Model model, Node from, Node to) {
     super(model);
+    this.from = from;
+    this.to = to;
   }
 
   @Override
-  public void apply(ConnectOperation op) {
-    nodes.put(op.getEnd(), op.getNode());
+  public Node apply(ReadFromNodesOperation op) {
+    return from;
   }
 
   @Override
-  public void apply(DisconnectOperation op) {
-    nodes.remove(op.getEnd(), op.getNode());
-  }
-
-  @Override
-  public PSSIFOption<Node> apply(ReadConnectedOperation op) {
-    return PSSIFOption.many(nodes.get(op.getEnd()));
-  }
-
-  @Override
-  public String toString() {
-    return "Edge (" + getId() + ")";
+  public Node apply(ReadToNodesOperation op) {
+    return to;
   }
 }

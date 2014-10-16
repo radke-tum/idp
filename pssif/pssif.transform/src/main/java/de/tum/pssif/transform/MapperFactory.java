@@ -1,12 +1,13 @@
 package de.tum.pssif.transform;
 
+import de.tum.pssif.core.common.PSSIFUtil;
 import de.tum.pssif.core.exception.PSSIFException;
-import de.tum.pssif.core.util.PSSIFUtil;
 import de.tum.pssif.transform.mapper.BpmnMapper;
 import de.tum.pssif.transform.mapper.EpkMapper;
 import de.tum.pssif.transform.mapper.SysMlMapper;
-import de.tum.pssif.transform.mapper.graphml.PssifMapper;
-import de.tum.pssif.transform.mapper.graphml.UfpMapper;
+import de.tum.pssif.transform.mapper.graphml.PSSIFMapper;
+import de.tum.pssif.transform.mapper.graphml.UFMMapper;
+import de.tum.pssif.transform.mapper.reqif.ReqifMapper;
 
 
 public final class MapperFactory {
@@ -36,9 +37,14 @@ public final class MapperFactory {
    */
   public static final String PSSIF = "PSSIF";
 
+  /**
+   * REQ-IF
+   */
+  public static final String REQ_IF = "reqIf";
+
   public static Mapper getMapper(String name) {
     if (PSSIFUtil.areSame(UOFP, name)) {
-      return new UfpMapper();
+      return new UFMMapper();
     }
     else if (PSSIFUtil.areSame(SYSML, name)) {
       return new SysMlMapper();
@@ -50,7 +56,10 @@ public final class MapperFactory {
       return new BpmnMapper();
     }
     else if (PSSIFUtil.areSame(PSSIF, name)) {
-      return new PssifMapper();
+      return new PSSIFMapper();
+    }
+    else if (PSSIFUtil.areSame(REQ_IF, name)) {
+    	return new ReqifMapper();
     }
     throw new PSSIFException("No mapper found for name: " + name);
   }

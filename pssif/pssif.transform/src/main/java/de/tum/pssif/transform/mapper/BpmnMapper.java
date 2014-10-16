@@ -28,11 +28,11 @@ public class BpmnMapper extends BaseVisioMapper {
 
   @Override
   protected Metamodel getView(Metamodel metamodel) {
-    Metamodel view = new AliasNodeTypeTransformation(metamodel.findNodeType("Block"), "Pool / Lane").apply(metamodel);
-    view = new AliasNodeTypeTransformation(view.findNodeType("State"), "Start Event").apply(view);
-    view = new AliasNodeTypeTransformation(view.findNodeType("Activity"), "Task").apply(view);
-    view = new AliasNodeTypeTransformation(view.findNodeType("State"), "End Event").apply(view);
-    view = new RenameEdgeTypeTransformation(view.findEdgeType("Control FLow"), "Sequence Flow").apply(view);
+    Metamodel view = new AliasNodeTypeTransformation(metamodel.getNodeType("Block").getOne(), "Pool / Lane", "Pool / Lane").apply(metamodel);
+    view = new AliasNodeTypeTransformation(view.getNodeType("State").getOne(), "Start Event", "Start Event").apply(view);
+    view = new AliasNodeTypeTransformation(view.getNodeType("Activity").getOne(), "Task", "Task").apply(view);
+    view = new AliasNodeTypeTransformation(view.getNodeType("State").getOne(), "End Event", "End Event").apply(view);
+    view = new RenameEdgeTypeTransformation(view.getEdgeType("Control Flow").getOne(), "Sequence Flow").apply(view);
     // TODO Auto-generated method stub
     return metamodel;
   }
