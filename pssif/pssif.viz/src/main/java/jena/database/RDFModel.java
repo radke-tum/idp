@@ -204,4 +204,14 @@ public interface RDFModel {
 	 * @return a property object
 	 */
 	Property getProperty(String uri);
+
+	/**
+	 * Writes model to a file in Turtle format.
+	 * 
+	 * @param name
+	 *            Name of the file
+	 * @param loc
+	 *            Location of the file
+	 */
+	void writeModelToTurtleFile(String name, String loc);
 }

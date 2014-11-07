@@ -4,6 +4,9 @@ import graph.model.MyEdge;
 import graph.model.MyJunctionNode;
 import graph.model.MyNode;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -13,12 +16,15 @@ import java.util.Set;
 
 import jena.database.Properties;
 import jena.database.URIs;
-import jena.database.impl.DatabaseImpl;
 import jena.database.impl.RDFModelImpl;
 import jena.mapper.DBMapper;
 import model.MyModelContainer;
 
-import com.hp.hpl.jena.query.ReadWrite;
+import org.pssif.mainProcesses.Methods;
+
+import com.hp.hpl.jena.query.DatasetAccessor;
+import com.hp.hpl.jena.query.DatasetAccessorFactory;
+import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.Statement;
@@ -35,9 +41,13 @@ import de.tum.pssif.core.model.Node;
 public class DBMapperImpl implements DBMapper {
 
 	public RDFModelImpl rdfModel;
-	public static DatabaseImpl db;
+	// public static DatabaseImpl db;
+	public static DatasetAccessor accessor;
 
 	// Variables to record changes that have to be saved in the Database
+	public static LinkedList<MyNode> newNodes = new LinkedList<>();
+	public static LinkedList<MyEdge> newEdges = new LinkedList<>();
+	public static LinkedList<MyJunctionNode> newJunctionNodes = new LinkedList<>();
 	public static LinkedList<MyNode> changedNodes = new LinkedList<>();
 	public static LinkedList<MyEdge> changedEdges = new LinkedList<>();
 	public static LinkedList<MyJunctionNode> changedJunctionNodes = new LinkedList<>();
@@ -48,37 +58,44 @@ public class DBMapperImpl implements DBMapper {
 
 	public DBMapperImpl() {
 		super();
-		if (db == null)
-			db = new DatabaseImpl(URIs.location, URIs.namespace);
-		rdfModel = db.getRdfModel();
+		// db = new DatabaseImpl(URIs.location, URIs.namespace);
+		// rdfModel = db.getRdfModel();
+		String serviceURI = URIs.uri.concat("/data");
+		accessor = DatasetAccessorFactory.createHTTP(serviceURI);
+		Model model = accessor.getModel();
+		rdfModel = new RDFModelImpl(URIs.modelname, model);
+
 	}
 
 	// MODEL
 
 	@Override
 	public void modelToDB(MyModelContainer model, String modelname) {
-		db.begin(ReadWrite.WRITE);
+		// db.begin(ReadWrite.WRITE);
+		// rdfModel.begin();
 		rdfModel.removeAll();
 		saveNodes(model.getAllNodes());
 		saveJunctionNodes(model.getAllJunctionNodes());
 		saveEdges(model.getAllEdges());
-		// TODO Testing
-		rdfModel.writeModelToFile("TestPSSIF", "C:\\Users\\Andrea\\Desktop\\");
-		db.commit();
-		db.end();
-		db.close();
+
+		addToServer();
+
+		// rdfModel.commit();
+		// db.commit();
+		// db.end();
+		// db.close();
 	}
 
 	@Override
 	public void saveToDB(String modelname) {
-		db.begin(ReadWrite.WRITE);
+		// db.begin(ReadWrite.WRITE);
+		// rdfModel.begin();
 		if (deleteAll) {
 			rdfModel.removeAll();
 			deleteAll = false;
 		}
-		saveNodes(changedNodes);
-		saveEdges(changedEdges);
-		saveJunctionNodes(changedJunctionNodes);
+
+		// changeElements();
 
 		for (MyNode node : deletedNodes)
 			removeNode(node);
@@ -86,11 +103,17 @@ public class DBMapperImpl implements DBMapper {
 			removeJunctionNode(junctionnode);
 		for (MyEdge edge : deletedEdges)
 			removeEdge(edge);
-		// TODO Testing
-		rdfModel.writeModelToFile("TestPSSIF", "C:\\Users\\Andrea\\Desktop\\");
-		db.commit();
-		db.end();
-		db.close();
+
+		saveNodes(newNodes);
+		saveEdges(newEdges);
+		saveJunctionNodes(newJunctionNodes);
+
+		addToServer();
+
+		// rdfModel.commit();
+		// db.commit();
+		// db.end();
+		// db.close();
 
 		// changes are in DB -> clear all Lists
 		clearAll();
@@ -98,11 +121,14 @@ public class DBMapperImpl implements DBMapper {
 
 	@Override
 	public void removeModel() {
-		db.begin(ReadWrite.WRITE);
+		// db.begin(ReadWrite.WRITE);
+		// rdfModel.begin();
 		rdfModel.removeAll();
-		db.removeNamedModel(rdfModel.toString());
-		db.commit();
-		db.end();
+		// rdfModel.commit();
+		accessor.deleteModel(URIs.modelname);
+		// db.removeNamedModel(rdfModel.toString());
+		// db.commit();
+		// db.end();
 	}
 
 	// NODES
@@ -130,12 +156,15 @@ public class DBMapperImpl implements DBMapper {
 	 */
 	private void addNode(MyNode mynode) {
 		Node n = mynode.getNode();
-		// Falls Edge noch nicht vorhanden
-		String uri = URIs.uriNode.concat(n.getId());
+		String globalID = Methods.findGlobalID(n, mynode.getNodeType()
+				.getType());
+
+		// Falls Node noch nicht vorhanden
+		String uri = URIs.uriNode.concat(globalID);
 		if (!rdfModel.bagContainsResource(uri, URIs.uriBagNodes)) {
 			// create Subject with URI from NodeID
 			Resource subjectNode = rdfModel.createResource(URIs.uriNode
-					.concat(n.getId()));
+					.concat(globalID));
 
 			// Add subject to Bag
 			rdfModel.addToBag(URIs.uriBagNodes, subjectNode);
@@ -161,12 +190,14 @@ public class DBMapperImpl implements DBMapper {
 	 */
 	private void removeNode(MyNode mynode) {
 		Node node = mynode.getNode();
+		String globalID = Methods.findGlobalID(node, mynode.getNodeType()
+				.getType());
 
-		if (rdfModel.bagContainsResource(URIs.uriNode.concat(node.getId()),
+		if (rdfModel.bagContainsResource(URIs.uriNode.concat(globalID),
 				URIs.uriBagNodes)) {
 			// get Subject with URI from NodeID
 			Resource subjectNode = rdfModel.getResource(URIs.uriNode
-					.concat(node.getId()));
+					.concat(globalID));
 
 			// Remove NodeType
 			rdfModel.removeTripleLiteral(subjectNode.getURI(),
@@ -182,7 +213,7 @@ public class DBMapperImpl implements DBMapper {
 
 			// Remove Node from Bag
 			rdfModel.removeFromBag(URIs.uriBagNodes,
-					URIs.uriNode.concat(node.getId()));
+					URIs.uriNode.concat(globalID));
 		}
 	}
 
@@ -315,20 +346,22 @@ public class DBMapperImpl implements DBMapper {
 
 			// Add Attributes from Edge
 			addAllAttributes(myedge.getAttributesHashMap(), subjectEdge,
-					URIs.uriEdge, e);
+					URIs.uriEdgeAttribute, e);
 
 			// Add all Annotations to Model
 			addAllAnnotations(e.getAnnotations(), subjectEdge);
 
 			// Add outgoing Nodes to Edge
 			Node out = myedge.getDestinationNode().getNode();
+
 			// check if outgoing Node is Node or JunctionNode
 			if (out instanceof JunctionNode)
 				uri = URIs.uriJunctionNode;
 			else
 				uri = URIs.uriNode;
-			Resource objectNode = rdfModel.createResource(uri.concat(out
-					.getId()));
+			Resource objectNode = rdfModel.createResource(uri.concat(Methods
+					.findGlobalID(out, myedge.getDestinationNode()
+							.getBaseNodeType())));
 			rdfModel.insert(subjectEdge, Properties.PROP_NODE_OUT, objectNode);
 
 			// Add incoming Nodes to Edge
@@ -338,7 +371,8 @@ public class DBMapperImpl implements DBMapper {
 				uri = URIs.uriJunctionNode;
 			else
 				uri = URIs.uriNode;
-			objectNode = rdfModel.getResource(uri.concat(in.getId()));
+			objectNode = rdfModel.getResource(uri.concat(Methods.findGlobalID(
+					in, myedge.getSourceNode().getBaseNodeType())));
 			rdfModel.insert(subjectEdge, Properties.PROP_NODE_IN, objectNode);
 		}
 	}
@@ -365,7 +399,7 @@ public class DBMapperImpl implements DBMapper {
 
 			// Remove all Attributes from Edge
 			removeAllAttributes(myedge.getAttributesHashMap(), subjectEdge,
-					URIs.uriEdge);
+					URIs.uriEdgeAttribute);
 
 			// Remove all Annotations to Model
 			removeAllAnnotations(edge.getAnnotations(), subjectEdge);
@@ -449,15 +483,27 @@ public class DBMapperImpl implements DBMapper {
 		if (value.isOne()) {
 			PSSIFValue v = value.getOne();
 			String attrValue = v.getValue().toString();
+			if (datatype.compareTo("Date") == 0) {
+				DateFormat df = new SimpleDateFormat("dd.MM.yyyy");
+				Date date = (Date) v.getValue();
+				attrValue = df.format(date);
+			}
 			addPSSIFValue(subjectAttr, attrValue, unit, datatype, category);
 			return;
 		}
 
 		if (value.isMany()) {
 			Set<PSSIFValue> values = value.getMany();
-			for (PSSIFValue val : values)
-				addPSSIFValue(subjectAttr, val.getValue().toString(), unit,
-						datatype, category);
+			for (PSSIFValue val : values) {
+
+				String attrValue = val.getValue().toString();
+				if (datatype.compareTo("Date") == 0) {
+					DateFormat df = new SimpleDateFormat("dd.mm.yyyy");
+					Date date = (Date) val.getValue();
+					attrValue = df.format(date);
+				}
+				addPSSIFValue(subjectAttr, attrValue, unit, datatype, category);
+			}
 		}
 	}
 
@@ -477,6 +523,7 @@ public class DBMapperImpl implements DBMapper {
 	 */
 	private void addPSSIFValue(Resource subjectAttr, String value, String unit,
 			String datatype, String category) {
+
 		// Add Value
 		subjectAttr.addProperty(Properties.PROP_ATTR_VALUE, value);
 		// Add Unit
@@ -600,11 +647,20 @@ public class DBMapperImpl implements DBMapper {
 	 * Clears all Lists of Nodes/Edges/JunctionNodes that are changed or deleted
 	 */
 	public static void clearAll() {
+		newNodes.clear();
+		newEdges.clear();
+		newJunctionNodes.clear();
 		changedNodes.clear();
 		changedEdges.clear();
 		changedJunctionNodes.clear();
 		deletedNodes.clear();
 		deletedEdges.clear();
 		deletedJunctionNodes.clear();
+	}
+
+	private void addToServer() {
+		// TODO Testing
+		rdfModel.writeModelToFile("TestPSSIF", "C:\\Users\\Andrea\\Desktop\\");
+		accessor.putModel(rdfModel.getModel());
 	}
 }

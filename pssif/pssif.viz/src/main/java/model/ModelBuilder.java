@@ -16,6 +16,8 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.swing.JOptionPane;
+
 import org.pssif.comparedDataStructures.ComparedNodePair;
 import org.pssif.consistencyDataStructures.ConsistencyData;
 import org.pssif.consistencyDataStructures.NodeAndType;
@@ -66,77 +68,85 @@ public class ModelBuilder {
 	 *            the newly imported model
 	 */
 	public static void addModel(Metamodel Pmeta, Model Pmodel) {
-		// check if we have to merge the model with an existing
-		if (activeModel == null || activeModel.isEmpty()) {
-			MyModelContainer newModel = new MyModelContainer(Pmodel, Pmeta);
-			activeModel = newModel;
+		try {
+			// check if we have to merge the model with an existing
+			if (activeModel == null || activeModel.isEmpty()) {
+				MyModelContainer newModel = new MyModelContainer(Pmodel, Pmeta);
+				activeModel = newModel;
 
-			/**
-			 * @author Andreas
-			 */
-		} else {
-			// user selected the two models to be merged
-			if (UserGuidingConsistency.openConsistencyPopUp()) {
+				/**
+				 * @author Andreas
+				 */
+			} else {
+				// user selected the two models to be merged
+				if (UserGuidingConsistency.openConsistencyPopUp()) {
 
-				ConsistencyData consistencyData = ConsistencyData.getInstance();
+					ConsistencyData consistencyData = ConsistencyData
+							.getInstance();
 
-				MergingProcess mergingProcess = new MergingProcess(
-						activeModel.getModel(), Pmodel,
-						activeModel.getMetamodel(), Pmeta);
+					MergingProcess mergingProcess = new MergingProcess(
+							activeModel.getModel(), Pmodel,
+							activeModel.getMetamodel(), Pmeta);
 
-				UserGuidingConsistency.openChooseTraceLinksWindows();
+					UserGuidingConsistency.openChooseTraceLinksWindows();
 
-				ConsistencyData.getInstance().createUnmatchedNodeList();
+					ConsistencyData.getInstance().createUnmatchedNodeList();
 
-				// retrieving the results of the merging process
-				List<MergedNodePair> mergedNodePairs = consistencyData
-						.getMergedNodePairs();
+					// retrieving the results of the merging process
+					List<MergedNodePair> mergedNodePairs = consistencyData
+							.getMergedNodePairs();
 
-				List<MergedNodePair> tracedNodes = consistencyData
-						.getTracedList();
+					List<MergedNodePair> tracedNodes = consistencyData
+							.getTracedList();
 
-				List<NodeAndType> unmatchedNodesOrigin = consistencyData
-						.getUnmatchedNodeList();
+					List<NodeAndType> unmatchedNodesOrigin = consistencyData
+							.getUnmatchedNodeList();
 
-				List<NodeAndType> unmatchedJunctionnodesOrigin = consistencyData
-						.getUnmatchedJunctionnodesList();
-
-				ModelMerger merger = new ModelMerger();
-
-				// here the model merge is started
-				activeModel = new MyModelContainer(merger.mergeModels(
-						activeModel.getModel(), Pmodel,
-						activeModel.getMetamodel(), Pmeta, mergedNodePairs,
-						unmatchedNodesOrigin, unmatchedJunctionnodesOrigin,
-						tracedNodes, activeModel), Pmeta);
-
-				// reset the temporary data so that in the next merge operation
-				// there isn't searched for old node objects in the new model
-				ConsistencyData.getInstance().resetMergedNodePairList();
-				ConsistencyData.getInstance().resetUnmatchedNodesList();
-			}
-			// user selected the two models to be searched for corresponding
-			// elements
-			else {
-				List<ComparedNodePair> matchedList = UserGuidingConsistency
-						.startConsistencyCheck(activeModel.getModel(), Pmodel,
-								activeModel.getMetamodel(), Pmeta);
-
-				if (matchedList != null) {
+					List<NodeAndType> unmatchedJunctionnodesOrigin = consistencyData
+							.getUnmatchedJunctionnodesList();
 
 					ModelMerger merger = new ModelMerger();
-					Model mergedModel = merger.mergeModels(
-							activeModel.getModel(), Pmodel, Pmeta);
 
-					MyModelContainer newModel = new MyModelContainer(
-							mergedModel, Pmeta);
+					// here the model merge is started
+					activeModel = new MyModelContainer(merger.mergeModels(
+							activeModel.getModel(), Pmodel,
+							activeModel.getMetamodel(), Pmeta, mergedNodePairs,
+							unmatchedNodesOrigin, unmatchedJunctionnodesOrigin,
+							tracedNodes, activeModel), Pmeta);
 
-					activeModel = newModel;
-
-					setEqualsLinks(matchedList);
+					// reset the temporary data so that in the next merge
+					// operation
+					// there isn't searched for old node objects in the new
+					// model
+					ConsistencyData.getInstance().resetMergedNodePairList();
+					ConsistencyData.getInstance().resetUnmatchedNodesList();
 				}
+				// user selected the two models to be searched for corresponding
+				// elements
+				else {
+					List<ComparedNodePair> matchedList = UserGuidingConsistency
+							.startConsistencyCheck(activeModel.getModel(),
+									Pmodel, activeModel.getMetamodel(), Pmeta);
 
+					if (matchedList != null) {
+
+						ModelMerger merger = new ModelMerger();
+						Model mergedModel = merger.mergeModels(
+								activeModel.getModel(), Pmodel, Pmeta);
+
+						MyModelContainer newModel = new MyModelContainer(
+								mergedModel, Pmeta);
+
+						activeModel = newModel;
+
+						setEqualsLinks(matchedList);
+					}
+
+				}
 			}
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(null, e.getMessage(), "",
+					JOptionPane.ERROR_MESSAGE);
 		}
 	}
 
@@ -155,8 +165,10 @@ public class ModelBuilder {
 	private static void setEqualsLinks(List<ComparedNodePair> matchedList) {
 		for (ComparedNodePair comparedNodePair : matchedList) {
 
-			MyEdgeType edgeType = new MyEdgeType(metaModel.getEdgeType(
-					PSSIFCanonicMetamodelCreator.TAGS.get("E_EQUALS")).getOne(), 4);
+			MyEdgeType edgeType = new MyEdgeType(
+					metaModel.getEdgeType(
+							PSSIFCanonicMetamodelCreator.TAGS.get("E_EQUALS"))
+							.getOne(), 4);
 
 			for (MyNode actNode : activeModel.getAllNodes()) {
 				if (Methods.findGlobalID(actNode.getNode(),

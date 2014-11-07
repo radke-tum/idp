@@ -37,9 +37,9 @@ public class Properties {
 	// public static final Property Prop_ATTR_ALIAS = m
 	// .createProperty(URIs.uriAttribute
 	// + PSSIFConstants.ALIAS_ANNOTATION_KEY);
-	// public static final Property Prop_ATTR_GLOBAL_ID = m
-	// .createProperty(URIs.uriAttribute
-	// + PSSIFConstants.BUILTIN_ATTRIBUTE_GLOBAL_ID);
+	public static final Property Prop_ATTR_GLOBAL_ID = m
+			.createProperty(URIs.uriAttribute
+					+ PSSIFConstants.BUILTIN_ATTRIBUTE_GLOBAL_ID);
 	// public static final Property Prop_ATTR_GROUP_NAME = m
 	// .createProperty(URIs.uriAttribute
 	// + PSSIFConstants.DEFAULT_ATTRIBUTE_GROUP_NAME);

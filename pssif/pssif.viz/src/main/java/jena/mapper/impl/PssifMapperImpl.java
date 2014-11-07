@@ -1,5 +1,9 @@
 package jena.mapper.impl;
 
+import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -8,12 +12,12 @@ import javax.swing.JOptionPane;
 
 import jena.database.Properties;
 import jena.database.URIs;
-import jena.database.impl.DatabaseImpl;
 import jena.database.impl.RDFModelImpl;
 import jena.mapper.PssifMapper;
 import model.ModelBuilder;
 
-import com.hp.hpl.jena.query.ReadWrite;
+import com.hp.hpl.jena.query.DatasetAccessor;
+import com.hp.hpl.jena.query.DatasetAccessorFactory;
 import com.hp.hpl.jena.rdf.model.Literal;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.Statement;
@@ -21,14 +25,17 @@ import com.hp.hpl.jena.rdf.model.StmtIterator;
 
 import de.tum.pssif.core.common.PSSIFConstants;
 import de.tum.pssif.core.common.PSSIFOption;
+import de.tum.pssif.core.common.PSSIFValue;
 import de.tum.pssif.core.metamodel.Attribute;
 import de.tum.pssif.core.metamodel.ConnectionMapping;
+import de.tum.pssif.core.metamodel.DataType;
 import de.tum.pssif.core.metamodel.EdgeType;
 import de.tum.pssif.core.metamodel.ElementType;
 import de.tum.pssif.core.metamodel.JunctionNodeType;
 import de.tum.pssif.core.metamodel.Metamodel;
 import de.tum.pssif.core.metamodel.NodeType;
 import de.tum.pssif.core.metamodel.NodeTypeBase;
+import de.tum.pssif.core.metamodel.PrimitiveDataType;
 import de.tum.pssif.core.metamodel.external.PSSIFCanonicMetamodelCreator;
 import de.tum.pssif.core.model.Edge;
 import de.tum.pssif.core.model.Element;
@@ -39,25 +46,35 @@ import de.tum.pssif.core.model.impl.ModelImpl;
 //DB to Model Mapper
 public class PssifMapperImpl implements PssifMapper {
 	public RDFModelImpl rdfModel;
-	public static DatabaseImpl db;
+	// public static DatabaseImpl db;
 	private de.tum.pssif.core.model.Model pssifModel;
 	private Metamodel metamodel = PSSIFCanonicMetamodelCreator.create();
 	private HashMap<String, Node> nodes = new HashMap<>();
 	private HashMap<String, Edge> edges = new HashMap<>();
 	private HashMap<String, JunctionNode> junctionNodes = new HashMap<>();
+	public static DatasetAccessor accessor;
 
 	@Override
 	public void DBToModel() {
-		if (db == null)
-			db = new DatabaseImpl(URIs.location, URIs.namespace);
-		rdfModel = db.getRdfModel();
+		// db = new DatabaseImpl(URIs.location, URIs.namespace);
+
+		String serviceURI = URIs.uri.concat("/data");
+		accessor = DatasetAccessorFactory.createHTTP(serviceURI);
+		try {
+			rdfModel = new RDFModelImpl(URIs.modelname, accessor.getModel());
+
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(null, "No such Model!\n", "PSSIF",
+					JOptionPane.ERROR_MESSAGE);
+		}
+
 		pssifModel = new ModelImpl();
 
-		db.begin(ReadWrite.READ);
+		// db.begin(ReadWrite.READ);
 		getNodes();
 		getJunctionNodes();
 		getEdges();
-		db.end();
+		// db.end();
 
 		ModelBuilder.addModel(ModelBuilder.getMetamodel(), pssifModel);
 	}
@@ -251,8 +268,9 @@ public class PssifMapperImpl implements PssifMapper {
 			} else
 				nodeTypeIn = metamodel.getNodeType(nodeTypeName).getOne();
 			// get ID
-			Resource resNodeID = resNodeIn.getProperty(Properties.PROP_ATTR_ID)
-					.getObject().asResource();
+			Resource resNodeID = resNodeIn
+					.getProperty(Properties.Prop_ATTR_GLOBAL_ID).getObject()
+					.asResource();
 			Statement st = resNodeID.getProperty(Properties.PROP_ATTR_VALUE);
 			String id = st.getObject().toString();
 			// get existing Node from ID
@@ -275,7 +293,7 @@ public class PssifMapperImpl implements PssifMapper {
 				nodeTypeOut = metamodel.getNodeType(nodeTypeName).getOne();
 			// get ID
 			Resource resNodeID = resNodeOut
-					.getProperty(Properties.PROP_ATTR_ID).getObject()
+					.getProperty(Properties.Prop_ATTR_GLOBAL_ID).getObject()
 					.asResource();
 			Statement st = resNodeID.getProperty(Properties.PROP_ATTR_VALUE);
 			String id = st.getObject().toString();
@@ -330,16 +348,17 @@ public class PssifMapperImpl implements PssifMapper {
 				// Add the Attribute to the element
 				PSSIFOption<Attribute> attributePssif = type
 						.getAttribute(attribute);
-				if (attributePssif.isOne()) {
-					attributePssif.getOne().set(
-							elem,
-							PSSIFOption.one(attributePssif.getOne().getType()
-									.fromObject(value)));
-				}
+				saveAttribute(elem, attributePssif, value);
 
 				// if attribute is the ID -> save it
-				if (PSSIFConstants.BUILTIN_ATTRIBUTE_ID.contains(attribute))
-					id = value;
+				if (elem instanceof Node) {
+					if (PSSIFConstants.BUILTIN_ATTRIBUTE_GLOBAL_ID
+							.contains(attribute))
+						id = value;
+				} else {
+					if (PSSIFConstants.BUILTIN_ATTRIBUTE_ID.contains(attribute))
+						id = value;
+				}
 			}
 			// Property is an Annotation
 			else if (propURI[0].concat("#").equals(URIs.uriAnnotation)) {
@@ -353,5 +372,63 @@ public class PssifMapperImpl implements PssifMapper {
 			}
 		}
 		return id;
+	}
+
+	/**
+	 * Saves the value of a given attribute
+	 * 
+	 * @param elem
+	 *            Node/Edge/JunctionNode
+	 * @param tmp
+	 * @param value
+	 * @return true if everything went fine, otherwise false
+	 */
+	public boolean saveAttribute(Element elem, PSSIFOption<Attribute> tmp,
+			String value) {
+		if (tmp.isOne()) {
+			Attribute attribute = tmp.getOne();
+			DataType attrType = attribute.getType();
+
+			if (attrType.equals(PrimitiveDataType.DATE)) {
+				try {
+					SimpleDateFormat formatter = new SimpleDateFormat(
+							"dd.MM.yyyy");
+					Date date = formatter.parse(value);
+
+					PSSIFValue res = PrimitiveDataType.DATE.fromObject(date);
+
+					attribute.set(elem, PSSIFOption.one(res));
+				} catch (IllegalArgumentException | ParseException e) {
+					e.printStackTrace();
+					return false;
+				}
+			}
+
+			else if (attrType.equals(PrimitiveDataType.DECIMAL)) {
+				try {
+					PSSIFValue res = PrimitiveDataType.DECIMAL
+							.fromObject(new BigDecimal(value));
+
+					attribute.set(elem, PSSIFOption.one(res));
+				} catch (IllegalArgumentException e) {
+					e.printStackTrace();
+					return false;
+				}
+			}
+
+			else {
+				try {
+
+					attribute.set(elem,
+							PSSIFOption.one(attrType.fromObject(value)));
+
+				} catch (IllegalArgumentException e) {
+					e.printStackTrace();
+					return false;
+				}
+			}
+			return true;
+		}
+		return false;
 	}
 }

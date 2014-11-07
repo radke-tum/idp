@@ -111,14 +111,14 @@ public class MyModelContainer {
 				for (Node tempNode : tempNodes.getMany()) {
 					// TODO added
 					MyNode newNode = new MyNode(tempNode, t);
-					DBMapperImpl.changedNodes.add(newNode);
+					DBMapperImpl.newNodes.add(newNode);
 					nodes.add(newNode);
 				}
 			}
 			if (tempNodes.isOne()) {
 				// TODO added
 				MyNode newNode = new MyNode(tempNodes.getOne(), t);
-				DBMapperImpl.changedNodes.add(newNode);
+				DBMapperImpl.newNodes.add(newNode);
 				nodes.add(newNode);
 			}
 
@@ -136,7 +136,7 @@ public class MyModelContainer {
 				for (Node tempNode : tempNodes.getMany()) {
 					// TODO added
 					MyJunctionNode newNode = new MyJunctionNode(tempNode, t);
-					DBMapperImpl.changedJunctionNodes.add(newNode);
+					DBMapperImpl.newJunctionNodes.add(newNode);
 					junctionNodes.add(newNode);
 				}
 			}
@@ -144,7 +144,7 @@ public class MyModelContainer {
 				// TODO added
 				MyJunctionNode newNode = new MyJunctionNode(tempNodes.getOne(),
 						t);
-				DBMapperImpl.changedJunctionNodes.add(newNode);
+				DBMapperImpl.newJunctionNodes.add(newNode);
 				junctionNodes.add(newNode);
 			}
 
@@ -202,7 +202,7 @@ public class MyModelContainer {
 	public void addNode(MyNode node) {
 		if (!isContained(node)) {
 			// TODO added
-			DBMapperImpl.changedNodes.add(node);
+			DBMapperImpl.newNodes.add(node);
 			nodes.add(node);
 		}
 	}
@@ -217,7 +217,7 @@ public class MyModelContainer {
 	public void addEdge(MyEdge edge) {
 		if (!isContained(edge)) {
 			// TODO added
-			DBMapperImpl.changedEdges.add(edge);
+			DBMapperImpl.newEdges.add(edge);
 			edges.add(edge);
 		}
 	}
@@ -351,7 +351,7 @@ public class MyModelContainer {
 	public void addCollapserEdge(MyEdge newEdge) {
 		newEdge.setCollapseEdge(true);
 		// TODO added
-		DBMapperImpl.changedEdges.add(newEdge);
+		DBMapperImpl.newEdges.add(newEdge);
 		edges.add(newEdge);
 	}
 
@@ -391,7 +391,7 @@ public class MyModelContainer {
 								+ newNodeIdCounter++)));
 		MyNode newMyNode = new MyNode(newNode, type);
 		// TODO added
-		DBMapperImpl.changedNodes.add(newMyNode);
+		DBMapperImpl.newNodes.add(newMyNode);
 		nodes.add(newMyNode);
 		return newMyNode;
 	}
@@ -464,7 +464,7 @@ public class MyModelContainer {
 					.println(source.getRealName() + destination.getRealName());
 
 			// TODO added
-			DBMapperImpl.changedEdges.add(e);
+			DBMapperImpl.newEdges.add(e);
 			edges.add(e);
 			return true;
 		} else {
@@ -493,7 +493,7 @@ public class MyModelContainer {
 		System.out.println(source.getRealName() + destination.getRealName());
 
 		// TODO added
-		DBMapperImpl.changedEdges.add(e);
+		DBMapperImpl.newEdges.add(e);
 		edges.add(e);
 		return newEdge;
 

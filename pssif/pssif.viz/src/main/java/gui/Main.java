@@ -24,6 +24,7 @@ import java.util.LinkedList;
 
 import javax.swing.BorderFactory;
 import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -32,12 +33,12 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+import jena.database.RDFModel;
 import jena.database.URIs;
 import jena.mapper.impl.DBMapperImpl;
 import jena.mapper.impl.PssifMapperImpl;
 import model.FileExporter;
 import model.FileImporter;
-import model.ModelBuilder;
 import reqtool.bus.ReqToolReqistry;
 import reqtool.event.CreateSpecProjectEvent;
 
@@ -68,6 +69,8 @@ public class Main {
 	private JMenuItem importDB;
 	private JMenuItem exportDB;
 	private JMenuItem followEdges;
+	private JMenuItem exportDBTurtleItem;
+	private JMenu exportDBTurtle;
 	private JCheckBoxMenuItem KKLayout;
 	private JCheckBoxMenuItem FRLayout;
 	private JCheckBoxMenuItem SpringLayout;
@@ -273,6 +276,37 @@ public class Main {
 		fileMenu.add(importDB);
 
 		menuBar.add(fileMenu);
+
+		exportDBTurtle = new JMenu("Export DB");
+		exportDBTurtleItem = new JMenuItem("Export in Turtle File");
+		exportDBTurtleItem.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				RDFModel model = null;
+
+				if (fromDB == null) {
+					if (toDB == null) {
+						toDB = new DBMapperImpl();
+						model = toDB.rdfModel;
+					} else
+						model = toDB.rdfModel;
+				} else
+					model = fromDB.rdfModel;
+
+				JFileChooser finder = new JFileChooser();
+				int returnVal = finder.showSaveDialog(null);
+				if (returnVal == javax.swing.JFileChooser.APPROVE_OPTION) {
+					java.io.File file = finder.getSelectedFile();
+					model.writeModelToTurtleFile(file.getName(), file
+							.getParent().concat("\\"));
+					JOptionPane.showMessageDialog(null, "Export successful",
+							"PSSIF", JOptionPane.INFORMATION_MESSAGE);
+				}
+			}
+		});
+		exportDBTurtle.add(exportDBTurtleItem);
+		menuBar.add(exportDBTurtle);
 
 		return menuBar;
 	}

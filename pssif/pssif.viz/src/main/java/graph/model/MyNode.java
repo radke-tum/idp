@@ -16,6 +16,8 @@ import de.tum.pssif.core.common.PSSIFOption;
 import de.tum.pssif.core.common.PSSIFValue;
 import de.tum.pssif.core.metamodel.Attribute;
 import de.tum.pssif.core.metamodel.DataType;
+import de.tum.pssif.core.metamodel.NodeType;
+import de.tum.pssif.core.metamodel.NodeTypeBase;
 import de.tum.pssif.core.metamodel.PrimitiveDataType;
 import de.tum.pssif.core.model.Node;
 
@@ -671,5 +673,10 @@ public class MyNode implements IMyNode{
 	  {
 	    return attr1.getFirst().compareTo(attr2.getFirst());
 	  }
+	}
+
+	@Override
+	public NodeTypeBase getBaseNodeType() {
+		return type.getType();
 	}
 }

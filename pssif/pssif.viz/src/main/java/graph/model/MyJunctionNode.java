@@ -7,6 +7,8 @@ import de.tum.pssif.core.common.PSSIFConstants;
 import de.tum.pssif.core.common.PSSIFOption;
 import de.tum.pssif.core.common.PSSIFValue;
 import de.tum.pssif.core.metamodel.Attribute;
+import de.tum.pssif.core.metamodel.NodeType;
+import de.tum.pssif.core.metamodel.NodeTypeBase;
 import de.tum.pssif.core.model.Node;
 
 public class MyJunctionNode implements IMyNode {
@@ -150,6 +152,11 @@ public class MyJunctionNode implements IMyNode {
 				+ findName() + "</h3>";
 
 		return output;
+	}
+
+	@Override
+	public NodeTypeBase getBaseNodeType() {
+		return type.getType();
 	}
 
 	/*

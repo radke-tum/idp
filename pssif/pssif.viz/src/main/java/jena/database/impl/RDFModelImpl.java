@@ -47,6 +47,17 @@ public class RDFModelImpl implements RDFModel {
 	}
 
 	@Override
+	public void writeModelToTurtleFile(String name, String loc) {
+		try {
+			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(
+					new FileOutputStream(loc + name + ".ttl", false)));
+			model.write(writer, "TTL");
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Override
 	public List<Resource> findAllSubjects() {
 		List<Resource> ressources = new ArrayList<Resource>();
 		ResIterator i = model.listSubjects();
@@ -211,6 +222,16 @@ public class RDFModelImpl implements RDFModel {
 		model.commit();
 	}
 
+	// TODO
+	public void begin() {
+		model.begin();
+	}
+
+	// TODO
+	public void abort() {
+		model.abort();
+	}
+
 	// Setter and Getter
 	public void setName(String name) {
 		this.name = name;
@@ -227,5 +248,4 @@ public class RDFModelImpl implements RDFModel {
 	public void setModel(Model model) {
 		this.model = model;
 	}
-
 }
