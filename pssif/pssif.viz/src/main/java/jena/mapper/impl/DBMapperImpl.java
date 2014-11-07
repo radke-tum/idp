@@ -97,16 +97,16 @@ public class DBMapperImpl implements DBMapper {
 
 		// changeElements();
 
+		saveNodes(newNodes);
+		saveEdges(newEdges);
+		saveJunctionNodes(newJunctionNodes);
+
 		for (MyNode node : deletedNodes)
 			removeNode(node);
 		for (MyJunctionNode junctionnode : deletedJunctionNodes)
 			removeJunctionNode(junctionnode);
 		for (MyEdge edge : deletedEdges)
 			removeEdge(edge);
-
-		saveNodes(newNodes);
-		saveEdges(newEdges);
-		saveJunctionNodes(newJunctionNodes);
 
 		addToServer();
 
@@ -170,8 +170,9 @@ public class DBMapperImpl implements DBMapper {
 			rdfModel.addToBag(URIs.uriBagNodes, subjectNode);
 
 			// Add NodeType
-			subjectNode.addProperty(Properties.PROP_TYPE, mynode.getNodeType()
-					.getName());
+			Resource type = rdfModel.createResource(URIs.uriNodeType
+					.concat(mynode.getNodeType().getName()));
+			rdfModel.insert(subjectNode, Properties.PROP_TYPE, type);
 
 			// Add Attributes from Node
 			addAllAttributes(mynode.getAttributesHashMap(), subjectNode,
@@ -200,9 +201,9 @@ public class DBMapperImpl implements DBMapper {
 					.concat(globalID));
 
 			// Remove NodeType
-			rdfModel.removeTripleLiteral(subjectNode.getURI(),
-					Properties.PROP_TYPE.getURI(), mynode.getNodeType()
-							.getName());
+			Resource type = subjectNode
+					.getPropertyResourceValue(Properties.PROP_TYPE);
+			rdfModel.removeTriple(subjectNode, Properties.PROP_TYPE, type);
 
 			// Remove Attributes from Node
 			removeAllAttributes(mynode.getAttributesHashMap(), subjectNode,
@@ -255,8 +256,9 @@ public class DBMapperImpl implements DBMapper {
 			rdfModel.addToBag(URIs.uriBagJunctionNodes, subjectJNode);
 
 			// Add JNodeType
-			subjectJNode.addProperty(Properties.PROP_TYPE, myJNode
-					.getNodeType().getName());
+			Resource type = rdfModel.createResource(URIs.uriJunctionNodeType
+					.concat(myJNode.getNodeType().getName()));
+			rdfModel.insert(subjectJNode, Properties.PROP_TYPE, type);
 
 			// Add Attributes from JNode
 			addAllAttributes(myJNode.getAttributesHashMap(), subjectJNode,
@@ -285,9 +287,9 @@ public class DBMapperImpl implements DBMapper {
 					.concat(jn.getId()));
 
 			// Remove NodeType
-			rdfModel.removeTripleLiteral(subjectJNode.getURI(),
-					Properties.PROP_TYPE.getURI(), mynode.getNodeType()
-							.getName());
+			Resource type = subjectJNode
+					.getPropertyResourceValue(Properties.PROP_TYPE);
+			rdfModel.removeTriple(subjectJNode, Properties.PROP_TYPE, type);
 
 			// Remove Attributes from Node
 			removeAllAttributes(mynode.getAttributesHashMap(), subjectJNode,
@@ -341,8 +343,9 @@ public class DBMapperImpl implements DBMapper {
 			rdfModel.addToBag(URIs.uriBagEdges, subjectEdge);
 
 			// Add EdgeType
-			subjectEdge.addProperty(Properties.PROP_TYPE, myedge.getEdgeType()
-					.getName());
+			Resource type = rdfModel.createResource(URIs.uriEdgeType
+					.concat(myedge.getEdgeType().getName()));
+			rdfModel.insert(subjectEdge, Properties.PROP_TYPE, type);
 
 			// Add Attributes from Edge
 			addAllAttributes(myedge.getAttributesHashMap(), subjectEdge,
@@ -393,9 +396,9 @@ public class DBMapperImpl implements DBMapper {
 					.concat(edge.getId()));
 
 			// Remove NodeType
-			rdfModel.removeTripleLiteral(subjectEdge.getURI(),
-					Properties.PROP_TYPE.getURI(), myedge.getEdgeType()
-							.getName());
+			Resource type = subjectEdge
+					.getPropertyResourceValue(Properties.PROP_TYPE);
+			rdfModel.removeTriple(subjectEdge, Properties.PROP_TYPE, type);
 
 			// Remove all Attributes from Edge
 			removeAllAttributes(myedge.getAttributesHashMap(), subjectEdge,

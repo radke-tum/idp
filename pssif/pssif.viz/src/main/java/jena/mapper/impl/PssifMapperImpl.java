@@ -19,6 +19,7 @@ import model.ModelBuilder;
 import com.hp.hpl.jena.query.DatasetAccessor;
 import com.hp.hpl.jena.query.DatasetAccessorFactory;
 import com.hp.hpl.jena.rdf.model.Literal;
+import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.Statement;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
@@ -112,8 +113,7 @@ public class PssifMapperImpl implements PssifMapper {
 			Node newNode = null;
 
 			// find NodeType
-			Statement resNodeType = subject.getProperty(Properties.PROP_TYPE);
-			String nodeTypeName = resNodeType.getObject().toString();
+			String nodeTypeName = getType(subject);
 
 			// Create new Node and NodeType
 			NodeType nodeType = metamodel.getNodeType(nodeTypeName).getOne();
@@ -161,8 +161,7 @@ public class PssifMapperImpl implements PssifMapper {
 			Node newJNode = null;
 
 			// find JNodeType
-			Statement resJNodeType = subject.getProperty(Properties.PROP_TYPE);
-			String jNodeTypeName = resJNodeType.getObject().toString();
+			String jNodeTypeName = getType(subject);
 
 			// create new JNode and JNodeType
 			JunctionNodeType jNodeType = metamodel.getJunctionNodeType(
@@ -212,8 +211,7 @@ public class PssifMapperImpl implements PssifMapper {
 	private void constructEdge(Resource subject) {
 		try {
 			// find EdgeType
-			Statement resEdgeType = subject.getProperty(Properties.PROP_TYPE);
-			String edgeTypeName = resEdgeType.getObject().toString();
+			String edgeTypeName = getType(subject);
 
 			// create new Edge and EdgeType
 			EdgeType edgeType = metamodel.getEdgeType(edgeTypeName).getOne();
@@ -257,9 +255,7 @@ public class PssifMapperImpl implements PssifMapper {
 			// get Node
 			Resource resNodeIn = stmtNodeIn.getObject().asResource();
 			// get NodeType
-			Statement stmtNodeType = resNodeIn
-					.getProperty(Properties.PROP_TYPE);
-			String nodeTypeName = stmtNodeType.getObject().toString();
+			String nodeTypeName = getType(resNodeIn);
 			// if node is a Junction node you have to get the JunctionNodeType
 			if (resNodeIn.toString().contains(URIs.uriJunctionNode)) {
 				PSSIFOption<NodeTypeBase> nodeTypeIn1 = metamodel
@@ -281,9 +277,7 @@ public class PssifMapperImpl implements PssifMapper {
 			// get Node
 			Resource resNodeOut = stmtNodeOut.getObject().asResource();
 			// get NodeType
-			Statement stmtNodeType = resNodeOut
-					.getProperty(Properties.PROP_TYPE);
-			String nodeTypeName = stmtNodeType.getObject().toString();
+			String nodeTypeName = getType(resNodeOut);
 			// if node is a Junction node you have to get the JunctionNodeType
 			if (resNodeOut.toString().contains(URIs.uriJunctionNode)) {
 				PSSIFOption<NodeTypeBase> nodeTypeOut1 = metamodel
@@ -430,5 +424,14 @@ public class PssifMapperImpl implements PssifMapper {
 			return true;
 		}
 		return false;
+	}
+
+	private String getType(Resource subject) {
+		Statement stmt = subject.getProperty(Properties.PROP_TYPE);
+		// to get the Type you have to split the URI and take the last
+		// part of it
+		String[] propURI = stmt.getObject().toString().split("#");
+
+		return propURI[1];
 	}
 }
