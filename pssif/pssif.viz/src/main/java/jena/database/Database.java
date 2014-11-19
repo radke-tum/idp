@@ -1,6 +1,7 @@
 package jena.database;
 
 import com.hp.hpl.jena.query.ReadWrite;
+import com.hp.hpl.jena.rdf.model.Model;
 
 public interface Database {
 	/**
@@ -45,4 +46,12 @@ public interface Database {
 	 *            URI of the model to be removed
 	 */
 	void removeNamedModel(String uri);
+
+	/**
+	 * Saves the Model either to Fuseki Server or to the Dataset
+	 * 
+	 * @param model
+	 *            model to be removed
+	 */
+	void saveModel(Model model);
 }

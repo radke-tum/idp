@@ -669,19 +669,20 @@ public class GraphView {
 											.iterator().next();
 
 									// TODO added
-									DBMapperImpl.newEdges.add(selectedEdge);
+									DBMapperImpl.deletedEdges.add(selectedEdge);
 
 									boolean res = selectedEdge.updateAttribute(
 											attributeName, data);
+
+									// TODO added
+									DBMapperImpl.newEdges.add(selectedEdge);
+
 									// directed attr changed
 									if (attributeName
 											.equals(PSSIFConstants.BUILTIN_ATTRIBUTE_DIRECTED)) {
 										graph.updateGraph();
 
 									}
-
-									// TODO added
-									DBMapperImpl.changedEdges.add(selectedEdge);
 
 									if (!res) {
 										model.setValueAt(null, row, column);

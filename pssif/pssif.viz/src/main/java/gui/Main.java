@@ -142,6 +142,7 @@ public class Main {
 
 		frame.pack();
 		frame.setVisible(true);
+		importDB.setVisible(true);
 	}
 
 	/**
@@ -826,7 +827,7 @@ public class Main {
 			graphOperations.setEnabled(false);
 			modelStatistics.setEnabled(true);
 		}
-
+		importDB.setVisible(false);
 	}
 
 	/**

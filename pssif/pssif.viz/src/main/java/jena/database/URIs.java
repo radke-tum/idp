@@ -3,6 +3,8 @@ package jena.database;
 public class URIs {
 	// URIs
 	public static final String uri = "http://localhost:3030/PSSIF";
+	// public static final String uri =
+	// "http://vmkrcmar2.informatik.tu-muenchen.de:3030/PSSIF";
 	public static final String namespace = uri.concat("#");
 
 	public static final String uriBagNodes = uri.concat("/BagNodes");

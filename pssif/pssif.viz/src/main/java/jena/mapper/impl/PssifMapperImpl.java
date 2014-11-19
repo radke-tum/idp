@@ -12,14 +12,12 @@ import javax.swing.JOptionPane;
 
 import jena.database.Properties;
 import jena.database.URIs;
+import jena.database.impl.DatabaseImpl;
 import jena.database.impl.RDFModelImpl;
 import jena.mapper.PssifMapper;
 import model.ModelBuilder;
 
-import com.hp.hpl.jena.query.DatasetAccessor;
-import com.hp.hpl.jena.query.DatasetAccessorFactory;
 import com.hp.hpl.jena.rdf.model.Literal;
-import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.Statement;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
@@ -47,29 +45,18 @@ import de.tum.pssif.core.model.impl.ModelImpl;
 //DB to Model Mapper
 public class PssifMapperImpl implements PssifMapper {
 	public RDFModelImpl rdfModel;
-	// public static DatabaseImpl db;
+	public static DatabaseImpl db;
 	private de.tum.pssif.core.model.Model pssifModel;
 	private Metamodel metamodel = PSSIFCanonicMetamodelCreator.create();
 	private HashMap<String, Node> nodes = new HashMap<>();
 	private HashMap<String, Edge> edges = new HashMap<>();
 	private HashMap<String, JunctionNode> junctionNodes = new HashMap<>();
-	public static DatasetAccessor accessor;
 
 	@Override
 	public void DBToModel() {
-		// db = new DatabaseImpl(URIs.location, URIs.namespace);
-
-		String serviceURI = URIs.uri.concat("/data");
-		accessor = DatasetAccessorFactory.createHTTP(serviceURI);
-		try {
-			rdfModel = new RDFModelImpl(URIs.modelname, accessor.getModel());
-
-		} catch (Exception e) {
-			JOptionPane.showMessageDialog(null, "No such Model!\n", "PSSIF",
-					JOptionPane.ERROR_MESSAGE);
-		}
-
+		db = new DatabaseImpl();
 		pssifModel = new ModelImpl();
+		rdfModel = db.getRdfModel();
 
 		// db.begin(ReadWrite.READ);
 		getNodes();
@@ -345,7 +332,7 @@ public class PssifMapperImpl implements PssifMapper {
 				saveAttribute(elem, attributePssif, value);
 
 				// if attribute is the ID -> save it
-				if (elem instanceof Node) {
+				if (elem instanceof Node || elem instanceof Edge) {
 					if (PSSIFConstants.BUILTIN_ATTRIBUTE_GLOBAL_ID
 							.contains(attribute))
 						id = value;

@@ -16,15 +16,13 @@ import java.util.Set;
 
 import jena.database.Properties;
 import jena.database.URIs;
+import jena.database.impl.DatabaseImpl;
 import jena.database.impl.RDFModelImpl;
 import jena.mapper.DBMapper;
 import model.MyModelContainer;
 
 import org.pssif.mainProcesses.Methods;
 
-import com.hp.hpl.jena.query.DatasetAccessor;
-import com.hp.hpl.jena.query.DatasetAccessorFactory;
-import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.Statement;
@@ -41,8 +39,7 @@ import de.tum.pssif.core.model.Node;
 public class DBMapperImpl implements DBMapper {
 
 	public RDFModelImpl rdfModel;
-	// public static DatabaseImpl db;
-	public static DatasetAccessor accessor;
+	public static DatabaseImpl db;
 
 	// Variables to record changes that have to be saved in the Database
 	public static LinkedList<MyNode> newNodes = new LinkedList<>();
@@ -58,13 +55,8 @@ public class DBMapperImpl implements DBMapper {
 
 	public DBMapperImpl() {
 		super();
-		// db = new DatabaseImpl(URIs.location, URIs.namespace);
-		// rdfModel = db.getRdfModel();
-		String serviceURI = URIs.uri.concat("/data");
-		accessor = DatasetAccessorFactory.createHTTP(serviceURI);
-		Model model = accessor.getModel();
-		rdfModel = new RDFModelImpl(URIs.modelname, model);
-
+		db = new DatabaseImpl();
+		rdfModel = db.getRdfModel();
 	}
 
 	// MODEL
@@ -78,9 +70,8 @@ public class DBMapperImpl implements DBMapper {
 		saveJunctionNodes(model.getAllJunctionNodes());
 		saveEdges(model.getAllEdges());
 
-		addToServer();
+		db.saveModel(rdfModel.getModel());
 
-		// rdfModel.commit();
 		// db.commit();
 		// db.end();
 		// db.close();
@@ -97,6 +88,9 @@ public class DBMapperImpl implements DBMapper {
 
 		// changeElements();
 
+		// save first then delete because of Version Management -> so it can
+		// happen that Edges are in new and deleted List, so delete should be
+		// your last operation
 		saveNodes(newNodes);
 		saveEdges(newEdges);
 		saveJunctionNodes(newJunctionNodes);
@@ -108,9 +102,8 @@ public class DBMapperImpl implements DBMapper {
 		for (MyEdge edge : deletedEdges)
 			removeEdge(edge);
 
-		addToServer();
+		db.saveModel(rdfModel.getModel());
 
-		// rdfModel.commit();
 		// db.commit();
 		// db.end();
 		// db.close();
@@ -125,8 +118,7 @@ public class DBMapperImpl implements DBMapper {
 		// rdfModel.begin();
 		rdfModel.removeAll();
 		// rdfModel.commit();
-		accessor.deleteModel(URIs.modelname);
-		// db.removeNamedModel(rdfModel.toString());
+		db.removeNamedModel(rdfModel.toString());
 		// db.commit();
 		// db.end();
 	}
@@ -244,7 +236,7 @@ public class DBMapperImpl implements DBMapper {
 	private void addJunctionNode(MyJunctionNode myJNode) {
 		Node jn = myJNode.getNode();
 
-		// Falls Edge noch nicht vorhanden
+		// Falls JunctionNode noch nicht vorhanden
 		if (!rdfModel.containsJunctionNode(URIs.uriJunctionNode.concat(jn
 				.getId()))) {
 
@@ -329,15 +321,16 @@ public class DBMapperImpl implements DBMapper {
 	 */
 	private void addEdge(MyEdge myedge) {
 		Edge e = myedge.getEdge();
-		String uri;
+		String globalID = Methods.findGlobalID(e, myedge.getEdgeType()
+				.getType());
+		String uri = URIs.uriEdge.concat(globalID);
 
 		// Falls Edge noch nicht vorhanden
-		if (!rdfModel.bagContainsResource(URIs.uriEdge.concat(e.getId()),
-				URIs.uriBagEdges)) {
+		if (!rdfModel.bagContainsResource(uri, URIs.uriBagEdges)) {
 
 			// create Subject with URI from NodeID
 			Resource subjectEdge = rdfModel.createResource(URIs.uriEdge
-					.concat(e.getId()));
+					.concat(globalID));
 
 			// Add subject to Bag
 			rdfModel.addToBag(URIs.uriBagEdges, subjectEdge);
@@ -388,12 +381,13 @@ public class DBMapperImpl implements DBMapper {
 	 */
 	private void removeEdge(MyEdge myedge) {
 		Edge edge = myedge.getEdge();
+		String globalID = Methods.findGlobalID(edge, myedge.getEdgeType()
+				.getType());
+		String uri = URIs.uriEdge.concat(globalID);
 
-		if (rdfModel.bagContainsResource(URIs.uriEdge.concat(edge.getId()),
-				URIs.uriBagEdges)) {
+		if (rdfModel.bagContainsResource(uri, URIs.uriBagEdges)) {
 			// get Subject with URI from NodeID
-			Resource subjectEdge = rdfModel.getResource(URIs.uriEdge
-					.concat(edge.getId()));
+			Resource subjectEdge = rdfModel.getResource(uri);
 
 			// Remove NodeType
 			Resource type = subjectEdge
@@ -408,8 +402,7 @@ public class DBMapperImpl implements DBMapper {
 			removeAllAnnotations(edge.getAnnotations(), subjectEdge);
 
 			// Remove Edge from Bag
-			rdfModel.removeFromBag(URIs.uriBagEdges,
-					URIs.uriEdge.concat(edge.getId()));
+			rdfModel.removeFromBag(URIs.uriBagEdges, uri);
 		}
 	}
 
@@ -659,11 +652,5 @@ public class DBMapperImpl implements DBMapper {
 		deletedNodes.clear();
 		deletedEdges.clear();
 		deletedJunctionNodes.clear();
-	}
-
-	private void addToServer() {
-		// TODO Testing
-		rdfModel.writeModelToFile("TestPSSIF", "C:\\Users\\Andrea\\Desktop\\");
-		accessor.putModel(rdfModel.getModel());
 	}
 }
