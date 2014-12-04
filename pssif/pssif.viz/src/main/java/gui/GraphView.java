@@ -582,14 +582,11 @@ public class GraphView {
 									if (selectedNode instanceof MyNode) {
 										MyNode node = (MyNode) selectedNode;
 
-										// TODO added
-										DBMapperImpl.deletedNodes.add(node);
-
 										boolean res = node.updateAttribute(
 												attributeName, data);
 
 										// TODO added
-										DBMapperImpl.newNodes.add(node);
+										DBMapperImpl.changedNodes.add(node);
 
 										if (!res) {
 											model.setValueAt(null, row, column);
@@ -668,14 +665,11 @@ public class GraphView {
 									MyEdge selectedEdge = selectedEdges
 											.iterator().next();
 
-									// TODO added
-									DBMapperImpl.deletedEdges.add(selectedEdge);
-
 									boolean res = selectedEdge.updateAttribute(
 											attributeName, data);
 
 									// TODO added
-									DBMapperImpl.newEdges.add(selectedEdge);
+									DBMapperImpl.changedEdges.add(selectedEdge);
 
 									// directed attr changed
 									if (attributeName

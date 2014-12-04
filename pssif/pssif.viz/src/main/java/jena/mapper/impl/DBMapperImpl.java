@@ -86,11 +86,9 @@ public class DBMapperImpl implements DBMapper {
 			deleteAll = false;
 		}
 
-		// changeElements();
-
 		// save first then delete because of Version Management -> so it can
 		// happen that Edges are in new and deleted List, so delete should be
-		// your last operation
+		// your last operation.
 		saveNodes(newNodes);
 		saveEdges(newEdges);
 		saveJunctionNodes(newJunctionNodes);
@@ -101,6 +99,8 @@ public class DBMapperImpl implements DBMapper {
 			removeJunctionNode(junctionnode);
 		for (MyEdge edge : deletedEdges)
 			removeEdge(edge);
+
+		changeElements();
 
 		db.saveModel(rdfModel.getModel());
 
@@ -651,8 +651,36 @@ public class DBMapperImpl implements DBMapper {
 		deletedJunctionNodes.clear();
 	}
 
+	/**
+	 * returns the ID of a certain URI. Doesn't look if this really is an ID
+	 * 
+	 * @param uri
+	 *            URI with ID in it
+	 * @return ID from URI
+	 */
 	private String getID(String uri) {
 		String[] uriSTR = uri.split("/");
 		return uriSTR[uriSTR.length - 1];
+	}
+
+	/**
+	 * Saves changed Edges/Nodes/JunctionNodes
+	 */
+	private void changeElements() {
+		// first deletes changed Nodes from DB and than add them to DB
+		for (MyNode node : changedNodes) {
+			removeNode(node);
+			addNode(node);
+		}
+
+		for (MyEdge edge : changedEdges) {
+			removeEdge(edge);
+			addEdge(edge);
+		}
+
+		for (MyJunctionNode jNode : changedJunctionNodes) {
+			removeJunctionNode(jNode);
+			addJunctionNode(jNode);
+		}
 	}
 }
