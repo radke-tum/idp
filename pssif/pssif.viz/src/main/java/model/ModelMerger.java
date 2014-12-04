@@ -18,6 +18,7 @@ import org.pssif.consistencyExceptions.ConsistencyException;
 import org.pssif.mainProcesses.Methods;
 import org.pssif.mergedDataStructures.MergedNodePair;
 
+import de.tum.pssif.core.common.PSSIFConstants;
 import de.tum.pssif.core.common.PSSIFOption;
 import de.tum.pssif.core.common.PSSIFValue;
 import de.tum.pssif.core.metamodel.Attribute;
@@ -1266,6 +1267,11 @@ public class ModelMerger {
 				for (Attribute a : attr) {
 					PSSIFOption<PSSIFValue> attrvalue = a.get(dataNode);
 
+//					//don't transfer the global ID (otherwise causes problems with the uniqueness of the ID)
+//					if(a.getName().equals(PSSIFConstants.BUILTIN_ATTRIBUTE_GLOBAL_ID)){
+//						continue;
+//					}
+					
 					if (attrvalue != null) {
 						currentType.getAttribute(a.getName()).getOne()
 								.set(newNode, attrvalue);
@@ -1321,6 +1327,12 @@ public class ModelMerger {
 				Collection<Attribute> attr = ag.getAttributes();
 
 				for (Attribute a : attr) {
+					
+//					//don't transfer the global ID (otherwise causes problems with the uniqueness of the ID)
+//					if(a.getName().equals(PSSIFConstants.BUILTIN_ATTRIBUTE_GLOBAL_ID)){
+//						continue;
+//					}
+					
 					PSSIFOption<PSSIFValue> attrvalue = a.get(dataNode);
 
 					if (attrvalue != null) {
