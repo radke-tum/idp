@@ -306,6 +306,14 @@ public class PssifMapperImpl implements PssifMapper {
 			ElementType type, Element elem) {
 
 		String id = "";
+		// we need to distringuish between Attribute or Annotation Property
+		// later on, so we have to get the value of the URIS. We could just
+		// compare with "Attr" or "Annot". But if we work with the URIs class
+		// this is more flexible for changes
+		String[] attrSTR = URIs.uriAttribute.split("/");
+		String[] annotSTR = URIs.uriAnnotation.split("/");
+		String attr = attrSTR[attrSTR.length - 1];
+		String annot = annotSTR[annotSTR.length - 1];
 
 		// find Attributes an Annotations by iterating over all Statements of
 		// the subject element
@@ -313,12 +321,12 @@ public class PssifMapperImpl implements PssifMapper {
 			Statement stmt = iter.nextStatement();
 			// to get the Attribute/Annotation Name you have to get the URI of
 			// the Property
-			// and take the String behind the # sign
-			String[] propURI = stmt.getPredicate().getURI().split("#");
+			// and take the String behind the last / sign
+			String[] propURI = stmt.getPredicate().getURI().split("/");
 
 			// Property is an Attribute
-			if (propURI[0].concat("#").equals(URIs.uriAttribute)) {
-				String attribute = propURI[1];
+			if (propURI[propURI.length - 2].equals(attr)) {
+				String attribute = propURI[propURI.length - 1];
 
 				// get the value of the Attribute
 				Resource object = stmt.getObject().asResource();
@@ -342,8 +350,8 @@ public class PssifMapperImpl implements PssifMapper {
 				}
 			}
 			// Property is an Annotation
-			else if (propURI[0].concat("#").equals(URIs.uriAnnotation)) {
-				String annotKey = propURI[1];
+			else if (propURI[propURI.length - 2].equals(annot)) {
+				String annotKey = propURI[propURI.length - 1];
 				// get the value of the Annotation
 				Literal object = stmt.getObject().asLiteral();
 				String value = object.getString();
@@ -417,8 +425,8 @@ public class PssifMapperImpl implements PssifMapper {
 		Statement stmt = subject.getProperty(Properties.PROP_TYPE);
 		// to get the Type you have to split the URI and take the last
 		// part of it
-		String[] propURI = stmt.getObject().toString().split("#");
+		String[] propURI = stmt.getObject().toString().split("/");
 
-		return propURI[1];
+		return propURI[propURI.length - 1];
 	}
 }

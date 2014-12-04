@@ -2,30 +2,32 @@ package jena.database;
 
 public class URIs {
 	// URIs
-	public static final String uri = "http://localhost:3030/PSSIF";
-	// public static final String uri =
-	// "http://vmkrcmar2.informatik.tu-muenchen.de:3030/PSSIF";
+	// public static final String uri = "http://localhost:3030/PSSIF";
+	public static final String uri = "http://vmkrcmar2.informatik.tu-muenchen.de:3030/PSSIF";
 	public static final String namespace = uri.concat("#");
 
-	public static final String uriBagNodes = uri.concat("/BagNodes");
-	public static final String uriBagEdges = uri.concat("/BagEdges");
-	public static final String uriBagJunctionNodes = uri
+	public static final String uriBagNodes = namespace.concat("BagNodes");
+	public static final String uriBagEdges = namespace.concat("BagEdges");
+	public static final String uriBagJunctionNodes = namespace
 			.concat("/BagJunctionNodes");
 
-	public static final String uriNode = uri.concat("/Node#");
-	public static final String uriEdge = uri.concat("/Edge#");
-	public static final String uriJunctionNode = uri.concat("/JunctionNode#");
+	public static final String uriNode = namespace.concat("Node/");
+	public static final String uriEdge = namespace.concat("Edge/");
+	public static final String uriJunctionNode = namespace
+			.concat("JunctionNode/");
 
-	public static final String uriAttribute = uri.concat("/Attr#");
-	public static final String uriNodeAttribute = uri.concat("/Node/Attr#");
-	public static final String uriEdgeAttribute = uri.concat("/Edge/Attr#");
-	public static final String uriJunctionNodeAttribute = uri
-			.concat("/JunctionNode/Attr#");
-	public static final String uriNodeType = uri.concat("/Node/Type#");
-	public static final String uriEdgeType = uri.concat("/Edge/Type#");
-	public static final String uriJunctionNodeType = uri
-			.concat("/JunctionNode/Type#");
-	public static final String uriAnnotation = uri.concat("/Annot#");
+	public static final String uriAttribute = namespace.concat("Attr/");
+	public static final String uriNodeAttribute = namespace
+			.concat("Node/Attr/");
+	public static final String uriEdgeAttribute = namespace
+			.concat("Edge/Attr/");
+	public static final String uriJunctionNodeAttribute = namespace
+			.concat("JunctionNode/Attr/");
+	public static final String uriNodeType = namespace.concat("Node/Type/");
+	public static final String uriEdgeType = namespace.concat("Edge/Type/");
+	public static final String uriJunctionNodeType = namespace
+			.concat("JunctionNode/Type/");
+	public static final String uriAnnotation = namespace.concat("Annot/");
 
 	// Database Location
 	public static final String location = "C:\\Users\\Andrea\\Documents\\Studium\\Master\\IDP\\Datenbankprojekt\\testPSSIFDB";

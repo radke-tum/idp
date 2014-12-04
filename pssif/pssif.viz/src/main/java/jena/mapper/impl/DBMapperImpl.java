@@ -155,8 +155,7 @@ public class DBMapperImpl implements DBMapper {
 		String uri = URIs.uriNode.concat(globalID);
 		if (!rdfModel.bagContainsResource(uri, URIs.uriBagNodes)) {
 			// create Subject with URI from NodeID
-			Resource subjectNode = rdfModel.createResource(URIs.uriNode
-					.concat(globalID));
+			Resource subjectNode = rdfModel.createResource(uri);
 
 			// Add subject to Bag
 			rdfModel.addToBag(URIs.uriBagNodes, subjectNode);
@@ -464,12 +463,11 @@ public class DBMapperImpl implements DBMapper {
 			return;
 
 		// Get the ID of subject to add it to the Attribute Node URI
-		String[] uri = subject.getURI().split("#");
-		String id = uri[1];
+		String id = getID(subject.getURI());
 
 		// Add Attribute Node
 		Resource subjectAttr = rdfModel.createResource(propURI
-				+ attrEntry.getKey() + id);
+				+ attrEntry.getKey() + "/" + id);
 		Property prop = rdfModel.createProperty(URIs.uriAttribute
 				.concat(attrEntry.getKey()));
 		rdfModel.insert(subject, prop, subjectAttr);
@@ -554,8 +552,7 @@ public class DBMapperImpl implements DBMapper {
 			Resource subject, String propURI) {
 
 		// Get the ID of subject to add it to the Attribute Node URI
-		String[] uri = subject.getURI().split("#");
-		String id = uri[1];
+		String id = getID(subject.getURI());
 
 		// Get Attribute Node + Property
 		Resource subjectAttr = rdfModel.getResource(propURI
@@ -652,5 +649,10 @@ public class DBMapperImpl implements DBMapper {
 		deletedNodes.clear();
 		deletedEdges.clear();
 		deletedJunctionNodes.clear();
+	}
+
+	private String getID(String uri) {
+		String[] uriSTR = uri.split("/");
+		return uriSTR[uriSTR.length - 1];
 	}
 }
