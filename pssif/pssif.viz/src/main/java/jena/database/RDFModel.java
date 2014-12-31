@@ -1,5 +1,6 @@
 package jena.database;
 
+import java.io.File;
 import java.util.List;
 
 import com.hp.hpl.jena.rdf.model.Property;
@@ -213,5 +214,5 @@ public interface RDFModel {
 	 * @param loc
 	 *            Location of the file
 	 */
-	void writeModelToTurtleFile(String name, String loc);
+	void writeModelToTurtleFile(File file);
 }

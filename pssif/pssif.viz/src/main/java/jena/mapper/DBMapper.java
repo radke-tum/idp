@@ -5,7 +5,8 @@ import model.MyModelContainer;
 public interface DBMapper {
 
 	/**
-	 * Saves the existing Model from MyModelContainer to the Database
+	 * Saves the existing Model from MyModelContainer to the Database by
+	 * deleting the whole Database before
 	 * 
 	 * @param model
 	 *            MyModelContainer from which the model should be saved

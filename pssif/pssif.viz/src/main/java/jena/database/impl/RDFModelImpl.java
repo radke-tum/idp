@@ -1,6 +1,7 @@
 package jena.database.impl;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
@@ -47,10 +48,10 @@ public class RDFModelImpl implements RDFModel {
 	}
 
 	@Override
-	public void writeModelToTurtleFile(String name, String loc) {
+	public void writeModelToTurtleFile(File file) {
 		try {
 			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(
-					new FileOutputStream(loc + name + ".ttl", false)));
+					new FileOutputStream(file, false)));
 			model.write(writer, "TTL");
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();

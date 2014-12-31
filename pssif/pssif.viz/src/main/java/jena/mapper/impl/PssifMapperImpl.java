@@ -40,6 +40,7 @@ import de.tum.pssif.core.model.Edge;
 import de.tum.pssif.core.model.Element;
 import de.tum.pssif.core.model.JunctionNode;
 import de.tum.pssif.core.model.Node;
+import de.tum.pssif.core.model.impl.JunctionNodeImpl;
 import de.tum.pssif.core.model.impl.ModelImpl;
 
 //DB to Model Mapper
@@ -50,7 +51,6 @@ public class PssifMapperImpl implements PssifMapper {
 	private Metamodel metamodel = PSSIFCanonicMetamodelCreator.create();
 	private HashMap<String, Node> nodes = new HashMap<>();
 	private HashMap<String, Edge> edges = new HashMap<>();
-	private HashMap<String, JunctionNode> junctionNodes = new HashMap<>();
 
 	@Override
 	public void DBToModel() {
@@ -155,10 +155,10 @@ public class PssifMapperImpl implements PssifMapper {
 					jNodeTypeName).getOne();
 			newJNode = jNodeType.create(pssifModel);
 
-			// add annotations and attributes to Edge
+			// add annotations and attributes to JNode
 			id = createAttributeOrAnnotation(subject, jNodeType, newJNode);
 
-			// add edge to Hashmap
+			// add JNode to Hashmap
 			nodes.put(id, newJNode);
 
 		} catch (Exception e) {
@@ -232,6 +232,7 @@ public class PssifMapperImpl implements PssifMapper {
 		Node nodeOut = null;
 		NodeTypeBase nodeTypeIn = null;
 		NodeTypeBase nodeTypeOut = null;
+		Resource resNodeID;
 
 		// get Statements for incoming and outgoing Nodes
 		Statement stmtNodeIn = subject.getProperty(Properties.PROP_NODE_IN);
@@ -241,44 +242,59 @@ public class PssifMapperImpl implements PssifMapper {
 		if (stmtNodeIn != null) {
 			// get Node
 			Resource resNodeIn = stmtNodeIn.getObject().asResource();
+
 			// get NodeType
 			String nodeTypeName = getType(resNodeIn);
 			// if node is a Junction node you have to get the JunctionNodeType
+			// and ID
 			if (resNodeIn.toString().contains(URIs.uriJunctionNode)) {
 				PSSIFOption<NodeTypeBase> nodeTypeIn1 = metamodel
 						.getBaseNodeType(nodeTypeName);
 				nodeTypeIn = nodeTypeIn1.getOne();
-			} else
+				resNodeID = resNodeIn.getProperty(Properties.PROP_ATTR_ID)
+						.getObject().asResource();
+			} else {
 				nodeTypeIn = metamodel.getNodeType(nodeTypeName).getOne();
+				resNodeID = resNodeIn
+						.getProperty(Properties.Prop_ATTR_GLOBAL_ID)
+						.getObject().asResource();
+			}
+
 			// get ID
-			Resource resNodeID = resNodeIn
-					.getProperty(Properties.Prop_ATTR_GLOBAL_ID).getObject()
-					.asResource();
 			Statement st = resNodeID.getProperty(Properties.PROP_ATTR_VALUE);
 			String id = st.getObject().toString();
-			// get existing Node from ID
+
 			nodeIn = nodes.get(id);
 		}
+
 		// get outgoing Node from statement
 		if (stmtNodeOut != null) {
 			// get Node
 			Resource resNodeOut = stmtNodeOut.getObject().asResource();
+
 			// get NodeType
 			String nodeTypeName = getType(resNodeOut);
 			// if node is a Junction node you have to get the JunctionNodeType
+			// and ID
 			if (resNodeOut.toString().contains(URIs.uriJunctionNode)) {
 				PSSIFOption<NodeTypeBase> nodeTypeOut1 = metamodel
 						.getBaseNodeType(nodeTypeName);
 				nodeTypeOut = nodeTypeOut1.getOne();
-			} else
+				resNodeID = resNodeOut.getProperty(Properties.PROP_ATTR_ID)
+						.getObject().asResource();
+			} else {
 				nodeTypeOut = metamodel.getNodeType(nodeTypeName).getOne();
+				resNodeID = resNodeOut
+						.getProperty(Properties.Prop_ATTR_GLOBAL_ID)
+						.getObject().asResource();
+			}
+
 			// get ID
-			Resource resNodeID = resNodeOut
-					.getProperty(Properties.Prop_ATTR_GLOBAL_ID).getObject()
-					.asResource();
 			Statement st = resNodeID.getProperty(Properties.PROP_ATTR_VALUE);
 			String id = st.getObject().toString();
+
 			// get existing Node from ID
+			boolean d = nodes.containsKey(id);
 			nodeOut = nodes.get(id);
 		}
 
@@ -340,12 +356,13 @@ public class PssifMapperImpl implements PssifMapper {
 				saveAttribute(elem, attributePssif, value);
 
 				// if attribute is the ID -> save it
-				if (elem instanceof Node || elem instanceof Edge) {
-					if (PSSIFConstants.BUILTIN_ATTRIBUTE_GLOBAL_ID
-							.contains(attribute))
+				if (elem instanceof JunctionNode
+						|| elem instanceof JunctionNodeImpl) {
+					if (PSSIFConstants.BUILTIN_ATTRIBUTE_ID.contains(attribute))
 						id = value;
 				} else {
-					if (PSSIFConstants.BUILTIN_ATTRIBUTE_ID.contains(attribute))
+					if (PSSIFConstants.BUILTIN_ATTRIBUTE_GLOBAL_ID
+							.contains(attribute))
 						id = value;
 				}
 			}
@@ -422,11 +439,18 @@ public class PssifMapperImpl implements PssifMapper {
 	}
 
 	private String getType(Resource subject) {
-		Statement stmt = subject.getProperty(Properties.PROP_TYPE);
-		// to get the Type you have to split the URI and take the last
-		// part of it
-		String[] propURI = stmt.getObject().toString().split("/");
+		try {
+			Statement stmt = subject.getProperty(Properties.PROP_TYPE);
+			// to get the Type you have to split the URI and take the last
+			// part of it
+			String[] propURI = stmt.getObject().toString().split("/");
 
-		return propURI[propURI.length - 1];
+			return propURI[propURI.length - 1];
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(null,
+					"There is no NodeType or JunctionNodeType", "PSSIF",
+					JOptionPane.ERROR_MESSAGE);
+			return "";
+		}
 	}
 }

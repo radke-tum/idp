@@ -19,6 +19,7 @@ import java.awt.GraphicsEnvironment;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.util.HashMap;
 import java.util.LinkedList;
 
@@ -39,6 +40,7 @@ import jena.mapper.impl.DBMapperImpl;
 import jena.mapper.impl.PssifMapperImpl;
 import model.FileExporter;
 import model.FileImporter;
+import model.ModelBuilder;
 import reqtool.bus.ReqToolReqistry;
 import reqtool.event.CreateSpecProjectEvent;
 
@@ -143,6 +145,10 @@ public class Main {
 		frame.pack();
 		frame.setVisible(true);
 		importDB.setVisible(true);
+
+		// To know wheather it could be possible that Database should be
+		// deleted.
+		DBMapperImpl.deleteAll = true;
 	}
 
 	/**
@@ -248,6 +254,8 @@ public class Main {
 									+ e1.getLocalizedMessage(), "PSSIF",
 							JOptionPane.ERROR_MESSAGE);
 				}
+				// Database should not be deleted
+				DBMapperImpl.deleteAll = false;
 
 				// Create the Views
 				matrixView = new MatrixView();
@@ -296,11 +304,13 @@ public class Main {
 					model = fromDB.rdfModel;
 
 				JFileChooser finder = new JFileChooser();
+				finder.setSelectedFile(new File(System.getProperty("user.home")
+						+ "\\TurtleExport.ttl"));
+
 				int returnVal = finder.showSaveDialog(null);
 				if (returnVal == javax.swing.JFileChooser.APPROVE_OPTION) {
 					java.io.File file = finder.getSelectedFile();
-					model.writeModelToTurtleFile(file.getName(), file
-							.getParent().concat("\\"));
+					model.writeModelToTurtleFile(file);
 					JOptionPane.showMessageDialog(null, "Export successful",
 							"PSSIF", JOptionPane.INFORMATION_MESSAGE);
 				}
@@ -385,8 +395,20 @@ public class Main {
 				try {
 					if (toDB == null)
 						toDB = new DBMapperImpl();
-					// toDB.modelToDB(ModelBuilder.activeModel, URIs.modelname);
-					toDB.saveToDB(URIs.modelname);
+					if (DBMapperImpl.deleteAll == true) {
+						int delete = JOptionPane.showConfirmDialog(null,
+								"Should the Database be deleted?");
+
+						if (delete == 0)
+							toDB.modelToDB(ModelBuilder.activeModel,
+									URIs.modelname);
+						else if (delete == 1)
+							toDB.saveToDB(URIs.modelname);
+						else
+							return;
+						DBMapperImpl.deleteAll = false;
+					} else
+						toDB.saveToDB(URIs.modelname);
 					JOptionPane.showMessageDialog(null, "Successfully saved!",
 							"PSSIF", JOptionPane.INFORMATION_MESSAGE);
 				} catch (Exception e1) {
@@ -657,9 +679,6 @@ public class Main {
 			public void actionPerformed(ActionEvent e) {
 				graphView.resetGraph();
 				initFrame();
-
-				DBMapperImpl.deleteAll = true;
-				DBMapperImpl.clearAll();
 			}
 		});
 

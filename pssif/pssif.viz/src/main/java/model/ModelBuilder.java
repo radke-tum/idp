@@ -9,7 +9,6 @@ import graph.model.MyJunctionNodeTypes;
 import graph.model.MyNode;
 import graph.model.MyNodeType;
 import graph.model.MyNodeTypes;
-import gui.graph.GraphVisualization;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -17,6 +16,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import javax.swing.JOptionPane;
+
+import jena.mapper.impl.DBMapperImpl;
 
 import org.pssif.comparedDataStructures.ComparedNodePair;
 import org.pssif.consistencyDataStructures.ConsistencyData;
@@ -33,7 +34,6 @@ import de.tum.pssif.core.metamodel.Metamodel;
 import de.tum.pssif.core.metamodel.NodeType;
 import de.tum.pssif.core.metamodel.external.PSSIFCanonicMetamodelCreator;
 import de.tum.pssif.core.model.Model;
-import de.tum.pssif.core.model.Node;
 
 /**
  * Builds out of a Model and an MetaModel a Model which can be displayed as
@@ -96,6 +96,9 @@ public class ModelBuilder {
 					List<MergedNodePair> mergedNodePairs = consistencyData
 							.getMergedNodePairs();
 
+					// Check if Nodes have to be deleted from DB
+					checkNodesForChanges(mergedNodePairs);
+
 					List<MergedNodePair> tracedNodes = consistencyData
 							.getTracedList();
 
@@ -147,6 +150,27 @@ public class ModelBuilder {
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(null, e.getMessage(), "",
 					JOptionPane.ERROR_MESSAGE);
+		}
+	}
+
+	// TODO changed
+	/**
+	 * Deletes the old nodes from DB if Model is merged.
+	 * 
+	 * 
+	 * @param nodes
+	 *            the list with the node pairs which shall be matched
+	 * @author Andrea
+	 */
+	private static void checkNodesForChanges(List<MergedNodePair> nodes) {
+		for (MergedNodePair p : nodes) {
+			// if Nodes are merged delete the original Node because the new
+			// node has to be saved to DB
+			if (p.isMerge()) {
+				MyNode myNode = new MyNode(p.getNodeOriginalModel(),
+						new MyNodeType(p.getTypeOriginModel()));
+				DBMapperImpl.deletedNodes.add(myNode);
+			}
 		}
 	}
 
@@ -518,5 +542,4 @@ public class ModelBuilder {
 			return true;
 		}
 	}
-
 }

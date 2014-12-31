@@ -1,8 +1,12 @@
 package model;
 
 import graph.model.IMyNode;
+import graph.model.MyEdge;
 import graph.model.MyEdgeType;
+import graph.model.MyJunctionNode;
+import graph.model.MyJunctionNodeType;
 import graph.model.MyNode;
+import graph.model.MyNodeType;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -12,6 +16,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+
+import jena.mapper.impl.DBMapperImpl;
 
 import org.pssif.consistencyDataStructures.NodeAndType;
 import org.pssif.consistencyExceptions.ConsistencyException;
@@ -304,17 +310,19 @@ public class ModelMerger {
 	 */
 	private void transferJunctionEdges() {
 		EdgeType controlFlow = metaModelOrigin.getEdgeType(
-				PSSIFCanonicMetamodelCreator.TAGS.get("E_FLOW_CONTROL")).getOne();
+				PSSIFCanonicMetamodelCreator.TAGS.get("E_FLOW_CONTROL"))
+				.getOne();
 
 		for (NodeAndType actJunctionnode : unmatchedJunctionnodesOrigin) {
 
 			Node newJunctionnode = null;
+			MyJunctionNodeType newJunctionnodeType = null;
 
 			NodeAndType tempFromEdgeNode = null, tempToEdgeNode = null;
 
 			NodeAndType tempNodeOrigin = null;
 
-			IMyNode searchedFromNodeNew = null, searchedToNodeNew = null;
+			MyNode searchedFromNodeNew = null, searchedToNodeNew = null;
 
 			Iterator<Entry<NodeAndType, Node>> iterator = nodeTransferunmatchedJunctionsOldToNewModel
 					.entrySet().iterator();
@@ -326,6 +334,9 @@ public class ModelMerger {
 
 				if (actJunctionnode.getNode().equals(tempNodeOrigin.getNode())) {
 					newJunctionnode = pairs.getValue();
+					newJunctionnodeType = new MyJunctionNodeType(
+							(JunctionNodeType) pairs.getKey().getType());
+
 				}
 			}
 
@@ -355,6 +366,14 @@ public class ModelMerger {
 								// create the new edge in the new model
 								Edge newEdge = incomingMapping.create(modelNew,
 										pairs.getValue(), newJunctionnode);
+
+								// this edge has to be changed in DB
+								changeEdgeinDB(newEdge, incomingMapping.getType(),
+										new MyNode(pairs.getValue(),
+												new MyNodeType((NodeType) pairs
+														.getKey().getType())),
+										new MyJunctionNode(newJunctionnode,
+												newJunctionnodeType));
 
 								// transfer the attributes of the old to the new
 								// edge
@@ -435,6 +454,12 @@ public class ModelMerger {
 							Edge newEdge = incomingMapping.create(modelNew,
 									searchedFromNodeNew.getNode(),
 									newJunctionnode);
+
+							// this edge has to be changed in DB
+							changeEdgeinDB(newEdge, incomingMapping.getType(),
+									searchedFromNodeNew, new MyJunctionNode(
+											newJunctionnode,
+											newJunctionnodeType));
 
 							// transfer the attributes of the old to the new
 							// edge
@@ -535,6 +560,12 @@ public class ModelMerger {
 									newJunctionnode,
 									searchedToNodeNew.getNode());
 
+							// this edge has to be changed in DB
+							changeEdgeinDB(newEdge, outgoingMapping.getType(),
+									new MyJunctionNode(newJunctionnode,
+											newJunctionnodeType),
+									searchedToNodeNew);
+
 							// transfer the attributes of the old to the new
 							// edge
 							transferEdgeAttributes(outgoingEdge, newEdge,
@@ -617,11 +648,10 @@ public class ModelMerger {
 	 * @author Andreas
 	 */
 	private void createTracelinks() {
-		MyEdgeType edgeType = new MyEdgeType(
-				metaModelNew
-						.getEdgeType(
-								PSSIFCanonicMetamodelCreator.TAGS.get("E_RELATIONSHIP_CHRONOLOGICAL_EVOLVES_TO"))
-						.getOne(), 6);
+		MyEdgeType edgeType = new MyEdgeType(metaModelNew.getEdgeType(
+				PSSIFCanonicMetamodelCreator.TAGS
+						.get("E_RELATIONSHIP_CHRONOLOGICAL_EVOLVES_TO"))
+				.getOne(), 6);
 
 		Iterator<Entry<NodeAndType, Node>> it = nodeTransferTracedOldToNewModel
 				.entrySet().iterator();
@@ -827,7 +857,8 @@ public class ModelMerger {
 
 					// don't match conjunctions
 					if (tempFromEdgeNodeType.getName().equals(
-							PSSIFCanonicMetamodelCreator.TAGS.get("N_CONJUNCTION"))) {
+							PSSIFCanonicMetamodelCreator.TAGS
+									.get("N_CONJUNCTION"))) {
 						continue;
 					}
 
@@ -950,6 +981,10 @@ public class ModelMerger {
 									searchedFromNodeNew.getNode(),
 									searchedToNodeNew.getNode());
 
+							// this edge has to be changed in DB
+							changeEdgeinDB(newEdge, edgeType, searchedFromNodeNew,
+									searchedToNodeNew);
+
 							// transfer the attributes of the old to the new
 							// edge
 							transferEdgeAttributes(incomingEdge, newEdge,
@@ -1003,7 +1038,8 @@ public class ModelMerger {
 
 					// don't match conjunctions
 					if (tempToEdgeNodeType.getName().equals(
-							PSSIFCanonicMetamodelCreator.TAGS.get("N_CONJUNCTION"))) {
+							PSSIFCanonicMetamodelCreator.TAGS
+									.get("N_CONJUNCTION"))) {
 						continue;
 					}
 
@@ -1126,6 +1162,10 @@ public class ModelMerger {
 									searchedFromNodeNew.getNode(),
 									searchedToNodeNew.getNode());
 
+							// this edge has to be changed in DB
+							changeEdgeinDB(newEdge, edgeType, searchedFromNodeNew,
+									searchedToNodeNew);
+
 							// transfer the attributes of the old to the new
 							// edge
 							transferEdgeAttributes(outgoingEdge, newEdge,
@@ -1138,6 +1178,69 @@ public class ModelMerger {
 				}
 			}
 		}
+	}
+
+	/**
+	 * change Edge in Database
+	 * 
+	 * @param newEdge
+	 *            edge to be changed
+	 * @param edgeType
+	 *            type of edge to be changed
+	 * @param searchedFromNodeNew
+	 *            source node of edge to be changed
+	 * @param searchedToNodeNew
+	 *            destination node of edge to be changed
+	 * 
+	 * @Author Andrea
+	 */
+	private void changeEdgeinDB(Edge newEdge, EdgeType edgeType,
+			MyNode searchedFromNodeNew, MyNode searchedToNodeNew) {
+		MyEdge myEdge = new MyEdge(newEdge, new MyEdgeType(edgeType,
+				edgeType.hashCode()), searchedFromNodeNew, searchedToNodeNew);
+		DBMapperImpl.changedEdges.add(myEdge);
+	}
+
+	/**
+	 * change Edge in Database
+	 * 
+	 * @param newEdge
+	 *            edge to be changed
+	 * @param edgeType
+	 *            type of edge to be changed
+	 * @param searchedFromNodeNew
+	 *            source junctionnode of edge to be changed
+	 * @param searchedToNodeNew
+	 *            destination node of edge to be changed
+	 * 
+	 * @Author Andrea
+	 */
+	private void changeEdgeinDB(Edge newEdge, EdgeType edgeType,
+			MyJunctionNode searchedFromNodeNew, MyNode searchedToNodeNew) {
+		MyEdge myEdge = new MyEdge(newEdge, new MyEdgeType(edgeType,
+				edgeType.hashCode()), searchedFromNodeNew, searchedToNodeNew);
+		DBMapperImpl.changedEdges.add(myEdge);
+	}
+
+	/**
+	 * change Edge in Database
+	 * 
+	 * @param newEdge
+	 *            edge to be changed
+	 * @param edgeType
+	 *            type of edge to be changed
+	 * @param searchedFromNodeNew
+	 *            source node of edge to be changed
+	 * @param searchedToNodeNew
+	 *            destination junctionnode of edge to be changed
+	 * 
+	 * @Author Andrea
+	 */
+	private void changeEdgeinDB(Edge newEdge, EdgeType edgeType,
+			MyNode searchedFromNodeNew, MyJunctionNode searchedToNodeNew) {
+		MyEdge myEdge = new MyEdge(newEdge, new MyEdgeType(edgeType,
+				edgeType.hashCode()), searchedFromNodeNew, searchedToNodeNew);
+		DBMapperImpl.changedEdges.add(myEdge);
 	}
 
 	/**
@@ -1267,11 +1370,12 @@ public class ModelMerger {
 				for (Attribute a : attr) {
 					PSSIFOption<PSSIFValue> attrvalue = a.get(dataNode);
 
-//					//don't transfer the global ID (otherwise causes problems with the uniqueness of the ID)
-//					if(a.getName().equals(PSSIFConstants.BUILTIN_ATTRIBUTE_GLOBAL_ID)){
-//						continue;
-//					}
-					
+					// //don't transfer the global ID (otherwise causes problems
+					// with the uniqueness of the ID)
+					// if(a.getName().equals(PSSIFConstants.BUILTIN_ATTRIBUTE_GLOBAL_ID)){
+					// continue;
+					// }
+
 					if (attrvalue != null) {
 						currentType.getAttribute(a.getName()).getOne()
 								.set(newNode, attrvalue);
@@ -1327,12 +1431,13 @@ public class ModelMerger {
 				Collection<Attribute> attr = ag.getAttributes();
 
 				for (Attribute a : attr) {
-					
-//					//don't transfer the global ID (otherwise causes problems with the uniqueness of the ID)
-//					if(a.getName().equals(PSSIFConstants.BUILTIN_ATTRIBUTE_GLOBAL_ID)){
-//						continue;
-//					}
-					
+
+					// //don't transfer the global ID (otherwise causes problems
+					// with the uniqueness of the ID)
+					// if(a.getName().equals(PSSIFConstants.BUILTIN_ATTRIBUTE_GLOBAL_ID)){
+					// continue;
+					// }
+
 					PSSIFOption<PSSIFValue> attrvalue = a.get(dataNode);
 
 					if (attrvalue != null) {

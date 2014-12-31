@@ -51,6 +51,7 @@ public class DBMapperImpl implements DBMapper {
 	public static LinkedList<MyNode> deletedNodes = new LinkedList<>();
 	public static LinkedList<MyEdge> deletedEdges = new LinkedList<>();
 	public static LinkedList<MyJunctionNode> deletedJunctionNodes = new LinkedList<>();
+	// Flag if Database should be deleted completely
 	public static boolean deleteAll = false;
 
 	public DBMapperImpl() {
@@ -71,6 +72,7 @@ public class DBMapperImpl implements DBMapper {
 		saveEdges(model.getAllEdges());
 
 		db.saveModel(rdfModel.getModel());
+		clearAll();
 
 		// db.commit();
 		// db.end();
@@ -81,10 +83,6 @@ public class DBMapperImpl implements DBMapper {
 	public void saveToDB(String modelname) {
 		// db.begin(ReadWrite.WRITE);
 		// rdfModel.begin();
-		if (deleteAll) {
-			rdfModel.removeAll();
-			deleteAll = false;
-		}
 
 		// save first then delete because of Version Management -> so it can
 		// happen that Edges are in new and deleted List, so delete should be
@@ -103,6 +101,7 @@ public class DBMapperImpl implements DBMapper {
 		changeElements();
 
 		db.saveModel(rdfModel.getModel());
+		// rdfModel.writeModelToFile("Test", "C:\\Users\\Andrea\\Desktop\\");
 
 		// db.commit();
 		// db.end();
@@ -320,6 +319,7 @@ public class DBMapperImpl implements DBMapper {
 	 */
 	private void addEdge(MyEdge myedge) {
 		Edge e = myedge.getEdge();
+		Resource objectNode;
 		String globalID = Methods.findGlobalID(e, myedge.getEdgeType()
 				.getType());
 		String uri = URIs.uriEdge.concat(globalID);
@@ -350,24 +350,34 @@ public class DBMapperImpl implements DBMapper {
 			Node out = myedge.getDestinationNode().getNode();
 
 			// check if outgoing Node is Node or JunctionNode
-			if (out instanceof JunctionNode)
+			// you have to differ between them because of the URI and the ID
+			// (JunctionNodes don't have global IDs)
+			if (out instanceof JunctionNode) {
 				uri = URIs.uriJunctionNode;
-			else
+				objectNode = rdfModel.createResource(uri.concat(out.getId()));
+			} else {
 				uri = URIs.uriNode;
-			Resource objectNode = rdfModel.createResource(uri.concat(Methods
-					.findGlobalID(out, myedge.getDestinationNode()
-							.getBaseNodeType())));
+				objectNode = rdfModel.createResource(uri.concat(Methods
+						.findGlobalID(out, myedge.getDestinationNode()
+								.getBaseNodeType())));
+			}
 			rdfModel.insert(subjectEdge, Properties.PROP_NODE_OUT, objectNode);
 
 			// Add incoming Nodes to Edge
 			Node in = myedge.getSourceNode().getNode();
-			// check if incoming Node is Node or JunctionNode
-			if (in instanceof JunctionNode)
+
+			// check if outgoing Node is Node or JunctionNode
+			// you have to differ between them because of the URI and the ID
+			// (JunctionNodes don't have global IDs)
+			if (in instanceof JunctionNode) {
 				uri = URIs.uriJunctionNode;
-			else
+				objectNode = rdfModel.createResource(uri.concat(in.getId()));
+			} else {
 				uri = URIs.uriNode;
-			objectNode = rdfModel.getResource(uri.concat(Methods.findGlobalID(
-					in, myedge.getSourceNode().getBaseNodeType())));
+				objectNode = rdfModel.getResource(uri.concat(Methods
+						.findGlobalID(in, myedge.getSourceNode()
+								.getBaseNodeType())));
+			}
 			rdfModel.insert(subjectEdge, Properties.PROP_NODE_IN, objectNode);
 		}
 	}
@@ -385,10 +395,10 @@ public class DBMapperImpl implements DBMapper {
 		String uri = URIs.uriEdge.concat(globalID);
 
 		if (rdfModel.bagContainsResource(uri, URIs.uriBagEdges)) {
-			// get Subject with URI from NodeID
+			// get Subject with URI from EdgeID
 			Resource subjectEdge = rdfModel.getResource(uri);
 
-			// Remove NodeType
+			// Remove EdgeType
 			Resource type = subjectEdge
 					.getPropertyResourceValue(Properties.PROP_TYPE);
 			rdfModel.removeTriple(subjectEdge, Properties.PROP_TYPE, type);
