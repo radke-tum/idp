@@ -1,0 +1,161 @@
+@prefix pssif: <http://www.sfb768.tum.de/voc/pssif/ns#> .
+@prefix epc: <http://www.sfb768.tum.de/voc/epc/ns#> .
+@prefix graph:  <http://www.sfb768.tum.de/voc/graph/ns#> .
+
+
+
+[rdfs10:  (?x rdfs:subClassOf ?y), (?y rdfs:subClassOf ?z) -> (?x rdfs:subClassOf ?z)]
+[rdfs10:  (?x rdf:type rdfs:Class) -> (?x rdfs:subClassOf ?x)]
+
+
+[EPC_Performs:
+		(?in epc:performs ?out) 
+		makeSkolem(?s, ?in, ?out)
+		->
+		(?s	rdf:type pssif:Performs)
+		(?s pssif:Source ?in)
+		(?s pssif:Target ?out)
+]
+
+[EPC_ControlFlow: 	
+					(?s epc:flow ?t)
+					makeSkolem(?c, ?s, ?t)
+					->
+					(?c rdf:type pssif:ControlFlow )
+					(?c	pssif:Source ?s )
+					(?c	pssif:Target ?t )
+]
+
+[EPC_Organization:
+		(?s rdf:type epc:Organizational_Unit)
+		->
+		(?s	rdf:type pssif:StructuralArtifact)
+		(?s graph:PSSIF_aliased_key "Organizational unit")
+]
+
+[EPC_Function: 	
+				(?s rdf:type epc:Function)
+				->
+				(?s rdf:type pssif:Activity )
+]
+		
+[EPC_Event: 
+			(?s rdf:type epc:Event)
+			->
+			(?s rdf:type pssif:State )
+]
+
+[EPC_Name:			
+			(?s epc:name ?n ) 
+			->
+			(?s	pssif:Name ?n )
+]
+
+[PSSIF_Node:
+		(?s rdf:type ?t1)
+		(?t1 rdfs:subClassOf pssif:Node)
+		->
+		(?s rdf:type graph:Node)
+]
+
+[PSSIF_Attribute:
+		(?e pssif:attribute ?s)
+		(?s rdf:type ?t1)
+		(?t1 rdfs:subClassOf pssif:Attribute)
+		(?s pssif:VALUE ?v)
+		(?s pssif:UNIT ?u)
+		(?s graph:type ?type)
+		->
+		(?e graph:attribute ?s)
+		(?s rdf:type graph:Attribute)
+		(?s graph:name ?type)
+		(?s graph:value ?v) 
+		(?s graph:unit ?u)
+]
+
+[PSSIF_Name:
+	(?s pssif:Name ?name)
+	makeSkolem(?n, ?s, ?name)
+	->
+	(?s graph:attribute ?n)
+	(?n rdf:type graph:Attribute)
+	(?n graph:name "name")
+	(?n graph:datatype "String")
+	(?n graph:category "MetaData")
+	(?n graph:unit "none")
+	(?n graph:value ?name)
+]
+
+[PSSIF_GlobalID:
+	(?s pssif:GlobalID ?gid)
+	makeSkolem(?n, ?s, ?gid)
+	->
+	(?s graph:attribute ?n)
+	(?n rdf:type graph:Attribute)
+	(?n graph:name "globalId")
+	(?n graph:datatype "String")
+	(?n graph:category "MetaData")
+	(?n graph:unit "none")
+	(?n graph:value ?gid)
+]
+
+
+[PSSIF_Edge:
+	(?e rdf:type ?t1)
+	(?e pssif:Source ?in)
+	(?e pssif:Target ?out)
+	->
+	(?e rdf:type graph:Edge)
+	(?e graph:in ?in)
+	(?e graph:out ?out)
+]
+
+[PSSIF_Flow_1:
+	(?e rdf:type ?t1)
+	(?t1 rdfs:subClassOf pssif:DirectedEdge)
+	(?e pssif:Source ?in)
+	(?e pssif:Target ?out)
+	makeSkolem(?d, ?e, ?in, ?out)
+	->
+	(?e graph:attribute ?d)
+	(?d rdf:type graph:Attribute)
+	(?d graph:name "directed")
+	(?d graph:value "true")
+	(?d graph:category "MetaData")
+	(?d graph:datatype "Boolean")
+	(?d graph:unit "none")
+]
+
+[PSSIF_Flow_2:
+	(?e rdf:type ?t1)
+	noValue(rdfs:subClassOf pssif:DirectedEdge)
+	(?e pssif:Source ?in)
+	(?e pssif:Target ?out)
+	makeSkolem(?d, ?e, ?in, ?out)
+	->
+	(?e graph:attribute ?d)
+	(?d rdf:type graph:Attribute)
+	(?d graph:name "directed")
+	(?d graph:value "false")
+	(?d graph:category "MetaData")
+	(?d graph:datatype "Boolean")
+	(?d graph:unit "none")
+]
+
+[PSSIF-Type_1: 	(?e rdf:type ?t1)
+				(?t1 rdfs:subClassOf pssif:Element)
+				(?t1 rdfs:label ?type)
+				->
+				(?e graph:type ?type)
+]
+
+
+[PSSIF-Type_4: 	
+				(?e rdf:type ?t)
+				(?t rdfs:subClassOf pssif:Element)
+				noValue(?t rdfs:label ?l)
+				strConcat(?t, ?uri)
+				regex(?uri, '(.*)#(.*)', ?ns, ?type)
+				->
+				(?e graph:type ?type)
+]

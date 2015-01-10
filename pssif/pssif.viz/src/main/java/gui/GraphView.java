@@ -44,8 +44,8 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
-import jena.mapper.impl.DBMapperImpl;
 import model.ModelBuilder;
+import jena.mapper.impl.DBMapperImpl;
 
 /**
  * Provides the Graph View of a PSS-IF Model

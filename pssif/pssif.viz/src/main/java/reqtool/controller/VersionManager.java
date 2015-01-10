@@ -6,8 +6,8 @@ import graph.model.MyNode;
 
 import java.util.LinkedList;
 
-import jena.mapper.impl.DBMapperImpl;
 import model.ModelBuilder;
+import jena.mapper.impl.DBMapperImpl;
 import de.tum.pssif.core.common.PSSIFConstants;
 import de.tum.pssif.core.common.PSSIFOption;
 import de.tum.pssif.core.common.PSSIFValue;
