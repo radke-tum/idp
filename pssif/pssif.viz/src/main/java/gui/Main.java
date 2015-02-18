@@ -43,6 +43,12 @@ import model.FileImporter;
 import model.ModelBuilder;
 import reqtool.bus.ReqToolReqistry;
 import reqtool.event.CreateSpecProjectEvent;
+import viewplugin.gui.CreateNewProjectViewPopup;
+import viewplugin.gui.ExportViewConfigPopup;
+import viewplugin.gui.ImportViewConfigPopup;
+import viewplugin.gui.ManageViewsPopup;
+import viewplugin.logic.ProjectView;
+import viewplugin.logic.ViewManager;
 
 /**
  * The main class of the project. Execute this class to start the Visualization
@@ -56,6 +62,26 @@ public class Main {
 	private MatrixView matrixView;
 	private JFrame frame;
 	private GraphView graphView;
+
+	/**
+	 * 
+	 * Added for viewPlugin
+	 * 
+	 */
+	private JMenu projectViews;
+	private JMenuItem manageViews;
+	private JMenuItem showMatrixView;
+	private JMenuItem importViewConfig;
+	private JMenuItem exportViewConfig;
+	private JMenuItem createNewViewConfig;
+	private JMenuItem applyViewConfig;
+	private JMenuItem resetView;
+
+	/**
+	 * 
+	 * --------------------
+	 * 
+	 */
 
 	private JMenuItem resetGraph;
 	private JMenuItem resetMatrix;
@@ -125,6 +151,7 @@ public class Main {
 		ReqToolReqistry.newInstance();
 
 		initFrame();
+		
 	}
 
 	private void initFrame() {
@@ -179,7 +206,7 @@ public class Main {
 					graphView = new GraphView();
 					// instance which manages all the filters
 					masterFilter = new MasterFilter(graphView);
-
+					
 					Dimension d = frame.getSize();
 
 					// Setup the frame
@@ -193,6 +220,8 @@ public class Main {
 					frame.setJMenuBar(createMenu());
 					adjustButtons();
 
+					ViewManager.initViewManager(graphView, masterFilter);
+					
 					frame.setPreferredSize(d);
 					frame.pack();
 					frame.repaint();
@@ -227,6 +256,8 @@ public class Main {
 					// create the full menuBar after first import
 					frame.setJMenuBar(createMenu());
 					adjustButtons();
+					
+					ViewManager.initViewManager(graphView, masterFilter);
 
 					frame.setPreferredSize(d);
 					frame.pack();
@@ -275,6 +306,8 @@ public class Main {
 				// create the full menuBar after first import
 				frame.setJMenuBar(createMenu());
 				adjustButtons();
+				
+				ViewManager.initViewManager(graphView, masterFilter);
 
 				frame.setPreferredSize(d);
 				frame.pack();
@@ -351,6 +384,9 @@ public class Main {
 
 		// Open Menu to display and manipulate the metamodel
 		menuBar.add(addMetaModelChangeOption());
+
+		// Project View Menu
+		menuBar.add(addProjectViewMenu());
 
 		return menuBar;
 	}
@@ -474,6 +510,48 @@ public class Main {
 		});
 
 		return metamodelMenu;
+	}
+
+	/*
+	 * 
+	 * Project View Menu
+	 */
+	private JMenu addProjectViewMenu() {
+
+		projectViews = new JMenu();
+		projectViews.setText("Project View");
+
+		/* Reset View */
+//		resetView = new JMenuItem();
+//		resetView.setText("Reset View");
+//
+//		projectViews.add(resetView);
+//
+//		resetView.addActionListener(new ActionListener() {
+//			@Override
+//			public void actionPerformed(ActionEvent e) {
+//
+//			}
+//		});
+
+		/* ViewManager */
+		manageViews = new JMenuItem();
+		manageViews.setText("Manage Views");
+
+		projectViews.add(manageViews);
+
+		manageViews.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				new ManageViewsPopup(frame, graphView, masterFilter);
+				// ProjectView pv =
+				// ViewManager.createNewProjectView("Standard View - No Filters",
+				// graphView, masterFilter);
+				// new ManageViewsPopup(frame, pv);
+			}
+		});
+
+		return projectViews;
 	}
 
 	/**
