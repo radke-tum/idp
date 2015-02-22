@@ -109,14 +109,12 @@ public class MyModelContainer {
 
 			if (tempNodes.isMany()) {
 				for (Node tempNode : tempNodes.getMany()) {
-					// TODO added
 					MyNode newNode = new MyNode(tempNode, t);
 					DBMapperImpl.newNodes.add(newNode);
 					nodes.add(newNode);
 				}
 			}
 			if (tempNodes.isOne()) {
-				// TODO added
 				MyNode newNode = new MyNode(tempNodes.getOne(), t);
 				DBMapperImpl.newNodes.add(newNode);
 				nodes.add(newNode);
@@ -134,14 +132,12 @@ public class MyModelContainer {
 
 			if (tempNodes.isMany()) {
 				for (Node tempNode : tempNodes.getMany()) {
-					// TODO added
 					MyJunctionNode newNode = new MyJunctionNode(tempNode, t);
 					DBMapperImpl.newJunctionNodes.add(newNode);
 					junctionNodes.add(newNode);
 				}
 			}
 			if (tempNodes.isOne()) {
-				// TODO added
 				MyJunctionNode newNode = new MyJunctionNode(tempNodes.getOne(),
 						t);
 				DBMapperImpl.newJunctionNodes.add(newNode);
@@ -201,7 +197,6 @@ public class MyModelContainer {
 	 */
 	public void addNode(MyNode node) {
 		if (!isContained(node)) {
-			// TODO added
 			DBMapperImpl.newNodes.add(node);
 			nodes.add(node);
 		}
@@ -216,7 +211,6 @@ public class MyModelContainer {
 	 */
 	public void addEdge(MyEdge edge) {
 		if (!isContained(edge)) {
-			// TODO added
 			DBMapperImpl.newEdges.add(edge);
 			edges.add(edge);
 		}
@@ -350,7 +344,6 @@ public class MyModelContainer {
 	 */
 	public void addCollapserEdge(MyEdge newEdge) {
 		newEdge.setCollapseEdge(true);
-		// TODO added
 		DBMapperImpl.newEdges.add(newEdge);
 		edges.add(newEdge);
 	}
@@ -363,7 +356,6 @@ public class MyModelContainer {
 	 */
 	public void removeCollapserEdge(MyEdge edge) {
 		if (edge.isCollapseEdge()) {
-			// TODO added
 			DBMapperImpl.deletedEdges.add(edge);
 			edges.remove(edge);
 		}
@@ -390,7 +382,6 @@ public class MyModelContainer {
 						PSSIFOption.one(PSSIFValue.create(nodeName
 								+ newNodeIdCounter++)));
 		MyNode newMyNode = new MyNode(newNode, type);
-		// TODO added
 		DBMapperImpl.newNodes.add(newMyNode);
 		nodes.add(newMyNode);
 		return newMyNode;
@@ -418,7 +409,6 @@ public class MyModelContainer {
 			model.removeNode(node.getNodeType().getType(), node.getNode());
 
 		}
-		// TODO added
 		DBMapperImpl.deletedNodes.add(node);
 		return nodes.remove(node);
 	}
@@ -463,7 +453,6 @@ public class MyModelContainer {
 			System.out
 					.println(source.getRealName() + destination.getRealName());
 
-			// TODO added
 			DBMapperImpl.newEdges.add(e);
 			edges.add(e);
 			return true;
@@ -492,7 +481,6 @@ public class MyModelContainer {
 
 		System.out.println(source.getRealName() + destination.getRealName());
 
-		// TODO added
 		DBMapperImpl.newEdges.add(e);
 		edges.add(e);
 		return newEdge;
@@ -506,7 +494,6 @@ public class MyModelContainer {
 	 *            The Edge which should be removed
 	 */
 	public void removeEdgeGUI(MyEdge edge) {
-		// TODO added
 		DBMapperImpl.deletedEdges.add(edge);
 		edges.remove(edge);
 		model.removeEdge(edge.getEdge());

@@ -1,6 +1,5 @@
 package model;
 
-import graph.model.IMyNode;
 import graph.model.MyEdge;
 import graph.model.MyEdgeType;
 import graph.model.MyJunctionNode;
@@ -24,7 +23,6 @@ import org.pssif.consistencyExceptions.ConsistencyException;
 import org.pssif.mainProcesses.Methods;
 import org.pssif.mergedDataStructures.MergedNodePair;
 
-import de.tum.pssif.core.common.PSSIFConstants;
 import de.tum.pssif.core.common.PSSIFOption;
 import de.tum.pssif.core.common.PSSIFValue;
 import de.tum.pssif.core.metamodel.Attribute;
@@ -185,7 +183,30 @@ public class ModelMerger {
 		nodeTransferTracedOldToNewModel = new HashMap<NodeAndType, Node>();
 		nodeTransferunmatchedJunctionsOldToNewModel = new HashMap<NodeAndType, Node>();
 
+		// Edges in Database have to be cleared, because all edges in merge are
+		// created new
+		// clearEdgesDatabase();
+
+		// If there is a merge, delete DB and save the new model
+		DBMapperImpl.merge = true;
+
 		return merge();
+	}
+
+	/**
+	 * This method deletes all Edges in the database and adds just the in the
+	 * merge created new edges to the database. This action is saved to database
+	 * only if you click on save to database in the tool
+	 * 
+	 * @author Andrea
+	 */
+	private void clearEdgesDatabase() {
+		// delete all edges in database, because all edges in merge are created
+		// new.
+		DBMapperImpl.deleteAllEdges();
+		// Because all edges are created new in merge you have to clear the list
+		// of newEdges that have to be added to database
+		DBMapperImpl.newEdges.clear();
 	}
 
 	/**
@@ -368,8 +389,9 @@ public class ModelMerger {
 										pairs.getValue(), newJunctionnode);
 
 								// this edge has to be changed in DB
-								changeEdgeinDB(newEdge, incomingMapping.getType(),
-										new MyNode(pairs.getValue(),
+								changeEdgeinDB(newEdge,
+										incomingMapping.getType(), new MyNode(
+												pairs.getValue(),
 												new MyNodeType((NodeType) pairs
 														.getKey().getType())),
 										new MyJunctionNode(newJunctionnode,
@@ -982,8 +1004,8 @@ public class ModelMerger {
 									searchedToNodeNew.getNode());
 
 							// this edge has to be changed in DB
-							changeEdgeinDB(newEdge, edgeType, searchedFromNodeNew,
-									searchedToNodeNew);
+							changeEdgeinDB(newEdge, edgeType,
+									searchedFromNodeNew, searchedToNodeNew);
 
 							// transfer the attributes of the old to the new
 							// edge
@@ -1163,8 +1185,8 @@ public class ModelMerger {
 									searchedToNodeNew.getNode());
 
 							// this edge has to be changed in DB
-							changeEdgeinDB(newEdge, edgeType, searchedFromNodeNew,
-									searchedToNodeNew);
+							changeEdgeinDB(newEdge, edgeType,
+									searchedFromNodeNew, searchedToNodeNew);
 
 							// transfer the attributes of the old to the new
 							// edge

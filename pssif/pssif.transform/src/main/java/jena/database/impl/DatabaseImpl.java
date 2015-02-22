@@ -7,30 +7,31 @@ import javax.swing.JOptionPane;
 import jena.database.Database;
 import jena.database.URIs;
 
+import org.apache.jena.atlas.web.HttpException;
+
 import com.hp.hpl.jena.query.Dataset;
 import com.hp.hpl.jena.query.DatasetAccessor;
 import com.hp.hpl.jena.query.DatasetAccessorFactory;
 import com.hp.hpl.jena.query.ReadWrite;
 import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.tdb.TDBFactory;
 
 public class DatabaseImpl implements Database {
 	public static Dataset ds = null;
 	public static DatasetAccessor accessor;
-	private static String modelname = URIs.modelname;
+	// private static String modelname = URIs.modelname;
 	private static RDFModelImpl rdfModel = null;
 	private static Model model = null;
 
-	public DatabaseImpl(String location, String ns) {
-
-		// Create Dataset
-		// TDB is a serious triple store suitable for enterprise applications
-		// that require scalability and performance
-		ds = TDBFactory.createDataset(location);
-
-		// create or get existing model
-		createModel(modelname);
-	}
+	// public DatabaseImpl(String location, String ns) {
+	//
+	// // Create Dataset
+	// // TDB is a serious triple store suitable for enterprise applications
+	// // that require scalability and performance
+	// ds = TDBFactory.createDataset(location);
+	//
+	// // create or get existing model
+	// createModel(modelname);
+	// }
 
 	public DatabaseImpl() {
 		// Load Database from Fuseki Server
@@ -41,9 +42,20 @@ public class DatabaseImpl implements Database {
 			model = accessor.getModel();
 			// Create RDFModel
 			rdfModel = new RDFModelImpl(URIs.modelname, model);
+		} catch (HttpException exp) {
+			String error = "An HttpException was raised.\n Cause: "
+					+ exp.getMessage();
+			JOptionPane.showMessageDialog(null, error, "PSSIF",
+					JOptionPane.ERROR_MESSAGE);
+
 		} catch (Exception e) {
-			JOptionPane.showMessageDialog(null,
-					"Problems with connecting to Server!\n", "PSSIF",
+			String error = "An error orrcured during connecting to database.\n";
+			if (accessor == null)
+				error = "Problems with connecting to Server!\n Location might be wrong or not accessible.\n";
+			if (model == null)
+				error = "Problems with getting the model from the database.\n";
+
+			JOptionPane.showMessageDialog(null, error, "PSSIF",
 					JOptionPane.ERROR_MESSAGE);
 		}
 	}
@@ -89,8 +101,9 @@ public class DatabaseImpl implements Database {
 
 	@Override
 	public void saveModel(Model model) {
-		// TODO Testing
-		rdfModel.writeModelToFile("TestPSSIF", "C:\\Users\\Andrea\\Desktop\\");
+		// For testing:
+		// rdfModel.writeModelToFile("TestPSSIF",
+		// "C:\\Users\\Andrea\\Desktop\\");
 		if (accessor != null)
 			accessor.putModel(model);
 		else if (ds != null)

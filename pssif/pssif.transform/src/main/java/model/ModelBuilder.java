@@ -153,7 +153,7 @@ public class ModelBuilder {
 		}
 	}
 
-	// TODO changed
+
 	/**
 	 * Deletes the old nodes from DB if Model is merged.
 	 * 

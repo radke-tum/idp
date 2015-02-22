@@ -38,7 +38,7 @@ import de.tum.pssif.core.model.Node;
 // Model to DB Mapper
 public class DBMapperImpl implements DBMapper {
 
-	public RDFModelImpl rdfModel;
+	public static RDFModelImpl rdfModel;
 	public static DatabaseImpl db;
 
 	// Variables to record changes that have to be saved in the Database
@@ -50,9 +50,11 @@ public class DBMapperImpl implements DBMapper {
 	public static LinkedList<MyJunctionNode> changedJunctionNodes = new LinkedList<>();
 	public static LinkedList<MyNode> deletedNodes = new LinkedList<>();
 	public static LinkedList<MyEdge> deletedEdges = new LinkedList<>();
+	public static List<Resource> deletedEdgesRes = new LinkedList<>();
 	public static LinkedList<MyJunctionNode> deletedJunctionNodes = new LinkedList<>();
 	// Flag if Database should be deleted completely
 	public static boolean deleteAll = false;
+	public static boolean merge = false;
 
 	public DBMapperImpl() {
 		super();
@@ -93,10 +95,12 @@ public class DBMapperImpl implements DBMapper {
 
 		for (MyNode node : deletedNodes)
 			removeNode(node);
-		for (MyJunctionNode junctionnode : deletedJunctionNodes)
-			removeJunctionNode(junctionnode);
+//		for (MyJunctionNode junctionnode : deletedJunctionNodes)
+//			removeJunctionNode(junctionnode);
 		for (MyEdge edge : deletedEdges)
 			removeEdge(edge);
+		for (Resource res : deletedEdgesRes)
+			removeEdge(res);
 
 		changeElements();
 
@@ -415,6 +419,42 @@ public class DBMapperImpl implements DBMapper {
 		}
 	}
 
+	/**
+	 * Removes a given Edge from Database
+	 * 
+	 * @param subjectEdge
+	 *            Edge of Class Resource to be removed
+	 */
+	private void removeEdge(Resource subjectEdge) {
+		String uri = subjectEdge.getURI();
+
+		if (rdfModel
+				.bagContainsResource(subjectEdge.getURI(), URIs.uriBagEdges)) {
+
+			// Remove all Statements of this Edge
+			List<Statement> listEdge = subjectEdge.listProperties().toList();
+			for (Statement stmt : listEdge) {
+				// If resource is an attribute, then delete all statements of
+				// this attribute
+				if (stmt.getPredicate().getURI()
+						.contains("Attr/")) {
+					// If there is nothing wrong this should always be true
+					if (stmt.getObject().isResource()) {
+						Resource attr = stmt.getObject().asResource();
+						List<Statement> listAttr = attr.listProperties()
+								.toList();
+						for (Statement stmtAttr : listAttr)
+							rdfModel.removeStatement(stmtAttr);
+					}
+				}
+				rdfModel.removeStatement(stmt);
+			}
+
+			// Remove Edge from Bag
+			rdfModel.removeFromBag(URIs.uriBagEdges, uri);
+		}
+	}
+
 	// ATTRIBUTES
 
 	/**
@@ -566,7 +606,7 @@ public class DBMapperImpl implements DBMapper {
 
 		// Get Attribute Node + Property
 		Resource subjectAttr = rdfModel.getResource(propURI
-				+ attrEntry.getKey() + id);
+				+ attrEntry.getKey() + "/" + id);
 		Property prop = rdfModel.getProperty(URIs.uriAttribute.concat(attrEntry
 				.getKey()));
 
@@ -659,6 +699,15 @@ public class DBMapperImpl implements DBMapper {
 		deletedNodes.clear();
 		deletedEdges.clear();
 		deletedJunctionNodes.clear();
+		deletedEdgesRes.clear();
+	}
+
+	/**
+	 * Delete all Edges in DB from DB
+	 */
+	public static void deleteAllEdges() {
+
+		deletedEdgesRes = rdfModel.getSubjectsOfBag(URIs.uriBagEdges);
 	}
 
 	/**

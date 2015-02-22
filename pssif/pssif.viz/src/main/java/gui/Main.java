@@ -151,7 +151,7 @@ public class Main {
 		ReqToolReqistry.newInstance();
 
 		initFrame();
-		
+
 	}
 
 	private void initFrame() {
@@ -206,7 +206,7 @@ public class Main {
 					graphView = new GraphView();
 					// instance which manages all the filters
 					masterFilter = new MasterFilter(graphView);
-					
+
 					Dimension d = frame.getSize();
 
 					// Setup the frame
@@ -221,7 +221,7 @@ public class Main {
 					adjustButtons();
 
 					ViewManager.initViewManager(graphView, masterFilter);
-					
+
 					frame.setPreferredSize(d);
 					frame.pack();
 					frame.repaint();
@@ -256,7 +256,7 @@ public class Main {
 					// create the full menuBar after first import
 					frame.setJMenuBar(createMenu());
 					adjustButtons();
-					
+
 					ViewManager.initViewManager(graphView, masterFilter);
 
 					frame.setPreferredSize(d);
@@ -286,7 +286,14 @@ public class Main {
 							JOptionPane.ERROR_MESSAGE);
 				}
 				// Database should not be deleted
-				DBMapperImpl.deleteAll = false;
+				DBMapperImpl.deleteAll = true;
+
+				// You can just load a database if there is no other model. If a
+				// new model is loaded into the tool nodes and edges are loaded
+				// to lists that implies which new nodes has to be added to the
+				// DB. But if you load the model from the DB all nodes/edges are
+				// in the db so you can delete the list again.
+				DBMapperImpl.clearAll();
 
 				// Create the Views
 				matrixView = new MatrixView();
@@ -306,7 +313,7 @@ public class Main {
 				// create the full menuBar after first import
 				frame.setJMenuBar(createMenu());
 				adjustButtons();
-				
+
 				ViewManager.initViewManager(graphView, masterFilter);
 
 				frame.setPreferredSize(d);
@@ -431,6 +438,11 @@ public class Main {
 				try {
 					if (toDB == null)
 						toDB = new DBMapperImpl();
+
+					if (DBMapperImpl.merge == true) {
+						toDB.modelToDB(ModelBuilder.activeModel, URIs.modelname);
+						DBMapperImpl.merge = false;
+					}
 					if (DBMapperImpl.deleteAll == true) {
 						int delete = JOptionPane.showConfirmDialog(null,
 								"Should the Database be deleted?");
@@ -522,17 +534,17 @@ public class Main {
 		projectViews.setText("Project View");
 
 		/* Reset View */
-//		resetView = new JMenuItem();
-//		resetView.setText("Reset View");
-//
-//		projectViews.add(resetView);
-//
-//		resetView.addActionListener(new ActionListener() {
-//			@Override
-//			public void actionPerformed(ActionEvent e) {
-//
-//			}
-//		});
+		// resetView = new JMenuItem();
+		// resetView.setText("Reset View");
+		//
+		// projectViews.add(resetView);
+		//
+		// resetView.addActionListener(new ActionListener() {
+		// @Override
+		// public void actionPerformed(ActionEvent e) {
+		//
+		// }
+		// });
 
 		/* ViewManager */
 		manageViews = new JMenuItem();
