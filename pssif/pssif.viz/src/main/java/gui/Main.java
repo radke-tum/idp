@@ -43,11 +43,7 @@ import model.FileImporter;
 import model.ModelBuilder;
 import reqtool.bus.ReqToolReqistry;
 import reqtool.event.CreateSpecProjectEvent;
-import viewplugin.gui.CreateNewProjectViewPopup;
-import viewplugin.gui.ExportViewConfigPopup;
-import viewplugin.gui.ImportViewConfigPopup;
 import viewplugin.gui.ManageViewsPopup;
-import viewplugin.logic.ProjectView;
 import viewplugin.logic.ViewManager;
 
 /**
@@ -334,6 +330,8 @@ public class Main {
 			public void actionPerformed(ActionEvent e) {
 				RDFModel model = null;
 
+				// Just make sure that there exists an instance of fromDB and
+				// toDB to get the rdfModel
 				if (fromDB == null) {
 					if (toDB == null) {
 						toDB = new DBMapperImpl();
@@ -343,6 +341,7 @@ public class Main {
 				} else
 					model = fromDB.rdfModel;
 
+				// Use a FileChooser to select the location for the file
 				JFileChooser finder = new JFileChooser();
 				finder.setSelectedFile(new File(System.getProperty("user.home")
 						+ "\\TurtleExport.ttl"));
@@ -350,6 +349,7 @@ public class Main {
 				int returnVal = finder.showSaveDialog(null);
 				if (returnVal == javax.swing.JFileChooser.APPROVE_OPTION) {
 					java.io.File file = finder.getSelectedFile();
+					// save the model of the DB into selected file
 					model.writeModelToTurtleFile(file);
 					JOptionPane.showMessageDialog(null, "Export successful",
 							"PSSIF", JOptionPane.INFORMATION_MESSAGE);
@@ -439,24 +439,37 @@ public class Main {
 					if (toDB == null)
 						toDB = new DBMapperImpl();
 
+					// If the model was merged then delete DB and build new
+					// rdfModel from activeModel
 					if (DBMapperImpl.merge == true) {
 						toDB.modelToDB(ModelBuilder.activeModel, URIs.modelname);
 						DBMapperImpl.merge = false;
 					}
-					if (DBMapperImpl.deleteAll == true) {
+					// If the database could be deleted compeletely because of
+					// not importing the database before importing the model...
+					// Then ask the user if he wants to delete the DB or add the
+					// new model to the DB
+					else if (DBMapperImpl.deleteAll == true) {
 						int delete = JOptionPane.showConfirmDialog(null,
 								"Should the Database be deleted?");
 
+						// If the DB should be deleted use the modelToDB Method
+						// to save the activeModel
 						if (delete == 0)
 							toDB.modelToDB(ModelBuilder.activeModel,
 									URIs.modelname);
+						// If the DB should not be deleted use the saveToDB
+						// Method to just save the changes
 						else if (delete == 1)
 							toDB.saveToDB(URIs.modelname);
 						else
 							return;
 						DBMapperImpl.deleteAll = false;
+						// If there is just a minor change in the model of the
+						// DB, just save the changes
 					} else
 						toDB.saveToDB(URIs.modelname);
+
 					JOptionPane.showMessageDialog(null, "Successfully saved!",
 							"PSSIF", JOptionPane.INFORMATION_MESSAGE);
 				} catch (Exception e1) {

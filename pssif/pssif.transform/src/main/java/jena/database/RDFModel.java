@@ -215,4 +215,17 @@ public interface RDFModel {
 	 *            Location of the file
 	 */
 	void writeModelToTurtleFile(File file);
+
+	/**
+	 * Begin a new transaction.
+	 * 
+	 * All changes made to a model within a transaction, will either be made, or
+	 * none of them will be made.
+	 */
+	public void begin();
+
+	/**
+	 * Abort the current transaction and abandon any changes in progress.
+	 */
+	public void abort();
 }

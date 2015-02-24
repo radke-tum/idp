@@ -6,8 +6,8 @@ import graph.model.MyNode;
 
 import java.util.LinkedList;
 
-import model.ModelBuilder;
 import jena.mapper.impl.DBMapperImpl;
+import model.ModelBuilder;
 import de.tum.pssif.core.common.PSSIFConstants;
 import de.tum.pssif.core.common.PSSIFOption;
 import de.tum.pssif.core.common.PSSIFValue;
@@ -115,14 +115,14 @@ public class VersionManager {
 					ModelBuilder.addNewEdgeGUI((MyNode) e.getSourceNode(),
 							newVersNode, e.getEdgeType(), e.isDirected());
 					ModelBuilder.getAllEdges().remove(e);
-					// TODO added
+					// If edge should be deleted from DB
 					DBMapperImpl.deletedEdges.add(e);
 				} else if (e.getSourceNode().equals(selNode)) {
 					ModelBuilder.addNewEdgeGUI(newVersNode,
 							(MyNode) e.getDestinationNode(), e.getEdgeType(),
 							e.isDirected());
 					ModelBuilder.getAllEdges().remove(e);
-					// TODO added
+					// If edge should be deleted from DB
 					DBMapperImpl.deletedEdges.add(e);
 				}
 			}

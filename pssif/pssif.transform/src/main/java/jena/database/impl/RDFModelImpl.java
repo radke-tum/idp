@@ -112,13 +112,6 @@ public class RDFModelImpl implements RDFModel {
 			// get bag with given name
 			Bag b = model.getBag(uri);
 
-			// NodeIterator iter = b.iterator();
-			// if (!iter.hasNext())
-			// return null;
-			// while (iter.hasNext())
-			//
-			// res.add(iter.nextNode().asResource());
-
 			List<Statement> list = b.listProperties(Properties.PROP_BAG)
 					.toList();
 			if (list.size() == 0)
@@ -223,12 +216,12 @@ public class RDFModelImpl implements RDFModel {
 		model.commit();
 	}
 
-	// TODO
+	@Override
 	public void begin() {
 		model.begin();
 	}
 
-	// TODO
+	@Override
 	public void abort() {
 		model.abort();
 	}

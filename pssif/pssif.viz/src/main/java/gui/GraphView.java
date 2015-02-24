@@ -44,8 +44,8 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
-import model.ModelBuilder;
 import jena.mapper.impl.DBMapperImpl;
+import model.ModelBuilder;
 
 /**
  * Provides the Graph View of a PSS-IF Model
@@ -585,7 +585,7 @@ public class GraphView {
 										boolean res = node.updateAttribute(
 												attributeName, data);
 
-										// TODO added
+										// If node should be saved to DB
 										DBMapperImpl.changedNodes.add(node);
 
 										if (!res) {
@@ -668,7 +668,7 @@ public class GraphView {
 									boolean res = selectedEdge.updateAttribute(
 											attributeName, data);
 
-									// TODO added
+									// If edge should be saved to DB
 									DBMapperImpl.changedEdges.add(selectedEdge);
 
 									// directed attr changed

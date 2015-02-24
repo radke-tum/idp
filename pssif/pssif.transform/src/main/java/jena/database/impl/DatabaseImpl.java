@@ -18,20 +18,8 @@ import com.hp.hpl.jena.rdf.model.Model;
 public class DatabaseImpl implements Database {
 	public static Dataset ds = null;
 	public static DatasetAccessor accessor;
-	// private static String modelname = URIs.modelname;
 	private static RDFModelImpl rdfModel = null;
 	private static Model model = null;
-
-	// public DatabaseImpl(String location, String ns) {
-	//
-	// // Create Dataset
-	// // TDB is a serious triple store suitable for enterprise applications
-	// // that require scalability and performance
-	// ds = TDBFactory.createDataset(location);
-	//
-	// // create or get existing model
-	// createModel(modelname);
-	// }
 
 	public DatabaseImpl() {
 		// Load Database from Fuseki Server

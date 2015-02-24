@@ -2,8 +2,8 @@ package jena.database;
 
 public class URIs {
 	// URIs
-	// public static final String uri = "http://localhost:3030/PSSIF";
 	public static final String uri = "http://vmkrcmar2.informatik.tu-muenchen.de:3030/PSSIF";
+	// public static final String uri = "http://localhost:3030/PSSIF";
 	public static final String namespace = uri.concat("#");
 
 	public static final String uriBagNodes = namespace.concat("BagNodes");
@@ -30,8 +30,7 @@ public class URIs {
 	public static final String uriAnnotation = namespace.concat("Annot/");
 
 	// Database Location
-	public static final String location = "C:\\Users\\Andrea\\Documents\\Studium\\Master\\IDP\\Datenbankprojekt\\testPSSIFDB";
-	// public static final String location = "C:\\Windows\\Temp\\JenaPSSIFDB";
+	public static final String location = "C:\\Windows\\Temp\\JenaPSSIFDB";
 
 	// Modelname
 	public static final String modelname = "PSSIFModel";

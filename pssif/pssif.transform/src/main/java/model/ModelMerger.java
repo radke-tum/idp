@@ -1,11 +1,8 @@
 package model;
 
-import graph.model.MyEdge;
 import graph.model.MyEdgeType;
-import graph.model.MyJunctionNode;
 import graph.model.MyJunctionNodeType;
 import graph.model.MyNode;
-import graph.model.MyNodeType;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -183,30 +180,10 @@ public class ModelMerger {
 		nodeTransferTracedOldToNewModel = new HashMap<NodeAndType, Node>();
 		nodeTransferunmatchedJunctionsOldToNewModel = new HashMap<NodeAndType, Node>();
 
-		// Edges in Database have to be cleared, because all edges in merge are
-		// created new
-		// clearEdgesDatabase();
-
 		// If there is a merge, delete DB and save the new model
 		DBMapperImpl.merge = true;
 
 		return merge();
-	}
-
-	/**
-	 * This method deletes all Edges in the database and adds just the in the
-	 * merge created new edges to the database. This action is saved to database
-	 * only if you click on save to database in the tool
-	 * 
-	 * @author Andrea
-	 */
-	private void clearEdgesDatabase() {
-		// delete all edges in database, because all edges in merge are created
-		// new.
-		DBMapperImpl.deleteAllEdges();
-		// Because all edges are created new in merge you have to clear the list
-		// of newEdges that have to be added to database
-		DBMapperImpl.newEdges.clear();
 	}
 
 	/**
@@ -388,15 +365,6 @@ public class ModelMerger {
 								Edge newEdge = incomingMapping.create(modelNew,
 										pairs.getValue(), newJunctionnode);
 
-								// this edge has to be changed in DB
-								changeEdgeinDB(newEdge,
-										incomingMapping.getType(), new MyNode(
-												pairs.getValue(),
-												new MyNodeType((NodeType) pairs
-														.getKey().getType())),
-										new MyJunctionNode(newJunctionnode,
-												newJunctionnodeType));
-
 								// transfer the attributes of the old to the new
 								// edge
 								transferEdgeAttributes(incomingEdge, newEdge,
@@ -476,12 +444,6 @@ public class ModelMerger {
 							Edge newEdge = incomingMapping.create(modelNew,
 									searchedFromNodeNew.getNode(),
 									newJunctionnode);
-
-							// this edge has to be changed in DB
-							changeEdgeinDB(newEdge, incomingMapping.getType(),
-									searchedFromNodeNew, new MyJunctionNode(
-											newJunctionnode,
-											newJunctionnodeType));
 
 							// transfer the attributes of the old to the new
 							// edge
@@ -581,12 +543,6 @@ public class ModelMerger {
 							Edge newEdge = outgoingMapping.create(modelNew,
 									newJunctionnode,
 									searchedToNodeNew.getNode());
-
-							// this edge has to be changed in DB
-							changeEdgeinDB(newEdge, outgoingMapping.getType(),
-									new MyJunctionNode(newJunctionnode,
-											newJunctionnodeType),
-									searchedToNodeNew);
 
 							// transfer the attributes of the old to the new
 							// edge
@@ -1003,10 +959,6 @@ public class ModelMerger {
 									searchedFromNodeNew.getNode(),
 									searchedToNodeNew.getNode());
 
-							// this edge has to be changed in DB
-							changeEdgeinDB(newEdge, edgeType,
-									searchedFromNodeNew, searchedToNodeNew);
-
 							// transfer the attributes of the old to the new
 							// edge
 							transferEdgeAttributes(incomingEdge, newEdge,
@@ -1184,10 +1136,6 @@ public class ModelMerger {
 									searchedFromNodeNew.getNode(),
 									searchedToNodeNew.getNode());
 
-							// this edge has to be changed in DB
-							changeEdgeinDB(newEdge, edgeType,
-									searchedFromNodeNew, searchedToNodeNew);
-
 							// transfer the attributes of the old to the new
 							// edge
 							transferEdgeAttributes(outgoingEdge, newEdge,
@@ -1200,69 +1148,6 @@ public class ModelMerger {
 				}
 			}
 		}
-	}
-
-	/**
-	 * change Edge in Database
-	 * 
-	 * @param newEdge
-	 *            edge to be changed
-	 * @param edgeType
-	 *            type of edge to be changed
-	 * @param searchedFromNodeNew
-	 *            source node of edge to be changed
-	 * @param searchedToNodeNew
-	 *            destination node of edge to be changed
-	 * 
-	 * @Author Andrea
-	 */
-	private void changeEdgeinDB(Edge newEdge, EdgeType edgeType,
-			MyNode searchedFromNodeNew, MyNode searchedToNodeNew) {
-		MyEdge myEdge = new MyEdge(newEdge, new MyEdgeType(edgeType,
-				edgeType.hashCode()), searchedFromNodeNew, searchedToNodeNew);
-		DBMapperImpl.changedEdges.add(myEdge);
-	}
-
-	/**
-	 * change Edge in Database
-	 * 
-	 * @param newEdge
-	 *            edge to be changed
-	 * @param edgeType
-	 *            type of edge to be changed
-	 * @param searchedFromNodeNew
-	 *            source junctionnode of edge to be changed
-	 * @param searchedToNodeNew
-	 *            destination node of edge to be changed
-	 * 
-	 * @Author Andrea
-	 */
-	private void changeEdgeinDB(Edge newEdge, EdgeType edgeType,
-			MyJunctionNode searchedFromNodeNew, MyNode searchedToNodeNew) {
-		MyEdge myEdge = new MyEdge(newEdge, new MyEdgeType(edgeType,
-				edgeType.hashCode()), searchedFromNodeNew, searchedToNodeNew);
-		DBMapperImpl.changedEdges.add(myEdge);
-	}
-
-	/**
-	 * change Edge in Database
-	 * 
-	 * @param newEdge
-	 *            edge to be changed
-	 * @param edgeType
-	 *            type of edge to be changed
-	 * @param searchedFromNodeNew
-	 *            source node of edge to be changed
-	 * @param searchedToNodeNew
-	 *            destination junctionnode of edge to be changed
-	 * 
-	 * @Author Andrea
-	 */
-	private void changeEdgeinDB(Edge newEdge, EdgeType edgeType,
-			MyNode searchedFromNodeNew, MyJunctionNode searchedToNodeNew) {
-		MyEdge myEdge = new MyEdge(newEdge, new MyEdgeType(edgeType,
-				edgeType.hashCode()), searchedFromNodeNew, searchedToNodeNew);
-		DBMapperImpl.changedEdges.add(myEdge);
 	}
 
 	/**

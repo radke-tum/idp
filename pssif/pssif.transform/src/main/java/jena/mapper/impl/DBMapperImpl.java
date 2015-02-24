@@ -52,8 +52,10 @@ public class DBMapperImpl implements DBMapper {
 	public static LinkedList<MyEdge> deletedEdges = new LinkedList<>();
 	public static List<Resource> deletedEdgesRes = new LinkedList<>();
 	public static LinkedList<MyJunctionNode> deletedJunctionNodes = new LinkedList<>();
-	// Flag if Database should be deleted completely
+	// Flag, if the database could be deleted completely because of
+	// not importing the database before importing the model...
 	public static boolean deleteAll = false;
+	// Flat if there was a Merge between 2 models
 	public static boolean merge = false;
 
 	public DBMapperImpl() {
@@ -95,8 +97,8 @@ public class DBMapperImpl implements DBMapper {
 
 		for (MyNode node : deletedNodes)
 			removeNode(node);
-//		for (MyJunctionNode junctionnode : deletedJunctionNodes)
-//			removeJunctionNode(junctionnode);
+		// for (MyJunctionNode junctionnode : deletedJunctionNodes)
+		// removeJunctionNode(junctionnode);
 		for (MyEdge edge : deletedEdges)
 			removeEdge(edge);
 		for (Resource res : deletedEdgesRes)
@@ -105,7 +107,6 @@ public class DBMapperImpl implements DBMapper {
 		changeElements();
 
 		db.saveModel(rdfModel.getModel());
-		// rdfModel.writeModelToFile("Test", "C:\\Users\\Andrea\\Desktop\\");
 
 		// db.commit();
 		// db.end();
@@ -436,8 +437,7 @@ public class DBMapperImpl implements DBMapper {
 			for (Statement stmt : listEdge) {
 				// If resource is an attribute, then delete all statements of
 				// this attribute
-				if (stmt.getPredicate().getURI()
-						.contains("Attr/")) {
+				if (stmt.getPredicate().getURI().contains("Attr/")) {
 					// If there is nothing wrong this should always be true
 					if (stmt.getObject().isResource()) {
 						Resource attr = stmt.getObject().asResource();
@@ -578,7 +578,16 @@ public class DBMapperImpl implements DBMapper {
 		subjectAttr.addProperty(Properties.PROP_ATTR_CATEGORY, category);
 	}
 
-	// removes all Attributes
+	/**
+	 * Removes all Attributes of a Node/Edge/JunctionNode
+	 * 
+	 * @param attr
+	 *            HashMap of the existing Attributes
+	 * @param subject
+	 *            Subject of which attributes should be deleted
+	 * @param prop
+	 *            Property
+	 */
 	private void removeAllAttributes(HashMap<String, Attribute> attr,
 			Resource subject, String prop) {
 		for (Iterator<Entry<String, Attribute>> it = attr.entrySet().iterator(); it

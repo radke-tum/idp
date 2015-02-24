@@ -294,7 +294,6 @@ public class PssifMapperImpl implements PssifMapper {
 			String id = st.getObject().toString();
 
 			// get existing Node from ID
-			boolean d = nodes.containsKey(id);
 			nodeOut = nodes.get(id);
 		}
 
@@ -438,6 +437,13 @@ public class PssifMapperImpl implements PssifMapper {
 		return false;
 	}
 
+	/**
+	 * gets the Type of a Node/Edge/JunctionNode from a Resource
+	 * 
+	 * @param subject
+	 *            Resource to get Type
+	 * @return name of the Type
+	 */
 	private String getType(Resource subject) {
 		try {
 			Statement stmt = subject.getProperty(Properties.PROP_TYPE);
