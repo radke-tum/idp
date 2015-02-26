@@ -55,18 +55,19 @@ public class Graph {
   }
 
   public String toString() {
-    StringBuilder b = new StringBuilder();
-    b.append("Nodes:\n");
-    for (Node node : nodes.values()) {
-      b.append(node);
-      b.append("\n");
-    }
-    b.append("Edges:\n");
-    for (Edge edge : edges.values()) {
-      b.append(edge);
-      b.append("\n");
-    }
-    return b.toString();
+		StringBuilder b = new StringBuilder();
+		b.append("Nodes:\n");
+		for (Node node : nodes.values()) {
+			b.append(node);
+			b.append("\n");
+		}
+		b.append("Edges:\n");
+		for (Edge edge : edges.values()) {
+			b.append(edge);
+			b.append("\n");
+		}
+		return b.toString();
+	  
   }
 
 }

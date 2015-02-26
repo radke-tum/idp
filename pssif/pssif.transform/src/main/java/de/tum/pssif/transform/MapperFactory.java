@@ -10,6 +10,7 @@ import de.tum.pssif.transform.mapper.SysMlMapper;
 import de.tum.pssif.transform.mapper.graphml.PSSIFMapper;
 import de.tum.pssif.transform.mapper.graphml.UFMMapper;
 import de.tum.pssif.transform.mapper.reqif.ReqifMapper;
+import de.tum.pssif.transform.mapper.xmi.XmiMapper;
 
 
 public final class MapperFactory {
@@ -49,8 +50,11 @@ public final class MapperFactory {
    */
   public static final String RDF_TTL = "RDF/Turtle";
   public static final String RDF_XML = "RDF/XML";
-
-
+  
+  /**
+   * UML
+   */
+  public static final String UML  = "uml";
 
   public static Mapper getMapper(String name) {
     if (PSSIFUtil.areSame(UOFP, name)) {
@@ -76,6 +80,8 @@ public final class MapperFactory {
     }
     else if (PSSIFUtil.areSame(RDF_XML, name)) {
     	return new RDFXMLMapper();
+    } else if (PSSIFUtil.areSame(UML, name)) {
+    	return new XmiMapper();
     }
     throw new PSSIFException("No mapper found for name: " + name);
   }

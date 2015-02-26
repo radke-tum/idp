@@ -1,5 +1,5 @@
 package gui.metamodel;
-
+ 
 import java.awt.GridBagConstraints;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
@@ -27,7 +27,7 @@ public class AttributeSpecificPopUp {
 	private JLabel datatypeLabel;
 	private JLabel visiblityLabel;
 	private JLabel categoryLabel;
-	private JComboBox<String> groupBox;
+	private JComboBox<String> groupBox; 
 	private JComboBox<String> unitBox;
 	private JComboBox<String> dataTypeBox;
 	private JComboBox<String> visibilityBox;

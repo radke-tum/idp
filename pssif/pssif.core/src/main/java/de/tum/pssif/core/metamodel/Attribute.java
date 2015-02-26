@@ -23,7 +23,7 @@ public interface Attribute extends Named {
    * @return
    *    Whether the attribute type is visible. This kind of visibility
    *    is concerned with UI and visualizations and does <b>not</b> 
-   *    have anyting to do with permissions. 
+   *    have anything to do with permissions. 
    */
   boolean isVisible();
 

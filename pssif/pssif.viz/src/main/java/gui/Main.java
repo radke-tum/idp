@@ -34,6 +34,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+import de.tum.pssif.transform.graph.Graph;
 import jena.database.RDFModel;
 import jena.database.URIs;
 import jena.mapper.impl.DBMapperImpl;
