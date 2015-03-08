@@ -8,7 +8,7 @@ import com.hp.hpl.jena.rdf.model.Property;
 import de.tum.pssif.core.common.PSSIFConstants;
 
 public class Properties {
-	private static Model m = ModelFactory.createDefaultModel();
+//	private static Model m = ModelFactory.createDefaultModel();
 
 	// // Properties of Attributes
 	
@@ -58,35 +58,6 @@ public class Properties {
 //			.createProperty(URIs.uriAttribute.concat("DATATYPE"));
 //	public static final Property PROP_ATTR_CATEGORY = m
 //			.createProperty(URIs.uriAttribute.concat("CATEGORY"));
-	public static final Property PROP_ATTR = m
-			.createProperty(URIs.namespace.concat("attribute"));
-	public static final Property PROP_ATTR_NAME = m
-			.createProperty(URIs.namespace.concat("name"));
-	public static final Property PROP_ATTR_VALUE = m
-			.createProperty(URIs.namespace.concat("value"));
-	public static final Property PROP_ATTR_UNIT = m
-			.createProperty(URIs.namespace.concat("unit"));
-	public static final Property PROP_ATTR_DATATYPE = m
-			.createProperty(URIs.namespace.concat("datatype"));
-	public static final Property PROP_ATTR_CATEGORY = m
-			.createProperty(URIs.namespace.concat("category"));
 
-	// Property of Type
-	public static final Property PROP_TYPE = m.createProperty(URIs.namespace
-			.concat("type"));
-	
-	public static final Property PROP_ID = m.createProperty(URIs.namespace
-			.concat(PSSIFConstants.BUILTIN_ATTRIBUTE_ID));
-	
-	public static final Property PROP_ANNOT = m.createProperty(URIs.namespace
-			.concat(PSSIFConstants.ALIAS_ANNOTATION_KEY));
-	// Properties of in and out going nodes
-	public static final Property PROP_NODE_IN = m.createProperty(URIs.namespace
-			.concat("in"));
-	public static final Property PROP_NODE_OUT = m
-			.createProperty(URIs.namespace.concat("out"));
 
-	// Property of Bags
-	public static final Property PROP_BAG = m
-			.createProperty("http://www.w3.org/1999/02/22-rdf-syntax-ns#BagElement");
 }

@@ -4,52 +4,50 @@
 @prefix graphattr:  <http://www.sfb768.tum.de/voc/graph/Attr#> .
 @prefix graphannot:  <http://www.sfb768.tum.de/voc/graph/Annot#> .
 
+
+
+
 [EPC_Performs:
-		(?in epc:performs ?out) 
-		makeSkolem(?a, ?in, ?out)
+		(?in epc:flow ?out) 
+		(?in rdf:type epc:Organizational_Unit)
+		makeSkolem(?s, ?in, ?out)
 		->
-		(?s	rdf:Type pssif:Performs)
+		(?s	rdf:type pssif:Performs)
 		(?s pssif:Source ?in)
 		(?s pssif:Target ?out)
 ]
 
+[EPC_ControlFlow: 	
+					(?s epc:flow ?t)
+					noValue(?s rdf:type epc:Organizational_Unit)
+					makeSkolem(?c, ?s, ?t)
+					->
+					(?c rdf:type pssif:ControlFlow )
+					(?c	pssif:Source ?s )
+					(?c	pssif:Target ?t )
+]
+
 [EPC_Organization:
 		(?s rdf:type epc:Organizational_Unit)
-		(?s epc:name ?n)
 		->
-		(?s	rdf:Type pssif:Actor)
-		(?s	pssif:Name ?n)
+		(?s	rdf:type pssif:Actor)
+		(?s pssif:PSSIF_aliased_key "Organizational unit")
 ]
 
-[EPC_Function: 	(?s rdf:type epc:Function)
-				(?s epc:name ?n ) 
-				makeSkolem(?a, ?gid, ?n)
+[EPC_Function: 	
+				(?s rdf:type epc:Function)
 				->
 				(?s rdf:type pssif:Activity )
-				(?s	pssif:Name ?n )
 ]
-
 		
-[EPC_Event: (?s a epc:Event)
-			(?s epc:name ?n ) 
-			makeSkolem(?a, ?gid, ?n)
+[EPC_Event: 
+			(?s rdf:type epc:Event)
 			->
-			(?a rdf:type pssif:State )
-			(?a	pssif:Name ?n )
-]
-		
-[EPC_ControlFlow: 	(?s epc:flow ?t)
-				makeSkolem(?c, ?s, ?t)
-				->
-				(?c rdf:type pssif:ControlFlow )
-				(?c	pssif:Source ?s )
-				(?c	pssif:Target ?t )
+			(?s rdf:type pssif:State )
 ]
 
-[EPC_Performs: 	(?s epc:performs ?t)
-				makeSkolem(?c, ?s, ?t)
-				->
-				(?c rdf:type pssif:performs )
-				(?c	pssif:Source ?s )
-				(?c	pssif:Target ?t )
+[EPC_Name:			
+			(?s epc:name ?n ) 
+			->
+			(?s	pssif:Name ?n )
 ]

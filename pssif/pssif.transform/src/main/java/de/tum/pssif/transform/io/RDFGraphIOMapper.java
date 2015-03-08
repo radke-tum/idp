@@ -1,6 +1,13 @@
 package de.tum.pssif.transform.io;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -10,27 +17,41 @@ import javax.swing.JOptionPane;
 
 import cern.colt.matrix.linalg.Property;
 
+import com.hp.hpl.jena.ontology.DatatypeProperty;
+import com.hp.hpl.jena.ontology.Individual;
+import com.hp.hpl.jena.ontology.OntClass;
+import com.hp.hpl.jena.ontology.OntDocumentManager;
+import com.hp.hpl.jena.ontology.OntModel;
+import com.hp.hpl.jena.ontology.OntModelSpec;
+import com.hp.hpl.jena.ontology.OntResource;
 import com.hp.hpl.jena.rdf.model.Bag;
 import com.hp.hpl.jena.rdf.model.Literal;
+import com.hp.hpl.jena.rdf.model.ModelFactory;
+import com.hp.hpl.jena.rdf.model.NodeIterator;
 import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.ResIterator;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.ResourceFactory;
 import com.hp.hpl.jena.rdf.model.Statement;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
+import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 import com.hp.hpl.jena.vocabulary.RDF;
 
 import de.tum.pssif.core.common.PSSIFConstants;
 import de.tum.pssif.core.common.PSSIFOption;
+import de.tum.pssif.core.common.PSSIFValue;
 import de.tum.pssif.core.metamodel.Attribute;
 import de.tum.pssif.core.metamodel.ConnectionMapping;
+import de.tum.pssif.core.metamodel.DataType;
 import de.tum.pssif.core.metamodel.EdgeType;
 import de.tum.pssif.core.metamodel.ElementType;
 import de.tum.pssif.core.metamodel.JunctionNodeType;
 import de.tum.pssif.core.metamodel.Metamodel;
 import de.tum.pssif.core.metamodel.NodeType;
 import de.tum.pssif.core.metamodel.NodeTypeBase;
+import de.tum.pssif.core.metamodel.PrimitiveDataType;
 import de.tum.pssif.core.metamodel.external.PSSIFCanonicMetamodelCreator;
+import de.tum.pssif.core.metamodel.external.URIs;
 import de.tum.pssif.core.model.Edge;
 import de.tum.pssif.core.model.Element;
 import de.tum.pssif.core.model.JunctionNode;
@@ -39,23 +60,38 @@ import de.tum.pssif.core.model.impl.ModelImpl;
 
 public class RDFGraphIOMapper {
 
-	private com.hp.hpl.jena.rdf.model.Model rdfModel;
+	private OntModel baseModel;
+	private OntModel infModel;
+	OntModel pssifOntModel;
+
 	private de.tum.pssif.core.model.Model pssifModel;
 	private Metamodel metamodel = PSSIFCanonicMetamodelCreator.create();
 	private HashMap<String, Node> nodes = new HashMap<>();
+	private HashMap<String, Node> junctionNodes = new HashMap<>();
+
 	private HashMap<String, Edge> edges = new HashMap<>();
 	private static int id = 0;
 
-	public RDFGraphIOMapper(com.hp.hpl.jena.rdf.model.Model rdfModel,
-			Metamodel metamodel) {
+	public RDFGraphIOMapper(OntModel infModel, Metamodel metamodel) {
+		pssifOntModel = OntDocumentManager.getInstance().getOntology(
+				URIs.pssifNS, OntModelSpec.OWL_DL_MEM_TRANS_INF);
+		this.infModel = infModel;
+		String path = System.getProperty("user.home") + "\\Meta-Model.rdf";
+		try {
+			this.infModel.read(new FileInputStream(new File(path)),
+					URIs.pssifNS, "TURTLE");
+		} catch (FileNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 
-		this.rdfModel = rdfModel;
 		this.metamodel = metamodel;
+
 		setPssifModel(new ModelImpl());
 		createNodes();
-		// TODO: Junction Nodes
-		// getJunctionNodes();
+		createJunctionNodes();
 		createEdges();
+
 	}
 
 	// NODES
@@ -64,35 +100,33 @@ public class RDFGraphIOMapper {
 	 * Get all Nodes from the database
 	 */
 	private void createNodes() {
-		ResIterator subjectNodes = rdfModel.listSubjectsWithProperty(RDF.type,
-				ResourceFactory.createProperty(URIs.namespace, "Node"));
 
+		ExtendedIterator<? extends OntResource> subjectNodes = infModel
+				.getOntClass(URIs.uriNode).listInstances();
 		while (subjectNodes.hasNext()) {
-			Resource subject = (subjectNodes.next());
 			try {
-				String id;
+				OntResource subject = (subjectNodes.next());
+				ExtendedIterator<OntClass> sc = subject.asIndividual()
+						.listOntClasses(true);
 
+				OntClass type = null;
+				while (sc.hasNext()) {
+					OntClass e = sc.next();
+					if (e.getURI() != null && !e.getURI().equals(URIs.uriNode))
+						type = e;
+				}
+				if (type == null)
+					type = infModel.getOntClass(URIs.uriNode);
 				// find NodeType
-
-				String nodeTypeName = subject.getProperty(Properties.PROP_TYPE)
-						.getObject().toString();
-
+				String nodeTypeName = type.getLabel(null);
+				if (nodeTypeName == null)
+					nodeTypeName = "Node";
 				// Create new Node and NodeType
 				NodeType nodeType = metamodel.getNodeType(nodeTypeName)
 						.getOne();
 				Node newNode = nodeType.create(getPssifModel());
-
-				// add attributes and annotations to Node
-				Statement s = subject.getProperty(Properties.PROP_ID);
-				if (s != null) {
-					id = s.getResource()
-							.getProperty(Properties.PROP_ATTR_VALUE)
-							.getObject().toString();
-				} else
-					id = generateId(subject);
-
-				createAttributeOrAnnotation(subject, nodeType, newNode);
-
+				String id = createAttributeOrAnnotation(subject.asIndividual(),
+						nodeType, newNode);
 				// add node to hashmap
 				nodes.put(id, newNode);
 			} catch (Exception e) {
@@ -105,73 +139,44 @@ public class RDFGraphIOMapper {
 	}
 
 	// JUNCTION NODES
+	private void createJunctionNodes() {
+		ExtendedIterator<? extends OntResource> subjectNodes = infModel
+				.getOntClass(URIs.uriJunctionNode).listInstances();
+		while (subjectNodes.hasNext()) {
+			try {
+				OntResource subject = (subjectNodes.next());
+				ExtendedIterator<OntClass> sc = subject.asIndividual()
+						.listOntClasses(true);
 
-	/**
-	 * Get all JunctionNodes from the database
-	 */
-	// private void getJunctionNodes() {
-	// try {
-	// List<Resource> subjectJNodes =
-	// getSubjectsOfBag(rdfModel,URIs.uriBagJunctionNodes);
-	// for (Iterator<Resource> iter = subjectJNodes.iterator(); iter
-	// .hasNext();) {
-	// constructJunctionNode(iter.next());
-	// }
-	// } catch (NullPointerException e) {
-	// }
-	// }
+				OntClass type = null;
+				while (sc.hasNext()) {
+					OntClass e = sc.next();
+					if (e.getURI() != null
+							&& !e.getURI().equals(URIs.uriJunctionNode))
+						type = e;
+				}
+				if (type == null)
+					type = infModel.getOntClass(URIs.uriJunctionNode);
+				// find NodeType
+				String jNodeTypeName = type.getLabel(null);
+				if (jNodeTypeName == null)
+					jNodeTypeName = "JunctionNode";
+				// Create new Node and NodeType
+				JunctionNodeType jNodeType = metamodel.getJunctionNodeType(
+						jNodeTypeName).getOne();
+				Node newNode = jNodeType.create(getPssifModel());
+				String id = createAttributeOrAnnotation(subject.asIndividual(),
+						jNodeType, newNode);
+				// add node to hashmap
+				junctionNodes.put(id, newNode);
+			} catch (Exception e) {
+				JOptionPane.showMessageDialog(null,
+						"Problem with constructing a Node", "PSSIF",
+						JOptionPane.ERROR_MESSAGE);
+			}
+		}
 
-	// /**
-	// * Reconstruct a JunctionNode like pssif.core.JunctionNode from a
-	// * JunctionNode subject in the database
-	// *
-	// * @param subject
-	// * Resource of the JunctionNode
-	// */
-	// private void constructJunctionNode(Resource subject) {
-	// try {
-	// String id;
-	// Node newJNode = null;
-	//
-	// // find JNodeType
-	// Statement resJNodeType = subject.getProperty(Properties.PROP_TYPE);
-	// String jNodeTypeName = resJNodeType.getObject().toString();
-	//
-	// // create new JNode and JNodeType
-	// JunctionNodeType jNodeType = metamodel.getJunctionNodeType(
-	// jNodeTypeName).getOne();
-	// newJNode = jNodeType.create(getPssifModel());
-	//
-	// // add annotations and attributes to Edge
-	//
-	// Statement s = subject.getProperty(Properties.PROP_ID);
-	// if (s != null) {
-	// id = s.getResource().getProperty(Properties.PROP_ATTR_VALUE)
-	// .getObject().toString();
-	// } else {
-	// if (subject.getURI() != null)
-	// id = subject.getURI().split("#")[1];
-	// else
-	// id = UUID.randomUUID().toString();
-	// Resource att = rdfModel.createResource();
-	// subject.addProperty(Properties.PROP_ID, att);
-	// att.addProperty(RDF.type, URIs.namespace + "Attribute");
-	// att.addProperty(Properties.PROP_ATTR_DATATYPE, "String");
-	// att.addProperty(Properties.PROP_ATTR_VALUE, id);
-	// att.addProperty(Properties.PROP_ATTR_UNIT, "None");
-	// att.addProperty(Properties.PROP_ATTR_CATEGORY, "MetaData");
-	// }
-	// createAttributeOrAnnotation(subject, jNodeType, newJNode);
-	//
-	// // add edge to Hashmap
-	// nodes.put(id, newJNode);
-	//
-	// } catch (Exception e) {
-	// JOptionPane.showMessageDialog(null,
-	// "Problem with constructing an JunctionNode", "PSSIF",
-	// JOptionPane.ERROR_MESSAGE);
-	// }
-	// }
+	}
 
 	// EDGES
 
@@ -179,43 +184,36 @@ public class RDFGraphIOMapper {
 	 * Get all Edges from the database
 	 */
 	private void createEdges() {
-		ResIterator subjectEdges = rdfModel.listSubjectsWithProperty(RDF.type,
-				ResourceFactory.createProperty(URIs.namespace, "Edge"));
+		ExtendedIterator<? extends OntResource> subjectNodes = infModel
+				.getOntClass(URIs.uriEdge).listInstances();
 
 		try {
-			while (subjectEdges.hasNext()) {
-				Resource subject = subjectEdges.next();
-
-				// find EdgeType
-				Statement resEdgeType = subject
-						.getProperty(Properties.PROP_TYPE);
-				if (resEdgeType != null) {
-					String edgeTypeName = resEdgeType.getObject().asLiteral()
-							.getString();
-
-					String id;
-					Statement s = subject.getProperty(Properties.PROP_ID);
-					if (s != null) {
-						id = s.getResource()
-								.getProperty(Properties.PROP_ATTR_VALUE)
-								.getObject().toString();
-					} else {
-						id = generateId(subject);
-					}
-
-					// create new Edge and EdgeType
-					EdgeType edgeType = metamodel.getEdgeType(edgeTypeName)
-							.getOne();
-
-					// get incoming and outgoing nodes
-					Edge newEdge = constructInOutNodes(subject, edgeType);
-
-					// add annotations and attributes to Edge
-					createAttributeOrAnnotation(subject, edgeType, newEdge);
-
-					// add edge to Hashmap
-					edges.put(id, newEdge);
+			while (subjectNodes.hasNext()) {
+				Individual subject = (subjectNodes.next()).asIndividual();
+				ExtendedIterator<OntClass> sc = subject.listOntClasses(true);
+				OntClass type = null;
+				while (sc.hasNext()) {
+					OntClass e = sc.next();
+					if (e.getURI() != null && !e.getURI().equals(URIs.uriEdge))
+						type = e;
 				}
+				if (type == null)
+					type = infModel.getOntClass(URIs.uriEdge);
+				// find EdgeType
+				String edgeTypeName = type.getLabel(null);
+				if (edgeTypeName == null)
+					edgeTypeName = "Edge";
+				// create new Edge and EdgeType
+				EdgeType edgeType = metamodel.getEdgeType(edgeTypeName)
+						.getOne();
+				Edge newEdge = constructInOutNodes(subject, edgeType);
+				// add annotations and attributes to Edge
+				String id = createAttributeOrAnnotation(subject, edgeType,
+						newEdge);
+				// get incoming and outgoing nodes
+
+				// add edge to Hashmap
+				edges.put(id, newEdge);
 			}
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(null,
@@ -227,23 +225,8 @@ public class RDFGraphIOMapper {
 
 	private String generateId(Resource subject) {
 		String id;
-		// if (subject.getURI() != null)
-		// id = subject.getURI().split("#")[1];
-		// else {
-		// id = UUID.randomUUID().toString();
 		id = String.valueOf(RDFGraphIOMapper.id);
 		RDFGraphIOMapper.id += 1;
-		// }
-		// Resource att = rdfModel.createResource();
-		subject.addProperty(Properties.PROP_ID, id);
-
-		// rdfModel.add(att,RDF.type, ResourceFactory.createResource(
-		// URIs.namespace+"Attribute"));
-		// rdfModel.add(att,Properties.PROP_ATTR_NAME, "name");
-		// rdfModel.add(att,Properties.PROP_ATTR_DATATYPE, "String");
-		// rdfModel.add(att,Properties.PROP_ATTR_VALUE, id);
-		// rdfModel.add(att,Properties.PROP_ATTR_UNIT, "none");
-		// rdfModel.add(att,Properties.PROP_ATTR_CATEGORY, "MetaData");
 		return id;
 	}
 
@@ -256,73 +239,46 @@ public class RDFGraphIOMapper {
 	 * @param edgeType
 	 *            EdgeType of the resource Edge
 	 */
-	private Edge constructInOutNodes(Resource subject, EdgeType edgeType) {
+	private Edge constructInOutNodes(Individual subject, EdgeType edgeType) {
 		Node nodeIn = null;
 		Node nodeOut = null;
 		NodeTypeBase nodeTypeIn = null;
 		NodeTypeBase nodeTypeOut = null;
 
 		// get Statements for incoming and outgoing Nodes
-		Statement stmtNodeIn = subject.getProperty(Properties.PROP_NODE_IN);
-		Statement stmtNodeOut = subject.getProperty(Properties.PROP_NODE_OUT);
+		Individual stmtNodeIn = ((OntResource) subject
+				.getPropertyValue(infModel.getObjectProperty(URIs.PROP_NODE_IN)))
+				.asIndividual();
+		Individual stmtNodeOut = ((OntResource) subject
+				.getPropertyValue(infModel
+						.getObjectProperty(URIs.PROP_NODE_OUT))).asIndividual();
 
-		// get incoming Node from statement
-		if (stmtNodeIn != null) {
+		if (stmtNodeIn != null && stmtNodeOut != null) {
 			// get Node
-			Resource resNodeIn = stmtNodeIn.getObject().asResource();
-			// get NodeType
-			Statement stmtNodeType = resNodeIn
-					.getProperty(Properties.PROP_TYPE);
-			String nodeTypeName = stmtNodeType.getObject().toString();
-			// if node is a Junction node you have to get the JunctionNodeType
-			// TODO JunctionNodeType
-			// if (resNodeIn.toString().contains(URIs.uriJunctionNode)) {
-			// PSSIFOption<NodeTypeBase> nodeTypeIn1 = metamodel
-			// .getBaseNodeType(nodeTypeName);
-			// nodeTypeIn = nodeTypeIn1.getOne();
-			// } else
-			nodeTypeIn = metamodel.getNodeType(nodeTypeName).getOne();
-			// get ID
-			// Statement resNodeID = resNodeIn
-			// .getProperty(Properties.PROP_ATTR_ID);
-			String id = resNodeIn.getProperty(Properties.PROP_ID).getString();
-			// if (resNodeID != null) {
-			// Statement st = resNodeID.getObject().asResource()
-			// .getProperty(Properties.PROP_ATTR_VALUE);
-			// id = st.getObject().toString();
-			// }
-			// get existing Node from ID
-			nodeIn = nodes.get(id);
-		}
 
-		// get outgoing Node from statement
-		if (stmtNodeOut != null) {
-			// get Node
-			Resource resNodeOut = stmtNodeOut.getObject().asResource();
-			// get NodeType
-			Statement stmtNodeType = resNodeOut
-					.getProperty(Properties.PROP_TYPE);
-			String nodeTypeName = stmtNodeType.getObject().toString();
-			// if node is a Junction node you have to get the JunctionNodeType
-			// TODO JunctionNodeType
+			OntClass nodeInType = stmtNodeIn.getOntClass();
+			OntClass nodeOutType = stmtNodeOut.getOntClass();
 
-			// if (resNodeOut.toString().contains(URIs.uriJunctionNode)) {
-			// PSSIFOption<NodeTypeBase> nodeTypeOut1 = metamodel
-			// .getBaseNodeType(nodeTypeName);
-			// nodeTypeOut = nodeTypeOut1.getOne();
-			// } else
-			nodeTypeOut = metamodel.getNodeType(nodeTypeName).getOne();
-			// get ID
-			// Statement resNodeID = resNodeOut
-			// .getProperty(Properties.PROP_ATTR_ID);
-			String id = resNodeOut.getProperty(Properties.PROP_ID).getString();
-			// if (resNodeID != null) {
-			// Statement st = resNodeID.getObject().asResource()
-			// .getProperty(Properties.PROP_ATTR_VALUE);
-			// id = st.getObject().toString();
-			// }
-			// get existing Node from ID
-			nodeOut = nodes.get(id);
+			// TODO JunctionNodeType
+			// BASENODETYPE
+			if (nodeInType.getURI().toString().contains(URIs.uriJunctionNode)) {
+				nodeTypeIn = metamodel.getJunctionNodeType(
+						nodeInType.getLabel(null)).getOne();
+			} else
+				nodeTypeIn = metamodel.getNodeType(nodeInType.getLabel(null))
+						.getOne();
+
+			if (nodeOutType.getURI().toString().contains(URIs.uriJunctionNode)) {
+				nodeTypeOut = metamodel.getJunctionNodeType(
+						nodeOutType.getLabel(null)).getOne();
+			} else
+				nodeTypeOut = metamodel.getNodeType(nodeOutType.getLabel(null))
+						.getOne();
+
+			nodeIn = nodes.get(stmtNodeIn.getProperty(
+					infModel.getDatatypeProperty(URIs.PROP_ID)).getString());
+			nodeOut = nodes.get(stmtNodeOut.getProperty(
+					infModel.getDatatypeProperty(URIs.PROP_ID)).getString());
 		}
 
 		PSSIFOption<ConnectionMapping> mapping = edgeType.getMapping(
@@ -332,13 +288,11 @@ public class RDFGraphIOMapper {
 
 		return newEdge;
 	}
-	Object getAttributeValue(Resource subject, com.hp.hpl.jena.rdf.model.Property att) {
-		 Object stmt = rdfModel.getProperty(subject, att);
-		String value = stmt.toString();
 
-		return value;
-		
-	}
+	// Object getAttributeValue(Individual individual, DatatypeProperty att) {
+	// return individual.getProperty(att).getString();
+	// }
+
 	// ATTRIBUTES
 
 	/**
@@ -352,75 +306,140 @@ public class RDFGraphIOMapper {
 	 * @param elem
 	 *            Node/Edge/JunctionNode
 	 */
-	private void createAttributeOrAnnotation(Resource subject,
+	private String createAttributeOrAnnotation(Individual subject,
 			ElementType type, Element elem) {
+		String id = null;
+		// Element ID
+		for (String attr : PSSIFConstants.builtinAttributes) {
+			RDFNode propval = subject.getPropertyValue(infModel
+					.getDatatypeProperty(URIs.pssifNS + attr));
+
+			if (propval != null) {
+				PSSIFOption<Attribute> attrName = type.getAttribute(attr);
+//				if (attrName.isOne()) {
+//					attrName.getOne().set(
+//							elem,
+//							PSSIFOption
+//									.one(attrName
+//											.getOne()
+//											.getType()
+//											.fromObject(
+//													propval.asLiteral()
+//															.getString())));
+//				}
+				saveAttribute(elem, attrName, propval.asLiteral().getString());
+				if (attr == PSSIFConstants.BUILTIN_ATTRIBUTE_ID)
+					id = propval.asLiteral().getString();
+			}
+		}
+		if (id == null)
+			id = generateId(subject);
+
+		// RDFNode idp = subject.getPropertyValue(infModel
+		// .getDatatypeProperty(URIs.PROP_ID));
+		//
+		// if (idp != null)
+		// id = idp.asLiteral().getString();
+		// else
+		// id = generateId(subject);
+		//
+		// PSSIFOption<Attribute> attributeId = type
+		// .getAttribute(PSSIFConstants.BUILTIN_ATTRIBUTE_ID);
+		// if (attributeId.isOne()) {
+		// attributeId.getOne().set(
+		// elem,
+		// PSSIFOption.one(attributeId.getOne().getType()
+		// .fromObject(id)));
+		// }
+		// // Element Name
 
 		// find Attributes an Annotations by iterating over all Statements of
 		// the subject element
-		for (StmtIterator iter = subject.listProperties(); iter.hasNext();) {
-			Statement stmt = iter.nextStatement();
-			// to get the Attribute/Annotation Name you have to get the URI of
-			// the Property
-			// and take the String behind the # sign
-			// String[] propURI = stmt.getPredicate().getURI().split("#");
 
-			if (stmt.getPredicate().getURI()
-					.equals(Properties.PROP_ID.getURI())) {
-				String name = "id";
+		for (NodeIterator iter = subject.listPropertyValues(infModel
+				.getObjectProperty(URIs.PROP_ATTR)); iter.hasNext();) {
+			RDFNode stmt = iter.next();
+
+			// Attribute Type
+
+			if (stmt.canAs(Individual.class)) {
+				Individual att = stmt.as(Individual.class);
+				String attType = att.getOntClass().getLabel(null);
+				String value = att.getProperty(
+						infModel.getDatatypeProperty(URIs.PROP_ATTR_VALUE))
+						.getString();
 				// get the value of the Attribute
 				// TODO Datatypes
-				String value = stmt.getObject().toString();
 
-				// Add the Attribute to the element
-				PSSIFOption<Attribute> attributePssif = type.getAttribute(name);
-				if (attributePssif.isOne()) {
-					attributePssif.getOne().set(
-							elem,
-							PSSIFOption.one(attributePssif.getOne().getType()
-									.fromObject(value)));
-				}
-
-			}
-
-			// Property is an Attribute
-			if (stmt.getPredicate().getURI()
-					.equals(Properties.PROP_ATTR.getURI())
-					&& stmt.getObject().isResource()) {
-
-				// if (propURI[0].concat("#").equals(URIs.uriAttribute)) {
-				Resource attribute = stmt.getObject().asResource();
-
-				 Statement name = attribute.getProperty(Properties.PROP_ATTR_NAME);
-				// get the value of the Attribute
-				// TODO Datatypes
-				 Statement value = attribute
-						.getProperty(Properties.PROP_ATTR_VALUE);
-				if (name != null && value != null) {
+				if (attType != null && value != null) {
 					// Add the Attribute to the element
 					PSSIFOption<Attribute> attributePssif = type
-							.getAttribute(name.getObject()
-									.toString());
-					if (attributePssif.isOne()) {
-						attributePssif.getOne().set(
-								elem,
-								PSSIFOption.one(attributePssif.getOne()
-										.getType().fromObject(value.getObject()
-												.toString())));
-					}
+							.getAttribute(attType);
+					saveAttribute(elem, attributePssif, value);
+
 				}
-
-			}
-			// Property is an Annotation
-			else if (stmt.getPredicate().getURI().equals(Properties.PROP_ANNOT)) {
-				// get the value of the Annotation
-				Literal object = stmt.getObject().asLiteral();
-				String value = object.getString();
-
-				// Add the Annotation to the element
-				elem.annotate(Properties.PROP_ANNOT.getLocalName(), value);
 			}
 		}
+		return id;
+	}
 
+	public boolean saveAttribute(Element elem, PSSIFOption<Attribute> tmp,
+			String value) {
+		if (tmp.isOne()) {
+			Attribute attribute = tmp.getOne();
+			DataType attrType = attribute.getType();
+
+			if (attrType.equals(PrimitiveDataType.BOOLEAN)) {
+				try {
+					attribute.set(elem, PSSIFOption
+							.one(PrimitiveDataType.BOOLEAN.fromObject(value)));
+
+				} catch (IllegalArgumentException e) {
+					e.printStackTrace();
+					return false;
+				}
+
+			} else if (attrType.equals(PrimitiveDataType.DATE)) {
+				try {
+					SimpleDateFormat formatter = new SimpleDateFormat(
+							"dd.MM.yyyy");
+					Date date = formatter.parse(value);
+
+					PSSIFValue res = PrimitiveDataType.DATE.fromObject(date);
+
+					attribute.set(elem, PSSIFOption.one(res));
+				} catch (IllegalArgumentException | ParseException e) {
+					e.printStackTrace();
+					return false;
+				}
+			}
+
+			else if (attrType.equals(PrimitiveDataType.DECIMAL)) {
+				try {
+					PSSIFValue res = PrimitiveDataType.DECIMAL
+							.fromObject(new BigDecimal(value));
+
+					attribute.set(elem, PSSIFOption.one(res));
+				} catch (IllegalArgumentException e) {
+					e.printStackTrace();
+					return false;
+				}
+			}
+
+			else {
+				try {
+
+					attribute.set(elem,
+							PSSIFOption.one(attrType.fromObject(value)));
+
+				} catch (IllegalArgumentException e) {
+					e.printStackTrace();
+					return false;
+				}
+			}
+			return true;
+		}
+		return false;
 	}
 
 	public de.tum.pssif.core.model.Model getPssifModel() {
