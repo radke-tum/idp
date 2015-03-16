@@ -34,11 +34,11 @@ import de.tum.pssif.transform.io.GraphRDFIOMapper;
 import de.tum.pssif.transform.io.RDFGraphIOMapper;
 
 public class AbstractRDFMapper implements Mapper {
-	String lang="TURTLE";
+	String lang=null;
 	OntModel pssifOnt = ModelFactory.createOntologyModel(OntModelSpec.OWL_DL_MEM);
 
 	public AbstractRDFMapper() {
-
+		lang="TURTLE";
 		String path = System.getProperty("user.home") + "\\Meta-Model.rdf";
 
 			try {
@@ -61,7 +61,7 @@ public class AbstractRDFMapper implements Mapper {
 
 	public final Model read(Metamodel metamodel, InputStream inputStream) {
 
-		OntModel model = ModelFactory.createOntologyModel(OntModelSpec.OWL_DL_MEM_RULE_INF);
+		OntModel model = ModelFactory.createOntologyModel(OntModelSpec.OWL_DL_MEM_TRANS_INF);
 		model.read(inputStream, URIs.modelNS, lang);
 		// List rules = Rule
 		// .parseRules(Rule.rulesParserFromReader(new BufferedReader(

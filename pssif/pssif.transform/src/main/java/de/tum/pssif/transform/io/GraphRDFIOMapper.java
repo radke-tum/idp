@@ -81,7 +81,7 @@ public class GraphRDFIOMapper {
 				MyNode myNode = it.next();
 				Node n = myNode.getNode();
 
-				// TODO BUILT IN ATTRIBUTES
+
 				// myNode.getNodeType().getType().
 				Individual node = this.model.createIndividual(
 						URIs.modelNS + n.getId(),
@@ -103,7 +103,7 @@ public class GraphRDFIOMapper {
 
 				// create Subject with URI from NodeID
 				Individual subjectJNode = this.model.createIndividual(
-						URIs.pssifNS + jn.getId(),
+						URIs.modelNS + jn.getId(),
 						pssifModel.getOntClass(URIs.pssifNS
 								+ myJNode.getNodeType().getName()
 										.replaceAll("\\s+", "_")));
@@ -134,12 +134,14 @@ public class GraphRDFIOMapper {
 				// Add outgoing Nodes to Edge
 				Node out = myEdge.getDestinationNode().getNode();
 				Node in = myEdge.getSourceNode().getNode();
+
 				subjectEdge.addProperty(
 						pssifModel.getObjectProperty(URIs.PROP_NODE_IN),
-						URIs.modelNS + in.getId());
+						this.model.getIndividual(URIs.modelNS + in.getId()));
+			
 				subjectEdge.addProperty(
 						pssifModel.getObjectProperty(URIs.PROP_NODE_OUT),
-						URIs.modelNS + out.getId());
+						this.model.getIndividual(URIs.modelNS + out.getId()));
 			}
 		}
 		Ontology ont = this.model.createOntology(URIs.modelUri);
