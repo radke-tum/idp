@@ -1,5 +1,6 @@
 package viewplugin.logic;
 
+import graph.listener.ConfigWriterReader;
 import graph.model.MyEdgeType;
 import graph.model.MyNodeType;
 import graph.operations.AttributeFilter;
@@ -64,11 +65,11 @@ public class ViewManager {
 		printPluginRelatedInformation("Added GraphView and MasterFilter to ViewManager.");
 
 		/* Import Config */
-		CONFIG_FILE = new File(CONFIG);
+		CONFIG_FILE = ConfigWriterReader.getCONFIG_FILE();
 		importProjectViewsFromConfig(CONFIG_FILE, true);
 		printPluginRelatedInformation("Imported Project Views from "
 				+ CONFIG_FILE.getAbsolutePath() + ".");
-	}
+}
 
 	/**
 	 * Create a new ProjectView with Attribute Filters
