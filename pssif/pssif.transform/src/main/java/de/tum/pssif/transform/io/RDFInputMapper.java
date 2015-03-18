@@ -59,9 +59,8 @@ import de.tum.pssif.core.model.JunctionNode;
 import de.tum.pssif.core.model.Node;
 import de.tum.pssif.core.model.impl.ModelImpl;
 
-public class RDFGraphIOMapper {
+public class RDFInputMapper {
 
-	private OntModel baseModel;
 	private OntModel infModel;
 	// OntModel pssifOntModel;
 
@@ -73,11 +72,11 @@ public class RDFGraphIOMapper {
 	private HashMap<String, Edge> edges = new HashMap<>();
 	private static int id = 0;
 
-	public RDFGraphIOMapper(OntModel infModel, Metamodel metamodel) {
+	public RDFInputMapper(OntModel infModel, Metamodel metamodel) {
 		// pssifOntModel = OntDocumentManager.getInstance().getOntology(
 		// URIs.pssifNS, OntModelSpec.OWL_DL_MEM_TRANS_INF);
 		this.infModel = infModel;
-		String path = System.getProperty("user.home") + "\\Meta-Model.rdf";
+		String path = PSSIFConstants.META_MODEL_PATH;
 		try {
 			this.infModel.read(new FileInputStream(new File(path)),
 					URIs.pssifNS, "TURTLE");
@@ -224,8 +223,8 @@ public class RDFGraphIOMapper {
 
 	private String generateId(Resource subject) {
 		String id;
-		id = String.valueOf(RDFGraphIOMapper.id);
-		RDFGraphIOMapper.id += 1;
+		id = String.valueOf(RDFInputMapper.id);
+		RDFInputMapper.id += 1;
 		return id;
 	}
 
@@ -274,9 +273,10 @@ public class RDFGraphIOMapper {
 				nodeTypeOut = metamodel.getNodeType(nodeOutType.getLabel(null))
 						.getOne();
 
-			if (nodeInType.getURI().equals(URIs.uriJunctionNode) || nodeInType.hasSuperClass(infModel
-					.getOntClass(URIs.uriJunctionNode), false))
-				nodeIn=junctionNodes
+			if (nodeInType.getURI().equals(URIs.uriJunctionNode)
+					|| nodeInType.hasSuperClass(
+							infModel.getOntClass(URIs.uriJunctionNode), false))
+				nodeIn = junctionNodes
 						.get(stmtNodeIn.getProperty(
 								infModel.getDatatypeProperty(URIs.PROP_ID))
 								.getString());
@@ -285,13 +285,12 @@ public class RDFGraphIOMapper {
 						.get(stmtNodeIn.getProperty(
 								infModel.getDatatypeProperty(URIs.PROP_ID))
 								.getString());
-			
-			
 
 			if (nodeOutType.hasSuperClass(infModel
-					.getOntClass(URIs.uriJunctionNode))|| nodeOutType.hasSuperClass(infModel
-							.getOntClass(URIs.uriJunctionNode), false))
-				nodeOut=junctionNodes
+					.getOntClass(URIs.uriJunctionNode))
+					|| nodeOutType.hasSuperClass(
+							infModel.getOntClass(URIs.uriJunctionNode), false))
+				nodeOut = junctionNodes
 						.get(stmtNodeOut.getProperty(
 								infModel.getDatatypeProperty(URIs.PROP_ID))
 								.getString());
@@ -301,12 +300,8 @@ public class RDFGraphIOMapper {
 								infModel.getDatatypeProperty(URIs.PROP_ID))
 								.getString());
 
-			if (nodeOut==null || nodeIn==null){
-				String debug="test";
-			}
-			}
-		
-		
+		}
+
 		PSSIFOption<ConnectionMapping> mapping = edgeType.getMapping(
 				nodeTypeIn, nodeTypeOut);
 		Edge newEdge = mapping.getOne()
@@ -314,10 +309,6 @@ public class RDFGraphIOMapper {
 
 		return newEdge;
 	}
-
-	// Object getAttributeValue(Individual individual, DatatypeProperty att) {
-	// return individual.getProperty(att).getString();
-	// }
 
 	// ATTRIBUTES
 

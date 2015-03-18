@@ -50,11 +50,11 @@ import de.tum.pssif.core.model.Edge;
 import de.tum.pssif.core.model.JunctionNode;
 import de.tum.pssif.core.model.Node;
 
-public class GraphRDFIOMapper {
+public class RDFOutputMapper {
 	public OntModel model;
 	public OntModel pssifModel;
 
-	public GraphRDFIOMapper(de.tum.pssif.core.model.Model model,
+	public RDFOutputMapper(de.tum.pssif.core.model.Model model,
 			Metamodel metamodel) {
 		MyModelContainer mymodelContainer = new MyModelContainer(model,
 				PSSIFCanonicMetamodelCreator.create());
@@ -65,7 +65,7 @@ public class GraphRDFIOMapper {
 		this.model = ModelFactory.createOntologyModel(OntModelSpec.OWL_DL_MEM);
 		pssifModel = OntDocumentManager.getInstance().getOntology(URIs.pssifNS,
 				OntModelSpec.OWL_DL_MEM);
-		String path = System.getProperty("user.home") + "\\Meta-Model.rdf";
+		String path = PSSIFConstants.META_MODEL_PATH;
 		try {
 			pssifModel.read(new FileInputStream(new File(path)), URIs.pssifNS,
 					"TURTLE");

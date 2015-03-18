@@ -24,14 +24,15 @@ import com.hp.hpl.jena.util.LocationMapper;
 
 import org.apache.jena.riot.RDFDataMgr;
 
+import de.tum.pssif.core.common.PSSIFConstants;
 import de.tum.pssif.core.metamodel.Metamodel;
 import de.tum.pssif.core.metamodel.external.URIs;
 import de.tum.pssif.core.model.Model;
 import de.tum.pssif.transform.IoMapper;
 import de.tum.pssif.transform.Mapper;
 import de.tum.pssif.transform.ModelMapper;
-import de.tum.pssif.transform.io.GraphRDFIOMapper;
-import de.tum.pssif.transform.io.RDFGraphIOMapper;
+import de.tum.pssif.transform.io.RDFOutputMapper;
+import de.tum.pssif.transform.io.RDFInputMapper;
 
 public class AbstractRDFMapper implements Mapper {
 	String lang=null;
@@ -39,7 +40,7 @@ public class AbstractRDFMapper implements Mapper {
 
 	public AbstractRDFMapper() {
 		lang="TURTLE";
-		String path = System.getProperty("user.home") + "\\Meta-Model.rdf";
+		String path = PSSIFConstants.META_MODEL_PATH;
 
 			try {
 				pssifOnt.read(new FileInputStream(new File(path)), URIs.pssifNS,
@@ -73,14 +74,14 @@ public class AbstractRDFMapper implements Mapper {
 		// reasoner.setTransitiveClosureCaching(true);
 		// InfModel inf = ModelFactory.createInfModel(reasoner, model);
 		model.write(System.out);
-		RDFGraphIOMapper mapper = new RDFGraphIOMapper(model, metamodel);
+		RDFInputMapper mapper = new RDFInputMapper(model, metamodel);
 
 		return mapper.getPssifModel();
 	}
 
 	public final void write(Metamodel metamodel, Model model,
 			OutputStream outputStream) {
-		GraphRDFIOMapper mapper = new GraphRDFIOMapper(model, metamodel);
+		RDFOutputMapper mapper = new RDFOutputMapper(model, metamodel);
 		OntModel results = mapper.model;
 		results.setNsPrefix("pssif", URIs.pssifNS);
 	

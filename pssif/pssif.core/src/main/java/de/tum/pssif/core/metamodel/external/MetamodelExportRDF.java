@@ -221,7 +221,7 @@ public class MetamodelExportRDF {
 		// Path to file
 		// String path = System.getProperty("user.dir");
 		// path = path.substring(0, path.length() - 9) + "Meta-Modell.xml";
-		String path = System.getProperty("user.home") + "\\Meta-Model.rdf";
+		String path = PSSIFConstants.META_MODEL_PATH;
 		base.createOntology(URIs.pssifUri);
 		
 		try {

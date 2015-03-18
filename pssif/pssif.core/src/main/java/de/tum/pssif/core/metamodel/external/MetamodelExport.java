@@ -184,7 +184,7 @@ public class MetamodelExport {
 			// Path to file
 			// String path = System.getProperty("user.dir");
 			// path = path.substring(0, path.length() - 9) + "Meta-Modell.xml";
-			String path = "C:\\Users\\Meta-Model.rdf";
+			String path = "C:\\Users\\Meta-Model.xml";
 
 			StreamResult result = new StreamResult(new File(path));
 

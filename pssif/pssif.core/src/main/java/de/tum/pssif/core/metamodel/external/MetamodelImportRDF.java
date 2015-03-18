@@ -25,6 +25,7 @@ import com.hp.hpl.jena.ontology.UnionClass;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 
+import de.tum.pssif.core.common.PSSIFConstants;
 import de.tum.pssif.core.model.Tupel;
 
 /**
@@ -52,8 +53,7 @@ public class MetamodelImportRDF {
 	public void runParser() {
 		base = ModelFactory.createOntologyModel(OntModelSpec.OWL_DL_MEM);
 		try {
-			base.read(new FileInputStream(System.getProperty("user.home")
-					+ "\\Meta-Model.rdf"), null, "TURTLE");
+			base.read(new FileInputStream(PSSIFConstants.META_MODEL_PATH), null, "TURTLE");
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

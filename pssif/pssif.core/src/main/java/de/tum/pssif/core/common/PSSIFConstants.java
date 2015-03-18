@@ -1,10 +1,12 @@
 package de.tum.pssif.core.common;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
 public final class PSSIFConstants {
-
+	public static final String META_MODEL_PATH = System
+			.getProperty("user.home") + File.separator+ "Meta-Model.rdf";
 	public static final String ROOT_NODE_TYPE_NAME = "Node";
 	public static final String ROOT_EDGE_TYPE_NAME = "Edge";
 
