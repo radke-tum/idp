@@ -54,11 +54,11 @@ public class RDFOutputMapper {
 	public OntModel model;
 	public OntModel pssifModel;
 
-	public RDFOutputMapper(de.tum.pssif.core.model.Model model,
-			Metamodel metamodel) {
-		MyModelContainer mymodelContainer = new MyModelContainer(model,
-				PSSIFCanonicMetamodelCreator.create());
+	public RDFOutputMapper(de.tum.pssif.core.model.Model model) {
+		this(new MyModelContainer(model, PSSIFCanonicMetamodelCreator.create()));
+	}
 
+	public RDFOutputMapper(MyModelContainer mymodelContainer) {
 		// MyModelContainer mymodelContainer = new MyModelContainer(model,
 		// metamodel);
 
@@ -79,18 +79,7 @@ public class RDFOutputMapper {
 		if (nodes != null) {
 			for (Iterator<MyNode> it = nodes.iterator(); it.hasNext();) {
 				MyNode myNode = it.next();
-				Node n = myNode.getNode();
-
-
-				// myNode.getNodeType().getType().
-				Individual node = this.model.createIndividual(
-						URIs.modelNS + n.getId(),
-						pssifModel.getOntClass(URIs.pssifNS
-								+ myNode.getNodeType().getName()
-										.replaceAll("\\s+", "_")));
-
-				// Add Attributes from Node
-				addAllAttributes(myNode.getAttributesHashMap(), node, myNode);
+				addNode(myNode);
 			}
 		}
 
@@ -99,18 +88,7 @@ public class RDFOutputMapper {
 		if (jnodes != null) {
 			for (Iterator<MyJunctionNode> it = jnodes.iterator(); it.hasNext();) {
 				MyJunctionNode myJNode = it.next();
-				Node jn = myJNode.getNode();
-
-				// create Subject with URI from NodeID
-				Individual subjectJNode = this.model.createIndividual(
-						URIs.modelNS + jn.getId(),
-						pssifModel.getOntClass(URIs.pssifNS
-								+ myJNode.getNodeType().getName()
-										.replaceAll("\\s+", "_")));
-
-				// Add Attributes from JNode
-				addAllAttributes(myJNode.getAttributesHashMap(), subjectJNode,
-						myJNode);
+				addJunctionNode(myJNode);
 			}
 		}
 
@@ -118,34 +96,66 @@ public class RDFOutputMapper {
 		if (edges != null) {
 			for (Iterator<MyEdge> it = edges.iterator(); it.hasNext();) {
 				MyEdge myEdge = it.next();
-				Edge e = myEdge.getEdge();
-
-				// create Subject with URI from NodeID
-				Individual subjectEdge = this.model.createIndividual(
-						URIs.modelNS + e.getId(),
-						pssifModel.getOntClass(URIs.pssifNS
-								+ myEdge.getEdgeType().getName()
-										.replaceAll("\\s+", "_")));
-
-				// Add Attributes from Edge
-				addAllAttributes(myEdge.getAttributesHashMap(), subjectEdge,
-						myEdge);
-
-				// Add outgoing Nodes to Edge
-				Node out = myEdge.getDestinationNode().getNode();
-				Node in = myEdge.getSourceNode().getNode();
-
-				subjectEdge.addProperty(
-						pssifModel.getObjectProperty(URIs.PROP_NODE_IN),
-						this.model.getIndividual(URIs.modelNS + in.getId()));
-			
-				subjectEdge.addProperty(
-						pssifModel.getObjectProperty(URIs.PROP_NODE_OUT),
-						this.model.getIndividual(URIs.modelNS + out.getId()));
+				addEdge(myEdge);
 			}
 		}
 		Ontology ont = this.model.createOntology(URIs.modelUri);
 		ont.addImport(this.model.createResource(URIs.pssifUri));
+	}
+
+	protected void addNode(MyNode myNode) {
+		Node n = myNode.getNode();
+
+		// myNode.getNodeType().getType().
+		Individual node = this.model.createIndividual(
+				URIs.modelNS + n.getId(),
+				pssifModel.getOntClass(URIs.pssifNS
+						+ myNode.getNodeType().getName()
+								.replaceAll("\\s+", "_")));
+
+		// Add Attributes from Node
+		addAllAttributes(myNode.getAttributesHashMap(), node, myNode);
+
+	}
+
+	protected void addJunctionNode(MyJunctionNode myJNode) {
+		Node jn = myJNode.getNode();
+
+		// create Subject with URI from NodeID
+		Individual subjectJNode = this.model.createIndividual(
+				URIs.modelNS + jn.getId(),
+				pssifModel.getOntClass(URIs.pssifNS
+						+ myJNode.getNodeType().getName()
+								.replaceAll("\\s+", "_")));
+
+		// Add Attributes from JNode
+		addAllAttributes(myJNode.getAttributesHashMap(), subjectJNode, myJNode);
+	}
+
+	protected void addEdge(MyEdge myEdge) {
+		Edge e = myEdge.getEdge();
+
+		// create Subject with URI from NodeID
+		Individual subjectEdge = this.model.createIndividual(
+				URIs.modelNS + e.getId(),
+				pssifModel.getOntClass(URIs.pssifNS
+						+ myEdge.getEdgeType().getName()
+								.replaceAll("\\s+", "_")));
+
+		// Add Attributes from Edge
+		addAllAttributes(myEdge.getAttributesHashMap(), subjectEdge, myEdge);
+
+		// Add outgoing Nodes to Edge
+		Node out = myEdge.getDestinationNode().getNode();
+		Node in = myEdge.getSourceNode().getNode();
+
+		subjectEdge.addProperty(
+				pssifModel.getObjectProperty(URIs.PROP_NODE_IN),
+				this.model.getIndividual(URIs.modelNS + in.getId()));
+
+		subjectEdge.addProperty(
+				pssifModel.getObjectProperty(URIs.PROP_NODE_OUT),
+				this.model.getIndividual(URIs.modelNS + out.getId()));
 	}
 
 	// JUNCTION NODES
@@ -183,19 +193,20 @@ public class RDFOutputMapper {
 				// Get the ID of subject to add it to the Attribute Node URI
 				PSSIFValue v = value.getOne();
 				String attrValue = v.getValue().toString();
-				String attrName= attr.getName();
+				String attrName = attr.getName();
 				// TODO ANONYMOUS INDIVIDUAL
 
 				// Add Value
 				// You have to differ weather the Attribute isOne or isMany
 				if (value.isOne()) {
-					addPSSIFValue(attrName,subject, attrValue, unit, datatype, category);
+					addPSSIFValue(attrName, subject, attrValue, unit, datatype,
+							category);
 				} else {
 					if (value.isMany()) {
 						Set<PSSIFValue> values = value.getMany();
 						for (PSSIFValue val : values)
-							addPSSIFValue(attrName,subject, val.getValue().toString(),
-									unit, datatype, category);
+							addPSSIFValue(attrName, subject, val.getValue()
+									.toString(), unit, datatype, category);
 					}
 				}
 
@@ -248,8 +259,8 @@ public class RDFOutputMapper {
 	 * @param category
 	 *            Category of Attribute to be saved
 	 */
-	private void addPSSIFValue(String attrName, Individual subject, String value, String unit,
-			String datatype, String category) {
+	private void addPSSIFValue(String attrName, Individual subject,
+			String value, String unit, String datatype, String category) {
 		OntClass attrClass = pssifModel.getOntClass(URIs.pssifNS
 				+ attrName.replaceAll("\\s+", "_"));
 		// Add Attribute Node
@@ -273,9 +284,14 @@ public class RDFOutputMapper {
 			subjectAttr.addProperty(
 					pssifModel.getDatatypeProperty(URIs.pssifNS + "category"),
 					category);
+			subject.addProperty(
+					pssifModel.getObjectProperty(URIs.PROP_ATTR),
+					subjectAttr);
 		} else {
-			if(PSSIFConstants.builtinAttributes.contains(attrName))
-			subject.addProperty(pssifModel.getDatatypeProperty(URIs.pssifNS + attrName), value);
+			if (PSSIFConstants.builtinAttributes.contains(attrName))
+				subject.addProperty(
+						pssifModel.getDatatypeProperty(URIs.pssifNS + attrName),
+						value);
 		}
 	}
 

@@ -13,7 +13,7 @@ public interface DBMapper {
 	 * @param modelname
 	 *            Name of the Model in the Database
 	 */
-	void modelToDB(MyModelContainer model, String modelname);
+	void modelToDB();
 
 	/**
 	 * Saves changes of the Model to the Database
@@ -21,7 +21,7 @@ public interface DBMapper {
 	 * @param modelname
 	 *            Name of the Model in the Database
 	 */
-	void saveToDB(String modelname);
+	void saveToDB();
 
 	/**
 	 * Removes the whole Model from the Database

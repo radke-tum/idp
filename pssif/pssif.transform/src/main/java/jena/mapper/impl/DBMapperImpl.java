@@ -14,31 +14,40 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import jena.database.Properties;
-import jena.database.URIs;
 import jena.database.impl.DatabaseImpl;
 import jena.database.impl.RDFModelImpl;
 import jena.mapper.DBMapper;
+import model.ModelBuilder;
 import model.MyModelContainer;
 
 import org.pssif.mainProcesses.Methods;
 
+import com.hp.hpl.jena.ontology.Individual;
+import com.hp.hpl.jena.ontology.OntModel;
+import com.hp.hpl.jena.ontology.OntModelSpec;
+import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.rdf.model.ModelFactory;
+import com.hp.hpl.jena.rdf.model.NodeIterator;
 import com.hp.hpl.jena.rdf.model.Property;
+import com.hp.hpl.jena.rdf.model.RDFNode;
+import com.hp.hpl.jena.rdf.model.ResIterator;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.Statement;
 
 import de.tum.pssif.core.common.PSSIFOption;
 import de.tum.pssif.core.common.PSSIFValue;
 import de.tum.pssif.core.metamodel.Attribute;
+import de.tum.pssif.core.metamodel.external.URIs;
 import de.tum.pssif.core.metamodel.impl.GetValueOperation;
 import de.tum.pssif.core.model.Edge;
 import de.tum.pssif.core.model.JunctionNode;
 import de.tum.pssif.core.model.Node;
+import de.tum.pssif.transform.io.RDFOutputMapper;
 
 // Model to DB Mapper
-public class DBMapperImpl implements DBMapper {
+public class DBMapperImpl extends RDFOutputMapper implements DBMapper {
 
-	public static RDFModelImpl rdfModel;
+	public static OntModel rdfModel;
 	public static DatabaseImpl db;
 
 	// Variables to record changes that have to be saved in the Database
@@ -57,25 +66,27 @@ public class DBMapperImpl implements DBMapper {
 	public static boolean deleteAll = false;
 	// Flat if there was a Merge between 2 models
 	public static boolean merge = false;
+	private MyModelContainer mymodel;
 
 	public DBMapperImpl() {
-		super();
+		super(ModelBuilder.activeModel);
 		db = new DatabaseImpl();
-		rdfModel = db.getRdfModel();
+		rdfModel = super.model ;
+		mymodel=ModelBuilder.activeModel;
 	}
 
 	// MODEL
 
 	@Override
-	public void modelToDB(MyModelContainer model, String modelname) {
+	public void modelToDB() {
 		// db.begin(ReadWrite.WRITE);
 		// rdfModel.begin();
 		rdfModel.removeAll();
-		saveNodes(model.getAllNodes());
-		saveJunctionNodes(model.getAllJunctionNodes());
-		saveEdges(model.getAllEdges());
+		saveNodes(mymodel.getAllNodes());
+		saveJunctionNodes(mymodel.getAllJunctionNodes());
+		saveEdges(mymodel.getAllEdges());
 
-		db.saveModel(rdfModel.getModel());
+		db.saveModel(rdfModel);
 		clearAll();
 
 		// db.commit();
@@ -84,7 +95,7 @@ public class DBMapperImpl implements DBMapper {
 	}
 
 	@Override
-	public void saveToDB(String modelname) {
+	public void saveToDB() {
 		// db.begin(ReadWrite.WRITE);
 		// rdfModel.begin();
 
@@ -97,16 +108,14 @@ public class DBMapperImpl implements DBMapper {
 
 		for (MyNode node : deletedNodes)
 			removeNode(node);
-		// for (MyJunctionNode junctionnode : deletedJunctionNodes)
-		// removeJunctionNode(junctionnode);
+		for (MyJunctionNode junctionnode : deletedJunctionNodes)
+			removeJunctionNode(junctionnode);
 		for (MyEdge edge : deletedEdges)
 			removeEdge(edge);
-		for (Resource res : deletedEdgesRes)
-			removeEdge(res);
 
 		changeElements();
 
-		db.saveModel(rdfModel.getModel());
+		db.saveModel(rdfModel);
 
 		// db.commit();
 		// db.end();
@@ -145,40 +154,6 @@ public class DBMapperImpl implements DBMapper {
 	}
 
 	/**
-	 * Saves the given Node of Class MyNode in Database
-	 * 
-	 * @param mynode
-	 *            Node of Class MyNode to be saved
-	 */
-	private void addNode(MyNode mynode) {
-		Node n = mynode.getNode();
-		String globalID = Methods.findGlobalID(n, mynode.getNodeType()
-				.getType());
-
-		// Falls Node noch nicht vorhanden
-		String uri = URIs.uriNode.concat(globalID);
-		if (!rdfModel.bagContainsResource(uri, URIs.uriBagNodes)) {
-			// create Subject with URI from NodeID
-			Resource subjectNode = rdfModel.createResource(uri);
-
-			// Add subject to Bag
-			rdfModel.addToBag(URIs.uriBagNodes, subjectNode);
-
-			// Add NodeType
-			Resource type = rdfModel.createResource(URIs.uriNodeType
-					.concat(mynode.getNodeType().getName()));
-			rdfModel.insert(subjectNode, Properties.PROP_TYPE, type);
-
-			// Add Attributes from Node
-			addAllAttributes(mynode.getAttributesHashMap(), subjectNode,
-					URIs.uriNodeAttribute, n);
-
-			// Add all Annotations to Model
-			addAllAnnotations(n.getAnnotations(), subjectNode);
-		}
-	}
-
-	/**
 	 * Removes a given Node of Class MyNode from Database
 	 * 
 	 * @param mynode
@@ -188,28 +163,27 @@ public class DBMapperImpl implements DBMapper {
 		Node node = mynode.getNode();
 		String globalID = Methods.findGlobalID(node, mynode.getNodeType()
 				.getType());
+		removeElement(globalID);
 
-		if (rdfModel.bagContainsResource(URIs.uriNode.concat(globalID),
-				URIs.uriBagNodes)) {
-			// get Subject with URI from NodeID
-			Resource subjectNode = rdfModel.getResource(URIs.uriNode
-					.concat(globalID));
+	}
 
-			// Remove NodeType
-			Resource type = subjectNode
-					.getPropertyResourceValue(Properties.PROP_TYPE);
-			rdfModel.removeTriple(subjectNode, Properties.PROP_TYPE, type);
+	private void removeElement(String globalID) {
 
-			// Remove Attributes from Node
-			removeAllAttributes(mynode.getAttributesHashMap(), subjectNode,
-					URIs.uriNodeAttribute);
+		ResIterator individuals2 = rdfModel.listResourcesWithProperty(
+				rdfModel.getDatatypeProperty(URIs.PROP_GLOBALID), globalID);
 
-			// Remove all Annotations to Model
-			removeAllAnnotations(node.getAnnotations(), subjectNode);
+		// ATTRIBUTES
 
-			// Remove Node from Bag
-			rdfModel.removeFromBag(URIs.uriBagNodes,
-					URIs.uriNode.concat(globalID));
+		if (individuals2.hasNext()) {
+			Resource next = individuals2.next();
+			Individual ind = next.as(Individual.class);
+			NodeIterator individuals1 = ind.listPropertyValues(rdfModel
+					.getObjectProperty(URIs.PROP_ATTR));
+			if (individuals1.hasNext()) {
+				RDFNode next1 = individuals1.next();
+				next1.as(Individual.class).remove();
+			}
+			ind.remove();
 		}
 	}
 
@@ -231,40 +205,6 @@ public class DBMapperImpl implements DBMapper {
 	}
 
 	/**
-	 * Saves the given JunctionNode of Class MyJunctionNode in Database
-	 * 
-	 * @param myJNode
-	 *            Node of Class MyJunctionNode to be saved
-	 */
-	private void addJunctionNode(MyJunctionNode myJNode) {
-		Node jn = myJNode.getNode();
-
-		// Falls JunctionNode noch nicht vorhanden
-		if (!rdfModel.containsJunctionNode(URIs.uriJunctionNode.concat(jn
-				.getId()))) {
-
-			// create Subject with URI from NodeID
-			Resource subjectJNode = rdfModel
-					.createResource(URIs.uriJunctionNode.concat(jn.getId()));
-
-			// Add subject to Bag
-			rdfModel.addToBag(URIs.uriBagJunctionNodes, subjectJNode);
-
-			// Add JNodeType
-			Resource type = rdfModel.createResource(URIs.uriJunctionNodeType
-					.concat(myJNode.getNodeType().getName()));
-			rdfModel.insert(subjectJNode, Properties.PROP_TYPE, type);
-
-			// Add Attributes from JNode
-			addAllAttributes(myJNode.getAttributesHashMap(), subjectJNode,
-					URIs.uriJunctionNode, jn);
-
-			// Add all Annotations to Model
-			addAllAnnotations(jn.getAnnotations(), subjectJNode);
-		}
-	}
-
-	/**
 	 * Removes a given JunctionNode of Class MyJunctionNode from Database
 	 * 
 	 * @param mynode
@@ -272,31 +212,9 @@ public class DBMapperImpl implements DBMapper {
 	 */
 	private void removeJunctionNode(MyJunctionNode mynode) {
 		Node jn = mynode.getNode();
-
-		if (rdfModel.bagContainsResource(
-				URIs.uriJunctionNode.concat(jn.getId()),
-				URIs.uriBagJunctionNodes)) {
-
-			// get Subject with URI from NodeID
-			Resource subjectJNode = rdfModel.getResource(URIs.uriJunctionNode
-					.concat(jn.getId()));
-
-			// Remove NodeType
-			Resource type = subjectJNode
-					.getPropertyResourceValue(Properties.PROP_TYPE);
-			rdfModel.removeTriple(subjectJNode, Properties.PROP_TYPE, type);
-
-			// Remove Attributes from Node
-			removeAllAttributes(mynode.getAttributesHashMap(), subjectJNode,
-					URIs.uriJunctionNode);
-
-			// Remove all Annotations to Model
-			removeAllAnnotations(jn.getAnnotations(), subjectJNode);
-
-			// Remove JunctionNode from Bag
-			rdfModel.removeFromBag(URIs.uriBagJunctionNodes,
-					URIs.uriJunctionNode.concat(jn.getId()));
-		}
+		String globalID = Methods.findGlobalID(jn, mynode.getNodeType()
+				.getType());
+		removeElement(globalID);
 	}
 
 	// EDGES
@@ -317,77 +235,6 @@ public class DBMapperImpl implements DBMapper {
 	}
 
 	/**
-	 * Saves the given Edge of Class MyEdge in Database
-	 * 
-	 * @param myedge
-	 *            Edge of Class MyEdge to be saved
-	 */
-	private void addEdge(MyEdge myedge) {
-		Edge e = myedge.getEdge();
-		Resource objectNode;
-		String globalID = Methods.findGlobalID(e, myedge.getEdgeType()
-				.getType());
-		String uri = URIs.uriEdge.concat(globalID);
-
-		// Falls Edge noch nicht vorhanden
-		if (!rdfModel.bagContainsResource(uri, URIs.uriBagEdges)) {
-
-			// create Subject with URI from NodeID
-			Resource subjectEdge = rdfModel.createResource(URIs.uriEdge
-					.concat(globalID));
-
-			// Add subject to Bag
-			rdfModel.addToBag(URIs.uriBagEdges, subjectEdge);
-
-			// Add EdgeType
-			Resource type = rdfModel.createResource(URIs.uriEdgeType
-					.concat(myedge.getEdgeType().getName()));
-			rdfModel.insert(subjectEdge, Properties.PROP_TYPE, type);
-
-			// Add Attributes from Edge
-			addAllAttributes(myedge.getAttributesHashMap(), subjectEdge,
-					URIs.uriEdgeAttribute, e);
-
-			// Add all Annotations to Model
-			addAllAnnotations(e.getAnnotations(), subjectEdge);
-
-			// Add outgoing Nodes to Edge
-			Node out = myedge.getDestinationNode().getNode();
-
-			// check if outgoing Node is Node or JunctionNode
-			// you have to differ between them because of the URI and the ID
-			// (JunctionNodes don't have global IDs)
-			if (out instanceof JunctionNode) {
-				uri = URIs.uriJunctionNode;
-				objectNode = rdfModel.createResource(uri.concat(out.getId()));
-			} else {
-				uri = URIs.uriNode;
-				objectNode = rdfModel.createResource(uri.concat(Methods
-						.findGlobalID(out, myedge.getDestinationNode()
-								.getBaseNodeType())));
-			}
-			rdfModel.insert(subjectEdge, Properties.PROP_NODE_OUT, objectNode);
-
-			// Add incoming Nodes to Edge
-			Node in = myedge.getSourceNode().getNode();
-
-			// check if outgoing Node is Node or JunctionNode
-			// you have to differ between them because of the URI and the ID
-			// (JunctionNodes don't have global IDs)
-			if (in instanceof JunctionNode) {
-				uri = URIs.uriJunctionNode;
-				objectNode = rdfModel.createResource(uri.concat(in.getId()));
-			} else {
-				uri = URIs.uriNode;
-				objectNode = rdfModel.getResource(uri.concat(Methods
-						.findGlobalID(in, myedge.getSourceNode()
-								.getBaseNodeType())));
-			}
-			rdfModel.insert(subjectEdge, Properties.PROP_NODE_IN, objectNode);
-		}
-	}
-
-	/**
 	 * Removes a given Edge of Class MyEdge from Database
 	 * 
 	 * @param myedge
@@ -397,238 +244,11 @@ public class DBMapperImpl implements DBMapper {
 		Edge edge = myedge.getEdge();
 		String globalID = Methods.findGlobalID(edge, myedge.getEdgeType()
 				.getType());
-		String uri = URIs.uriEdge.concat(globalID);
-
-		if (rdfModel.bagContainsResource(uri, URIs.uriBagEdges)) {
-			// get Subject with URI from EdgeID
-			Resource subjectEdge = rdfModel.getResource(uri);
-
-			// Remove EdgeType
-			Resource type = subjectEdge
-					.getPropertyResourceValue(Properties.PROP_TYPE);
-			rdfModel.removeTriple(subjectEdge, Properties.PROP_TYPE, type);
-
-			// Remove all Attributes from Edge
-			removeAllAttributes(myedge.getAttributesHashMap(), subjectEdge,
-					URIs.uriEdgeAttribute);
-
-			// Remove all Annotations to Model
-			removeAllAnnotations(edge.getAnnotations(), subjectEdge);
-
-			// Remove Edge from Bag
-			rdfModel.removeFromBag(URIs.uriBagEdges, uri);
-		}
-	}
-
-	/**
-	 * Removes a given Edge from Database
-	 * 
-	 * @param subjectEdge
-	 *            Edge of Class Resource to be removed
-	 */
-	private void removeEdge(Resource subjectEdge) {
-		String uri = subjectEdge.getURI();
-
-		if (rdfModel
-				.bagContainsResource(subjectEdge.getURI(), URIs.uriBagEdges)) {
-
-			// Remove all Statements of this Edge
-			List<Statement> listEdge = subjectEdge.listProperties().toList();
-			for (Statement stmt : listEdge) {
-				// If resource is an attribute, then delete all statements of
-				// this attribute
-				if (stmt.getPredicate().getURI().contains("Attr/")) {
-					// If there is nothing wrong this should always be true
-					if (stmt.getObject().isResource()) {
-						Resource attr = stmt.getObject().asResource();
-						List<Statement> listAttr = attr.listProperties()
-								.toList();
-						for (Statement stmtAttr : listAttr)
-							rdfModel.removeStatement(stmtAttr);
-					}
-				}
-				rdfModel.removeStatement(stmt);
-			}
-
-			// Remove Edge from Bag
-			rdfModel.removeFromBag(URIs.uriBagEdges, uri);
-		}
-	}
-
-	// ATTRIBUTES
-
-	/**
-	 * Adds all Attributes from a Node/Edge/JunctionNode to a
-	 * Node/Edge/JunctionNode
-	 * 
-	 * @param attr
-	 *            HashMap of Attributes to be saved
-	 * @param subject
-	 *            Resource to which Attribute should be added
-	 * @param prop
-	 *            Property URI of the Triple: Node Property Attribute
-	 * @param n
-	 *            Node/Edge/JunctionNode to which Attribute belongs
-	 */
-	private <T> void addAllAttributes(HashMap<String, Attribute> attr,
-			Resource subject, String prop, T n) {
-		for (Iterator<Entry<String, Attribute>> it = attr.entrySet().iterator(); it
-				.hasNext();) {
-			Entry<String, Attribute> attrEntry = it.next();
-			addAttribute(attrEntry, subject, prop, n);
-		}
-	}
-
-	/**
-	 * Add Attribute from one Entry-Set to a Node/Edge/JunctionNode
-	 * 
-	 * @param attrEntry
-	 *            Entry-Set to be saved
-	 * @param subject
-	 *            Resource to which Attribute should be added
-	 * @param propURI
-	 *            Property URI of the Triple: Node Property Attribute
-	 * @param n
-	 *            Node/Edge/JunctionNode to which Attribute belongs
-	 */
-	private <T> void addAttribute(Entry<String, Attribute> attrEntry,
-			Resource subject, String propURI, T n) {
-		Attribute attr = attrEntry.getValue();
-		String datatype = attr.getType().getName();
-		String unit = attr.getUnit().getName();
-		String category = attr.getCategory().getName();
-
-		// Get Value and define what Type n is
-		PSSIFOption<PSSIFValue> value = null;
-
-		if (n instanceof Node)
-			value = ((Node) n).apply(new GetValueOperation(attr));
-		if (n instanceof JunctionNode)
-			value = ((JunctionNode) n).apply(new GetValueOperation(attr));
-		if (n instanceof Edge)
-			value = ((Edge) n).apply(new GetValueOperation(attr));
-
-		// if there is no Attribute value don't save anything
-		if (value.isNone())
-			return;
-
-		// Get the ID of subject to add it to the Attribute Node URI
-		String id = getID(subject.getURI());
-
-		// Add Attribute Node
-		Resource subjectAttr = rdfModel.createResource(propURI
-				+ attrEntry.getKey() + "/" + id);
-		Property prop = rdfModel.createProperty(URIs.uriAttribute
-				.concat(attrEntry.getKey()));
-		rdfModel.insert(subject, prop, subjectAttr);
-
-		// Add Value
-		// You have to differ weather the Attribute isOne or isMany
-		if (value.isOne()) {
-			PSSIFValue v = value.getOne();
-			String attrValue = v.getValue().toString();
-			if (datatype.compareTo("Date") == 0) {
-				DateFormat df = new SimpleDateFormat("dd.MM.yyyy");
-				Date date = (Date) v.getValue();
-				attrValue = df.format(date);
-			}
-			addPSSIFValue(subjectAttr, attrValue, unit, datatype, category);
-			return;
-		}
-
-		if (value.isMany()) {
-			Set<PSSIFValue> values = value.getMany();
-			for (PSSIFValue val : values) {
-
-				String attrValue = val.getValue().toString();
-				if (datatype.compareTo("Date") == 0) {
-					DateFormat df = new SimpleDateFormat("dd.mm.yyyy");
-					Date date = (Date) val.getValue();
-					attrValue = df.format(date);
-				}
-				addPSSIFValue(subjectAttr, attrValue, unit, datatype, category);
-			}
-		}
-	}
-
-	/**
-	 * Adds PSSIF Attribute Values to Attribute
-	 * 
-	 * @param subjectAttr
-	 *            Resource of Attribute
-	 * @param value
-	 *            Value of Attribute to be saved
-	 * @param unit
-	 *            Unit of Attribute to be saved
-	 * @param datatype
-	 *            Datatype of Attribute to be saved
-	 * @param category
-	 *            Category of Attribute to be saved
-	 */
-	private void addPSSIFValue(Resource subjectAttr, String value, String unit,
-			String datatype, String category) {
-
-		// Add Value
-		subjectAttr.addProperty(Properties.PROP_ATTR_VALUE, value);
-		// Add Unit
-		subjectAttr.addProperty(Properties.PROP_ATTR_UNIT, unit);
-		// Add Datatype
-		subjectAttr.addProperty(Properties.PROP_ATTR_DATATYPE, datatype);
-		// Add Category
-		subjectAttr.addProperty(Properties.PROP_ATTR_CATEGORY, category);
-	}
-
-	/**
-	 * Removes all Attributes of a Node/Edge/JunctionNode
-	 * 
-	 * @param attr
-	 *            HashMap of the existing Attributes
-	 * @param subject
-	 *            Subject of which attributes should be deleted
-	 * @param prop
-	 *            Property
-	 */
-	private void removeAllAttributes(HashMap<String, Attribute> attr,
-			Resource subject, String prop) {
-		for (Iterator<Entry<String, Attribute>> it = attr.entrySet().iterator(); it
-				.hasNext();) {
-			Entry<String, Attribute> attrEntry = it.next();
-			removeAttribute(attrEntry, subject, prop);
-		}
-	}
-
-	/**
-	 * Removes a given Attributes with its Value, Unit, Datatype and Category
-	 * 
-	 * @param attrEntry
-	 *            Entry-Set to be saved
-	 * @param subject
-	 *            Resource from which Attribute should be removed
-	 * @param propURI
-	 *            Property URI of the Triple: Node Property Attribute
-	 */
-	private void removeAttribute(Entry<String, Attribute> attrEntry,
-			Resource subject, String propURI) {
-
-		// Get the ID of subject to add it to the Attribute Node URI
-		String id = getID(subject.getURI());
-
-		// Get Attribute Node + Property
-		Resource subjectAttr = rdfModel.getResource(propURI
-				+ attrEntry.getKey() + "/" + id);
-		Property prop = rdfModel.getProperty(URIs.uriAttribute.concat(attrEntry
-				.getKey()));
-
-		// remove Value, Unit and Datatype
-		List<Statement> list = subjectAttr.listProperties().toList();
-		for (Statement stmt : list)
-			rdfModel.removeStatement(stmt);
-
-		// remove the Attribute Node
-		rdfModel.removeTriple(subject, prop, subjectAttr);
+		removeElement(globalID);
 	}
 
 	// ANNOTATIONS
+	// TODO: addAllAnnotations(n.getAnnotations(), subjectNode);
 
 	/**
 	 * Adds all Annotation to a Node/Edge/JunctionNode
@@ -673,10 +293,7 @@ public class DBMapperImpl implements DBMapper {
 	 *            Resource to which Annotation should be added
 	 */
 	private void addAnnotation(Entry<String, String> annot, Resource subject) {
-		String key = annot.getKey();
-		String value = annot.getValue();
-		Property prop = rdfModel.createProperty(URIs.uriAnnotation.concat(key));
-		subject.addProperty(prop, value);
+
 	}
 
 	/**
@@ -688,11 +305,7 @@ public class DBMapperImpl implements DBMapper {
 	 *            Resource from which Annotation should be removed
 	 */
 	private void removeAnnotation(Entry<String, String> annot, Resource subject) {
-		String key = annot.getKey();
-		String value = annot.getValue();
 
-		rdfModel.removeTripleLiteral(subject.getURI(),
-				URIs.uriAnnotation.concat(key), value);
 	}
 
 	/**
@@ -709,26 +322,6 @@ public class DBMapperImpl implements DBMapper {
 		deletedEdges.clear();
 		deletedJunctionNodes.clear();
 		deletedEdgesRes.clear();
-	}
-
-	/**
-	 * Delete all Edges in DB from DB
-	 */
-	public static void deleteAllEdges() {
-
-		deletedEdgesRes = rdfModel.getSubjectsOfBag(URIs.uriBagEdges);
-	}
-
-	/**
-	 * returns the ID of a certain URI. Doesn't look if this really is an ID
-	 * 
-	 * @param uri
-	 *            URI with ID in it
-	 * @return ID from URI
-	 */
-	private String getID(String uri) {
-		String[] uriSTR = uri.split("/");
-		return uriSTR[uriSTR.length - 1];
 	}
 
 	/**

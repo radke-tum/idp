@@ -46,24 +46,7 @@ public interface RDFModel {
 	 */
 	public List<Resource> findAllSubjects(Property p);
 
-	/**
-	 * Create a bag if it don't exist yet and add a subject to it
-	 * 
-	 * @param uri
-	 *            Uri of the bag
-	 * @param subject
-	 *            The subject that should be added
-	 */
-	public void addToBag(String uri, Resource subject);
 
-	/**
-	 * Get all subjects of a certain bag
-	 * 
-	 * @param uri
-	 *            Uri of the bag
-	 * @return List of Resources containing subjects in bag
-	 */
-	public List<Resource> getSubjectsOfBag(String uri);
 
 	/**
 	 * Remove a triple with a given subject, predicate and object
@@ -161,35 +144,9 @@ public interface RDFModel {
 	 */
 	public void commit();
 
-	/**
-	 * Removes an element from a bag.
-	 * 
-	 * @param uri
-	 *            the URI of the bag
-	 * @param uri
-	 *            the URI of the element to be removed
-	 */
-	void removeFromBag(String uri, String subject);
 
-	/**
-	 * Checks whether a bag contains an element
-	 * 
-	 * @param uri
-	 *            the URI of the element
-	 * @param bag
-	 *            the URI of the bag
-	 * @return result of the check
-	 */
-	boolean bagContainsResource(String uri, String bag);
 
-	/**
-	 * Checks whether a bag contains an JunctionNode
-	 * 
-	 * @param uri
-	 *            the URI of the JunctionNode
-	 * @return result of the check
-	 */
-	boolean containsJunctionNode(String uri);
+
 
 	/**
 	 * Return a Property instance in this model.

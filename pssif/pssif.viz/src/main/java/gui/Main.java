@@ -19,7 +19,11 @@ import java.awt.GraphicsEnvironment;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
 import java.util.HashMap;
 import java.util.LinkedList;
 
@@ -34,8 +38,9 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+import com.hp.hpl.jena.rdf.model.Model;
+
 import jena.database.RDFModel;
-import jena.database.URIs;
 import jena.mapper.impl.DBMapperImpl;
 import jena.mapper.impl.PssifMapperImpl;
 import model.FileExporter;
@@ -114,8 +119,8 @@ public class Main {
 	// private SpecificationProjectWizard reqProjImporter;
 	private MasterFilter masterFilter;
 
-	private PssifMapperImpl fromDB = null;
-	private DBMapperImpl toDB = null;
+	private PssifMapperImpl fromDBMapper = null;
+	private DBMapperImpl toDBMapper = null;
 
 	public static void main(String[] args) {
 
@@ -271,9 +276,9 @@ public class Main {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				try {
-					if (fromDB == null)
-						fromDB = new PssifMapperImpl();
-					fromDB.DBToModel();
+					if (fromDBMapper == null)
+						fromDBMapper = new PssifMapperImpl();
+					fromDBMapper.DBToModel();
 				} catch (Exception e1) {
 					JOptionPane.showMessageDialog(
 							null,
@@ -328,18 +333,19 @@ public class Main {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				RDFModel model = null;
+			
 
 				// Just make sure that there exists an instance of fromDB and
 				// toDB to get the rdfModel
-				if (fromDB == null) {
-					if (toDB == null) {
-						toDB = new DBMapperImpl();
-						model = toDB.rdfModel;
-					} else
-						model = toDB.rdfModel;
-				} else
-					model = fromDB.rdfModel;
+				// if (fromDBMapper == null) {
+				 if (toDBMapper == null) {
+				toDBMapper = new DBMapperImpl();
+			
+				 } 
+				// else
+				// model = toDBMapper.rdfModel;
+				// } else
+				// model = fromDBMapper.rdfModel;
 
 				// Use a FileChooser to select the location for the file
 				JFileChooser finder = new JFileChooser();
@@ -350,9 +356,17 @@ public class Main {
 				if (returnVal == javax.swing.JFileChooser.APPROVE_OPTION) {
 					java.io.File file = finder.getSelectedFile();
 					// save the model of the DB into selected file
-					model.writeModelToTurtleFile(file);
-					JOptionPane.showMessageDialog(null, "Export successful",
-							"PSSIF", JOptionPane.INFORMATION_MESSAGE);
+					try {
+						BufferedWriter writer = new BufferedWriter(
+								new OutputStreamWriter(new FileOutputStream(
+										file, false)));
+						toDBMapper.rdfModel.write(writer, "TTL");
+						JOptionPane.showMessageDialog(null, "Export successful",
+								"PSSIF", JOptionPane.INFORMATION_MESSAGE);
+					} catch (FileNotFoundException e1) {
+						e1.printStackTrace();
+					}
+					
 				}
 			}
 		});
@@ -436,13 +450,13 @@ public class Main {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				try {
-					if (toDB == null)
-						toDB = new DBMapperImpl();
-
+					if (toDBMapper == null){
+						toDBMapper = new DBMapperImpl();
+					}
 					// If the model was merged then delete DB and build new
 					// rdfModel from activeModel
 					if (DBMapperImpl.merge == true) {
-						toDB.modelToDB(ModelBuilder.activeModel, URIs.modelname);
+						toDBMapper.modelToDB();
 						DBMapperImpl.merge = false;
 					}
 					// If the database could be deleted compeletely because of
@@ -456,19 +470,18 @@ public class Main {
 						// If the DB should be deleted use the modelToDB Method
 						// to save the activeModel
 						if (delete == 0)
-							toDB.modelToDB(ModelBuilder.activeModel,
-									URIs.modelname);
+							toDBMapper.modelToDB();
 						// If the DB should not be deleted use the saveToDB
 						// Method to just save the changes
 						else if (delete == 1)
-							toDB.saveToDB(URIs.modelname);
+							toDBMapper.saveToDB();
 						else
 							return;
 						DBMapperImpl.deleteAll = false;
 						// If there is just a minor change in the model of the
 						// DB, just save the changes
 					} else
-						toDB.saveToDB(URIs.modelname);
+						toDBMapper.saveToDB();
 
 					JOptionPane.showMessageDialog(null, "Successfully saved!",
 							"PSSIF", JOptionPane.INFORMATION_MESSAGE);

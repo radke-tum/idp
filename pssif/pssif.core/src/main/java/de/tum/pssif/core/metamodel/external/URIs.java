@@ -6,6 +6,7 @@ import de.tum.pssif.core.common.PSSIFConstants;
 
 public class URIs {
 	// URIs
+	public static final String serviceUri = "http://vmkrcmar2.informatik.tu-muenchen.de:3030/PSSIF";
 	public static final String pssifUri = "http://www.sfb768.tum.de/voc/pssif/ns";
 	public static final String pssifNS = pssifUri.concat("#");
 
@@ -18,10 +19,6 @@ public class URIs {
 	public static final String uriEdge = pssifNS + "Edge";
 	public static final String uriJunctionNode = pssifNS + "Conjunction";
 	public static final String uriAttribute = pssifNS + "Attribute";
-
-	public static final String uriJunctionNodeAttribute = modelUri
-			.concat("/JunctionNode/Attr#");
-	public static final String uriAnnotation = modelUri.concat("/Annot#");
 
 	public static final String PROP_ATTR = URIs.pssifNS.concat("attribute");
 	public static final String PROP_ATTR_NAME = URIs.pssifNS.concat("name");

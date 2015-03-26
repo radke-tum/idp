@@ -1,11 +1,18 @@
 package jena.database.impl;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
 import java.util.Iterator;
 
 import javax.swing.JOptionPane;
 
 import jena.database.Database;
-import jena.database.URIs;
+
+
+
 
 import org.apache.jena.atlas.web.HttpException;
 
@@ -15,21 +22,23 @@ import com.hp.hpl.jena.query.DatasetAccessorFactory;
 import com.hp.hpl.jena.query.ReadWrite;
 import com.hp.hpl.jena.rdf.model.Model;
 
+import de.tum.pssif.core.metamodel.external.URIs;
+
 public class DatabaseImpl implements Database {
 	public static Dataset ds = null;
 	public static DatasetAccessor accessor;
-	private static RDFModelImpl rdfModel = null;
+//	private static RDFModelImpl rdfModel = null;
 	private static Model model = null;
 
 	public DatabaseImpl() {
 		// Load Database from Fuseki Server
-		String serviceURI = URIs.uri.concat("/data");
+		String serviceURI = URIs.serviceUri.concat("/data");
 		try {
 			accessor = DatasetAccessorFactory.createHTTP(serviceURI);
 			// Get Default Model from Server
 			model = accessor.getModel();
 			// Create RDFModel
-			rdfModel = new RDFModelImpl(URIs.modelname, model);
+//			rdfModel = new RDFModelImpl(URIs.modelname, model);
 		} catch (HttpException exp) {
 			String error = "An HttpException was raised.\n Cause: "
 					+ exp.getMessage();
@@ -49,8 +58,8 @@ public class DatabaseImpl implements Database {
 	}
 
 	// Getter
-	public RDFModelImpl getRdfModel() {
-		return rdfModel;
+	public Model getRdfModel() {
+		return model;
 	}
 
 	@Override
@@ -66,26 +75,26 @@ public class DatabaseImpl implements Database {
 		}
 	}
 
-	@Override
-	public RDFModelImpl createModel(String name) {
-		if (ds != null) {
-			// Create Model
-			// Alternative default model: model = ds.getDefaultModel() -> But
-			// it's good practice to use a named model. The default model always
-			// exist in the Dataset. It will exist even if it is not used.
-			if (model == null)
-				model = ds.getNamedModel(name);
-
-			// If model doesn't exist already
-			if (rdfModel == null) {
-				// create new RDFModel
-				rdfModel = new RDFModelImpl(name, model);
-			}
-
-			return rdfModel;
-		}
-		return null;
-	}
+//	@Override
+//	public RDFModelImpl createModel(String name) {
+//		if (ds != null) {
+//			// Create Model
+//			// Alternative default model: model = ds.getDefaultModel() -> But
+//			// it's good practice to use a named model. The default model always
+//			// exist in the Dataset. It will exist even if it is not used.
+//			if (model == null)
+//				model = ds.getNamedModel(name);
+//				
+//			// If model doesn't exist already
+//			if (rdfModel == null) {
+//				// create new RDFModel
+//				rdfModel = new RDFModelImpl(name, model);
+//			}
+//
+//			return rdfModel;
+//		}
+//		return null;
+//	}
 
 	@Override
 	public void saveModel(Model model) {

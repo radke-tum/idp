@@ -56,6 +56,7 @@ import de.tum.pssif.core.metamodel.external.URIs;
 import de.tum.pssif.core.model.Edge;
 import de.tum.pssif.core.model.Element;
 import de.tum.pssif.core.model.JunctionNode;
+import de.tum.pssif.core.model.Model;
 import de.tum.pssif.core.model.Node;
 import de.tum.pssif.core.model.impl.ModelImpl;
 
@@ -72,9 +73,8 @@ public class RDFInputMapper {
 	private HashMap<String, Edge> edges = new HashMap<>();
 	private static int id = 0;
 
-	public RDFInputMapper(OntModel infModel, Metamodel metamodel) {
-		// pssifOntModel = OntDocumentManager.getInstance().getOntology(
-		// URIs.pssifNS, OntModelSpec.OWL_DL_MEM_TRANS_INF);
+	public RDFInputMapper(OntModel infModel, Metamodel metamodel, Model model) {
+		setPssifModel(model);
 		this.infModel = infModel;
 		String path = PSSIFConstants.META_MODEL_PATH;
 		try {
@@ -86,8 +86,6 @@ public class RDFInputMapper {
 		}
 
 		this.metamodel = metamodel;
-
-		setPssifModel(new ModelImpl());
 
 		ExtendedIterator<? extends OntResource> subjectNodes = infModel
 				.listIndividuals();
@@ -219,6 +217,12 @@ public class RDFInputMapper {
 
 		}
 
+	}
+
+	public RDFInputMapper(OntModel infModel, Metamodel metamodel) {
+		// pssifOntModel = OntDocumentManager.getInstance().getOntology(
+		// URIs.pssifNS, OntModelSpec.OWL_DL_MEM_TRANS_INF);
+		this(infModel, metamodel, new ModelImpl());
 	}
 
 	private String generateId(Resource subject) {

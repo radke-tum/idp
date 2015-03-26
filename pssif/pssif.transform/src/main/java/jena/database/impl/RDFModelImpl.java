@@ -8,11 +8,10 @@ import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.List;
 
-import jena.database.Properties;
 import jena.database.RDFModel;
-import jena.database.URIs;
 
-import com.hp.hpl.jena.rdf.model.Bag;
+
+
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.ResIterator;
@@ -79,64 +78,9 @@ public class RDFModelImpl implements RDFModel {
 		return ressources;
 	}
 
-	@Override
-	public void addToBag(String uri, Resource subject) {
-		// create bag if not existing otherwise get existing bag
-		Bag b = model.createBag(uri);
-		// add subject to bag if it doesn't already exist
-		if (!b.contains(subject))
-			b.addProperty(Properties.PROP_BAG, subject);
-	}
 
-	@Override
-	public void removeFromBag(String uri, String subject) {
-		// create bag if not existing otherwise get existing bag
-		Bag b = model.createBag(uri);
-		// add subject to bag if it doesn't already exist
-		if (!b.contains(subject)) {
-			List<Statement> list = b.listProperties(Properties.PROP_BAG)
-					.toList();
-			for (Statement stmt : list) {
-				String test = stmt.getObject().toString();
-				if (subject.contains(test))
-					model.remove(stmt);
-			}
-		}
-	}
 
-	@Override
-	public List<Resource> getSubjectsOfBag(String uri) {
-		List<Resource> res = new ArrayList<Resource>();
 
-		try {
-			// get bag with given name
-			Bag b = model.getBag(uri);
-
-			List<Statement> list = b.listProperties(Properties.PROP_BAG)
-					.toList();
-			if (list.size() == 0)
-				return null;
-
-			for (Statement stmt : list)
-				res.add(stmt.getObject().asResource());
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return res;
-	}
-
-	@Override
-	public boolean bagContainsResource(String uri, String bag) {
-		Bag b = model.getBag(bag);
-		return b.hasProperty(Properties.PROP_BAG, model.createResource(uri));
-	}
-
-	@Override
-	public boolean containsJunctionNode(String uri) {
-		Bag b = model.getBag(URIs.uriBagJunctionNodes);
-		return b.contains(model.createResource(uri));
-	}
 
 	@Override
 	public void removeTriple(Resource s, Property p, Resource r) {

@@ -1,18 +1,20 @@
 package jena.database;
 
+import java.io.File;
+
 import com.hp.hpl.jena.query.ReadWrite;
 import com.hp.hpl.jena.rdf.model.Model;
 
 public interface Database {
-	/**
-	 * Creates a new RDF model if not already existing else return existing RDF
-	 * model
-	 * 
-	 * @param name
-	 *            Name of the dataset model
-	 * @return New/Existing RDFModel
-	 */
-	public RDFModel createModel(String name);
+//	/**
+//	 * Creates a new RDF model if not already existing else return existing RDF
+//	 * model
+//	 * 
+//	 * @param name
+//	 *            Name of the dataset model
+//	 * @return New/Existing RDFModel
+//	 */
+//	public RDFModel createModel(String name);
 
 	/**
 	 * Prints out names of all the models in a dataset Just for testing purpose
@@ -54,4 +56,5 @@ public interface Database {
 	 *            model to be removed
 	 */
 	void saveModel(Model model);
+
 }

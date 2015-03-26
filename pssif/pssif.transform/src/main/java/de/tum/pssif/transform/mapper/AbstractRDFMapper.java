@@ -81,7 +81,7 @@ public class AbstractRDFMapper implements Mapper {
 
 	public final void write(Metamodel metamodel, Model model,
 			OutputStream outputStream) {
-		RDFOutputMapper mapper = new RDFOutputMapper(model, metamodel);
+		RDFOutputMapper mapper = new RDFOutputMapper(model);
 		OntModel results = mapper.model;
 		results.setNsPrefix("pssif", URIs.pssifNS);
 	
