@@ -1,4 +1,4 @@
-package jena.mapper.impl;
+package de.tum.pssif.transform.mapper.db;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -15,9 +15,6 @@ import java.util.List;
 
 import javax.swing.JOptionPane;
 
-import jena.database.impl.DatabaseImpl;
-import jena.database.impl.RDFModelImpl;
-import jena.mapper.PssifMapper;
 import model.ModelBuilder;
 
 import com.hp.hpl.jena.ontology.OntModel;
@@ -49,10 +46,10 @@ import de.tum.pssif.core.model.JunctionNode;
 import de.tum.pssif.core.model.Node;
 import de.tum.pssif.core.model.impl.JunctionNodeImpl;
 import de.tum.pssif.core.model.impl.ModelImpl;
-import de.tum.pssif.transform.io.RDFInputMapper;
+import de.tum.pssif.transform.mapper.rdf.RDFInputMapper;
 
 //DB to Model Mapper
-public class PssifMapperImpl implements PssifMapper {
+public class DBToPssifMapperImpl implements DBToPssifMapper {
 
 	public Model model;
 	public static DatabaseImpl db;

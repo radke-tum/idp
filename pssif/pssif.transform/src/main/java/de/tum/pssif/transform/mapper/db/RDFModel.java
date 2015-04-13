@@ -1,4 +1,4 @@
-package jena.database;
+package de.tum.pssif.transform.mapper.db;
 
 import java.io.File;
 import java.util.List;

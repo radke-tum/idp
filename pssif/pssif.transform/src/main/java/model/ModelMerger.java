@@ -13,8 +13,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import jena.mapper.impl.DBMapperImpl;
-
 import org.pssif.consistencyDataStructures.NodeAndType;
 import org.pssif.consistencyExceptions.ConsistencyException;
 import org.pssif.mainProcesses.Methods;
@@ -34,6 +32,7 @@ import de.tum.pssif.core.metamodel.external.PSSIFCanonicMetamodelCreator;
 import de.tum.pssif.core.model.Edge;
 import de.tum.pssif.core.model.Model;
 import de.tum.pssif.core.model.Node;
+import de.tum.pssif.transform.mapper.db.PssifToDBMapperImpl;
 
 /**
  * THis class is responsible for conduction the merge between two models based
@@ -181,7 +180,7 @@ public class ModelMerger {
 		nodeTransferunmatchedJunctionsOldToNewModel = new HashMap<NodeAndType, Node>();
 
 		// If there is a merge, delete DB and save the new model
-		DBMapperImpl.merge = true;
+		PssifToDBMapperImpl.merge = true;
 
 		return merge();
 	}

@@ -1,4 +1,4 @@
-package jena.database.impl;
+package de.tum.pssif.transform.mapper.db;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -8,7 +8,8 @@ import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.List;
 
-import jena.database.RDFModel;
+
+
 
 
 

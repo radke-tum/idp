@@ -1,8 +1,8 @@
-package jena.mapper;
+package de.tum.pssif.transform.mapper.db;
 
 import model.MyModelContainer;
 
-public interface DBMapper {
+public interface PssifToDBMapper {
 
 	/**
 	 * Saves the existing Model from MyModelContainer to the Database by

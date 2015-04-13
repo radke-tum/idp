@@ -1,4 +1,4 @@
-package de.tum.pssif.transform.mapper;
+package de.tum.pssif.transform.mapper.rdf;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -31,11 +31,9 @@ import de.tum.pssif.core.model.Model;
 import de.tum.pssif.transform.IoMapper;
 import de.tum.pssif.transform.Mapper;
 import de.tum.pssif.transform.ModelMapper;
-import de.tum.pssif.transform.io.RDFOutputMapper;
-import de.tum.pssif.transform.io.RDFInputMapper;
 
 public class AbstractRDFMapper implements Mapper {
-	String lang=null;
+	protected String lang=null;
 	OntModel pssifOnt = ModelFactory.createOntologyModel(OntModelSpec.OWL_DL_MEM);
 
 	public AbstractRDFMapper() {

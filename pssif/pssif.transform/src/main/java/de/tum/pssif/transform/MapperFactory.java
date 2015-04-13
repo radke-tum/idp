@@ -4,11 +4,11 @@ import de.tum.pssif.core.common.PSSIFUtil;
 import de.tum.pssif.core.exception.PSSIFException;
 import de.tum.pssif.transform.mapper.BpmnMapper;
 import de.tum.pssif.transform.mapper.EpkMapper;
-import de.tum.pssif.transform.mapper.RDFTTLMapper;
-import de.tum.pssif.transform.mapper.RDFXMLMapper;
 import de.tum.pssif.transform.mapper.SysMlMapper;
 import de.tum.pssif.transform.mapper.graphml.PSSIFMapper;
 import de.tum.pssif.transform.mapper.graphml.UFMMapper;
+import de.tum.pssif.transform.mapper.rdf.RDFTTLMapper;
+import de.tum.pssif.transform.mapper.rdf.RDFXMLMapper;
 import de.tum.pssif.transform.mapper.reqif.ReqifMapper;
 
 

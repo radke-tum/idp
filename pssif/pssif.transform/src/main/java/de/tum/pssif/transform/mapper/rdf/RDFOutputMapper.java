@@ -1,4 +1,4 @@
-package de.tum.pssif.transform.io;
+package de.tum.pssif.transform.mapper.rdf;
 
 import graph.model.MyEdge;
 import graph.model.MyJunctionNode;

@@ -1,4 +1,4 @@
-package de.tum.pssif.transform.mapper;
+package de.tum.pssif.transform.mapper.rdf;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -22,8 +22,6 @@ import de.tum.pssif.transform.IoMapper;
 import de.tum.pssif.transform.Mapper;
 import de.tum.pssif.transform.ModelMapper;
 import de.tum.pssif.transform.graph.Graph;
-import de.tum.pssif.transform.io.RDFOutputMapper;
-import de.tum.pssif.transform.io.RDFInputMapper;
 
 public class RDFTTLMapper extends AbstractRDFMapper   {
 	public RDFTTLMapper(){

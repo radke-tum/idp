@@ -1,4 +1,4 @@
-package jena.database.impl;
+package de.tum.pssif.transform.mapper.db;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -9,7 +9,8 @@ import java.util.Iterator;
 
 import javax.swing.JOptionPane;
 
-import jena.database.Database;
+
+
 
 
 

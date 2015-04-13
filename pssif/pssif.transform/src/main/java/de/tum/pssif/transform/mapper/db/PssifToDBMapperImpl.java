@@ -1,4 +1,4 @@
-package jena.mapper.impl;
+package de.tum.pssif.transform.mapper.db;
 
 import graph.model.MyEdge;
 import graph.model.MyJunctionNode;
@@ -14,9 +14,6 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import jena.database.impl.DatabaseImpl;
-import jena.database.impl.RDFModelImpl;
-import jena.mapper.DBMapper;
 import model.ModelBuilder;
 import model.MyModelContainer;
 
@@ -42,10 +39,10 @@ import de.tum.pssif.core.metamodel.impl.GetValueOperation;
 import de.tum.pssif.core.model.Edge;
 import de.tum.pssif.core.model.JunctionNode;
 import de.tum.pssif.core.model.Node;
-import de.tum.pssif.transform.io.RDFOutputMapper;
+import de.tum.pssif.transform.mapper.rdf.RDFOutputMapper;
 
 // Model to DB Mapper
-public class DBMapperImpl extends RDFOutputMapper implements DBMapper {
+public class PssifToDBMapperImpl extends RDFOutputMapper implements PssifToDBMapper {
 
 	public static OntModel rdfModel;
 	public static DatabaseImpl db;
@@ -68,7 +65,7 @@ public class DBMapperImpl extends RDFOutputMapper implements DBMapper {
 	public static boolean merge = false;
 	private MyModelContainer mymodel;
 
-	public DBMapperImpl() {
+	public PssifToDBMapperImpl() {
 		super(ModelBuilder.activeModel);
 		db = new DatabaseImpl();
 		rdfModel = super.model ;

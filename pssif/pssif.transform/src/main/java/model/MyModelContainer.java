@@ -17,7 +17,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import jena.mapper.impl.DBMapperImpl;
 import de.tum.pssif.core.common.PSSIFConstants;
 import de.tum.pssif.core.common.PSSIFOption;
 import de.tum.pssif.core.common.PSSIFValue;
@@ -29,6 +28,7 @@ import de.tum.pssif.core.metamodel.NodeType;
 import de.tum.pssif.core.model.Edge;
 import de.tum.pssif.core.model.Model;
 import de.tum.pssif.core.model.Node;
+import de.tum.pssif.transform.mapper.db.PssifToDBMapperImpl;
 
 /**
  * A container which holds a model and a metamodel The container provides also
@@ -110,13 +110,13 @@ public class MyModelContainer {
 			if (tempNodes.isMany()) {
 				for (Node tempNode : tempNodes.getMany()) {
 					MyNode newNode = new MyNode(tempNode, t);
-					DBMapperImpl.newNodes.add(newNode);
+					PssifToDBMapperImpl.newNodes.add(newNode);
 					nodes.add(newNode);
 				}
 			}
 			if (tempNodes.isOne()) {
 				MyNode newNode = new MyNode(tempNodes.getOne(), t);
-				DBMapperImpl.newNodes.add(newNode);
+				PssifToDBMapperImpl.newNodes.add(newNode);
 				nodes.add(newNode);
 			}
 
@@ -133,14 +133,14 @@ public class MyModelContainer {
 			if (tempNodes.isMany()) {
 				for (Node tempNode : tempNodes.getMany()) {
 					MyJunctionNode newNode = new MyJunctionNode(tempNode, t);
-					DBMapperImpl.newJunctionNodes.add(newNode);
+					PssifToDBMapperImpl.newJunctionNodes.add(newNode);
 					junctionNodes.add(newNode);
 				}
 			}
 			if (tempNodes.isOne()) {
 				MyJunctionNode newNode = new MyJunctionNode(tempNodes.getOne(),
 						t);
-				DBMapperImpl.newJunctionNodes.add(newNode);
+				PssifToDBMapperImpl.newJunctionNodes.add(newNode);
 				junctionNodes.add(newNode);
 			}
 
@@ -197,7 +197,7 @@ public class MyModelContainer {
 	 */
 	public void addNode(MyNode node) {
 		if (!isContained(node)) {
-			DBMapperImpl.newNodes.add(node);
+			PssifToDBMapperImpl.newNodes.add(node);
 			nodes.add(node);
 		}
 	}
@@ -211,7 +211,7 @@ public class MyModelContainer {
 	 */
 	public void addEdge(MyEdge edge) {
 		if (!isContained(edge)) {
-			DBMapperImpl.newEdges.add(edge);
+			PssifToDBMapperImpl.newEdges.add(edge);
 			edges.add(edge);
 		}
 	}
@@ -344,7 +344,7 @@ public class MyModelContainer {
 	 */
 	public void addCollapserEdge(MyEdge newEdge) {
 		newEdge.setCollapseEdge(true);
-		DBMapperImpl.newEdges.add(newEdge);
+		PssifToDBMapperImpl.newEdges.add(newEdge);
 		edges.add(newEdge);
 	}
 
@@ -356,7 +356,7 @@ public class MyModelContainer {
 	 */
 	public void removeCollapserEdge(MyEdge edge) {
 		if (edge.isCollapseEdge()) {
-			DBMapperImpl.deletedEdges.add(edge);
+			PssifToDBMapperImpl.deletedEdges.add(edge);
 			edges.remove(edge);
 		}
 	}
@@ -382,7 +382,7 @@ public class MyModelContainer {
 						PSSIFOption.one(PSSIFValue.create(nodeName
 								+ newNodeIdCounter++)));
 		MyNode newMyNode = new MyNode(newNode, type);
-		DBMapperImpl.newNodes.add(newMyNode);
+		PssifToDBMapperImpl.newNodes.add(newMyNode);
 		nodes.add(newMyNode);
 		return newMyNode;
 	}
@@ -409,7 +409,7 @@ public class MyModelContainer {
 			model.removeNode(node.getNodeType().getType(), node.getNode());
 
 		}
-		DBMapperImpl.deletedNodes.add(node);
+		PssifToDBMapperImpl.deletedNodes.add(node);
 		return nodes.remove(node);
 	}
 
@@ -453,7 +453,7 @@ public class MyModelContainer {
 			System.out
 					.println(source.getRealName() + destination.getRealName());
 
-			DBMapperImpl.newEdges.add(e);
+			PssifToDBMapperImpl.newEdges.add(e);
 			edges.add(e);
 			return true;
 		} else {
@@ -481,7 +481,7 @@ public class MyModelContainer {
 
 		System.out.println(source.getRealName() + destination.getRealName());
 
-		DBMapperImpl.newEdges.add(e);
+		PssifToDBMapperImpl.newEdges.add(e);
 		edges.add(e);
 		return newEdge;
 
@@ -494,7 +494,7 @@ public class MyModelContainer {
 	 *            The Edge which should be removed
 	 */
 	public void removeEdgeGUI(MyEdge edge) {
-		DBMapperImpl.deletedEdges.add(edge);
+		PssifToDBMapperImpl.deletedEdges.add(edge);
 		edges.remove(edge);
 		model.removeEdge(edge.getEdge());
 	}
