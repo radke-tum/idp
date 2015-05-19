@@ -6,7 +6,6 @@ import graph.model.MyNode;
 
 import java.util.LinkedList;
 
-import jena.mapper.impl.DBMapperImpl;
 import model.ModelBuilder;
 import de.tum.pssif.core.common.PSSIFConstants;
 import de.tum.pssif.core.common.PSSIFOption;
@@ -14,6 +13,7 @@ import de.tum.pssif.core.common.PSSIFValue;
 import de.tum.pssif.core.metamodel.Attribute;
 import de.tum.pssif.core.metamodel.NodeType;
 import de.tum.pssif.core.metamodel.external.PSSIFCanonicMetamodelCreator;
+import de.tum.pssif.transform.mapper.db.PssifToDBMapperImpl;
 
 /**
  * The Class VersionManager.
@@ -116,14 +116,14 @@ public class VersionManager {
 							newVersNode, e.getEdgeType(), e.isDirected());
 					ModelBuilder.getAllEdges().remove(e);
 					// If edge should be deleted from DB
-					DBMapperImpl.deletedEdges.add(e);
+					PssifToDBMapperImpl.deletedEdges.add(e);
 				} else if (e.getSourceNode().equals(selNode)) {
 					ModelBuilder.addNewEdgeGUI(newVersNode,
 							(MyNode) e.getDestinationNode(), e.getEdgeType(),
 							e.isDirected());
 					ModelBuilder.getAllEdges().remove(e);
 					// If edge should be deleted from DB
-					DBMapperImpl.deletedEdges.add(e);
+					PssifToDBMapperImpl.deletedEdges.add(e);
 				}
 			}
 		}

@@ -1,6 +1,7 @@
 package gui;
 
 import de.tum.pssif.core.common.PSSIFConstants;
+import de.tum.pssif.transform.mapper.db.PssifToDBMapperImpl;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.picking.PickedState;
 import graph.model.IMyNode;
@@ -44,7 +45,6 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
-import jena.mapper.impl.DBMapperImpl;
 import model.ModelBuilder;
 
 /**
@@ -586,7 +586,7 @@ public class GraphView {
 												attributeName, data);
 
 										// If node should be saved to DB
-										DBMapperImpl.changedNodes.add(node);
+										PssifToDBMapperImpl.changedNodes.add(node);
 
 										if (!res) {
 											model.setValueAt(null, row, column);
@@ -669,7 +669,7 @@ public class GraphView {
 											attributeName, data);
 
 									// If edge should be saved to DB
-									DBMapperImpl.changedEdges.add(selectedEdge);
+									PssifToDBMapperImpl.changedEdges.add(selectedEdge);
 
 									// directed attr changed
 									if (attributeName

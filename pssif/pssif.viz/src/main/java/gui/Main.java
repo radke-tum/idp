@@ -40,9 +40,11 @@ import javax.swing.JPanel;
 
 import com.hp.hpl.jena.rdf.model.Model;
 
-import jena.database.RDFModel;
-import jena.mapper.impl.DBMapperImpl;
-import jena.mapper.impl.PssifMapperImpl;
+
+
+import de.tum.pssif.transform.mapper.db.DBToPssifMapperImpl;
+import de.tum.pssif.transform.mapper.db.PssifToDBMapperImpl;
+import de.tum.pssif.transform.mapper.db.RDFModel;
 import model.FileExporter;
 import model.FileImporter;
 import model.ModelBuilder;
@@ -119,8 +121,8 @@ public class Main {
 	// private SpecificationProjectWizard reqProjImporter;
 	private MasterFilter masterFilter;
 
-	private PssifMapperImpl fromDBMapper = null;
-	private DBMapperImpl toDBMapper = null;
+	private DBToPssifMapperImpl fromDBMapper = null;
+	private PssifToDBMapperImpl toDBMapper = null;
 
 	public static void main(String[] args) {
 
@@ -176,7 +178,7 @@ public class Main {
 
 		// To know wheather it could be possible that Database should be
 		// deleted.
-		DBMapperImpl.deleteAll = true;
+		PssifToDBMapperImpl.deleteAll = true;
 	}
 
 	/**
@@ -277,7 +279,7 @@ public class Main {
 			public void actionPerformed(ActionEvent e) {
 				try {
 					if (fromDBMapper == null)
-						fromDBMapper = new PssifMapperImpl();
+						fromDBMapper = new DBToPssifMapperImpl();
 					fromDBMapper.DBToModel();
 				} catch (Exception e1) {
 					JOptionPane.showMessageDialog(
@@ -287,14 +289,14 @@ public class Main {
 							JOptionPane.ERROR_MESSAGE);
 				}
 				// Database should not be deleted
-				DBMapperImpl.deleteAll = true;
+				PssifToDBMapperImpl.deleteAll = true;
 
 				// You can just load a database if there is no other model. If a
 				// new model is loaded into the tool nodes and edges are loaded
 				// to lists that implies which new nodes has to be added to the
 				// DB. But if you load the model from the DB all nodes/edges are
 				// in the db so you can delete the list again.
-				DBMapperImpl.clearAll();
+				PssifToDBMapperImpl.clearAll();
 
 				// Create the Views
 				matrixView = new MatrixView();
@@ -339,7 +341,7 @@ public class Main {
 				// toDB to get the rdfModel
 				// if (fromDBMapper == null) {
 				 if (toDBMapper == null) {
-				toDBMapper = new DBMapperImpl();
+				toDBMapper = new PssifToDBMapperImpl();
 			
 				 } 
 				// else
@@ -451,19 +453,19 @@ public class Main {
 			public void actionPerformed(ActionEvent e) {
 				try {
 					if (toDBMapper == null){
-						toDBMapper = new DBMapperImpl();
+						toDBMapper = new PssifToDBMapperImpl();
 					}
 					// If the model was merged then delete DB and build new
 					// rdfModel from activeModel
-					if (DBMapperImpl.merge == true) {
+					if (PssifToDBMapperImpl.merge == true) {
 						toDBMapper.modelToDB();
-						DBMapperImpl.merge = false;
+						PssifToDBMapperImpl.merge = false;
 					}
 					// If the database could be deleted compeletely because of
 					// not importing the database before importing the model...
 					// Then ask the user if he wants to delete the DB or add the
 					// new model to the DB
-					else if (DBMapperImpl.deleteAll == true) {
+					else if (PssifToDBMapperImpl.deleteAll == true) {
 						int delete = JOptionPane.showConfirmDialog(null,
 								"Should the Database be deleted?");
 
@@ -477,7 +479,7 @@ public class Main {
 							toDBMapper.saveToDB();
 						else
 							return;
-						DBMapperImpl.deleteAll = false;
+						PssifToDBMapperImpl.deleteAll = false;
 						// If there is just a minor change in the model of the
 						// DB, just save the changes
 					} else
