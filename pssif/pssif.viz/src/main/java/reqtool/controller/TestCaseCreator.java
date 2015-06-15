@@ -3,7 +3,6 @@ package reqtool.controller;
 import graph.model.MyEdgeType;
 import graph.model.MyNode;
 import graph.model.MyNodeType;
-
 import java.util.List;
 
 import model.ModelBuilder;

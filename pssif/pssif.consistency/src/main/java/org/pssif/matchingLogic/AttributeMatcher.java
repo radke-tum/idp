@@ -81,8 +81,7 @@ public class AttributeMatcher extends MatchMethod {
 		PSSIFOption<Attribute> optionOrigin, optionNew;
 		Attribute attrOrigin, attrNew;
 		PSSIFOption<PSSIFValue> attrValueOrigin, attrValueNew;
-		PSSIFValue tempValueOrigin;
-		PSSIFValue tempValueNew;
+		String tempValueOrigin, tempValueNew;
 
 		double nrOfAttributesOrigin = 0;
 		double nrOfAttributesNew = 0;
@@ -106,7 +105,17 @@ public class AttributeMatcher extends MatchMethod {
 				attrValueOrigin = attrOrigin.get(tempNodeOrigin);
 
 				if (attrValueOrigin.isOne()) {
+
+					tempValueOrigin = attrValueOrigin.getOne().asString();
+
 					nrOfAttributesOrigin++;
+
+					if (debugMode) {
+						System.out.println("Node Origin has the attribute: "
+								+ attrOrigin.getName() + " with value: "
+								+ tempValueOrigin);
+					}
+
 				}
 			}
 
@@ -116,55 +125,35 @@ public class AttributeMatcher extends MatchMethod {
 				attrValueNew = attrNew.get(tempNodeNew);
 
 				if (attrValueNew.isOne()) {
+					tempValueNew = attrValueNew.getOne().asString();
+
 					nrOfAttributesNew++;
-				}
-			}
 
-			if (attrValueOrigin != null && attrValueNew != null
-					&& attrValueOrigin.isOne()) {
-				tempValueOrigin = attrValueOrigin.getOne();
+					if (debugMode) {
+						System.out.println("Node New has the attribute: "
+								+ attrNew.getName() + " with value: "
+								+ tempValueNew);
+					}
 
-				if (attrValueNew.isOne()) {
-					tempValueNew = attrValueNew.getOne();
+					if (tempValueOrigin != null) {
+						String tmpOrigin = tempValueOrigin.replaceAll("\\s+",
+								"").toLowerCase();
+						String tmpNew = tempValueNew.replaceAll("\\s+", "")
+								.toLowerCase();
 
-					if (attributesAreSimilar(tempValueOrigin, tempValueNew)) {
-						nrOfSimilarAttributes++;
+						if (tmpOrigin.equals(tmpNew)) {
+							nrOfSimilarAttributes++;
+						}
 					}
 				}
 			}
-		}
 
+		}
 		if ((nrOfAttributesOrigin == 0) && (nrOfAttributesNew == 0)) {
 			return 1;
 		} else {
 			return (nrOfSimilarAttributes / (Math.max(nrOfAttributesOrigin,
 					nrOfAttributesNew)));
 		}
-	}
-
-	private boolean attributesAreSimilar(final PSSIFValue attrOrigin,
-			final PSSIFValue attrNew) {
-		boolean result = false;
-
-		if (debugMode) {
-			System.out.println("Node Origin has one attribute with value: "
-					+ attrOrigin.getValue().toString());
-
-			System.out.println("Node New has the attribute with value: "
-					+ attrNew.getValue().toString());
-		}
-
-		if (attrOrigin.isString()) {
-			String tmpOrigin = attrOrigin.asString().replaceAll("\\s+", "")
-					.toLowerCase();
-			String tmpNew = attrNew.asString().replaceAll("\\s+", "")
-					.toLowerCase();
-
-			result = tmpOrigin.equals(tmpNew);
-		} else {
-			result = attrOrigin.getValue().equals(attrNew.getValue());
-		}
-
-		return result;
 	}
 }

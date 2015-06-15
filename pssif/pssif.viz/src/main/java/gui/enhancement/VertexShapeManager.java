@@ -25,7 +25,6 @@ public class VertexShapeManager {
 		if (node instanceof MyNode)
 		{
 			MyNode tmp = (MyNode) node;
-			//System.out.println(tmp.getNodeType());
 			return new Rectangle2D.Double(-(tmp.getWidth()/2), -(tmp.getHeight()/2), tmp.getWidth(), tmp.getHeight());
 		}
 		else

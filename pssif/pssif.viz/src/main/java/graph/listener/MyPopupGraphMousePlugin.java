@@ -1,9 +1,14 @@
 package graph.listener;
 
 
+import java.awt.BasicStroke;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
+import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.util.Collections;
 import java.util.HashMap;
@@ -31,20 +36,23 @@ import graph.model.MyEdge;
 import graph.model.MyNode;
 import graph.model.MyNodeType;
 import gui.graph.GraphVisualization;
+import gui.graph.IconSizePopup;
 
 /**
  * Creates the right click popups
  * @author Luc
  *
  */
-public class MyPopupGraphMousePlugin extends AbstractPopupGraphMousePlugin {
+public class MyPopupGraphMousePlugin extends AbstractPopupGraphMousePlugin implements MouseMotionListener {
 	
 	private GraphVisualization gViz;
 	private MyNode sourceNode = null;
+	private int p1x,p1y, p2x, p2y;
 
     public MyPopupGraphMousePlugin(GraphVisualization gViz) {
         this(MouseEvent.BUTTON3_MASK);
         this.gViz = gViz;
+        p1x = p1y = p2x = p2y = 0;
     }
     public MyPopupGraphMousePlugin(int modifiers) {
         super(modifiers);
@@ -59,9 +67,14 @@ public class MyPopupGraphMousePlugin extends AbstractPopupGraphMousePlugin {
         }
     	
     	if(e.getButton() == MouseEvent.BUTTON1 && this.gViz.getAbstractModalGraphMode() == Mode.EDITING)
+    	{
     		sourceNode = getClickedNode(e);
+    		p1x = e.getX();
+    		p1y = e.getY();
+    		
+    	}
+    	
     }
-    
     
     
     public void mouseReleased(MouseEvent e) {
@@ -80,6 +93,8 @@ public class MyPopupGraphMousePlugin extends AbstractPopupGraphMousePlugin {
     			popup.showPopup();
     			gViz.setAbstractModalGraphMode(Mode.PICKING);
     		}
+    		
+    		gViz.getVisualisationViewer().repaint();
     	}
     }
     
@@ -101,8 +116,10 @@ public class MyPopupGraphMousePlugin extends AbstractPopupGraphMousePlugin {
 				
 				JMenu submenu = createEdge(e, node);
 				JMenuItem submenuRemove = removeNode(e, node);
+				JMenuItem customizeSize = customizeSize(e, node);
 				popup.add(submenu);
 				popup.add(submenuRemove);
+				popup.add(customizeSize);
 
 				// if the user made a right click on a Reqtool Node
 				ReqToolReqistry.getInstance().post(new CreateReqMenuEvent(node, popup, gViz));
@@ -242,6 +259,17 @@ public class MyPopupGraphMousePlugin extends AbstractPopupGraphMousePlugin {
  		return submenu;
     }
 
+    private JMenuItem customizeSize(MouseEvent e, final MyNode selectedNode) {
+    	JMenuItem submenu = new JMenuItem("Customize Node Size");
+    	submenu.addActionListener(new ActionListener() {
+    		@Override
+        	public void actionPerformed(ActionEvent e) {
+    			IconSizePopup popup= new IconSizePopup(selectedNode);
+    			popup.showPopup();
+        	}
+		});
+ 		return submenu;
+    }
 
     
     
@@ -283,4 +311,25 @@ public class MyPopupGraphMousePlugin extends AbstractPopupGraphMousePlugin {
         }
         return null;
     }
+    
+	@Override
+	public void mouseDragged(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+		p2x = e.getX();
+		p2y = e.getY();
+		System.out.println("mouse dragged: " + p2x +"," + p2y);
+		Graphics2D g2d = (Graphics2D) gViz.getVisualisationViewer().getGraphics();
+		g2d.setStroke(new BasicStroke(4, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+		g2d.drawLine(p1x,p1y,p2x,p2y);
+		p1x = p2x;
+		p1y = p2y;
+
+
+	}
+	@Override
+	public void mouseMoved(MouseEvent e) {
+		// TODO Auto-generated method stub
+		System.out.println("mouse Moved");	
+	}
 }

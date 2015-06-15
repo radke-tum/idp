@@ -34,7 +34,7 @@ import de.tum.pssif.core.model.Tupel;
 public final class PSSIFCanonicMetamodelCreator {
 
 	public static HashMap<String, String> TAGS = new HashMap<String, String>();
-	private static MetamodelImportRDF importer;
+	private static MetamodelImport importer;
 	public static HashMap<String, MetamodelConjunction> conjunctions;
 	public static HashMap<String, MetamodelNode> nodes;
 	public static HashMap<String, MetamodelEdge> edges;
@@ -99,11 +99,9 @@ public final class PSSIFCanonicMetamodelCreator {
 			return;
 		}
 		
-//		MutableEnumeration conjunction = metamodel
-//				.createEnumeration(conjunctions.get("Conjunction").getName());
 		MutableEnumeration conjunction = metamodel
-				.createEnumeration("Conjunction");
-		
+				.createEnumeration(conjunctions.get("Conjunction").getName());
+
 		for(String key : conjunctions.keySet()) {
 			if(!key.equals("Conjunction")) {
 				conjunction.createLiteral(conjunctions.get(key).getName());
@@ -318,7 +316,7 @@ public final class PSSIFCanonicMetamodelCreator {
 	 */
 	public static void loadXMLData() {
 		// Import current version of the canonic Metamodel as stated in the .xml
-		importer = new MetamodelImportRDF();
+		importer = new MetamodelImport();
 		importer.runParser();
 		TAGS = importer.getTagMap();
 

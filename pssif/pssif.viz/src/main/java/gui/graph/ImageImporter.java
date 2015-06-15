@@ -2,8 +2,10 @@ package gui.graph;
 
  
 import graph.model.MyNodeType;
+import gui.enhancement.MainFrame;
 
 import java.io.*;
+import java.net.URI;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
@@ -90,6 +92,7 @@ public class ImageImporter extends JPanel
            		if (picLabel != null)
            			this.remove(picLabel);
     			ImageIcon icon = loadImageBySize(file, IMG_WIDTH, IMG_HEIGHT);
+    			String basepath = MainFrame.INSTALL_FOLDER;
     			icon.setDescription(file.getPath());
                	nsp.getIconMapper().put(currentNode, icon);
                	this.showImage(icon);

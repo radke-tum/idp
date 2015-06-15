@@ -3,16 +3,24 @@ package gui.graph;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Graphics2D;
+import java.awt.GraphicsConfiguration;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
+import java.awt.Image;
 import java.awt.Paint;
 import java.awt.Shape;
 import java.awt.Stroke;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
+import java.awt.image.BufferedImage;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 
 import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JMenu;
 
 import org.apache.commons.collections15.Transformer;
@@ -142,8 +150,10 @@ public class GraphVisualization
 
 		this.gm = new EnhancedModalGraphMouse<MyNode, MyEdge>();
 		
-		this.vv.setGraphMouse(this.gm);   
-		this.gm.add(new MyPopupGraphMousePlugin(this));
+		this.vv.setGraphMouse(this.gm);
+		MyPopupGraphMousePlugin mpgmp = new MyPopupGraphMousePlugin(this);
+		this.gm.add(mpgmp);
+		evv.addMouseMotionListener(mpgmp);
 	}
 
 
@@ -168,7 +178,8 @@ public class GraphVisualization
 			return Color.LIGHT_GRAY;
 		}
 	};
-
+	
+	
 	private void createNodeTransformers()
 	{
 		Transformer<IMyNode, Shape> vertexSize = new Transformer<IMyNode, Shape>()
@@ -214,8 +225,14 @@ public class GraphVisualization
 				{
 					MyNode node = (MyNode) n;
 					Icon icon = nodeIconMapping.get(node.getNodeType());
-					//System.out.println(icon);
-					return icon;
+					if (icon != null)
+					{
+						ImageIcon imgicon = (ImageIcon) icon;
+						imgicon.setImage(imgicon.getImage().getScaledInstance((int) node.getWidth(), (int) node.getHeight(), Image.SCALE_SMOOTH));
+						return imgicon;
+					}
+					else
+						return icon;
 				}
 				return null;
 			}

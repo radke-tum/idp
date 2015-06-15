@@ -78,7 +78,7 @@ public class ImagePanel extends JPanel {
 			}
 		}
 		
-		private BufferedImage resizeImage(BufferedImage originalImage, int type, int width, int height){
+		public BufferedImage resizeImage(BufferedImage originalImage, int type, int width, int height){
 			BufferedImage resizedImage = new BufferedImage(width, height, type);
 			Graphics2D g = resizedImage.createGraphics();
 			g.drawImage(originalImage, 0, 0, width, height, null);
