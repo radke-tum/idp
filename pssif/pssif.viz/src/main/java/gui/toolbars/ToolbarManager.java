@@ -7,6 +7,7 @@ import gui.enhancement.DraggableButton;
 import gui.enhancement.EnhancedVisualizationViewer;
 import gui.graph.GraphVisualization;
 
+import java.awt.Color;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -91,6 +92,7 @@ public class ToolbarManager {
 	public EnhancedToolBar createStandardToolBar(final FileCommands fcommands)
 	{
 		EnhancedToolBar ebt = new EnhancedToolBar(0);
+		ebt.setBackground(Color.WHITE);
 		//new button
 		ebt.addButton(MainFrame.INSTALL_FOLDER + "//images//buttons//newfile.png", new ActionListener(){ @Override
 			public void actionPerformed(ActionEvent e) {

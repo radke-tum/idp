@@ -3,6 +3,12 @@
     xmlns:j.0="http://localhost:3030/ds/PSSIF/Attr#"
     xmlns:j.1="http://localhost:3030/ds/PSSIF#"
     xmlns:j.2="http://localhost:3030/ds/PSSIF/Annot#" > 
+  <rdf:Description rdf:about="http://localhost:3030/ds/PSSIF/Node/Attr#idzz0">
+    <j.0:VALUE>zz0</j.0:VALUE>
+    <j.0:UNIT>none</j.0:UNIT>
+    <j.0:DATATYPE>String</j.0:DATATYPE>
+    <j.0:CATEGORY>MetaData</j.0:CATEGORY>
+  </rdf:Description>
   <rdf:Description rdf:about="http://localhost:3030/ds/PSSIF/Node/Attr#globalId13">
     <j.0:VALUE>c1ac4c72-b324-4d5e-9d62-b9df66c39b08</j.0:VALUE>
     <j.0:UNIT>none</j.0:UNIT>
@@ -174,6 +180,7 @@
     <rdf:BagElement rdf:resource="http://localhost:3030/ds/PSSIF/Node#15"/>
     <rdf:BagElement rdf:resource="http://localhost:3030/ds/PSSIF/Node#12"/>
     <rdf:BagElement rdf:resource="http://localhost:3030/ds/PSSIF/Node#3"/>
+    <rdf:BagElement rdf:resource="http://localhost:3030/ds/PSSIF/Node#zz0"/>
   </rdf:Description>
   <rdf:Description rdf:about="http://localhost:3030/ds/PSSIF/Edge#id18">
     <j.0:VALUE>18</j.0:VALUE>
@@ -577,6 +584,12 @@
     <j.0:name rdf:resource="http://localhost:3030/ds/PSSIF/Node/Attr#name2"/>
     <j.0:globalId rdf:resource="http://localhost:3030/ds/PSSIF/Node/Attr#globalId2"/>
   </rdf:Description>
+  <rdf:Description rdf:about="http://localhost:3030/ds/PSSIF/Node/Attr#globalIdzz0">
+    <j.0:VALUE>46c8db7c-36de-4f2e-9068-aaf133da7a33</j.0:VALUE>
+    <j.0:UNIT>none</j.0:UNIT>
+    <j.0:DATATYPE>String</j.0:DATATYPE>
+    <j.0:CATEGORY>MetaData</j.0:CATEGORY>
+  </rdf:Description>
   <rdf:Description rdf:about="http://localhost:3030/ds/PSSIF/Edge#directed27">
     <j.0:VALUE>true</j.0:VALUE>
     <j.0:UNIT>none</j.0:UNIT>
@@ -801,6 +814,12 @@
     <j.0:DATATYPE>String</j.0:DATATYPE>
     <j.0:CATEGORY>MetaData</j.0:CATEGORY>
   </rdf:Description>
+  <rdf:Description rdf:about="http://localhost:3030/ds/PSSIF/Node#zz0">
+    <j.1:Type>Specification Artifact</j.1:Type>
+    <j.0:id rdf:resource="http://localhost:3030/ds/PSSIF/Node/Attr#idzz0"/>
+    <j.0:name rdf:resource="http://localhost:3030/ds/PSSIF/Node/Attr#namezz0"/>
+    <j.0:globalId rdf:resource="http://localhost:3030/ds/PSSIF/Node/Attr#globalIdzz0"/>
+  </rdf:Description>
   <rdf:Description rdf:about="http://localhost:3030/ds/PSSIF/Edge#37">
     <j.1:Type>Control Flow</j.1:Type>
     <j.0:id rdf:resource="http://localhost:3030/ds/PSSIF/Edge#id37"/>
@@ -911,6 +930,12 @@
     <j.0:VALUE>true</j.0:VALUE>
     <j.0:UNIT>none</j.0:UNIT>
     <j.0:DATATYPE>Boolean</j.0:DATATYPE>
+    <j.0:CATEGORY>MetaData</j.0:CATEGORY>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://localhost:3030/ds/PSSIF/Node/Attr#namezz0">
+    <j.0:VALUE>zz</j.0:VALUE>
+    <j.0:UNIT>none</j.0:UNIT>
+    <j.0:DATATYPE>String</j.0:DATATYPE>
     <j.0:CATEGORY>MetaData</j.0:CATEGORY>
   </rdf:Description>
   <rdf:Description rdf:about="http://localhost:3030/ds/PSSIF/Node/Attr#id2">

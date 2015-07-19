@@ -801,6 +801,9 @@ public class ConfigWriterReader {
 			}
 		}
 	}
-
+	
+	public static File getCONFIG_FILE() {
+		return CONFIG_FILE;
+		}
 	
 }

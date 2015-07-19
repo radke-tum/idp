@@ -4,15 +4,20 @@ import graph.operations.MasterFilter;
 
 import java.awt.Dimension;
 import java.awt.GraphicsEnvironment;
+import java.io.File;
 
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 import de.tum.pssif.transform.mapper.db.DBToPssifMapperImpl;
 import de.tum.pssif.transform.mapper.db.PssifToDBMapperImpl;
+import jena.database.RDFModel;
+import jena.database.URIs;
+import jena.mapper.impl.DBMapperImpl;
+import jena.mapper.impl.PssifMapperImpl;
 import reqtool.bus.ReqToolReqistry;
 import reqtool.event.CreateSpecProjectEvent;
-import viewplugin.logic.ViewManager;
 import model.FileImporter;
 
 public class FileCommands{
@@ -23,9 +28,12 @@ public class FileCommands{
 	MasterFilter masterFilter = null;
 	
 	private DBToPssifMapperImpl fromDBMapper = null;
+	private PssifToDBMapperImpl toDBMapper = null;
 	
+	private DBMapperImpl toDB = null;
 	private MenuManager menuManager;
 	private MainFrame mainFrame ;
+	private PssifMapperImpl fromDB;
 	public FileCommands(MainFrame mainFrame)
 	{
 		importer = new FileImporter();
@@ -64,8 +72,6 @@ public class FileCommands{
 		frame.setJMenuBar(menuManager.createMenu());
 		menuManager.adjustButtons();
 		
-		ViewManager.initViewManager(graphView, masterFilter);
-		
 		frame.setPreferredSize(d);
 		frame.pack();
 		frame.setLocationRelativeTo(null);
@@ -95,28 +101,99 @@ public class FileCommands{
 	//do the process for importing from DB
 	public void importFromDB()
 	{
-		try {
-			if (fromDBMapper == null)
-				fromDBMapper = new DBToPssifMapperImpl();
-			fromDBMapper.DBToModel();
-		} catch (Exception e1) {
-			JOptionPane.showMessageDialog(
-					null,
-					"Error with importing!\n"
-							+ e1.getLocalizedMessage(), "PSSIF",
-					JOptionPane.ERROR_MESSAGE);
-		}
-		
-		// Database should not be deleted
-		PssifToDBMapperImpl.deleteAll = true;
+	try {
+	if (fromDBMapper == null)
+	fromDBMapper = new DBToPssifMapperImpl();
+	fromDBMapper.DBToModel();
+	} catch (Exception e1) {
+	JOptionPane.showMessageDialog(
+	null,
+	"Error with importing!\n"
+	+ e1.getLocalizedMessage(), "PSSIF",
+	JOptionPane.ERROR_MESSAGE);
+	}
 
-		// You can just load a database if there is no other model. If a
-		// new model is loaded into the tool nodes and edges are loaded
-		// to lists that implies which new nodes has to be added to the
-		// DB. But if you load the model from the DB all nodes/edges are
-		// in the db so you can delete the list again.
-		PssifToDBMapperImpl.clearAll();
+	// Database should not be deleted
+	PssifToDBMapperImpl.deleteAll = true;
+
+	// You can just load a database if there is no other model. If a
+	// new model is loaded into the tool nodes and edges are loaded
+	// to lists that implies which new nodes has to be added to the
+	// DB. But if you load the model from the DB all nodes/edges are
+	// in the db so you can delete the list again.
+	PssifToDBMapperImpl.clearAll();
+
+	setUp();
+	}
+	
+	public void exportDBTurtle() {
+		RDFModel model = null;
+
+		if (fromDB == null) {
+			if (toDB == null) {
+				toDB = new DBMapperImpl();
+				model = toDB.rdfModel;
+			} else
+				model = toDB.rdfModel;
+		} else
+			model = fromDB.rdfModel;
+
+		JFileChooser finder = new JFileChooser();
+		finder.setSelectedFile(new File(System.getProperty("user.home")
+				+ "\\TurtleExport.ttl"));
+
+		int returnVal = finder.showSaveDialog(null);
+		if (returnVal == javax.swing.JFileChooser.APPROVE_OPTION) {
+			java.io.File file = finder.getSelectedFile();
+			model.writeModelToTurtleFile(file);
+			JOptionPane.showMessageDialog(null, "Export successful",
+					"PSSIF", JOptionPane.INFORMATION_MESSAGE);
+		}
+	}
+	public void saveToDB() {
+		try {
+			if (toDBMapper == null){
+			toDBMapper = new PssifToDBMapperImpl();
+			}
+			// If the model was merged then delete DB and build new
+			// rdfModel from activeModel
+			if (PssifToDBMapperImpl.merge == true) {
+			toDBMapper.modelToDB();
+			PssifToDBMapperImpl.merge = false;
+			}
+			// If the database could be deleted compeletely because of
+			// not importing the database before importing the model...
+			// Then ask the user if he wants to delete the DB or add the
+			// new model to the DB
+			else if (PssifToDBMapperImpl.deleteAll == true) {
+			int delete = JOptionPane.showConfirmDialog(null,
+			"Should the Database be deleted?");
+
+			// If the DB should be deleted use the modelToDB Method
+			// to save the activeModel
+			if (delete == 0)
+			toDBMapper.modelToDB();
+			// If the DB should not be deleted use the saveToDB
+			// Method to just save the changes
+			else if (delete == 1)
+			toDBMapper.saveToDB();
+			else
+			return;
+			PssifToDBMapperImpl.deleteAll = false;
+			// If there is just a minor change in the model of the
+			// DB, just save the changes
+			} else
+			toDBMapper.saveToDB();
+
+			JOptionPane.showMessageDialog(null, "Successfully saved!",
+			"PSSIF", JOptionPane.INFORMATION_MESSAGE);
+			} catch (Exception e1) {
+			JOptionPane.showMessageDialog(null, "Error with saving!\n"
+			+ e1.getMessage(), "PSSIF",
+			JOptionPane.ERROR_MESSAGE);
+			}
+
+			
 		
-		setUp();
 	}
 }

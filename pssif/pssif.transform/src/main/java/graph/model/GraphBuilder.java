@@ -3,10 +3,10 @@ package graph.model;
 import java.util.Collection;
 import java.util.LinkedList;
 
-import model.ModelBuilder;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.SparseMultigraph;
 import edu.uci.ics.jung.graph.util.EdgeType;
+import model.ModelBuilder;
 
 
 public class GraphBuilder {

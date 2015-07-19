@@ -34,6 +34,9 @@ public class FileHandler {
 	    comboBoxValues.put("SysML", MapperFactory.SYSML);
 	    comboBoxValues.put("PSS-IF", MapperFactory.PSSIF);
 	    comboBoxValues.put("ReqIf", MapperFactory.REQ_IF);
+	    comboBoxValues.put("RDF/TTL", MapperFactory.RDF_TTL);
+	    comboBoxValues.put("RDF/XML", MapperFactory.RDF_XML);
+	    comboBoxValues.put("UML", MapperFactory.UML);
 	    
 	    // bind the label and the combobox to the dialog
 	    fileChooser = new JFileChooser();

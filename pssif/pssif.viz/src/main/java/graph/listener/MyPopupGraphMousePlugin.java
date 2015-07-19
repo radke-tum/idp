@@ -315,18 +315,17 @@ public class MyPopupGraphMousePlugin extends AbstractPopupGraphMousePlugin imple
 	@Override
 	public void mouseDragged(MouseEvent e) {
 		// TODO Auto-generated method stub
-		
 		p2x = e.getX();
 		p2y = e.getY();
-		System.out.println("mouse dragged: " + p2x +"," + p2y);
+		System.out.println("mouse dragged: " + p2x +"," + p2y + ","+ p1x + "," + p1y);
 		Graphics2D g2d = (Graphics2D) gViz.getVisualisationViewer().getGraphics();
 		g2d.setStroke(new BasicStroke(4, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
 		g2d.drawLine(p1x,p1y,p2x,p2y);
+		
 		p1x = p2x;
 		p1y = p2y;
-
-
 	}
+	
 	@Override
 	public void mouseMoved(MouseEvent e) {
 		// TODO Auto-generated method stub

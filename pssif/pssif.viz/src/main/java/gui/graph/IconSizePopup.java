@@ -15,11 +15,18 @@ public class IconSizePopup extends MyPopup{
 	JTextField height;
 	JTextField width;
 	MyNode selectedNode;
+	boolean noNode = false;
+	double widthval = 0;
+	double heightval = 0;
 	
 	public IconSizePopup(MyNode node){
 		this.selectedNode = node;
 	}
 	
+	public IconSizePopup() {
+		noNode = true;
+	}
+
 	private JPanel createPanel()
 	{
 		JPanel bannerPanel = new JPanel();
@@ -50,12 +57,16 @@ public class IconSizePopup extends MyPopup{
 	{
 		if (dialogResult==0)
 	 	{
-			if (isDigit(height.getText())&&isDigit(width.getText())){
+			if (!noNode && isDigit(height.getText()) && isDigit(width.getText())){
 			//	System.out.println("both valid numbers");
 				selectedNode.setHeight(Double.valueOf(height.getText()));
 				selectedNode.setWidth(Double.valueOf(width.getText()));
 				//selectedNode.update();
 				System.out.println(selectedNode.getName() + ":" + selectedNode.getWidth() + ":" + selectedNode.getHeight());
+			}
+			else if (noNode && isDigit(height.getText()) && isDigit(width.getText())){
+				widthval = Double.valueOf(width.getText());
+				heightval = Double.valueOf(height.getText());
 			}
 	 	}
 	}
@@ -68,6 +79,22 @@ public class IconSizePopup extends MyPopup{
             }
         }
         return true;
+    }
+    
+    public double getWidth()
+    {
+    	if (noNode)
+    		return widthval;
+    	else
+    		return selectedNode.getWidth();
+    }
+    
+    public double getHeight()
+    {
+    	if (noNode)
+    		return heightval;
+    	else
+    		return selectedNode.getHeight();
     }
 
 }

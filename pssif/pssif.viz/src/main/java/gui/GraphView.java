@@ -10,7 +10,9 @@ import graph.model.MyNode;
 import graph.model.MyNodeType;
 import graph.operations.MasterFilter;
 import gui.graph.GraphVisualization;
+import gui.toolbars.EnhancedToolBar;
 import gui.toolbars.NodeHierarchyContainer;
+import gui.toolbars.ToolbarManager;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -232,7 +234,6 @@ public GraphView(MainFrame mainFrame) {
 
     c.gridx = 0;
     JLabel lblNodeName = new JLabel("Node Name:");
-    lblNodeName.setFont(new Font("Serif", Font.PLAIN, 12));
     ypos++;
     c.gridy = ypos;
     nodeInfos.add(lblNodeName, c);
@@ -247,7 +248,6 @@ public GraphView(MainFrame mainFrame) {
     //nodeInfos.add(Box.createVerticalStrut(betweenComps), c);
 
     JLabel lblNodeType = new JLabel("Node Type:");
-    lblNodeType.setFont(new Font("Serif", Font.PLAIN, 12));
     ypos++;
     c.gridy = ypos;
     nodeInfos.add(lblNodeType, c);
@@ -394,7 +394,6 @@ public GraphView(MainFrame mainFrame) {
     basicOperations.setBackground(bgColor);
 
     JLabel pickMode = new JLabel("Pick Mode: ");
-    pickMode.setFont( new Font("Serif", Font.ITALIC, 12));
 
     edgeSelection = new JRadioButton("Edge");
     edgeSelection.setBackground(bgColor);

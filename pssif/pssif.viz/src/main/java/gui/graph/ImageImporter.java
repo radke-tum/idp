@@ -1,8 +1,9 @@
 package gui.graph;
 
  
+import graph.model.MyNode;
 import graph.model.MyNodeType;
-import gui.enhancement.MainFrame;
+import gui.MainFrame;
 
 import java.io.*;
 import java.net.URI;
@@ -19,10 +20,12 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 public class ImageImporter extends JPanel
                              implements ActionListener {
 	
-	public static final int IMG_WIDTH = 128;
-	public static final int IMG_HEIGHT = 128;
+	public static int IMG_WIDTH = 128;
+	public static int IMG_HEIGHT = 128;
 	
     private JButton openButton;
+    private JButton remButton;
+    private JButton chgButton;
     private JFileChooser fc;
     private File file ;
     private JLabel picLabel = new JLabel();
@@ -43,13 +46,18 @@ public class ImageImporter extends JPanel
         openButton = new JButton("Select an Image File...");
         openButton.addActionListener(this);
         
-        JButton remButton = new JButton("Remove Icon");
+        remButton = new JButton("Remove Icon");
         remButton.addActionListener(this);
  
+        chgButton = new JButton("Change Size");
+        chgButton.addActionListener(this);
+        
         //For layout purposes, put the buttons in a separate panel
          //use FlowLayout
+        buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS));
         buttonPanel.add(openButton);
         buttonPanel.add(remButton);
+        buttonPanel.add(chgButton);
        
         //Add the buttons and the log to this panel.
         add(buttonPanel, BorderLayout.PAGE_START);
@@ -62,15 +70,28 @@ public class ImageImporter extends JPanel
         if (e.getSource() == openButton) {
         	handleShapeMapping();
         } 
-        else 
+        else if (e.getSource() == remButton)
         {
         	nsp.getIconMapper().remove(currentNode);
         	this.wipeImage();
         }
+        else if (e.getSource() == chgButton)
+        {
+        	handleShapeSizeChange();
+        }
 
     }
     
-    public void setCurrentNode(MyNodeType node){
+    private void handleShapeSizeChange() {
+		// TODO Auto-generated method stub
+    	IconSizePopup sizepop = new IconSizePopup();
+    	sizepop.showPopup();
+    	IMG_WIDTH = (int) sizepop.getWidth();
+    	IMG_HEIGHT = (int) sizepop.getHeight();
+		
+	}
+
+	public void setCurrentNode(MyNodeType node){
     	this.currentNode = node;
     }
  

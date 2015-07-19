@@ -17,6 +17,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import jena.mapper.impl.DBMapperImpl;
 import de.tum.pssif.core.common.PSSIFConstants;
 import de.tum.pssif.core.common.PSSIFOption;
 import de.tum.pssif.core.common.PSSIFValue;
@@ -28,7 +29,6 @@ import de.tum.pssif.core.metamodel.NodeType;
 import de.tum.pssif.core.model.Edge;
 import de.tum.pssif.core.model.Model;
 import de.tum.pssif.core.model.Node;
-import de.tum.pssif.transform.mapper.db.PssifToDBMapperImpl;
 
 /**
  * A container which holds a model and a metamodel The container provides also
@@ -109,14 +109,16 @@ public class MyModelContainer {
 
 			if (tempNodes.isMany()) {
 				for (Node tempNode : tempNodes.getMany()) {
+					// TODO added
 					MyNode newNode = new MyNode(tempNode, t);
-					PssifToDBMapperImpl.newNodes.add(newNode);
+					DBMapperImpl.newNodes.add(newNode);
 					nodes.add(newNode);
 				}
 			}
 			if (tempNodes.isOne()) {
+				// TODO added
 				MyNode newNode = new MyNode(tempNodes.getOne(), t);
-				PssifToDBMapperImpl.newNodes.add(newNode);
+				DBMapperImpl.newNodes.add(newNode);
 				nodes.add(newNode);
 			}
 
@@ -132,15 +134,17 @@ public class MyModelContainer {
 
 			if (tempNodes.isMany()) {
 				for (Node tempNode : tempNodes.getMany()) {
+					// TODO added
 					MyJunctionNode newNode = new MyJunctionNode(tempNode, t);
-					PssifToDBMapperImpl.newJunctionNodes.add(newNode);
+					DBMapperImpl.newJunctionNodes.add(newNode);
 					junctionNodes.add(newNode);
 				}
 			}
 			if (tempNodes.isOne()) {
+				// TODO added
 				MyJunctionNode newNode = new MyJunctionNode(tempNodes.getOne(),
 						t);
-				PssifToDBMapperImpl.newJunctionNodes.add(newNode);
+				DBMapperImpl.newJunctionNodes.add(newNode);
 				junctionNodes.add(newNode);
 			}
 
@@ -197,7 +201,8 @@ public class MyModelContainer {
 	 */
 	public void addNode(MyNode node) {
 		if (!isContained(node)) {
-			PssifToDBMapperImpl.newNodes.add(node);
+			// TODO added
+			DBMapperImpl.newNodes.add(node);
 			nodes.add(node);
 		}
 	}
@@ -211,7 +216,8 @@ public class MyModelContainer {
 	 */
 	public void addEdge(MyEdge edge) {
 		if (!isContained(edge)) {
-			PssifToDBMapperImpl.newEdges.add(edge);
+			// TODO added
+			DBMapperImpl.newEdges.add(edge);
 			edges.add(edge);
 		}
 	}
@@ -344,7 +350,8 @@ public class MyModelContainer {
 	 */
 	public void addCollapserEdge(MyEdge newEdge) {
 		newEdge.setCollapseEdge(true);
-		PssifToDBMapperImpl.newEdges.add(newEdge);
+		// TODO added
+		DBMapperImpl.newEdges.add(newEdge);
 		edges.add(newEdge);
 	}
 
@@ -356,7 +363,8 @@ public class MyModelContainer {
 	 */
 	public void removeCollapserEdge(MyEdge edge) {
 		if (edge.isCollapseEdge()) {
-			PssifToDBMapperImpl.deletedEdges.add(edge);
+			// TODO added
+			DBMapperImpl.deletedEdges.add(edge);
 			edges.remove(edge);
 		}
 	}
@@ -382,7 +390,8 @@ public class MyModelContainer {
 						PSSIFOption.one(PSSIFValue.create(nodeName
 								+ newNodeIdCounter++)));
 		MyNode newMyNode = new MyNode(newNode, type);
-		PssifToDBMapperImpl.newNodes.add(newMyNode);
+		// TODO added
+		DBMapperImpl.newNodes.add(newMyNode);
 		nodes.add(newMyNode);
 		return newMyNode;
 	}
@@ -409,7 +418,8 @@ public class MyModelContainer {
 			model.removeNode(node.getNodeType().getType(), node.getNode());
 
 		}
-		PssifToDBMapperImpl.deletedNodes.add(node);
+		// TODO added
+		DBMapperImpl.deletedNodes.add(node);
 		return nodes.remove(node);
 	}
 
@@ -453,7 +463,8 @@ public class MyModelContainer {
 			System.out
 					.println(source.getRealName() + destination.getRealName());
 
-			PssifToDBMapperImpl.newEdges.add(e);
+			// TODO added
+			DBMapperImpl.newEdges.add(e);
 			edges.add(e);
 			return true;
 		} else {
@@ -481,7 +492,8 @@ public class MyModelContainer {
 
 		System.out.println(source.getRealName() + destination.getRealName());
 
-		PssifToDBMapperImpl.newEdges.add(e);
+		// TODO added
+		DBMapperImpl.newEdges.add(e);
 		edges.add(e);
 		return newEdge;
 
@@ -494,7 +506,8 @@ public class MyModelContainer {
 	 *            The Edge which should be removed
 	 */
 	public void removeEdgeGUI(MyEdge edge) {
-		PssifToDBMapperImpl.deletedEdges.add(edge);
+		// TODO added
+		DBMapperImpl.deletedEdges.add(edge);
 		edges.remove(edge);
 		model.removeEdge(edge.getEdge());
 	}

@@ -1,6 +1,7 @@
 package gui;
 
 import gui.enhancement.ImagePanel;
+import gui.graph.ImageImporter;
 import gui.toolbars.ToolbarManager;
 
 import java.awt.BorderLayout;
@@ -10,12 +11,14 @@ import java.awt.Font;
 import java.awt.Frame;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
+import java.io.File;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
 import reqtool.bus.ReqToolReqistry;
@@ -27,7 +30,8 @@ public class MainFrame {
 	private MenuManager menuManager;
 	private FileCommands fcommands;
 	private ToolbarManager toolbarManager;
-	
+	private File backgroundFile;
+		
 	public JFrame getFrame(){return frame;}
 	public MenuManager getMenuManager(){return menuManager;}
 	public FileCommands getFileCommands(){return fcommands;}
@@ -35,17 +39,15 @@ public class MainFrame {
 	public MainFrame()
 	{
 		frame = new JFrame(
-				"PSSIF Visualization");
+				"Trails");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		menuManager = new MenuManager(this);
 		fcommands = new FileCommands(this);
 		menuManager.update();
 		fcommands.update();
 		toolbarManager = new ToolbarManager();
-		
-		
-		frame.setState(Frame.MAXIMIZED_BOTH);
-
+		backgroundFile = new File(INSTALL_FOLDER + "//images//background.jpg");
+			
 		ReqToolReqistry.newInstance();
 
 		initFrame();
@@ -64,15 +66,18 @@ public class MainFrame {
 		frame.setPreferredSize(new Dimension(width, height));
 		// create the Basic Menu Bar
 		frame.setJMenuBar(menuManager.createFileMenu());
-		JPanel allPanel = new ImagePanel(INSTALL_FOLDER + "//images//background.jpg");
+		ImageIcon ii = ImageImporter.loadImageBySize(backgroundFile, width, height);
+		final ImagePanel allPanel = new ImagePanel(ii);
+		allPanel.setBackground(Color.WHITE);
 		allPanel.setSize(frame.getSize());
-		allPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+		allPanel.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
+
 		JLabel label = new JLabel("Start by importing a file");
 		label.setHorizontalAlignment(SwingConstants.CENTER);
 		label.setOpaque(true);
 		label.setBackground(Color.WHITE);
 		label.setFont(new Font("Times New Roman", Font.ITALIC, 27));
-		
+
 		frame.add(allPanel, BorderLayout.CENTER);
 		frame.add(label, BorderLayout.PAGE_END);
 		frame.add(toolbarManager.createStandardToolBar(fcommands), BorderLayout.PAGE_START);
@@ -83,5 +88,30 @@ public class MainFrame {
 		ImageIcon icon = new ImageIcon(INSTALL_FOLDER + "//images//icon3.png");
 		frame.setIconImage(icon.getImage());
 		frame.setVisible(true);
+		
+		frame.addComponentListener(new ComponentListener() {
+		    public void componentResized(ComponentEvent e) {
+		    	ImageIcon ii = ImageImporter.loadImageBySize(backgroundFile, frame.getWidth(), frame.getHeight());
+			    allPanel.reloadImage(ii);			    
+		    }
+
+			@Override
+			public void componentMoved(ComponentEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void componentShown(ComponentEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void componentHidden(ComponentEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
 	}
 }

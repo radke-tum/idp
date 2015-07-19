@@ -1,5 +1,6 @@
 package gui.enhancement;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -51,6 +52,7 @@ public class ImagePanel extends JPanel {
 	  }
 	  
 	  public ImagePanel(Image img) {
+		this.setBackground(Color.white);
 	    this.img = img;
 	    Dimension size = new Dimension(img.getWidth(null), img.getHeight(null));
 	    setPreferredSize(size);
@@ -90,7 +92,7 @@ public class ImagePanel extends JPanel {
 	  public void paintComponent(Graphics g) {
 	    	if (img != null)
 	    	{
-	    		g.drawImage(img, 10, 40, null);
+	    		g.drawImage(img, 0, 0, null);
 	    	}
 	  }
 }

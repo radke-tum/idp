@@ -72,6 +72,8 @@ public class GraphVisualization
 	public static final String TestLayout  ="TestLayout";
 
 
+	private boolean gridEnabled = true;
+	
 	private Graph<IMyNode, MyEdge> g;
 	private AbstractModalGraphMouse gm;
 	private VisualizationViewer<IMyNode, MyEdge> vv;
@@ -180,6 +182,7 @@ public class GraphVisualization
 	};
 	
 	
+	
 	private void createNodeTransformers()
 	{
 		Transformer<IMyNode, Shape> vertexSize = new Transformer<IMyNode, Shape>()
@@ -228,7 +231,7 @@ public class GraphVisualization
 					if (icon != null)
 					{
 						ImageIcon imgicon = (ImageIcon) icon;
-						imgicon.setImage(imgicon.getImage().getScaledInstance((int) node.getWidth(), (int) node.getHeight(), Image.SCALE_SMOOTH));
+						imgicon.setImage(imgicon.getImage().getScaledInstance(ImageImporter.IMG_WIDTH, ImageImporter.IMG_HEIGHT, Image.SCALE_SMOOTH));
 						return imgicon;
 					}
 					else
@@ -665,5 +668,18 @@ public class GraphVisualization
 
 		updateGraph();
 		
+	}
+
+
+	public boolean isGridEnabled() {
+		return gridEnabled;
+	}
+	
+	public void setGridEnabled() {
+		gridEnabled = true;
+	}
+	
+	public void setGridUnenabled() {
+		gridEnabled = false;
 	}
 }

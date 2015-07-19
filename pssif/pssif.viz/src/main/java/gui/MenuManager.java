@@ -12,22 +12,17 @@ import gui.graph.NodeColorPopup;
 import gui.graph.NodeIconPopup;
 import gui.metamodel.MetamodelPopUp;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.OutputStreamWriter;
 import java.util.HashMap;
 import java.util.LinkedList;
 
 import javax.swing.BorderFactory;
 import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -37,15 +32,13 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import viewplugin.gui.ManageViewsPopup;
-import de.tum.pssif.transform.mapper.db.PssifToDBMapperImpl;
+import jena.mapper.impl.DBMapperImpl;
 import model.FileExporter;
 
 public class MenuManager {
 	
 	private JMenuItem manageViews;
 	private JMenu projectViews;
-	
-	private PssifToDBMapperImpl toDBMapper = null;
 	
 	private JFrame frame = null;
 	private MainFrame mainFrame = null;
@@ -62,6 +55,7 @@ public class MenuManager {
 		fcommands = this.mainFrame.getFileCommands();
 	
 	}
+	
 	public void update()
 	{
 		this.frame = this.mainFrame.getFrame();
@@ -80,6 +74,7 @@ public class MenuManager {
 	private JMenuItem resetMatrix;
 	private JMenuItem colorNodes;
 	private JMenuItem shapeNodes;
+	private JCheckBoxMenuItem gridEnabled;
 	private JMenuItem newProject;
 	private JMenuItem modelStatistics;
 	private JMenuItem createView;
@@ -88,6 +83,7 @@ public class MenuManager {
 	private JMenuItem matrixVizualistation;
 	private JMenuItem importFile;
 	private JMenuItem exportFile;
+	
 	private JMenuItem importDB;
 	private JMenuItem exportDB;
 	private JMenuItem followEdges;
@@ -105,8 +101,6 @@ public class MenuManager {
 	private JMenu deleteNodeFilter;
 	private JMenu deleteEdgeFilter;
 	private JMenu exportDBTurtle;
-	private JMenuItem exportDBTurtleItem;
-	
 	
 	
 	/**
@@ -116,10 +110,8 @@ public class MenuManager {
 	 */
 	public JMenuBar createFileMenu() {
 		JMenuBar menuBar = new JMenuBar();
-
 		JMenu fileMenu = new JMenu("File");
-
-		newProject = new JMenuItem("New Project from Req");
+		newProject = new JMenuItem("New Project");
 		newProject.addActionListener(new ActionListener() {
 
 			@Override
@@ -154,55 +146,7 @@ public class MenuManager {
 		fileMenu.add(importDB);
 
 		menuBar.add(fileMenu);
-		
-		
-		exportDBTurtle = new JMenu("Export DB");
-		exportDBTurtleItem = new JMenuItem("Export in Turtle File");
-		exportDBTurtleItem.addActionListener(new ActionListener() {
-
-			@SuppressWarnings("static-access")
-			@Override
-			public void actionPerformed(ActionEvent e) {
-			
-
-				// Just make sure that there exists an instance of fromDB and
-				// toDB to get the rdfModel
-				// if (fromDBMapper == null) {
-				 if (toDBMapper == null) {
-				toDBMapper = new PssifToDBMapperImpl();
-			
-				 } 
-				// else
-				// model = toDBMapper.rdfModel;
-				// } else
-				// model = fromDBMapper.rdfModel;
-
-				// Use a FileChooser to select the location for the file
-				JFileChooser finder = new JFileChooser();
-				finder.setSelectedFile(new File(System.getProperty("user.home")
-						+ "\\TurtleExport.ttl"));
-
-				int returnVal = finder.showSaveDialog(null);
-				if (returnVal == javax.swing.JFileChooser.APPROVE_OPTION) {
-					java.io.File file = finder.getSelectedFile();
-					// save the model of the DB into selected file
-					try {
-						BufferedWriter writer = new BufferedWriter(
-								new OutputStreamWriter(new FileOutputStream(
-										file, false)));
-						toDBMapper.rdfModel.write(writer, "TTL");
-						JOptionPane.showMessageDialog(null, "Export successful",
-								"PSSIF", JOptionPane.INFORMATION_MESSAGE);
-					} catch (FileNotFoundException e1) {
-						e1.printStackTrace();
-					}
-					
-				}
-			}
-		});
-		exportDBTurtle.add(exportDBTurtleItem);
-		menuBar.add(exportDBTurtle);
-		
+		menuBar.add(this.addExportTurtleDB());
 
 		return menuBar;
 	}
@@ -234,12 +178,24 @@ public class MenuManager {
 		// Open Menu to display and manipulate the metamodel
 		menuBar.add(addMetaModelChangeOption());
 		
-		// Project View Menu
 		menuBar.add(addProjectViewMenu());
-
+		
 		return menuBar;
 	}
 
+	private JMenu addExportTurtleDB() {
+		exportDBTurtle = new JMenu("Export DB");
+		JMenuItem exportDBTurtleItem = new JMenuItem("Export in Turtle File");
+		exportDBTurtleItem.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				fcommands.exportDBTurtle();
+			}
+		});
+		exportDBTurtle.add(exportDBTurtleItem);
+		return exportDBTurtle;
+	}
 	/**
 	 * Adds the missing options to the "File" Menu to the MenuBar (Import File
 	 * not included)
@@ -277,47 +233,7 @@ public class MenuManager {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				try {
-					if (toDBMapper == null){
-						toDBMapper = new PssifToDBMapperImpl();
-					}
-					// If the model was merged then delete DB and build new
-					// rdfModel from activeModel
-					if (PssifToDBMapperImpl.merge == true) {
-						toDBMapper.modelToDB();
-						PssifToDBMapperImpl.merge = false;
-					}
-					// If the database could be deleted compeletely because of
-					// not importing the database before importing the model...
-					// Then ask the user if he wants to delete the DB or add the
-					// new model to the DB
-					else if (PssifToDBMapperImpl.deleteAll == true) {
-						int delete = JOptionPane.showConfirmDialog(null,
-								"Should the Database be deleted?");
-
-						// If the DB should be deleted use the modelToDB Method
-						// to save the activeModel
-						if (delete == 0)
-							toDBMapper.modelToDB();
-						// If the DB should not be deleted use the saveToDB
-						// Method to just save the changes
-						else if (delete == 1)
-							toDBMapper.saveToDB();
-						else
-							return;
-						PssifToDBMapperImpl.deleteAll = false;
-						// If there is just a minor change in the model of the
-						// DB, just save the changes
-					} else
-						toDBMapper.saveToDB();
-
-					JOptionPane.showMessageDialog(null, "Successfully saved!",
-							"PSSIF", JOptionPane.INFORMATION_MESSAGE);
-				} catch (Exception e1) {
-					JOptionPane.showMessageDialog(null, "Error with saving!\n"
-							+ e1.getMessage(), "PSSIF",
-							JOptionPane.ERROR_MESSAGE);
-				}
+				fcommands.saveToDB();
 
 			}
 		});
@@ -350,6 +266,7 @@ public class MenuManager {
 
 		menuBar.getMenu(0).add(shapeNodes);
 
+		
 		modelStatistics = new JMenuItem("Statistics");
 		modelStatistics.addActionListener(new ActionListener() {
 
@@ -363,6 +280,20 @@ public class MenuManager {
 		});
 		menuBar.getMenu(0).add(modelStatistics);
 
+		gridEnabled = new JCheckBoxMenuItem("Show Grid");
+		gridEnabled.setSelected(true);
+		gridEnabled.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (gridEnabled.isSelected())
+					graphView.getGraph().setGridEnabled();
+				else
+					graphView.getGraph().setGridUnenabled();
+			}
+		});
+		menuBar.getMenu(0).add(gridEnabled);
+		
 		return menuBar;
 	}
 
@@ -375,7 +306,7 @@ public class MenuManager {
 		JMenu metamodelMenu = new JMenu();
 		metamodelMenu.setText("Metamodel");
 		metamodelMenu.setIcon(null);
-		metamodelMenu.setPreferredSize(new Dimension(80, 20));
+		metamodelMenu.setPreferredSize(new Dimension(90, 20));
 
 		JMenuItem changeOption = new JMenuItem("Manipulate Metamodel");
 		metamodelMenu.add(changeOption);
@@ -390,49 +321,53 @@ public class MenuManager {
 
 		return metamodelMenu;
 	}
-
 	/*
-	 * 
-	 * Project View Menu
-	 */
+	* 
+	* Project View Menu
+	*/
 	private JMenu addProjectViewMenu() {
 
-		projectViews = new JMenu();
-		projectViews.setText("Project View");
+	projectViews = new JMenu();
+	projectViews.setText("Project View");
 
-		/* Reset View */
-		// resetView = new JMenuItem();
-		// resetView.setText("Reset View");
-		//
-		// projectViews.add(resetView);
-		//
-		// resetView.addActionListener(new ActionListener() {
-		// @Override
-		// public void actionPerformed(ActionEvent e) {
-		//
-		// }
-		// });
+	/* Reset View */
+	// resetView = new JMenuItem();
+	// resetView.setText("Reset View");
+	//
+	// projectViews.add(resetView);
+	//
+	// resetView.addActionListener(new ActionListener() {
+	// @Override
+	// public void actionPerformed(ActionEvent e) {
+	//
+	// }
+	// });
 
-		/* ViewManager */
-		manageViews = new JMenuItem();
-		manageViews.setText("Manage Views");
+	/* ViewManager */
+	manageViews = new JMenuItem();
+	manageViews.setText("Manage Views");
 
-		projectViews.add(manageViews);
+	projectViews.add(manageViews);
 
-		manageViews.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				new ManageViewsPopup(frame, graphView, masterFilter);
-				// ProjectView pv =
-				// ViewManager.createNewProjectView("Standard View - No Filters",
-				// graphView, masterFilter);
-				// new ManageViewsPopup(frame, pv);
-			}
-		});
-
-		return projectViews;
+	manageViews.addActionListener(new ActionListener() {
+	@Override
+	public void actionPerformed(ActionEvent e) {
+	new ManageViewsPopup(frame, graphView, masterFilter);
+	// ProjectView pv =
+	// ViewManager.createNewProjectView("Standard View - No Filters",
+	// graphView, masterFilter);
+	// new ManageViewsPopup(frame, pv);
 	}
-	
+	});
+
+	return projectViews;
+	}
+	/**
+	 * Adds the Mouse Operations Mode to the MenuBar (Picking and Transforming
+	 * Mode)
+	 * 
+	 * @return The updated MenuBar
+	 */
 	
 	/**
 	 * Adds the Option to change the Graph Layout to the MenuBar
@@ -607,6 +542,9 @@ public class MenuManager {
 			public void actionPerformed(ActionEvent e) {
 				graphView.resetGraph();
 				mainFrame.initFrame();
+
+				DBMapperImpl.deleteAll = true;
+				DBMapperImpl.clearAll();
 			}
 		});
 

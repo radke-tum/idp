@@ -36,9 +36,10 @@ import gui.graph.GraphVisualization;
 
 @SuppressWarnings("serial")
 public class EnhancedVisualizationViewer extends VisualizationViewer<IMyNode, MyEdge> implements MouseWheelListener, DropTargetListener, KeyListener{
-
+	
 	private GraphVisualization gViz;
 	public int subdivision_size = 30; 
+	
 	
 	public void setGraphVisualization(GraphVisualization g)
 	{
@@ -121,8 +122,10 @@ public class EnhancedVisualizationViewer extends VisualizationViewer<IMyNode, My
 		g2d.setColor(getBackground());
 		g2d.fillRect(0,0,d.width,d.height);
 		
+		
 		// painting the background grid area
-		paintGrid(g2d);
+		if (gViz.isGridEnabled())
+			paintGrid(g2d);
 
 		AffineTransform oldXform = g2d.getTransform();
         AffineTransform newXform = new AffineTransform(oldXform);

@@ -2,13 +2,15 @@ package de.tum.pssif.transform;
 
 import de.tum.pssif.core.common.PSSIFUtil;
 import de.tum.pssif.core.exception.PSSIFException;
+import de.tum.pssif.transform.mapper.RDFTTLMapper;
+import de.tum.pssif.transform.mapper.RDFXMLMapper;
 import de.tum.pssif.transform.mapper.BpmnMapper;
 import de.tum.pssif.transform.mapper.EpkMapper;
 import de.tum.pssif.transform.mapper.SysMlMapper;
 import de.tum.pssif.transform.mapper.graphml.PSSIFMapper;
 import de.tum.pssif.transform.mapper.graphml.UFMMapper;
 import de.tum.pssif.transform.mapper.reqif.ReqifMapper;
-
+import de.tum.pssif.transform.mapper.xmi.XmiMapper;
 
 public final class MapperFactory {
 
@@ -41,7 +43,12 @@ public final class MapperFactory {
    * REQ-IF
    */
   public static final String REQ_IF = "reqIf";
+  
+  public static final String RDF_TTL = "RDF/Turtle";
+  public static final String RDF_XML = "RDF/XML";
 
+  public static final String UML = "uml";
+  
   public static Mapper getMapper(String name) {
     if (PSSIFUtil.areSame(UOFP, name)) {
       return new UFMMapper();
@@ -60,6 +67,14 @@ public final class MapperFactory {
     }
     else if (PSSIFUtil.areSame(REQ_IF, name)) {
     	return new ReqifMapper();
+    }
+    else if (PSSIFUtil.areSame(RDF_TTL, name)) {
+    	return new RDFTTLMapper();
+    }
+    else if (PSSIFUtil.areSame(RDF_XML, name)) {
+    	return new RDFXMLMapper();
+    } else if (PSSIFUtil.areSame(UML, name)) {
+    	return new XmiMapper();
     }
     throw new PSSIFException("No mapper found for name: " + name);
   }
