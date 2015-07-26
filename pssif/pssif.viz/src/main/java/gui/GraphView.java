@@ -29,10 +29,13 @@ import java.util.LinkedList;
 import java.util.Set;
 
 import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
+import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
@@ -75,6 +78,8 @@ public class GraphView {
 	private JPanel			   showPanel;
 	private JPanel 			   graphpanel;
 	private JScrollPane		   hierachypane;
+	private JScrollPane 	   instancePane;
+	private DefaultListModel<String> instanceList;
 	private JLabel             nodename;
 	private JLabel             nodetype;
 	private JLabel             edgetype;
@@ -137,17 +142,26 @@ public GraphView(MainFrame mainFrame) {
 	spliter.setDividerLocation(520);
 	parent.add(spliter, BorderLayout.CENTER);
 
-	final NodeHierarchyContainer nhcp = new NodeHierarchyContainer();
-    hierachypane = nhcp.createNodeHierarchyTree(masterFilter);
-    parent.add(hierachypane, BorderLayout.EAST);
+	JPanel leftContainer = new JPanel();
+	leftContainer.setLayout(new BoxLayout(leftContainer,BoxLayout.Y_AXIS));
+
+	instanceList = new DefaultListModel<String>();
+	JList<String> listOfInstances = new JList<String>(instanceList);
 	
+	final NodeHierarchyContainer nhcp = new NodeHierarchyContainer(listOfInstances);
+    hierachypane = nhcp.createNodeHierarchyTree(masterFilter);
+    leftContainer.add(hierachypane);
+    
+    //instancePane = new JScrollPane(); 
+    //instancePane.add(listOfInstances);
+    listOfInstances.setMinimumSize(new Dimension());
+    leftContainer.add(listOfInstances);
+    parent.add(leftContainer, BorderLayout.EAST);
     ToolbarManager toolbarManager = new ToolbarManager();
     parent.add(toolbarManager.createMouseToolbar(graph), BorderLayout.LINE_START);
     EnhancedToolBar jt = toolbarManager.createStandardToolBar(mainFrame.getFileCommands());
    
-    parent.add(jt, BorderLayout.PAGE_START);
-    
-    
+    parent.add(jt, BorderLayout.PAGE_START);    
     
     
     return parent;

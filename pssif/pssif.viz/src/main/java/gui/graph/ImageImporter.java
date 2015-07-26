@@ -1,18 +1,24 @@
 package gui.graph;
 
  
-import graph.model.MyNode;
 import graph.model.MyNodeType;
 import gui.MainFrame;
 
-import java.io.*;
-import java.net.URI;
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.BorderLayout;
+import java.awt.Graphics2D;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
+import java.io.File;
 
 import javax.imageio.ImageIO;
-import javax.swing.*;
+import javax.swing.BoxLayout;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFileChooser;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.filechooser.FileNameExtensionFilter;
  
 
@@ -22,6 +28,8 @@ public class ImageImporter extends JPanel
 	
 	public static int IMG_WIDTH = 128;
 	public static int IMG_HEIGHT = 128;
+	
+	ImageIcon icon;
 	
     private JButton openButton;
     private JButton remButton;
@@ -88,8 +96,26 @@ public class ImageImporter extends JPanel
     	sizepop.showPopup();
     	IMG_WIDTH = (int) sizepop.getWidth();
     	IMG_HEIGHT = (int) sizepop.getHeight();
+    	String tmpFileAdd = this.icon.getDescription();
+    	ImageIcon tmpIcon = reloadIcon(this.icon);
+    	tmpIcon.setDescription(tmpFileAdd);
+    	nsp.getIconMapper().put(currentNode, tmpIcon);
+    	showImage(tmpIcon);
 		
 	}
+    
+    private ImageIcon reloadIcon(ImageIcon icon)
+    {
+    	try
+    	{
+    		File tmpFile = new File(icon.getDescription());
+    		return loadImageBySize(tmpFile, IMG_WIDTH, IMG_HEIGHT);
+    	} catch (Exception e) 
+    	{
+    		System.out.println("inja readi refigh....");
+    		return null;
+    	}
+    }
 
 	public void setCurrentNode(MyNodeType node){
     	this.currentNode = node;
@@ -112,8 +138,8 @@ public class ImageImporter extends JPanel
            		file = fc.getSelectedFile();
            		if (picLabel != null)
            			this.remove(picLabel);
-    			ImageIcon icon = loadImageBySize(file, IMG_WIDTH, IMG_HEIGHT);
-    			String basepath = MainFrame.INSTALL_FOLDER;
+    			icon = loadImageBySize(file, IMG_WIDTH, IMG_HEIGHT);
+    			//String basepath = MainFrame.INSTALL_FOLDER;
     			icon.setDescription(file.getPath());
                	nsp.getIconMapper().put(currentNode, icon);
                	this.showImage(icon);
@@ -151,7 +177,7 @@ public class ImageImporter extends JPanel
     	}
     	if (picLabel != null)
     		this.remove(picLabel);
-    	
+    	this.icon = (ImageIcon) icon;
     	//icon.paintIcon(this, getGraphics(), (this.getWidth()-IMG_WIDTH)/2, 30);
     	picLabel = new JLabel(icon);
     	picLabel.setSize(this.getSize());

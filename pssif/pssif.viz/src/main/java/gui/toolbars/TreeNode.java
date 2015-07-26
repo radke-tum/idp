@@ -1,7 +1,12 @@
 package gui.toolbars;
 
-import java.util.LinkedList;
+import graph.model.MyNode;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+
+import model.ModelBuilder;
 import de.tum.pssif.core.metamodel.external.MetamodelNode;
 
 public class TreeNode {
@@ -31,8 +36,21 @@ public class TreeNode {
 	public MetamodelNode getContent() {
 		return content;
 	}
+
+	
 	public void setContent(MetamodelNode content) {
 		this.content = content;
+	}
+	public static ArrayList<MyNode> findInstances(String contentName){
+		ArrayList<MyNode> instances = new ArrayList<MyNode>();
+		LinkedList<MyNode> graphNodes = new LinkedList<MyNode>();
+		graphNodes = ModelBuilder.getAllNodes() ;
+	
+		for (MyNode node: graphNodes){
+			if(node.getNodeType().getName().equals(contentName))
+				instances.add(node);
+		}
+		return instances;
 	}
 	
 	

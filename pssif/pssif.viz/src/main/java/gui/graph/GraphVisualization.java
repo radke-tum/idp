@@ -3,17 +3,11 @@ package gui.graph;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Graphics2D;
-import java.awt.GraphicsConfiguration;
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
-import java.awt.Image;
 import java.awt.Paint;
 import java.awt.Shape;
 import java.awt.Stroke;
-import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
-import java.awt.image.BufferedImage;
+import java.io.File;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -44,6 +38,7 @@ import edu.uci.ics.jung.visualization.util.Animator;
 import graph.listener.ConfigWriterReader;
 import graph.listener.MyPopupGraphMousePlugin;
 import graph.listener.NodeIconConfigWriterReader;
+import graph.listener.NodeSizeConfigWriterReader;
 import graph.model.GraphBuilder;
 import graph.model.IMyNode;
 import graph.model.MyEdge;
@@ -87,9 +82,11 @@ public class GraphVisualization
 	public HashMap<MyNodeType, Shape> nodeShapeMapping;
 	private HashMap<MyNodeType,Color> nodeColorMapping;
 	private HashMap<MyNodeType, Icon> nodeIconMapping;
+	private HashMap<MyNodeType, Dimension> nodeSizeMapping;
 	
 	private ConfigWriterReader configWriterReader;
 	private NodeIconConfigWriterReader nodeIconConfigWriterReader;
+	private NodeSizeConfigWriterReader nodeSizeConfigWriterReader;
 
 
 	public GraphVisualization(Dimension d, boolean details)
@@ -101,9 +98,13 @@ public class GraphVisualization
 		this.collapser = new MyCollapser();
 		configWriterReader = new ConfigWriterReader();
 		nodeIconConfigWriterReader = new NodeIconConfigWriterReader();
+		nodeSizeConfigWriterReader = new NodeSizeConfigWriterReader();
 		this.nodeColorMapping = configWriterReader.readColors();
 		this.nodeIconMapping = nodeIconConfigWriterReader.readIcons();
+		this.nodeSizeMapping = nodeSizeConfigWriterReader.readSizes();
 
+		updateSizes();
+		
 		this.g =  this.gb.createGraph(this.detailedNodes);
 		this.vertexLabelVisibility = true;
 
@@ -231,7 +232,8 @@ public class GraphVisualization
 					if (icon != null)
 					{
 						ImageIcon imgicon = (ImageIcon) icon;
-						imgicon.setImage(imgicon.getImage().getScaledInstance(ImageImporter.IMG_WIDTH, ImageImporter.IMG_HEIGHT, Image.SCALE_SMOOTH));
+						//imgicon.setImage(imgicon.getImage().getScaledInstance(ImageImporter.IMG_WIDTH, ImageImporter.IMG_HEIGHT, Image.SCALE_SMOOTH));
+						imgicon.setImage(imgicon.getImage());
 						return imgicon;
 					}
 					else
@@ -581,8 +583,12 @@ public class GraphVisualization
 	
 	public HashMap<MyNodeType, Icon> getNodeIconMapping()
 	{
-		//return this.nodeIconConfigWriterReader.readIcons();
 		return this.nodeIconMapping;
+	}
+	
+	public HashMap<MyNodeType, Dimension> getNodeSizeMapping()
+	{
+		return this.nodeSizeMapping;
 	}
 
 	/**
@@ -669,6 +675,13 @@ public class GraphVisualization
 		updateGraph();
 		
 	}
+	
+	public void setNodeSizeMapping(HashMap<MyNodeType, Dimension> sizeMapper) {
+		this.nodeSizeMapping = sizeMapper;
+		this.nodeSizeConfigWriterReader.setSizes(sizeMapper);
+		updateSizes();
+		updateGraph();
+	}
 
 
 	public boolean isGridEnabled() {
@@ -681,5 +694,25 @@ public class GraphVisualization
 	
 	public void setGridUnenabled() {
 		gridEnabled = false;
+	}
+	
+	public void updateSizes()
+	{
+		for (MyNodeType mnt : nodeIconMapping.keySet())
+		{
+			Dimension d = nodeSizeMapping.get(mnt);
+			if (d == null)
+				continue;
+			ImageIcon i = (ImageIcon) nodeIconMapping.get(mnt);
+			if (d.width == i.getIconWidth() && d.height == i.getIconHeight())
+				continue;
+			else
+			{
+				String tmp = i.getDescription();
+				i = ImageImporter.loadImageBySize(new File(i.getDescription()), d.width, d.height);
+				i.setDescription(tmp);
+				nodeIconMapping.put(mnt, i);
+			}
+		}
 	}
 }

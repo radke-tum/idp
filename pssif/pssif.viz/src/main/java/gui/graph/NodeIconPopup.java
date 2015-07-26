@@ -4,6 +4,7 @@ import graph.model.MyNodeType;
 import gui.GraphView;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.util.Arrays;
 import java.util.HashMap;
 
@@ -38,6 +39,13 @@ public class NodeIconPopup extends MyPopup{
 		if (dialogResult==0)
 	 	{
 	 		graphView.getGraph().setNodeIconMapping(iconMapper);
+	 		HashMap<MyNodeType, Dimension> sizeMapper = new HashMap<MyNodeType, Dimension>();
+	 		for (MyNodeType mnt : iconMapper.keySet())
+	 		{
+	 			Dimension d = new Dimension(iconMapper.get(mnt).getIconWidth(), iconMapper.get(mnt).getIconHeight());
+	 			sizeMapper.put(mnt, d);
+	 		}
+	 		graphView.getGraph().setNodeSizeMapping(sizeMapper);
 	 		
 	 	}
 	}

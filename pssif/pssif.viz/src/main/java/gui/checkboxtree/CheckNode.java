@@ -22,6 +22,11 @@ public class CheckNode extends DefaultMutableTreeNode {
 
 	  public boolean isSelected;
 
+	  public Object getObject()
+	  {
+		  return getUserObject();
+	  }
+	  
 	  public CheckNode() {
 	    this(null);
 	  }

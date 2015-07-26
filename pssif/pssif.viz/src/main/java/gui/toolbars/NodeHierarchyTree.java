@@ -1,15 +1,17 @@
 package gui.toolbars;
 
+import graph.model.MyNode;
 import graph.model.MyNodeType;
 import graph.operations.MasterFilter;
 import gui.checkboxtree.CheckBoxRenderer;
 import gui.checkboxtree.CheckNode;
 
-
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.LinkedList;
 
+import javax.swing.DefaultListModel;
+import javax.swing.JList;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
@@ -25,14 +27,17 @@ import model.ModelBuilder;
 public class NodeHierarchyTree{
 	
 	private LinkedList<String> selectedValues;
+	private JList<String> instanceList;
 	
 	/**
 	 * create a new Instance
 	 */
-	public NodeHierarchyTree(){
+	public NodeHierarchyTree(JList<String> instanceList){
 		selectedValues = new LinkedList<String>();
+		this.instanceList = instanceList;
 	}
 	
+
 	/**
 	 * Create a new JTree with checkboxes
 	 * @param metanodes a Map(Name of the NodeType, NodeType Object) which should be displayed in the Tree
@@ -56,9 +61,22 @@ public class NodeHierarchyTree{
 	    tree.putClientProperty("JTree.lineStyle", "Angled");
 	    tree.addMouseListener(new NodeSelectionListener(tree, mfilter));
 	    
+	    //printInstancesOfTree(root);
+	    
 	    return tree;
 	}
 	
+	private void printInstancesOfTree(TreeNode root)
+	{
+		System.out.println("**************************");
+	    for (TreeNode tnode : root.getLeaves())
+	    {
+	    	System.out.println(tnode.getContent().getName());
+	    	//tnode.printInstances();
+	    	printInstancesOfTree(tnode);
+	    }
+	}
+
 	private CheckNode addNodesToTree(TreeNode tn, CheckNode node) {
 		
 		for (TreeNode t : tn.getLeaves())
@@ -123,7 +141,7 @@ public class NodeHierarchyTree{
 	{
 		JTree tree;
 		private MasterFilter masterFilter;
-	
+		
 		final String Filter_Name = "Temp_H";
     
 		NodeSelectionListener(JTree tree, MasterFilter mfilter)
@@ -132,6 +150,7 @@ public class NodeHierarchyTree{
 			this.masterFilter = mfilter;
 		}
     
+		@SuppressWarnings("unchecked")
 		public void mouseClicked(MouseEvent e)
 		{
 			int x = e.getX();
@@ -164,7 +183,17 @@ public class NodeHierarchyTree{
 				selectedValues.clear();
 				evalMouseSelection(root);
 				applyGraphView();
+			
+				DefaultListModel<String> listModel = (DefaultListModel<String>) instanceList.getModel();
+				listModel.clear();
 				
+				for (MyNode mn : TreeNode.findInstances(node.getObject().toString()))
+					listModel.addElement(mn.getRealName());
+				
+				instanceList.revalidate();
+				instanceList.repaint();
+				
+			
 				
 			}
 		}

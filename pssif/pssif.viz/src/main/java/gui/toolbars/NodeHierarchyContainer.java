@@ -4,6 +4,8 @@ import graph.operations.MasterFilter;
 
 import java.util.Collection;
 
+import javax.swing.DefaultListModel;
+import javax.swing.JList;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
 
@@ -12,9 +14,15 @@ import de.tum.pssif.core.metamodel.external.PSSIFCanonicMetamodelCreator;
 
 public class NodeHierarchyContainer {
 	NodeHierarchyTree nodeTree;
-	public NodeHierarchyContainer()
+	
+	public NodeHierarchyTree getTree()
 	{
-		this.nodeTree = new NodeHierarchyTree();
+		return nodeTree;
+	}
+	
+	public NodeHierarchyContainer(JList<String> instanceList)
+	{
+		this.nodeTree = new NodeHierarchyTree(instanceList);
 	}
 	
 	public void printSelecteds()
@@ -32,7 +40,7 @@ public class NodeHierarchyContainer {
 	    return scrollpane;
 	}
 	
-
+	
 	private TreeNode sortNodeHierarchy (Collection<MetamodelNode> nodeTypes)
 	{
 		TreeNode mytree = new TreeNode(null);
