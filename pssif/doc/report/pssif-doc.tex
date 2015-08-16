@@ -1,0 +1,146 @@
+% Template for computer science thesis at the TU Munich
+% Authors Benedikt Mas y Parareda, Johannes Becker, Gunnar Schroeder, Elmar Juergens
+
+\documentclass[11pt,a4paper]{book}
+
+\usepackage{multicol}
+\usepackage[latin1]{inputenc}
+\usepackage{amsmath,amssymb,amsfonts,amsthm}
+\usepackage{graphicx}
+\usepackage{rotating}
+\usepackage{url}
+\usepackage{latexsym}
+\usepackage{makeidx}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage[english,german]{babel}
+
+\usepackage{longtable}
+
+%maybe temporary packages: 
+\usepackage{color}
+
+\makeindex
+
+\usepackage{geometry,mflogo,xspace,texnames,path,booktabs,bm}
+\usepackage[hyperindex,bookmarks,pdfborder=0,plainpages=false,pdfpagelabels]{hyperref}
+\usepackage{subfigure}
+\usepackage{listings}
+\usepackage{footnote}
+
+\usepackage[nonumberlist,nopostdot,nomain,toc,acronym]{glossaries}
+\makeglossaries
+
+%Settings applicable to the complete document
+
+%Breaks URLs properly and draws them in a nice font
+\urlstyle{sm}
+
+\renewcommand{\ttdefault}{pcr} % Courier has a bold shape, default tt does not
+
+
+%Include a CVS revision number in the document
+\def\version$#1 #2 #3 #4${#3}
+\newcommand{\CVSrevision}
+{\version$Id: thesis.tex 00 2010-07- 18:32:21Z Elmar $}
+
+
+%Decrease the default indentation of paragraphs
+\parindent=0.3cm
+
+%new or changed commands
+\renewcommand\contentsname{Table of Contents}
+\newcommand{\chapref}[1]{Chapter~\ref{#1}}
+\newcommand{\secref}[1]{Section~\ref{#1}}
+\newcommand{\appref}[1]{Appendix~\ref{#1}}
+\newcommand{\figref}[2][]{Figure~\ref{#2}#1}
+\newcommand{\listref}[2][]{Listing~\ref{#2}#1}
+\newcommand{\tabref}[2][]{Table~\ref{#2}#1}
+\newcommand{\acroref}[1]{List of Abbreviations~\ref{#1}}
+
+\newcommand{\etal}{et al.\ }
+\newcommand{\ie}{i.\,e.\ }
+\newcommand{\eg}{e.\,g.\ }
+\newcommand{\gap}{\hspace{1.5cm}}
+
+\newcommand{\dotcup}{\ensuremath{\mathaccent\cdot\cup}}
+
+\renewcommand\lstlistingname{Listing}
+\renewcommand\lstlistlistingname{List of Listings}
+
+\renewcommand\contentsname{Table of Contents}
+
+%hyphenation rules
+\hyphenation{ele-ments}
+\hyphenation{Composite-Expression}
+\hyphenation{dia-gram}
+
+% footnote stuff....
+\makesavenoteenv{tabular} 
+
+% set listings to texttt
+\lstset{language=Java}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% THE DOCUMENT
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+\bibliographystyle{alpha}
+
+\input{cover.tex}
+\input{titlepage.tex}
+%\input{declaration.tex}
+%\input{abstract.tex}
+%\input{abstract-de.tex}
+%\input{acknowledgement.tex}
+
+
+% Table of Contents
+\setcounter{tocdepth}{2}                % Sets depth of table of contents. 0 is chapter, 1 is sections, 2 is subsections
+\setcounter{secnumdepth}{2}             % Sets depth of numbering of toc contents
+
+\selectlanguage{english}
+\tableofcontents
+
+
+%List of Figures
+%TODO ENABLE
+%\listoffigures
+
+%List of Tables
+%\listoftables
+
+%List of Listings
+%\lstlistoflistings
+
+\include{acronyms}
+\printglossary[title=List of Abbreviations,type=acronym]
+
+\mainmatter
+\pagestyle{headings}
+
+
+% Chapters. Each one in its own file
+
+\input{sections/01-introduction.tex}
+%\input{sections/02-requirements.tex}
+\input{sections/03-approach.tex}
+\input{sections/04-implementation.tex}
+\input{sections/05-results.tex}
+\input{sections/06-outlook.tex}
+%\input{sections/requirements.tex}
+%\input{sections/related.tex}
+%\input{sections/formal_ql.tex}
+%\input{sections/implementation.tex}
+%\input{sections/evaluation.tex}
+%\input{sections/conclusion.tex}
+
+\appendix
+\input{sections/00-appendix-distribution.tex}
+%\input{sections/appendix-owl.tex}
+
+% the bibliography
+\bibliography{papers}
+
+\end{document}
