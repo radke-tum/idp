@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xmi:XMI xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:sysml4mechatronics="http://sysml4mechatronics/1.0" xsi:schemaLocation="http://sysml4mechatronics/1.0 ">
+  <sysml4mechatronics:Functionality Name="Functionality 3"/>
+  <sysml4mechatronics:MechanicalInterfaceBlock Direction="Out" ownedDataType="#/9"/>
+  <sysml4mechatronics:EEDataType Name="SysML4Mechatronics Data Type 1"/>
+  <sysml4mechatronics:SoftwareBlock Name="Software Block 1" Version="1">
+    <ownedPort href="#/21"/>
+  </sysml4mechatronics:SoftwareBlock>
+  <sysml4mechatronics:EEDataType Name="SysML4Mechatronics Data Type 5"/>
+  <sysml4mechatronics:EEPort Name="Electrical Port 1" Conjugated="true" isMandatoryFor="#/0" isConnectedTo="#/23" ownedInterfaceBlock="#/19"/>
+  <sysml4mechatronics:MechanicalInterfaceBlock ownedDataType="#/2"/>
+  <sysml4mechatronics:SoftwareInterfaceBlock OperationName="SysML4Mechatronics Data Type 4"/>
+  <sysml4mechatronics:MechanicalPort Name="Mechanical Port 2" isMandatoryFor="#/10" ownedInterfaceBlock="#/1"/>
+  <sysml4mechatronics:EEDataType Name="SysML4Mechatronics Data Type 2"/>
+  <sysml4mechatronics:Functionality Name="Functionality 2"/>
+  <sysml4mechatronics:EEInterfaceBlock Direction="InOut" ownedDataType="#/14"/>
+  <sysml4mechatronics:Functionality Name="Functionality 1"/>
+  <sysml4mechatronics:Module Name="Module 1" Version="1">
+    <ownedBlock xsi:type="sysml4mechatronics:EEBlock" href="#/25"/>
+    <ownedBlock xsi:type="sysml4mechatronics:MechanicalBlock" href="#/22"/>
+    <ownedBlock xsi:type="sysml4mechatronics:MechanicalBlock" href="#/24"/>
+    <ownedBlock xsi:type="sysml4mechatronics:SoftwareBlock" href="#/3"/>
+    <ownedBlock xsi:type="sysml4mechatronics:SoftwareBlock" href="#/28"/>
+  </sysml4mechatronics:Module>
+  <sysml4mechatronics:EEDataType Name="SysML4Mechatronics Data Type 6"/>
+  <sysml4mechatronics:Module Name="Module 2" Version="1">
+    <ownedBlock xsi:type="sysml4mechatronics:SoftwareBlock" href="#/18"/>
+    <ownedBlock xsi:type="sysml4mechatronics:EEBlock" href="#/16"/>
+    <ownedBlock xsi:type="sysml4mechatronics:EEBlock" href="#/27"/>
+    <ownedBlock xsi:type="sysml4mechatronics:MechanicalBlock" href="#/17"/>
+  </sysml4mechatronics:Module>
+  <sysml4mechatronics:EEBlock Name="Electronic Block 2" Version="1" ownedFunctionality="#/0 #/10">
+    <ownedPort href="#/5"/>
+    <ownedPort href="#/29"/>
+  </sysml4mechatronics:EEBlock>
+  <sysml4mechatronics:MechanicalBlock Name="Mechanical Block 3" Version="1"/>
+  <sysml4mechatronics:SoftwareBlock Name="Software Block 3" Version="1"/>
+  <sysml4mechatronics:EEInterfaceBlock Direction="InOut" ownedDataType="#/4"/>
+  <sysml4mechatronics:MechanicalPort Name="Mechanical Port 1" isConnectedTo="#/8" ownedInterfaceBlock="#/6"/>
+  <sysml4mechatronics:SoftwarePort Name="Software Port 1" isConnectedTo="#/29" ownedInterfaceBlock="#/26"/>
+  <sysml4mechatronics:MechanicalBlock Name="Mechanical Block 1" Version="1">
+    <ownedPort href="#/20"/>
+  </sysml4mechatronics:MechanicalBlock>
+  <sysml4mechatronics:EEPort Name="Electrical Port 2" isMandatoryFor="#/12" ownedInterfaceBlock="#/11"/>
+  <sysml4mechatronics:MechanicalBlock Name="Mechanical Block 2" Version="1"/>
+  <sysml4mechatronics:EEBlock Name="Electronic Block 1" Version="1" ownedFunctionality="#/12">
+    <ownedPort href="#/23"/>
+    <ownedPort href="#/8"/>
+  </sysml4mechatronics:EEBlock>
+  <sysml4mechatronics:SoftwareInterfaceBlock Direction="Provided" OperationName="SysML4Mechatronics Data Type 3"/>
+  <sysml4mechatronics:EEBlock Name="Electronic Block 3" Version="1"/>
+  <sysml4mechatronics:SoftwareBlock Name="Software Block 2" Version="1"/>
+  <sysml4mechatronics:SoftwarePort Name="Software Port 2" isMandatoryFor="#/0" ownedInterfaceBlock="#/7"/>
+</xmi:XMI>
